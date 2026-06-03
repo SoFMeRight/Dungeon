@@ -69,7 +69,7 @@ perform:
     - stagefreight ci run perform
   artifacts:
     paths: [.stagefreight/]
-    expire_in: 2 hours
+    expire_in: 1 day
 
 review:
   stage: review
