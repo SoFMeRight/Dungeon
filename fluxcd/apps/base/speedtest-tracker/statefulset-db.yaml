@@ -61,17 +61,25 @@ spec:
           livenessProbe:
             exec:
               command:
-                - pg_isready
-                - -U
-                - $(POSTGRES_USER)
+                # Wrapped in a shell so $POSTGRES_USER actually expands — k8s does
+                # NOT substitute $(VAR) inside probe commands, so the bare
+                # "pg_isready -U $(POSTGRES_USER)" fell back to the OS user
+                # "postgres", spamming "role \"postgres\" does not exist" every probe.
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
             initialDelaySeconds: 30
             periodSeconds: 10
           readinessProbe:
             exec:
               command:
-                - pg_isready
-                - -U
-                - $(POSTGRES_USER)
+                # Wrapped in a shell so $POSTGRES_USER actually expands — k8s does
+                # NOT substitute $(VAR) inside probe commands, so the bare
+                # "pg_isready -U $(POSTGRES_USER)" fell back to the OS user
+                # "postgres", spamming "role \"postgres\" does not exist" every probe.
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
             initialDelaySeconds: 5
             periodSeconds: 5
   volumeClaimTemplates:
