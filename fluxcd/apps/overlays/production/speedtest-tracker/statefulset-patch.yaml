@@ -11,9 +11,12 @@ spec:
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: gossip-stone.speedtest-tracker.postgres
     spec:
+      # s6-overlay (LinuxServer image) MUST init as root — s6-applyuidgid can
+      # only run as root — then it drops the speedtest-tracker app to PUID/PGID
+      # 1000. Forcing runAsUser:1000 here broke that (s6 couldn't set the
+      # supplementary group list), so the app never started. fsGroup keeps the
+      # ceph-rbd volumes writable by the dropped-to-1000 app.
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
         fsGroup: 1000
       initContainers:
         - name: init-storage
@@ -34,6 +37,27 @@ spec:
       containers:
         - name: speedtest-tracker
           image: docker.io/linuxserver/speedtest-tracker:1.13.11
+          # Container starts as root only so s6 can drop the app to 1000; harden
+          # everything around that. drop ALL + add back only what s6/nginx need
+          # (setuid/setgid + setpcap for the privilege drop, chown/fowner/
+          # dac_override/fsetid for /config ownership, kill for s6 supervision,
+          # net_bind_service for nginx on :80/:443). Plus default seccomp.
+          securityContext:
+            allowPrivilegeEscalation: true
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: ["ALL"]
+              add:
+                - SETUID
+                - SETGID
+                - SETPCAP
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - FSETID
+                - KILL
+                - NET_BIND_SERVICE
           env:
             - name: PUID
               value: "1000"
