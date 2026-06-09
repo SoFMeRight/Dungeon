@@ -11,7 +11,7 @@ spec:
         policy.prplanit.com/access-scope-mariadb: hyrule-castle.osticket.mariadb
     spec:
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       initContainers:
         - name: wait-for-db
           image: docker.io/busybox:1.37
