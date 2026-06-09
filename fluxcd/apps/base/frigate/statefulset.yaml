@@ -15,6 +15,21 @@ spec:
         app: frigate
     spec:
       serviceAccountName: frigate
+      # Pin to a GPU with CUDA compute capability >= 7 (Ampere A2000 = 8). The GTX
+      # 980 Ti (Maxwell, CC 5) is too old for frigate's ONNX CUDA kernels
+      # (cudaErrorNoKernelImageForDevice → detector dies → crashloop). Mirrors the
+      # libretranslate convention.
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: nvidia.com/gpu.compute.major
+                    operator: In
+                    values:
+                      - "7"
+                      - "8"
+                      - "9"
       initContainers:
         # Download YOLOx model if not present
         - name: download-model
