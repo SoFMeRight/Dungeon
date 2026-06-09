@@ -17,7 +17,7 @@ spec:
           image: docker.io/busybox:1.37
       containers:
         - name: osticket
-          image: docker.io/tiredofit/osticket:3.6.2
+          image: ghcr.io/tiredofit/docker-osticket:3.6.2
           resources:
             requests:
               cpu: "250m"
