@@ -11,6 +11,12 @@ spec:
         any:
           - resources:
               kinds: [Pod]
+              # Gate creation/update only. Without this, the rule also matches
+              # DELETE and traps every existing default-SA pod — it can never be
+              # deleted/replaced with a compliant one (e.g. a StatefulSet rolling
+              # in a fixed serviceAccountName deadlocks). Enforcement is unchanged:
+              # default-SA pods still cannot be created.
+              operations: [CREATE, UPDATE]
               namespaces:
                 - arylls-lookout
                 - compass
@@ -56,6 +62,7 @@ spec:
         any:
           - resources:
               kinds: [Deployment, StatefulSet, DaemonSet, Job, CronJob]
+              operations: [CREATE, UPDATE]
               namespaces:
                 - arylls-lookout
                 - compass
