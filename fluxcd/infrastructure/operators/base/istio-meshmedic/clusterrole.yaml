@@ -1,0 +1,10 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: istio-meshmedic
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    # delete is needed only for the repair paths (restart = delete; the controller
+    # recreates with a fresh ambient enrollment).
+    verbs: ["get", "list", "watch", "delete"]

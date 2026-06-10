@@ -11,6 +11,7 @@ resources:
   - ./external-secrets
   - ./gpu-operator
   - ./istio
+  - ./istio-meshmedic
   - ./mariadb-operator-crds
   - ./mariadb-operator
   - ./redis-operator

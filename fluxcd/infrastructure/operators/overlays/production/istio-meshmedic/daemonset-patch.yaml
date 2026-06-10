@@ -1,0 +1,21 @@
+# Production standing policy (proven on this cluster): heal Ready orphans, and
+# heal not-Ready orphans that stay orphaned past the grace period. The orphan
+# filter bounds churn — a pod that re-enrolls drops out of scope.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: istio-meshmedic
+  namespace: king-of-red-lions
+spec:
+  template:
+    spec:
+      containers:
+        - name: agent
+          args:
+            - agent
+            - --interval=60s
+            - --confirm=15s
+            - --grace-period=5m
+            - --auto-repair=true
+            - --repair-stuck=true
+            - --metrics-addr=:9100

@@ -1,0 +1,70 @@
+# istio-meshmedic node-agent — one pod per node. Reads each local pod's netns
+# sockets straight from /host/proc (no ephemeral container injected) and assesses
+# ambient enrollment independently of readiness. Lives alongside the istio data
+# plane (ztunnel/istio-cni) it watches. SAFE defaults here (detect-only); the
+# production overlay enables the proven repair policy.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: istio-meshmedic
+  namespace: king-of-red-lions
+  labels:
+    app: istio-meshmedic
+spec:
+  selector:
+    matchLabels:
+      app: istio-meshmedic
+  template:
+    metadata:
+      labels:
+        app: istio-meshmedic
+        istio.io/dataplane-mode: none # keep the agent out of the ambient mesh
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9100"
+        prometheus.io/path: /metrics
+    spec:
+      serviceAccountName: istio-meshmedic
+      hostPID: true
+      containers:
+        - name: agent
+          image: cr.pcfae.com/prplanit/istio-meshmedic:latest-dev
+          imagePullPolicy: Always
+          args:
+            - agent
+            - --interval=60s
+            - --confirm=15s
+            - --grace-period=5m
+            - --auto-repair=false
+            - --repair-stuck=false
+            - --metrics-addr=:9100
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          ports:
+            - name: metrics
+              containerPort: 9100
+          volumeMounts:
+            - name: host-proc
+              mountPath: /host/proc
+              readOnly: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+          securityContext:
+            runAsUser: 0
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+      volumes:
+        - name: host-proc
+          hostPath:
+            path: /proc
+      tolerations:
+        - operator: Exists # run on every node, control-plane included
