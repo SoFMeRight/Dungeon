@@ -28,7 +28,7 @@ spec:
       hostPID: true
       containers:
         - name: agent
-          image: cr.pcfae.com/prplanit/istio-meshmedic:latest-dev
+          image: docker.io/prplanit/istio-meshmedic:latest-dev
           imagePullPolicy: Always
           args:
             - agent
