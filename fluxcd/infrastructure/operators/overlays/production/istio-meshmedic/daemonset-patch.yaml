@@ -11,6 +11,9 @@ spec:
     spec:
       containers:
         - name: agent
+          # Pin the released version in production — do not float on :latest-dev.
+          image: cr.pcfae.com/prplanit/istio-meshmedic:v0.0.1
+          imagePullPolicy: IfNotPresent
           args:
             - agent
             - --interval=60s
