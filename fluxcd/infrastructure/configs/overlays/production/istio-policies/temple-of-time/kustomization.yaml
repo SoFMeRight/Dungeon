@@ -15,6 +15,9 @@ resources:
   - allow-appflowy-to-appflowy-postgres.yaml
   - allow-appflowy-to-appflowy-redis.yaml
   - allow-appflowy-cloud-to-appflowy-gotrue.yaml
+  - allow-appflowy-nginx-to-appflowy-gotrue.yaml
+  - allow-appflowy-nginx-to-appflowy-cloud.yaml
+  - allow-appflowy-nginx-to-appflowy-web.yaml
   - allow-mealie-to-mealie-postgres.yaml
   - allow-photoprism-to-photoprism-mariadb.yaml
   - allow-ghost-to-ghost-mysql.yaml

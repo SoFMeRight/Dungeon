@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-appflowy-nginx-to-appflowy-cloud
+spec:
+  selector:
+    matchLabels:
+      app: appflowy-cloud
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/temple-of-time/sa/appflowy-nginx
+      to:
+        - operation:
+            ports: ["8000"]
