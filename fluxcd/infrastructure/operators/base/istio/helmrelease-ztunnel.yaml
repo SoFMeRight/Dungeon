@@ -6,6 +6,13 @@ spec:
   releaseName: ztunnel
   targetNamespace: king-of-red-lions
   interval: 30m
+  # ztunnel is also a per-node DaemonSet — same rollout-timeout need as istio-cni, else
+  # its upgrade hits helm's 5m default wait and reports a false timeout.
+  timeout: 20m
+  install:
+    timeout: 20m
+  upgrade:
+    timeout: 20m
   dependsOn:
     - name: istio-base
     - name: istio-cni

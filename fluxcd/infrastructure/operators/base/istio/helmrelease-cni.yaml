@@ -6,8 +6,15 @@ spec:
   releaseName: istio-cni
   targetNamespace: king-of-red-lions
   interval: 30m
+  # A per-node CNI DaemonSet rolls node-by-node and routinely exceeds helm's 5m default
+  # wait, so the upgrade converges on-cluster but helm reports a timeout and the release
+  # goes NotReady — blocking dependents (ztunnel). Give the rollout room on both install
+  # and upgrade.
+  timeout: 20m
   install:
-    timeout: 10m
+    timeout: 20m
+  upgrade:
+    timeout: 20m
   dependsOn:
     - name: istio-base
   chart:
