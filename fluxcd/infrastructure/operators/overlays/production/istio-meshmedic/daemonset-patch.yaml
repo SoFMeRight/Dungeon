@@ -11,8 +11,10 @@ spec:
     spec:
       containers:
         - name: agent
-          # Pin the released version in production — do not float on :latest-dev.
-          image: docker.io/prplanit/istio-meshmedic:v0.0.1
+          # TEMP (Phase-1 verification): immutable dev sha to collect confirm-reason
+          # telemetry before promoting to a released v0.0.2. Revert to a released
+          # version after verifying — do not float on :latest-dev.
+          image: docker.io/prplanit/istio-meshmedic:dev-2488864
           imagePullPolicy: IfNotPresent
           args:
             - agent
