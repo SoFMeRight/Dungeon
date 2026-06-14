@@ -43,7 +43,6 @@ gitops:
 
 commit:
   conventional: true
-  backend: forge
 
 glossary:
   types:
