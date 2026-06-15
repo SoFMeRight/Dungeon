@@ -142,8 +142,12 @@ spec:
     # for the same kube-system/cert-manager-controller lease, and the GitLab one
     # was winning it while lacking the Cloudflare token + DNS-01 resolver config,
     # silently failing every renewal cluster-wide. One controller, one owner.
-    certmanager:
-      install: false
+    # chart 9.9.3 rejects certmanager.install (the cert-manager subchart now enforces a
+    # strict values schema); the bundled-install toggle is the top-level installCertmanager.
+    # configureCertmanager stays default(true): GitLab still wires cert-manager
+    # annotations on its ingress, resolved by the cluster cert-manager via the
+    # ClusterIssuer that certmanager-issuer (below) creates.
+    installCertmanager: false
     certmanager-issuer:
       email: sofmeright+gitlab@gmail.com
     prometheus:
