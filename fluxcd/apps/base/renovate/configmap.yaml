@@ -66,6 +66,15 @@ data:
           "matchDatasources": ["docker"],
           "commitMessagePrefix": "chore(image):",
           "semanticCommits": "enabled"
+        },
+        {
+          // Flux distribution + its controllers are version-coupled and all live
+          // in gotk-components.yaml — every release otherwise fires 5-6 competing
+          // MRs against the same file. Group them into one "flux" MR. This is the
+          // ONLY grouping rule: unrelated apps stay per-dependency for bisectability.
+          "groupName": "flux",
+          "matchPackageNames": ["fluxcd/flux2", "ghcr.io/fluxcd/**"],
+          "commitMessagePrefix": "chore(flux):"
         }
       ],
 
