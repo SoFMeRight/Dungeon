@@ -1,0 +1,29 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-renovate-to-xylem-gateway
+spec:
+  description: >-
+    Renovate (tingle-tuner/app=renovate) ingress to xylem-gateway for registry
+    tag discovery via the gateway mirror (docker.cr.pcfae.com). Identity-based
+    allow — it does NOT relax the pod-CIDR lockdown in allow-xylem-gateway-lan
+    (which excludes the pod CIDR to prevent LB-IP identity bypass); it permits
+    one specific pod identity. Renovate is the only pod that needs gateway-fronted
+    registry discovery. Additive: Cilium unions ingress allows across policies for
+    the same endpoint, so this lives in its own file separate from the gateway
+    lockdown.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: xylem-gateway
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: tingle-tuner
+            app: renovate
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

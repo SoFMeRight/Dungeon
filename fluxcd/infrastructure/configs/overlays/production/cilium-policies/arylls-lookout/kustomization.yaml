@@ -4,3 +4,4 @@ namespace: arylls-lookout
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-xylem-gateway.yaml
+  - cnp-renovate-gateway.yaml
