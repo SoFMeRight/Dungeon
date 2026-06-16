@@ -20,7 +20,7 @@ spec:
               memory: 64Mi
       containers:
         - name: zigbee2mqtt
-          image: ghcr.io/koenkk/zigbee2mqtt:2.9.1
+          image: ghcr.io/koenkk/zigbee2mqtt:2.12.0
           # z2m has no built-in health endpoint (gh#1310) and the
           # container has no mosquitto_sub binary for MQTT probes.
           # TCP check on the web UI port is the best available option.
