@@ -133,6 +133,13 @@ data:
               if not image then
                 image, rest = uri:match("^/v2/([^/]+)/(blobs/.+)$")
               end
+              if not image then
+                -- tags/list is the discovery verb (Renovate version lookup).
+                -- Without this match, single-name official images fall through
+                -- to the project-only branch and miss the library/ prefix,
+                -- so tags/list returns empty while manifests/blobs (pulls) work.
+                image, rest = uri:match("^/v2/([^/]+)/(tags/.+)$")
+              end
               if image and rest then
                 -- Single-name image (no slash) = official, needs library/ prefix
                 ngx.req.set_uri("/v2/" .. project .. "/library/" .. image .. "/" .. rest)
