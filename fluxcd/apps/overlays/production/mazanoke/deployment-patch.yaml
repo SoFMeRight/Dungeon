@@ -12,4 +12,4 @@ spec:
         - name: jcr-pcfae-dungeon-pull-secret
       containers:
         - name: mazanoke
-          image: ghcr.io/civilblur/mazanoke:v1.1.5
+          image: ghcr.io/civilblur/mazanoke:v1.1.6
