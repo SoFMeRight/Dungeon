@@ -133,6 +133,8 @@ data:
       "commitMessagePrefix": "chore(deps):",
       "semanticCommits": "enabled",
       "dependencyDashboard": true,
-      "prConcurrentLimit": 5,
-      "prHourlyLimit": 2
+      // Unlimited by design: the whole available update set must be actionable
+      // same-day. 0 = no cap (do NOT reintroduce a throttle here).
+      "prConcurrentLimit": 0,
+      "prHourlyLimit": 0
     }
