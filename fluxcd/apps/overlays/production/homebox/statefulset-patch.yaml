@@ -15,7 +15,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: homebox
-          image: ghcr.io/sysadminsmedia/homebox:0.24.2
+          image: ghcr.io/sysadminsmedia/homebox:0.26.2
           volumeMounts:
             - name: pedestal-of-time-homebox-data
               mountPath: /data
