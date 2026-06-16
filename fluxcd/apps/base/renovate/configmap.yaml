@@ -70,11 +70,63 @@ data:
         {
           // Flux distribution + its controllers are version-coupled and all live
           // in gotk-components.yaml — every release otherwise fires 5-6 competing
-          // MRs against the same file. Group them into one "flux" MR. This is the
-          // ONLY grouping rule: unrelated apps stay per-dependency for bisectability.
+          // MRs against the same file. Group them into one "flux" MR.
           "groupName": "flux",
           "matchPackageNames": ["fluxcd/flux2", "ghcr.io/fluxcd/**"],
           "commitMessagePrefix": "chore(flux):"
+        },
+        // Grouping below is reserved for STRICTLY version-coupled multi-component
+        // products — components built from one release that must upgrade in lockstep
+        // (a split upgrade breaks the app). Unrelated apps, and incidental sidecars
+        // (gluetun, busybox, generic postgres/redis/mariadb backing stores), stay
+        // per-dependency for bisectability. Major updates remain disabled globally.
+        {
+          // AppFlowy-Cloud stack: cloud/web/worker/admin_frontend/ai/gotrue ship per release.
+          "groupName": "appflowy",
+          "matchPackageNames": ["docker.io/appflowyinc/**"],
+          "commitMessagePrefix": "chore(appflowy):"
+        },
+        {
+          // Immich requires server and machine-learning to be the same version.
+          "groupName": "immich",
+          "matchPackageNames": ["ghcr.io/immich-app/**"],
+          "commitMessagePrefix": "chore(immich):"
+        },
+        {
+          // Penpot requires backend/exporter/frontend matched.
+          "groupName": "penpot",
+          "matchPackageNames": ["docker.io/penpotapp/**"],
+          "commitMessagePrefix": "chore(penpot):"
+        },
+        {
+          // TacticalRMM pins tactical/frontend/meshcentral/nats/nginx to one version.
+          "groupName": "tacticalrmm",
+          "matchPackageNames": ["docker.io/tacticalrmm/**"],
+          "commitMessagePrefix": "chore(tacticalrmm):"
+        },
+        {
+          // guacd protocol version must match the guacamole client.
+          "groupName": "guacamole",
+          "matchPackageNames": ["docker.io/guacamole/**"],
+          "commitMessagePrefix": "chore(guacamole):"
+        },
+        {
+          // OpnForm api + client ship from one release.
+          "groupName": "opnform",
+          "matchPackageNames": ["docker.io/jhumanj/**"],
+          "commitMessagePrefix": "chore(opnform):"
+        },
+        {
+          // Zitadel login v2 is version-locked to the server (v4+).
+          "groupName": "zitadel",
+          "matchPackageNames": ["ghcr.io/zitadel/**"],
+          "commitMessagePrefix": "chore(zitadel):"
+        },
+        {
+          // opstree redis HA: redis-sentinel must match the redis version.
+          "groupName": "redis-ha",
+          "matchPackageNames": ["quay.io/opstree/redis", "quay.io/opstree/redis-sentinel"],
+          "commitMessagePrefix": "chore(redis-ha):"
         }
       ],
 
