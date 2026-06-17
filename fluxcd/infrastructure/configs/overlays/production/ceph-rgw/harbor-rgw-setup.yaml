@@ -9,8 +9,8 @@ spec:
       labels:
         policy.prplanit.com/cap.ceph: "true"
         policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
-        istio.io/dataplane-mode: none
     spec:
+      serviceAccountName: rgw-admin
       restartPolicy: OnFailure
       containers:
         - name: setup
