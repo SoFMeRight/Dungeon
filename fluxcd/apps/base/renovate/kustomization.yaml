@@ -4,4 +4,5 @@ resources:
   - serviceaccount.yaml
   - configmap.yaml
   - externalsecret.yaml
+  - externalsecret-rgw.yaml
   - cronjob.yaml

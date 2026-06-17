@@ -13,6 +13,8 @@ spec:
         metadata:
           labels:
             app: renovate
+            policy.prplanit.com/cap.s3: "true"
+            policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
         spec:
           restartPolicy: Never
           serviceAccountName: renovate
@@ -49,6 +51,28 @@ spec:
                   value: "info"
                 - name: RENOVATE_CONFIG_FILE
                   value: "/config/renovate.json5"
+                # S3 repository cache (Ceph RGW via s3.pcfae.com) — stops the
+                # ephemeral cronjob cold-scanning all ~2400 deps every run.
+                - name: RENOVATE_REPOSITORY_CACHE
+                  value: "enabled"
+                - name: RENOVATE_REPOSITORY_CACHE_TYPE
+                  value: "s3://renovate-cache"
+                - name: RENOVATE_S3_ENDPOINT
+                  value: "https://s3.pcfae.com"
+                - name: RENOVATE_S3_PATH_STYLE
+                  value: "true"
+                - name: AWS_REGION
+                  value: "default"
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: renovate-rgw-credentials
+                      key: s3_access_key
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: renovate-rgw-credentials
+                      key: s3_secret_key
               volumeMounts:
                 - name: config
                   mountPath: /config
