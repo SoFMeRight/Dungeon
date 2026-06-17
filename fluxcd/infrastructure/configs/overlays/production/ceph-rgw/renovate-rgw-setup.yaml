@@ -1,0 +1,57 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: renovate-rgw-setup
+spec:
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/cap.ceph: "true"
+        policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
+        istio.io/dataplane-mode: none
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: setup
+          image: quay.io/ceph/ceph:v19
+          env:
+            - name: ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: renovate-rgw-credentials
+                  key: s3_access_key
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: renovate-rgw-credentials
+                  key: s3_secret_key
+          command:
+            - /bin/bash
+            - /scripts/setup.sh
+            - --user=renovate-user
+            - --display-name="Renovate S3 User"
+            - --buckets=renovate-cache
+          volumeMounts:
+            - name: setup-script
+              mountPath: /scripts
+              readOnly: true
+            - name: ceph-config
+              mountPath: /etc/ceph/ceph.conf
+              subPath: ceph.conf
+              readOnly: true
+            - name: ceph-keyring
+              mountPath: /etc/ceph/ceph.client.dungeon-rgw.keyring
+              subPath: keyring
+              readOnly: true
+      volumes:
+        - name: setup-script
+          configMap:
+            name: ceph-rgw-setup-script
+            defaultMode: 0755
+        - name: ceph-config
+          configMap:
+            name: ceph-config
+        - name: ceph-keyring
+          secret:
+            secretName: ceph-rgw-keyring

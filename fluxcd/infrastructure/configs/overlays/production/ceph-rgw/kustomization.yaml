@@ -16,3 +16,5 @@ resources:
   - appflowy-rgw-setup.yaml
   - nextcloud-rgw-credentials-externalsecret.yaml
   - nextcloud-rgw-setup.yaml
+  - renovate-rgw-credentials-externalsecret.yaml
+  - renovate-rgw-setup.yaml
