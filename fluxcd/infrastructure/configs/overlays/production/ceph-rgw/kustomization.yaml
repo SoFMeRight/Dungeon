@@ -2,6 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: gorons-bracelet
 resources:
+  - rgw-admin-serviceaccount.yaml
   - ceph-rgw-keyring.enc.yaml
   - ceph-rgw-setup-script.yaml
   - gitlab-rgw-credentials.enc.yaml
