@@ -37,7 +37,7 @@ spec:
               value: dreame_vacuum
             # renovate: datasource=github-releases depName=Tasshack/dreame-vacuum
             - name: COMP_2_VERSION
-              value: "1.0.8"
+              value: "1.0.11"
             - name: COMP_2_URL
               value: "https://github.com/Tasshack/dreame-vacuum/releases/download/v1.0.8/dreame_vacuum.zip"
           resources:
