@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: convertx
-          image: ghcr.io/c4illin/convertx:v0.17.0
+          image: ghcr.io/c4illin/convertx:v0.18.0
           resources:
             requests:
               cpu: "50m"
