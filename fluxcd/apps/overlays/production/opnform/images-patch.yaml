@@ -67,7 +67,7 @@ spec:
     spec:
       containers:
         - name: client
-          image: docker.io/jhumanj/opnform-client:1.13.1
+          image: docker.io/jhumanj/opnform-client:1.13.2
 ---
 apiVersion: apps/v1
 kind: Deployment
