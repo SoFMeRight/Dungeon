@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: ferdium
-          image: docker.io/linuxserver/ferdium:7.1.1
+          image: docker.io/linuxserver/ferdium:7.1.2
           env:
             - name: PUID
               value: "1000"
