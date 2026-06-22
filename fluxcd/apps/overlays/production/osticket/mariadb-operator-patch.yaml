@@ -7,7 +7,7 @@ spec:
     labels:
       policy.prplanit.com/access-class: mariadb
       policy.prplanit.com/service-scope: hyrule-castle.osticket.mariadb
-  image: docker.io/mariadb:12.2.2
+  image: docker.io/mariadb:12.3.2
   # Ensure pods are on separate nodes for HA
   affinity:
     antiAffinityEnabled: true
