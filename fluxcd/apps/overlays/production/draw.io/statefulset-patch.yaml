@@ -14,7 +14,7 @@ spec:
         runAsGroup: 999
       containers:
         - name: draw-io
-          image: docker.io/jgraph/drawio:29.6.1
+          image: docker.io/jgraph/drawio:29.7.12
           resources:
             requests:
               cpu: "15m"
