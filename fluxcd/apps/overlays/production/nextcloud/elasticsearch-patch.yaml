@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: elasticsearch
-          image: docker.io/library/elasticsearch:9.3.1
+          image: docker.io/library/elasticsearch:9.4.2
           env:
             - name: ES_JAVA_OPTS
               value: "-Xms1g -Xmx1g"
