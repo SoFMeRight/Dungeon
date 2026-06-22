@@ -15,7 +15,7 @@ spec:
         fsGroup: 82
       containers:
         - name: roundcube
-          image: docker.io/roundcube/roundcubemail:1.6.13-fpm-alpine-nonroot
+          image: docker.io/roundcube/roundcubemail:1.7.1-fpm-alpine-nonroot
           env:
             - name: ROUNDCUBEMAIL_SKIN
               value: "elastic"
