@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: prowlarr
-          image: docker.io/linuxserver/prowlarr:2.3.0
+          image: docker.io/linuxserver/prowlarr:2.4.0
           env:
             - name: TZ
               value: "America/Los_Angeles"
