@@ -116,7 +116,7 @@ spec:
         policy.prplanit.com/ingress: "true"
       image:
         repository: docker.io/collabora/code
-        tag: "25.04.9.2.1"
+        tag: "25.04.10.3.1"
       collabora:
         aliasgroups:
           - host: "https://ncloud.optcp.com:443"
