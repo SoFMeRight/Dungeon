@@ -19,7 +19,7 @@ spec:
           image: docker.io/busybox:1.37
       containers:
         - name: netbox
-          image: docker.io/linuxserver/netbox:4.5.4
+          image: docker.io/linuxserver/netbox:4.6.3
           env:
             - name: ALLOWED_HOSTS
               value: "netbox.prplanit.com,netbox.prplanit.internal,netbox.pcfae.com,10.40.9.104,10.30.1.123,10.24.96.9,127.0.0.1,172.22.30.86"
