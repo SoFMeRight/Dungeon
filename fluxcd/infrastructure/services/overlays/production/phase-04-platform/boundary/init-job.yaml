@@ -36,7 +36,7 @@ spec:
               mountPath: /boundary
       containers:
         - name: boundary-init
-          image: docker.io/hashicorp/boundary:0.21.1
+          image: docker.io/hashicorp/boundary:0.21.3
           command: ["boundary", "database", "init", "-config", "/boundary/controller.hcl"]
           volumeMounts:
             - name: config

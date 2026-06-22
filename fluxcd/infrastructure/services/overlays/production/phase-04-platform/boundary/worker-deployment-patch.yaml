@@ -19,4 +19,4 @@ spec:
               app.kubernetes.io/component: worker
       containers:
         - name: boundary
-          image: docker.io/hashicorp/boundary:0.21.1
+          image: docker.io/hashicorp/boundary:0.21.3
