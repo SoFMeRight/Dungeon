@@ -13,7 +13,7 @@ spec:
         - name: jcr-pcfae-dungeon-pull-secret
       containers:
         - name: uptime-kuma
-          image: docker.io/louislam/uptime-kuma:2.2.1
+          image: docker.io/louislam/uptime-kuma:2.4.0
           volumeMounts:
             - name: gossip-stone-uptime-kuma-data
               mountPath: /app/data
