@@ -321,7 +321,7 @@ spec:
 
         # Cross-seed
         - name: cross-seed
-          image: docker.io/crossseed/cross-seed:6.13.6
+          image: docker.io/crossseed/cross-seed:6.13.7
           env:
             - name: TZ
               value: PLACEHOLDER_TZ
