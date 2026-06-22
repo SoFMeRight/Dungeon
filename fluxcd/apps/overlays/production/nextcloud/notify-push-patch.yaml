@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: notify-push
-          image: docker.io/icewind1991/notify_push:1.3.1
+          image: docker.io/icewind1991/notify_push:1.3.2
           env:
             - name: NEXTCLOUD_URL
               value: "https://ncloud.optcp.com"
