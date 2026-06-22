@@ -38,7 +38,7 @@ spec:
               done
       containers:
         - name: api
-          image: docker.io/jhumanj/opnform-api:1.13.1
+          image: docker.io/jhumanj/opnform-api:1.13.2
           ports:
             - name: fastcgi
               containerPort: 9000

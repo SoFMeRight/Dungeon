@@ -34,7 +34,7 @@ spec:
           image: docker.io/busybox:1.37.0
       containers:
         - name: api
-          image: docker.io/jhumanj/opnform-api:1.13.1
+          image: docker.io/jhumanj/opnform-api:1.13.2
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -45,7 +45,7 @@ spec:
     spec:
       containers:
         - name: worker
-          image: docker.io/jhumanj/opnform-api:1.13.1
+          image: docker.io/jhumanj/opnform-api:1.13.2
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -56,7 +56,7 @@ spec:
     spec:
       containers:
         - name: scheduler
-          image: docker.io/jhumanj/opnform-api:1.13.1
+          image: docker.io/jhumanj/opnform-api:1.13.2
 ---
 apiVersion: apps/v1
 kind: Deployment
