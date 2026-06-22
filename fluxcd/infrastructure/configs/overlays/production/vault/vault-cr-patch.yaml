@@ -3,7 +3,7 @@ kind: Vault
 metadata:
   name: vault
 spec:
-  image: docker.io/openbao/openbao:2.5.2
+  image: docker.io/openbao/openbao:2.5.5
   envsConfig:
     - name: VAULT_OIDC_CLIENT_SECRET
       valueFrom:
