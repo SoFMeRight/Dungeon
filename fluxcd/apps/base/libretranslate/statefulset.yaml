@@ -28,7 +28,7 @@ spec:
                       - "9"
       initContainers:
         - name: fix-permissions
-          image: docker.io/library/busybox:1.37
+          image: docker.io/library/busybox:1.38
           command:
             - sh
             - -c
