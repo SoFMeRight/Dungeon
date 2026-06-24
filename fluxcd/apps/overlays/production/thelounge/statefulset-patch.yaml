@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: thelounge
-          image: docker.io/linuxserver/thelounge:4.4.3
+          image: docker.io/linuxserver/thelounge:4.5.1
           env:
             - name: TZ
               value: "America/Los_Angeles"
