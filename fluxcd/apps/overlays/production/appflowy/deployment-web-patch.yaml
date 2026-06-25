@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: appflowy-web
-          image: docker.io/appflowyinc/appflowy_web:0.11.2
+          image: docker.io/appflowyinc/appflowy_web:0.15.5
           resources:
             requests:
               memory: "512Mi"
