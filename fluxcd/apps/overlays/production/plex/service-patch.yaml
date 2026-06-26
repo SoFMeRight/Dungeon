@@ -6,3 +6,14 @@ metadata:
     lbipam.cilium.io/ips: "172.22.30.123"
     lbipam.cilium.io/sharing-key: "song-of-storms"
     lbipam.cilium.io/sharing-cross-namespace: "*"
+spec:
+  # Drop DLNA/SSDP (1900/UDP). This Service shares LB IP 172.22.30.123 with
+  # jellyfin (sharing-key song-of-storms), and Cilium LB-IPAM refuses to share an
+  # IP when ports overlap — jellyfin also publishes 1900/UDP. The collision left
+  # plex's LoadBalancer stuck <pending> (no external IP), forcing clients onto
+  # Plex Relay (remote playback / audio underruns). Removing this unused port lets
+  # plex claim .123 and restores direct connections. Plex app/web/mobile don't use DLNA.
+  ports:
+    - port: 1900
+      protocol: UDP
+      $patch: delete
