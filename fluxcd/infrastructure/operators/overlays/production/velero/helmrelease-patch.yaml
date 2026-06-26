@@ -12,7 +12,7 @@ spec:
         - jcr-pcfae-dungeon-pull-secret
     initContainers:
       - name: velero-plugin-for-aws
-        image: docker.io/velero/velero-plugin-for-aws:v1.14.0
+        image: docker.io/velero/velero-plugin-for-aws:v1.14.2
         imagePullPolicy: IfNotPresent
         volumeMounts:
           - mountPath: /target
