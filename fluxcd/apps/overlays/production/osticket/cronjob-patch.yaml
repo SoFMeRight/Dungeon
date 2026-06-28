@@ -18,5 +18,4 @@ spec:
               image: docker.io/busybox:1.37
           containers:
             - name: osticket-cron
-              image: ghcr.io/homelabhd/osticket:latest-dev
-              imagePullPolicy: Always
+              image: ghcr.io/homelabhd/osticket:v0.0.1
