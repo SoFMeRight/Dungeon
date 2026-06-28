@@ -10,46 +10,45 @@ spec:
         ipam.cilium.io/ip-address: "192.168.153.200"
     spec:
       initContainers:
-      - name: config-substitution
-        image: docker.io/alpine:3.23.3
-        command:
-        - sh
-        - -c
-        - |
-          apk add --no-cache gettext
-          envsubst < /config-template/crowdsec-cloudflare-bouncer.yaml > /config/crowdsec-cloudflare-bouncer.yaml
-        env:
-        - name: CROWDSEC_LAPI_KEY
-          valueFrom:
-            secretKeyRef:
-              name: crowdsec-secrets
-              key: CROWDSEC_LAPI_KEY
-        - name: CLOUDFLARE_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: crowdsec-secrets
-              key: CLOUDFLARE_TOKEN
-        volumeMounts:
-        - name: bouncer-config-template
-          mountPath: /config-template
-        - name: bouncer-config-rendered
-          mountPath: /config
+        - name: config-substitution
+          image: docker.io/prplanit/oh-ci:0.0.1
+          command:
+            - sh
+            - -c
+            - |
+              envsubst < /config-template/crowdsec-cloudflare-bouncer.yaml > /config/crowdsec-cloudflare-bouncer.yaml
+          env:
+            - name: CROWDSEC_LAPI_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: CROWDSEC_LAPI_KEY
+            - name: CLOUDFLARE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: CLOUDFLARE_TOKEN
+          volumeMounts:
+            - name: bouncer-config-template
+              mountPath: /config-template
+            - name: bouncer-config-rendered
+              mountPath: /config
       containers:
-      - name: cloudflare-bouncer
-        image: ghcr.io/crowdsecurity/cloudflare-bouncer:v0.3.0
-        volumeMounts:
-        - name: bouncer-config-rendered
-          mountPath: /etc/crowdsec/bouncers
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
-          limits:
-            cpu: "250m"
-            memory: "256Mi"
+        - name: cloudflare-bouncer
+          image: ghcr.io/crowdsecurity/cloudflare-bouncer:v0.3.0
+          volumeMounts:
+            - name: bouncer-config-rendered
+              mountPath: /etc/crowdsec/bouncers
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
       volumes:
-      - name: bouncer-config-template
-        configMap:
-          name: crowdsec-cloudflare-bouncer
-      - name: bouncer-config-rendered
-        emptyDir: {}
+        - name: bouncer-config-template
+          configMap:
+            name: crowdsec-cloudflare-bouncer
+        - name: bouncer-config-rendered
+          emptyDir: {}
