@@ -21,7 +21,7 @@ spec:
               echo "Setup job completed! Starting Zitadel..."
       containers:
         - name: zitadel
-          image: ghcr.io/zitadel/zitadel:v4.12.2
+          image: ghcr.io/zitadel/zitadel:v4.15.3
 ---
 apiVersion: batch/v1
 kind: Job
@@ -43,7 +43,7 @@ spec:
               done
       containers:
         - name: zitadel-init
-          image: ghcr.io/zitadel/zitadel:v4.12.2
+          image: ghcr.io/zitadel/zitadel:v4.15.3
 ---
 apiVersion: batch/v1
 kind: Job
@@ -57,7 +57,7 @@ spec:
           image: docker.io/alpine/k8s:1.36.2
       containers:
         - name: zitadel-setup
-          image: ghcr.io/zitadel/zitadel:v4.12.2
+          image: ghcr.io/zitadel/zitadel:v4.15.3
         - name: machinekey-writer
           image: docker.io/alpine/k8s:1.36.2
         - name: machine-pat-writer
