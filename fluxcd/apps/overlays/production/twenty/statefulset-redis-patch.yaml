@@ -14,7 +14,7 @@ spec:
         - name: jcr-pcfae-dungeon-pull-secret
       containers:
         - name: redis
-          image: docker.io/redis:8.6.1-alpine
+          image: docker.io/redis:8.8.0-alpine
   volumeClaimTemplates:
     - metadata:
         name: hyrule-castle-twenty-redis
