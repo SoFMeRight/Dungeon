@@ -170,5 +170,14 @@ data:
             end
           }
         }
+
+        # Non-registry paths (browser hits on /, favicon, etc.) return a clean 404
+        # instead of OpenResty's default welcome page. The xylem gateway's
+        # fairer-pages EnvoyFilter themes this for browsers (Accept: text/html);
+        # docker clients never send that header, so /v2/ pulls keep their raw
+        # registry 401/404 responses untouched.
+        location / {
+          return 404;
+        }
       }
     }
