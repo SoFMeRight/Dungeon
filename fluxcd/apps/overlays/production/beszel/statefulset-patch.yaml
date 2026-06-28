@@ -17,7 +17,7 @@ spec:
         - name: jcr-pcfae-dungeon-pull-secret
       containers:
         - name: beszel
-          image: docker.io/henrygd/beszel:0.18.4
+          image: docker.io/henrygd/beszel:0.18.7
           volumeMounts:
             - name: gossip-stone-beszel-data
               mountPath: /beszel_data
