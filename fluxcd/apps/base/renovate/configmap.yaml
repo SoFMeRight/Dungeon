@@ -83,7 +83,7 @@ data:
         {
           // AppFlowy-Cloud stack: cloud/web/worker/admin_frontend/ai/gotrue ship per release.
           "groupName": "appflowy",
-          "matchPackageNames": ["docker.io/appflowyinc/**"],
+          "matchPackageNames": ["**/appflowyinc/**"],
           "commitMessagePrefix": "chore(appflowy):"
         },
         {
@@ -95,25 +95,25 @@ data:
         {
           // Penpot requires backend/exporter/frontend matched.
           "groupName": "penpot",
-          "matchPackageNames": ["docker.io/penpotapp/**"],
+          "matchPackageNames": ["**/penpotapp/**"],
           "commitMessagePrefix": "chore(penpot):"
         },
         {
           // TacticalRMM pins tactical/frontend/meshcentral/nats/nginx to one version.
           "groupName": "tacticalrmm",
-          "matchPackageNames": ["docker.io/tacticalrmm/**"],
+          "matchPackageNames": ["**/tacticalrmm/**"],
           "commitMessagePrefix": "chore(tacticalrmm):"
         },
         {
           // guacd protocol version must match the guacamole client.
           "groupName": "guacamole",
-          "matchPackageNames": ["docker.io/guacamole/**"],
+          "matchPackageNames": ["**/guacamole/**"],
           "commitMessagePrefix": "chore(guacamole):"
         },
         {
           // OpnForm api + client ship from one release.
           "groupName": "opnform",
-          "matchPackageNames": ["docker.io/jhumanj/**"],
+          "matchPackageNames": ["**/jhumanj/**"],
           "commitMessagePrefix": "chore(opnform):"
         },
         {
@@ -143,7 +143,10 @@ data:
           // variant and never detects an update. Parse the numeric version, ignore the
           // hash, and exclude the -amd64/-arm64/-armhf single-arch tags (the multi-arch
           // hash-only tag is what's deployed). e.g. 1.43.0.10492 -> 1.43.2.10687.
-          "matchPackageNames": ["docker.io/plexinc/pms-docker"],
+          // matchPackageNames matches the resolved packageName, which the docker.io
+          // registryAlias rewrites to docker.cr.pcfae.com/... — so a "docker.io/..."
+          // key never matches. Use a registry-agnostic glob.
+          "matchPackageNames": ["**/plexinc/pms-docker"],
           "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)-[0-9a-f]+$",
           "commitMessagePrefix": "chore(plex):"
         }
