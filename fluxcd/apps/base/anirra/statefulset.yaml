@@ -19,7 +19,7 @@ spec:
       serviceAccountName: anirra
       initContainers:
         - name: config-init
-          image: docker.io/library/busybox:1.37
+          image: docker.io/library/busybox:1.38
           command:
             - sh
             - -c
