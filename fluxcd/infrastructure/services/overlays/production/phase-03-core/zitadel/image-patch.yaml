@@ -8,7 +8,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-setup
-          image: docker.io/alpine/k8s:1.35.2
+          image: docker.io/alpine/k8s:1.36.2
           command:
             - sh
             - -c
@@ -54,16 +54,16 @@ spec:
     spec:
       initContainers:
         - name: wait-for-db
-          image: docker.io/alpine/k8s:1.35.2
+          image: docker.io/alpine/k8s:1.36.2
       containers:
         - name: zitadel-setup
           image: ghcr.io/zitadel/zitadel:v4.12.2
         - name: machinekey-writer
-          image: docker.io/alpine/k8s:1.35.2
+          image: docker.io/alpine/k8s:1.36.2
         - name: machine-pat-writer
-          image: docker.io/alpine/k8s:1.35.2
+          image: docker.io/alpine/k8s:1.36.2
         - name: login-client-pat-writer
-          image: docker.io/alpine/k8s:1.35.2
+          image: docker.io/alpine/k8s:1.36.2
 ---
 apiVersion: batch/v1
 kind: Job
@@ -74,7 +74,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-secret
-          image: docker.io/alpine/k8s:1.35.2
+          image: docker.io/alpine/k8s:1.36.2
       containers:
         - name: sync-to-vault
-          image: docker.io/alpine/k8s:1.35.2
+          image: docker.io/alpine/k8s:1.36.2

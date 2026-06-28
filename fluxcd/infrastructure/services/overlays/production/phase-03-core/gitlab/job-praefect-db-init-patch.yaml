@@ -9,7 +9,7 @@ spec:
         - name: jcr-pcfae-dungeon-pull-secret
       containers:
         - name: init-praefect-db
-          image: docker.io/alpine/k8s:1.35.2
+          image: docker.io/alpine/k8s:1.36.2
           env:
             - name: PGHOST
               value: gitlab-postgresql-rw.hyrule-castle.svc.cluster.local

@@ -15,7 +15,7 @@ spec:
             value: "2"
       initContainers:
         - name: seed-config
-          image: docker.io/alpine/k8s:1.35.2
+          image: docker.io/alpine/k8s:1.36.2
           resources:
             requests:
               cpu: 10m
@@ -24,7 +24,7 @@ spec:
               cpu: 100m
               memory: 64Mi
         - name: install-custom-components
-          image: docker.io/alpine/k8s:1.35.2
+          image: docker.io/alpine/k8s:1.36.2
           env:
             - name: COMP_1_NAME
               value: hacs

@@ -10,7 +10,7 @@ spec:
     spec:
       initContainers:
         - name: render-config
-          image: docker.io/alpine/k8s:1.35.2
+          image: docker.io/alpine/k8s:1.36.2
       containers:
         - name: signaling
           image: docker.io/strukturag/nextcloud-spreed-signaling:e78e914
