@@ -138,6 +138,14 @@ data:
           "commitMessagePrefix": "chore(istio):"
         },
         {
+          // Wazuh manager/indexer/dashboard are version-locked (all must be the same
+          // 4.x.y); group them. docker.io images → registry-agnostic glob (the alias
+          // rewrites the packageName, so a "docker.io/wazuh/**" key would never match).
+          "groupName": "wazuh",
+          "matchPackageNames": ["**/wazuh/**"],
+          "commitMessagePrefix": "chore(wazuh):"
+        },
+        {
           // Plex tags are <maj>.<min>.<patch>.<build>-<hash>; the hash changes every
           // release, so default docker versioning treats each release as an incompatible
           // variant and never detects an update. Parse the numeric version, ignore the
