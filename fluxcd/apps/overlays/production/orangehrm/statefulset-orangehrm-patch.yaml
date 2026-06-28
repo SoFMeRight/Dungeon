@@ -10,7 +10,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-mariadb
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
       containers:
         - name: orangehrm
           image: docker.io/orangehrm/orangehrm:5.8

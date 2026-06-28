@@ -12,7 +12,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: create-initialized-marker
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           # CephFS dirs owned by 1000:1000 — must match to touch
           securityContext:
             runAsUser: 1000

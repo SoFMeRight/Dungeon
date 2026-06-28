@@ -13,7 +13,7 @@ spec:
       initContainers:
         - $patch: replace
         - name: fix-permissions
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           command:
             - sh
             - -c
@@ -24,7 +24,7 @@ spec:
             - name: hyrule-castle-jfrog-artifactory-data
               mountPath: /var/opt/jfrog/artifactory
         - name: wait-for-postgres
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           command:
             - sh
             - -c

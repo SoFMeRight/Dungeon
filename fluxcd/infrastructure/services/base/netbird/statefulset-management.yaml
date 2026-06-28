@@ -19,7 +19,7 @@ spec:
       serviceAccountName: netbird-management
       initContainers:
         - name: config-generator
-          image: docker.io/busybox:1.37.0
+          image: docker.io/busybox:1.38.0
           command: ["/bin/sh", "-c"]
           args:
             - |

@@ -18,7 +18,7 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: config-init
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           command:
             - sh
             - -c

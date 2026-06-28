@@ -33,7 +33,7 @@ spec:
             - name: PLACEHOLDER_NAMESPACE-bagisto-demo-app
               mountPath: /data
         - name: configure-env
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           command:
             - sh
             - -c

@@ -17,7 +17,7 @@ spec:
       serviceAccountName: downloadarrs
       initContainers:
         - name: cross-seed-config-init
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           env:
             - name: QBITTORRENT_USERNAME
               valueFrom:

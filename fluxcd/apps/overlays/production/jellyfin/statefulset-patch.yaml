@@ -18,7 +18,7 @@ spec:
         runAsGroup: 1000
       initContainers:
         - name: fix-permissions
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           securityContext:
             runAsUser: 0
             runAsGroup: 0

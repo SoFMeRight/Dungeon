@@ -29,9 +29,9 @@ spec:
     spec:
       initContainers:
         - name: wait-for-db
-          image: docker.io/busybox:1.37.0
+          image: docker.io/busybox:1.38.0
         - name: wait-for-redis
-          image: docker.io/busybox:1.37.0
+          image: docker.io/busybox:1.38.0
       containers:
         - name: api
           image: docker.io/jhumanj/opnform-api:1.13.1

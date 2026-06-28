@@ -9,7 +9,7 @@ spec:
       initContainers:
       - $patch: replace
       - name: init-permissions
-        image: docker.io/busybox:1.37.0
+        image: docker.io/busybox:1.38.0
         command:
         - sh
         - -c

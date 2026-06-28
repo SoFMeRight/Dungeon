@@ -17,7 +17,7 @@ spec:
       serviceAccountName: opnform-api
       initContainers:
         - name: wait-for-db
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           command:
             - sh
             - -c
@@ -27,7 +27,7 @@ spec:
                 sleep 5
               done
         - name: wait-for-redis
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           command:
             - sh
             - -c
