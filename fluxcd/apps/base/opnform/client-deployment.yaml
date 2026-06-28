@@ -17,7 +17,7 @@ spec:
       serviceAccountName: opnform-client
       containers:
         - name: client
-          image: docker.io/jhumanj/opnform-client:1.13.1
+          image: docker.io/jhumanj/opnform-client:1.13.2
           ports:
             - name: http
               containerPort: 3000
