@@ -17,7 +17,7 @@ spec:
       serviceAccountName: opnform-api-scheduler
       containers:
         - name: scheduler
-          image: docker.io/jhumanj/opnform-api:1.13.1
+          image: docker.io/jhumanj/opnform-api:1.13.2
           command: ["php", "artisan", "schedule:work"]
           env:
             - name: APP_NAME
