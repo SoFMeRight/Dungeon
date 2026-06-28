@@ -11,11 +11,10 @@ spec:
     spec:
       initContainers:
         - name: import-cert
-          image: docker.io/alpine/k8s:1.36.2
+          image: docker.io/linuxserver/unifi-network-application:9.5.21
           command: ["/bin/sh", "-c"]
           args:
             - |
-              apk add --no-cache openssl openjdk17-jre-headless >/dev/null 2>&1
               KEYSTORE="/config/data/keystore"
               STOREPASS="aircontrolenterprise"
               mkdir -p /config/data
