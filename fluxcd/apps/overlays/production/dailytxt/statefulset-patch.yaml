@@ -15,7 +15,7 @@ spec:
         fsGroup: 101
       initContainers:
         - name: init-permissions
-          image: docker.io/phitux/dailytxt:2.4.4
+          image: docker.io/phitux/dailytxt:2.6.2
           command:
             - sh
             - -c
@@ -29,7 +29,7 @@ spec:
               mountPath: /data
       containers:
         - name: dailytxt
-          image: docker.io/phitux/dailytxt:2.4.4
+          image: docker.io/phitux/dailytxt:2.6.2
           env:
             - name: ALLOWED_HOSTS
               value: "shiplog.pcfae.com"
