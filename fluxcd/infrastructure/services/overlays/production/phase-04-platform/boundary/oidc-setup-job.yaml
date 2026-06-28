@@ -17,7 +17,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: oidc-setup
-          image: docker.io/hashicorp/boundary:0.21.1
+          image: docker.io/hashicorp/boundary:0.21.3
           command: ["sh", "-c"]
           args:
             - |
