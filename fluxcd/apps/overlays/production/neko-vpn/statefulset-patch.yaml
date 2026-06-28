@@ -47,7 +47,7 @@ spec:
             - name: tingle-tuner-neko-vpn-gluetun-config
               mountPath: /gluetun
         - name: neko
-          image: ghcr.io/m1k1o/neko/vivaldi:3.0.7
+          image: ghcr.io/m1k1o/neko/vivaldi:3.1.4
           resources:
             requests:
               cpu: "102m"
