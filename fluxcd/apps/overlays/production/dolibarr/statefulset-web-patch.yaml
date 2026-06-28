@@ -13,7 +13,7 @@ spec:
           image: docker.io/busybox:1.37
       containers:
         - name: dolibarr
-          image: docker.io/dolibarr/dolibarr:22.0.4
+          image: docker.io/dolibarr/dolibarr:22.0.5
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_DOLIBARR_DATA
