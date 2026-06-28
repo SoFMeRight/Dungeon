@@ -77,7 +77,7 @@ spec:
             capabilities:
               drop: [ALL]
         - name: tactical-init
-          image: docker.io/tacticalrmm/tactical:1.4.0
+          image: docker.io/tacticalrmm/tactical:1.5.1
           command: ["/bin/bash", "/scripts/init-wrapper.sh"]
           # MUST stay root: entrypoint does chown -R, rsync, su, mkdir
           # Documented exception SEC-1/2
@@ -147,7 +147,7 @@ spec:
               mountPath: /scripts
       containers:
         - name: backend
-          image: docker.io/tacticalrmm/tactical:1.4.0
+          image: docker.io/tacticalrmm/tactical:1.5.1
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000

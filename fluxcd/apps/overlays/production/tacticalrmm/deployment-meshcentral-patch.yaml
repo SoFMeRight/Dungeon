@@ -63,7 +63,7 @@ spec:
               mountPath: /meshdata
       containers:
         - name: meshcentral
-          image: docker.io/tacticalrmm/tactical-meshcentral:1.4.0
+          image: docker.io/tacticalrmm/tactical-meshcentral:1.5.1
           command:
             - bash
             - -c

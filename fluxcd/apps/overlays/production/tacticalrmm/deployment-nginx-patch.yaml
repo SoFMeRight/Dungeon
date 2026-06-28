@@ -21,7 +21,7 @@ spec:
       # NOTE: nginx must start freely - meshcentral waits for nginx, init waits for meshcentral
       containers:
         - name: nginx
-          image: docker.io/tacticalrmm/tactical-nginx:1.4.0
+          image: docker.io/tacticalrmm/tactical-nginx:1.5.1
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

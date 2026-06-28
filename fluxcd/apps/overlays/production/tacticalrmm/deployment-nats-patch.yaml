@@ -40,7 +40,7 @@ spec:
               mountPath: /opt/tactical
       containers:
         - name: nats
-          image: docker.io/tacticalrmm/tactical-nats:1.4.0
+          image: docker.io/tacticalrmm/tactical-nats:1.5.1
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

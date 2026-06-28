@@ -32,7 +32,7 @@ spec:
               mountPath: /opt/tactical
       containers:
         - name: frontend
-          image: docker.io/tacticalrmm/tactical-frontend:1.4.0
+          image: docker.io/tacticalrmm/tactical-frontend:1.5.1
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
