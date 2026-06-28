@@ -36,7 +36,7 @@ spec:
               mountPath: /storage
       containers:
         - name: speedtest-tracker
-          image: docker.io/linuxserver/speedtest-tracker:1.13.11
+          image: docker.io/linuxserver/speedtest-tracker:1.14.5
           # Container starts as root only so s6 can drop the app to 1000; harden
           # everything around that. drop ALL + add back only what s6/nginx need
           # (setuid/setgid + setpcap for the privilege drop, chown/fowner/
