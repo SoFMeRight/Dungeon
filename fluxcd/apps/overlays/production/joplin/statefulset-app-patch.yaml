@@ -15,7 +15,7 @@ spec:
         runAsGroup: 1001
       containers:
         - name: joplin
-          image: docker.io/joplin/server:3.5.2
+          image: docker.io/joplin/server:3.7.1
           env:
             - name: APP_BASE_URL
               value: "https://joplin.pcfae.com"
