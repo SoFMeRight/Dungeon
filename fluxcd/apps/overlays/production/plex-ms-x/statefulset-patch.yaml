@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: plex-ms-x
-          image: docker.io/plexinc/pms-docker:1.40.2.8395-c67dce28e
+          image: docker.io/plexinc/pms-docker:1.43.2.10687-563d026ea
           env:
             - name: ADVERTISE_IP
               value: "http://172.22.30.124:32400/,https://plexx.pcfae.com/"
