@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: docker.io/postgres:16.13-alpine
+          image: docker.io/postgres:16.14-alpine
           volumeMounts:
             - $patch: replace
             - name: hyrule-castle-jfrog-artifactory-postgres-data
