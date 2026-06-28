@@ -127,6 +127,25 @@ data:
           "groupName": "redis-ha",
           "matchPackageNames": ["quay.io/opstree/redis", "quay.io/opstree/redis-sentinel"],
           "commitMessagePrefix": "chore(redis-ha):"
+        },
+        {
+          // istio base/cni/istiod/ztunnel ship from one release and must upgrade in
+          // lockstep — a split control/data-plane upgrade breaks the mesh. They all live
+          // in operators/base/istio/, so scope by path (unambiguous; chart names like
+          // "base" are too generic to match safely).
+          "groupName": "istio",
+          "matchFileNames": ["fluxcd/infrastructure/operators/base/istio/**"],
+          "commitMessagePrefix": "chore(istio):"
+        },
+        {
+          // Plex tags are <maj>.<min>.<patch>.<build>-<hash>; the hash changes every
+          // release, so default docker versioning treats each release as an incompatible
+          // variant and never detects an update. Parse the numeric version, ignore the
+          // hash, and exclude the -amd64/-arm64/-armhf single-arch tags (the multi-arch
+          // hash-only tag is what's deployed). e.g. 1.43.0.10492 -> 1.43.2.10687.
+          "matchPackageNames": ["docker.io/plexinc/pms-docker"],
+          "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)-[0-9a-f]+$",
+          "commitMessagePrefix": "chore(plex):"
         }
       ],
 
