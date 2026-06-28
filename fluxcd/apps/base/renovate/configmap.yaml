@@ -146,6 +146,16 @@ data:
           "commitMessagePrefix": "chore(wazuh):"
         },
         {
+          // Velero chart + velero-plugin-for-aws are version-locked (the plugin minor
+          // tracks Velero's per the compat matrix; a mismatched plugin breaks
+          // backups/restores). Both live under operators/**/velero/, so scope by path —
+          // this groups the HelmRelease chart version and the plugin image into one MR,
+          // like istio.
+          "groupName": "velero",
+          "matchFileNames": ["fluxcd/infrastructure/operators/**/velero/**"],
+          "commitMessagePrefix": "chore(velero):"
+        },
+        {
           // Plex tags are <maj>.<min>.<patch>.<build>-<hash>; the hash changes every
           // release, so default docker versioning treats each release as an incompatible
           // variant and never detects an update. Parse the numeric version, ignore the
