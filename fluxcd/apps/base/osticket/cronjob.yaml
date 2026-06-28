@@ -1,0 +1,122 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: osticket-cron
+spec:
+  schedule: "*/5 * * * *"
+  concurrencyPolicy: Forbid
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 240
+      backoffLimit: 0
+      template:
+        metadata:
+          labels:
+            app: osticket-cron
+        spec:
+          restartPolicy: OnFailure
+          serviceAccountName: osticket-app
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          initContainers:
+            - name: wait-for-db
+              image: PLACEHOLDER_BUSYBOX_IMAGE
+              command:
+                - sh
+                - -c
+                - |
+                  until nc -z osticket-mariadb-primary 3306; do
+                    echo "Waiting for MariaDB Galera cluster..."
+                    sleep 2
+                  done
+          containers:
+            - name: osticket-cron
+              image: PLACEHOLDER_OSTICKET_IMAGE
+              args:
+                - php
+                - /var/www/html/api/cron.php
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              env:
+                - name: TZ
+                  value: "America/Los_Angeles"
+                - name: DB_HOST
+                  value: "osticket-mariadb-primary"
+                - name: DB_PASS
+                  valueFrom:
+                    secretKeyRef:
+                      name: osticket-secrets
+                      key: DB_PASS
+                - name: DB_NAME
+                  value: "osticket"
+                - name: DB_USER
+                  value: "osticket"
+                - name: SMTP_FROM
+                  valueFrom:
+                    secretKeyRef:
+                      name: osticket-secrets
+                      key: SMTP_FROM
+                - name: SMTP_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: osticket-secrets
+                      key: SMTP_HOST
+                - name: SMTP_PORT
+                  valueFrom:
+                    secretKeyRef:
+                      name: osticket-secrets
+                      key: SMTP_PORT
+                - name: SMTP_TLS
+                  value: "1"
+                - name: SMTP_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: osticket-secrets
+                      key: SMTP_USER
+                - name: SMTP_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: osticket-secrets
+                      key: SMTP_PASSWORD
+                - name: OSTICKET_ENFORCE_EXTERNAL_CRON
+                  value: "1"
+                - name: INSTALL_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: osticket-secrets
+                      key: INSTALL_SECRET
+                - name: INSTALL_EMAIL
+                  valueFrom:
+                    secretKeyRef:
+                      name: osticket-secrets
+                      key: INSTALL_EMAIL
+                - name: INSTALL_NAME
+                  value: "PrecisionPlanIT Helpdesk"
+                - name: ADMIN_FIRSTNAME
+                  value: "Kai"
+                - name: ADMIN_LASTNAME
+                  value: "H."
+                - name: ADMIN_EMAIL
+                  valueFrom:
+                    secretKeyRef:
+                      name: osticket-secrets
+                      key: ADMIN_EMAIL
+                - name: ADMIN_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: osticket-secrets
+                      key: ADMIN_USER
+                - name: ADMIN_PASS
+                  valueFrom:
+                    secretKeyRef:
+                      name: osticket-secrets
+                      key: ADMIN_PASS

@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - serviceaccount.yaml
   - mariadb-operator.yaml
-  - statefulset-app.yaml
+  - deployment-app.yaml
+  - cronjob.yaml
   - service.yaml
   - externalsecret.yaml

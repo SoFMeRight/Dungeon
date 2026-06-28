@@ -10,7 +10,8 @@ resources:
 
 patches:
   - path: mariadb-operator-patch.yaml
-  - path: statefulset-app-patch.yaml
+  - path: deployment-app-patch.yaml
+  - path: cronjob-patch.yaml
   - path: service-patch.yaml
     target:
       kind: Service

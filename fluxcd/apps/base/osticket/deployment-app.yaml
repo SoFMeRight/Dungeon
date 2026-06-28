@@ -1,10 +1,9 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: osticket-app
 spec:
   revisionHistoryLimit: 5
-  serviceName: osticket-app
   replicas: 3
   selector:
     matchLabels:
@@ -15,6 +14,11 @@ spec:
         app: osticket-app
     spec:
       serviceAccountName: osticket-app
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: wait-for-db
           image: PLACEHOLDER_BUSYBOX_IMAGE
@@ -30,8 +34,29 @@ spec:
         - name: osticket
           image: PLACEHOLDER_OSTICKET_IMAGE
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               name: http
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          readinessProbe:
+            httpGet:
+              path: /scp/login.php
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /scp/login.php
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3
           env:
             - name: TZ
               value: "America/Los_Angeles"
@@ -73,8 +98,8 @@ spec:
                 secretKeyRef:
                   name: osticket-secrets
                   key: SMTP_PASSWORD
-            - name: CRON_INTERVAL
-              value: "5"
+            - name: OSTICKET_ENFORCE_EXTERNAL_CRON
+              value: "1"
             - name: INSTALL_SECRET
               valueFrom:
                 secretKeyRef:

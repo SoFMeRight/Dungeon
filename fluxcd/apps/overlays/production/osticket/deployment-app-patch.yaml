@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: osticket-app
 spec:
@@ -17,7 +17,8 @@ spec:
           image: docker.io/busybox:1.37
       containers:
         - name: osticket
-          image: ghcr.io/tiredofit/docker-osticket:3.6.2
+          image: ghcr.io/homelabhd/osticket:latest-dev
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: "250m"

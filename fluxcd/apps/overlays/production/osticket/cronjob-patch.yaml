@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: osticket-cron
+spec:
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            policy.prplanit.com/cap.mariadb: "true"
+            policy.prplanit.com/access-scope-mariadb: hyrule-castle.osticket.mariadb
+        spec:
+          imagePullSecrets:
+            - name: cr-pcfae-admin-pull-secret
+          initContainers:
+            - name: wait-for-db
+              image: docker.io/busybox:1.37
+          containers:
+            - name: osticket-cron
+              image: ghcr.io/homelabhd/osticket:latest-dev
+              imagePullPolicy: Always
