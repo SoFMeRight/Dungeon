@@ -243,7 +243,7 @@ spec:
 
         # Sonarr - only zz-sonarr subpath
         - name: sonarr
-          image: docker.io/linuxserver/sonarr:4.0.16
+          image: docker.io/linuxserver/sonarr:4.0.19
           env:
             - name: TZ
               value: PLACEHOLDER_TZ
