@@ -148,6 +148,10 @@ data:
           // key never matches. Use a registry-agnostic glob.
           "matchPackageNames": ["**/plexinc/pms-docker"],
           "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)-[0-9a-f]+$",
+          // Two independent Plex servers (plex, plex-ms-x) share this image; key the
+          // branch on the deployment dir so each gets its own MR — stagger/verify one
+          // before the other rather than restarting both at once.
+          "additionalBranchPrefix": "{{parentDir}}-",
           "commitMessagePrefix": "chore(plex):"
         }
       ],
