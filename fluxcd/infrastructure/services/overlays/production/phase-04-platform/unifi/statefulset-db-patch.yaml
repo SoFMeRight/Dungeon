@@ -10,7 +10,7 @@ spec:
         - name: jcr-pcfae-dungeon-pull-secret
       containers:
         - name: mongo
-          image: docker.io/library/mongo:7.0.30
+          image: docker.io/library/mongo:7.0.37
           securityContext:
             capabilities:
               drop:
