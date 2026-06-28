@@ -33,7 +33,7 @@ spec:
       initContainers:
         # Download YOLOx model if not present
         - name: download-model
-          image: docker.io/prplanit/stagefreight:v0.3.1
+          image: docker.io/prplanit/oh-ci:0.0.1
           command:
             - sh
             - -c
