@@ -38,7 +38,7 @@ spec:
               mountPath: /home/libretranslate/.local
       containers:
         - name: libretranslate
-          image: docker.io/libretranslate/libretranslate:v1.9.5-cuda
+          image: docker.io/libretranslate/libretranslate:v1.9.6-cuda
           command: ["libretranslate"]
           args: ["--host", "0.0.0.0"]
           ports:
