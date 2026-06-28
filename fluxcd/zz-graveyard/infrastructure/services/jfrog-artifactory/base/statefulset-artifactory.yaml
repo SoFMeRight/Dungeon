@@ -17,7 +17,7 @@ spec:
       serviceAccountName: jfrog-artifactory-jcr
       initContainers:
         - name: wait-for-postgres
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           command:
             - sh
             - -c

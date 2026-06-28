@@ -10,7 +10,7 @@ spec:
     spec:
       initContainers:
         - name: seed-config
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           resources:
             requests:
               cpu: 10m

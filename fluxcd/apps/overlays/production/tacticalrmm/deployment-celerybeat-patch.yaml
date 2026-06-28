@@ -52,7 +52,7 @@ spec:
             capabilities:
               drop: [ALL]
         - name: wait-for-init
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           command: ["sh", "-c", "until [ -f /opt/tactical/tmp/tactical.ready ]; do echo 'Waiting for init...'; sleep 5; done"]
           securityContext:
             runAsUser: 1000

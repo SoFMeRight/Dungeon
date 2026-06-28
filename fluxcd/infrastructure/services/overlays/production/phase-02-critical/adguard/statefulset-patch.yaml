@@ -13,7 +13,7 @@ spec:
         - name: jcr-pcfae-dungeon-pull-secret
       initContainers:
         - name: copy-config
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           command:
             - sh
             - -c

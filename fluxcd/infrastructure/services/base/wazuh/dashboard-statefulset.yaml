@@ -17,7 +17,7 @@ spec:
       hostname: wazuh-dashboard
       initContainers:
         - name: fix-permissions
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           command: ['sh', '-c', 'chown -R 1000:1000 /usr/share/wazuh-dashboard/data']
           volumeMounts:
             - name: dashboard-data

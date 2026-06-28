@@ -16,7 +16,7 @@ spec:
         fsGroup: 82
       initContainers:
         - name: setup-dirs
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_APP_CACHE
@@ -31,9 +31,9 @@ spec:
             - name: hyrule-castle-invoiceninja-app-storage
               mountPath: /storage
         - name: wait-for-mysql
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
         - name: wait-for-redis
-          image: docker.io/busybox:1.37
+          image: docker.io/busybox:1.38
       containers:
         - name: app
           image: docker.io/invoiceninja/invoiceninja-debian:5.13.26
