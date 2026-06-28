@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: coturn
-          image: docker.io/coturn/coturn:4.9.0
+          image: docker.io/coturn/coturn:4.14.0
           command:
             - /bin/sh
             - -c
