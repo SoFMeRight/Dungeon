@@ -11,7 +11,7 @@ spec:
     spec:
       initContainers:
         - name: copy-app
-          image: docker.io/webkul/bagisto:2.3.15
+          image: docker.io/webkul/bagisto:2.4.7
           volumeMounts:
             - name: hyrule-castle-bagisto-demo-app
               mountPath: /data
@@ -23,13 +23,13 @@ spec:
             - name: hyrule-castle-bagisto-demo-app
               mountPath: /data
         - name: setup-db
-          image: docker.io/webkul/bagisto:2.3.15
+          image: docker.io/webkul/bagisto:2.4.7
           volumeMounts:
             - name: hyrule-castle-bagisto-demo-app
               mountPath: /var/www/html
       containers:
         - name: bagisto-demo
-          image: docker.io/webkul/bagisto:2.3.15
+          image: docker.io/webkul/bagisto:2.4.7
           resources:
             requests:
               cpu: 100m
