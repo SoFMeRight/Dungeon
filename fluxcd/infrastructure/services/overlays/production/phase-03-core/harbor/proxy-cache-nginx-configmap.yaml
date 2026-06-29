@@ -171,11 +171,21 @@ data:
           }
         }
 
-        # Non-registry paths (browser hits on /, favicon, etc.) return a clean 404
-        # instead of OpenResty's default welcome page. The xylem gateway's
-        # fairer-pages EnvoyFilter themes this for browsers (Accept: text/html);
-        # docker clients never send that header, so /v2/ pulls keep their raw
-        # registry 401/404 responses untouched.
+        # The gateway's themed-404 iframe loads /fairer-pages/... from THIS host, so
+        # it must be routed to the fairer-pages service or the iframe renders a bare
+        # 404. The gateway's fairer-pages HTTPRoute only covers *.pcfae.com, NOT the
+        # *.cr.pcfae.com mirror hosts, and its EnvoyFilter skips /fairer-pages/ (loop
+        # guard) — so the request lands here. Prefix is kept (the route does no rewrite).
+        location /fairer-pages/ {
+          set $fairer_pages http://fairer-pages.tingle-tuner.svc.cluster.local:8023;
+          proxy_pass $fairer_pages;
+          proxy_set_header Host $host;
+        }
+
+        # Non-registry paths (browser hits on /, favicon, etc.) return a 404. For
+        # browsers (Accept: text/html) the gateway EnvoyFilter swaps in the themed
+        # fairer-pages page (whose iframe is now served by the location above);
+        # docker clients never send text/html, so /v2/ pulls keep raw registry 401/404.
         location / {
           return 404;
         }
