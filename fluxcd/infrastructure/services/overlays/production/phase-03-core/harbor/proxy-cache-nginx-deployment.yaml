@@ -18,7 +18,7 @@ spec:
       serviceAccountName: harbor-proxy-cache-proxy
       containers:
         - name: openresty
-          image: docker.io/openresty/openresty:1.27.1.2-alpine
+          image: docker.io/openresty/openresty:1.31.1.1-alpine
           ports:
             - containerPort: 8080
               protocol: TCP
