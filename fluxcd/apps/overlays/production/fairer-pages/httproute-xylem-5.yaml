@@ -25,6 +25,14 @@ spec:
     - "siem.pcfae.com"
     - "web.pcfae.com"
     - "z2m.pcfae.com"
+    # Container-registry mirror hosts. Listed EXACT (not the *.cr.pcfae.com wildcard)
+    # so this route's /fairer-pages/ path beats the mirror's catch-all proxy route on
+    # the same host (Gateway API ranks longest hostname, then longest path), letting
+    # the gateway's themed-404 iframe load on the mirror instead of a bare 404.
+    - "docker.cr.pcfae.com"
+    - "ghcr.cr.pcfae.com"
+    - "quay.cr.pcfae.com"
+    - "lscr.cr.pcfae.com"
   rules:
     - matches:
         - path:
