@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: zeldas-lullaby
+
+resources:
+  - ../../../../base/zitadel-jobs
+
+# Job-only halves of the shared patches (the StatefulSet half of image-patch and the
+# login-v2 Deployment half of command-patches stay in the zitadel overlay).
+patches:
+  - path: image-patch.yaml
+  - path: command-patches.yaml
+  - path: setup-job-env-patch.yaml
+    target:
+      kind: Job
+      name: zitadel-setup

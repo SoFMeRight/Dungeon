@@ -8,9 +8,6 @@ resources:
   - zitadel-clusterrole.yaml
   - zitadel-statefulset.yaml
   - zitadel-service.yaml
-  - zitadel-initjob.yaml
-  - zitadel-setupjob.yaml
-  - admin-sa-provision-job.yaml
   - login-v2-deployment.yaml
   - login-v2-service.yaml
   - redis-replication.yaml

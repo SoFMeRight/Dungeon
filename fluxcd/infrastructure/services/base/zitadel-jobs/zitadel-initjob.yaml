@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: zitadel-init
+spec:
+  backoffLimit: 5
+  template:
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: zitadel
+      initContainers:
+        - name: wait-for-postgres
+          image: PLACEHOLDER_POSTGRES_IMAGE
+          command:
+            - sh
+            - -c
+            - until pg_isready -h PLACEHOLDER_POSTGRES_HOST -p 5432 -U postgres; do echo waiting for postgres; sleep 2; done
+      containers:
+        - name: zitadel-init
+          image: PLACEHOLDER_IMAGE
+          env:
+            - name: ZITADEL_MASTERKEY
+              valueFrom:
+                secretKeyRef:
+                  name: zitadel-masterkey
+                  key: masterkey
+            - name: ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: zitadel-postgres-superuser
+                  key: password
+            - name: ZITADEL_DATABASE_POSTGRES_USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: zitadel-secrets
+                  key: ZITADEL_DATABASE_POSTGRES_USER_PASSWORD
+          command:
+            - /app/zitadel
+            - init
+            - --config
+            - /config/zitadel-config.yaml
+          volumeMounts:
+            - name: zitadel-config
+              mountPath: /config
+              readOnly: true
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 100m
+            limits:
+              memory: 512Mi
+              cpu: 500m
+      volumes:
+        - name: zitadel-config
+          configMap:
+            name: zitadel-config

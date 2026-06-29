@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# One-shot bootstrap/orchestration Jobs for zitadel, split out of base/zitadel so
+# they can be reconciled by a force:true Flux Kustomization (immutable Job templates
+# must be replace-on-change). The durable zitadel resources (Cluster, PVCs, StatefulSet,
+# Deployments) stay in base/zitadel under fail-closed reconciliation.
+resources:
+  - zitadel-initjob.yaml
+  - zitadel-setupjob.yaml
+  - admin-sa-provision-job.yaml

@@ -125,6 +125,33 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
+  name: infra-zitadel-jobs
+  namespace: flux-system
+spec:
+  # zitadel's one-shot bootstrap Jobs, reconciled separately with force:true so their
+  # immutable templates are replaced (not blocked) on image bumps. Durable zitadel
+  # resources (Cluster, PVCs, StatefulSet, Deployments) stay in infra-services-phase-03
+  # under fail-closed reconciliation.
+  #
+  # dependsOn phase-02, NOT phase-03: the jobs self-order via their init containers
+  # (init waits for postgres, setup waits for init, the StatefulSet waits for setup).
+  # Depending on phase-03 would deadlock — phase-03's StatefulSet never becomes Ready
+  # until the setup Job here completes.
+  dependsOn:
+    - name: infra-services-phase-02
+  interval: 1h
+  retryInterval: 1m
+  timeout: 5m
+  force: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  path: ./fluxcd/infrastructure/services/overlays/production/phase-03-core/zitadel-jobs
+  prune: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
   name: infra-services-phase-04
   namespace: flux-system
 spec:

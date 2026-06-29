@@ -19,10 +19,6 @@ patches:
     target:
       kind: Cluster
       name: zitadel-postgres
-  - path: setup-job-env-patch.yaml
-    target:
-      kind: Job
-      name: zitadel-setup
   - path: service-patch.yaml
     target:
       kind: Service

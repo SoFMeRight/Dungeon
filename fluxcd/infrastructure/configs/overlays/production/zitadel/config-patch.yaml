@@ -37,7 +37,10 @@ data:
     # Processed by setup job which creates credentials in emptyDir volumes
     # Sidecar containers extract credentials and create Kubernetes secrets
     FirstInstance:
+      InstanceName: PrecisionPlanIT
+      DefaultLanguage: en
       Org:
+        Name: PrecisionPlanIT
         Machine:
           Machine:
             Username: k8s-admin
