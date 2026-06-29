@@ -31,6 +31,13 @@ spec:
               value: "10"
             - name: HBOX_OPTIONS_ALLOW_REGISTRATION
               value: "true"
+            # Required since v0.26.x: must be >=32 bytes or homebox panics on
+            # startup. Rotating it invalidates all issued API keys.
+            - name: HBOX_AUTH_API_KEY_PEPPER
+              valueFrom:
+                secretKeyRef:
+                  name: homebox-secrets
+                  key: HBOX_AUTH_API_KEY_PEPPER
           volumeMounts:
             - name: data
               mountPath: /data
