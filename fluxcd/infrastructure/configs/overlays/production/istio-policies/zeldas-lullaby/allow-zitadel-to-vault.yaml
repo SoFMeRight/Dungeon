@@ -1,0 +1,21 @@
+# The zitadel-admin-sa-to-vault Job (runs as sa/zitadel) pushes the admin SA token
+# into Vault at zeldas-letter/apps/zitadel; external-secrets reads it back. Mirrors
+# allow-external-secrets-to-vault. sa/zitadel is zitadel's app identity (STS + jobs),
+# already granted to postgres/redis by allow-zitadel-to-zitadel-{postgres,redis}.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-zitadel-to-vault
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vault
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/zeldas-lullaby/sa/zitadel
+      to:
+        - operation:
+            ports: ["8200"]

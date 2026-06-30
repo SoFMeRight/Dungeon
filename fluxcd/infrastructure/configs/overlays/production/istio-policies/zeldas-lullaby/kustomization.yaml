@@ -13,6 +13,7 @@ resources:
   - allow-external-secrets-to-vault.yaml
   - allow-bank-vaults-operator-to-vault.yaml
   - allow-vault-to-vault.yaml
+  - allow-zitadel-to-vault.yaml
   - allow-netbird-coturn-loadbalancer.yaml
   - allow-netbird-postgres-replication.yaml
   - allow-vaultwarden-postgres-replication.yaml
