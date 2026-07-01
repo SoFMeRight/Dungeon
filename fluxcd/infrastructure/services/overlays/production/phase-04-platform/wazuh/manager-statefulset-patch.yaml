@@ -9,7 +9,7 @@ spec:
         - name: jcr-pcfae-dungeon-pull-secret
       containers:
       - name: wazuh-manager
-        image: docker.io/wazuh/wazuh-manager:4.14.5
+        image: docker.io/wazuh/wazuh-manager:4.14.6
         envFrom:
         - secretRef:
             name: wazuh-manager-secrets
