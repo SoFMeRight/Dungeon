@@ -18,18 +18,12 @@ spec:
       serviceAccountName: nextcloud-elasticsearch
       securityContext:
         fsGroup: 1000
-      initContainers:
-        - name: sysctl
-          image: docker.io/alpine/k8s:1.36.2
-          securityContext:
-            privileged: true
-          command:
-            - sysctl
-            - -w
-            - vm.max_map_count=262144
+      # No privileged sysctl init container: nodes already default vm.max_map_count
+      # to 1048576 (kernel 6.8), 4x above ES's 262144, and single-node ES skips the
+      # bootstrap check anyway. The init container only tripped PodSecurity baseline.
       containers:
         - name: elasticsearch
-          image: docker.io/library/elasticsearch:8.19.17
+          image: docker.io/library/elasticsearch:9.4.3
           ports:
             - name: http
               containerPort: 9200
