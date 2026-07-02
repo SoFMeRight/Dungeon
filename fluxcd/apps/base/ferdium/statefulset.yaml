@@ -37,7 +37,7 @@ spec:
               mountPath: /dev/shm
           securityContext:
             seccompProfile:
-              type: Unconfined
+              type: RuntimeDefault
       volumes:
         - name: dshm
           emptyDir:

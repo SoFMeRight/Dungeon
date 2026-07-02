@@ -95,10 +95,8 @@ resources:
   - reactive-resume
   - roundcube-primary-gmail
   # Utilities
-  - code-server
   - endlessh-go
   - shlink
-  - filebrowser
   - google-webfonts-helper
   - convertx
   - hrconvert2

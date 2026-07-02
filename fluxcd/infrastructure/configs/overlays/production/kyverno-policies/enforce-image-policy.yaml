@@ -180,7 +180,7 @@ spec:
               conditions:
                 all:
                   # yamllint disable-line rule:line-length
-                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com)|([a-z0-9-]+\\.)*jcr\\.pcfae\\.com|([a-z0-9-]+\\.)*cr\\.pcfae\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
+                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com|istio\\.io)|([a-z0-9-]+\\.)*jcr\\.pcfae\\.com|([a-z0-9-]+\\.)*cr\\.pcfae\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
                     operator: Equals
                     value: false
                   - key: "{{ regex_match('^[^/]+(:|@sha256:)', element.image) }}"
@@ -191,7 +191,7 @@ spec:
               conditions:
                 all:
                   # yamllint disable-line rule:line-length
-                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com)|([a-z0-9-]+\\.)*jcr\\.pcfae\\.com|([a-z0-9-]+\\.)*cr\\.pcfae\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
+                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com|istio\\.io)|([a-z0-9-]+\\.)*jcr\\.pcfae\\.com|([a-z0-9-]+\\.)*cr\\.pcfae\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
                     operator: Equals
                     value: false
                   - key: "{{ regex_match('^[^/]+(:|@sha256:)', element.image) }}"
@@ -202,7 +202,7 @@ spec:
               conditions:
                 all:
                   # yamllint disable-line rule:line-length
-                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com)|([a-z0-9-]+\\.)*jcr\\.pcfae\\.com|([a-z0-9-]+\\.)*cr\\.pcfae\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
+                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com|istio\\.io)|([a-z0-9-]+\\.)*jcr\\.pcfae\\.com|([a-z0-9-]+\\.)*cr\\.pcfae\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
                     operator: Equals
                     value: false
                   - key: "{{ regex_match('^[^/]+(:|@sha256:)', element.image) }}"
@@ -247,7 +247,7 @@ spec:
               conditions:
                 all:
                   # yamllint disable-line rule:line-length
-                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com)|([a-z0-9-]+\\.)*jcr\\.pcfae\\.com|([a-z0-9-]+\\.)*cr\\.pcfae\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
+                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com|istio\\.io)|([a-z0-9-]+\\.)*jcr\\.pcfae\\.com|([a-z0-9-]+\\.)*cr\\.pcfae\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
                     operator: Equals
                     value: false
                   - key: "{{ regex_match('^[^/]+(:|@sha256:)', element.image) }}"
@@ -258,7 +258,7 @@ spec:
               conditions:
                 all:
                   # yamllint disable-line rule:line-length
-                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com)|([a-z0-9-]+\\.)*jcr\\.pcfae\\.com|([a-z0-9-]+\\.)*cr\\.pcfae\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
+                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com|istio\\.io)|([a-z0-9-]+\\.)*jcr\\.pcfae\\.com|([a-z0-9-]+\\.)*cr\\.pcfae\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
                     operator: Equals
                     value: false
                   - key: "{{ regex_match('^[^/]+(:|@sha256:)', element.image) }}"
