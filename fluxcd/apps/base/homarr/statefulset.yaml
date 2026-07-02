@@ -17,7 +17,7 @@ spec:
       serviceAccountName: homarr
       containers:
         - name: homarr
-          image: ghcr.io/homarr-labs/homarr:v1.68.0
+          image: ghcr.io/homarr-labs/homarr:v1.68.1
           ports:
             - name: http
               containerPort: 7575
