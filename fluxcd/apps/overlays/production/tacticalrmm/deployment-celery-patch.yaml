@@ -11,7 +11,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       initContainers:
         - name: wait-for-postgres
           image: docker.io/postgres:13-alpine

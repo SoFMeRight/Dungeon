@@ -9,7 +9,7 @@ spec:
     # Note: Chart already sets prometheus.io/scrape and prometheus.io/port annotations by default
     image:
       pullSecrets:
-        - jcr-pcfae-dungeon-pull-secret
+        - cr-pcfae-admin-pull-secret
     initContainers:
       - name: velero-plugin-for-aws
         image: docker.io/velero/velero-plugin-for-aws:v1.14.2

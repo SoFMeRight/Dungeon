@@ -32,7 +32,7 @@ spec:
     # Global imagePullSecrets for all Loki pods
     global:
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
         - name: docker-io-pull-secret
     sidecar:
       image:

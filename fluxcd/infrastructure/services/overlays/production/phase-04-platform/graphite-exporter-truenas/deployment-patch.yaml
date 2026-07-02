@@ -13,7 +13,7 @@ spec:
         monitoring.prplanit.com/instance: "gringotts"
     spec:
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       containers:
         - name: graphite-exporter
           image: docker.io/prom/graphite-exporter:v0.16.0

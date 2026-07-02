@@ -10,7 +10,7 @@ spec:
         policy.prplanit.com/probe: "true"
     spec:
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       containers:
         - name: chrony
           image: docker.io/simonrupf/chronyd:0.7.1

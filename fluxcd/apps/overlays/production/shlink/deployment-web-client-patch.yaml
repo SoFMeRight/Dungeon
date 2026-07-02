@@ -13,7 +13,7 @@ spec:
         runAsUser: 101
         runAsGroup: 101
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       containers:
         - name: shlink-web-client
           image: docker.io/shlinkio/shlink-web-client:4.8.0

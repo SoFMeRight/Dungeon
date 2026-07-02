@@ -10,7 +10,7 @@ spec:
         policy.prplanit.com/ingress: "true"
     spec:
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       containers:
         - name: urbackup-server
           image: docker.io/uroni/urbackup-server:2.6.15

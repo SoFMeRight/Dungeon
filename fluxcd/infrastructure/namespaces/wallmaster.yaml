@@ -3,7 +3,7 @@ kind: Namespace
 metadata:
   name: wallmaster
   labels:
-    jcr-pull-secret: enabled
+    cr-pcfae-pull-secret: "enabled"
     istio.io/dataplane-mode: ambient
     pod-security.kubernetes.io/enforce: baseline
     pod-security.kubernetes.io/enforce-version: "latest"

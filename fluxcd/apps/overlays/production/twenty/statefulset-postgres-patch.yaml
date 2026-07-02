@@ -7,12 +7,12 @@ spec:
   template:
     spec:
       imagePullSecrets:
-      - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       containers:
-      - name: postgres
-        image: docker.io/library/postgres:16
+        - name: postgres
+          image: docker.io/library/postgres:16
   volumeClaimTemplates:
-  - metadata:
-      name: hyrule-castle-twenty-postgres
-    spec:
-      storageClassName: ceph-rbd-retain
+    - metadata:
+        name: hyrule-castle-twenty-postgres
+      spec:
+        storageClassName: ceph-rbd-retain

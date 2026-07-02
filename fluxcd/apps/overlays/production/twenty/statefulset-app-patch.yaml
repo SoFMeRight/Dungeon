@@ -14,7 +14,7 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       containers:
         - name: twenty-app
           image: docker.io/twentycrm/twenty:v0.60.7

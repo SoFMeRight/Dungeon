@@ -22,7 +22,7 @@ patches:
       - op: replace
         path: /spec/template/spec/imagePullSecrets
         value:
-          - name: jcr-pcfae-dungeon-pull-secret
+          - name: cr-pcfae-admin-pull-secret
   - path: statefulset-db-patch.yaml
     target:
       kind: StatefulSet

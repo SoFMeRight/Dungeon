@@ -6,27 +6,27 @@ spec:
   template:
     spec:
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       containers:
-      - name: wazuh-manager
-        image: docker.io/wazuh/wazuh-manager:4.14.6
-        envFrom:
-        - secretRef:
-            name: wazuh-manager-secrets
-        resources:
-          requests:
-            cpu: 500m
-            memory: 512Mi
-          limits:
-            cpu: 2000m
-            memory: 2Gi
+        - name: wazuh-manager
+          image: docker.io/wazuh/wazuh-manager:4.14.6
+          envFrom:
+            - secretRef:
+                name: wazuh-manager-secrets
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 2000m
+              memory: 2Gi
       volumes:
-      - name: wazuh-manager-conf
-        configMap:
-          name: wazuh-manager-config
-      - name: ssl-certs
-        secret:
-          secretName: wazuh-ssl-certs
+        - name: wazuh-manager-conf
+          configMap:
+            name: wazuh-manager-config
+        - name: ssl-certs
+          secret:
+            secretName: wazuh-ssl-certs
   volumeClaimTemplates:
     - metadata:
         name: wazuh-manager-data

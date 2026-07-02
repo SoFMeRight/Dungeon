@@ -5,7 +5,7 @@ metadata:
   labels:
     name: shooting-gallery
     purpose: game-servers
-    jcr-pull-secret: "enabled"
+    cr-pcfae-pull-secret: "enabled"
     pod-security.kubernetes.io/enforce: baseline
     pod-security.kubernetes.io/audit: baseline
     pod-security.kubernetes.io/warn: baseline

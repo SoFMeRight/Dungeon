@@ -3,7 +3,7 @@ kind: Namespace
 metadata:
   name: temple-of-time
   labels:
-    jcr-pull-secret: enabled
+    cr-pcfae-pull-secret: "enabled"
     docker-io-pull-secret: "enabled"
     istio.io/dataplane-mode: ambient
     pod-security.kubernetes.io/enforce: baseline

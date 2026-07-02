@@ -14,7 +14,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       initContainers:
         - name: wait-for-init
           image: docker.io/busybox:1.38

@@ -6,21 +6,21 @@ spec:
   template:
     spec:
       imagePullSecrets:
-      - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       containers:
-      - name: postgres
-        image: docker.io/postgres:16-alpine
-        volumeMounts:
-        - name: hookshot-dd-ui-postgres-data
-          mountPath: /var/lib/postgresql/data
-          subPath: pgdata
+        - name: postgres
+          image: docker.io/postgres:16-alpine
+          volumeMounts:
+            - name: hookshot-dd-ui-postgres-data
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata
   volumeClaimTemplates:
-  - metadata:
-      name: hookshot-dd-ui-postgres-data
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      storageClassName: ceph-rbd-retain
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: hookshot-dd-ui-postgres-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-rbd-retain
+        resources:
+          requests:
+            storage: 10Gi

@@ -80,24 +80,23 @@
     - Apps reference the pull secret by name (e.g., `cr-pcfae-admin-pull-secret`) in their deployment `imagePullSecrets`
     - Credentials stored in Vault at `registries/<registry-url>` with keys: `username`, `password`
 
-- JFrog Container Registry (JCR) Strategy:
-  - **Primary Registry**: JFrog Artifactory at `jcr.pcfae.com` managed by admin user
-  - **Pull-Through Cache Registries**: JFrog automatically caches and proxies upstream registries via `*.jcr.pcfae.com` subdomains
-    - `docker.jcr.pcfae.com` - Docker Hub (docker.io) pull-through cache
-    - `ghcr.jcr.pcfae.com` - GitHub Container Registry (ghcr.io) pull-through cache
-    - `quay.jcr.pcfae.com` - Quay.io (quay.io) pull-through cache
-    - `lscr.jcr.pcfae.com` - LinuxServer.io (lscr.io) pull-through cache
+- Harbor Container Registry Strategy:
+  - **Primary Registry**: Harbor (internal) at `cr.pcfae.com`, admin-managed. Runs external to the cluster for independent availability. **Replaces the retired JFrog/JCR** — `jcr.pcfae.com`, `*.jcr.pcfae.com`, `jcr-pcfae-dungeon-pull-secret`, and the `jcr-pull-secret` label are all DEAD; do not reference them.
+  - **Pull-Through Cache Registries**: Harbor proxy-cache projects proxy upstream registries via `*.cr.pcfae.com` subdomains
+    - `docker.cr.pcfae.com` - Docker Hub (docker.io) pull-through cache
+    - `ghcr.cr.pcfae.com` - GitHub Container Registry (ghcr.io) pull-through cache
+    - `quay.cr.pcfae.com` - Quay.io (quay.io) pull-through cache
+    - `lscr.cr.pcfae.com` - LinuxServer.io (lscr.io) pull-through cache
   - **CRI-O Registry Mirrors (Automatic)**:
-    - All cluster nodes have CRI-O registry mirrors pre-configured at `/etc/containers/registries.conf.d/jcr-mirrors.conf`
-    - **Transparent redirection**: Images can be requested using original registry names (e.g., `docker.io/redis:alpine`) and CRI-O automatically pulls through JCR mirrors
-    - **Automatic fallback**: If JCR is unavailable, CRI-O falls back to upstream registries
-    - **Mirrored registries**: docker.io → docker.jcr.pcfae.com, ghcr.io → ghcr.jcr.pcfae.com, lscr.io → lscr.jcr.pcfae.com, quay.io → quay.jcr.pcfae.com
-    - **Benefits**: Reduces bandwidth, avoids rate limits, caches images, no manifest changes required. JFrog Artifactory runs on ZFS & Docker external to the cluster for independent availability.
-    - **Re-apply configuration**: Run [configure-registry-mirrors.sh](bash/_importing_from_sibling_repo/configure-registry-mirrors.sh) from any control plane node
+    - All cluster nodes have CRI-O registry mirrors configured to route upstream names through the Harbor mirrors
+    - **Transparent redirection**: Images can be requested using original registry names (e.g., `docker.io/redis:alpine`) and CRI-O automatically pulls through the Harbor mirrors
+    - **Automatic fallback**: If Harbor is unavailable, CRI-O falls back to upstream registries
+    - **Mirrored registries**: docker.io → docker.cr.pcfae.com, ghcr.io → ghcr.cr.pcfae.com, lscr.io → lscr.cr.pcfae.com, quay.io → quay.cr.pcfae.com
+    - **Benefits**: Reduces bandwidth, avoids rate limits, caches images, no manifest changes required.
   - **Image Pull Strategy**:
-    - **All Applications**: Always use original upstream registry names (docker.io, ghcr.io, quay.io, lscr.io) - CRI-O mirrors automatically route through JCR with transparent fallback
-    - **No need to explicitly reference `*.jcr.pcfae.com`**: CRI-O handles the routing automatically, no manifest changes required
-  - **Pull Secret**: `jcr-pcfae-dungeon-pull-secret` deployed to all namespaces with label `jcr-pull-secret: "enabled"`
+    - **All Applications**: Always use original upstream registry names (docker.io, ghcr.io, quay.io, lscr.io) - CRI-O mirrors automatically route through Harbor with transparent fallback
+    - **No need to explicitly reference `*.cr.pcfae.com`**: CRI-O handles the routing automatically, no manifest changes required
+  - **Pull Secret**: `cr-pcfae-admin-pull-secret`, distributed by a ClusterExternalSecret (ESO, Vault-backed; auths `cr.pcfae.com`) to every namespace labeled `cr-pcfae-pull-secret: "enabled"`. Namespaces are labeled in `fluxcd/infrastructure/namespaces/<ns>.yaml`.
 
 - FluxCD App Structure:
   - `fluxcd/apps/base/<app>/` contains TEMPLATED Kubernetes resources WITHOUT any environment-specific values including: no hardcoded namespaces, image tags, replicas, storage classes, LoadBalancer IPs, cluster-specific annotations (lbipam.cilium.io/*), domain names, URLs, etc. These are reusable templates across environments.

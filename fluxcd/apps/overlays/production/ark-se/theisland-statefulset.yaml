@@ -17,7 +17,7 @@ spec:
       serviceAccountName: ark-se-tmc-theisland
       enableServiceLinks: false
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       securityContext:
         fsGroup: 1001
       containers:

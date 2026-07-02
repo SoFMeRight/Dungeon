@@ -17,7 +17,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       # NOTE: nginx must start freely - meshcentral waits for nginx, init waits for meshcentral
       containers:
         - name: nginx

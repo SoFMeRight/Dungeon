@@ -12,7 +12,7 @@ spec:
           key: client-secret
   vaultPodSpec:
     imagePullSecrets:
-      - name: jcr-pcfae-dungeon-pull-secret
+      - name: cr-pcfae-admin-pull-secret
   vaultLabels:
     policy.prplanit.com/ingress: "true"
   vaultAnnotations:

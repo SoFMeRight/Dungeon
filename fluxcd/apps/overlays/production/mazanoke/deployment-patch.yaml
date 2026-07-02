@@ -9,7 +9,7 @@ spec:
         policy.prplanit.com/ingress: "true"
     spec:
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       containers:
         - name: mazanoke
           image: ghcr.io/civilblur/mazanoke:v1.1.6

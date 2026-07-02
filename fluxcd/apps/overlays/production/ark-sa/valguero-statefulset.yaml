@@ -17,7 +17,7 @@ spec:
       serviceAccountName: ark-sa-tmc-valguero
       enableServiceLinks: false
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       securityContext:
         fsGroup: 7777
       containers:

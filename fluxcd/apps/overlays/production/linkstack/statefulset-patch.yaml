@@ -10,7 +10,7 @@ spec:
         policy.prplanit.com/ingress: "true"
     spec:
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       securityContext:
         fsGroup: 101
       volumes:

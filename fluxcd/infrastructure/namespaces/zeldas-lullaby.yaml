@@ -4,7 +4,7 @@ metadata:
   name: zeldas-lullaby
   labels:
     name: zeldas-lullaby
-    jcr-pull-secret: "enabled"
+    cr-pcfae-pull-secret: "enabled"
     docker-io-pull-secret: "enabled"
     istio.io/dataplane-mode: ambient
     pod-security.kubernetes.io/enforce: baseline

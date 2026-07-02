@@ -13,7 +13,7 @@ patches:
       - op: replace
         path: /spec/template/spec/imagePullSecrets
         value:
-          - name: jcr-pcfae-dungeon-pull-secret
+          - name: cr-pcfae-admin-pull-secret
   - path: configmap-patch.yaml
   - path: externalsecret-patch.yaml
   - path: service-openspeedtest-ingress-patch.yaml

@@ -5,7 +5,6 @@ metadata:
   labels:
     name: lens-of-truth
     cr-pcfae-pull-secret: "enabled"
-    jcr-pull-secret: "enabled"
     docker-io-pull-secret: "enabled"
     pod-security.kubernetes.io/enforce: privileged
     istio.io/dataplane-mode: ambient

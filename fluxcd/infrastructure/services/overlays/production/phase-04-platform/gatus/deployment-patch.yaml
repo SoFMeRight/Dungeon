@@ -12,7 +12,7 @@ spec:
         policy.prplanit.com/access-scope-postgres: gossip-stone.gatus.postgres
     spec:
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       initContainers:
         - name: init-config
           image: docker.io/library/busybox:1.38

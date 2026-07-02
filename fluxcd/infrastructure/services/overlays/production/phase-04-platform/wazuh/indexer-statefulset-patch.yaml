@@ -6,28 +6,28 @@ spec:
   template:
     spec:
       imagePullSecrets:
-        - name: jcr-pcfae-dungeon-pull-secret
+        - name: cr-pcfae-admin-pull-secret
       containers:
-      - name: wazuh-indexer
-        image: docker.io/wazuh/wazuh-indexer:4.14.6
-        envFrom: []
-        resources:
-          requests:
-            cpu: 500m
-            memory: 1Gi
-          limits:
-            cpu: 2000m
-            memory: 4Gi
+        - name: wazuh-indexer
+          image: docker.io/wazuh/wazuh-indexer:4.14.6
+          envFrom: []
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2000m
+              memory: 4Gi
       volumes:
-      - name: indexer-config
-        configMap:
-          name: wazuh-indexer-config
-      - name: indexer-security-config
-        configMap:
-          name: wazuh-indexer-security-config
-      - name: ssl-certs
-        secret:
-          secretName: wazuh-ssl-certs
+        - name: indexer-config
+          configMap:
+            name: wazuh-indexer-config
+        - name: indexer-security-config
+          configMap:
+            name: wazuh-indexer-security-config
+        - name: ssl-certs
+          secret:
+            secretName: wazuh-ssl-certs
   volumeClaimTemplates:
     - metadata:
         name: wazuh-indexer-data
