@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: queue-short
-          image: docker.io/frappe/erpnext:v15.114.0
+          image: docker.io/frappe/erpnext:v15.115.0
           resources:
             requests:
               cpu: "250m"
