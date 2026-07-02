@@ -81,7 +81,9 @@ review:
   script:
     - stagefreight ci run review
   artifacts:
-    paths: [.stagefreight/security/]
+    paths:
+      - .stagefreight/security/
+      - .stagefreight/pipeline.json
     expire_in: 1 week
   allow_failure: true
 
