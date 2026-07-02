@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: clamav
-          image: docker.io/clamav/clamav:1.5.2
+          image: docker.io/clamav/clamav:1.5.3
   volumeClaimTemplates:
     - metadata:
         name: db
