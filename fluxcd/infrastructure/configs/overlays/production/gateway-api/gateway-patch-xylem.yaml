@@ -9,15 +9,6 @@ metadata:
     service.cilium.io/loadbalancer-mode: "dsr"
 spec:
   infrastructure:
-    annotations:
-      # Right-sized to the measured config-reload spike, not the istio 1Gi default.
-      # Steady state is 168-284Mi; the reload spike (107 routes / 194 hostnames held
-      # old+new during an envoy push) peaked at 916Mi on the one replica that never
-      # restarted, and tipped just over 1Gi on the others -> chronic OOMKilled flap.
-      # 1.25Gi clears the observed peak + sub-1.1Gi tail with ~160Mi headroom; request
-      # covers true steady state (istio default 128Mi was below it).
-      sidecar.istio.io/proxyMemory: "320Mi"
-      sidecar.istio.io/proxyMemoryLimit: "1280Mi"
     labels:
       policy.prplanit.com/metrics: "true"
       policy.prplanit.com/client-class: ingress-gateway

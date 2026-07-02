@@ -24,6 +24,23 @@ spec:
     # Override namespace to king-of-red-lions instead of istio-system
     global:
       istioNamespace: king-of-red-lions
+      # Default proxy resources. In this ambient mesh there are no sidecars, so this
+      # only feeds the Gateway-API kube-gateways (xylem/cell-membrane/phloem) -- the
+      # kube-gateway injection template reads resources ONLY from here, never from a
+      # per-gateway annotation or the generated Deployment (istiod reverts direct
+      # patches). Memory limit raised 1024Mi->1280Mi: xylem fronts 107 HTTPRoutes /
+      # 194 hostnames and its config-reload spike (envoy holds old+new during a push)
+      # peaked at 916Mi on the one replica that never restarted and tipped just over
+      # 1Gi on the others -> chronic OOMKilled flap. Limit-only bump reserves zero
+      # extra capacity (a limit is a ceiling); the smaller gateways never approach it.
+      proxy:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 2000m
+            memory: 1280Mi
 
     # Pilot (istiod) configuration
     # Note: profile: ambient already sets prometheus.io/scrape and prometheus.io/port annotations
