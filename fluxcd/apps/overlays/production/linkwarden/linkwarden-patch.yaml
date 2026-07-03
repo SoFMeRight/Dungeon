@@ -11,10 +11,17 @@ spec:
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: temple-of-time.linkwarden.postgres
     spec:
+      # linkwarden's image bundles its Playwright/Chromium browser in root's home
+      # (/root/.cache/ms-playwright) and has NO USER directive — it is built to run as
+      # root. Running as a non-root UID breaks link archival, and upstream does not
+      # support non-root for the browser (linkwarden#799, still open). So we run as root
+      # but strip every other privilege: no capabilities, no privilege escalation,
+      # default seccomp. Chromium runs headless with --no-sandbox (required as root), so
+      # it needs zero Linux capabilities.
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 1000 # keep the data volume group at 1000 (no re-chown churn; root accesses it regardless)
       initContainers:
         - name: wait-for-postgres
           image: docker.io/library/postgres:16-alpine
@@ -23,6 +30,19 @@ spec:
       containers:
         - name: linkwarden
           image: ghcr.io/linkwarden/linkwarden:v2.14.1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          env:
+            # Pin Playwright to the browser baked into the image so link archival works
+            # regardless of HOME resolution and survives image bumps (browsers install to
+            # root's cache at build time). Tied to the run-as-root decision above.
+            - name: PLAYWRIGHT_BROWSERS_PATH
+              value: /root/.cache/ms-playwright
           volumeMounts:
             - name: data
               mountPath: /data/data
