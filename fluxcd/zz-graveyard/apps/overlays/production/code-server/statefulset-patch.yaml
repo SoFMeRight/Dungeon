@@ -23,7 +23,7 @@ spec:
           effect: NoSchedule
       containers:
         - name: code-server
-          image: docker.io/linuxserver/code-server:4.126.0
+          image: docker.io/linuxserver/code-server:4.127.0
           env:
             - name: PROXY_DOMAIN
               value: "code.pcfae.com"
