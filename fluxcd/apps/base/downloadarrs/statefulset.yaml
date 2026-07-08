@@ -160,7 +160,7 @@ spec:
 
         # qBittorrent - full downloads access
         - name: qbittorrent
-          image: docker.io/linuxserver/qbittorrent:5.2.2
+          image: docker.io/linuxserver/qbittorrent:5.2.3
           env:
             - name: TZ
               value: PLACEHOLDER_TZ
