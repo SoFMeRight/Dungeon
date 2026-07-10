@@ -21,7 +21,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: zitadel-login-v2
-          image: ghcr.io/zitadel/zitadel-login:v4.15.3
+          image: ghcr.io/zitadel/zitadel-login:v4.16.0
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
