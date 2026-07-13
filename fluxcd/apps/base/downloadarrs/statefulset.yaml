@@ -217,7 +217,7 @@ spec:
 
         # Radarr - only zz-radarr subpath
         - name: radarr
-          image: docker.io/linuxserver/radarr:6.2.1
+          image: docker.io/linuxserver/radarr:6.3.0
           env:
             - name: TZ
               value: PLACEHOLDER_TZ
