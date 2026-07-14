@@ -72,25 +72,8 @@ versioning:
     - id: stable
       pattern: "^v\\d+\\.\\d+\\.\\d+$"
 
-docs:
-  enabled: true
-  generators:
-    badges: true
-    narrator: true
-  commit:
-    enabled: true
-    type: docs
-    message: "refresh generated docs and badges"
-    add:
-      - "README.md"
-      - "docs/Apps_&_Services-Overview.md"
-      - ".stagefreight/badges"
-      - ".stagefreight/manifests"
-    push: true
-    skip_ci: false
-
-badges:
-  items:
+narrate:
+  badges:
     - id: build
       text: build
       value: "{env:BUILD_STATUS}"
@@ -108,39 +91,47 @@ badges:
       value: "{env:BUILD_DATE}"
       color: "#236144"
       output: ".stagefreight/badges/updated.svg"
-
-narrator:
-  - file: "README.md"
-    items:
-      - id: badge.build
-        kind: badge_ref
-        ref: build
-        placement:
-          between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
-          mode: replace
-          inline: true
-      - id: badge.license
-        kind: badge_ref
-        ref: license
-        placement:
-          between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
-          mode: replace
-          inline: true
-      - id: badge.updated
-        kind: badge_ref
-        ref: updated
-        placement:
-          between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
-          mode: replace
-          inline: true
-
-  - file: "docs/Apps_&_Services-Overview.md"
-    items:
-      - id: cluster-inventory
-        kind: k8s-inventory
-        placement:
-          between: ["<!-- sf:k8s-inventory:start -->", "<!-- sf:k8s-inventory:end -->"]
-          mode: replace
+  patches:
+    - file: "README.md"
+      items:
+        - id: badge.build
+          kind: badge_ref
+          ref: build
+          placement:
+            between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
+            mode: replace
+            inline: true
+        - id: badge.license
+          kind: badge_ref
+          ref: license
+          placement:
+            between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
+            mode: replace
+            inline: true
+        - id: badge.updated
+          kind: badge_ref
+          ref: updated
+          placement:
+            between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
+            mode: replace
+            inline: true
+    - file: "docs/Apps_&_Services-Overview.md"
+      items:
+        - id: cluster-inventory
+          kind: k8s-inventory
+          placement:
+            between: ["<!-- sf:k8s-inventory:start -->", "<!-- sf:k8s-inventory:end -->"]
+            mode: replace
+  commit:
+    type: docs
+    message: "refresh generated docs and badges"
+    add:
+      - "README.md"
+      - "docs/Apps_&_Services-Overview.md"
+      - ".stagefreight/badges"
+      - ".stagefreight/manifests"
+    push: true
+    skip_ci: false
 
 lint:
   level: full
