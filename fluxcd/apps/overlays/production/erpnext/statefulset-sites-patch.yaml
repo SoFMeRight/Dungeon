@@ -9,14 +9,14 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: copy-assets
-          image: docker.io/frappe/erpnext:v15.115.0
+          image: docker.io/frappe/erpnext:v15.117.0
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_SITES_DATA
             - name: sites-data
               mountPath: /mnt/sites
         - name: configurator
-          image: docker.io/frappe/erpnext:v15.115.0
+          image: docker.io/frappe/erpnext:v15.117.0
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_SITES_DATA
@@ -27,7 +27,7 @@ spec:
             - name: logs-data
               mountPath: /home/frappe/frappe-bench/logs
         - name: create-site
-          image: docker.io/frappe/erpnext:v15.115.0
+          image: docker.io/frappe/erpnext:v15.117.0
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_SITES_DATA
@@ -39,7 +39,7 @@ spec:
               mountPath: /home/frappe/frappe-bench/logs
       containers:
         - name: backend
-          image: docker.io/frappe/erpnext:v15.115.0
+          image: docker.io/frappe/erpnext:v15.117.0
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_SITES_DATA
