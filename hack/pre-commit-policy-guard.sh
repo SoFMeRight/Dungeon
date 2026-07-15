@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
-# pre-commit-policy-guard.sh — Detect likely stale generated network/security policy.
+# pre-commit-policy-guard.sh — verify generated network/security policy matches the repo.
 #
-# Called by pre-commit when staged changes touch files that can affect
-# derived policy (HTTPRoutes, Services, Gatus annotations, generator scripts,
-# generated policy files). Uses --check mode only — never auto-regenerates.
+# Derives policy from the repo's own manifests with PolySieve (the repo is the source of truth)
+# and fails if the committed policy is stale. Best-effort --cluster augmentation resolves
+# Helm/operator-rendered backends when the cluster is reachable; offline it degrades to repo-only
+# and PolySieve's honesty gate preserves rather than prunes, so it never falsely reports drift for
+# backends it cannot see.
 #
 # Override: SKIP_GENERATED_POLICY_GUARD=1 git commit ...
 set -euo pipefail
@@ -12,44 +14,34 @@ if [ "${SKIP_GENERATED_POLICY_GUARD:-}" = "1" ]; then
   exit 0
 fi
 
-# Cluster availability — checked once
-CLUSTER_OK=false
-if command -v kubectl &>/dev/null && kubectl cluster-info &>/dev/null 2>&1; then
-  CLUSTER_OK=true
+IMAGE="docker.io/prplanit/polysieve:v0.0.2"
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "policy guard: docker unavailable — skipping (install docker to enable the PolySieve check)"
+  exit 0
 fi
 
-STALE_GENERATORS=()
-
-for gen in hack/gen-cilium-backend-ports.sh hack/gen-gateway-ingress-policies.sh; do
-  [ -x "$gen" ] || continue
-  if $CLUSTER_OK; then
-    if ! "$gen" --check &>/dev/null; then
-      STALE_GENERATORS+=("  ./$gen --generate")
-    fi
-  else
-    STALE_GENERATORS+=("  ./$gen --generate  (cluster unreachable, cannot verify)")
-  fi
-done
-
-if [ ${#STALE_GENERATORS[@]} -gt 0 ]; then
-  echo ""
-  echo "Generated policy may be stale due to staged changes."
-  echo ""
-  echo "Affected generators:"
-  for g in "${STALE_GENERATORS[@]}"; do
-    echo "$g"
-  done
-  echo ""
-  echo "Why this was blocked:"
-  echo "  Changes were detected in files that can affect derived network/security"
-  echo "  policy. Generated policy is not updated automatically because that would"
-  echo "  implicitly bless security-surface changes."
-  echo ""
-  echo "Next step:"
-  echo "  Run the generator(s), review the diff, stage intended changes, and commit again."
-  echo ""
-  echo "Override:"
-  echo "  SKIP_GENERATED_POLICY_GUARD=1 git commit ..."
-  echo ""
-  exit 1
+# Mount the kubeconfig for best-effort cluster augmentation when it exists.
+kube_dir="$(dirname "${KUBECONFIG:-$HOME/.kube/config}")"
+kube_args=()
+if [ -d "$kube_dir" ]; then
+  kube_args=(--network host -v "${kube_dir}:/root/.kube:ro")
 fi
+
+if docker run --rm "${kube_args[@]}" -v "$PWD:/repo" -w /repo "$IMAGE" \
+    check --profile dungeon --cluster; then
+  exit 0
+fi
+
+cat <<EOF
+
+Generated network/security policy is stale.
+
+Regenerate it, review the diff, stage the intended changes, and commit again:
+  docker run --rm --network host -v "\$HOME/.kube:/root/.kube:ro" \\
+    -v "\$PWD:/repo" -w /repo $IMAGE generate --profile dungeon --cluster
+
+Override:
+  SKIP_GENERATED_POLICY_GUARD=1 git commit ...
+EOF
+exit 1

@@ -58,17 +58,16 @@ repos:
         exclude: ^(Makefile|.*\.mk|.*\.go)$
 
   # Generated network/security policy guard.
-  # Detects when staged changes may have made derived policy stale.
-  # Does NOT auto-regenerate — that would implicitly bless security-surface
-  # changes. Instead, blocks and requires intentional follow-through.
+  # Derives policy from the repo with PolySieve and blocks if the committed policy is stale.
+  # Does NOT auto-regenerate — that would implicitly bless security-surface changes.
   - repo: local
     hooks:
       - id: generated-policy-guard
-        name: Check for likely stale generated network/security policy
+        name: Check for stale generated network/security policy (PolySieve)
         entry: hack/pre-commit-policy-guard.sh
         language: script
         pass_filenames: false
-        files: (hack/gen-(cilium-backend-ports|gateway-ingress-policies)\.sh|fluxcd/.*(httproute|cilium-policies|istio-policies|gatus).*\.yaml|fluxcd/apps/.*/(statefulset|deployment|service).*\.yaml)
+        files: (fluxcd/.*(httproute|cilium-policies|istio-policies|gatus).*\.yaml|fluxcd/apps/.*/(statefulset|deployment|service).*\.yaml)
         stages: [pre-commit]
 
   # Kustomize validation
