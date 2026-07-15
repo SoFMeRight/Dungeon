@@ -95,6 +95,7 @@ resources:
   - reactive-resume
   - roundcube-primary-gmail
   # Utilities
+  - cloudflare-ddns
   - endlessh-go
   - shlink
   - google-webfonts-helper

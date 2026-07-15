@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-ddns-config
+data:
+  DOMAINS: "cm.arbitorium.com,pm.arbitorium.com"
+  PROXIED: "false"
+  IP4_PROVIDER: "cloudflare.trace"
+  IP6_PROVIDER: "none"
+  UPDATE_CRON: "@every 5m"
+  TZ: "Etc/UTC"

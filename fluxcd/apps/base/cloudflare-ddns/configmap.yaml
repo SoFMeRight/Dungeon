@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-ddns-config
+# Non-secret runtime config (the API token comes from the ExternalSecret).
+data:
+  DOMAINS: PLACEHOLDER_DOMAINS
+  PROXIED: PLACEHOLDER_PROXIED
+  IP4_PROVIDER: PLACEHOLDER_IP4_PROVIDER
+  IP6_PROVIDER: PLACEHOLDER_IP6_PROVIDER
+  UPDATE_CRON: PLACEHOLDER_UPDATE_CRON
+  TZ: PLACEHOLDER_TZ

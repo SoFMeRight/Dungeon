@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflare-ddns
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflare-ddns
+  template:
+    metadata:
+      labels:
+        app: cloudflare-ddns
+    spec:
+      serviceAccountName: cloudflare-ddns
+      containers:
+        - name: cloudflare-ddns
+          image: PLACEHOLDER_IMAGE
+          envFrom:
+            - configMapRef:
+                name: cloudflare-ddns-config
+            - secretRef:
+                name: cloudflare-ddns-secrets
+          resources:
+            requests:
+              cpu: PLACEHOLDER_CPU
+              memory: PLACEHOLDER_MEMORY
+            limits:
+              cpu: PLACEHOLDER_CPU_LIMIT
+              memory: PLACEHOLDER_MEMORY_LIMIT
