@@ -1,0 +1,37 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: ceph-dashboard-health-xylem
+  namespace: arylls-lookout
+spec:
+  workloadSelector:
+    labels:
+      gateway.networking.k8s.io/gateway-name: xylem-gateway
+  configPatches:
+    # Active HTTP health check on the ceph-dashboard upstream. The Ceph mgr dashboard is
+    # active/standby: only the active mgr answers 200, standby mgrs answer 500. Passive
+    # outlierDetection ejects then re-admits on a timer, so requests flap. Active checking
+    # keeps standbys out of the load-balancing pool until they pass, and re-admits a mgr
+    # within one interval after failover. Probes reuse the cluster's originate-TLS socket
+    # from the DestinationRule.
+    - applyTo: CLUSTER
+      match:
+        context: GATEWAY
+        cluster:
+          service: ceph-dashboard.gorons-bracelet.svc.cluster.local
+          portNumber: 8443
+      patch:
+        operation: MERGE
+        value:
+          health_checks:
+            - timeout: 3s
+              interval: 10s
+              no_traffic_interval: 10s
+              unhealthy_threshold: 2
+              healthy_threshold: 1
+              http_health_check:
+                host: ceph.pcfae.com
+                path: /
+                expected_statuses:
+                  - start: 200
+                    end: 400
