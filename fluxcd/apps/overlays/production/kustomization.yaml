@@ -104,6 +104,7 @@ resources:
   - mazanoke
   - renovate
   # External Services
+  - ceph-dashboard
   - fusionpbx-external
   # - home-assistant-external  # Replaced by in-cluster home-assistant
   - mailcow-external
