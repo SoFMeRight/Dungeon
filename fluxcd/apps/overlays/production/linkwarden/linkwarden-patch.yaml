@@ -29,7 +29,7 @@ spec:
           image: docker.io/curlimages/curl:8.21.0
       containers:
         - name: linkwarden
-          image: ghcr.io/linkwarden/linkwarden:v2.14.1
+          image: ghcr.io/linkwarden/linkwarden:v2.15.1
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
