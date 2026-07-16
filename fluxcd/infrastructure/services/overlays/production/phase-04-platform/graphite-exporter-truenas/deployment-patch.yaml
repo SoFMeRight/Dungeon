@@ -16,7 +16,7 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: graphite-exporter
-          image: docker.io/prom/graphite-exporter:v0.16.0
+          image: docker.io/prom/graphite-exporter:v0.17.0
           resources:
             requests:
               cpu: 50m
