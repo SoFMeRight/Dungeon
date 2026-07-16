@@ -24,6 +24,16 @@ spec:
       serviceAccountName: kimai
       securityContext:
         fsGroup: 33
+      # Hard spread: one replica per node, so 3 replicas occupy 3 distinct nodes and the tier
+      # genuinely survives 2 concurrent node losses. A replica stays Pending if <3 eligible
+      # nodes are free (acceptable on a 5-worker cluster).
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: kimai
       volumes:
         - name: env-config
           emptyDir: {}
