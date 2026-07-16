@@ -22,6 +22,10 @@ spec:
       volumes:
         - name: env-config
           emptyDir: {}
+        # Ephemeral compiled-cache dir: keeps var/cache OFF the persistent volume so an image
+        # upgrade rebuilds it fresh per pod instead of inheriting a stale cache (which 500s).
+        - name: kimai-cache
+          emptyDir: {}
       initContainers:
         - name: prepare-env
           image: docker.io/busybox:1.38
@@ -170,6 +174,8 @@ spec:
               readOnly: true
             - name: kimai-data
               mountPath: /opt/kimai/var
+            - name: kimai-cache
+              mountPath: /opt/kimai/var/cache
           resources:
             requests:
               cpu: 100m

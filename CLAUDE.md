@@ -11,23 +11,24 @@
   - When working with files in source control, make clean moves that dont create a headache of files!!!!
   - STAY ON TASK when following directions. NO BAND AID, NO FUCKING WORK AROUNDS. IF YOU THINK WE NEED TO GIVE UP or regroup and re-evaluate. ASK. DONT MAKE THE CALL ON YOUR OWN to find alternative solutions or FIND A SHORTCUT. I CAN FIND MY OWN WAYS TO BASTARDIZE THINGS I DONT NEED YOUR FUCKING HELP. I want things done exactly how I ask. If I am to be offered an alternative, conversation should stop till I tell you if I agree/disagree with the alternative proposed.
   - **NEVER drain nodes or force delete database pods without explicit permission** - causes unrecoverable PostgreSQL/MariaDB WAL corruption and RBD data loss. Safe procedure: cordon → audit stateful workloads → migrate database primaries gracefully → drain with --grace-period=300.
-  - **NEVER delete PVCs for CNPG-managed PostgreSQL clusters** - deleting PVCs corrupts the CNPG instance index and breaks cluster management. To heal a stuck/diverged replica, use `ansible-playbook k8s/recovery/hasteward.yml -e engine=cnpg -e cluster_name=<name> -e namespace=<ns> -e mode=repair -e instance_number=<N>` which triages the cluster, then fences the instance, clears pgdata on the existing PVC, runs pg_basebackup from the primary, then unfences. Use `mode=triage` for read-only diagnostics.
-  - **hasteward** (`ansible/k8s/recovery/hasteward.yml`) - HASteward (High Availability Steward) - Ansible playbook that standardizes recovery logic for common stateful services (PostgreSQL, MariaDB) to safely revive stalled replicas where possible
+  - **NEVER delete PVCs for CNPG-managed PostgreSQL clusters** - deleting PVCs corrupts the CNPG instance index and breaks cluster management. To heal a stuck/diverged replica, use `hasteward repair --engine cnpg --cluster <name> --namespace <ns> --instance <N>` which triages the cluster, then fences the instance, clears pgdata on the existing PVC, runs pg_basebackup from the primary, then unfences. Use `hasteward triage --engine cnpg --cluster <name> --namespace <ns>` for read-only diagnostics.
+  - **hasteward** - HASteward (High Availability Steward) - a Go CLI (and operator) that standardizes recovery logic for common stateful services (PostgreSQL, MariaDB) to safely revive stalled replicas where possible. Common flags on every command: `--engine galera|cnpg`, `--cluster <name>`, `--namespace <ns>`
     - Engines: `galera` (MariaDB Galera clusters), `cnpg` (CloudNativePG PostgreSQL clusters)
-    - `mode=triage` - read-only diagnostic, triages all instances
-    - `mode=repair` - triage → safety gate → escrow backup → heal all unhealthy instances → re-triage
-    - `mode=repair -e instance_number=N` - triage → safety gate → escrow backup → heal specific instance
-    - `mode=backup` - take a backup of the cluster (dump to backups_path, or native S3 for CNPG)
-    - `mode=restore` - restore a cluster from a backup (dump method)
-    - `force=true` - override split-brain/healthy checks (targeted repair only)
-    - `backups_path=/path` - local filesystem path for backup storage (required for repair unless no_escrow, required for backup/restore dump)
-    - `no_escrow=true` - skip escrow backup before repair (accept the risk)
-    - `retain_escrow=true` - keep escrow after successful repair (otherwise deleted on success)
-    - `backup_method=dump|native` - dump (default, works everywhere) or native (CNPG barmanObjectStore only)
-    - Galera example: `ansible-playbook k8s/recovery/hasteward.yml -e engine=galera -e cluster_name=osticket-mariadb -e namespace=hyrule-castle -e mode=repair -e instance_number=0 -e backups_path=/backups`
-    - CNPG example: `ansible-playbook k8s/recovery/hasteward.yml -e engine=cnpg -e cluster_name=zitadel-postgres -e namespace=zeldas-lullaby -e mode=repair -e instance_number=3 -e backups_path=/backups`
-    - Backup example: `ansible-playbook k8s/recovery/hasteward.yml -e engine=cnpg -e cluster_name=zitadel-postgres -e namespace=zeldas-lullaby -e mode=backup -e backups_path=/backups`
-    - Restore example: `ansible-playbook k8s/recovery/hasteward.yml -e engine=galera -e cluster_name=osticket-mariadb -e namespace=hyrule-castle -e mode=restore -e backups_path=/backups`
+    - `hasteward triage` - read-only diagnostic, triages all instances
+    - `hasteward repair` - triage → safety gate → escrow backup → heal all unhealthy instances → re-triage
+    - `hasteward repair --instance N` - triage → safety gate → escrow backup → heal specific instance
+    - `hasteward bootstrap` - bootstrap a fully-down Galera cluster from the best candidate
+    - `hasteward backup` - take a backup of the cluster (dump to `--backups-path`, or native S3 for CNPG)
+    - `hasteward restore` - restore a cluster from a backup (dump method)
+    - `hasteward serve` - run the operator (controller + scheduler); watches CNPG Cluster / MariaDB CRs and runs scheduled backups + triage/repair per BackupPolicy
+    - `--force` - override split-brain/healthy checks (targeted repair only)
+    - `--backups-path /path` - local filesystem path for backup storage (required for repair unless `--no-escrow`, required for backup/restore dump)
+    - `--no-escrow` - skip escrow backup before repair (accept the risk)
+    - `--method dump|native` - dump (default, works everywhere) or native (CNPG barmanObjectStore only)
+    - Galera example: `hasteward repair --engine galera --cluster osticket-mariadb --namespace hyrule-castle --instance 0 --backups-path /backups`
+    - CNPG example: `hasteward repair --engine cnpg --cluster zitadel-postgres --namespace zeldas-lullaby --instance 3 --backups-path /backups`
+    - Backup example: `hasteward backup --engine cnpg --cluster zitadel-postgres --namespace zeldas-lullaby --backups-path /backups`
+    - Restore example: `hasteward restore --engine galera --cluster osticket-mariadb --namespace hyrule-castle --backups-path /backups`
 
 - FluxCD Infrastructure Structure:
   - `fluxcd/infrastructure/controllers/base` should contain TEMPLATED infrastructure resources WITHOUT any environment-specific values including: no hardcoded namespaces, image tags, replicas, storage classes, LoadBalancer IPs, cluster-specific annotations (lbipam.cilium.io/*), domain names, URLs, etc.
