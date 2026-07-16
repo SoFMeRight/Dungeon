@@ -16,7 +16,7 @@ spec:
         - name: docker-io-prplanit-pull-secret
       containers:
         - name: plex
-          image: docker.io/plexinc/pms-docker:1.43.2.10687-563d026ea
+          image: docker.io/plexinc/pms-docker:1.43.3.10828-00f62d37d
           env:
             - name: ADVERTISE_IP
               value: "http://172.22.30.123:32400/,https://plex.optcp.com/"
