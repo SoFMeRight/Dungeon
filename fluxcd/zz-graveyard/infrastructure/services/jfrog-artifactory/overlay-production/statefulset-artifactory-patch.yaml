@@ -35,7 +35,7 @@ spec:
               done
       containers:
         - name: artifactory
-          image: releases-docker.jfrog.io/jfrog/artifactory-jcr:7.146.27
+          image: releases-docker.jfrog.io/jfrog/artifactory-jcr:7.146.28
           env:
             - $patch: replace
             - name: JF_ROUTER_ENTRYPOINTS_EXTERNALPORT
