@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: lubelogger
-          image: ghcr.io/hargata/lubelogger:v1.6.8
+          image: ghcr.io/hargata/lubelogger:v1.7.0
           volumeMounts:
             - name: pedestal-of-time-lubelogger-config
               mountPath: /App/config
