@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kimai-scripts
+  labels:
+    app: kimai
+data:
+  # Builds Kimai's DATABASE_URL from the kimai-mariadb-connection secret with a URL-encoded
+  # password, mirroring the StatefulSet's inline prepare-env, so the console CronJobs connect
+  # exactly like the app. Writes to /env-config/database_url for the main container to source.
+  build-db-url.sh: |
+    ENCODED_PASS=$(echo -n "$DB_PASS" | sed 's/+/%2B/g; s/@/%40/g; s/:/%3A/g; s/\//%2F/g')
+    ENCODED_PASS=$(echo -n "$ENCODED_PASS" | sed 's/?/%3F/g; s/#/%23/g; s/\[/%5B/g; s/\]/%5D/g')
+    ENCODED_PASS=$(echo -n "$ENCODED_PASS" | sed 's/!/%21/g; s/\$/%24/g; s/&/%26/g; s/'\''/%27/g')
+    ENCODED_PASS=$(echo -n "$ENCODED_PASS" | sed 's/(/%28/g; s/)/%29/g; s/\*/%2A/g; s/,/%2C/g; s/;/%3B/g; s/=/%3D/g')
+    echo "DATABASE_URL=mysql://${DB_USER}:${ENCODED_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?charset=utf8mb4&serverVersion=mariadb-11.4.2" > /env-config/database_url

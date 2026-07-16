@@ -1,0 +1,71 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: kimai-export-create
+  labels:
+    app: kimai
+spec:
+  # Opt-in: suspended by default. Enable only after setting the export options below to match
+  # your scheduled-export config, then flip suspend to false in the overlay.
+  suspend: true
+  schedule: "10 6 * * *"
+  timeZone: America/Los_Angeles
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            app: kimai
+        spec:
+          restartPolicy: Never
+          serviceAccountName: kimai
+          securityContext:
+            fsGroup: 33
+          volumes:
+            - name: env-config
+              emptyDir: {}
+            - name: scripts
+              configMap:
+                name: kimai-scripts
+                defaultMode: 0555
+          initContainers:
+            - name: prepare-env
+              image: docker.io/busybox:1.38
+              command: ["sh", "/scripts/build-db-url.sh"]
+              env:
+                - name: DB_HOST
+                  valueFrom: {secretKeyRef: {name: kimai-mariadb-connection, key: host}}
+                - name: DB_PORT
+                  valueFrom: {secretKeyRef: {name: kimai-mariadb-connection, key: port}}
+                - name: DB_USER
+                  valueFrom: {secretKeyRef: {name: kimai-mariadb-connection, key: username}}
+                - name: DB_PASS
+                  valueFrom: {secretKeyRef: {name: kimai-mariadb-connection, key: password}}
+                - name: DB_NAME
+                  valueFrom: {secretKeyRef: {name: kimai-mariadb-connection, key: database}}
+              volumeMounts:
+                - name: env-config
+                  mountPath: /env-config
+                - name: scripts
+                  mountPath: /scripts
+          containers:
+            - name: kimai
+              image: docker.io/kimai/kimai2:apache
+              command: ["/bin/bash", "-c"]
+              args:
+                - |
+                  export $(cat /env-config/database_url)
+                  # TODO: add options for your scheduled exports before enabling.
+                  # Run `kimai:export:create --help` in the pod for the full option list.
+                  /opt/kimai/bin/console kimai:export:create --no-interaction
+              env:
+                - name: APP_SECRET
+                  valueFrom: {secretKeyRef: {name: kimai-secret, key: app-secret}}
+              volumeMounts:
+                - name: env-config
+                  mountPath: /env-config
+                  readOnly: true

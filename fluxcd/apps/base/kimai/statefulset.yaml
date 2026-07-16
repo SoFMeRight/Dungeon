@@ -7,7 +7,11 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: kimai
-  replicas: 1
+  # HA: default OrderedReady serializes pod (and migration-init) startup, so replicas never
+  # race on migrations. The only cost is a brief window on a schema-changing update where a
+  # not-yet-updated pod may error a few queries — accepted, vs a full outage when the single
+  # node hosting a 1-replica pod dies (RWO volume reattach makes that a multi-minute outage).
+  replicas: 2
   selector:
     matchLabels:
       app: kimai

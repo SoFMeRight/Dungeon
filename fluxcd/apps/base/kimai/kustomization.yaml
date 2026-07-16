@@ -7,3 +7,8 @@ resources:
   - statefulset.yaml
   - externalsecret.yaml
   - service.yaml
+  - configmap-scripts.yaml
+  # Scheduled console commands — all suspend:true (opt-in); enable per feature in the overlay.
+  - cronjob-stop-all.yaml
+  - cronjob-invoice.yaml
+  - cronjob-export.yaml
