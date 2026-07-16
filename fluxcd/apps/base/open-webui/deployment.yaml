@@ -13,6 +13,15 @@ spec:
       labels:
         app: open-webui
     spec:
+      # Hard spread: one replica per node (matches kimai) — survives node loss; a replica
+      # stays Pending if fewer eligible nodes are free (acceptable on a 5-worker cluster).
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app: open-webui
       containers:
         - name: open-webui
           image: PLACEHOLDER_OPEN_WEBUI_IMAGE

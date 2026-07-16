@@ -5,6 +5,15 @@ metadata:
 spec:
   clusterSize: 3
   serviceAccountName: zitadel-sentinel
+  # Hard spread: one sentinel per node so a single node loss can't take 2/3 of the
+  # sentinel quorum (matches the kimai one-replica-per-node intent).
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app: zitadel-sentinel-sentinel
+          topologyKey: kubernetes.io/hostname
   podSecurityContext:
     runAsUser: 1000
     runAsGroup: 1000
