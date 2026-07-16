@@ -10,7 +10,7 @@ spec:
       - name: jcr-pcfae-dungeon-pull-secret
       containers:
       - name: mariadb
-        image: docker.io/linuxserver/mariadb:11.4.12
+        image: docker.io/linuxserver/mariadb:11.8.8
   volumeClaimTemplates:
   - metadata:
       name: temple-of-time-tiki-wiki-mysql
