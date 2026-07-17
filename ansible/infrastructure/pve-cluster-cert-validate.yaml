@@ -56,7 +56,7 @@
                  if (!(k in s)) { s[k]=1; c[h[i] SUBSEP $2]++ } } }
              END { for (x in c) if (c[x] > 1) { split(x, a, SUBSEP);
                      print a[1]" ["a[2]"] has "c[x]" different keys" } }'
-             {{ kh }} 2>/dev/null || true
+             /etc/pve/local/ssh_known_hosts {{ kh }} 2>/dev/null || true
       register: kh_conflicts
       changed_when: false
       failed_when: false

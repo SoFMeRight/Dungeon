@@ -55,9 +55,10 @@
         - /etc/pve/local/pve-ssl.pem
         - /etc/pve/local/pve-ssl.key
         - /etc/pve/priv/known_hosts
+        - /etc/pve/local/ssh_known_hosts   # the PER-NODE file — where stale host keys actually live
         - /etc/pve/local/pveproxy-ssl.pem
         - /etc/pve/local/pveproxy-ssl.key
-      failed_when: false   # the pveproxy-ssl + known_hosts files may legitimately not exist
+      failed_when: false   # optional files (pveproxy-ssl, either known_hosts) may not exist
 
     # ── Trap 1: a custom pveproxy cert overrides the vanilla node cert ──────────────
     - name: Detect a custom pveproxy cert on this node
@@ -71,16 +72,22 @@
       when: pveproxy_cert.stat.exists
       changed_when: true
 
-    # ── Trap 2: stale hostname/IP entries in the cluster SSH known_hosts ────────────
-    - name: Purge this node's stale SSH host-key entries (hostname, fqdn, all IPs) from the cluster known_hosts
+    # ── Trap 2: stale host-key entries. The AUTHORITATIVE file is the PER-NODE
+    #    /etc/pve/local/ssh_known_hosts (= /etc/pve/nodes/<Node>/ssh_known_hosts) — that is
+    #    what peers read when connecting here, and where a changed host key goes stale
+    #    ("REMOTE HOST IDENTIFICATION HAS CHANGED"). Purge this node's own identifiers from
+    #    it (and the legacy priv/known_hosts) for every name/IP; updatecerts re-adds current.
+    - name: Purge this node's stale SSH host-key entries from BOTH known_hosts files
       ansible.builtin.command:
-        cmd: "ssh-keygen -f /etc/pve/priv/known_hosts -R {{ item }}"
-      loop: >-
-        {{ ([inventory_hostname, ansible_hostname, ansible_fqdn]
-            + (ansible_all_ipv4_addresses | default([]))
-            + (ansible_all_ipv6_addresses | default([]))) | reject('equalto', '') | unique }}
+        cmd: "ssh-keygen -f {{ item.0 }} -R {{ item.1 }}"
+      loop: "{{ ['/etc/pve/local/ssh_known_hosts', '/etc/pve/priv/known_hosts'] | product(node_ids) | list }}"
+      vars:
+        node_ids: >-
+          {{ ([inventory_hostname, ansible_hostname, ansible_fqdn]
+              + (ansible_all_ipv4_addresses | default([]))
+              + (ansible_all_ipv6_addresses | default([]))) | reject('equalto', '') | unique }}
       loop_control:
-        label: "{{ item }}"
+        label: "{{ item.0 }} -R {{ item.1 }}"
       changed_when: true
       failed_when: false   # ssh-keygen -R is a no-op (rc 0) when the host isn't present
 
