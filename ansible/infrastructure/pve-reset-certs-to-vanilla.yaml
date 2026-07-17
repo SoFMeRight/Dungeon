@@ -85,15 +85,23 @@
       changed_when: false
       failed_when: false
 
-    - name: Regenerate the RSA host key + restart sshd so it is actually served
+    - name: Ensure sshd serves an RSA host key that updatecerts records
       when: "'REGEN' in rsa_state.stdout"
       block:
-        - name: Generate a fresh RSA host key pair
-          ansible.builtin.shell: |
-            rm -f /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub
-            ssh-keygen -q -t rsa -b 4096 -N '' -f /etc/ssh/ssh_host_rsa_key
-          changed_when: true
-        - name: Restart sshd to serve the new RSA host key
+        - name: Ensure an RSA host key exists (generate only if missing)
+          ansible.builtin.command:
+            cmd: ssh-keygen -q -t rsa -b 4096 -N '' -f /etc/ssh/ssh_host_rsa_key
+            creates: /etc/ssh/ssh_host_rsa_key
+        # Root cause: a non-stock explicit 'HostKey ed25519' line makes sshd ed25519-only,
+        # dropping the compiled defaults (incl. RSA). An extra HostKey line is ADDITIVE, so
+        # ed25519 stays served too — this just re-adds RSA so updatecerts's key is presented.
+        - name: Configure sshd to serve the RSA host key
+          ansible.builtin.lineinfile:
+            path: /etc/ssh/sshd_config
+            line: HostKey /etc/ssh/ssh_host_rsa_key
+            state: present
+            validate: sshd -t -f %s
+        - name: Restart sshd so the RSA host key is actually served
           ansible.builtin.systemd:
             name: ssh
             state: restarted
