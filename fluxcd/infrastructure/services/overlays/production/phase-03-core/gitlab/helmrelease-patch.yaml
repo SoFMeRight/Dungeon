@@ -184,6 +184,9 @@ spec:
       webservice:
         minReplicas: 3
         maxReplicas: 5
+        # Hard spread: one replica per node (matches kimai) so a node loss can't take
+        # multiple webservice pods. A replica stays Pending if <N eligible nodes free.
+        antiAffinity: hard
         # Trust Gateway proxy to extract real client IP for CSRF protection
         trusted_proxies:
           - "10.144.0.0/12"  # Service CIDR
@@ -192,6 +195,8 @@ spec:
       sidekiq:
         minReplicas: 3
         maxReplicas: 5
+        # Hard spread: one replica per node (matches kimai).
+        antiAffinity: hard
       kas:
         minReplicas: 3
         maxReplicas: 5

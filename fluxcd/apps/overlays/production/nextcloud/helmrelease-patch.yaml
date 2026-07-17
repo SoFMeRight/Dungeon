@@ -19,6 +19,18 @@ spec:
 
     replicaCount: 3
 
+    # Hard spread: one replica per node (matches kimai) so replicas occupy distinct
+    # nodes and survive a single node loss. A replica stays Pending if fewer eligible
+    # nodes are free (acceptable on a 5-worker cluster).
+    affinity:
+      podAntiAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                app.kubernetes.io/name: nextcloud
+                app.kubernetes.io/component: app
+            topologyKey: kubernetes.io/hostname
+
     nextcloud:
       host: ncloud.optcp.com
       trustedDomains:
