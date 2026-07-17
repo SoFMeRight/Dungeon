@@ -16,6 +16,10 @@ spec:
               - cluster.local/ns/hyrule-castle/sa/gitlab-praefect
               - cluster.local/ns/hyrule-castle/sa/gitlab-toolbox
               - cluster.local/ns/hyrule-castle/sa/gitlab-gitaly
+              # Helm-hook Jobs (migrations, praefect DB init) run under their own SAs and
+              # need DB access to complete an upgrade; not discovered by PolySieve (hooks).
+              - cluster.local/ns/hyrule-castle/sa/gitlab-migrations
+              - cluster.local/ns/hyrule-castle/sa/gitlab-praefect-db-init
       to:
         - operation:
             ports: ["5432"]
