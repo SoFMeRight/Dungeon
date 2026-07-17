@@ -51,7 +51,7 @@ spec:
 
         # Enable Thanos sidecar
         thanos:
-          image: quay.io/thanos/thanos:v0.42.0
+          image: quay.io/thanos/thanos:v0.42.2
           volumeMounts:
             - name: thanos-objstore-config
               mountPath: /etc/thanos/objstore
