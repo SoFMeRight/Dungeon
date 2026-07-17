@@ -16,6 +16,7 @@ spec:
               - cluster.local/ns/hyrule-castle/sa/gitlab-kas
               - cluster.local/ns/hyrule-castle/sa/gitlab-gitlab-exporter
               - cluster.local/ns/hyrule-castle/sa/gitlab-toolbox
+              - cluster.local/ns/hyrule-castle/sa/gitlab-migrations
       to:
         - operation:
             ports: ["26379"]
