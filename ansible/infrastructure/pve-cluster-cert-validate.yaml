@@ -54,6 +54,7 @@
              END{for(x in c)if(c[x]>1)print x" ("c[x]" keys)"}' {{ kh }} 2>/dev/null || true
       register: kh_conflicts
       changed_when: false
+      failed_when: false
 
     - name: Migration SSH path — connect to each peer under strict host-key checking
       ansible.builtin.command: "ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=yes {{ item }} true"
@@ -66,9 +67,12 @@
       ansible.builtin.shell: >-
         boot=$(( $(date +%s) - $(cut -d. -f1 /proc/uptime) ));
         for f in /etc/ssh/ssh_host_*_key; do [ -f "$f" ] || continue;
-          m=$(stat -c %Y "$f"); [ "$m" -ge "$boot" ] && echo "$(basename "$f") @ $(date -d @"$m")"; done
+          m=$(stat -c %Y "$f");
+          if [ "$m" -ge "$boot" ]; then echo "$(basename "$f") @ $(date -d @"$m")"; fi;
+        done; true
       register: hostkey_regen
       changed_when: false
+      failed_when: false
 
     - name: Time — chrony / NTP synced?
       ansible.builtin.shell: >-
@@ -76,6 +80,7 @@
         (timedatectl show -p NTPSynchronized --value 2>/dev/null | grep -qi true && echo synced || echo NOT_SYNCED)
       register: timesync
       changed_when: false
+      failed_when: false
 
     # ── Assemble findings (one simple conditional append per check) ──
     - name: Start issue list
