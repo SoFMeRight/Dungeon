@@ -203,16 +203,6 @@ spec:
       gitlab-shell:
         minReplicas: 3
         maxReplicas: 5
-      # The migrations Job is a Helm hook that does NOT inherit global.common.labels,
-      # so it needs the postgres/redis access-scope labels explicitly. Without them the
-      # generated mesh policy denies its DB connection ("server closed the connection")
-      # and the 361 schema migrations never run, blocking webservice/sidekiq startup.
-      migrations:
-        podLabels:
-          policy.prplanit.com/cap.postgres: "true"
-          policy.prplanit.com/access-scope-postgres: hyrule-castle.gitlab.postgres
-          policy.prplanit.com/cap.redis: "true"
-          policy.prplanit.com/access-scope-redis: hyrule-castle.gitlab.redis
 
     # Container Registry HA
     registry:
