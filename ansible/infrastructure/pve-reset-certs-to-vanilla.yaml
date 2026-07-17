@@ -72,6 +72,32 @@
       when: pveproxy_cert.stat.exists
       changed_when: true
 
+    # ── Trap 3: updatecerts records the host key ONLY from /etc/ssh/ssh_host_rsa_key.pub
+    #    (RSA-only; it dies otherwise). If sshd serves ed25519-only (modern default), the pinned
+    #    RSA is never presented -> peers get "REMOTE HOST IDENTIFICATION CHANGED". Ensure a fresh
+    #    RSA host key that sshd actually serves BEFORE updatecerts records it below.
+    - name: Check whether sshd serves the RSA host key that updatecerts will record
+      ansible.builtin.shell: |
+        served=$(ssh-keyscan -t rsa -T 5 localhost 2>/dev/null | ssh-keygen -lf - 2>/dev/null | awk '{print $2}')
+        rec=$(ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub 2>/dev/null | awk '{print $2}')
+        { [ -n "$served" ] && [ "$served" = "$rec" ]; } && echo OK || echo REGEN
+      register: rsa_state
+      changed_when: false
+      failed_when: false
+
+    - name: Regenerate the RSA host key + restart sshd so it is actually served
+      when: "'REGEN' in rsa_state.stdout"
+      block:
+        - name: Generate a fresh RSA host key pair
+          ansible.builtin.shell: |
+            rm -f /etc/ssh/ssh_host_rsa_key /etc/ssh/ssh_host_rsa_key.pub
+            ssh-keygen -q -t rsa -b 4096 -N '' -f /etc/ssh/ssh_host_rsa_key
+          changed_when: true
+        - name: Restart sshd to serve the new RSA host key
+          ansible.builtin.systemd:
+            name: ssh
+            state: restarted
+
     # ── Trap 2: stale host-key entries. The AUTHORITATIVE file is the PER-NODE
     #    /etc/pve/local/ssh_known_hosts (= /etc/pve/nodes/<Node>/ssh_known_hosts) — that is
     #    what peers read when connecting here, and where a changed host key goes stale
@@ -83,7 +109,7 @@
       loop: "{{ ['/etc/pve/local/ssh_known_hosts', '/etc/pve/priv/known_hosts'] | product(node_ids) | list }}"
       vars:
         node_ids: >-
-          {{ ([inventory_hostname, ansible_hostname, ansible_fqdn]
+          {{ ([inventory_hostname, inventory_hostname | capitalize, ansible_hostname, ansible_fqdn]
               + (ansible_all_ipv4_addresses | default([]))
               + (ansible_all_ipv6_addresses | default([]))) | reject('equalto', '') | unique }}
       loop_control:
