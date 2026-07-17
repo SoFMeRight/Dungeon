@@ -14,6 +14,8 @@
 #   2. root CA validity        6. migration SSH path to every peer (strict host-key check)
 #   3. node pve-ssl vs CA      7. SSH host keys regenerated on boot (the "breaks every boot" cause)
 #   4. custom pveproxy-ssl      8. time sync (cert validity depends on it)
+#                               9. RSA host key sshd-serves vs updatecerts-records (the PVE
+#                                  RSA-only regression: nodes serve ed25519, updatecerts pins RSA)
 #
 - name: Ad Arbitorium - GitOps - Infrastructure - Validate Proxmox certs + SSH trust
   hosts: proxmox
@@ -86,6 +88,18 @@
       changed_when: false
       failed_when: false
 
+    - name: RSA host key — does sshd SERVE the RSA key that updatecerts records? (PVE regression)
+      ansible.builtin.shell: |
+        rec=$(ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub 2>/dev/null | awk '{print $2}')
+        served=$(ssh-keyscan -t rsa -T 5 localhost 2>/dev/null | ssh-keygen -lf - 2>/dev/null | awk '{print $2}')
+        if [ -z "$rec" ]; then echo NORSAKEY;
+        elif [ -z "$served" ]; then echo "NOTSERVED rec=$rec";
+        elif [ "$rec" != "$served" ]; then echo "MISMATCH rec=$rec served=$served";
+        else echo OK; fi
+      register: rsa_serve
+      changed_when: false
+      failed_when: false
+
     # ── Assemble findings (one simple conditional append per check) ──
     - name: Start issue list
       ansible.builtin.set_fact:
@@ -134,6 +148,17 @@
       ansible.builtin.set_fact:
         pve_issues: "{{ pve_issues + ['time NOT synced -> fix NTP; cert time-validity fails at boot'] }}"
       when: "'synced' not in timesync.stdout"
+
+    - name: "flag: RSA host-key regression (updatecerts records an RSA key sshd does not serve)"
+      ansible.builtin.set_fact:
+        pve_issues: "{{ pve_issues + [rsa_msg] }}"
+      vars:
+        rsa_msg: >-
+          RSA host-key regression ({{ rsa_serve.stdout | trim }}): pvecm updatecerts records
+          ONLY the RSA key from /etc/ssh/ssh_host_rsa_key.pub, but sshd here serves ed25519 ->
+          peers get REMOTE HOST IDENTIFICATION CHANGED and migration fails. Fix: regenerate the
+          RSA host key, make sshd serve it, then pvecm updatecerts -f.
+      when: "'OK' not in rsa_serve.stdout"
 
     - name: Per-node verdict
       ansible.builtin.debug:
