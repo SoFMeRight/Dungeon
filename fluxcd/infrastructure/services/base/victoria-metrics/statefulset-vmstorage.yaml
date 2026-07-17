@@ -21,6 +21,10 @@ spec:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
           whenUnsatisfiable: DoNotSchedule
+          # StatefulSet revision label (not pod-template-hash): count only same-revision
+          # pods so a rolling update doesn't stall on the old replica.
+          matchLabelKeys:
+            - controller-revision-hash
           labelSelector:
             matchLabels:
               app: vmstorage
