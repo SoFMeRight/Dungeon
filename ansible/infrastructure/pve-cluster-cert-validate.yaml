@@ -48,10 +48,15 @@
         path: /etc/pve/local/pveproxy-ssl.pem
       register: pveproxy
 
-    - name: known_hosts — hosts that have more than one distinct key (stale/conflicting)
+    - name: known_hosts — same host+algorithm recorded with DIFFERENT keys (real conflict)
       ansible.builtin.shell: >-
-        awk '{split($1,h,",");k=$2" "$3;for(i in h){hk=h[i] SUBSEP k;if(!(hk in s)){s[hk]=1;c[h[i]]++}}}
-             END{for(x in c)if(c[x]>1)print x" ("c[x]" keys)"}' {{ kh }} 2>/dev/null || true
+        awk '/^[ \t]*#/ || NF < 3 { next }
+             { split($1, h, ",");
+               for (i in h) { k = h[i] SUBSEP $2 SUBSEP $3;
+                 if (!(k in s)) { s[k]=1; c[h[i] SUBSEP $2]++ } } }
+             END { for (x in c) if (c[x] > 1) { split(x, a, SUBSEP);
+                     print a[1]" ["a[2]"] has "c[x]" different keys" } }'
+             {{ kh }} 2>/dev/null || true
       register: kh_conflicts
       changed_when: false
       failed_when: false
@@ -94,7 +99,7 @@
     - name: "flag: not quorate"
       ansible.builtin.set_fact:
         pve_issues: "{{ pve_issues + ['NOT QUORATE -> cluster/corosync problem; /etc/pve is read-only, migration cannot work'] }}"
-      when: "'Quorate: Yes' not in quorum.stdout"
+      when: not (quorum.stdout is search('Quorate:\\s+Yes'))
 
     - name: "flag: root CA"
       ansible.builtin.set_fact:
