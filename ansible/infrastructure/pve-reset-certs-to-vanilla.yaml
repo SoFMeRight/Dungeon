@@ -1,0 +1,125 @@
+---
+# Ad Arbitorium - GitOps - Infrastructure - Reset Proxmox certs to vanilla
+#
+# WHY: restore stock Proxmox self-signed PKI on every node and clean the cluster SSH trust,
+# so node-to-node VM migration stops failing (and the web UI stays on the vanilla cert).
+# Public TLS is fronted by Cloudflare (wildcard); Proxmox itself only needs its own vanilla
+# self-signed certs, and migration is internal, so this is independent of CF.
+#
+# THREE things `pvecm updatecerts` does NOT fix on its own (the traps this playbook covers):
+#   1. A custom /etc/pve/nodes/<node>/pveproxy-ssl.{pem,key} OVERRIDES the vanilla node cert
+#      and updatecerts never removes it (the wiki reset misses this too — it's a known bug).
+#      -> `pvenode cert delete --restart 1` deletes the custom web cert + restarts pveproxy.
+#   2. Stale hostname/IP entries in /etc/pve/priv/known_hosts (classic after a node was
+#      REPLACED/reinstalled with the same name/IP). updatecerts ADDS entries but does not
+#      PURGE the conflicting stale ones -> migration keeps failing across reboots.
+#      -> purge each node's hostname + IPs, THEN updatecerts re-adds them clean.
+#   3. The cluster ROOT CA (/etc/pve/pve-root-ca.pem) is created once and NEVER regenerated
+#      by updatecerts. If it's inconsistent, see the escalation block at the end.
+#
+# SAFETY:
+#   - serial: 1  -> one node at a time; quorum + UI stay up while pveproxy restarts roll.
+#   - backs up CA + node cert/key (+ any pveproxy cert) on each node before touching anything.
+#   - does NOT regenerate the root CA and does NOT restart corosync/pve-cluster.
+#
+# If it STILL re-breaks every boot after this, the node is regenerating its SSH host keys on
+# boot (cloud-init / first-boot / cloned template): check `ls -l /etc/ssh/ssh_host_*`.
+#
+- name: Ad Arbitorium - GitOps - Infrastructure - Reset Proxmox certs to vanilla
+  hosts: proxmox
+  become: true
+  serial: 1
+  gather_facts: true
+  vars:
+    pve_cert_backup_root: /root/pve-cert-backups
+
+  tasks:
+    - name: Compute a per-run backup directory
+      ansible.builtin.set_fact:
+        pve_cert_backup_dir: "{{ pve_cert_backup_root }}/{{ ansible_date_time.iso8601_basic_short }}"
+
+    - name: Ensure the backup directory exists
+      ansible.builtin.file:
+        path: "{{ pve_cert_backup_dir }}"
+        state: directory
+        mode: "0700"
+
+    - name: Back up the current cluster CA, node cert/key, cluster known_hosts, + any custom web cert
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "{{ pve_cert_backup_dir }}/"
+        remote_src: true
+        mode: preserve
+      loop:
+        - /etc/pve/pve-root-ca.pem
+        - /etc/pve/local/pve-ssl.pem
+        - /etc/pve/local/pve-ssl.key
+        - /etc/pve/priv/known_hosts
+        - /etc/pve/local/pveproxy-ssl.pem
+        - /etc/pve/local/pveproxy-ssl.key
+      failed_when: false   # the pveproxy-ssl + known_hosts files may legitimately not exist
+
+    # ── Trap 1: a custom pveproxy cert overrides the vanilla node cert ──────────────
+    - name: Detect a custom pveproxy cert on this node
+      ansible.builtin.stat:
+        path: /etc/pve/local/pveproxy-ssl.pem
+      register: pveproxy_cert
+
+    - name: Delete the custom web cert the proper way (falls back to vanilla pve-ssl + restarts pveproxy)
+      ansible.builtin.command:
+        cmd: pvenode cert delete --restart 1
+      when: pveproxy_cert.stat.exists
+      changed_when: true
+
+    # ── Trap 2: stale hostname/IP entries in the cluster SSH known_hosts ────────────
+    - name: Purge this node's stale SSH host-key entries (hostname, fqdn, all IPs) from the cluster known_hosts
+      ansible.builtin.command:
+        cmd: "ssh-keygen -f /etc/pve/priv/known_hosts -R {{ item }}"
+      loop: >-
+        {{ ([inventory_hostname, ansible_hostname, ansible_fqdn]
+            + (ansible_all_ipv4_addresses | default([]))
+            + (ansible_all_ipv6_addresses | default([]))) | reject('equalto', '') | unique }}
+      loop_control:
+        label: "{{ item }}"
+      changed_when: true
+      failed_when: false   # ssh-keygen -R is a no-op (rc 0) when the host isn't present
+
+    # ── Regenerate node cert from the shared CA + re-add fresh SSH host keys ─────────
+    - name: Regenerate this node's pve-ssl cert from the cluster CA + repopulate cluster SSH trust
+      ansible.builtin.command:
+        cmd: pvecm updatecerts -f
+      register: updatecerts
+      changed_when: true
+
+    - name: Restart Proxmox services (one node at a time via serial)
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        state: restarted
+      loop:
+        - pvedaemon
+        - pveproxy
+        - pvestatd
+
+    - name: Verify the regenerated node cert validates against the cluster CA
+      ansible.builtin.command:
+        cmd: openssl verify -CAfile /etc/pve/pve-root-ca.pem /etc/pve/local/pve-ssl.pem
+      register: cert_verify
+      changed_when: false
+      failed_when: "'OK' not in cert_verify.stdout"
+
+    - name: Report
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }}: custom web cert cleared (if any), stale known_hosts purged,
+          node cert regenerated + verified against the cluster CA. Backup at {{ pve_cert_backup_dir }}.
+
+# ── ESCALATION: broken cluster ROOT CA (only if migration still fails after the above) ──
+# /etc/pve is pmxcfs — SHARED across all nodes — so pve-root-ca.pem is ONE file. Delete it
+# exactly ONCE, then updatecerts node-by-node. A per-node loop that deletes it everywhere
+# would wipe the freshly-created CA. Do this by hand, deliberately:
+#   # on ONE node (it's cluster-shared):
+#   cp -a /etc/pve/pve-root-ca.pem{,.bak}; cp -a /etc/pve/priv/pve-root-ca.key{,.bak}
+#   rm -f /etc/pve/pve-root-ca.pem /etc/pve/priv/pve-root-ca.key /etc/pve/priv/pve-root-ca.srl
+#   pvecm updatecerts -f          # recreates the CA + this node's cert
+#   # then on EVERY OTHER node:  pvecm updatecerts -f   (re-sign against the new CA)
+#   # restart pvedaemon/pveproxy/pvestatd on all nodes.
