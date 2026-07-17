@@ -1,0 +1,135 @@
+---
+# Ad Arbitorium - GitOps - Infrastructure - Validate Proxmox certs + SSH trust
+#
+# READ-ONLY. Finds the ACTUAL cert / SSH-trust issues that break VM migration or the web UI,
+# and prints a per-node verdict with the exact remediation. Changes NOTHING (every task is
+# changed_when: false, no state modules). Run this FIRST, then remediate only what it flags
+# with pve-reset-certs-to-vanilla.yaml.
+#
+# Run via your ansible docker container:
+#   ansible-playbook -i ansible/inventory ansible/infrastructure/pve-cluster-cert-validate.yaml
+#
+# Checks (per node — /etc/pve is shared, but SSH/host-key/time are per-node):
+#   1. cluster quorum          5. known_hosts conflicting keys
+#   2. root CA validity        6. migration SSH path to every peer (strict host-key check)
+#   3. node pve-ssl vs CA      7. SSH host keys regenerated on boot (the "breaks every boot" cause)
+#   4. custom pveproxy-ssl      8. time sync (cert validity depends on it)
+#
+- name: Ad Arbitorium - GitOps - Infrastructure - Validate Proxmox certs + SSH trust
+  hosts: proxmox
+  become: true
+  gather_facts: true
+  vars:
+    ca: /etc/pve/pve-root-ca.pem
+    kh: /etc/pve/priv/known_hosts
+    peers: "{{ groups['proxmox'] | difference([inventory_hostname]) }}"
+
+  tasks:
+    - name: Cluster quorum (pvecm status)
+      ansible.builtin.command: pvecm status
+      register: quorum
+      changed_when: false
+      failed_when: false
+
+    - name: Root CA — not expired
+      ansible.builtin.command: "openssl x509 -checkend 0 -noout -in {{ ca }}"
+      register: ca_check
+      changed_when: false
+      failed_when: false
+
+    - name: Node cert — verifies against the cluster CA
+      ansible.builtin.command: "openssl verify -CAfile {{ ca }} /etc/pve/local/pve-ssl.pem"
+      register: nodecert
+      changed_when: false
+      failed_when: false
+
+    - name: Custom pveproxy cert present? (overrides the vanilla node cert)
+      ansible.builtin.stat:
+        path: /etc/pve/local/pveproxy-ssl.pem
+      register: pveproxy
+
+    - name: known_hosts — hosts that have more than one distinct key (stale/conflicting)
+      ansible.builtin.shell: >-
+        awk '{split($1,h,",");k=$2" "$3;for(i in h){hk=h[i] SUBSEP k;if(!(hk in s)){s[hk]=1;c[h[i]]++}}}
+             END{for(x in c)if(c[x]>1)print x" ("c[x]" keys)"}' {{ kh }} 2>/dev/null || true
+      register: kh_conflicts
+      changed_when: false
+
+    - name: Migration SSH path — connect to each peer under strict host-key checking
+      ansible.builtin.command: "ssh -o BatchMode=yes -o ConnectTimeout=5 -o StrictHostKeyChecking=yes {{ item }} true"
+      loop: "{{ peers }}"
+      register: sshtests
+      changed_when: false
+      failed_when: false
+
+    - name: SSH host keys — regenerated after last boot? (breaks cluster trust every boot)
+      ansible.builtin.shell: >-
+        boot=$(( $(date +%s) - $(cut -d. -f1 /proc/uptime) ));
+        for f in /etc/ssh/ssh_host_*_key; do [ -f "$f" ] || continue;
+          m=$(stat -c %Y "$f"); [ "$m" -ge "$boot" ] && echo "$(basename "$f") @ $(date -d @"$m")"; done
+      register: hostkey_regen
+      changed_when: false
+
+    - name: Time — chrony / NTP synced?
+      ansible.builtin.shell: >-
+        chronyc tracking 2>/dev/null | grep -q 'Leap status *: Normal' && echo synced ||
+        (timedatectl show -p NTPSynchronized --value 2>/dev/null | grep -qi true && echo synced || echo NOT_SYNCED)
+      register: timesync
+      changed_when: false
+
+    # ── Assemble findings (one simple conditional append per check) ──
+    - name: Start issue list
+      ansible.builtin.set_fact:
+        pve_issues: []
+        ssh_fail_peers: >-
+          {{ sshtests.results | default([]) | rejectattr('rc', 'equalto', 0)
+             | selectattr('stderr', 'search', '(?i)host key verification failed|remote host identification has changed')
+             | map(attribute='item') | list }}
+
+    - name: "flag: not quorate"
+      ansible.builtin.set_fact:
+        pve_issues: "{{ pve_issues + ['NOT QUORATE -> cluster/corosync problem; /etc/pve is read-only, migration cannot work'] }}"
+      when: "'Quorate: Yes' not in quorum.stdout"
+
+    - name: "flag: root CA"
+      ansible.builtin.set_fact:
+        pve_issues: "{{ pve_issues + ['root CA missing/expired -> root-CA reset (delete once + updatecerts all nodes)'] }}"
+      when: ca_check.rc != 0
+
+    - name: "flag: node cert"
+      ansible.builtin.set_fact:
+        pve_issues: "{{ pve_issues + ['pve-ssl does NOT verify against the CA -> pvecm updatecerts -f on this node'] }}"
+      when: nodecert.rc != 0
+
+    - name: "flag: custom pveproxy cert"
+      ansible.builtin.set_fact:
+        pve_issues: "{{ pve_issues + ['custom pveproxy-ssl present (overrides vanilla) -> pvenode cert delete --restart 1'] }}"
+      when: pveproxy.stat.exists
+
+    - name: "flag: known_hosts conflicts"
+      ansible.builtin.set_fact:
+        pve_issues: "{{ pve_issues + ['known_hosts conflicts [' + (kh_conflicts.stdout_lines | join('; ')) + '] -> purge hostname+IP, then updatecerts'] }}"
+      when: kh_conflicts.stdout | trim | length > 0
+
+    - name: "flag: migration SSH host-key failures"
+      ansible.builtin.set_fact:
+        pve_issues: "{{ pve_issues + ['migration SSH host-key check FAILS to: ' + (ssh_fail_peers | join(', ')) + ' -> purge those from known_hosts + updatecerts'] }}"
+      when: ssh_fail_peers | length > 0
+
+    - name: "flag: host keys regenerated on boot"
+      ansible.builtin.set_fact:
+        pve_issues: "{{ pve_issues + ['SSH host keys regenerated on boot [' + (hostkey_regen.stdout_lines | join('; ')) + '] -> pin host keys (cloud-init/first-boot/cloned template)'] }}"
+      when: hostkey_regen.stdout | trim | length > 0
+
+    - name: "flag: time not synced"
+      ansible.builtin.set_fact:
+        pve_issues: "{{ pve_issues + ['time NOT synced -> fix NTP; cert time-validity fails at boot'] }}"
+      when: "'synced' not in timesync.stdout"
+
+    - name: Per-node verdict
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }}:
+          {{ 'OK — no cert/SSH-trust issues' if (pve_issues | length == 0)
+             else ((pve_issues | length) ~ ' ISSUE(S):') }}
+          {{ pve_issues if (pve_issues | length > 0) else '' }}
