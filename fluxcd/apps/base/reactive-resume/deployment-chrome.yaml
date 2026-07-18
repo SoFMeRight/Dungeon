@@ -37,7 +37,7 @@ spec:
           resources:
             requests:
               memory: 512Mi
-              cpu: 250m
+              cpu: 30m   # right-sized 2026-07: p95 ~9m (was 250m)
             limits:
               memory: 2Gi
               cpu: 2000m

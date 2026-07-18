@@ -20,7 +20,7 @@ spec:
           resources:
             requests:
               memory: "1Gi"
-              cpu: "500m"
+              cpu: "50m"   # right-sized 2026-07: p95 ~2m (was 500m)
             limits:
               memory: "2Gi"
               cpu: "1000m"
