@@ -54,7 +54,7 @@ data:
         {
           "matchDatasources": ["docker", "helm"],
           "matchUpdateTypes": ["major"],
-          "enabled": false,
+          "dependencyDashboardApproval": true,
           "description": "Disable auto-major updates - require manual review"
         },
         {
