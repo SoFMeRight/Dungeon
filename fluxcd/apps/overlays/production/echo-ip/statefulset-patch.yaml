@@ -19,7 +19,7 @@ spec:
               mountPath: /usr/share/GeoIP
       containers:
         - name: echo-ip
-          image: docker.io/mpolden/echoip@sha256:c2f875e7aa56019db643ae0f12032bd7a72b5be03dafa46a33f449ac3fb6717d
+          image: ghcr.io/homelabhd/echoip:2026.7.0@sha256:9ef5aaf1e26ab3c44202e803d291daa2f3460474dba4e5c7e30393aff4bfc700
           command: []
           args:
             - "-C"
@@ -35,11 +35,19 @@ spec:
             - "-f"
             - "/data/GeoLite2-Country.mmdb"
             - "-t"
-            - "html"
+            - "/opt/echoip/html"
+          envFrom:
+            # ipleek.com branding/theme (escape-hatch env; image ships stock when unset)
+            - configMapRef:
+                name: echo-ip-branding
           volumeMounts:
             - name: compass-echo-ip-data
               mountPath: /data
               readOnly: true
+            # vestigial: the fork bakes templates at /opt/echoip/html and themes via env,
+            # so -t points there and this PVC is no longer read. Left mounted to avoid a
+            # volumeClaimTemplate change (immutable on an existing StatefulSet); drop it
+            # in a future STS recreate.
             - name: compass-echo-ip-html
               mountPath: /html
   volumeClaimTemplates:

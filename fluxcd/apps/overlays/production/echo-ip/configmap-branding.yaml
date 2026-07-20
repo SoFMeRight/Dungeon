@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: echo-ip-branding
+# ipleek.com branding/theme for the HomeLabHD echoip fork. Consumed via envFrom by
+# the echo-ip container (NewBrandFromEnv); assets are baked into the image at
+# /opt/echoip/assets. Escape hatches only — the image ships stock upstream when unset.
+data:
+  # branding
+  ECHOIP_BRAND_ICON: /opt/echoip/assets/leek.gif
+  ECHOIP_BRAND_CAPTION: ipleek.com
+  ECHOIP_BRAND_FOOTER: "© 2026 ipleek · Powered by echoip."
+  # palette — light
+  ECHOIP_COLOR_BG: "#f3f8ee"
+  ECHOIP_COLOR_BG_SURFACE: "#e8f2e0"
+  ECHOIP_COLOR_BORDER: "#cde3c0"
+  ECHOIP_COLOR_TEXT: "#1e3416"
+  ECHOIP_COLOR_TEXT_SECONDARY: "#52774a"
+  ECHOIP_COLOR_ACCENT: "#2d8b21"
+  ECHOIP_COLOR_CODE_BG: "#e8f2e0"
+  ECHOIP_COLOR_IP_COLOR: "#236a17"
+  ECHOIP_COLOR_HERO_BG: "#edf6e6"
+  ECHOIP_COLOR_CODE_ACCENT: "#2d8b21"
+  ECHOIP_COLOR_JSON_BG: "#1b2d15"
+  ECHOIP_COLOR_JSON_TEXT: "#e2f3d9"
+  ECHOIP_COLOR_JSON_BORDER: "#56b03c"
+  ECHOIP_COLOR_TABLE_ROW_HOVER: "#edf6e6"
+  ECHOIP_COLOR_TOP_BAR: "#42bc2c"
+  # palette — dark
+  ECHOIP_COLOR_DARK_BG: "#121a0f"
+  ECHOIP_COLOR_DARK_BG_SURFACE: "#1a2515"
+  ECHOIP_COLOR_DARK_BORDER: "#334529"
+  ECHOIP_COLOR_DARK_TEXT: "#e6f3de"
+  ECHOIP_COLOR_DARK_TEXT_SECONDARY: "#9cbf8d"
+  ECHOIP_COLOR_DARK_ACCENT: "#63cf45"
+  ECHOIP_COLOR_DARK_CODE_BG: "#1a2515"
+  ECHOIP_COLOR_DARK_IP_COLOR: "#86ec6e"
+  ECHOIP_COLOR_DARK_HERO_BG: "#121a0f"
+  ECHOIP_COLOR_DARK_CODE_ACCENT: "#63cf45"
+  ECHOIP_COLOR_DARK_JSON_BG: "#0d1409"
+  ECHOIP_COLOR_DARK_JSON_TEXT: "#d6ecc9"
+  ECHOIP_COLOR_DARK_JSON_BORDER: "#63cf45"
+  ECHOIP_COLOR_DARK_TABLE_ROW_HOVER: "#1a2515"
+  ECHOIP_COLOR_DARK_TOP_BAR: "#63cf45"
