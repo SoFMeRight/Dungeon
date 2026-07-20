@@ -31,7 +31,7 @@ spec:
 
     # Base configuration - override in production overlay
     deployNodeAgent: true
-    upgradeCRDs: false
+    upgradeCRDs: true
 
     # Base server configuration
     configuration:
