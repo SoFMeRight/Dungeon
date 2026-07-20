@@ -1,31 +1,61 @@
 ---
 # kubelet-maxpods.yaml
-# Updates maxPods limit on k8s worker nodes for N+2 failover capacity
+# Durably raise the kubelet maxPods limit across the cluster (N+2 failover +
+# room for velero data-mover pods).
+#
+# WHY THIS TARGETS THE CONFIGMAP (and the old version silently drifted):
+# /var/lib/kubelet/config.yaml is a DERIVED file — kubeadm REGENERATES it from
+# the kube-system/kubelet-config ConfigMap on every `kubeadm upgrade node` /
+# `kubeadm upgrade apply` (you can see it in the upgrade log:
+# "Backing up kubelet config file ... The kubelet configuration ... was
+# successfully upgraded"). If maxPods lives ONLY in the node file, the next
+# kubeadm upgrade regenerates the file from the ConfigMap — which had no maxPods —
+# and the value reverts to the built-in default (110). That is exactly how the
+# 1.34.x node upgrades wiped maxPods back to default.
+#
+# So the SOURCE OF TRUTH is the ConfigMap. Play 1 sets it there; Play 2 re-applies
+# it to each running node for immediate effect (kubeadm regen now PRESERVES it,
+# because the ConfigMap carries it).
+#
 # Run via Semaphore or: ansible-playbook -i inventory k8s/tuning/kubelet-maxpods.yaml
 
-- name: Update kubelet maxPods to 250
-  hosts: k8s_worker
-  serial: 1
+- name: Set kubelet maxPods in the kubeadm ConfigMap (source of truth)
+  hosts: k8s_master[0]
   become: true
-
+  gather_facts: false
   vars:
     max_pods: 250
-    node_name: "{{ inventory_hostname | replace('dungeon_worker_', 'dungeon-chest-') | replace('_', '-') }}"
-
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
   tasks:
-    - name: Check current maxPods setting
-      shell: grep -E "^maxPods:" /var/lib/kubelet/config.yaml || echo "maxPods not set"
-      register: current_maxpods
-      changed_when: false
+    - name: Ensure maxPods={{ max_pods }} in kube-system/kubelet-config
+      shell: |
+        set -eo pipefail
+        cur=$(kubectl -n kube-system get cm kubelet-config -o jsonpath='{.data.kubelet}')
+        if printf '%s\n' "$cur" | grep -qx 'maxPods: {{ max_pods }}'; then
+          echo unchanged; exit 0
+        fi
+        new=$(printf '%s\n' "$cur" | grep -v '^maxPods:'; echo 'maxPods: {{ max_pods }}')
+        kubectl -n kube-system patch cm kubelet-config --type merge \
+          -p "$(python3 -c 'import json,sys; print(json.dumps({"data": {"kubelet": sys.stdin.read()}}))' <<<"$new")"
+        echo patched
+      register: cm_patch
+      changed_when: "'patched' in cm_patch.stdout"
 
-    - name: Update maxPods in kubelet config
+- name: Apply maxPods to each node's kubelet and restart
+  hosts: k8s_master:k8s_worker
+  serial: 1
+  become: true
+  vars:
+    max_pods: 250
+  tasks:
+    - name: Set maxPods in the on-disk kubelet config (immediate; ConfigMap keeps it across upgrades)
       lineinfile:
         path: /var/lib/kubelet/config.yaml
         regexp: '^maxPods:'
         line: 'maxPods: {{ max_pods }}'
         insertafter: '^kind: KubeletConfiguration'
       register: kubelet_config
-      when: "('maxPods: ' ~ max_pods) not in current_maxpods.stdout"
 
     - name: Restart kubelet
       systemd:
@@ -33,12 +63,7 @@
         state: restarted
       when: kubelet_config.changed
 
-    - name: Wait for kubelet to restart
-      pause:
-        seconds: 30
-      when: kubelet_config.changed
-
-    - name: Verify kubelet is running
+    - name: Wait for kubelet to be active
       systemd:
         name: kubelet
       register: kubelet_status
