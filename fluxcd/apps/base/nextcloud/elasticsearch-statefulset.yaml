@@ -23,7 +23,7 @@ spec:
       # bootstrap check anyway. The init container only tripped PodSecurity baseline.
       containers:
         - name: elasticsearch
-          image: docker.io/library/elasticsearch:9.4.3
+          image: docker.io/library/elasticsearch:9.4.4
           ports:
             - name: http
               containerPort: 9200
