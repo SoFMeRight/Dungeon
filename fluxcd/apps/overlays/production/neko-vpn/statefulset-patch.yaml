@@ -21,7 +21,7 @@ spec:
                       - dungeon-chest-001
       containers:
         - name: gluetun
-          image: docker.io/qmcgaw/gluetun:v3.41.1
+          image: docker.io/qmcgaw/gluetun:v3.41.3
           resources:
             requests:
               cpu: "2m"
