@@ -25,6 +25,13 @@ spec:
 
   galera:
     enabled: true
+    # The agent + init containers run the mariadb-operator binary and MUST match the
+    # running operator version (see infrastructure/operators/mariadb-operator). The operator
+    # persists these into the CR on create; bump them together with the operator upgrade.
+    agent:
+      image: ghcr.io/mariadb-operator/mariadb-operator:26.6.0
+    initContainer:
+      image: ghcr.io/mariadb-operator/mariadb-operator:26.6.0
     sst: mariabackup
     replicaThreads: 1
     providerOptions:

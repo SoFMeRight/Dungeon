@@ -47,6 +47,15 @@ data:
             "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\n\\s+- name: COMP_\\d+_VERSION\\n\\s+value: \"?(?<currentValue>[^\"\\n]+)\"?"
           ],
           "description": "Home Assistant custom components (HACS, Dreame, etc.)"
+        },
+        {
+          "customType": "regex",
+          "fileMatch": ["fluxcd/.+\\.yaml$"],
+          "matchStrings": [
+            "image:\\s+(?<depName>ghcr\\.io/mariadb-operator/mariadb-operator):(?<currentValue>\\S+)"
+          ],
+          "datasourceTemplate": "docker",
+          "description": "Galera agent/init images in the MariaDB CRs — run the operator binary, so they track the operator (grouped mariadb-operator)"
         }
       ],
 
@@ -115,6 +124,17 @@ data:
           "groupName": "opnform",
           "matchPackageNames": ["**/jhumanj/**"],
           "commitMessagePrefix": "chore(opnform):"
+        },
+        {
+          // mariadb-operator: the crds chart, the operator chart, and the agent/init
+          // container images (spec.galera.{agent,initContainer}.image, pinned in the
+          // Galera CRs) all run the SAME operator binary and must upgrade in lockstep —
+          // a split (operator 26.x + agent v0.0.x) breaks Galera reconciliation and takes
+          // the cluster down. ghcr.io/mariadb-operator/** matches both the OCI charts
+          // (.../charts/*) and the operator image.
+          "groupName": "mariadb-operator",
+          "matchPackageNames": ["ghcr.io/mariadb-operator/**"],
+          "commitMessagePrefix": "chore(mariadb-operator):"
         },
         {
           // Zitadel login v2 is version-locked to the server (v4+).
