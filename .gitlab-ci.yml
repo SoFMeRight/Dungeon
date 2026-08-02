@@ -18,6 +18,11 @@ stages:
 workflow:
   auto_cancel:
     on_new_commit: interruptible
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: '$CI_COMMIT_MESSAGE =~ /Generated-By: StageFreight/'
+      when: never
+    - when: always
 
 .stagefreight-context: &sf-context
   - export SF_CI_PROVIDER=gitlab
@@ -50,6 +55,7 @@ audition:
     - stagefreight ci run audition
   artifacts:
     paths: [.stagefreight/]
+    when: always
     expire_in: 1 week
   allow_failure: true
 
@@ -83,7 +89,7 @@ review:
   artifacts:
     paths:
       - .stagefreight/security/
-      - .stagefreight/pipeline.json
+      - .stagefreight/subsystems/
     expire_in: 1 week
   allow_failure: true
 
@@ -98,12 +104,16 @@ publish:
     - *sf-context
   script:
     - stagefreight ci run publish
+  artifacts:
+    paths: [.stagefreight/subsystems/]
+    expire_in: 1 week
   allow_failure: true
 
 narrate:
   stage: narrate
   needs:
     - perform
+    - review
     - publish
   variables:
     GIT_DEPTH: 0

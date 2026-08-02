@@ -1,12 +1,12 @@
 version: 1
 
 forges:
-  - id: gitlab
+  gitlab:
     provider: gitlab
     url: "https://gitlab.prplanit.com"
 
 repos:
-  - id: primary
+  primary:
     forge: gitlab
     project: "SoFMeRight/dungeon"
     roles: [primary, publish-origin]
@@ -67,68 +67,98 @@ glossary:
       priority: 10
       release_visible: false
 
-versioning:
-  tag_sources:
-    - id: stable
-      pattern: "^v\\d+\\.\\d+\\.\\d+$"
+git:
+  tags:
+    stable: {pattern: "^v\\d+\\.\\d+\\.\\d+$"}
 
-narrate:
-  badges:
-    - id: build
-      text: build
-      value: "{env:BUILD_STATUS}"
-      color: auto
-      output: ".stagefreight/badges/build.svg"
-      link: "https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines"
-    - id: license
-      text: license
-      value: "AGPL-3.0"
-      color: "#310937"
-      output: ".stagefreight/badges/license.svg"
-      link: LICENSE
-    - id: updated
-      text: updated
-      value: "{env:BUILD_DATE}"
-      color: "#236144"
-      output: ".stagefreight/badges/updated.svg"
-  patches:
-    - file: "README.md"
-      items:
-        - id: badge.build
-          kind: badge_ref
-          ref: build
-          placement:
-            between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
-            mode: replace
-            inline: true
-        - id: badge.license
-          kind: badge_ref
-          ref: license
-          placement:
-            between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
-            mode: replace
-            inline: true
-        - id: badge.updated
-          kind: badge_ref
-          ref: updated
-          placement:
-            between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
-            mode: replace
-            inline: true
-    - file: "docs/Apps_&_Services-Overview.md"
-      items:
-        - id: cluster-inventory
-          kind: k8s-inventory
-          placement:
-            between: ["<!-- sf:k8s-inventory:start -->", "<!-- sf:k8s-inventory:end -->"]
-            mode: replace
+llms:
+  # Model endpoint library — referenced by type: llm stencils via llm: <id>.
+  # AI output is dispatch-only (stdout cards, notifications), never committed.
+  glicynia: {provider: ollama, url: "http://glicynia:11434", model: "deepseek-r1:1.5b"}
+
+stencils:
+  # badges write to scribe.store/{id}.svg (default .stagefreight/scribe) — no output: needed
+  build:
+    label: build
+    message: "{env:BUILD_STATUS}"
+    color: auto
+    link: "https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines"
+  license:
+    label: license
+    message: "AGPL-3.0"
+    color: "#310937"
+    link: LICENSE
+  updated:
+    label: updated
+    message: "{commit.date}"        # YYYY-MM-DD — only churns the README when the date changes
+    color: "#236144"
+  cluster-inventory: {type: k8s-inventory}
+
+  # ── AI stencils (lazy — ollama is only called when a notification dispatches) ──
+  ci-detail:
+    type: text
+    body: |
+      {commit_title}
+      {status} · {project} {ref}
+      Failed in {failure.subsystem} — {failure.reason}
+      {failures}
+      Converged {reconcile.succeeded}/{reconcile.total} {reconcile.units} on {reconcile.cluster}
+      Commits since {changelog.range} — {changelog.count}
+  triage:
+    type: llm
+    llm: glicynia
+    body: |
+      {ci-detail}
+
+      In 2-3 sentences: which kustomizations broke, the likely cause, and the
+      first thing to check on the cluster.
+  recap:
+    type: llm
+    llm: glicynia
+    body: |
+      {summary}
+
+      In one or two sentences, recap this GitOps reconcile for a team chat —
+      plain and direct, lead with what converged. No markdown, no preamble.
+
+notifications:
+  # Phone pings via the in-cluster ntfy (delivery-bag). credentials: NTFY resolves
+  # the NTFY_TOKEN CI variable (write-only token, topic Dungeon-CI).
+  phone:
+    provider: ntfy
+    url: https://ntfy.pcfae.com/Dungeon-CI
+    credentials: NTFY
+  triage:
+    provider: ntfy
+    url: https://ntfy.pcfae.com/Dungeon-CI
+    credentials: NTFY
+    body: "{triage}"
+    when: {outcomes: [failure]}
+  recap:
+    provider: ntfy
+    url: https://ntfy.pcfae.com/Dungeon-CI
+    credentials: NTFY
+    body: "🤖 {recap}"
+    when: {outcomes: [success]}
+
+scribe:
+  files:
+    readme.badges:
+      file: "README.md"
+      between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
+      inline: true
+      items: [build, license, updated]
+    apps.inventory:
+      file: "docs/Apps_&_Services-Overview.md"
+      between: ["<!-- sf:k8s-inventory:start -->", "<!-- sf:k8s-inventory:end -->"]
+      items: [cluster-inventory]
   commit:
     type: docs
     message: "refresh generated docs and badges"
     add:
       - "README.md"
       - "docs/Apps_&_Services-Overview.md"
-      - ".stagefreight/badges"
+      - ".stagefreight/scribe"
       - ".stagefreight/manifests"
     push: true
     skip_ci: false
@@ -145,18 +175,10 @@ lint:
         - "fluxcd/infrastructure/services/base/vaultwarden/externalsecret.yaml"
 
 toolchains:
-  desired:
-    trivy:
-      version: "0.69.3"
-    syft:
-      version: "1.42.3"
-    grype:
-      version: "0.110.0"
-    osv-scanner:
-      version: "2.3.5"
-    cosign:
-      version: "3.0.6"
-    flux:
-      version: "2.8.3"
-    kubectl:
-      version: "1.34.2"
+  trivy: "0.69.3"
+  syft: "1.42.3"
+  grype: "0.110.0"
+  osv-scanner: "2.3.5"
+  cosign: "3.0.6"
+  flux: "2.8.3"
+  kubectl: "1.34.2"
