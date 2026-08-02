@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "cluster": "dungeon",
-  "generated_at": "2026-08-02T16:23:13.194271188Z",
+  "generated_at": "2026-08-02T16:41:49.970388031Z",
   "discovery_status": {
     "complete": true,
     "source": "live_cluster"
@@ -10,7 +10,7 @@
     "arylls-lookout/pve-cluster-proxy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "arylls-lookout",
@@ -29,7 +29,7 @@
     "arylls-lookout/xylem-gateway-istio": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "arylls-lookout",
@@ -48,7 +48,7 @@
     "compass/adguard": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "compass",
@@ -67,7 +67,7 @@
     "compass/adguardhome-sync": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "compass",
@@ -86,7 +86,7 @@
     "compass/chrony": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "compass",
@@ -105,7 +105,7 @@
     "compass/cloudflare-ddns": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "compass",
@@ -124,7 +124,7 @@
     "compass/echo-ip": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "compass",
@@ -143,7 +143,7 @@
     "compass/librespeed-speedtest": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "compass",
@@ -162,7 +162,7 @@
     "compass/netbootxyz": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "compass",
@@ -181,7 +181,7 @@
     "compass/openspeedtest": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "compass",
@@ -200,7 +200,7 @@
     "delivery-bag/ntfy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "delivery-bag",
@@ -219,7 +219,7 @@
     "fairy-bottle/snapshot-controller": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "fairy-bottle",
@@ -238,7 +238,7 @@
     "fairy-bottle/velero": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "fairy-bottle",
@@ -257,7 +257,7 @@
     "flux-system/flux-system": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "flux-system",
@@ -279,7 +279,7 @@
     "gerudo-crest/reflector": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gerudo-crest",
@@ -298,7 +298,7 @@
     "gorons-bracelet/ceph": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -388,7 +388,7 @@
     "gorons-bracelet/cifs-csi-driver": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -410,7 +410,7 @@
     "gorons-bracelet/cloudnative-pg": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -429,7 +429,7 @@
     "gorons-bracelet/gorons-bracelet.cephfs.csi.ceph.com": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -453,7 +453,7 @@
     "gorons-bracelet/gorons-bracelet.rbd.csi.ceph.com": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -477,7 +477,7 @@
     "gorons-bracelet/gpu-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -500,7 +500,7 @@
     "gorons-bracelet/mariadb-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -519,7 +519,7 @@
     "gorons-bracelet/rbd-toolbox": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -538,7 +538,7 @@
     "gorons-bracelet/redis-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -557,7 +557,7 @@
     "gorons-bracelet/rook-ceph": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -576,7 +576,7 @@
     "gorons-bracelet/rook-ceph-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -595,7 +595,7 @@
     "gorons-bracelet/strimzi-cluster-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -614,7 +614,7 @@
     "gossip-stone/beszel": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -633,7 +633,7 @@
     "gossip-stone/gatus": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -653,7 +653,7 @@
     "gossip-stone/grafana": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -672,7 +672,7 @@
     "gossip-stone/graphite-exporter-truenas": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -691,7 +691,7 @@
     "gossip-stone/kube-state-metrics": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -710,7 +710,7 @@
     "gossip-stone/loki": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -732,7 +732,7 @@
     "gossip-stone/nutify": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -750,7 +750,7 @@
     },
     "gossip-stone/prometheus": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -772,14 +772,14 @@
     "gossip-stone/prometheus-exporter": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
         "name": "prometheus-exporter",
         "images": [
-          "cr.pcfae.com/hlhd/prometheus-eaton-ups-exporter:v0.9.3",
-          "docker.io/prompve/prometheus-pve-exporter:3"
+          "docker.io/prompve/prometheus-pve-exporter:3",
+          "cr.pcfae.com/hlhd/prometheus-eaton-ups-exporter:v0.9.3"
         ],
         "image_digests": null
       },
@@ -832,7 +832,7 @@
     "gossip-stone/speedtest": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -892,7 +892,7 @@
     "gossip-stone/umami": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -910,7 +910,7 @@
     },
     "gossip-stone/umami-postgres": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -931,7 +931,7 @@
     "gossip-stone/uptime-kuma": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -950,7 +950,7 @@
     "gossip-stone/vminsert": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -969,7 +969,7 @@
     "gossip-stone/vmselect": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -988,7 +988,7 @@
     "gossip-stone/vmstorage": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -1007,7 +1007,7 @@
     "gossip-stone/weave-gitops": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -1026,7 +1026,7 @@
     "hookshot/boundary": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hookshot",
@@ -1045,15 +1045,15 @@
     "hookshot/guacamole": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hookshot",
         "name": "guacamole",
         "images": [
           "docker.io/guacamole/guacamole:latest",
-          "docker.io/guacamole/guacd:latest",
-          "docker.io/postgres:15-alpine"
+          "docker.io/postgres:15-alpine",
+          "docker.io/guacamole/guacd:latest"
         ],
         "image_digests": null
       },
@@ -1106,7 +1106,7 @@
     "hookshot/rustdesk": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hookshot",
@@ -1125,18 +1125,18 @@
     "hookshot/tactical": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hookshot",
         "name": "tactical",
         "images": [
+          "docker.io/postgres:15-alpine",
           "docker.io/tacticalrmm/tactical-nats:1.5.1",
           "docker.io/tacticalrmm/tactical:1.5.1",
-          "docker.io/tacticalrmm/tactical-meshcentral:1.5.1",
           "docker.io/mongo:4.4",
           "docker.io/redis:7-alpine",
-          "docker.io/postgres:15-alpine",
+          "docker.io/tacticalrmm/tactical-meshcentral:1.5.1",
           "docker.io/tacticalrmm/tactical-frontend:1.5.1",
           "docker.io/tacticalrmm/tactical-nginx:1.5.1"
         ],
@@ -1371,7 +1371,7 @@
     "hyrule-castle/apt-cacher-ng": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1390,7 +1390,7 @@
     "hyrule-castle/bagisto": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1450,7 +1450,7 @@
     "hyrule-castle/bookstack": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1468,7 +1468,7 @@
     },
     "hyrule-castle/bookstack-db": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -1489,7 +1489,7 @@
     "hyrule-castle/calcom": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1508,7 +1508,7 @@
     "hyrule-castle/cell-membrane-gateway-istio": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1527,14 +1527,14 @@
     "hyrule-castle/dolibarr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
         "name": "dolibarr",
         "images": [
-          "docker.io/dolibarr/dolibarr:22.0.5",
-          "docker.io/linuxserver/mariadb:11.8.8"
+          "docker.io/linuxserver/mariadb:11.8.8",
+          "docker.io/dolibarr/dolibarr:22.0.5"
         ],
         "image_digests": null
       },
@@ -1587,15 +1587,15 @@
     "hyrule-castle/erpnext": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
         "name": "erpnext",
         "images": [
           "docker.io/frappe/erpnext:v15.117.0",
-          "docker.io/mariadb:10.11",
-          "docker.io/redis:6.2-alpine"
+          "docker.io/redis:6.2-alpine",
+          "docker.io/mariadb:10.11"
         ],
         "image_digests": null
       },
@@ -1788,7 +1788,7 @@
     "hyrule-castle/gitlab": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1815,7 +1815,7 @@
     "hyrule-castle/gitlab-gitlab-runner": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1833,7 +1833,7 @@
     },
     "hyrule-castle/gitlab-redis": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -1853,7 +1853,7 @@
     },
     "hyrule-castle/gitlab-sentinel": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -1874,7 +1874,7 @@
     "hyrule-castle/harbor": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1898,7 +1898,7 @@
     "hyrule-castle/harbor-proxy-cache-proxy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1916,7 +1916,7 @@
     },
     "hyrule-castle/harbor-redis": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -1937,16 +1937,16 @@
     "hyrule-castle/invoiceninja": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
         "name": "invoiceninja",
         "images": [
-          "docker.io/redis:alpine",
           "docker.io/invoiceninja/invoiceninja-debian:5.13.26",
           "docker.io/nginx:alpine",
-          "docker.io/mysql:8"
+          "docker.io/mysql:8",
+          "docker.io/redis:alpine"
         ],
         "image_digests": null
       },
@@ -2020,17 +2020,17 @@
     "hyrule-castle/opnform": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
         "name": "opnform",
         "images": [
+          "docker.io/postgres:16",
           "docker.io/jhumanj/opnform-api:1.13.2",
           "docker.io/redis:7",
-          "docker.io/nginx:1",
-          "docker.io/postgres:16",
-          "docker.io/jhumanj/opnform-client:1.13.2"
+          "docker.io/jhumanj/opnform-client:1.13.2",
+          "docker.io/nginx:1"
         ],
         "image_digests": null
       },
@@ -2183,7 +2183,7 @@
     "hyrule-castle/orangehrm": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -2201,7 +2201,7 @@
     },
     "hyrule-castle/orangehrm-mariadb": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -2222,7 +2222,7 @@
     "hyrule-castle/osticket-app": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -2241,7 +2241,7 @@
     "hyrule-castle/osticket-mariadb": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -2261,7 +2261,7 @@
     "king-of-red-lions/cert-manager": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
@@ -2282,7 +2282,7 @@
     "king-of-red-lions/istio-cni": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
@@ -2301,7 +2301,7 @@
     "king-of-red-lions/istio-meshmedic": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
@@ -2320,7 +2320,7 @@
     "king-of-red-lions/istiod": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
@@ -2339,7 +2339,7 @@
     "king-of-red-lions/stunner": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
@@ -2399,7 +2399,7 @@
     "king-of-red-lions/ztunnel": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
@@ -2418,7 +2418,7 @@
     "kokiri-forest/linkstack": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "kokiri-forest",
@@ -2436,7 +2436,7 @@
     },
     "kokiri-forest/linkstack-db": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -2457,7 +2457,7 @@
     "kokiri-forest/phloem-gateway-istio": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "kokiri-forest",
@@ -2476,7 +2476,7 @@
     "kube-system/cilium-agent": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2493,7 +2493,7 @@
     "kube-system/cilium-envoy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2510,7 +2510,7 @@
     "kube-system/cilium-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2527,7 +2527,7 @@
     "kube-system/coredns": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2546,7 +2546,7 @@
     "kube-system/hubble-relay": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2563,7 +2563,7 @@
     "kube-system/hubble-ui": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2580,7 +2580,7 @@
     "kube-system/kube-vip": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2599,7 +2599,7 @@
     "kube-system/metrics-server": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2618,7 +2618,7 @@
     "lakitu/alloy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lakitu",
@@ -2638,7 +2638,7 @@
     "lakitu/netalertx": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lakitu",
@@ -2657,7 +2657,7 @@
     "lens-of-truth/crowdsec": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
@@ -2718,7 +2718,7 @@
     "lens-of-truth/frigate": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
@@ -2738,7 +2738,7 @@
     "lens-of-truth/home-assistant": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
@@ -2757,7 +2757,7 @@
     "lens-of-truth/mosquitto": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
@@ -2776,15 +2776,15 @@
     "lens-of-truth/wazuh": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
         "name": "wazuh",
         "images": [
-          "docker.io/wazuh/wazuh-indexer:4.14.6",
           "docker.io/wazuh/wazuh-dashboard:4.14.6",
-          "docker.io/wazuh/wazuh-manager:4.14.6"
+          "docker.io/wazuh/wazuh-manager:4.14.6",
+          "docker.io/wazuh/wazuh-indexer:4.14.6"
         ],
         "image_digests": null
       },
@@ -2857,7 +2857,7 @@
     "lens-of-truth/zigbee2mqtt": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
@@ -2876,7 +2876,7 @@
     "lost-woods/astralfocal-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -2895,7 +2895,7 @@
     "lost-woods/enamorafoto-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -2914,7 +2914,7 @@
     "lost-woods/etherealclique-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -2933,7 +2933,7 @@
     "lost-woods/ferdium": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -2952,7 +2952,7 @@
     "lost-woods/homarr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -2970,7 +2970,7 @@
     },
     "lost-woods/homarr-redis": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -2990,7 +2990,7 @@
     },
     "lost-woods/homarr-sentinel": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -3011,7 +3011,7 @@
     "lost-woods/homelabhelpdesk-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -3030,7 +3030,7 @@
     "lost-woods/kai-hamilton-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -3049,7 +3049,7 @@
     "lost-woods/organizr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -3068,7 +3068,7 @@
     "lost-woods/precisionplanit-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -3087,7 +3087,7 @@
     "lost-woods/sofmeright-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -3106,7 +3106,7 @@
     "lost-woods/yesimvegan-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -3125,7 +3125,7 @@
     "pedestal-of-time/actualbudget": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
@@ -3144,7 +3144,7 @@
     "pedestal-of-time/dailytxt": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
@@ -3163,7 +3163,7 @@
     "pedestal-of-time/homebox": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
@@ -3182,7 +3182,7 @@
     "pedestal-of-time/lubelogger": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
@@ -3201,7 +3201,7 @@
     "pedestal-of-time/monica": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
@@ -3220,7 +3220,7 @@
     },
     "pedestal-of-time/monica-db": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -3241,15 +3241,15 @@
     "pedestal-of-time/paperless": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
         "name": "paperless",
         "images": [
-          "docker.io/library/redis:7",
+          "ghcr.io/paperless-ngx/paperless-ngx:2.20.15",
           "docker.io/postgres:18.4-alpine3.23",
-          "ghcr.io/paperless-ngx/paperless-ngx:2.20.15"
+          "docker.io/library/redis:7"
         ],
         "image_digests": null
       },
@@ -3322,7 +3322,7 @@
     "pedestal-of-time/photoprism": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
@@ -3382,7 +3382,7 @@
     "pedestal-of-time/plex-ms-x": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
@@ -3400,7 +3400,7 @@
     },
     "pedestal-of-time/roundcube": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -3423,7 +3423,7 @@
     "pedestal-of-time/roundcube-primary": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
@@ -3485,15 +3485,15 @@
     "shooting-gallery/ark": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "shooting-gallery",
         "name": "ark",
         "images": [
+          "docker.io/drpsychick/arkserver:latest-v1.6.62",
           "docker.io/acekorneya/asa_server:2_1_latest",
-          "docker.io/library/nginx:alpine",
-          "docker.io/drpsychick/arkserver:latest-v1.6.62"
+          "docker.io/library/nginx:alpine"
         ],
         "image_digests": null
       },
@@ -3586,7 +3586,7 @@
     "shooting-gallery/emulatorjs": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "shooting-gallery",
@@ -3605,7 +3605,7 @@
     "shooting-gallery/minecraft": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "shooting-gallery",
@@ -3624,7 +3624,7 @@
     "shooting-gallery/romm": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "shooting-gallery",
@@ -3642,7 +3642,7 @@
     },
     "shooting-gallery/romm-db": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -3663,7 +3663,7 @@
     "swift-sail/anirra": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3682,7 +3682,7 @@
     "swift-sail/bazarr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3702,7 +3702,7 @@
     "swift-sail/byparr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3722,7 +3722,7 @@
     "swift-sail/downloadarrs": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3748,7 +3748,7 @@
     "swift-sail/jellyseerr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3768,7 +3768,7 @@
     "swift-sail/neko": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3830,7 +3830,7 @@
     "swift-sail/overseerr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3850,7 +3850,7 @@
     "swift-sail/pinchflat": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3870,7 +3870,7 @@
     "swift-sail/prowlarr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3890,7 +3890,7 @@
     "swift-sail/py-kms": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3909,7 +3909,7 @@
     "swift-sail/pyload-ng": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3929,7 +3929,7 @@
     "swift-sail/sabnzbd": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3949,7 +3949,7 @@
     "swift-sail/supermicro-license-generator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3968,7 +3968,7 @@
     "swift-sail/thelounge": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3988,20 +3988,20 @@
     "temple-of-time/appflowy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "appflowy",
         "images": [
-          "docker.io/appflowyinc/gotrue:0.16.5",
-          "docker.io/appflowyinc/appflowy_ai:0.15.18",
-          "docker.io/redis:8.8.0-alpine",
-          "docker.io/nginx:1.31.3-alpine",
-          "docker.io/appflowyinc/appflowy_worker:0.16.5",
           "docker.io/appflowyinc/appflowy_cloud:0.16.5",
+          "docker.io/appflowyinc/gotrue:0.16.5",
           "docker.io/appflowyinc/appflowy_web:0.15.5",
-          "docker.io/appflowyinc/admin_frontend:0.16.5"
+          "docker.io/appflowyinc/appflowy_ai:0.15.18",
+          "docker.io/appflowyinc/admin_frontend:0.16.5",
+          "docker.io/appflowyinc/appflowy_worker:0.16.5",
+          "docker.io/redis:8.8.0-alpine",
+          "docker.io/nginx:1.31.3-alpine"
         ],
         "image_digests": null
       },
@@ -4174,7 +4174,7 @@
     "temple-of-time/calibre-web": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4193,7 +4193,7 @@
     "temple-of-time/ghost": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4211,7 +4211,7 @@
     },
     "temple-of-time/ghost-mysql": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4232,7 +4232,7 @@
     "temple-of-time/immich": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4254,7 +4254,7 @@
     "temple-of-time/jellyfin": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4273,7 +4273,7 @@
     "temple-of-time/joplin": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4333,7 +4333,7 @@
     "temple-of-time/kimai": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4351,7 +4351,7 @@
     },
     "temple-of-time/kimai-mariadb": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4373,7 +4373,7 @@
     "temple-of-time/linkwarden": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4434,7 +4434,7 @@
     "temple-of-time/mealie": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4452,7 +4452,7 @@
     },
     "temple-of-time/mealie-postgres": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4473,7 +4473,7 @@
     "temple-of-time/nextcloud": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4493,7 +4493,7 @@
     },
     "temple-of-time/nextcloud-clamav": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4513,7 +4513,7 @@
     },
     "temple-of-time/nextcloud-elasticsearch": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4533,7 +4533,7 @@
     },
     "temple-of-time/nextcloud-notify-push": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4553,7 +4553,7 @@
     },
     "temple-of-time/nextcloud-redis": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4573,7 +4573,7 @@
     },
     "temple-of-time/nextcloud-sentinel": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4593,7 +4593,7 @@
     },
     "temple-of-time/nextcloud-talk-hpb": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4613,7 +4613,7 @@
     },
     "temple-of-time/nextcloud-whiteboard": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4634,14 +4634,14 @@
     "temple-of-time/open": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "open",
         "images": [
-          "docker.io/redis:7.4-alpine",
-          "ghcr.io/open-webui/open-webui:v0.7.2"
+          "ghcr.io/open-webui/open-webui:v0.7.2",
+          "docker.io/redis:7.4-alpine"
         ],
         "image_digests": null
       },
@@ -4714,16 +4714,16 @@
     "temple-of-time/penpot": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "penpot",
         "images": [
           "docker.io/penpotapp/frontend:2.16.2",
+          "docker.io/penpotapp/exporter:2.16.2",
           "docker.io/redis:7",
           "docker.io/penpotapp/backend:2.16.2",
-          "docker.io/penpotapp/exporter:2.16.2",
           "docker.io/postgres:15"
         ],
         "image_digests": null
@@ -4837,7 +4837,7 @@
     "temple-of-time/photoprism": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4855,7 +4855,7 @@
     },
     "temple-of-time/photoprism-mariadb": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4876,7 +4876,7 @@
     "temple-of-time/plex": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4894,7 +4894,7 @@
     },
     "temple-of-time/reactive": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -4918,16 +4918,16 @@
     "temple-of-time/reactive-resume": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "reactive-resume",
         "images": [
-          "ghcr.io/browserless/chromium:v2.55.0",
-          "docker.io/amruthpillai/reactive-resume:v5.2.3",
           "docker.io/library/postgres:16-alpine",
-          "docker.io/minio/minio:RELEASE.2025-09-07T16-13-09Z"
+          "docker.io/amruthpillai/reactive-resume:v5.2.3",
+          "docker.io/minio/minio:RELEASE.2025-09-07T16-13-09Z",
+          "ghcr.io/browserless/chromium:v2.55.0"
         ],
         "image_digests": null
       },
@@ -5020,15 +5020,15 @@
     "temple-of-time/shlink": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "shlink",
         "images": [
           "docker.io/shlinkio/shlink:5.1.5",
-          "docker.io/linuxserver/mariadb:11.8.8",
-          "docker.io/shlinkio/shlink-web-client:4.8.0"
+          "docker.io/shlinkio/shlink-web-client:4.8.0",
+          "docker.io/linuxserver/mariadb:11.8.8"
         ],
         "image_digests": null
       },
@@ -5101,14 +5101,14 @@
     "temple-of-time/wikijs": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "wikijs",
         "images": [
-          "docker.io/library/postgres:15-alpine",
-          "ghcr.io/requarks/wiki:2"
+          "ghcr.io/requarks/wiki:2",
+          "docker.io/library/postgres:15-alpine"
         ],
         "image_digests": null
       },
@@ -5160,7 +5160,7 @@
     },
     "tingle-tuner/code-server": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -5181,7 +5181,7 @@
     "tingle-tuner/convertx": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5200,7 +5200,7 @@
     "tingle-tuner/draw-io": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5219,7 +5219,7 @@
     "tingle-tuner/endlessh-go": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5238,7 +5238,7 @@
     "tingle-tuner/fairer-pages": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5257,7 +5257,7 @@
     "tingle-tuner/faster-whisper": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5275,7 +5275,7 @@
     },
     "tingle-tuner/filebrowser": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -5296,7 +5296,7 @@
     "tingle-tuner/google-webfonts-helper": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5315,7 +5315,7 @@
     "tingle-tuner/hrconvert2": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5334,7 +5334,7 @@
     "tingle-tuner/it-tools": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5353,7 +5353,7 @@
     "tingle-tuner/libretranslate": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5372,7 +5372,7 @@
     "tingle-tuner/mazanoke": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5391,7 +5391,7 @@
     "tingle-tuner/ollama": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5410,7 +5410,7 @@
     "tingle-tuner/openwakeword": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5429,7 +5429,7 @@
     "tingle-tuner/piper": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5448,7 +5448,7 @@
     "tingle-tuner/searxng": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5466,7 +5466,7 @@
     },
     "tingle-tuner/searxng-redis": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -5487,7 +5487,7 @@
     "tingle-tuner/stable-diffusion-webui": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5506,7 +5506,7 @@
     "wallmaster/anubis": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "wallmaster",
@@ -5525,7 +5525,7 @@
     "zeldas-lullaby/bank-vaults-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -5544,7 +5544,7 @@
     "zeldas-lullaby/external-secrets": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -5563,7 +5563,7 @@
     "zeldas-lullaby/kyverno": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -5585,17 +5585,17 @@
     "zeldas-lullaby/netbird": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "netbird",
         "images": [
-          "docker.io/netbirdio/dashboard:v2.30.1",
           "docker.io/netbirdio/signal:0.64.4",
           "docker.io/netbirdio/relay:0.64.4",
           "docker.io/netbirdio/management:0.64.4",
-          "docker.io/coturn/coturn:4.8.0"
+          "docker.io/coturn/coturn:4.8.0",
+          "docker.io/netbirdio/dashboard:v2.30.1"
         ],
         "image_digests": null
       },
@@ -5708,7 +5708,7 @@
     "zeldas-lullaby/netbox": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -5789,7 +5789,7 @@
     "zeldas-lullaby/oauth2-proxy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -5808,7 +5808,7 @@
     "zeldas-lullaby/semaphore": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -5828,7 +5828,7 @@
     "zeldas-lullaby/twofauth": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -5847,14 +5847,14 @@
     "zeldas-lullaby/unifi": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "unifi",
         "images": [
-          "docker.io/library/mongo:7.0.37",
-          "docker.io/linuxserver/unifi-network-application:9.5.21"
+          "docker.io/linuxserver/unifi-network-application:9.5.21",
+          "docker.io/library/mongo:7.0.37"
         ],
         "image_digests": null
       },
@@ -5907,7 +5907,7 @@
     "zeldas-lullaby/vault": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -5928,7 +5928,7 @@
     "zeldas-lullaby/vault-configurator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -5947,7 +5947,7 @@
     "zeldas-lullaby/vaultwarden": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -5966,7 +5966,7 @@
     "zeldas-lullaby/zitadel": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -5985,7 +5985,7 @@
     "zeldas-lullaby/zitadel-login-v2": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-02T16:23:13.194271188Z"
+        "last_seen": "2026-08-02T16:41:49.970388031Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
@@ -6003,7 +6003,7 @@
     },
     "zeldas-lullaby/zitadel-redis": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
@@ -6023,7 +6023,7 @@
     },
     "zeldas-lullaby/zitadel-sentinel": {
       "lifecycle": {
-        "state": "missing",
+        "state": "graveyard",
         "last_seen": "2026-03-31T07:08:41.438990608Z",
         "missing_since": "2026-08-02T16:23:13.194271188Z"
       },
