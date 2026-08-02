@@ -95,6 +95,9 @@ review:
 
 publish:
   stage: publish
+  id_tokens:
+    STAGEFREIGHT_OIDC:
+      aud: stagefreight
   tags:
     - k8s-dungeon-production
   needs:
@@ -119,7 +122,6 @@ narrate:
     - publish
   variables:
     GIT_DEPTH: 0
-    BUILD_DATE: "$CI_COMMIT_TIMESTAMP"
   before_script:
     - *sf-context
   script:
