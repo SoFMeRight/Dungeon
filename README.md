@@ -1,7 +1,7 @@
 ![Banner](./docs/assets/dungeon-banner.png)
 
 <!-- sf:badges:start -->
-[![build](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/badges/build.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![license](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/badges/license.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/LICENSE) ![updated](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/badges/updated.svg)
+[![build](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/build.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![license](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/license.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/LICENSE) ![updated](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/updated.svg)
 <!-- sf:badges:end -->
 
 > _"When the cluster's down, and the world is on fire, at least you can still run Ansible."_ 🔥
