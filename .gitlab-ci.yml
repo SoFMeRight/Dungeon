@@ -95,6 +95,8 @@ review:
 
 publish:
   stage: publish
+  tags:
+    - k8s-dungeon-production
   needs:
     - perform
     - review

@@ -19,6 +19,11 @@ ci:
   routing:
     perform:
       labels: [k8s-dungeon-production]
+    # publish runs scribe (badges + the k8s-inventory region + docs auto-commit)
+    # — it needs cluster access (in-cluster auth on the production runner), or
+    # the inventory silently stays stale ("no kubeconfig available").
+    publish:
+      labels: [k8s-dungeon-production]
 
 lifecycle:
   mode: gitops
