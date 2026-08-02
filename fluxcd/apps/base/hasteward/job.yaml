@@ -46,7 +46,14 @@ spec:
           volumeMounts:
             - name: backups
               mountPath: /backups
+            # The image is built FROM scratch (no /tmp). restic writes temp pack
+            # files to /tmp during escrow backups, so provide writable scratch
+            # space at runtime rather than baking it into the image.
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - name: backups
           persistentVolumeClaim:
             claimName: hasteward-backups
+        - name: tmp
+          emptyDir: {}

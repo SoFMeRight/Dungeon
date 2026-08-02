@@ -1,5 +1,18 @@
 ---
 # hasteward.yml - HASteward (High Availability Steward)
+#
+# ============================================================================
+# *** DEPRECATED - DO NOT USE ***
+# Superseded by the HASteward Go binary/operator (prplanit/hasteward). This
+# Ansible logic predates the fixed Go recovery engine (trustworthy seqno
+# derivation, fail-closed authority, WAL-stranded classification) and can
+# produce a WRONG assessment on a production DB. Use the binary instead, e.g.:
+#   docker run --rm --network host -e KUBECONFIG=/kube/config \
+#     -v "$HOME/.kube:/kube:ro" prplanit/hasteward:latest \
+#     triage -e galera -c <cluster> -n <namespace>
+# See docs/cnpg-postgres-cluster-recovery-runbook.md (engine-general).
+# ============================================================================
+#
 # Ansible playbook that standardizes recovery logic for common stateful services
 # (PostgreSQL, MariaDB) to safely revive stalled replicas where possible.
 #

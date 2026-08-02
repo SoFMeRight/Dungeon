@@ -11,24 +11,23 @@
   - When working with files in source control, make clean moves that dont create a headache of files!!!!
   - STAY ON TASK when following directions. NO BAND AID, NO FUCKING WORK AROUNDS. IF YOU THINK WE NEED TO GIVE UP or regroup and re-evaluate. ASK. DONT MAKE THE CALL ON YOUR OWN to find alternative solutions or FIND A SHORTCUT. I CAN FIND MY OWN WAYS TO BASTARDIZE THINGS I DONT NEED YOUR FUCKING HELP. I want things done exactly how I ask. If I am to be offered an alternative, conversation should stop till I tell you if I agree/disagree with the alternative proposed.
   - **NEVER drain nodes or force delete database pods without explicit permission** - causes unrecoverable PostgreSQL/MariaDB WAL corruption and RBD data loss. Safe procedure: cordon → audit stateful workloads → migrate database primaries gracefully → drain with --grace-period=300.
-  - **NEVER delete PVCs for CNPG-managed PostgreSQL clusters** - deleting PVCs corrupts the CNPG instance index and breaks cluster management. To heal a stuck/diverged replica, use `hasteward repair --engine cnpg --cluster <name> --namespace <ns> --instance <N>` which triages the cluster, then fences the instance, clears pgdata on the existing PVC, runs pg_basebackup from the primary, then unfences. Use `hasteward triage --engine cnpg --cluster <name> --namespace <ns>` for read-only diagnostics.
-  - **hasteward** - HASteward (High Availability Steward) - a Go CLI (and operator) that standardizes recovery logic for common stateful services (PostgreSQL, MariaDB) to safely revive stalled replicas where possible. Common flags on every command: `--engine galera|cnpg`, `--cluster <name>`, `--namespace <ns>`
-    - Engines: `galera` (MariaDB Galera clusters), `cnpg` (CloudNativePG PostgreSQL clusters)
-    - `hasteward triage` - read-only diagnostic, triages all instances
-    - `hasteward repair` - triage → safety gate → escrow backup → heal all unhealthy instances → re-triage
-    - `hasteward repair --instance N` - triage → safety gate → escrow backup → heal specific instance
-    - `hasteward bootstrap` - bootstrap a fully-down Galera cluster from the best candidate
-    - `hasteward backup` - take a backup of the cluster (dump to `--backups-path`, or native S3 for CNPG)
-    - `hasteward restore` - restore a cluster from a backup (dump method)
-    - `hasteward serve` - run the operator (controller + scheduler); watches CNPG Cluster / MariaDB CRs and runs scheduled backups + triage/repair per BackupPolicy
-    - `--force` - override split-brain/healthy checks (targeted repair only)
-    - `--backups-path /path` - local filesystem path for backup storage (required for repair unless `--no-escrow`, required for backup/restore dump)
-    - `--no-escrow` - skip escrow backup before repair (accept the risk)
-    - `--method dump|native` - dump (default, works everywhere) or native (CNPG barmanObjectStore only)
-    - Galera example: `hasteward repair --engine galera --cluster osticket-mariadb --namespace hyrule-castle --instance 0 --backups-path /backups`
-    - CNPG example: `hasteward repair --engine cnpg --cluster zitadel-postgres --namespace zeldas-lullaby --instance 3 --backups-path /backups`
-    - Backup example: `hasteward backup --engine cnpg --cluster zitadel-postgres --namespace zeldas-lullaby --backups-path /backups`
-    - Restore example: `hasteward restore --engine galera --cluster osticket-mariadb --namespace hyrule-castle --backups-path /backups`
+  - **NEVER delete PVCs for CNPG-managed PostgreSQL clusters** - deleting PVCs corrupts the CNPG instance index and breaks cluster management. To heal a stuck/diverged replica, use the HASteward binary: `docker run --rm --network host -e KUBECONFIG=/kube/config -v "$HOME/.kube:/kube:ro" prplanit/hasteward:latest repair -e cnpg -c <name> -n <ns> --instance <N> --backups-path <restic-repo>` which triages, fences the instance, clears pgdata on the existing PVC, runs pg_basebackup from the primary, then unfences. Run `triage` (same flags) for read-only diagnostics FIRST.
+  - **hasteward** - HASteward (High Availability Steward) - the **Go CLI/operator** (`prplanit/hasteward`) that standardizes DB-cluster recovery (triage / repair / backup / restore) for MariaDB Galera and CloudNativePG. Run it as a one-shot container against the cluster via your kubeconfig:
+    - Wrapper: `docker run --rm --network host -e KUBECONFIG=/kube/config -v "$HOME/.kube:/kube:ro" prplanit/hasteward:latest <command> -e <engine> -c <cluster> -n <namespace> [flags]`
+    - Engines (`-e`): `galera` (MariaDB Galera), `cnpg` (CloudNativePG PostgreSQL)
+    - `triage` - read-only diagnostic. **ALWAYS run first**; trust its `safeToHeal` / `mostAdvanced`, NOT the operator phase string.
+    - `repair` - triage → safety gate → escrow backup → re-clone/heal unhealthy instances → re-triage (`--instance N` targets one)
+    - `bootstrap` - bootstrap a fully-down Galera cluster from the best candidate
+    - `backup` / `restore` - back up / restore the cluster (`--method dump|native` — dump default, native = CNPG barmanObjectStore only)
+    - `serve` - run the operator (controller + scheduler); watches CNPG Cluster / MariaDB CRs and runs scheduled backups + triage/repair per BackupPolicy
+    - `--force` - override split-brain / same-timeline conservatism (targeted repair only)
+    - `--backups-path <restic-repo>` - escrow/backup location (required for repair unless `--no-escrow`, and for backup/restore)
+    - `--no-escrow` - skip the pre-repair escrow backup (accept the risk)
+    - `--output json` - machine-readable output for scripting
+    - Galera example (triage osticket): `docker run --rm --network host -e KUBECONFIG=/kube/config -v "$HOME/.kube:/kube:ro" prplanit/hasteward:latest triage -e galera -c osticket-mariadb -n hyrule-castle`
+    - CNPG example (repair): `docker run --rm --network host -e KUBECONFIG=/kube/config -v "$HOME/.kube:/kube:ro" prplanit/hasteward:latest repair -e cnpg -c zitadel-postgres -n zeldas-lullaby --instance 3 --backups-path <restic-repo>`
+    - Full runbook: `docs/cnpg-postgres-cluster-recovery-runbook.md` (engine-general — use `-e galera` for MariaDB).
+    - **⛔ DEPRECATED — do NOT use the old Ansible path** (`ansible/k8s/recovery/hasteward.yml -e mode=…`). It predates the fixed Go recovery logic (trustworthy seqno derivation, fail-closed authority) and can give a WRONG assessment on a production DB. Use the binary above.
 
 - FluxCD Infrastructure Structure:
   - `fluxcd/infrastructure/controllers/base` should contain TEMPLATED infrastructure resources WITHOUT any environment-specific values including: no hardcoded namespaces, image tags, replicas, storage classes, LoadBalancer IPs, cluster-specific annotations (lbipam.cilium.io/*), domain names, URLs, etc.

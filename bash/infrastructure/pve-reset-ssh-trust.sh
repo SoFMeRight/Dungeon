@@ -1,173 +1,69 @@
 #!/usr/bin/env bash
-# pve-reset-ssh-trust.sh — Full SSH host key trust reset for a Proxmox cluster.
-# Run on ONE node. Requires pmxcfs mounted at /etc/pve.
-# Resets trust on THIS node AND populates the shared pmxcfs files for all nodes.
+# pve-reset-ssh-trust.sh — Repair PVE inter-node SSH host-key trust on THIS node.
+#
+# Run on EACH node. It fixes THIS node's entry in the shared (pmxcfs) trust file
+# and restarts THIS node's PVE services. After running it on every node, the
+# cluster's inter-node SSH (WebUI "Shell", migration, pvesh) works again.
+#
+# WHY THIS SCRIPT EXISTS (PVE limitation, confirmed in the PVE source):
+#   * PVE::Cluster::Setup::ssh_create_node_known_hosts() writes ONLY the RSA host
+#     key into /etc/pve/nodes/<node>/ssh_known_hosts, and only at node setup.
+#     `pvecm updatecerts` does NOT refresh that file.
+#   * PVE::SSHInfo verifies inter-node ssh against that exact file with
+#     `-o HostKeyAlias=<node> -o GlobalKnownHostsFile=none` — so that per-node
+#     file is the SOLE source of truth.
+#   * Modern OpenSSH (9/10) negotiates ED25519. An RSA-only (or stale) per-node
+#     file therefore can never match a regenerated ED25519 host key, and there is
+#     no native command that fixes it. This script writes ALL current host-key
+#     types into that file, which PVE itself does not do.
+#
+# pmxcfs (/etc/pve) has NO hardlink support, so `ssh-keygen -R` and `sed -i` FAIL
+# with "Operation not permitted". Every edit below is read -> filter -> redirect.
 set -euo pipefail
 
-# Node names as PVE knows them (capitalized = directory names under /etc/pve/nodes/)
-NODES=(Avocado Bamboo Cosmos Dragonfruit Eggplant)
-
-# Mapping: capitalized name → lowercase hostname → IP
-declare -A NODE_IP
-NODE_IP[Avocado]=172.22.22.3
-NODE_IP[Bamboo]=172.22.22.4
-NODE_IP[Cosmos]=172.22.22.5
-NODE_IP[Dragonfruit]=172.22.22.6
-NODE_IP[Eggplant]=172.22.22.7
-
-THIS_NODE=$(hostname -s)
-
-if [[ ! -d /etc/pve/nodes ]]; then
-  echo "ERROR: /etc/pve/nodes not found — is this a Proxmox node with pmxcfs mounted?" >&2
+# --- Resolve THIS node's PVE name (must match the /etc/pve/nodes/<Name> dir) ---
+NODE=$(hostname -s)
+if [[ ! -d "/etc/pve/nodes/$NODE" ]]; then
+  match=$(ls /etc/pve/nodes/ 2>/dev/null | grep -ix "$NODE" | head -1 || true)
+  [[ -n "$match" ]] && NODE="$match"
+fi
+[[ -d "/etc/pve/nodes/$NODE" ]] || {
+  echo "ERROR: /etc/pve/nodes/$NODE not found — is pmxcfs mounted and the nodename correct?" >&2
   exit 1
+}
+KH="/etc/pve/nodes/$NODE/ssh_known_hosts"
+
+echo "=== PVE SSH trust repair on: $NODE ==="
+
+# --- 1. Restore the native /root/.ssh/known_hosts symlink (undo flat-file tamper) ---
+#        On stock PVE this is a symlink into pmxcfs; a flat file here means it was
+#        clobbered and will drift. SSHInfo doesn't use it, but manual `ssh` does.
+if [[ ! -L /root/.ssh/known_hosts ]]; then
+  rm -f /root/.ssh/known_hosts
+  ln -s /etc/pve/priv/known_hosts /root/.ssh/known_hosts
+  echo "  restored /root/.ssh/known_hosts -> /etc/pve/priv/known_hosts"
 fi
 
-echo "=== Running on: $THIS_NODE ==="
-echo ""
+# --- 2. Native cert / authorized_keys refresh (do PVE's part first) ---
+echo "  pvecm updatecerts -f ..."
+pvecm updatecerts -f || echo "  WARN: pvecm updatecerts returned non-zero" >&2
 
-# --- Step 1: Clear all known_hosts everywhere ---
-echo "=== Step 1: Clearing all known_hosts ==="
-
-for node in "${NODES[@]}"; do
-  f="/etc/pve/nodes/$node/ssh_known_hosts"
-  if [[ -f "$f" ]]; then
-    > "$f"
-    echo "  cleared $f"
-  fi
+# --- 3. Fill PVE's gap: write ALL current host-key types into the per-node file ---
+#        Format = PVE/SSHInfo's HostKeyAlias key: "<Node> <keytype> <key>".
+#        Written LAST so it wins over anything pvecm/setup may have (re)written.
+tmp=$(mktemp)   # mktemp lands in /tmp (real fs), never pmxcfs
+for kt in ed25519 rsa ecdsa; do
+  pub="/etc/ssh/ssh_host_${kt}_key.pub"
+  [[ -f "$pub" ]] && echo "$NODE $(cut -d' ' -f1-2 "$pub")" >> "$tmp"
 done
+[[ -s "$tmp" ]] || { echo "ERROR: no /etc/ssh/ssh_host_*_key.pub found" >&2; rm -f "$tmp"; exit 1; }
+cat "$tmp" > "$KH"    # pmxcfs-safe: redirect truncates in place (no rename / hardlink)
+rm -f "$tmp"
+echo "  wrote $KH:"; sed 's/^/      /' "$KH"
 
-if [[ -f /etc/pve/priv/known_hosts ]]; then
-  > /etc/pve/priv/known_hosts
-  echo "  cleared /etc/pve/priv/known_hosts"
-fi
-
-> /root/.ssh/known_hosts
-echo "  cleared /root/.ssh/known_hosts"
-
-if [[ -f /etc/ssh/ssh_known_hosts ]]; then
-  > /etc/ssh/ssh_known_hosts
-  echo "  cleared /etc/ssh/ssh_known_hosts"
-fi
-
-echo ""
-
-# --- Step 2: Scan fresh host keys from every node ---
-# PVE uses unhashed entries with capitalized names, lowercase names, and IPs.
-echo "=== Step 2: Scanning host keys from all nodes ==="
-
-TMPKEYS=$(mktemp)
-trap 'rm -f "$TMPKEYS"' EXIT
-
-for node in "${NODES[@]}"; do
-  lower=$(echo "$node" | tr '[:upper:]' '[:lower:]')
-  ip="${NODE_IP[$node]}"
-
-  echo "  scanning $node ($lower / $ip)..."
-
-  # Scan by all name variants — unhashed (no -H) so PVE can match
-  for target in "$lower" "$node" "$ip"; do
-    if keys=$(ssh-keyscan -t ed25519 "$target" 2>/dev/null); then
-      echo "$keys" >> "$TMPKEYS"
-    else
-      echo "    WARN: could not scan $target" >&2
-    fi
-  done
-
-  # Also add aliased entries: "name,ip" format that SSH/PVE understands
-  if keys=$(ssh-keyscan -t ed25519 "$lower" 2>/dev/null); then
-    echo "$keys" | while IFS= read -r line; do
-      [[ "$line" == \#* ]] && continue
-      [[ -z "$line" ]] && continue
-      keytype=$(echo "$line" | awk '{print $2}')
-      keydata=$(echo "$line" | awk '{print $3}')
-      echo "$node,$lower,$ip $keytype $keydata" >> "$TMPKEYS"
-    done
-  fi
-done
-
-echo ""
-
-# --- Step 3: Populate all known_hosts locations ---
-echo "=== Step 3: Populating known_hosts files ==="
-
-# /etc/pve/priv/known_hosts — cluster-wide, used by PVE tools
-cp "$TMPKEYS" /etc/pve/priv/known_hosts
-echo "  wrote /etc/pve/priv/known_hosts ($(wc -l < /etc/pve/priv/known_hosts) lines)"
-
-# Per-node ssh_known_hosts — PVE reads these for inter-node ops
-for node in "${NODES[@]}"; do
-  f="/etc/pve/nodes/$node/ssh_known_hosts"
-  if [[ -f "$f" ]] || [[ -d "/etc/pve/nodes/$node" ]]; then
-    cp "$TMPKEYS" "$f"
-    echo "  wrote $f ($(wc -l < "$f") lines)"
-  fi
-done
-
-# /root/.ssh/known_hosts — standard SSH client
-cp "$TMPKEYS" /root/.ssh/known_hosts
-echo "  wrote /root/.ssh/known_hosts ($(wc -l < /root/.ssh/known_hosts) lines)"
-
-echo ""
-
-# --- Step 4: Verify SSH connectivity ---
-echo "=== Step 4: Verifying SSH to each node ==="
-for node in "${NODES[@]}"; do
-  lower=$(echo "$node" | tr '[:upper:]' '[:lower:]')
-  ip="${NODE_IP[$node]}"
-
-  # Test by hostname
-  if result=$(ssh -o StrictHostKeyChecking=yes -o ConnectTimeout=5 "$lower" hostname 2>/dev/null); then
-    echo "  OK  $lower → $result"
-  else
-    echo "  FAIL $lower (by hostname)" >&2
-  fi
-
-  # Test by IP
-  if result=$(ssh -o StrictHostKeyChecking=yes -o ConnectTimeout=5 "$ip" hostname 2>/dev/null); then
-    echo "  OK  $ip → $result"
-  else
-    echo "  FAIL $ip (by IP)" >&2
-  fi
-done
-
-echo ""
-
-# --- Step 5: Clear known_hosts on remote nodes and push fresh keys ---
-echo "=== Step 5: Resetting known_hosts on remote nodes ==="
-for node in "${NODES[@]}"; do
-  lower=$(echo "$node" | tr '[:upper:]' '[:lower:]')
-  [[ "$lower" == "$(echo "$THIS_NODE" | tr '[:upper:]' '[:lower:]')" ]] && continue
-
-  echo "  resetting $lower..."
-  if ssh -o StrictHostKeyChecking=yes -o ConnectTimeout=5 "$lower" bash -s <<'REMOTE' 2>/dev/null; then
-    # Remote node: clear local known_hosts (pmxcfs files are already updated via shared filesystem)
-    > /root/.ssh/known_hosts
-    # Copy from the shared pmxcfs (already populated by the initiating node)
-    if [[ -f /etc/pve/priv/known_hosts ]]; then
-      cp /etc/pve/priv/known_hosts /root/.ssh/known_hosts
-    fi
-    echo "    done"
-REMOTE
-    echo "    OK $lower"
-  else
-    echo "    WARN: could not reset $lower — do it manually:" >&2
-    echo "      ssh root@$lower 'cp /etc/pve/priv/known_hosts /root/.ssh/known_hosts'" >&2
-  fi
-done
-
-echo ""
-
-# --- Step 6: Restart PVE services ---
-echo "=== Step 6: Restarting PVE services ==="
+# --- 4. Restart PVE services on THIS node ---
 for svc in pve-cluster pvedaemon pveproxy; do
-  if systemctl is-active "$svc" &>/dev/null || systemctl is-enabled "$svc" &>/dev/null; then
-    systemctl restart "$svc" && echo "  restarted $svc" || echo "  WARN: failed to restart $svc" >&2
-  else
-    echo "  skip $svc (not found)"
-  fi
+  systemctl restart "$svc" && echo "  restarted $svc" || echo "  WARN: failed to restart $svc" >&2
 done
 
-echo ""
-echo "=== Done ==="
-echo "If any remote nodes showed WARN above, SSH to them and run:"
-echo "  cp /etc/pve/priv/known_hosts /root/.ssh/known_hosts"
+echo "=== Done on $NODE. Run this on EVERY node, then re-test the WebUI shell. ==="
