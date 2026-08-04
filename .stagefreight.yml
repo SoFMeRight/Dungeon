@@ -180,10 +180,10 @@ lint:
         - "fluxcd/infrastructure/services/base/vaultwarden/externalsecret.yaml"
 
 toolchains:
-  trivy: "0.69.3"
-  syft: "1.42.3"
-  grype: "0.110.0"
-  osv-scanner: "2.3.5"
-  cosign: "3.0.6"
-  flux: "2.8.3"
-  kubectl: "1.34.2"
+  trivy: "0.x"
+  syft: "1.x"
+  grype: "0.x"
+  osv-scanner: "2.x"
+  cosign: "3.x"
+  flux: "2.x"
+  kubectl: "1.35.x"
