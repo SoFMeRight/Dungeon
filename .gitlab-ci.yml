@@ -76,6 +76,7 @@ perform:
   artifacts:
     paths: [.stagefreight/]
     expire_in: 1 day
+  resource_group: perform
 
 review:
   stage: review
