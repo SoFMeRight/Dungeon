@@ -2,8 +2,8 @@
 set -euxo pipefail
 
 # Kubernetes Variables
-KUBERNETES_VERSION="v1.34"
-CRIO_VERSION="v1.34"
+KUBERNETES_VERSION="v1.35"
+CRIO_VERSION="v1.35"
 
 echo "==================================="
 echo "Kubernetes Dependencies Installation"
