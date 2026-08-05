@@ -56,6 +56,28 @@ data:
           ],
           "datasourceTemplate": "docker",
           "description": "Galera agent/init images in the MariaDB CRs — run the operator binary, so they track the operator (grouped mariadb-operator)"
+        },
+        {
+          "customType": "regex",
+          "fileMatch": ["ansible/group_vars/.+\\.ya?ml$"],
+          "matchStrings": [
+            "crio_version:\\s+\"?(?<currentValue>[^\"\\s]+)\"?"
+          ],
+          "depNameTemplate": "cri-o/cri-o",
+          "datasourceTemplate": "github-releases",
+          "extractVersionTemplate": "^v(?<version>.*)$",
+          "description": "Node runtime pin the ansible converge playbook applies (grouped k8s-nodes)"
+        },
+        {
+          "customType": "regex",
+          "fileMatch": ["ansible/group_vars/.+\\.ya?ml$"],
+          "matchStrings": [
+            "kubernetes_version:\\s+\"?(?<currentValue>[^\"\\s]+)\"?"
+          ],
+          "depNameTemplate": "kubernetes/kubernetes",
+          "datasourceTemplate": "github-releases",
+          "extractVersionTemplate": "^v(?<version>.*)$",
+          "description": "Cluster kubernetes pin — minor moves in lockstep with cri-o (grouped k8s-nodes)"
         }
       ],
 
@@ -135,6 +157,18 @@ data:
           "groupName": "mariadb-operator",
           "matchPackageNames": ["ghcr.io/mariadb-operator/**"],
           "commitMessagePrefix": "chore(mariadb-operator):"
+        },
+        {
+          // k8s-nodes: cri-o's minor is coupled to the cluster's kubernetes minor
+          // (runtime/kubelet skew policy), so the two pins move as one PR. Patch
+          // bumps auto-PR within the 1.35 line; the minor fence (allowedVersions)
+          // holds 1.36+ until it is raised deliberately alongside a cluster
+          // upgrade. Merging a bump makes the perform reconcile's ansible
+          // converge roll the fleet, one node at a time.
+          "groupName": "k8s-nodes",
+          "matchDepNames": ["cri-o/cri-o", "kubernetes/kubernetes"],
+          "allowedVersions": "<1.36.0",
+          "commitMessagePrefix": "chore(k8s-nodes):"
         },
         {
           // Zitadel login v2 is version-locked to the server (v4+).
