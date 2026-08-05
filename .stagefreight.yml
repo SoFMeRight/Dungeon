@@ -51,7 +51,7 @@ ansible:
   inventory: ansible/inventory
   ssh:
     user: kai
-    credentials: DUNGEON_NODES        # → DUNGEON_NODES_SSH_KEY (masked + PROTECTED forge variable)
+    credentials: DUNGEON              # → DUNGEON_SSH_KEY (PROTECTED forge variable)
     known_hosts: ansible/known_hosts  # committed fleet host keys — verification is always strict
   playbooks:
     provision-hosts:                  # node runtime convergence (cri-o + bundled crun)
