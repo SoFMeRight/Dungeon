@@ -8,6 +8,7 @@
   ansible.builtin.command: crio --version
   register: crio_live
   changed_when: false
+  check_mode: false
 
 - name: Converge cri-o to {{ crio_version }}
   when: crio_version not in crio_live.stdout
@@ -15,19 +16,16 @@
     crio_minor: "{{ crio_version.split('.')[0] }}.{{ crio_version.split('.')[1] }}"
     kubectl_admin: kubectl --kubeconfig /etc/kubernetes/admin.conf
   block:
-    - name: Cordon {{ ansible_hostname }}
-      ansible.builtin.command: "{{ kubectl_admin }} cordon {{ ansible_hostname }}"
+    - name: Cordon {{ ansible_facts['hostname'] }}
+      ansible.builtin.command: "{{ kubectl_admin }} cordon {{ ansible_facts['hostname'] }}"
       delegate_to: "{{ groups['k8s_master'][0] }}"
 
-    - name: Drain {{ ansible_hostname }}
+    - name: Drain {{ ansible_facts['hostname'] }}
       ansible.builtin.command: >-
-        {{ kubectl_admin }} drain {{ ansible_hostname }}
+        {{ kubectl_admin }} drain {{ ansible_facts['hostname'] }}
         --ignore-daemonsets --delete-emptydir-data
         --grace-period=300 --timeout=600s
       delegate_to: "{{ groups['k8s_master'][0] }}"
-
-    - name: Unhold cri-o
-      ansible.builtin.command: apt-mark unhold cri-o
 
     - name: Install the cri-o {{ crio_minor }} apt keyring
       ansible.builtin.shell: >-
@@ -46,6 +44,7 @@
       ansible.builtin.apt:
         name: "cri-o={{ crio_version }}*"
         update_cache: true
+        allow_change_held_packages: true
 
     - name: Hold cri-o
       ansible.builtin.dpkg_selections:
@@ -62,13 +61,25 @@
       register: crio_after
       changed_when: false
       failed_when: crio_version not in crio_after.stdout
+      when: not ansible_check_mode
 
-    - name: Wait for {{ ansible_hostname }} Ready
+    - name: Wait for {{ ansible_facts['hostname'] }} Ready
       ansible.builtin.command: >-
         {{ kubectl_admin }} wait --for=condition=Ready
-        node/{{ ansible_hostname }} --timeout=300s
+        node/{{ ansible_facts['hostname'] }} --timeout=300s
       delegate_to: "{{ groups['k8s_master'][0] }}"
 
-    - name: Uncordon {{ ansible_hostname }}
-      ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_hostname }}"
+    - name: Uncordon {{ ansible_facts['hostname'] }}
+      ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
       delegate_to: "{{ groups['k8s_master'][0] }}"
+
+# Desired state includes schedulability: an interrupted earlier roll can leave a
+# node converged but cordoned (killed between upgrade and uncordon), which the
+# version gate would otherwise skip forever. Uncordon is idempotent.
+- name: Ensure {{ ansible_facts['hostname'] }} is schedulable
+  ansible.builtin.command: >-
+    kubectl --kubeconfig /etc/kubernetes/admin.conf
+    uncordon {{ ansible_facts['hostname'] }}
+  delegate_to: "{{ groups['k8s_master'][0] }}"
+  changed_when: false
+  when: not ansible_check_mode
