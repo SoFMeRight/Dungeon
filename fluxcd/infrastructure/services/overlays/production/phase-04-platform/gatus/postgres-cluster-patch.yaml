@@ -24,13 +24,16 @@ spec:
   stopDelay: 10
   livenessProbeTimeout: 5
 
-  # Sized from VictoriaMetrics 7d history (avg 99Mi / median 58m, peak
-  # 112Mi / 128m at 128MB shared_buffers; buffers now 32MB): requests
-  # reserve typical usage, limits cap just above observed peak.
+  # Limits cap just above the VictoriaMetrics 7d peak (112Mi / 128m).
+  # Requests are floor-level so replicas can schedule on the
+  # requests-saturated worker pool while chest-001 is out of it — re-size
+  # to typical usage (avg 99Mi / median 58m) once the fleet converges and
+  # its capacity returns. Requests must stay explicit: absent requests
+  # default to the limits.
   resources:
     requests:
-      cpu: 50m
-      memory: 96Mi
+      cpu: 10m
+      memory: 32Mi
     limits:
       cpu: 250m
       memory: 192Mi
