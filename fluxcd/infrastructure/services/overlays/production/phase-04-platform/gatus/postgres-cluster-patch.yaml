@@ -9,7 +9,50 @@ spec:
       policy.prplanit.com/access-class: postgres
       policy.prplanit.com/service-scope: gossip-stone.gatus.postgres
 
-  instances: 1
+  # 3 instances (fleet standard): replicas keep gatus up through node drains
+  # (operator switchover) — the status page must stay alive precisely while
+  # nodes are being maintained.
+  instances: 3
+
+  # Replicas must land on different nodes or a drain takes several at once.
+  affinity:
+    podAntiAffinityType: required
+
+  # Fast failover (fleet pattern — see grafana-postgres)
+  switchoverDelay: 30
+  startDelay: 10
+  stopDelay: 10
+  livenessProbeTimeout: 5
+
+  # Sized from VictoriaMetrics 7d history (avg 99Mi / median 58m, peak
+  # 112Mi / 128m at 128MB shared_buffers; buffers now 32MB): requests
+  # reserve typical usage, limits cap just above observed peak.
+  resources:
+    requests:
+      cpu: 50m
+      memory: 96Mi
+    limits:
+      cpu: 250m
+      memory: 192Mi
+
+  postgresql:
+    # Synchronous replication: zero data loss, and with two replicas any one
+    # can acknowledge — stays writable with a replica down.
+    synchronous:
+      method: any
+      number: 1
+
+    parameters:
+      shared_buffers: "32MB"
+      max_connections: "50"
+      # Fast detection of primary failure
+      wal_receiver_timeout: "5s"
+      # WAL retention caps - a disconnected replica's slot must not fill the PVC
+      wal_keep_size: "128MB"
+      max_slot_wal_keep_size: "160MB"  # 8% of 2Gi PVC (fleet ratio)
+
+  monitoring:
+    enablePodMonitor: true
 
   bootstrap:
     initdb:
