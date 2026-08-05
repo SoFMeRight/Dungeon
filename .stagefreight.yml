@@ -46,6 +46,19 @@ gitops:
   oidc:
     audience: stagefreight
 
+ansible:
+  image: docker.io/hlhd/ansible:2.20.4-v1
+  inventory: ansible/inventory
+  ssh:
+    user: kai
+    credentials: DUNGEON_NODES        # → DUNGEON_NODES_SSH_KEY (masked + PROTECTED forge variable)
+    known_hosts: ansible/known_hosts  # committed fleet host keys — verification is always strict
+  playbooks:
+    provision-hosts:                  # node runtime convergence (cri-o + bundled crun)
+      path: ansible/k8s/provision-hosts.yml
+      groups: [k8s_worker, k8s_master]
+      converge: true
+
 commit:
   conventional: true
 
@@ -178,6 +191,8 @@ lint:
       enabled: true
       exclude:
         - "fluxcd/infrastructure/services/base/vaultwarden/externalsecret.yaml"
+    ansible:
+      enabled: true
 
 toolchains:
   trivy: "0.x"

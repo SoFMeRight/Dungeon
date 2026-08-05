@@ -1,0 +1,74 @@
+---
+# Per-host cri-o convergence: version gate, then the safe roll — cordon → drain
+# (grace 300s) → apt upgrade within the pinned line → restart → Ready → uncordon.
+# kubectl steps delegate to the first control-plane host, which holds the admin
+# kubeconfig; the node's kubernetes name is its hostname.
+
+- name: Read live cri-o version
+  ansible.builtin.command: crio --version
+  register: crio_live
+  changed_when: false
+
+- name: Converge cri-o to {{ crio_version }}
+  when: crio_version not in crio_live.stdout
+  vars:
+    crio_minor: "{{ crio_version.split('.')[0] }}.{{ crio_version.split('.')[1] }}"
+    kubectl_admin: kubectl --kubeconfig /etc/kubernetes/admin.conf
+  block:
+    - name: Cordon {{ ansible_hostname }}
+      ansible.builtin.command: "{{ kubectl_admin }} cordon {{ ansible_hostname }}"
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    - name: Drain {{ ansible_hostname }}
+      ansible.builtin.command: >-
+        {{ kubectl_admin }} drain {{ ansible_hostname }}
+        --ignore-daemonsets --delete-emptydir-data
+        --grace-period=300 --timeout=600s
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    - name: Unhold cri-o
+      ansible.builtin.command: apt-mark unhold cri-o
+
+    - name: Install the cri-o {{ crio_minor }} apt keyring
+      ansible.builtin.shell: >-
+        curl -fsSL https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v{{ crio_minor }}/deb/Release.key
+        | gpg --dearmor --yes -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+
+    - name: Point the cri-o apt repo at the {{ crio_minor }} line
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/cri-o.list
+        content: >
+          deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg]
+          https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v{{ crio_minor }}/deb/ /
+        mode: "0644"
+
+    - name: Install cri-o {{ crio_version }}
+      ansible.builtin.apt:
+        name: "cri-o={{ crio_version }}*"
+        update_cache: true
+
+    - name: Hold cri-o
+      ansible.builtin.dpkg_selections:
+        name: cri-o
+        selection: hold
+
+    - name: Restart cri-o
+      ansible.builtin.systemd_service:
+        name: crio
+        state: restarted
+
+    - name: Verify the live version converged
+      ansible.builtin.command: crio --version
+      register: crio_after
+      changed_when: false
+      failed_when: crio_version not in crio_after.stdout
+
+    - name: Wait for {{ ansible_hostname }} Ready
+      ansible.builtin.command: >-
+        {{ kubectl_admin }} wait --for=condition=Ready
+        node/{{ ansible_hostname }} --timeout=300s
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    - name: Uncordon {{ ansible_hostname }}
+      ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_hostname }}"
+      delegate_to: "{{ groups['k8s_master'][0] }}"

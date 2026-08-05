@@ -1,0 +1,20 @@
+---
+# Converges each kubernetes node's cri-o (and its bundled crun) to the pinned
+# crio_version from group_vars/all.yml. Per-host idempotent: a node already at
+# the pin is skipped without cordon/drain, so the play is safe on every
+# reconcile. Workers roll first, then control-plane, one node at a time; a
+# failed node stops the play before the next node is touched.
+
+- name: Converge cri-o on workers
+  hosts: k8s_worker
+  serial: 1
+  become: true
+  tasks:
+    - ansible.builtin.import_tasks: tasks/crio-converge.yml
+
+- name: Converge cri-o on control-plane
+  hosts: k8s_master
+  serial: 1
+  become: true
+  tasks:
+    - ansible.builtin.import_tasks: tasks/crio-converge.yml

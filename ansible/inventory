@@ -3,6 +3,8 @@ all:
 # ------- Automations ------- #
     ant-parade:
       ansible_host: 10.30.1.111
+    dungeon-pedestal:               # gitops runner (k8s-dungeon-production)
+      ansible_host: 172.22.144.8
     freightyard:
       ansible_host: 10.30.8.101
     leaf-cutter:
@@ -161,6 +163,7 @@ ubuntu_24_04_unclustered:
     anchorage:
     cell-membrane:
     dock:
+    dungeon-pedestal:
     harbormaster:
     homing-pigeon:
     jabu-jabu:
