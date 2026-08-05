@@ -1,0 +1,3 @@
+
+# Runner stack env files carry registration tokens when filled — never committable
+docker-compose/**/.env

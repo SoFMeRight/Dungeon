@@ -1,8 +1,18 @@
-# https://forum.gitlab.com/t/example-gitlab-runner-docker-compose-configuration/67344/11
+# GitLab runner stack on dungeon-pedestal — the gitops runner (k8s-dungeon-production).
+# Freightyard architecture: jobs run on the HOST docker (socket executor) and join the
+# stagefreight compose network, where `dind` is a network alias — so job containers
+# resolve tcp://dind:2376 natively and mount the dind client certs by host path.
+# DOCKER_* env is injected per-job at registration; jobs run unprivileged (docker work
+# happens inside the dind companion, not the job container).
+#
+# Registration only runs when /etc/gitlab-runner/config.toml is absent — flag changes
+# here need a fresh register (remove the generated config.toml) on redeploy.
+# Secrets via stack environment: CI_SERVER_URL, RUNNER_TOKEN (glrt-… authentication
+# token — the runner is CREATED in GitLab first, where tags/untagged/locked live).
 
 services:
   dind:
-    image: docker:dind # Latest stable version
+    image: docker:dind
     privileged: true
     restart: always
     environment:
@@ -17,9 +27,13 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
+    networks:
+      stagefreight:
+        aliases:
+          - dind
 
   register-runner:
-    image: gitlab/gitlab-runner:latest # Always use latest stable
+    image: gitlab/gitlab-runner:latest
     restart: 'no'
     depends_on:
       dind:
@@ -30,43 +44,57 @@ services:
         if [ ! -f /etc/gitlab-runner/config.toml ]; then
           echo "Config does not exist, registering runner..."
           gitlab-runner register \
-            --non-interactive \
-            --locked=false \
-            --name=${RUNNER_NAME:-"GitLab Runner"} \
-            --executor=docker \
-            --docker-dns "10.0.0.1,10.0.0.2,1.1.1.1,8.8.8.8" \
-            --docker-host=tcp://dind:2376 \
+            --docker-dns=10.0.0.1 \
+            --docker-dns=10.0.0.2 \
+            --docker-dns=172.22.30.122 \
+            --docker-dns=1.1.1.1 \
+            --docker-dns=8.8.8.8 \
+            --docker-env=DOCKER_CERT_PATH=/certs/client \
+            --docker-env=DOCKER_HOST=tcp://dind:2376 \
+            --docker-env=DOCKER_TLS_VERIFY=1 \
             --docker-image=alpine:latest \
-            --docker-privileged \
-            --docker-volumes "/cache" \
-            --docker-volumes "/certs/client:/certs/client:ro" \
-            --tag-list=${RUNNER_TAGS:-"docker,alpine"} \
-            --run-untagged=${RUN_UNTAGGED:-true}
+            --docker-network-mode=stagefreight \
+            --docker-privileged=false \
+            --docker-volumes=/cache \
+            --docker-volumes=/opt/docker/gitlab-runner/certs/client:/certs/client:ro \
+            --executor=docker \
+            --name=$${RUNNER_NAME:-"GitLab Runner"} \
+            --non-interactive \
+            --token=$${RUNNER_TOKEN} \
+            --url=$${CI_SERVER_URL}
         else
           echo "Runner config already exists, skipping registration"
         fi
     environment:
       - CI_SERVER_URL=${CI_SERVER_URL}
-      - REGISTRATION_TOKEN=${REGISTRATION_TOKEN}
-      - DOCKER_TLS_VERIFY=1
-      - DOCKER_CERT_PATH=/certs/client
+      - RUNNER_TOKEN=${RUNNER_TOKEN}
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - /opt/docker/gitlab-runner/config:/etc/gitlab-runner:z
-      - /opt/docker/gitlab-runner/certs:/certs:ro
+    networks:
+      - stagefreight
 
   runner:
-    image: gitlab/gitlab-runner:latest # Latest stable version
+    image: gitlab/gitlab-runner:latest
     restart: always
     depends_on:
       dind:
         condition: service_healthy
-    environment:
-      - DOCKER_HOST=tcp://dind:2376
-      - DOCKER_TLS_VERIFY=1
-      - DOCKER_CERT_PATH=/certs/client
     volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
       - /opt/docker/gitlab-runner/config:/etc/gitlab-runner:z
-      - /opt/docker/gitlab-runner/certs:/certs:ro
+    healthcheck:
+      test: ["CMD", "gitlab-runner", "list"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - stagefreight
+
+networks:
+  stagefreight:
+    name: stagefreight
 
 volumes:
   dind-storage:
