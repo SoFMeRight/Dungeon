@@ -24,6 +24,8 @@ workflow:
       when: never
     - if: '$CI_COMMIT_MESSAGE =~ /Generated-By: StageFreight/'
       when: never
+    - if: '$CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS'
+      when: never
     - when: always
 
 .stagefreight-context: &sf-context
