@@ -14,7 +14,7 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: hbbs
-          image: docker.io/rustdesk/rustdesk-server:1.1.15
+          image: docker.io/rustdesk/rustdesk-server:1.1.16
           resources:
             requests:
               cpu: 10m
@@ -23,7 +23,7 @@ spec:
               cpu: 500m
               memory: 256Mi
         - name: hbbr
-          image: docker.io/rustdesk/rustdesk-server:1.1.15
+          image: docker.io/rustdesk/rustdesk-server:1.1.16
           resources:
             requests:
               cpu: 10m
