@@ -12,4 +12,4 @@ spec:
         - name: docker-io-pull-secret
       containers:
         - name: exporter
-          image: docker.io/penpotapp/exporter:2.16.2
+          image: docker.io/penpotapp/exporter:2.17.0
