@@ -9,7 +9,7 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: wazuh-manager
-          image: docker.io/wazuh/wazuh-manager:4.14.6
+          image: docker.io/wazuh/wazuh-manager:4.14.7
           envFrom:
             - secretRef:
                 name: wazuh-manager-secrets
