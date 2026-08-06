@@ -22,7 +22,7 @@ spec:
             name: linkstack-apache-config
       initContainers:
         - name: init-htdocs
-          image: docker.io/linkstackorg/linkstack@sha256:1c8b05399ee459ac601bac3eede7fbe765d1b6b7be725663b57f3220610958bf
+          image: docker.io/linkstackorg/linkstack@
           command:
             - /bin/sh
             - -c
