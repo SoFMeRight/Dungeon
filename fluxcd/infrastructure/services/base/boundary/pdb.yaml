@@ -6,7 +6,11 @@ metadata:
     app.kubernetes.io/name: boundary
     app.kubernetes.io/component: controller
 spec:
-  minAvailable: 2
+  # Controllers are active/active (coordination state lives in postgres) —
+  # one serving controller keeps Boundary online. Involuntary-failure
+  # tolerance comes from the replica count; the PDB only forbids a drain
+  # from taking the last one.
+  minAvailable: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: boundary
