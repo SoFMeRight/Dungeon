@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: scheduler
-          image: docker.io/frappe/erpnext:v15.117.0
+          image: docker.io/frappe/erpnext:v15.119.0
           resources:
             requests:
               cpu: "10m"
