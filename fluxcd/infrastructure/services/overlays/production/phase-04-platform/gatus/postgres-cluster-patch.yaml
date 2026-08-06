@@ -9,10 +9,12 @@ spec:
       policy.prplanit.com/access-class: postgres
       policy.prplanit.com/service-scope: gossip-stone.gatus.postgres
 
-  # 3 instances (fleet standard): replicas keep gatus up through node drains
-  # (operator switchover) — the status page must stay alive precisely while
-  # nodes are being maintained.
-  instances: 3
+  # 2 instances while chest-001 is out of the pool: the remaining workers
+  # can only host two gatus-postgres pods, and a declared-but-unschedulable
+  # third blocks the operator's switchover off the cordoned node. Restore
+  # the fleet-standard 3 (with right-sized requests) once the fleet
+  # converges and chest-001's capacity returns.
+  instances: 2
 
   # Replicas must land on different nodes or a drain takes several at once.
   affinity:
