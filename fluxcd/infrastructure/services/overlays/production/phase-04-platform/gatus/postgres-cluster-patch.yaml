@@ -39,12 +39,9 @@ spec:
       memory: 192Mi
 
   postgresql:
-    # Synchronous replication: zero data loss, and with two replicas any one
-    # can acknowledge — stays writable with a replica down.
-    synchronous:
-      method: any
-      number: 1
-
+    # Async replication: strict synchronous (grafana pattern) blocks every
+    # commit whenever no replica is ready — with replicas still joining,
+    # that is a full write outage. Revisit sync once 3/3 is stable.
     parameters:
       shared_buffers: "32MB"
       max_connections: "50"
