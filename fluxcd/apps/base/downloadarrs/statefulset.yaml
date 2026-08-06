@@ -74,7 +74,7 @@ spec:
       containers:
         # Gluetun VPN Gateway - shared by all apps
         - name: gluetun
-          image: docker.io/qmcgaw/gluetun:v3.41.1
+          image: docker.io/qmcgaw/gluetun:v3.41.3
           securityContext:
             capabilities:
               add:

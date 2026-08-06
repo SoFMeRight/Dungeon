@@ -16,7 +16,7 @@ spec:
             - name: TZ
               value: "America/Los_Angeles"
         - name: gluetun
-          image: docker.io/qmcgaw/gluetun:v3.41.1
+          image: docker.io/qmcgaw/gluetun:v3.41.3
           env:
             - name: VPN_SERVICE_PROVIDER
               value: "private internet access"
