@@ -15,7 +15,45 @@
   vars:
     crio_minor: "{{ crio_version.split('.')[0] }}.{{ crio_version.split('.')[1] }}"
     kubectl_admin: kubectl --kubeconfig /etc/kubernetes/admin.conf
+    mesh_namespace: king-of-red-lions
   block:
+    # A drain blocked by an unsatisfiable PDB wedges for the full timeout and
+    # fails the roll. Surface those as a NAMED failure before touching the
+    # node: every zero-disruption PDB whose pods live here is listed, so the
+    # operator fixes the budget (or the degraded workload behind it) instead
+    # of diagnosing a stall. matchLabels only — the fleet's PDBs use nothing
+    # else.
+    - name: Audit PDBs — drain blockers fail fast by name
+      ansible.builtin.shell: |
+        set -o pipefail
+        python3 - <<'PYEOF'
+        import json, subprocess, sys
+        ka = "{{ kubectl_admin }}".split()
+        node = "{{ ansible_facts['hostname'] }}"
+        pods = json.loads(subprocess.check_output(ka + ["get", "pods", "-A",
+            "--field-selector", f"spec.nodeName={node},status.phase=Running", "-o", "json"]))["items"]
+        pdbs = json.loads(subprocess.check_output(ka + ["get", "pdb", "-A", "-o", "json"]))["items"]
+        blockers = []
+        for pdb in pdbs:
+            if pdb.get("status", {}).get("disruptionsAllowed", 1) != 0:
+                continue
+            ns = pdb["metadata"]["namespace"]
+            sel = pdb.get("spec", {}).get("selector", {}).get("matchLabels", {})
+            for p in pods:
+                if p["metadata"]["namespace"] != ns:
+                    continue
+                labels = p["metadata"].get("labels", {})
+                if sel and all(labels.get(k) == v for k, v in sel.items()):
+                    blockers.append(f"{ns}/{p['metadata']['name']} (pdb {pdb['metadata']['name']} allows 0 disruptions)")
+        if blockers:
+            print("drain would wedge on:", file=sys.stderr)
+            for b in blockers:
+                print(f"  {b}", file=sys.stderr)
+            sys.exit(1)
+        PYEOF
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+      changed_when: false
+
     - name: Cordon {{ ansible_facts['hostname'] }}
       ansible.builtin.command: "{{ kubectl_admin }} cordon {{ ansible_facts['hostname'] }}"
       delegate_to: "{{ groups['k8s_master'][0] }}"
@@ -69,9 +107,58 @@
         node/{{ ansible_facts['hostname'] }} --timeout=300s
       delegate_to: "{{ groups['k8s_master'][0] }}"
 
+    # Daemonset pods survive the drain, so the node's mesh dataplane
+    # (ztunnel, istio-cni) runs atop a runtime it wasn't started under —
+    # pods created after the upgrade get broken enrollment. Restart it under
+    # the new runtime BEFORE workloads land, but only when istiod is there
+    # to reprogram it: a dataplane restart with no control plane turns a
+    # limp into an outage.
+    - name: Check the mesh control plane can reprogram a restarted dataplane
+      ansible.builtin.command: >-
+        {{ kubectl_admin }} -n {{ mesh_namespace }} get deploy istiod
+        -o jsonpath={.status.readyReplicas}
+      register: istiod_ready
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+      changed_when: false
+      failed_when: false
+
+    - name: Restart the node's mesh dataplane under the new runtime
+      ansible.builtin.shell: |
+        set -o pipefail
+        pods=$({{ kubectl_admin }} -n {{ mesh_namespace }} get pods \
+          --field-selector spec.nodeName={{ ansible_facts['hostname'] }} -o name | grep -E 'ztunnel|istio-cni' || true)
+        if [ -n "$pods" ]; then
+          echo "$pods" | xargs {{ kubectl_admin }} -n {{ mesh_namespace }} delete --wait=false
+        fi
+      when: (istiod_ready.stdout | default('0')) | int > 0
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    - name: Wait for the node's mesh dataplane to resync
+      ansible.builtin.command: >-
+        {{ kubectl_admin }} -n {{ mesh_namespace }} wait --for=condition=Ready pod
+        --field-selector spec.nodeName={{ ansible_facts['hostname'] }} --timeout=180s
+      when: (istiod_ready.stdout | default('0')) | int > 0
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
     - name: Uncordon {{ ansible_facts['hostname'] }}
       ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
       delegate_to: "{{ groups['k8s_master'][0] }}"
+
+  # Fail OPEN: a failed roll must never freeze the node's capacity behind a
+  # cordon — a frozen worker starves the pool and cascades (control-plane
+  # singletons go homeless, storage gateways go Pending). The node stays on
+  # its current runtime, schedulable, and the failure is surfaced.
+  rescue:
+    - name: Fail open — uncordon {{ ansible_facts['hostname'] }}
+      ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+      changed_when: false
+
+    - name: Surface the converge failure
+      ansible.builtin.fail:
+        msg: >-
+          cri-o converge failed on {{ ansible_facts['hostname'] }} — node left
+          schedulable (fail-open); see the failed task above for the cause
 
 # Desired state includes schedulability: an interrupted earlier roll can leave a
 # node converged but cordoned (killed between upgrade and uncordon), which the
