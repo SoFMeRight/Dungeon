@@ -48,7 +48,6 @@
     # instead of stalling the drain for its full timeout.
     - name: Audit PDBs — drain blockers fail fast by name
       ansible.builtin.shell: |
-        set -o pipefail
         python3 - <<'PYEOF'
         import json, subprocess, sys
         ka = "{{ kubectl_admin }}".split()
@@ -179,6 +178,8 @@
         if [ -n "$pods" ]; then
           echo "$pods" | xargs {{ kubectl_admin }} -n {{ mesh_namespace }} delete --wait=false
         fi
+      args:
+        executable: /bin/bash
       when: (istiod_ready.stdout | default('0')) | int > 0
       delegate_to: "{{ groups['k8s_master'][0] }}"
 

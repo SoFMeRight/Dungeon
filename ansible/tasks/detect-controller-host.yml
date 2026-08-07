@@ -28,6 +28,8 @@
       done
     fi
     echo "$found"
+  args:
+    executable: /bin/bash
   register: controller_probe
   changed_when: false
 
