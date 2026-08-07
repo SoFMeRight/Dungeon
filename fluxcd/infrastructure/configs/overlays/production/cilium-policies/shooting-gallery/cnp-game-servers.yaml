@@ -127,10 +127,12 @@ spec:
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-minecraft-lan
+  name: allow-minecraft-public
 spec:
   description: >-
-    LAN-only ingress to minecraft (172.22.30.231).
+    Public (internet-facing) ingress to minecraft (172.22.30.231) on the game
+    port — world-reachable server. Real client IPs are preserved (no SNAT) and
+    traffic keeps the BGP shortest path.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -139,11 +141,7 @@ spec:
       app: minecraft
   ingress:
     - fromCIDRSet:
-        - cidr: "10.0.0.0/8"
-        - cidr: "172.16.0.0/12"
-        - cidr: "192.168.0.0/16"
-          except:
-            - "192.168.144.0/20"
+        - cidr: "0.0.0.0/0"
       toPorts:
         - ports:
             - port: "35566"
