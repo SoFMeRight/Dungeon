@@ -1,0 +1,38 @@
+---
+# Converges each kubernetes node's kubelet/kubeadm/kubectl to the pinned
+# kubernetes_version from group_vars/all.yml. PATCH upgrades within one minor.
+# Per-host idempotent: a node already at the pin is skipped without cordon/drain.
+#
+# Ordering is the INVERSE of cri-o convergence and is load-bearing. kubeadm
+# requires the first control-plane's `kubeadm upgrade apply` to write the target
+# version into cluster state BEFORE any other node's `kubeadm upgrade node` can
+# read it. So three phases, each serial: 1:
+#   1. the first control-plane alone (runs upgrade apply)
+#   2. the remaining control-plane nodes (run upgrade node)
+#   3. the workers (run upgrade node)
+#
+# A converge play (.stagefreight.yml): it runs every perform, and the version
+# gate makes a converged fleet a no-op. Bumping kubernetes_version in
+# group_vars is the declaration of intent — Renovate patch-PRs it (minors are
+# held for approval), and the next perform rolls the fleet to it.
+
+- name: Converge kubelet on the first control-plane (upgrade apply)
+  hosts: "{{ groups['k8s_master'][0] }}"
+  serial: 1
+  become: true
+  tasks:
+    - ansible.builtin.import_tasks: tasks/kubelet-converge.yml
+
+- name: Converge kubelet on the remaining control-plane (upgrade node)
+  hosts: "k8s_master:!{{ groups['k8s_master'][0] }}"
+  serial: 1
+  become: true
+  tasks:
+    - ansible.builtin.import_tasks: tasks/kubelet-converge.yml
+
+- name: Converge kubelet on workers (upgrade node)
+  hosts: k8s_worker
+  serial: 1
+  become: true
+  tasks:
+    - ansible.builtin.import_tasks: tasks/kubelet-converge.yml

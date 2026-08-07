@@ -1,0 +1,208 @@
+---
+# Per-host kubelet/kubeadm/kubectl convergence to the pinned kubernetes_version
+# from group_vars/all.yml. PATCH upgrades within one minor only (1.35.6 →
+# 1.35.7); a minor bump (1.35 → 1.36) is a deliberate, staged operation and is
+# NOT this task's job — the version gate below refuses a minor mismatch.
+#
+# A converge task, gated the same way crio-converge is: read the live version,
+# skip a matched node with no drain. A converged fleet is a full no-op.
+#
+# kubeadm ordering constraint (why this is NOT a clone of crio-converge):
+#   The FIRST control-plane node runs `kubeadm upgrade apply <ver>`, which
+#   writes the target version into the cluster's kubeadm-config. EVERY other
+#   node (remaining masters AND workers) then runs `kubeadm upgrade node`,
+#   which reads that config. So the first control-plane MUST converge before
+#   any other node — the inverse of crio-converge's workers-first ordering.
+#   The calling play (kubelet-provision.yml) enforces this with three phases.
+#
+# Safety scaffolding (PDB pre-audit, fail-open rescue, mesh dataplane restart)
+# mirrors crio-converge.yml. TODO: the shared scaffolding wants extraction into
+# a common node-roll task once a second converge task exists (this is it).
+
+- name: Read live kubelet version
+  ansible.builtin.command: kubelet --version
+  register: kubelet_live
+  changed_when: false
+  check_mode: false
+
+- name: Converge kubernetes node components to {{ kubernetes_version }}
+  when: kubernetes_version not in kubelet_live.stdout
+  vars:
+    k8s_minor: "{{ kubernetes_version.split('.')[0] }}.{{ kubernetes_version.split('.')[1] }}"
+    kubectl_admin: kubectl --kubeconfig /etc/kubernetes/admin.conf
+    mesh_namespace: king-of-red-lions
+    is_first_control_plane: "{{ inventory_hostname == groups['k8s_master'][0] }}"
+    live_minor: "{{ kubelet_live.stdout | regex_search('v(\\d+\\.\\d+)', '\\1') | first }}"
+  block:
+    # A patch task must never straddle a minor. kubeadm upgrade across minors
+    # has extra steps (component config migration, staged skew) this task does
+    # not perform — refuse rather than half-upgrade.
+    - name: Refuse a minor-version straddle
+      ansible.builtin.fail:
+        msg: >-
+          live kubelet {{ live_minor }} != target minor {{ k8s_minor }} — a minor
+          upgrade is a staged operation, not a patch converge; do it deliberately.
+      when: live_minor != k8s_minor
+
+    # Same pre-drain PDB audit as crio-converge: name the blockers, fail fast
+    # instead of stalling the drain for its full timeout.
+    - name: Audit PDBs — drain blockers fail fast by name
+      ansible.builtin.shell: |
+        set -o pipefail
+        python3 - <<'PYEOF'
+        import json, subprocess, sys
+        ka = "{{ kubectl_admin }}".split()
+        node = "{{ ansible_facts['hostname'] }}"
+        pods = json.loads(subprocess.check_output(ka + ["get", "pods", "-A",
+            "--field-selector", f"spec.nodeName={node},status.phase=Running", "-o", "json"]))["items"]
+        pdbs = json.loads(subprocess.check_output(ka + ["get", "pdb", "-A", "-o", "json"]))["items"]
+        blockers = []
+        for pdb in pdbs:
+            if pdb.get("status", {}).get("disruptionsAllowed", 1) != 0:
+                continue
+            ns = pdb["metadata"]["namespace"]
+            sel = pdb.get("spec", {}).get("selector", {}).get("matchLabels", {})
+            for p in pods:
+                if p["metadata"]["namespace"] != ns:
+                    continue
+                labels = p["metadata"].get("labels", {})
+                if sel and all(labels.get(k) == v for k, v in sel.items()):
+                    blockers.append(f"{ns}/{p['metadata']['name']} (pdb {pdb['metadata']['name']} allows 0 disruptions)")
+        if blockers:
+            print("drain would wedge on:", file=sys.stderr)
+            for b in blockers:
+                print(f"  {b}", file=sys.stderr)
+            sys.exit(1)
+        PYEOF
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+      changed_when: false
+
+    # kubeadm binary FIRST (before the upgrade command that uses it), pinned to
+    # the target patch. kubelet/kubectl come AFTER the drain so the node keeps
+    # serving until it is emptied.
+    - name: Install the kubernetes {{ k8s_minor }} apt keyring
+      ansible.builtin.shell: >-
+        curl -fsSL https://pkgs.k8s.io/core:/stable:/v{{ k8s_minor }}/deb/Release.key
+        | gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+    - name: Point the kubernetes apt repo at the {{ k8s_minor }} line
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/kubernetes.list
+        content: >
+          deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg]
+          https://pkgs.k8s.io/core:/stable:/v{{ k8s_minor }}/deb/ /
+        mode: "0644"
+
+    - name: Install kubeadm {{ kubernetes_version }}
+      ansible.builtin.apt:
+        name: "kubeadm={{ kubernetes_version }}*"
+        update_cache: true
+        allow_change_held_packages: true
+
+    # The cluster-state write. First control-plane sets the target version for
+    # the whole cluster; every other node adopts it. --certificate-renewal=false
+    # keeps a patch roll from rotating certs as a side effect.
+    - name: Upgrade cluster config (first control-plane — kubeadm upgrade apply)
+      ansible.builtin.command: >-
+        kubeadm upgrade apply v{{ kubernetes_version }} --yes --certificate-renewal=false
+      when: is_first_control_plane | bool
+
+    - name: Upgrade node config (every other node — kubeadm upgrade node)
+      ansible.builtin.command: kubeadm upgrade node
+      when: not (is_first_control_plane | bool)
+
+    - name: Cordon {{ ansible_facts['hostname'] }}
+      ansible.builtin.command: "{{ kubectl_admin }} cordon {{ ansible_facts['hostname'] }}"
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    - name: Drain {{ ansible_facts['hostname'] }}
+      ansible.builtin.command: >-
+        {{ kubectl_admin }} drain {{ ansible_facts['hostname'] }}
+        --ignore-daemonsets --delete-emptydir-data
+        --grace-period=300 --timeout=600s
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    - name: Install kubelet + kubectl {{ kubernetes_version }}
+      ansible.builtin.apt:
+        name:
+          - "kubelet={{ kubernetes_version }}*"
+          - "kubectl={{ kubernetes_version }}*"
+        update_cache: true
+        allow_change_held_packages: true
+
+    - name: Hold kubeadm, kubelet, kubectl
+      ansible.builtin.dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      loop:
+        - kubeadm
+        - kubelet
+        - kubectl
+
+    - name: Reload systemd and restart kubelet
+      ansible.builtin.systemd_service:
+        name: kubelet
+        state: restarted
+        daemon_reload: true
+
+    - name: Verify the live version converged
+      ansible.builtin.command: kubelet --version
+      register: kubelet_after
+      changed_when: false
+      failed_when: kubernetes_version not in kubelet_after.stdout
+      when: not ansible_check_mode
+
+    - name: Wait for {{ ansible_facts['hostname'] }} Ready
+      ansible.builtin.command: >-
+        {{ kubectl_admin }} wait --for=condition=Ready
+        node/{{ ansible_facts['hostname'] }} --timeout=300s
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    # Same istiod-gated mesh dataplane restart as crio-converge: daemonset pods
+    # survive the drain and run atop the freshly-restarted kubelet; bounce them
+    # so post-upgrade workloads enroll cleanly, but only with a control plane
+    # present to reprogram them.
+    - name: Check the mesh control plane can reprogram a restarted dataplane
+      ansible.builtin.command: >-
+        {{ kubectl_admin }} -n {{ mesh_namespace }} get deploy istiod
+        -o jsonpath={.status.readyReplicas}
+      register: istiod_ready
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+      changed_when: false
+      failed_when: false
+
+    - name: Restart the node's mesh dataplane under the new kubelet
+      ansible.builtin.shell: |
+        set -o pipefail
+        pods=$({{ kubectl_admin }} -n {{ mesh_namespace }} get pods \
+          --field-selector spec.nodeName={{ ansible_facts['hostname'] }} -o name | grep -E 'ztunnel|istio-cni' || true)
+        if [ -n "$pods" ]; then
+          echo "$pods" | xargs {{ kubectl_admin }} -n {{ mesh_namespace }} delete --wait=false
+        fi
+      when: (istiod_ready.stdout | default('0')) | int > 0
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    - name: Wait for the node's mesh dataplane to resync
+      ansible.builtin.command: >-
+        {{ kubectl_admin }} -n {{ mesh_namespace }} wait --for=condition=Ready pod
+        --field-selector spec.nodeName={{ ansible_facts['hostname'] }} --timeout=180s
+      when: (istiod_ready.stdout | default('0')) | int > 0
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    - name: Uncordon {{ ansible_facts['hostname'] }}
+      ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
+  # Fail OPEN, exactly as crio-converge: a failed roll must never freeze the
+  # node's capacity behind a cordon and cascade into the rest of the fleet.
+  rescue:
+    - name: Fail open — uncordon {{ ansible_facts['hostname'] }}
+      ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+      changed_when: false
+
+    - name: Surface the converge failure
+      ansible.builtin.fail:
+        msg: >-
+          kubelet converge failed on {{ ansible_facts['hostname'] }} — node left
+          schedulable (fail-open); see the failed task above for the cause

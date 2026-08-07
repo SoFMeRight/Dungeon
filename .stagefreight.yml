@@ -58,6 +58,10 @@ ansible:
       path: ansible/k8s/provision-hosts.yml
       groups: [k8s_worker, k8s_master]
       converge: true
+    kubelet-provision:                # kubernetes component convergence (kubelet/kubeadm/kubectl)
+      path: ansible/k8s/kubelet-provision.yml
+      groups: [k8s_master, k8s_worker]
+      converge: true
 
 commit:
   conventional: true
