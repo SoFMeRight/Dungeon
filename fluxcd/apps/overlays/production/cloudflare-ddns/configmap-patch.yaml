@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: cloudflare-ddns-config
 data:
-  DOMAINS: "cm.arbitorium.com,pm.arbitorium.com"
+  DOMAINS: "cm.arbitorium.com,pm.arbitorium.com,mc.operationtimecapsule.com"
   PROXIED: "false"
   IP4_PROVIDER: "cloudflare.trace"
   IP6_PROVIDER: "none"
