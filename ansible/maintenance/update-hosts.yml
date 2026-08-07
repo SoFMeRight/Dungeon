@@ -1,0 +1,106 @@
+---
+# Fleet OS patching — deduped, cluster-aware successor to
+# update-hosts-linux_{clustered,unclustered}.yaml (byte-identical but for the
+# hosts line, and rebooting cluster nodes with no graceful eviction).
+#
+# One shared OS body (tasks/os-upgrade.yml) for every host. serial: 1 within
+# each class. Order and eviction per class:
+#   1. k8s nodes FIRST — cordon + drain (graceful, PDB-respecting) → upgrade →
+#      reboot → Ready → uncordon; fail-open (a failed roll never leaves a node
+#      cordoned). The k8s VMs run ON the proxmox hosts, so they patch first.
+#   2. proxmox hypervisors — reboot IN PLACE (resource-scarce; VMs can't
+#      migrate), then gate on PVE quorum + Ceph HEALTH_OK before the next host.
+#   3. standalone hosts — plain reboot, nothing to evacuate.
+#
+# kubectl invocation + control-plane delegate read group_vars/all.yml; the three
+# host-class targets are inline `hosts:` defaults (a play's hosts resolves before
+# group_vars load) — override per-run with Semaphore extra-vars / -e:
+#   os_patch_k8s_group   (default k8s_master:k8s_worker)
+#   os_patch_proxmox_group   (default proxmox)
+#   os_patch_standalone_group   (default linux_unclustered)
+# OS patching ONLY; cri-o + kubelet version convergence are separate version-
+# gated plays. Run on its own cadence:
+#   ansible-playbook -i inventory maintenance/update-hosts.yml
+
+- name: OS patch — Kubernetes nodes (drain-safe), before the hypervisors
+  hosts: "{{ os_patch_k8s_group | default('k8s_master:k8s_worker') }}"
+  serial: 1
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Drain-wrapped OS upgrade + reboot
+      vars:
+        cp_delegate: "{{ groups[control_plane_group] | first }}"
+      block:
+        - name: Cordon {{ ansible_facts['hostname'] }}
+          ansible.builtin.command: "{{ kubectl_admin }} cordon {{ ansible_facts['hostname'] }}"
+          delegate_to: "{{ cp_delegate }}"
+
+        - name: Drain {{ ansible_facts['hostname'] }}
+          ansible.builtin.command: >-
+            {{ kubectl_admin }} drain {{ ansible_facts['hostname'] }}
+            --ignore-daemonsets --delete-emptydir-data
+            --grace-period=300 --timeout=600s
+          delegate_to: "{{ cp_delegate }}"
+
+        - ansible.builtin.import_tasks: ../tasks/os-upgrade.yml
+        - ansible.builtin.import_tasks: ../tasks/reboot-if-required.yml
+
+        - name: Wait for {{ ansible_facts['hostname'] }} to rejoin Ready
+          ansible.builtin.command: >-
+            {{ kubectl_admin }} wait --for=condition=Ready
+            node/{{ ansible_facts['hostname'] }} --timeout=300s
+          delegate_to: "{{ cp_delegate }}"
+
+        - name: Uncordon {{ ansible_facts['hostname'] }}
+          ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
+          delegate_to: "{{ cp_delegate }}"
+      rescue:
+        - name: Fail open — uncordon {{ ansible_facts['hostname'] }}
+          ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
+          delegate_to: "{{ groups[control_plane_group] | first }}"
+          changed_when: false
+
+        - name: Surface the patch failure
+          ansible.builtin.fail:
+            msg: >-
+              OS patch failed on {{ ansible_facts['hostname'] }} — node left
+              schedulable (fail-open); see the failed task above.
+
+- name: OS patch — Proxmox hypervisors (reboot in place, quorum-gated)
+  hosts: "{{ os_patch_proxmox_group | default('proxmox') }}"
+  serial: 1
+  gather_facts: true
+  become: true
+  tasks:
+    # Upgrade always (hypervisor packages are safe; the guest VMs are untouched).
+    - ansible.builtin.import_tasks: ../tasks/os-upgrade.yml
+
+    # Detect the one host we must NOT reboot: whichever currently runs the
+    # ansible controller guest (auto-detected live — follows VM migration).
+    - ansible.builtin.import_tasks: ../tasks/detect-controller-host.yml
+
+    - name: Defer reboot — this hypervisor runs the ansible controller
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }} runs the ansible controller
+          ({{ controller_hostname }}) — packages upgraded, REBOOT DEFERRED. It
+          would kill this run. Reboot it separately (from another controller, or
+          manually) to finish patching it.
+      when: hosts_ansible_controller | bool
+
+    # Reboot + quorum gate only when this host is NOT the controller's host.
+    - ansible.builtin.import_tasks: ../tasks/reboot-if-required.yml
+      when: not (hosts_ansible_controller | bool)
+
+    - ansible.builtin.import_tasks: ../tasks/gate-proxmox-quorum.yml
+      when: not (hosts_ansible_controller | bool)
+
+- name: OS patch — standalone hosts (plain reboot)
+  hosts: "{{ os_patch_standalone_group | default('linux_unclustered') }}"
+  serial: 1
+  gather_facts: true
+  become: true
+  tasks:
+    - ansible.builtin.import_tasks: ../tasks/os-upgrade.yml
+    - ansible.builtin.import_tasks: ../tasks/reboot-if-required.yml

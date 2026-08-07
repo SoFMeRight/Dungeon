@@ -4,3 +4,17 @@
 # lockstep with the cluster's kubernetes minor).
 crio_version: "1.35.6"
 kubernetes_version: "1.35.6"
+
+# ── Fleet OS-patch wiring ────────────────────────────────────────────────────
+# Environment-specific values the maintenance play reads — override per-inventory
+# (a group_vars file) or per-run (Semaphore extra-vars / ansible-playbook -e).
+# Nothing in the task logic hardcodes the environment.
+
+kubectl_admin: "kubectl --kubeconfig /etc/kubernetes/admin.conf"   # kubectl on the control-plane delegate (cordon/drain/Ready)
+control_plane_group: k8s_master        # its FIRST host is the kubectl delegate
+
+# The host-class targets for maintenance/update-hosts.yml (k8s / proxmox /
+# standalone) are NOT set here: a play's `hosts:` is resolved before group_vars
+# load, so they live as inline defaults in that play and are overridden per-run
+# with Semaphore extra-vars / -e (e.g. -e os_patch_k8s_group=my_nodes). See the
+# play header for the three names.

@@ -1,0 +1,12 @@
+---
+# Reboot the node only when os-upgrade.yml set node_reboot_required. On a
+# clustered node this runs INSIDE the drain window (node already emptied); on
+# an unclustered node it runs directly. ansible.builtin.reboot waits for the
+# host to come back before continuing.
+
+- name: Reboot {{ ansible_facts['hostname'] }} (kernel/library update pending)
+  ansible.builtin.reboot:
+    msg: "Reboot initiated by ansible after OS update"
+    reboot_timeout: 3600
+    test_command: uptime
+  when: node_reboot_required | default(false) | bool

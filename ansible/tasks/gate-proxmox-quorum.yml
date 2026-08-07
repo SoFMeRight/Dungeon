@@ -1,0 +1,23 @@
+---
+# Post-reboot health gate for a Proxmox hypervisor: block until the rebooted
+# host has rejoined PVE quorum AND Ceph has fully recovered, before the serial
+# roll moves to the next host. Ceph HEALTH_OK (not just quorate) is the correct
+# bar for rebooting OSD hosts one at a time — the previous host's OSDs must be
+# back and PGs active+clean or the next reboot risks min_size violations.
+# Runs on the just-rebooted host (root); no migration, no drain.
+
+- name: Wait for Proxmox cluster quorum on {{ inventory_hostname }}
+  ansible.builtin.command: pvecm status
+  register: pvecm
+  until: "'Quorate: Yes' in pvecm.stdout"
+  retries: 30
+  delay: 10
+  changed_when: false
+
+- name: Wait for Ceph HEALTH_OK (PGs recovered before the next host)
+  ansible.builtin.command: ceph -s -f json
+  register: ceph_status
+  until: (ceph_status.stdout | from_json).health.status == "HEALTH_OK"
+  retries: 60
+  delay: 15
+  changed_when: false

@@ -1,0 +1,68 @@
+---
+# The OS package upgrade body — apt (Debian/Ubuntu), dnf (RHEL 8+), yum (RHEL
+# 7). Extracted ONCE so every caller (clustered and unclustered update plays)
+# shares it instead of copying ~110 lines. Sets the fact node_reboot_required;
+# it does NOT reboot and does NOT drain — the caller owns reboot timing (inside
+# a drain window for clustered nodes, directly for unclustered).
+
+- name: Upgrade Debian / Ubuntu with apt
+  when: ansible_os_family == "Debian"
+  block:
+    - name: apt dist-upgrade
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: true
+      register: apt_upgrade
+
+    - name: apt autoremove
+      ansible.builtin.apt:
+        autoremove: true
+
+    - name: Detect reboot-required (Debian)
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: deb_reboot
+
+    - name: Record reboot requirement
+      ansible.builtin.set_fact:
+        node_reboot_required: "{{ deb_reboot.stat.exists }}"
+
+- name: Upgrade RHEL 8+ with dnf
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version != "7"
+  block:
+    - name: dnf upgrade
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_cache: true
+      register: dnf_upgrade
+
+    - name: Detect reboot-required (dnf needs-restarting)
+      ansible.builtin.command: needs-restarting -r
+      register: dnf_reboot
+      failed_when: false
+      changed_when: false
+
+    - name: Record reboot requirement
+      ansible.builtin.set_fact:
+        node_reboot_required: "{{ dnf_reboot.rc != 0 }}"
+
+- name: Upgrade legacy RHEL 7 with yum
+  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+  block:
+    - name: yum upgrade
+      ansible.builtin.yum:
+        name: "*"
+        state: latest
+        update_cache: true
+      register: yum_upgrade
+
+    - name: Detect reboot-required (yum needs-restarting)
+      ansible.builtin.command: needs-restarting -r
+      register: yum_reboot
+      failed_when: false
+      changed_when: false
+
+    - name: Record reboot requirement
+      ansible.builtin.set_fact:
+        node_reboot_required: "{{ yum_reboot.rc != 0 }}"
