@@ -16,4 +16,4 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: shlink-web-client
-          image: docker.io/shlinkio/shlink-web-client:4.8.0
+          image: docker.io/shlinkio/shlink-web-client:4.8.1
