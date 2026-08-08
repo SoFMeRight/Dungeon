@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: gotrue
-          image: docker.io/appflowyinc/gotrue:0.17.2
+          image: docker.io/appflowyinc/gotrue:0.17.4
           ports:
             - name: http
               containerPort: 9999
