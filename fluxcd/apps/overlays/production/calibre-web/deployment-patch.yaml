@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: calibre-web
-          image: docker.io/linuxserver/calibre-web:0.6.26
+          image: docker.io/linuxserver/calibre-web:0.6.27
       volumes:
         - name: config
           persistentVolumeClaim:
