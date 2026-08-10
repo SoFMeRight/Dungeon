@@ -44,11 +44,6 @@
           upgrade is a staged operation, not a patch converge; do it deliberately.
       when: live_minor != k8s_minor
 
-    # Move CNPG primaries off the node and fail fast on any genuine non-CNPG PDB
-    # blocker before draining. Shared with crio-converge.yml.
-    - name: Guard the node before draining (CNPG switchover + PDB audit)
-      ansible.builtin.include_tasks: pre-drain-node.yml
-
     # kubeadm binary FIRST (before the upgrade command that uses it), pinned to
     # the target patch. kubelet/kubectl come AFTER the drain so the node keeps
     # serving until it is emptied.
@@ -86,6 +81,12 @@
     - name: Cordon {{ ansible_facts['hostname'] }}
       ansible.builtin.command: "{{ kubectl_admin }} cordon {{ ansible_facts['hostname'] }}"
       delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    # Cordoning triggers CNPG to switch any primary off this node and rejoin the
+    # demoted instance itself. Wait for that to complete, then fail fast on genuine
+    # non-CNPG PDB blockers. Shared with crio-converge.yml.
+    - name: Wait for CNPG failover + PDB audit before draining
+      ansible.builtin.include_tasks: pre-drain-node.yml
 
     - name: Drain {{ ansible_facts['hostname'] }}
       ansible.builtin.command: >-

@@ -17,15 +17,16 @@
     kubectl_admin: kubectl --kubeconfig /etc/kubernetes/admin.conf
     mesh_namespace: king-of-red-lions
   block:
-    # Before touching the node: move CNPG primaries off it (their by-design
-    # always-zero primary PDB would otherwise wedge the drain) and fail fast on
-    # any genuine non-CNPG PDB blocker. Shared with kubelet-converge.yml.
-    - name: Guard the node before draining (CNPG switchover + PDB audit)
-      ansible.builtin.include_tasks: pre-drain-node.yml
-
     - name: Cordon {{ ansible_facts['hostname'] }}
       ansible.builtin.command: "{{ kubectl_admin }} cordon {{ ansible_facts['hostname'] }}"
       delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    # Cordoning triggers CNPG to switch any primary off this node and rejoin the
+    # demoted instance itself. Wait for that to complete (primary off-node, cluster
+    # healthy) and fail fast on genuine non-CNPG PDB blockers. Shared with
+    # kubelet-converge.yml.
+    - name: Wait for CNPG failover + PDB audit before draining
+      ansible.builtin.include_tasks: pre-drain-node.yml
 
     - name: Drain {{ ansible_facts['hostname'] }}
       ansible.builtin.command: >-
