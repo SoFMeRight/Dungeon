@@ -41,18 +41,29 @@ def ready_off_node(pod, node):
 
 
 def wait_primary_off(ns, cluster, node, attempts=60, delay=5):
-    """Poll until the cluster's primary is off the node AND the cluster is healthy again."""
+    """Poll until the primary is off the node AND every OTHER instance is Ready.
+
+    The instance still on this node is about to be drained and rescheduled, so its
+    readiness is irrelevant — requiring full cluster health here would wedge on the
+    very pod we're about to evict (e.g. a demoted old primary that is slow to rejoin,
+    or one that is itself the reason we're draining). What must hold before the drain
+    is that the SURVIVING (off-node) instances are healthy, so quorum is preserved.
+    """
     for _ in range(attempts):
-        status = json.loads(k("get", "cluster", "-n", ns, cluster, "-o", "json")).get("status", {})
-        current = status.get("currentPrimary", "")
-        current_node = ""
-        if current:
-            current_node = json.loads(
-                k("get", "pod", "-n", ns, current, "-o", "json"))["spec"].get("nodeName", "")
-        if (current and current_node != node
-                and status.get("readyInstances") == status.get("instances")
-                and status.get("phase") == "Cluster in healthy state"):
-            print(f"  {ns}/{cluster}: primary now {current} on {current_node}, healthy")
+        current = json.loads(
+            k("get", "cluster", "-n", ns, cluster, "-o", "json")).get("status", {}).get("currentPrimary", "")
+        pods = json.loads(k("get", "pods", "-n", ns,
+            "-l", f"cnpg.io/cluster={cluster}", "-o", "json"))["items"]
+        cur_pod = next((p for p in pods if p["metadata"]["name"] == current), None)
+        primary_off = cur_pod is not None and cur_pod["spec"].get("nodeName") != node
+        off_node = [p for p in pods if p["spec"].get("nodeName") != node]
+        survivors_ready = bool(off_node) and all(
+            bool(p["status"].get("containerStatuses"))
+            and all(cs.get("ready") for cs in p["status"]["containerStatuses"])
+            for p in off_node
+        )
+        if primary_off and survivors_ready:
+            print(f"  {ns}/{cluster}: primary now {current}, off {node}; surviving instances ready")
             return True
         time.sleep(delay)
     return False
