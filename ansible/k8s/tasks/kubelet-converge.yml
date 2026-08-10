@@ -15,9 +15,9 @@
 #   any other node — the inverse of crio-converge's workers-first ordering.
 #   The calling play (kubelet-provision.yml) enforces this with three phases.
 #
-# Safety scaffolding (PDB pre-audit, fail-open rescue, mesh dataplane restart)
-# mirrors crio-converge.yml. TODO: the shared scaffolding wants extraction into
-# a common node-roll task once a second converge task exists (this is it).
+# The pre-drain guard (CNPG primary switchover + PDB audit) is shared with
+# crio-converge.yml via tasks/pre-drain-node.yml. The fail-open rescue and mesh
+# dataplane restart still mirror crio-converge.yml inline.
 
 - name: Read live kubelet version
   ansible.builtin.command: kubelet --version
@@ -44,37 +44,10 @@
           upgrade is a staged operation, not a patch converge; do it deliberately.
       when: live_minor != k8s_minor
 
-    # Same pre-drain PDB audit as crio-converge: name the blockers, fail fast
-    # instead of stalling the drain for its full timeout.
-    - name: Audit PDBs — drain blockers fail fast by name
-      ansible.builtin.shell: |
-        python3 - <<'PYEOF'
-        import json, subprocess, sys
-        ka = "{{ kubectl_admin }}".split()
-        node = "{{ ansible_facts['hostname'] }}"
-        pods = json.loads(subprocess.check_output(ka + ["get", "pods", "-A",
-            "--field-selector", f"spec.nodeName={node},status.phase=Running", "-o", "json"]))["items"]
-        pdbs = json.loads(subprocess.check_output(ka + ["get", "pdb", "-A", "-o", "json"]))["items"]
-        blockers = []
-        for pdb in pdbs:
-            if pdb.get("status", {}).get("disruptionsAllowed", 1) != 0:
-                continue
-            ns = pdb["metadata"]["namespace"]
-            sel = pdb.get("spec", {}).get("selector", {}).get("matchLabels", {})
-            for p in pods:
-                if p["metadata"]["namespace"] != ns:
-                    continue
-                labels = p["metadata"].get("labels", {})
-                if sel and all(labels.get(k) == v for k, v in sel.items()):
-                    blockers.append(f"{ns}/{p['metadata']['name']} (pdb {pdb['metadata']['name']} allows 0 disruptions)")
-        if blockers:
-            print("drain would wedge on:", file=sys.stderr)
-            for b in blockers:
-                print(f"  {b}", file=sys.stderr)
-            sys.exit(1)
-        PYEOF
-      delegate_to: "{{ groups['k8s_master'][0] }}"
-      changed_when: false
+    # Move CNPG primaries off the node and fail fast on any genuine non-CNPG PDB
+    # blocker before draining. Shared with crio-converge.yml.
+    - name: Guard the node before draining (CNPG switchover + PDB audit)
+      ansible.builtin.include_tasks: pre-drain-node.yml
 
     # kubeadm binary FIRST (before the upgrade command that uses it), pinned to
     # the target patch. kubelet/kubectl come AFTER the drain so the node keeps

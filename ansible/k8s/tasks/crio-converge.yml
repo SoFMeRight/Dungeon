@@ -17,41 +17,11 @@
     kubectl_admin: kubectl --kubeconfig /etc/kubernetes/admin.conf
     mesh_namespace: king-of-red-lions
   block:
-    # A drain blocked by an unsatisfiable PDB wedges for the full timeout and
-    # fails the roll. Surface those as a NAMED failure before touching the
-    # node: every zero-disruption PDB whose pods live here is listed, so the
-    # operator fixes the budget (or the degraded workload behind it) instead
-    # of diagnosing a stall. matchLabels only — the fleet's PDBs use nothing
-    # else.
-    - name: Audit PDBs — drain blockers fail fast by name
-      ansible.builtin.shell: |
-        python3 - <<'PYEOF'
-        import json, subprocess, sys
-        ka = "{{ kubectl_admin }}".split()
-        node = "{{ ansible_facts['hostname'] }}"
-        pods = json.loads(subprocess.check_output(ka + ["get", "pods", "-A",
-            "--field-selector", f"spec.nodeName={node},status.phase=Running", "-o", "json"]))["items"]
-        pdbs = json.loads(subprocess.check_output(ka + ["get", "pdb", "-A", "-o", "json"]))["items"]
-        blockers = []
-        for pdb in pdbs:
-            if pdb.get("status", {}).get("disruptionsAllowed", 1) != 0:
-                continue
-            ns = pdb["metadata"]["namespace"]
-            sel = pdb.get("spec", {}).get("selector", {}).get("matchLabels", {})
-            for p in pods:
-                if p["metadata"]["namespace"] != ns:
-                    continue
-                labels = p["metadata"].get("labels", {})
-                if sel and all(labels.get(k) == v for k, v in sel.items()):
-                    blockers.append(f"{ns}/{p['metadata']['name']} (pdb {pdb['metadata']['name']} allows 0 disruptions)")
-        if blockers:
-            print("drain would wedge on:", file=sys.stderr)
-            for b in blockers:
-                print(f"  {b}", file=sys.stderr)
-            sys.exit(1)
-        PYEOF
-      delegate_to: "{{ groups['k8s_master'][0] }}"
-      changed_when: false
+    # Before touching the node: move CNPG primaries off it (their by-design
+    # always-zero primary PDB would otherwise wedge the drain) and fail fast on
+    # any genuine non-CNPG PDB blocker. Shared with kubelet-converge.yml.
+    - name: Guard the node before draining (CNPG switchover + PDB audit)
+      ansible.builtin.include_tasks: pre-drain-node.yml
 
     - name: Cordon {{ ansible_facts['hostname'] }}
       ansible.builtin.command: "{{ kubectl_admin }} cordon {{ ansible_facts['hostname'] }}"
