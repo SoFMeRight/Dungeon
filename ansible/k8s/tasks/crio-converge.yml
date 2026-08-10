@@ -104,12 +104,20 @@
       when: (istiod_ready.stdout | default('0')) | int > 0
       delegate_to: "{{ groups['k8s_master'][0] }}"
 
+    # Wait via daemonset rollout, NOT `kubectl wait` on pods by node: right after the
+    # bounce the old pods are Terminating but still match a node selector, so a
+    # pod-Ready wait latches onto doomed pods and times out (ztunnel/istio-cni linger
+    # in Terminating well past 180s on graceful shutdown). rollout status tracks the
+    # DS reaching desired/available and ignores the terminating ones.
     - name: Wait for the node's mesh dataplane to resync
       ansible.builtin.command: >-
-        {{ kubectl_admin }} -n {{ mesh_namespace }} wait --for=condition=Ready pod
-        --field-selector spec.nodeName={{ ansible_facts['hostname'] }} --timeout=180s
+        {{ kubectl_admin }} -n {{ mesh_namespace }} rollout status {{ item }} --timeout=180s
+      loop:
+        - daemonset/ztunnel
+        - daemonset/istio-cni-node
       when: (istiod_ready.stdout | default('0')) | int > 0
       delegate_to: "{{ groups['k8s_master'][0] }}"
+      changed_when: false
 
     - name: Uncordon {{ ansible_facts['hostname'] }}
       ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
