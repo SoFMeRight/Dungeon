@@ -27,11 +27,13 @@ import subprocess
 import sys
 import time
 
-KUBECTL = ["kubectl", "--kubeconfig", "/etc/kubernetes/admin.conf"]
+KUBECTL = ["kubectl", "--kubeconfig", "/etc/kubernetes/admin.conf", "--request-timeout=20s"]
 
 
 def k(*args):
-    return subprocess.check_output(KUBECTL + list(args))
+    # Bounded: a client --request-timeout AND a hard subprocess ceiling, so a wedged
+    # API call fails fast (the caller fail-opens) instead of hanging the drain roll.
+    return subprocess.check_output(KUBECTL + list(args), timeout=30)
 
 
 def node_of(ns, pod):

@@ -32,7 +32,7 @@
       ansible.builtin.command: >-
         {{ kubectl_admin }} drain {{ ansible_facts['hostname'] }}
         --ignore-daemonsets --delete-emptydir-data
-        --grace-period=300 --timeout=600s
+        --grace-period=90 --timeout=600s
       delegate_to: "{{ groups['k8s_master'][0] }}"
 
     - name: Install the cri-o {{ crio_minor }} apt keyring
