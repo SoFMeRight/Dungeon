@@ -176,6 +176,11 @@
       ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
       delegate_to: "{{ groups['k8s_master'][0] }}"
 
+    # CNPG can't always re-attach an instance the drain evicted; re-clone any that
+    # stranded (hasteward repair) so every cluster is whole before the next node.
+    - name: Reconcile stranded CNPG instances after the drain
+      ansible.builtin.include_tasks: post-drain-reconcile.yml
+
   # Fail OPEN, exactly as crio-converge: a failed roll must never freeze the
   # node's capacity behind a cordon and cascade into the rest of the fleet.
   rescue:

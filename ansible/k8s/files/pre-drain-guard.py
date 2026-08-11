@@ -1,27 +1,26 @@
 #!/usr/bin/env python3
-"""Pre-drain guard for the node-convergence rolls (crio-converge / kubelet-converge).
+"""Pre-drain guard: move CNPG primaries off the node so the drain can proceed.
 
 Runs on a control-plane host (holds admin.conf), delegated there by ansible, with the
-target node's kubernetes name as the sole argument. It runs AFTER the node is cordoned
-and BEFORE it is drained.
+target node's kubernetes name as the sole argument, AFTER the node is cordoned and
+BEFORE it is drained.
 
-The guard does NOT move CNPG primaries itself. An external status.targetPrimary patch
-races CNPG's own reconciliation and strands the demoted old primary; and for
-unsupervised clusters CNPG moves the primary on its own DURING the drain (the drain's
-eviction of the primary is held by the <cluster>-primary PDB until CNPG promotes a
-replica, then the eviction proceeds and CNPG rejoins the demoted instance). So the
-guard only makes the drain safe to start:
+CNPG does NOT switch a primary off a cordoned or draining node on its own — verified:
+a primary blocks the drain on its always-zero <cluster>-primary PDB for the full
+timeout. So the roll must move it. For each CNPG primary on the node, patch
+status.targetPrimary to a ready off-node replica (the switchover trigger that
+`kubectl cnpg promote` uses) and wait only until the primary ROLE is off the node, so
+the drain can evict the node's now-replica instance.
 
-  1. Wait until every CNPG cluster with an instance on this node is fully healthy
-     (readyInstances == instances) — so CNPG has a promotion target and losing this
-     node's instance to the drain keeps the cluster above quorum.
+We deliberately do NOT wait for the demoted instance to rejoin: CNPG's rejoin after a
+demote/eviction is unreliable in this cluster (an instance can strand shut-down with no
+standby.signal). Any instance that strands is re-cloned AFTER the drain by
+post-drain-reconcile (hasteward repair), which is the one reliable heal.
 
-  2. Fail fast on any genuine (non-CNPG) zero-disruption PDB, so an unsatisfiable
-     budget surfaces as a named cause instead of a full-timeout drain stall. CNPG's
-     own primary/replica budgets are excluded — CNPG resolves those during the drain.
+Then fail-fast on any genuine (non-CNPG) zero-disruption PDB.
 
-Exit 0 = safe to drain; exit non-zero = a cluster is not healthy enough, or a real PDB
-would wedge the drain (either way the caller fail-opens and leaves the node schedulable).
+Exit 0 = safe to drain; exit non-zero = no promotion target, switchover didn't take, or
+a real PDB would wedge the drain (the caller fail-opens and leaves the node schedulable).
 """
 import json
 import subprocess
@@ -35,41 +34,52 @@ def k(*args):
     return subprocess.check_output(KUBECTL + list(args))
 
 
-def clusters_on_node(node):
-    """CNPG clusters (namespace, name) that have at least one instance pod on the node."""
-    pods = json.loads(k(
-        "get", "pods", "-A", "-l", "cnpg.io/cluster",
+def node_of(ns, pod):
+    try:
+        return json.loads(k("get", "pod", "-n", ns, pod, "-o", "json"))["spec"].get("nodeName", "")
+    except subprocess.CalledProcessError:
+        return ""
+
+
+def ready_off_node(pod, node):
+    if pod["spec"].get("nodeName") == node:
+        return False
+    statuses = pod["status"].get("containerStatuses", [])
+    return bool(statuses) and all(cs.get("ready") for cs in statuses)
+
+
+def switchover_primaries_off(node, attempts=60, delay=5):
+    primaries = json.loads(k(
+        "get", "pods", "-A", "-l", "cnpg.io/instanceRole=primary",
         "--field-selector", f"spec.nodeName={node}", "-o", "json",
     ))["items"]
-    return sorted({(p["metadata"]["namespace"], p["metadata"]["labels"]["cnpg.io/cluster"]) for p in pods})
-
-
-def wait_clusters_ready(node, attempts=30, delay=10):
-    """Wait until every CNPG cluster with an instance on this node is fully healthy
-    (readyInstances == instances).
-
-    We do NOT wait for the primary to move off the node here. For unsupervised CNPG
-    clusters the primary is switched over by CNPG DURING the drain — the drain's
-    eviction of the primary is held by the <cluster>-primary PDB until CNPG promotes a
-    replica, then the eviction proceeds and CNPG rejoins the demoted instance. Waiting
-    for primary-off before the drain is a deadlock (the switchover needs the drain).
-    All this guard must guarantee is that every affected cluster is at full health, so
-    CNPG has a promotion target and losing this node's instance keeps quorum."""
-    targets = clusters_on_node(node)
-    if not targets:
-        return
-    pending = []
+    moving = []
+    for pod in primaries:
+        ns = pod["metadata"]["namespace"]
+        cluster = pod["metadata"]["labels"]["cnpg.io/cluster"]
+        replicas = json.loads(k(
+            "get", "pods", "-n", ns,
+            "-l", f"cnpg.io/cluster={cluster},cnpg.io/instanceRole=replica", "-o", "json",
+        ))["items"]
+        target = next((r["metadata"]["name"] for r in replicas if ready_off_node(r, node)), None)
+        if target is None:
+            sys.exit(f"{ns}/{cluster}: no ready off-node replica to promote — cannot drain safely")
+        print(f"switching over {ns}/{cluster}: {pod['metadata']['name']} -> {target}")
+        k("patch", "cluster", "-n", ns, cluster, "--subresource", "status",
+          "--type", "merge", "-p", json.dumps({"status": {"targetPrimary": target}}))
+        moving.append((ns, cluster))
     for _ in range(attempts):
-        pending = []
-        for ns, cl in targets:
-            status = json.loads(k("get", "cluster", "-n", ns, cl, "-o", "json")).get("status", {})
-            if status.get("readyInstances") != status.get("instances"):
-                pending.append(f"{ns}/{cl} (ready={status.get('readyInstances')}/{status.get('instances')})")
-        if not pending:
-            print(f"all CNPG clusters on {node} healthy")
+        stuck = []
+        for ns, cluster in moving:
+            current = json.loads(k("get", "cluster", "-n", ns, cluster, "-o", "json")).get("status", {}).get("currentPrimary", "")
+            if current and node_of(ns, current) == node:
+                stuck.append(f"{ns}/{cluster}")
+        if not stuck:
+            if moving:
+                print(f"all CNPG primaries moved off {node}")
             return
         time.sleep(delay)
-    sys.exit("CNPG clusters not fully healthy before drain: " + "; ".join(pending))
+    sys.exit("switchover did not move the primary off the node in time: " + "; ".join(stuck))
 
 
 def audit_pdbs(node):
@@ -83,7 +93,8 @@ def audit_pdbs(node):
     for pdb in pdbs:
         if pdb.get("status", {}).get("disruptionsAllowed", 1) != 0:
             continue
-        # CNPG primary/replica budgets are handled by the wait above — not a genuine wedge.
+        # CNPG primary/replica budgets are handled by the switchover above and the
+        # post-drain reconcile — not a genuine wedge.
         if "cnpg.io/cluster" in pdb["metadata"].get("labels", {}):
             continue
         ns = pdb["metadata"]["namespace"]
@@ -105,7 +116,7 @@ def main():
     if len(sys.argv) != 2:
         sys.exit("usage: pre-drain-guard.py <node-name>")
     node = sys.argv[1]
-    wait_clusters_ready(node)
+    switchover_primaries_off(node)
     audit_pdbs(node)
 
 

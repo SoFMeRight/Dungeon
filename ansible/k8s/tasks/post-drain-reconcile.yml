@@ -1,0 +1,18 @@
+---
+# Shared post-drain reconcile, included by crio-converge.yml and kubelet-converge.yml
+# AFTER the node is drained and uncordoned. It runs files/post-drain-reconcile.py on a
+# control-plane host: for every CNPG cluster left degraded by the drain (an instance that
+# CNPG could not re-attach on its own), it re-clones the stranded instance with a
+# hasteward `repair` Job — under the existing `hasteward` ServiceAccount + ClusterRole —
+# and waits until every cluster is back at full health. Idempotent: a healthy fleet is a
+# no-op. This must complete before the roll moves to the next node, so each cluster is
+# whole again before its next instance is disrupted.
+
+- name: Reconcile stranded CNPG instances (hasteward repair) after the drain
+  ansible.builtin.script: "{{ playbook_dir }}/files/post-drain-reconcile.py {{ ansible_facts['hostname'] }}"
+  args:
+    executable: python3
+  register: post_drain_reconcile
+  changed_when: "'repair job' in post_drain_reconcile.stdout"
+  when: not ansible_check_mode
+  delegate_to: "{{ groups['k8s_master'][0] }}"

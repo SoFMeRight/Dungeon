@@ -10,7 +10,7 @@
 #   docker run --rm --network host -e KUBECONFIG=/kube/config \
 #     -v "$HOME/.kube:/kube:ro" prplanit/hasteward:latest \
 #     triage -e galera -c <cluster> -n <namespace>
-# See docs/cnpg-postgres-cluster-recovery-runbook.md (engine-general).
+# See docs/k8s/cnpg-postgres-cluster-recovery-runbook.md (engine-general).
 # ============================================================================
 #
 # Ansible playbook that standardizes recovery logic for common stateful services

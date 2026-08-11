@@ -1,19 +1,19 @@
 ---
 # Shared pre-drain guard, included by crio-converge.yml and kubelet-converge.yml
-# AFTER the node is cordoned and BEFORE it is drained. Cordoning makes CNPG switch any
-# primary off this node and rejoin the demoted instance itself; this guard does NOT
-# switch over manually (that races CNPG and strands the demoted primary). It runs
+# AFTER the node is cordoned and BEFORE it is drained. It runs
 # files/pre-drain-guard.py on a control-plane host, which:
-#   - waits until every CNPG cluster with an instance on this node is fully healthy
-#     with its primary off-node (CNPG's switchover + rejoin complete), and
+#   - switches every CNPG primary off this node (status.targetPrimary patch) and waits
+#     until the primary role has moved — CNPG will NOT do this for a drain on its own,
+#     so a primary would otherwise block the drain on its always-zero -primary PDB; and
 #   - fails fast by name on any remaining genuine (non-CNPG) zero-disruption PDB.
-# See the script header for the full rationale.
+# It does NOT wait for a demoted instance to rejoin — CNPG's rejoin is unreliable here,
+# so anything that strands is re-cloned after the drain by post-drain-reconcile.yml.
 
-- name: Wait for CNPG failover + PDB audit before draining
+- name: Switch CNPG primaries off the node + PDB audit before draining
   ansible.builtin.script: "{{ playbook_dir }}/files/pre-drain-guard.py {{ ansible_facts['hostname'] }}"
   args:
     executable: python3
   register: pre_drain_guard
-  changed_when: false
+  changed_when: "'switching over' in pre_drain_guard.stdout"
   when: not ansible_check_mode
   delegate_to: "{{ groups['k8s_master'][0] }}"

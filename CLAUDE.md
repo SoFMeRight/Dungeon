@@ -26,7 +26,7 @@
     - `--output json` - machine-readable output for scripting
     - Galera example (triage osticket): `docker run --rm --network host -e KUBECONFIG=/kube/config -v "$HOME/.kube:/kube:ro" prplanit/hasteward:latest triage -e galera -c osticket-mariadb -n hyrule-castle`
     - CNPG example (repair): `docker run --rm --network host -e KUBECONFIG=/kube/config -v "$HOME/.kube:/kube:ro" prplanit/hasteward:latest repair -e cnpg -c zitadel-postgres -n zeldas-lullaby --instance 3 --backups-path <restic-repo>`
-    - Full runbook: `docs/cnpg-postgres-cluster-recovery-runbook.md` (engine-general — use `-e galera` for MariaDB).
+    - Full runbook: `docs/k8s/cnpg-postgres-cluster-recovery-runbook.md` (engine-general — use `-e galera` for MariaDB).
     - **⛔ DEPRECATED — do NOT use the old Ansible path** (`ansible/k8s/recovery/hasteward.yml -e mode=…`). It predates the fixed Go recovery logic (trustworthy seqno derivation, fail-closed authority) and can give a WRONG assessment on a production DB. Use the binary above.
 
 - FluxCD Infrastructure Structure:
