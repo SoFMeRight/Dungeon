@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: appflowy-cloud
-          image: docker.io/appflowyinc/appflowy_cloud:0.17.4
+          image: docker.io/appflowyinc/appflowy_cloud:0.17.10
           resources:
             requests:
               memory: "1Gi"
