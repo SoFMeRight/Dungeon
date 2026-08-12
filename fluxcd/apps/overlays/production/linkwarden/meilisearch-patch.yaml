@@ -6,6 +6,12 @@ spec:
   replicas: 1
   template:
     spec:
+      initContainers:
+        - name: meili-version-guard
+          image: docker.io/getmeili/meilisearch:v1.52.0
+          volumeMounts:
+            - name: temple-of-time-linkwarden-meilisearch-data
+              mountPath: /meili_data
       containers:
         - name: meilisearch
           image: docker.io/getmeili/meilisearch:v1.53.0

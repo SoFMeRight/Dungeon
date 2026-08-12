@@ -13,6 +13,43 @@ spec:
         app: linkwarden-meilisearch
     spec:
       serviceAccountName: linkwarden-meilisearch
+      initContainers:
+        # Meilisearch refuses to open an index written by an incompatible engine version
+        # and crashloops. That index is a rebuildable derivative of linkwarden's Postgres,
+        # so on a version bump we CLEAR it and let linkwarden re-index — rather than migrate
+        # in place, which can OOM or be interrupted mid-rewrite (e.g. a node drain) and leave
+        # a corrupt half-migrated dir. Self-detecting: compares the engine's own reported
+        # version to the on-disk /meili_data/VERSION marker (major.minor, which is the level
+        # Meilisearch changes its on-disk format at) — no pinned version to keep in sync, and
+        # a no-op when they already match.
+        - name: meili-version-guard
+          image: PLACEHOLDER_IMAGE
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              data=/meili_data
+              ver_file="$data/VERSION"
+              engine="$(meilisearch --version | awk '{print $NF}')"
+              engine_mm="$(echo "$engine" | cut -d. -f1-2)"
+              if [ -f "$ver_file" ]; then
+                disk="$(cat "$ver_file")"
+                if [ "$(echo "$disk" | cut -d. -f1-2)" != "$engine_mm" ]; then
+                  echo "meili-version-guard: index v$disk incompatible with engine v$engine — clearing $data for a clean rebuild (linkwarden re-indexes from Postgres)"
+                  rm -rf "$data"/* 2>/dev/null || true
+                else
+                  echo "meili-version-guard: index v$disk compatible with engine v$engine — keeping"
+                fi
+              elif [ -d "$data/indexes" ] || [ -d "$data/auth" ]; then
+                echo "meili-version-guard: data present but unversioned — clearing to be safe"
+                rm -rf "$data"/* 2>/dev/null || true
+              else
+                echo "meili-version-guard: data dir empty — nothing to do"
+              fi
+          volumeMounts:
+            - name: meilisearch-data
+              mountPath: /meili_data
       containers:
         - name: meilisearch
           image: PLACEHOLDER_IMAGE
