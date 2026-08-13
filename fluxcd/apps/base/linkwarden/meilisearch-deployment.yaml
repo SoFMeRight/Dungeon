@@ -13,46 +13,6 @@ spec:
         app: linkwarden-meilisearch
     spec:
       serviceAccountName: linkwarden-meilisearch
-      initContainers:
-        # Meilisearch refuses to open an index written by an incompatible engine version
-        # and crashloops. That index is a rebuildable derivative of linkwarden's Postgres,
-        # so on a version bump we CLEAR it and let linkwarden re-index — rather than migrate
-        # in place, which can OOM or be interrupted mid-rewrite (e.g. a node drain) and leave
-        # a corrupt half-migrated dir. Self-detecting: compares the engine's own reported
-        # version to the on-disk VERSION marker (major.minor, the level Meilisearch changes
-        # its format at). The index lives in the data.ms SUBDIR of the db path (Meilisearch's
-        # default), so both the check and the clear target /meili_data/data.ms. A no-op when
-        # compatible. IMPORTANT: this container's image MUST equal the meilisearch container's
-        # image (the overlay sets both to the same tag) so `meilisearch --version` reports the
-        # engine that will actually run.
-        - name: meili-version-guard
-          image: PLACEHOLDER_IMAGE
-          command:
-            - sh
-            - -c
-            - |
-              set -eu
-              db=/meili_data/data.ms
-              ver_file="$db/VERSION"
-              engine="$(meilisearch --version | awk '{print $NF}')"
-              engine_mm="$(echo "$engine" | cut -d. -f1-2)"
-              if [ -f "$ver_file" ]; then
-                disk="$(cat "$ver_file")"
-                if [ "$(echo "$disk" | cut -d. -f1-2)" != "$engine_mm" ]; then
-                  echo "meili-version-guard: index v$disk incompatible with engine v$engine — clearing $db for a clean rebuild (linkwarden re-indexes from Postgres)"
-                  rm -rf "$db"
-                else
-                  echo "meili-version-guard: index v$disk compatible with engine v$engine — keeping"
-                fi
-              elif [ -d "$db" ]; then
-                echo "meili-version-guard: $db present but unversioned — clearing to be safe"
-                rm -rf "$db"
-              else
-                echo "meili-version-guard: no index yet — nothing to do"
-              fi
-          volumeMounts:
-            - name: meilisearch-data
-              mountPath: /meili_data
       containers:
         - name: meilisearch
           image: PLACEHOLDER_IMAGE
@@ -64,6 +24,12 @@ spec:
                   key: meili-master-key
             - name: MEILI_ENV
               value: "production"
+            # Meilisearch's own supported in-place upgrade: on a version bump it migrates the
+            # on-disk index to the running engine's format at startup (supported for any DB
+            # created by v1.12+). No-op when versions already match, and it keeps the index —
+            # so linkwarden's per-link indexVersion stays valid and no reindex is needed.
+            - name: MEILI_UPGRADE_DB
+              value: "true"
           ports:
             - containerPort: 7700
               name: meilisearch
