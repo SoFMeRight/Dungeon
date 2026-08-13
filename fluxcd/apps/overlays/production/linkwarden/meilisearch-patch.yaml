@@ -7,8 +7,10 @@ spec:
   template:
     spec:
       initContainers:
+        # Image MUST match the meilisearch container below (Renovate bumps both) so the
+        # guard's version check runs the same engine that will start.
         - name: meili-version-guard
-          image: docker.io/getmeili/meilisearch:v1.52.0
+          image: docker.io/getmeili/meilisearch:v1.53.0
           volumeMounts:
             - name: temple-of-time-linkwarden-meilisearch-data
               mountPath: /meili_data
