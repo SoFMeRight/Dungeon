@@ -6,6 +6,7 @@ resources:
   - allow-intra-breakglass.yaml
   - allow-nextcloud-to-nextcloud-postgres.yaml
   - allow-nextcloud-to-nextcloud-redis.yaml
+  - allow-nextcloud-to-nextcloud-collabora.yaml
   - allow-open-webui-to-open-webui-postgres.yaml
   - allow-open-webui-to-open-webui-redis.yaml
   - allow-penpot-to-penpot-postgres.yaml

@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-nextcloud-to-nextcloud-collabora
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: collabora
+      app.kubernetes.io/instance: nextcloud
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/temple-of-time/sa/nextcloud
+      to:
+        - operation:
+            ports: ["9980"]
