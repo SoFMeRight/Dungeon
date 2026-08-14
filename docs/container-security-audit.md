@@ -28,6 +28,33 @@ Living document tracking security posture of all containerized workloads. This i
 
 ---
 
+## Current Posture Snapshot (live sweep 2026-08-14)
+
+Live measurement across 233 workloads in the 12 internet-exposed namespaces (behind the phloem + cell-membrane gateways):
+
+| dimension | pass rate |
+|-----------|-----------|
+| non-root | 44% |
+| no privilege-escalation | 19% |
+| drop ALL caps | 22% |
+| read-only root FS | 7% |
+| seccomp | 17% |
+
+**The network layer is the strong counterpart** — istio ambient + `default-deny` AuthorizationPolicy + per-identity ALLOWs + Cilium `default-deny-ingress` in every app namespace (see `k8s/workload-compliance-manifest.md` §Network and the istio/cilium `POLICY-SPEC.md`). East-west reach of a compromised pod is already gated; the remaining gap is **in-pod blast radius** — which is what this doc tracks.
+
+### Harden exposed apps FIRST (internet-facing = highest priority)
+
+The 52 front-ends behind the two internet-exposed gateways, prioritized. Root-required ones still get seccomp + no-privesc + drop-caps even where non-root/ro-fs can't happen.
+
+- **Tier A — static/near-static (easy → 5/5):** astralfocal-site, enamorafoto-site, etherealclique-site, homelabhelpdesk-site, kai-hamilton-site, precisionplanit-site, sofmeright-site, yesimvegan-site *(all lost-woods — see [Custom Site Images](#custom-site-images-pending))*, linkstack, organizr.
+- **Tier B — rootless-friendly (medium):** gatus, umami, uptime-kuma, boundary, calcom, jellyseerr, ghost, mealie, penpot-frontend, reactive-resume, shlink, wikijs-vegan, appflowy-nginx, netbird-*, netbox-server, **vaultwarden**, **zitadel**, ntfy, echo-ip.
+- **Tier C — root-required/special (triage — see [Root Required](#root-required-cannot-change-without-upstream-fixes)):** bookstack, dolibarr, orangehrm, opnform, calibre-web, plex, nextcloud (+collabora/notify-push/talk-hpb/whiteboard), jellyfin, home-assistant.
+- **Templates to copy (already ~4/5):** zitadel-login-v2, gitlab-webservice-default, osticket-app, tactical-nginx, fairer-pages, linkwarden.
+
+**Scalable guardrail (do before the long tail):** Kyverno is installed but enforces nothing on pod security. Add a mutate policy (inject `seccompProfile: RuntimeDefault` + `allowPrivilegeEscalation: false` + `capabilities.drop:[ALL]`) fleet-wide in Audit→Enforce with per-workload exclusions — moves seccomp/privesc/caps toward ~100% by default instead of 200 hand-edits.
+
+---
+
 ## Completed Apps
 
 Apps that have been hardened and verified.
@@ -376,6 +403,7 @@ See postgres upgrade plan at `~/.claude/plans/goofy-baking-shamir.md`.
 | 2026-02-05 | Claude | Initial audit creation, gluetun caps (12 apps), downloadarrs→StatefulSet, byparr non-root, photoprism non-root, dailytxt non-root, TZ fix to America/Los_Angeles |
 | 2026-02-05 | Claude | speedtest-tracker LSIO non-root pattern (pioneer), updated LSIO section with Mode column, created workload-compliance-manifest.md |
 | 2026-02-06 | Claude | TacticalRMM full hardening: all 11 components in hookshot namespace (SEC-1 through SEC-8). Redis/MongoDB init chown removed (fsGroup handles ownership), wait-for-* init containers hardened as nobody, tactical-init documented exception for root with minimal caps |
+| 2026-08-14 | Claude | Live posture sweep (233 workloads, 12 exposed namespaces): non-root 44% / no-privesc 19% / drop-caps 22% / ro-fs 7% / seccomp 17%. Added Current Posture Snapshot + exposed-first priority (52 front-ends, tiered). Network layer verified strong (istio ambient + Cilium default-deny everywhere) and corrected the stale "0%/Planning" NET entries in workload-compliance-manifest.md. Repaired 2 invalid Cilium default-deny-ingress policies (temple-of-time, hyrule-castle → VALID). |
 
 ## Related Documents
 

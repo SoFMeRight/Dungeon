@@ -41,7 +41,7 @@ Living document tracking all workloads against production best practices aligned
 | 5.2.6 | Minimize SYS_ADMIN capability | SEC-6 | Enforcing |
 | 5.2.7-9 | Minimize host namespace sharing | SEC-9,10,11 | Tracking |
 | 5.2.10 | Minimize containers without securityContext | SEC-* | Enforcing |
-| 5.3.x | Network Policies | NET-* | Planning |
+| 5.3.x | Network Policies | NET-* | Deployed (ingress; egress pending) |
 | 5.4.1 | Secrets as files not env vars | SECRETS-2 | Tracking |
 | 5.7.x | General Policies | Various | Partial |
 
@@ -65,7 +65,7 @@ Living document tracking all workloads against production best practices aligned
 | CM (Config Mgmt) | CM-2,6,7 | GitOps, IMG-* | Implemented |
 | CP (Contingtic Plan) | CP-9,10 | BACKUP-* | Tracking |
 | IA (Identification) | IA-2,5 | SECRETS-*, mTLS | Partial |
-| SC (Sys/Comm Prot) | SC-7,8,13 | NET-*, ENCRYPT-* | Planning |
+| SC (Sys/Comm Prot) | SC-7,8,13 | NET-*, ENCRYPT-* | Partial (NET deployed: istio ambient + Cilium; ENCRYPT tracking) |
 | SI (Sys/Info Integ) | SI-2,3,4 | IMG-*, RUNTIME-* | Tracking |
 
 ---
@@ -130,16 +130,18 @@ These are the mandatory standards for all production workloads.
 |----|-------------|--------|-------|
 | TZ-1 | Consistent timezone | `America/Los_Angeles` or `UTC` | Per app requirements |
 
-### Network (NET) - Future Planning
+### Network (NET) - Implemented (istio ambient + Cilium)
 
-| ID | Requirement | Target | Notes |
-|----|-------------|--------|-------|
-| NET-1 | NetworkPolicy exists | Yes | Zero-trust pod traffic |
-| NET-2 | Ingress rules defined | Minimal required | Only allow necessary sources |
-| NET-3 | Egress rules defined | Minimal required | Only allow necessary destinations |
-| NET-4 | mTLS enabled | Yes (where possible) | Encryption in transit |
+Deployed as a two-layer, deny-by-default model across all app namespaces. Design specs: `fluxcd/infrastructure/configs/overlays/production/istio-policies/POLICY-SPEC.md` (identity/authz) and `.../cilium-policies/POLICY-SPEC.md` (L3/L4).
 
-> **Note**: Network policies require detailed discussion of app-to-app communication patterns. See [Network Policy Planning](#network-policy-planning) section.
+| ID | Requirement | Target | Status |
+|----|-------------|--------|--------|
+| NET-1 | NetworkPolicy exists | Yes | ✅ Cilium `default-deny-ingress` + CCNP contracts in every app namespace |
+| NET-2 | Ingress rules defined | Minimal required | ✅ istio `default-deny` AuthorizationPolicy + explicit per-identity ALLOW rules |
+| NET-3 | Egress rules defined | Minimal required | ⚠️ ingress-side enforced; egress default-deny not yet enabled (`enableDefaultDeny.egress: false`) |
+| NET-4 | mTLS enabled | Yes (where possible) | ✅ istio ambient (ztunnel HBONE) — mTLS for all in-mesh traffic |
+
+> **Verified 2026-08-14:** all 12 internet-exposed namespaces run istio ambient + `default-deny` AuthorizationPolicy + per-identity ALLOWs + Cilium `default-deny-ingress` (VALID). This is the strongest layer of the posture. Two Cilium default-deny policies were found invalid (empty `ingress: []`) and repaired to the `enableDefaultDeny` + anchor-rule shape. App-to-app authz is enforced at the istio layer (ztunnel); Cilium is L3/L4 defense-in-depth (HBONE-aware).
 
 ### Pod Security Admission (PSA)
 
@@ -524,8 +526,8 @@ These are the mandatory standards for all production workloads.
 
 | Category | Status | Notes |
 |----------|--------|-------|
-| PSA Enforcement | 0% | No namespaces have PSA labels |
-| Network Policies | 0% | Not implemented |
+| PSA Enforcement | 0% | No namespaces have PSA labels (Kyverno installed, not enforcing pod-security) |
+| Network Policies | ~90% (ingress) | istio ambient `default-deny` + per-identity ALLOWs AND Cilium `default-deny-ingress` in every app namespace; egress default-deny not yet enabled |
 | RBAC Audit | 0% | Not audited |
 | Secrets Hygiene | 80% | Vault ESO + SOPS, env vars |
 | Image Scanning | 0% | No automated scanning |
@@ -533,7 +535,7 @@ These are the mandatory standards for all production workloads.
 | Runtime Security | 0% | Falco not deployed |
 | Audit Logging | ? | K8s API audit unknown |
 | Encryption at Rest | ? | Needs verification |
-| mTLS | 0% | Not implemented |
+| mTLS | ~100% (mesh) | istio ambient (ztunnel HBONE) provides mTLS for all in-mesh traffic across app namespaces |
 
 ### Overall Compliance Score
 
