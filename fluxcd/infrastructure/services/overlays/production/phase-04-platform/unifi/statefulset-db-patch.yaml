@@ -10,7 +10,7 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: mongo
-          image: docker.io/library/mongo:7.0.40
+          image: docker.io/library/mongo:8.3.8
           securityContext:
             capabilities:
               drop:
