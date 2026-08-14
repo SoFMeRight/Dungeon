@@ -24,7 +24,7 @@ spec:
               drop: [ALL]
       containers:
         - name: mongodb
-          image: docker.io/mongo:4.4
+          image: docker.io/mongo:8.3
           securityContext:
             runAsUser: 999
             runAsGroup: 999

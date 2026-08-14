@@ -17,7 +17,7 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       initContainers:
         - name: wait-for-mongodb
-          image: docker.io/mongo:4.4
+          image: docker.io/mongo:8.3
           command:
             - sh
             - -c
