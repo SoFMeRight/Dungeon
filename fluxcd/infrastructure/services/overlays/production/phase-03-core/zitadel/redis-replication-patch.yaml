@@ -9,4 +9,4 @@ spec:
         storageClassName: ceph-rbd
         resources:
           requests:
-            storage: 64Mi
+            storage: 128Mi
