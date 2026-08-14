@@ -6,7 +6,7 @@ spec:
   chart:
     spec:
       # renovate: datasource=docker depName=ghcr.io/bank-vaults/helm-charts/vault-operator
-      version: "1.23.0"
+      version: "1.24.0"
   values:
     # Prometheus scraping
     podAnnotations:
