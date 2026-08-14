@@ -1,0 +1,118 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: audit-pod-hardening
+  annotations:
+    policies.kyverno.io/title: Audit Pod Hardening (SEC-*)
+    policies.kyverno.io/description: >-
+      Report-only (Audit) baseline for the five workload-hardening dimensions tracked in
+      docs/container-security-audit.md — non-root, no privilege-escalation, drop ALL caps,
+      seccomp RuntimeDefault, read-only root FS. Generates PolicyReports across every istio
+      ambient (app) namespace WITHOUT blocking anything, so the exception list can be built
+      before graduating the tolerable dimensions to a mutate + Enforce policy. Scope follows
+      the ambient label (auto-covers new app namespaces; excludes system namespaces).
+spec:
+  # AUDIT ONLY — reports violations in PolicyReports, blocks nothing. Do not flip to
+  # Enforce here; enforcement graduates per-dimension via a separate mutate/validate policy
+  # once the audit exception list is triaged.
+  validationFailureAction: Audit
+  background: true
+  rules:
+    - name: require-run-as-non-root
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              namespaceSelector:
+                matchLabels:
+                  istio.io/dataplane-mode: ambient
+      exclude: &excludeCommon
+        any:
+          - resources:
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: kyverno
+          - resources:
+              namespaceSelector:
+                matchLabels:
+                  policy.prplanit.com/audit-hardening: "suspended"
+      validate:
+        message: "SEC-1/2: runAsNonRoot should be true (pod-level or every container)."
+        anyPattern:
+          - spec:
+              securityContext:
+                runAsNonRoot: true
+          - spec:
+              containers:
+                - securityContext:
+                    runAsNonRoot: true
+    - name: disallow-privilege-escalation
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              namespaceSelector:
+                matchLabels:
+                  istio.io/dataplane-mode: ambient
+      exclude: *excludeCommon
+      validate:
+        message: "SEC-3: allowPrivilegeEscalation must be false on every container."
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  allowPrivilegeEscalation: false
+    - name: require-drop-all-capabilities
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              namespaceSelector:
+                matchLabels:
+                  istio.io/dataplane-mode: ambient
+      exclude: *excludeCommon
+      validate:
+        message: "SEC-6: every container should drop ALL capabilities (add back the minimum)."
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  capabilities:
+                    drop: ["ALL"]
+    - name: require-seccomp-runtime-default
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              namespaceSelector:
+                matchLabels:
+                  istio.io/dataplane-mode: ambient
+      exclude: *excludeCommon
+      validate:
+        message: "SEC-7: seccompProfile RuntimeDefault/Localhost required (pod-level or every container)."
+        anyPattern:
+          - spec:
+              securityContext:
+                seccompProfile:
+                  type: "RuntimeDefault | Localhost"
+          - spec:
+              containers:
+                - securityContext:
+                    seccompProfile:
+                      type: "RuntimeDefault | Localhost"
+    - name: require-readonly-root-fs
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              namespaceSelector:
+                matchLabels:
+                  istio.io/dataplane-mode: ambient
+      exclude: *excludeCommon
+      validate:
+        message: "SEC-4: readOnlyRootFilesystem should be true on every container (mount emptyDir for writable paths)."
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  readOnlyRootFilesystem: true

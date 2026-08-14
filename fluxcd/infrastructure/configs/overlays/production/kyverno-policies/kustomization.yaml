@@ -8,3 +8,4 @@ resources:
   - enforce-image-policy.yaml
   - mutate-redis-contract-labels.yaml
   - mutate-probe-on-ingress.yaml
+  - audit-pod-hardening.yaml
