@@ -6,6 +6,7 @@ spec:
   targetNamespace: gorons-bracelet
   chart:
     spec:
+      # renovate: datasource=helm depName=rook-ceph registryUrl=https://charts.rook.io/release
       version: "v1.18.2"
   values:
     csi:

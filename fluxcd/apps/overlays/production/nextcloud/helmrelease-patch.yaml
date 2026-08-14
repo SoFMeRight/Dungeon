@@ -5,6 +5,7 @@ metadata:
 spec:
   chart:
     spec:
+      # renovate: datasource=helm depName=nextcloud registryUrl=https://nextcloud.github.io/helm/
       version: "8.9.1"
   values:
     podLabels:
@@ -15,6 +16,7 @@ spec:
       policy.prplanit.com/access-scope-redis: temple-of-time.nextcloud.redis
 
     image:
+      # renovate: datasource=docker depName=library/nextcloud
       tag: "31.0.10"
 
     replicaCount: 3

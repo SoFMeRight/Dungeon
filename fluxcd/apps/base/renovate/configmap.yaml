@@ -78,15 +78,42 @@ data:
           "datasourceTemplate": "github-releases",
           "extractVersionTemplate": "^v(?<version>.*)$",
           "description": "Cluster kubernetes pin — minor moves in lockstep with cri-o (grouped k8s-nodes)"
+        },
+        {
+          // Generic "split dependency" rescue manager. The base/overlay convention can
+          // divorce a value from the metadata Renovate needs to resolve it — an image
+          // tag in an overlay patch whose repository is in base, or a chart version
+          // pinned in an overlay without the sourceRef. Neither helm-values nor the flux
+          // manager can correlate across files (Renovate never runs kustomize), so those
+          // dependencies were invisible and NEVER got a bump — patch or major. Annotate
+          // the value in place and this manager tracks it. Covers the four known splits:
+          // nextcloud (image + chart), stunner, rook-ceph, bank-vaults (chart + images).
+          //   # renovate: datasource=docker depName=library/nextcloud
+          //   tag: "31.0.10"
+          //   # renovate: datasource=helm depName=stunner registryUrl=https://l7mp.io/stunner
+          //   version: "1.1.0"
+          // registryUrl is optional — OCI charts carry the registry inside depName.
+          "customType": "regex",
+          "fileMatch": ["fluxcd/.+\\.yaml$"],
+          "matchStrings": [
+            "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: registryUrl=(?<registryUrl>\\S+))?\\s+tag:\\s+\"?(?<currentValue>[^\"\\s]+)\"?",
+            "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: registryUrl=(?<registryUrl>\\S+))?\\s+version:\\s+\"?(?<currentValue>[^\"\\s]+)\"?"
+          ],
+          "description": "Annotation-driven tracking for base/overlay-split image tags and chart versions"
         }
       ],
 
       "packageRules": [
         {
+          // Majors surface as an MR (a real notification), but only once the release
+          // has aged 30 days — matured enough to be a reasonable upgrade, letting the
+          // .0 bugs shake out first. Never auto-merged: the MR waits for a human to
+          // review and merge. This REPLACES the old dependencyDashboardApproval gate,
+          // which silently parked every major behind a dashboard checkbox so nothing
+          // ever got a chance to update — the drift that left Nextcloud two majors back.
           "matchDatasources": ["docker", "helm"],
           "matchUpdateTypes": ["major"],
-          "dependencyDashboardApproval": true,
-          "description": "Disable auto-major updates - require manual review"
+          "minimumReleaseAge": "30 days"
         },
         {
           "matchDatasources": ["helm"],
@@ -225,6 +252,16 @@ data:
           // before the other rather than restarting both at once.
           "additionalBranchPrefix": "{{parentDir}}-",
           "commitMessagePrefix": "chore(plex):"
+        },
+        {
+          // Nextcloud chart (helm) + app image (docker) must move together across majors —
+          // chart 9.x carries the NC 33 templates, chart 8.x carries NC 32. Group so a
+          // major bump proposes ONE MR touching both, never a half-upgrade that pairs a
+          // new image with an incompatible chart. "nextcloud" = the chart depName (exact);
+          // the glob matches the image after the docker.io registryAlias rewrite.
+          "groupName": "nextcloud",
+          "matchPackageNames": ["nextcloud", "**/library/nextcloud"],
+          "commitMessagePrefix": "chore(nextcloud):"
         }
       ],
 
