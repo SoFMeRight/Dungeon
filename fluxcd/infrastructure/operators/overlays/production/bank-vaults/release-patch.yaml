@@ -18,7 +18,7 @@ spec:
     bankVaults:
       image:
         # renovate: datasource=docker depName=ghcr.io/bank-vaults/bank-vaults
-        tag: v1.32.0
+        tag: v1.33.1
     webhook:
       image:
         # renovate: datasource=docker depName=ghcr.io/bank-vaults/vault-secrets-webhook
