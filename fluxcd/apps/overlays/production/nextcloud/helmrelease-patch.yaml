@@ -6,7 +6,7 @@ spec:
   chart:
     spec:
       # renovate: datasource=helm depName=nextcloud registryUrl=https://nextcloud.github.io/helm/
-      version: "8.9.1"
+      version: "9.1.4"
   values:
     podLabels:
       policy.prplanit.com/ingress: "true"
@@ -17,7 +17,7 @@ spec:
 
     image:
       # renovate: datasource=docker depName=library/nextcloud
-      tag: "32.0.6"
+      tag: "33.0.5"
 
     replicaCount: 1
 
