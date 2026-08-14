@@ -17,9 +17,9 @@ spec:
 
     image:
       # renovate: datasource=docker depName=library/nextcloud
-      tag: "31.0.10"
+      tag: "32.0.6"
 
-    replicaCount: 3
+    replicaCount: 1
 
     # Hard spread: one replica per node (matches kimai) so replicas occupy distinct
     # nodes and survive a single node loss. A replica stays Pending if fewer eligible
