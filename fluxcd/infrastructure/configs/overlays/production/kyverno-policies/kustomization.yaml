@@ -9,3 +9,4 @@ resources:
   - mutate-redis-contract-labels.yaml
   - mutate-probe-on-ingress.yaml
   - audit-pod-hardening.yaml
+  - mutate-pod-hardening.yaml
