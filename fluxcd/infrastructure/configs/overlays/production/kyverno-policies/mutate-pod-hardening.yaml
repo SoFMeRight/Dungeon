@@ -3,21 +3,21 @@ kind: ClusterPolicy
 metadata:
   name: mutate-pod-hardening
   annotations:
-    policies.kyverno.io/title: Mutate Pod Hardening (seccomp + no-privesc)
+    policies.kyverno.io/title: Mutate Pod Hardening (seccomp)
     policies.kyverno.io/description: >-
       Phase 2b of the workload-hardening rollout (see docs/container-security-audit.md and the
-      audit-pod-hardening report). Injects the two lowest-risk securityContext defaults on pods
-      in istio ambient (app) namespaces: pod-level seccompProfile RuntimeDefault, and
-      allowPrivilegeEscalation:false on every container. Uses +() anchors so it only ADDS when
-      absent — never overrides an app's explicit value. ADMISSION-TIME ONLY (no mutateExisting):
-      existing pods are untouched until they next roll, so the change lands gradually and
-      observably, never a fleet-wide restart. Per-app escape hatch: set the container/pod field
-      explicitly, or label the namespace policy.prplanit.com/mutate-hardening=suspended.
+      audit-pod-hardening report). Injects pod-level seccompProfile RuntimeDefault on pods in
+      istio ambient (app) namespaces — the ONE dimension safe to apply fleet-wide. Uses a +()
+      anchor so it only ADDS when absent, never overrides. ADMISSION-TIME ONLY (no
+      mutateExisting): existing pods are untouched until they next roll, so the change lands
+      gradually and observably, never a fleet-wide restart. The other four dimensions
+      (non-root, no-privilege-escalation, drop-caps, read-only rootfs) are carried explicitly
+      per app in the overlays (Phase 3) — every decision visible and diff-reviewable in git,
+      rather than inferred from a runtime expression. Escape hatch: label a namespace
+      policy.prplanit.com/mutate-hardening=suspended.
 spec:
   background: true
   rules:
-    # seccomp RuntimeDefault — near-zero risk (applies the default syscall filter). Pod-level
-    # so it covers all containers; a container may still override to its own profile.
     - name: add-seccomp-runtime-default
       match:
         any:
@@ -26,7 +26,7 @@ spec:
               namespaceSelector:
                 matchLabels:
                   istio.io/dataplane-mode: ambient
-      exclude: &excludeCommon
+      exclude:
         any:
           - resources:
               selector:
@@ -42,22 +42,3 @@ spec:
             securityContext:
               +(seccompProfile):
                 type: RuntimeDefault
-    # allowPrivilegeEscalation:false on every container — mostly safe, but can break apps that
-    # rely on setuid privilege GAIN (rare). Canary-roll before trusting broadly; suspend per
-    # namespace or add an explicit true on the offending container to opt out.
-    - name: add-no-privilege-escalation
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude: *excludeCommon
-      mutate:
-        patchStrategicMerge:
-          spec:
-            containers:
-              - (name): "?*"
-                securityContext:
-                  +(allowPrivilegeEscalation): false
