@@ -67,6 +67,13 @@ spec:
           # CRITICAL: Enable file-level backups to MinIO instead of relying on CSI snapshots
           # This ensures backups are independent of the Ceph storage backend
           defaultVolumesToFsBackup: true
+          # Only Ceph (rbd/cephfs) volumes are backed up; NAS CIFS/SMB
+          # (smb.csi.k8s.io) is skipped robustly by driver — see the
+          # velero-volume-policy ConfigMap. This replaces the fragile,
+          # incomplete per-PVC-name blocklist in excludedResources below.
+          resourcePolicy:
+            kind: configmap
+            name: velero-volume-policy
           includedNamespaces:
             # Administrative services (vault, weave, zitadel)
             - zeldas-lullaby

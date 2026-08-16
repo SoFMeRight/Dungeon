@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: velero-volume-policy
+data:
+  # Velero resource/volume policy — referenced by the daily-backup schedule.
+  # RULE: only Ceph-originated volumes (rbd / cephfs) get backed up. NAS CIFS/SMB
+  # shares (smb.csi.k8s.io) are SKIPPED — they originate on the NAS, so copying
+  # them to the NAS's own S3 (SeaweedFS) is pointless self-backup and was the
+  # entire 331Ti / ~14TB blowup. This driver match catches ALL current AND future
+  # SMB volumes, replacing the fragile per-PVC-name excludedResources blocklist.
+  policy.yaml: |
+    version: v1
+    volumePolicies:
+      - conditions:
+          csi:
+            driver: smb.csi.k8s.io
+        action:
+          type: skip
