@@ -5,8 +5,12 @@
 # beside dind with its own independent PKI (generated once by buildkitd-certs); jobs mount
 # its client certs at /buildkit-certs. The /stagefreight host dir is the shared SF cache
 # root (toolchains, buildx state), mounted into dind, buildkitd, and every job.
-# DOCKER_* env is injected per-job at registration; jobs run unprivileged (docker work
-# happens inside the companions, not the job container).
+# Jobs receive DOCKER_HOST/DOCKER_TLS_VERIFY/DOCKER_CERT_PATH as runner-provided env
+# (--env), so ANY project's docker-consuming jobs work here — no pipeline-side wiring
+# required. The runner's OWN executor connection is pinned to the host socket
+# (--docker-host), which makes that job env injection safe: an explicit host cannot be
+# overridden by environment lookup. Jobs run
+# unprivileged (docker work happens inside the companions, not the job container).
 #
 # Registration only runs when /etc/gitlab-runner/config.toml is absent — flag changes
 # here need a fresh register (remove the generated config.toml) on redeploy.
@@ -25,6 +29,12 @@ services:
       - dind-storage:/var/lib/docker
       - /opt/docker/gitlab-runner/certs:/certs
       - /opt/docker/gitlab-runner/stagefreight:/stagefreight
+    # Pull-through cache (docker.io, with upstream fallback) for the job's inner
+    # docker pulls. The job IMAGE is host-pulled; mirror docker.io in the host's
+    # /etc/docker/daemon.json (same content).
+    configs:
+      - source: dind_daemon_json
+        target: /etc/docker/daemon.json
     healthcheck:
       test: ["CMD", "docker", "info"]
       interval: 10s
@@ -97,6 +107,12 @@ services:
       - buildkitd-state:/var/lib/buildkit
       - /opt/docker/gitlab-runner/stagefreight:/stagefreight
       - /opt/docker/gitlab-runner/buildkitd-certs:/certs:ro
+    # Per-registry pull-through cache for build bases (docker.io/ghcr/quay/lscr),
+    # each with upstream fallback — the surface dockerd's docker.io-only mirror
+    # can't cover. buildkitd reads /etc/buildkit/buildkitd.toml by default.
+    configs:
+      - source: buildkitd_toml
+        target: /etc/buildkit/buildkitd.toml
     healthcheck:
       test: ["CMD-SHELL", "buildctl --addr tcp://127.0.0.1:1234 --tlscacert /certs/ca/cert.pem --tlscert /certs/client/cert.pem --tlskey /certs/client/key.pem debug workers"]
       interval: 10s
@@ -127,16 +143,17 @@ services:
             --docker-dns=172.22.30.122 \
             --docker-dns=1.1.1.1 \
             --docker-dns=8.8.8.8 \
+            --docker-host=unix:///var/run/docker.sock \
             --docker-image=alpine:latest \
             --docker-network-mode=stagefreight \
             --docker-privileged=false \
-            --docker-env=DOCKER_HOST=tcp://dind:2376 \
-            --docker-env=DOCKER_TLS_VERIFY=1 \
-            --docker-env=DOCKER_CERT_PATH=/certs/client \
             --docker-volumes=/cache \
             --docker-volumes=/opt/docker/gitlab-runner/stagefreight:/stagefreight \
             --docker-volumes=/opt/docker/gitlab-runner/buildkitd-certs/client:/buildkit-certs:ro \
             --docker-volumes=/opt/docker/gitlab-runner/certs/client:/certs/client:ro \
+            --env=DOCKER_CERT_PATH=/certs/client \
+            --env=DOCKER_HOST=tcp://dind:2376 \
+            --env=DOCKER_TLS_VERIFY=1 \
             --executor=docker \
             --name=$${RUNNER_NAME:-"GitLab Runner"} \
             --non-interactive \
@@ -173,6 +190,27 @@ services:
       start_period: 10s
     networks:
       - stagefreight
+
+configs:
+  # dockerd mirror (docker.io only) — job's inner docker pulls + copy the same
+  # content to the host's /etc/docker/daemon.json for the job image. Cache is OFF
+  # unless REGISTRY_MIRROR_DOCKER is set (unset → empty list → direct upstream).
+  dind_daemon_json:
+    content: |
+      { "registry-mirrors": [${REGISTRY_MIRROR_DOCKER:+"https://${REGISTRY_MIRROR_DOCKER}"}] }
+  # BuildKit per-registry mirrors — caches ghcr/quay/lscr build bases too. Each
+  # registry's cache is OFF unless its REGISTRY_MIRROR_* is set (unset → empty
+  # mirror list → direct upstream); set one to enable that registry's cache.
+  buildkitd_toml:
+    content: |
+      [registry."docker.io"]
+        mirrors = [${REGISTRY_MIRROR_DOCKER:+"${REGISTRY_MIRROR_DOCKER}"}]
+      [registry."ghcr.io"]
+        mirrors = [${REGISTRY_MIRROR_GHCR:+"${REGISTRY_MIRROR_GHCR}"}]
+      [registry."quay.io"]
+        mirrors = [${REGISTRY_MIRROR_QUAY:+"${REGISTRY_MIRROR_QUAY}"}]
+      [registry."lscr.io"]
+        mirrors = [${REGISTRY_MIRROR_LSCR:+"${REGISTRY_MIRROR_LSCR}"}]
 
 networks:
   stagefreight:

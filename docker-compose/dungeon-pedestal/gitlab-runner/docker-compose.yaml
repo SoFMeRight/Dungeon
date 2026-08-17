@@ -2,8 +2,12 @@
 # Freightyard architecture: jobs run on the HOST docker (socket executor) and join the
 # stagefreight compose network, where `dind` is a network alias — so job containers
 # resolve tcp://dind:2376 natively and mount the dind client certs by host path.
-# DOCKER_* env is injected per-job at registration; jobs run unprivileged (docker work
-# happens inside the dind companion, not the job container).
+# Jobs receive DOCKER_HOST/DOCKER_TLS_VERIFY/DOCKER_CERT_PATH as runner-provided env
+# (--env), so ANY project's docker-consuming jobs work here — no pipeline-side wiring
+# required. The runner's OWN executor connection is pinned to the host socket
+# (--docker-host), which makes that job env injection safe: an explicit host cannot be
+# overridden by environment lookup. Jobs run
+# unprivileged (docker work happens inside the dind companion, not the job container).
 #
 # Registration only runs when /etc/gitlab-runner/config.toml is absent — flag changes
 # here need a fresh register (remove the generated config.toml) on redeploy.
@@ -21,6 +25,12 @@ services:
     volumes:
       - dind-storage:/var/lib/docker
       - /opt/docker/gitlab-runner/certs:/certs
+    # Pull-through cache (with upstream fallback) for the job's inner docker.io
+    # pulls — e.g. the ansible execution image. The job IMAGE is host-pulled;
+    # mirror docker.io in the host's /etc/docker/daemon.json (same content).
+    configs:
+      - source: dind_daemon_json
+        target: /etc/docker/daemon.json
     healthcheck:
       test: ["CMD", "docker", "info"]
       interval: 10s
@@ -49,14 +59,15 @@ services:
             --docker-dns=172.22.30.122 \
             --docker-dns=1.1.1.1 \
             --docker-dns=8.8.8.8 \
-            --docker-env=DOCKER_CERT_PATH=/certs/client \
-            --docker-env=DOCKER_HOST=tcp://dind:2376 \
-            --docker-env=DOCKER_TLS_VERIFY=1 \
+            --docker-host=unix:///var/run/docker.sock \
             --docker-image=alpine:latest \
             --docker-network-mode=stagefreight \
             --docker-privileged=false \
             --docker-volumes=/cache \
             --docker-volumes=/opt/docker/gitlab-runner/certs/client:/certs/client:ro \
+            --env=DOCKER_CERT_PATH=/certs/client \
+            --env=DOCKER_HOST=tcp://dind:2376 \
+            --env=DOCKER_TLS_VERIFY=1 \
             --executor=docker \
             --name=$${RUNNER_NAME:-"GitLab Runner"} \
             --non-interactive \
@@ -91,6 +102,14 @@ services:
       start_period: 10s
     networks:
       - stagefreight
+
+configs:
+  # dockerd mirror (docker.io only), inline so the stack stays self-contained.
+  # Cache is OFF unless REGISTRY_MIRROR_DOCKER is set — unset renders an empty
+  # mirror list (direct upstream). Set it (e.g. docker.cr.pcfae.com) to enable.
+  dind_daemon_json:
+    content: |
+      { "registry-mirrors": [${REGISTRY_MIRROR_DOCKER:+"https://${REGISTRY_MIRROR_DOCKER}"}] }
 
 networks:
   stagefreight:
