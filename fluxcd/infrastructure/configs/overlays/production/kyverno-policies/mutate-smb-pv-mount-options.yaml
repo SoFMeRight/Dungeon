@@ -17,6 +17,10 @@ spec:
   # Admission-time mutation only. background:false avoids scanning existing
   # PVs (mountOptions is immutable, so re-mutation would only produce noise).
   background: false
+  # Best-effort defaulting: never let this convenience mutation block core
+  # storage provisioning. If Kyverno is unavailable, a PV is created
+  # un-mutated (the pre-policy behavior) rather than rejected.
+  failurePolicy: Ignore
   rules:
     - name: default-hard-mount
       match:
