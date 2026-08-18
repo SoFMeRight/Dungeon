@@ -10,6 +10,8 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: smb
   mountOptions:
+    - vers=3.1.1
+    - hard
     - dir_mode=0777
     - file_mode=0777
     - uid=1000
@@ -48,6 +50,8 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: smb
   mountOptions:
+    - vers=3.1.1
+    - hard
     - dir_mode=0777
     - file_mode=0777
     - uid=1000

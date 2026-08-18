@@ -10,7 +10,8 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   mountOptions:
-    - vers=2.1
+    - vers=3.1.1
+    - hard
     - uid=1000
     - gid=1000
     - file_mode=0777
@@ -48,7 +49,8 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   mountOptions:
-    - vers=2.1
+    - vers=3.1.1
+    - hard
     - uid=1000
     - gid=1000
     - file_mode=0777
