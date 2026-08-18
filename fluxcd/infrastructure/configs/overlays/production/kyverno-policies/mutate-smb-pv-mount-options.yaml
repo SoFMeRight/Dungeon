@@ -1,0 +1,65 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: mutate-smb-pv-mount-options
+  annotations:
+    policies.kyverno.io/title: Default SMB PV mount options
+    policies.kyverno.io/category: Storage
+    policies.kyverno.io/description: >-
+      smb.csi.k8s.io PersistentVolumes that omit an explicit `hard` mount
+      option get the CIFS default of `soft`, which turns transient network
+      blips into EIO read/write failures (intermittent media read failures +
+      library freezes). This policy injects `hard` and, when no dialect is
+      pinned, `vers=3.1.1` at admission so new statically-provisioned SMB PVs
+      cannot silently regress. Explicit author choices (`soft`, or a pinned
+      `vers=`) are respected. See memory: smb-csi-soft-inject.
+spec:
+  # Admission-time mutation only. background:false avoids scanning existing
+  # PVs (mountOptions is immutable, so re-mutation would only produce noise).
+  background: false
+  rules:
+    - name: default-hard-mount
+      match:
+        any:
+          - resources:
+              kinds: ["PersistentVolume"]
+      preconditions:
+        all:
+          - key: "{{ request.object.spec.csi.driver || '' }}"
+            operator: Equals
+            value: smb.csi.k8s.io
+          - key: "{{ length(request.object.spec.mountOptions || `[]`) }}"
+            operator: GreaterThan
+            value: 0
+          - key: "{{ contains(request.object.spec.mountOptions || `[]`, 'hard') }}"
+            operator: Equals
+            value: false
+          - key: "{{ contains(request.object.spec.mountOptions || `[]`, 'soft') }}"
+            operator: Equals
+            value: false
+      mutate:
+        patchesJson6902: |-
+          - op: add
+            path: "/spec/mountOptions/-"
+            value: hard
+    - name: default-smb3-dialect
+      match:
+        any:
+          - resources:
+              kinds: ["PersistentVolume"]
+      preconditions:
+        all:
+          - key: "{{ request.object.spec.csi.driver || '' }}"
+            operator: Equals
+            value: smb.csi.k8s.io
+          - key: "{{ length(request.object.spec.mountOptions || `[]`) }}"
+            operator: GreaterThan
+            value: 0
+          - key: "{{ length((request.object.spec.mountOptions || `[]`)[?starts_with(@, 'vers=')]) }}"
+            operator: Equals
+            value: 0
+      mutate:
+        patchesJson6902: |-
+          - op: add
+            path: "/spec/mountOptions/-"
+            value: vers=3.1.1
