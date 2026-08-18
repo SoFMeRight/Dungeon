@@ -4,4 +4,5 @@ namespace: temple-of-time
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-media-servers.yaml
+  - cnp-overseerr-to-plex.yaml
   - cnp-galera-replication.yaml

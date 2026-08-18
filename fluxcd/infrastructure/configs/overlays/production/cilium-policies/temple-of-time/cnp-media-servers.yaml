@@ -67,3 +67,13 @@ spec:
               protocol: UDP
             - port: "32414"
               protocol: UDP
+    # In-cluster consumers (overseerr) — pod IPs fall in the fromCIDRSet
+    # `except` (pod CIDR), so they need an explicit fromEndpoints allow.
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: swift-sail
+            app: overseerr
+      toPorts:
+        - ports:
+            - port: "32400"
+              protocol: TCP
