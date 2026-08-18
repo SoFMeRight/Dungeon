@@ -11,7 +11,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: jellyfin
+      app: jellyfin
   ingress:
     - fromCIDRSet:
         - cidr: "10.0.0.0/8"
@@ -42,7 +42,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: plex
+      app: plex
   ingress:
     - fromCIDRSet:
         - cidr: "10.0.0.0/8"
