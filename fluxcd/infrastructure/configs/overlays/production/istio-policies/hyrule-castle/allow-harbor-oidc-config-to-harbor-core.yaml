@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-harbor-oidc-config-to-harbor-core
+spec:
+  selector:
+    matchLabels:
+      app: harbor
+      component: core
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/hyrule-castle/sa/harbor-oidc-config
+      to:
+        - operation:
+            ports: ["8080"]

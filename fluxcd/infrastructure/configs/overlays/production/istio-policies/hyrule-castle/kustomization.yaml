@@ -30,6 +30,7 @@ resources:
   - allow-harbor-nginx-to-harbor-core.yaml
   - allow-harbor-nginx-to-harbor-registry.yaml
   - allow-harbor-jobservice-to-harbor-core.yaml
+  - allow-harbor-oidc-config-to-harbor-core.yaml
   - allow-opnform-ingress-to-opnform-client.yaml
   - allow-opnform-ingress-to-opnform-api.yaml
   - allow-opnform-client-to-opnform-ingress.yaml
