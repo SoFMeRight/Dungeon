@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: config
-          image: docker.io/curlimages/curl:8.11.1
+          image: docker.io/curlimages/curl:8.21.0
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
