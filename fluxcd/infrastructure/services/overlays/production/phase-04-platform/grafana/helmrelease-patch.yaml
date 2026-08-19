@@ -68,6 +68,11 @@ spec:
         # Viewer role are denied (strict), never auto-assigned.
         role_attribute_strict: true
         role_attribute_path: "contains(roles[*], 'Admin') && 'Admin' || contains(roles[*], 'Editor') && 'Editor' || contains(roles[*], 'Viewer') && 'Viewer' || 'None'"
+      # Link an SSO login to the matching existing local account by (verified)
+      # email, so ONE Grafana user signs in via both SSO and username/password.
+      # Safe here: single trusted IdP (Zitadel) with email_verified=true.
+      auth:
+        oauth_allow_insecure_email_lookup: true
 
     # Map secret keys to Grafana environment variables
     envValueFrom:
