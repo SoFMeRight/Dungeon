@@ -1,0 +1,47 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-oidc-consumers-to-cell-membrane
+spec:
+  description: >-
+    Allow in-cluster OIDC consumers to reach the cell-membrane gateway on 443
+    so they can hairpin to the IdP (sso.prplanit.com) via split-horizon DNS for
+    server-side discovery / JWKS / token exchange. Capability-gated: each
+    fromEndpoints entry requires BOTH the namespace AND
+    policy.prplanit.com/cap.oidc=true (logical AND) — only labeled pods match,
+    NOT whole namespaces. The namespace label only scopes Cilium's
+    cross-namespace match. Mirrors the xylem-gateway cap.s3 pattern and
+    preserves the "no identity bypass via LB IP" posture (no `cluster`/all-pods).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: zeldas-lullaby
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: temple-of-time
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: pedestal-of-time
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: lost-woods
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hookshot
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gossip-stone
+            policy.prplanit.com/cap.oidc: "true"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

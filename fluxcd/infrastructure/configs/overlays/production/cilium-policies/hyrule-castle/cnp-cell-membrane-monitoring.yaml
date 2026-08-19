@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-monitoring-to-cell-membrane
+spec:
+  description: >-
+    Allow gatus / uptime-kuma (gossip-stone) to probe business services behind
+    the cell-membrane gateway on 443. Parity with allow-xylem-gateway-lan, which
+    already whitelists these monitors; cell-membrane was missing it, so probes
+    to sso.prplanit.com and other cell-membrane hosts were being dropped.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gossip-stone
+            app.kubernetes.io/name: gatus
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gossip-stone
+            app: uptime-kuma
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
