@@ -18,7 +18,7 @@ spec:
           image: docker.io/actualbudget/actual-server:sha-37e807f-alpine
           env:
             - name: ACTUAL_OPENID_SERVER_HOSTNAME
-              value: "https://funds.arbitorium.com"
+              value: "https://budget.pcfae.com"
           volumeMounts:
             - name: pedestal-of-time-actualbudget-data
               mountPath: /data
