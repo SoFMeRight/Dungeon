@@ -15,6 +15,7 @@ spec:
       - name: cr-pcfae-admin-pull-secret
   vaultLabels:
     policy.prplanit.com/ingress: "true"
+    policy.prplanit.com/cap.oidc: "true"
   vaultAnnotations:
     prometheus.io/scrape: "true"
     prometheus.io/port: "9091"

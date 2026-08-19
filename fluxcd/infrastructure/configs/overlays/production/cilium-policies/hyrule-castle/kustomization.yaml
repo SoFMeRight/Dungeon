@@ -4,6 +4,8 @@ namespace: hyrule-castle
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-cell-membrane-gateway.yaml
+  - cnp-cell-membrane-oidc-consumers.yaml
+  - cnp-cell-membrane-monitoring.yaml
   - cnp-apt-cacher-ng.yaml
   - cnp-galera-replication.yaml
   - cnp-gitlab-webhooks.yaml

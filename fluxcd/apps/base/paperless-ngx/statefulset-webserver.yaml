@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         app: paperless-webserver
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: paperless-webserver
       containers:

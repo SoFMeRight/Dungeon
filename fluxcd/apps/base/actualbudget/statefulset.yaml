@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         app: actualbudget
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: actualbudget
       containers:

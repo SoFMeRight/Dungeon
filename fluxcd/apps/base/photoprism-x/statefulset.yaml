@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         app: photoprism-x
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: photoprism-x
       runtimeClassName: nvidia

@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: penpot-backend
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: penpot-backend
       containers:

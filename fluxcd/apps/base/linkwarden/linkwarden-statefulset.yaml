@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: linkwarden
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: linkwarden
       initContainers:

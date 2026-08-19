@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         app: bookstack
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: bookstack
       initContainers:

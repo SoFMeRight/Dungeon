@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: oauth2-proxy
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: oauth2-proxy
       containers:

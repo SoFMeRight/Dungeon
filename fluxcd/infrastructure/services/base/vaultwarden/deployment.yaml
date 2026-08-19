@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: vaultwarden
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: vaultwarden
       containers:

@@ -15,6 +15,7 @@ spec:
       labels:
         app: netbird
         component: management
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: netbird-management
       initContainers:

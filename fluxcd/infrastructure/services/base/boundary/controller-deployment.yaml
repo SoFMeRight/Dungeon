@@ -16,6 +16,7 @@ spec:
       labels:
         app.kubernetes.io/name: boundary
         app.kubernetes.io/component: controller
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: boundary-controller
       initContainers:

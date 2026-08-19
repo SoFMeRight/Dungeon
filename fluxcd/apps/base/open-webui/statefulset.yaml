@@ -13,6 +13,7 @@ spec:
     metadata:
       labels:
         app: open-webui
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: open-webui
       containers:
