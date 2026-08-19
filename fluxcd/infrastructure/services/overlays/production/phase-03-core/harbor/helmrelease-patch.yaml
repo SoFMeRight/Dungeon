@@ -38,6 +38,9 @@ spec:
         policy.prplanit.com/access-scope-redis: hyrule-castle.harbor.redis
         policy.prplanit.com/cap.ceph: "true"
         policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
+        # core validates OIDC tokens against Zitadel (sso.prplanit.com) — needs
+        # the cell-membrane gateway hairpin allow.
+        policy.prplanit.com/cap.oidc: "true"
       image:
         repository: docker.io/goharbor/harbor-core
 
