@@ -182,6 +182,10 @@ spec:
     # High Availability: Scale critical components to 3 replicas for 2-node failure tolerance
     gitlab:
       webservice:
+        # webservice does the OIDC (omniauth openid_connect) token/JWKS
+        # exchange with Zitadel — needs the cell-membrane gateway hairpin allow.
+        podLabels:
+          policy.prplanit.com/cap.oidc: "true"
         minReplicas: 3
         maxReplicas: 5
         # Hard spread: one replica per node (matches kimai) so a node loss can't take
