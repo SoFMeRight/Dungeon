@@ -12,19 +12,6 @@ spec:
   hostnames:
     - "budget.pcfae.com"
   rules:
-    # OIDC flow endpoints must NOT carry COOP: the browser returns here
-    # cross-origin from Zitadel, and COOP: same-origin forces a browsing-context
-    # swap that RELOADS the callback page — redeeming the single-use auth code a
-    # second time, which Zitadel rejects with Errors.AuthRequest.NoCode. These
-    # paths are plain redirects and never touch SharedArrayBuffer, so serve them
-    # with the app's own headers untouched. More-specific prefix wins over "/".
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /openid
-      backendRefs:
-        - name: actualbudget
-          port: 5006
     - matches:
         - path:
             type: PathPrefix
@@ -32,9 +19,11 @@ spec:
       filters:
         # ActualBudget's frontend needs SharedArrayBuffer, which the browser
         # only grants under cross-origin isolation (COOP: same-origin + COEP:
-        # require-corp on the top-level document). The app server sends both,
-        # but they don't survive the xylem gateway hop — force them here so the
-        # browser actually receives them.
+        # require-corp on the top-level document). The app server already sends
+        # both on EVERY path — including /openid/callback, where it re-serves the
+        # SPA to render login errors — but the xylem gateway drops them, so force
+        # them back on all paths. (Do NOT carve out /openid: the callback serves
+        # the SAB-dependent SPA too, so it must stay cross-origin isolated.)
         - type: ResponseHeaderModifier
           responseHeaderModifier:
             set:
