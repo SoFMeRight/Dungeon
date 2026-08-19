@@ -16,6 +16,19 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        # ActualBudget's frontend needs SharedArrayBuffer, which the browser
+        # only grants under cross-origin isolation (COOP: same-origin + COEP:
+        # require-corp on the top-level document). The app server sends both,
+        # but they don't survive the xylem gateway hop — force them here so the
+        # browser actually receives them.
+        - type: ResponseHeaderModifier
+          responseHeaderModifier:
+            set:
+              - name: Cross-Origin-Opener-Policy
+                value: same-origin
+              - name: Cross-Origin-Embedder-Policy
+                value: require-corp
       backendRefs:
         - name: actualbudget
           port: 5006
