@@ -12,6 +12,19 @@ spec:
   hostnames:
     - "budget.pcfae.com"
   rules:
+    # OIDC flow endpoints must NOT carry COOP: the browser returns here
+    # cross-origin from Zitadel, and COOP: same-origin forces a browsing-context
+    # swap that RELOADS the callback page — redeeming the single-use auth code a
+    # second time, which Zitadel rejects with Errors.AuthRequest.NoCode. These
+    # paths are plain redirects and never touch SharedArrayBuffer, so serve them
+    # with the app's own headers untouched. More-specific prefix wins over "/".
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /openid
+      backendRefs:
+        - name: actualbudget
+          port: 5006
     - matches:
         - path:
             type: PathPrefix
