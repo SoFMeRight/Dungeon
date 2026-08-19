@@ -1,6 +1,30 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
+  name: allow-harbor-oidc-config-to-core
+spec:
+  description: >-
+    Allow the harbor-oidc-config Job to reach harbor-core on 8080/TCP to PUT
+    the OIDC auth config via /api/v2.0/configurations.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: harbor
+      component: core
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: harbor-oidc-config
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
   name: allow-harbor-nginx-to-core
 spec:
   description: >-

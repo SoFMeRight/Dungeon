@@ -55,7 +55,7 @@ spec:
             - -c
             - |
               set -eu
-              HARBOR="http://harbor"
+              HARBOR="http://harbor-core"
               echo "Waiting for Harbor API..."
               until curl -sf -o /dev/null "$HARBOR/api/v2.0/health"; do sleep 5; done
               echo "Harbor is up. Applying OIDC (auth_mode=oidc_auth)..."
