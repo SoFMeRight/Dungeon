@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: homarr-session-affinity
+spec:
+  host: homarr.lost-woods.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      # Sticky routing so a given browser hits the SAME homarr pod for the
+      # whole OIDC login handshake (Auth.js state/PKCE cookies don't survive
+      # requests bouncing across replicas). Hash on the real client IP
+      # (x-forwarded-for) — stable across the Zitadel redirect, unlike cookies.
+      consistentHash:
+        httpHeaderName: x-forwarded-for

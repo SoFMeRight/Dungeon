@@ -8,6 +8,7 @@ resources:
   - externalsecret.yaml
   - cephfs-images-pv.yaml
   - httproute-xylem.yaml
+  - destinationrule.yaml
 
 patches:
   - path: statefulset-patch.yaml
