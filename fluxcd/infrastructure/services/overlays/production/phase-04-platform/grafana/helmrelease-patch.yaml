@@ -217,7 +217,7 @@ spec:
               - uid: ntfy-security
                 type: webhook
                 settings:
-                  url: "https://ntfy.pcfae.com/grafana-security-alerts"
+                  url: "http://ntfy.delivery-bag.svc.cluster.local/grafana-security-alerts"
                   httpMethod: POST
                   httpHeaderName1: "Authorization"
                   httpHeaderValue1: "Bearer ${NTFY_TOKEN}"
@@ -426,7 +426,7 @@ spec:
                     datasourceUid: loki
                     model:
                       refId: A
-                      expr: 'sum(count_over_time({app="ztunnel"} |= "denied" |!= "handling RBAC" [5m]))'
+                      expr: 'sum(count_over_time({app="ztunnel"} |= "denied" != "handling RBAC" [5m]))'
                       queryType: instant
                       intervalMs: 1000
                       maxDataPoints: 43200

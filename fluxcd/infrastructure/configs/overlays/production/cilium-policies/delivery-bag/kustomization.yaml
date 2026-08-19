@@ -4,3 +4,4 @@ namespace: delivery-bag
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-ntfy-smtp.yaml
+  - cnp-grafana-to-ntfy.yaml
