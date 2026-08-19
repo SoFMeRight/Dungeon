@@ -30,8 +30,6 @@ spec:
               value: PLACEHOLDER_NEXTAUTH_URL
             - name: AUTH_PROVIDERS
               value: PLACEHOLDER_AUTH_PROVIDERS
-            - name: AUTH_OIDC_URI
-              value: PLACEHOLDER_AUTH_OIDC_URI
             - name: AUTH_OIDC_ISSUER
               value: PLACEHOLDER_AUTH_OIDC_ISSUER
             - name: AUTH_OIDC_CLIENT_NAME

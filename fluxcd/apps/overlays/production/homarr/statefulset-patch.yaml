@@ -83,11 +83,8 @@ spec:
               value: "email"
             - name: AUTH_OIDC_FORCE_USERINFO
               value: "false"
-            - name: AUTH_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: homarr-postgres-credentials
-                  key: password
+            # AUTH_SECRET now comes from the homarr-secrets envFrom (dedicated
+            # Vault value apps/homarr:AUTH_SECRET), not the postgres password.
             - name: AUTH_TRUST_HOST
               value: "true"
       volumes:
