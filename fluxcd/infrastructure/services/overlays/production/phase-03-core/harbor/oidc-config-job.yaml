@@ -62,7 +62,7 @@ spec:
               BODY=$(cat <<JSON
               {
                 "auth_mode": "oidc_auth",
-                "oidc_name": "zitadel",
+                "oidc_name": "PrPlanIT SSO",
                 "oidc_endpoint": "https://sso.prplanit.com",
                 "oidc_client_id": "$OIDC_CLIENT_ID",
                 "oidc_client_secret": "$OIDC_CLIENT_SECRET",
