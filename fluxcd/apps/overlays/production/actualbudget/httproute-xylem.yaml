@@ -12,18 +12,33 @@ spec:
   hostnames:
     - "budget.pcfae.com"
   rules:
+    # OIDC callback ONLY: no COOP here. The browser returns to this path
+    # cross-origin from Zitadel; COOP:same-origin makes Chromium do a browsing-
+    # context-group swap that RESTARTS the navigation, so the code lands twice
+    # → the 2nd exchange fails Errors.AuthRequest.NoCode (Zitadel oidc_session.go
+    # CreateOIDCSessionFromAuthRequest: code already consumed). This handler
+    # returns only a 302 (success) or 400 JSON (error) — it never serves the
+    # SAB-dependent SPA — so dropping COOP here does NOT affect SharedArrayBuffer.
+    # More-specific prefix wins over "/". (Grafana works precisely because its
+    # callback carries no COOP.)
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /openid/callback
+      backendRefs:
+        - name: actualbudget
+          port: 5006
     - matches:
         - path:
             type: PathPrefix
             value: /
       filters:
-        # ActualBudget's frontend needs SharedArrayBuffer, which the browser
-        # only grants under cross-origin isolation (COOP: same-origin + COEP:
-        # require-corp on the top-level document). The app server already sends
-        # both on EVERY path — including /openid/callback, where it re-serves the
-        # SPA to render login errors — but the xylem gateway drops them, so force
-        # them back on all paths. (Do NOT carve out /openid: the callback serves
-        # the SAB-dependent SPA too, so it must stay cross-origin isolated.)
+        # ActualBudget's frontend needs SharedArrayBuffer, which the browser only
+        # grants under cross-origin isolation (COOP: same-origin + COEP:
+        # require-corp on the top-level document). The app server sends both, but
+        # the xylem gateway drops them — force them back. The SPA (which needs
+        # SAB) only ever loads under "/", so it stays isolated; only the callback
+        # above is carved out.
         - type: ResponseHeaderModifier
           responseHeaderModifier:
             set:
