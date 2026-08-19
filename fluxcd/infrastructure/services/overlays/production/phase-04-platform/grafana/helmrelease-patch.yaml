@@ -59,6 +59,10 @@ spec:
         token_url: "https://sso.prplanit.com/oauth/v2/token"
         api_url: "https://sso.prplanit.com/oidc/v1/userinfo"
         use_pkce: true
+        # Use Zitadel preferred_username (e.g. "kai") as the Grafana login,
+        # not the email — avoids colliding with the built-in admin account
+        # whose login was renamed to the same email.
+        login_attribute_path: preferred_username
         # Role comes ONLY from the Zitadel-assigned role (flattened into the
         # `roles` claim by the flatRoles action); users with no Admin/Editor/
         # Viewer role are denied (strict), never auto-assigned.
