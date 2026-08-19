@@ -6,6 +6,7 @@ resources:
   - cephfs-plugins-pv.yaml
   - httproute-xylem.yaml
   - externalsecret-ntfy.yaml
+  - externalsecret-oidc.yaml
 
 patches:
   - path: helmrelease-patch.yaml
@@ -72,6 +73,13 @@ patches:
   - target:
       kind: ExternalSecret
       name: grafana-ntfy-token
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: gossip-stone
+  - target:
+      kind: ExternalSecret
+      name: grafana-oidc
     patch: |-
       - op: add
         path: /metadata/namespace
