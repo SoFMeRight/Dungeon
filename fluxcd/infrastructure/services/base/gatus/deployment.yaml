@@ -16,10 +16,23 @@ spec:
         app.kubernetes.io/name: gatus
     spec:
       serviceAccountName: gatus
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: init-config
           image: docker.io/busybox:1.38.0
           command: ["sh", "-c", "cp /configmap/* /config/"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           volumeMounts:
             - name: configmap
               mountPath: /configmap
@@ -28,6 +41,12 @@ spec:
       containers:
         - name: gatus
           image: ghcr.io/twin/gatus:PLACEHOLDER_VERSION
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: http
               containerPort: 8080
@@ -61,6 +80,12 @@ spec:
               memory: PLACEHOLDER_MEMORY_LIMIT
         - name: gatus-sidecar
           image: ghcr.io/home-operations/gatus-sidecar:PLACEHOLDER_SIDECAR_VERSION
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           args:
             - --auto-httproute
             - --auto-service
