@@ -18,4 +18,4 @@ spec:
               - cluster.local/ns/kokiri-forest/sa/phloem-gateway-istio
       to:
         - operation:
-            ports: ["80"]
+            ports: ["8080"]
