@@ -15,19 +15,32 @@ spec:
         app: opnform-ingress
     spec:
       serviceAccountName: opnform-ingress
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: nginx
           image: docker.io/nginx:1
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8080
               protocol: TCP
-          env:
-            - name: NGINX_MAX_BODY_SIZE
-              value: "64m"
           volumeMounts:
             - name: nginx-config
-              mountPath: /etc/nginx/templates
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
           livenessProbe:
             exec:
               command:
@@ -38,7 +51,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 80
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
           resources:
@@ -52,3 +65,5 @@ spec:
         - name: nginx-config
           configMap:
             name: opnform-nginx-config
+        - name: tmp
+          emptyDir: {}

@@ -3,43 +3,66 @@ kind: ConfigMap
 metadata:
   name: opnform-nginx-config
 data:
-  default.conf.template: |
-    map $request_uri $api_uri {
-        ~^/api(?<api_path>.*)$ $api_path;
-        default $request_uri;
+  # Full nginx.conf (not a template) so the container runs non-root: no `user`
+  # directive, pid + temp under /tmp, listen on the unprivileged :8080. Body-size
+  # limit inlined (was ${NGINX_MAX_BODY_SIZE}=64m via the envsubst entrypoint).
+  nginx.conf: |
+    pid /tmp/nginx.pid;
+    events {
+        worker_connections 1024;
     }
 
-    client_max_body_size ${NGINX_MAX_BODY_SIZE};
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        access_log /dev/stdout;
+        error_log  /dev/stderr;
 
-    server {
-        listen 80;
-        server_name _;
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path       /tmp/proxy_temp;
+        fastcgi_temp_path     /tmp/fastcgi_temp;
+        uwsgi_temp_path       /tmp/uwsgi_temp;
+        scgi_temp_path        /tmp/scgi_temp;
 
-        # API and backend routes - pass to PHP-FPM
-        location ~ ^/(api|open|local/temp|forms/assets|vapor)(/|$) {
-            fastcgi_pass opnform-api:9000;
-            include fastcgi_params;
-            fastcgi_param SCRIPT_FILENAME /usr/share/nginx/html/public/index.php;
-            fastcgi_param REQUEST_URI $api_uri;
-            fastcgi_param HTTP_X_FORWARDED_PROTO $scheme;
-            fastcgi_param HTTP_X_FORWARDED_HOST $host;
-            fastcgi_read_timeout 600;
+        sendfile on;
+
+        map $request_uri $api_uri {
+            ~^/api(?<api_path>.*)$ $api_path;
+            default $request_uri;
         }
 
-        # Frontend client
-        location / {
-            proxy_pass http://opnform-client:3000;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header Connection "upgrade";
-        }
+        client_max_body_size 64m;
 
-        # Block hidden files
-        location ~ /\. {
-            deny all;
+        server {
+            listen 8080;
+            server_name _;
+
+            # API and backend routes - pass to PHP-FPM
+            location ~ ^/(api|open|local/temp|forms/assets|vapor)(/|$) {
+                fastcgi_pass opnform-api:9000;
+                include fastcgi_params;
+                fastcgi_param SCRIPT_FILENAME /usr/share/nginx/html/public/index.php;
+                fastcgi_param REQUEST_URI $api_uri;
+                fastcgi_param HTTP_X_FORWARDED_PROTO $scheme;
+                fastcgi_param HTTP_X_FORWARDED_HOST $host;
+                fastcgi_read_timeout 600;
+            }
+
+            # Frontend client
+            location / {
+                proxy_pass http://opnform-client:3000;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
+            }
+
+            # Block hidden files
+            location ~ /\. {
+                deny all;
+            }
         }
     }
