@@ -14,9 +14,21 @@ spec:
         app: zitadel
     spec:
       serviceAccountName: zitadel
+      # zitadel image already runs as the non-root 'zitadel' user (uid 1000); formalize it.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: wait-for-setup
           image: PLACEHOLDER_KUBECTL_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -37,6 +49,11 @@ spec:
       containers:
         - name: zitadel
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http
