@@ -10,6 +10,7 @@ spec:
         policy.prplanit.com/access-scope-postgres: temple-of-time.penpot.postgres
         policy.prplanit.com/cap.redis: "true"
         policy.prplanit.com/access-scope-redis: temple-of-time.penpot.redis
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       securityContext:
         runAsUser: 1001
@@ -35,6 +36,8 @@ spec:
                 enable-oidc-registration enable-smtp disable-registration
             - name: PENPOT_PUBLIC_URI
               value: "https://penpot.prplanit.com"
+            - name: PENPOT_SSRF_ALLOWED_HOSTS
+              value: "sso.prplanit.com"
             - name: PENPOT_SMTP_HOST
               value: "smtp.gmail.com"
             - name: PENPOT_SMTP_PORT
