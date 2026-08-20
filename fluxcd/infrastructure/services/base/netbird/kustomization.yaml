@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - serviceaccounts.yaml
   - cluster-postgres.yaml
-  - configmap-management.yaml
   - configmap-coturn.yaml
   - configmap-dashboard-nginx.yaml
   - statefulset-management.yaml

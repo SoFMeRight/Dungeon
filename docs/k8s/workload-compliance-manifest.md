@@ -307,7 +307,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | penpot | exporter | ? | ? | ? | ? | ? | ? | Y | ? | |
 | penpot | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
 | penpot | redis | Y (999:1000) | ? | ? | ? | ? | ? | Y | ? | |
-| reactive-resume | reactive-resume | X | ? | ? | ? | ? | ? | Y | ? | No USER directive |
+| reactive-resume | reactive-resume | Y (1000) | ? | ? | ? | ? | ? | Y | ? | app container hardened non-root 1000, drop ALL, seccomp |
 | reactive-resume | chrome | Y (999:999) | ? | ? | ? | ? | ? | Y | ? | browserless |
 | reactive-resume | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
 | reactive-resume | minio | ? | ? | ? | ? | ? | ? | Y | ? | |
@@ -402,7 +402,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | downloadarrs | readarr | Y (1000:1000) | N | ? | Y | ? | ? | Y | Y | LSIO image |
 | downloadarrs | cross-seed | Y (1000:1000) | N | ? | Y | ? | ? | Y | Y | |
 | jellyseerr | gluetun | P | N | P | ? | ? | ? | Y | ? | NET_ADMIN required |
-| jellyseerr | jellyseerr | X | ? | ? | ? | ? | ? | Y | ? | No USER directive |
+| jellyseerr | jellyseerr | Y (1000) | ? | ? | ? | ? | ? | Y | ? | app hardened non-root 1000, drop ALL, seccomp (gluetun sidecar keeps VPN caps) |
 | overseerr | gluetun | P | N | P | ? | ? | ? | Y | ? | NET_ADMIN required |
 | overseerr | overseerr | X | ? | ? | ? | ? | ? | Y | ? | No USER directive |
 | pinchflat | gluetun | P | N | P | ? | ? | ? | Y | Y | NET_ADMIN required |
@@ -451,7 +451,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | plex | plex | ? | ? | ? | ? | ? | ? | Y | ? | |
 | projectsend | projectsend | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
 | projectsend | mysql | ? | ? | ? | ? | ? | ? | Y | ? | |
-| reactive-resume | reactive-resume | X | ? | ? | ? | ? | ? | Y | ? | No USER directive |
+| reactive-resume | reactive-resume | Y (1000) | ? | ? | ? | ? | ? | Y | ? | app container hardened non-root 1000, drop ALL, seccomp |
 | reactive-resume | chrome | Y (999:999) | ? | ? | ? | ? | ? | Y | ? | |
 | reactive-resume | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
 | reactive-resume | minio | ? | ? | ? | ? | ? | ? | Y | ? | |
@@ -912,6 +912,7 @@ kubectl get pods -n <ns> -o custom-columns=\
 | 2026-08-20 | Hardened all 8 lost-woods static sites to the non-root static-site base (uid 10001, readOnlyRootFilesystem, drop ALL, seccomp RuntimeDefault, :8080) |
 | 2026-08-20 | Hardened public-facing workloads to non-root. Bucket A: netbird-relay, netbird-signal (high-port :10000), ntfy (:8080/:2525), boundary-controller, gatus, umami. Bucket B nginx frontends: erpnext-frontend (uid 1000), appflowy-nginx (101), opnform-ingress (101). Documented exceptions (root-required vendor images): netbird-dashboard (supervisord + startup auth-config injection), dolibarr-web (root entrypoint chown/install). Also moved netbird-dashboard AUTH_CLIENT_ID/AUTH_AUDIENCE off hardcoded values to secretKeyRef. |
 | 2026-08-20 | Bucket C (LSIO/PUID) assessed: bookstack, calibre-web, organizr are non-root EXCEPTIONS — LSIO s6-overlay preinit fatally requires root-owned /run (confirmed via bookstack in-cluster crash, exit 100; fsGroup can't fix owner). mealie deferred (needs careful in-cluster validation). Remaining public work: high-care tier (vaultwarden, zitadel, nextcloud, mealie) + home-assistant exception. |
+| 2026-08-20 | Bucket D: hardened reactive-resume-app (node, uid 1000) and jellyseerr (node uid 1000, gluetun sidecar keeps its VPN caps). Exceptions (root-required init): netbox-server (LSIO s6), plex (s6), nextcloud + orangehrm (apache root), mealie (root python init). DEFERRED to a dedicated careful session (criticality/blast-radius): vaultwarden + zitadel (auth crown jewels), netbird-management (VPN control-plane). Cleanup: removed dead netbird configmap-management.yaml (unused) + statefulset-dashboard.yaml (not in kustomization). |
 
 ---
 
