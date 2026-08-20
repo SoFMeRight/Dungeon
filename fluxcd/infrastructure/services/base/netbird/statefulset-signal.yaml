@@ -17,12 +17,27 @@ spec:
         component: signal
     spec:
       serviceAccountName: netbird-signal
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: signal
           image: PLACEHOLDER_IMAGE
           ports:
             - containerPort: 80
               name: http
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - NET_BIND_SERVICE
           volumeMounts:
             - name: signal-data
               mountPath: /var/lib/netbird
