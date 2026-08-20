@@ -259,7 +259,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | netalertx | netalertx | ? | N | ? | ? | ? | ? | Y | ? | Has NET_RAW/NET_ADMIN caps |
 | speedtest-tracker | speedtest-tracker | Y (1000:1000) | N | N | Y | Y | ? | Y | Y | LSIO non-root pattern |
 | speedtest-tracker | postgres | ? | ? | ? | Y | ? | ? | Y | ? | |
-| umami | umami | ? | ? | ? | ? | ? | ? | Y | ? | |
+| umami | umami | Y (1001) | ? | Y | ? | ? | ? | Y | ? | Hardened non-root 1001, fsGroup, drop ALL, seccomp |
 | umami | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
 
 ### gorons-bracelet (Storage Services)
@@ -288,7 +288,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | bookstack | bookstack | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
 | bookstack | mysql | ? | ? | ? | ? | ? | ? | Y | ? | |
 | calcom | calcom | ? | ? | ? | ? | ? | ? | Y | ? | |
-| dolibarr | dolibarr | X | ? | ? | ? | ? | ? | Y | ? | No USER directive |
+| dolibarr | dolibarr | X | ? | ? | ? | ? | ? | Y | ? | Exception — root entrypoint (chown conf.php/install.lock); non-root needs vendor rebuild |
 | dolibarr | mariadb | ? | ? | ? | ? | ? | ? | Y | ? | |
 | erpnext | multiple (8+) | ? | ? | ? | ? | ? | ? | Y | ? | Complex multi-container |
 | invoiceninja | invoiceninja | ? | ? | ? | ? | ? | ? | Y | ? | |
@@ -298,7 +298,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | netbox | netbox | ? | ? | ? | ? | ? | ? | Y | ? | |
 | netbox | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
 | netbox | redis | Y (999:1000) | ? | ? | ? | ? | ? | Y | ? | |
-| opnform | multiple | X | ? | ? | ? | ? | ? | Y | ? | No USER directive |
+| opnform | multiple | P | ? | ? | ? | ? | ? | Y | ? | ingress(nginx) hardened non-root 101 :8080 (RO rootfs, drop ALL); api/client PHP pending |
 | orangehrm | orangehrm | ? | ? | ? | ? | ? | ? | Y | ? | |
 | orangehrm | mariadb | ? | ? | ? | ? | ? | ? | Y | ? | |
 | osticket | osticket | X | ? | ? | ? | ? | ? | Y | ? | Apache root pattern |
@@ -910,6 +910,7 @@ kubectl get pods -n <ns> -o custom-columns=\
 | 2026-02-05 | Added PSA, RBAC, Secrets, Image Security, Backup/DR, Runtime, Audit, Encryption sections |
 | 2026-02-05 | Added priority action list ranked by severity |
 | 2026-08-20 | Hardened all 8 lost-woods static sites to the non-root static-site base (uid 10001, readOnlyRootFilesystem, drop ALL, seccomp RuntimeDefault, :8080) |
+| 2026-08-20 | Hardened public-facing workloads to non-root. Bucket A: netbird-relay, netbird-signal (high-port :10000), ntfy (:8080/:2525), boundary-controller, gatus, umami. Bucket B nginx frontends: erpnext-frontend (uid 1000), appflowy-nginx (101), opnform-ingress (101). Documented exceptions (root-required vendor images): netbird-dashboard (supervisord + startup auth-config injection), dolibarr-web (root entrypoint chown/install). Also moved netbird-dashboard AUTH_CLIENT_ID/AUTH_AUDIENCE off hardcoded values to secretKeyRef. |
 
 ---
 
