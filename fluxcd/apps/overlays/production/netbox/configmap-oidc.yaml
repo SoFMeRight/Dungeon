@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netbox-oidc-config
+data:
+  oidc.py: |
+    # BEGIN OIDC (gitops-managed)
+    import os
+
+    REMOTE_AUTH_ENABLED = True
+    REMOTE_AUTH_BACKEND = 'social_core.backends.open_id_connect.OpenIdConnectAuth'
+    REMOTE_AUTH_AUTO_CREATE_USER = True
+
+    SOCIAL_AUTH_OIDC_OIDC_ENDPOINT = 'https://sso.prplanit.com'
+    SOCIAL_AUTH_OIDC_KEY = os.environ.get('OIDC_CLIENT_ID')
+    SOCIAL_AUTH_OIDC_SECRET = os.environ.get('OIDC_CLIENT_SECRET')
+
+    # Link SSO logins to an existing NetBox user by verified email
+    # (so kai.hamil@gmail.com maps onto the existing superuser instead of
+    # creating a new permissionless account).
+    SOCIAL_AUTH_PIPELINE = (
+        'social_core.pipeline.social_auth.social_details',
+        'social_core.pipeline.social_auth.social_uid',
+        'social_core.pipeline.social_auth.social_user',
+        'social_core.pipeline.user.get_username',
+        'social_core.pipeline.social_auth.associate_by_email',
+        'social_core.pipeline.user.create_user',
+        'social_core.pipeline.social_auth.associate_user',
+        'social_core.pipeline.social_auth.load_extra_data',
+        'social_core.pipeline.user.user_details',
+    )
+    # END OIDC (gitops-managed)
