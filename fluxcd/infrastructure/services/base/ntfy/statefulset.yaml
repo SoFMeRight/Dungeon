@@ -17,11 +17,26 @@ spec:
         app.kubernetes.io/name: ntfy
     spec:
       serviceAccountName: ntfy
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: ntfy
           image: binwiederhier/ntfy:PLACEHOLDER_VERSION
           command: ["ntfy"]
           args: ["serve"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - NET_BIND_SERVICE
           ports:
             - name: http
               containerPort: 80
@@ -63,6 +78,8 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/lib/ntfy
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -70,6 +87,9 @@ spec:
             limits:
               cpu: PLACEHOLDER_CPU_LIMIT
               memory: PLACEHOLDER_MEMORY_LIMIT
+      volumes:
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data
