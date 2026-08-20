@@ -24,6 +24,11 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
+        sysctls:
+          # A non-root process can't use NET_BIND_SERVICE (the cap isn't in the ambient
+          # set after exec), so binding :80/:25 needs this SAFE, namespaced sysctl instead.
+          - name: net.ipv4.ip_unprivileged_port_start
+            value: "0"
       containers:
         - name: ntfy
           image: binwiederhier/ntfy:PLACEHOLDER_VERSION
@@ -35,8 +40,6 @@ spec:
             capabilities:
               drop:
                 - ALL
-              add:
-                - NET_BIND_SERVICE
           ports:
             - name: http
               containerPort: 80
