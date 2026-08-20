@@ -11,6 +11,7 @@ spec:
         policy.prplanit.com/access-scope-postgres: zeldas-lullaby.netbox.postgres
         policy.prplanit.com/cap.redis: "true"
         policy.prplanit.com/access-scope-redis: zeldas-lullaby.netbox.redis
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       initContainers:
         - name: wait-for-postgres
@@ -23,6 +24,16 @@ spec:
           env:
             - name: ALLOWED_HOSTS
               value: "netbox.prplanit.com,netbox.prplanit.internal,netbox.pcfae.com,10.40.9.104,10.30.1.123,10.24.96.9,127.0.0.1,172.22.30.86"
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: netbox-secrets
+                  key: OIDC_CLIENT_ID
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: netbox-secrets
+                  key: OIDC_CLIENT_SECRET
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_CONFIG_DATA
