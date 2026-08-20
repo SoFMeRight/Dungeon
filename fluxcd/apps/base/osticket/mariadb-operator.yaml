@@ -16,6 +16,17 @@ spec:
 
   image: PLACEHOLDER_MARIADB_IMAGE
 
+  # Full podSecurityContext (this CR field REPLACES, not merges — must restate
+  # the operator's mysql-999 defaults) + seccomp to pre-match mutate-pod-hardening
+  # and avoid the operator's roll-time securityContext-immutability lock.
+  podSecurityContext:
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
   # High availability with 3-replica Galera cluster
   replicas: 3
 
