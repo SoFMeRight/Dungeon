@@ -31,7 +31,7 @@ spec:
                 enable-login-with-password enable-login-with-oidc
                 enable-oidc-registration enable-smtp disable-registration
             - name: PENPOT_PUBLIC_URI
-              value: "https://design.pcfae.com"
+              value: "https://penpot.prplanit.com"
           volumeMounts:
             - name: penpot-assets
               mountPath: /opt/data/assets
