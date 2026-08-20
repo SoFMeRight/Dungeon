@@ -19,6 +19,12 @@ spec:
         component: nginx
     spec:
       serviceAccountName: appflowy-nginx
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
       # Hard spread: one replica per node (matches kimai) — survives node loss; a replica
       # stays Pending if fewer eligible nodes are free (acceptable on a 5-worker cluster).
       topologySpreadConstraints:
@@ -35,9 +41,15 @@ spec:
       containers:
         - name: nginx
           image: PLACEHOLDER_NGINX_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8080
               protocol: TCP
             - name: https
               containerPort: 443
@@ -47,6 +59,8 @@ spec:
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -58,3 +72,5 @@ spec:
         - name: nginx-config
           configMap:
             name: appflowy-nginx-config
+        - name: tmp
+          emptyDir: {}
