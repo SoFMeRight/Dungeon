@@ -17,11 +17,28 @@ spec:
         component: signal
     spec:
       serviceAccountName: netbird-signal
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: signal
           image: PLACEHOLDER_IMAGE
+          # Listen on an unprivileged port so the process runs non-root (it can't bind
+          # :80); the Service remaps :80 -> :10000, so routing is unchanged. Log to
+          # stdout so a read-only root filesystem needs no /var/log write.
+          args: ["run", "--port", "10000", "--log-file", "console"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
-            - containerPort: 80
+            - containerPort: 10000
               name: http
           volumeMounts:
             - name: signal-data
