@@ -344,18 +344,18 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| astralfocal-site | nginx | ? | ? | ? | ? | ? | ? | Y | ? | Custom site image |
-| enamorafoto-site | nginx | ? | ? | ? | ? | ? | ? | Y | ? | Custom site image |
-| etherealclique-site | nginx | ? | ? | ? | ? | ? | ? | Y | ? | Custom site image |
+| astralfocal-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
+| enamorafoto-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
+| etherealclique-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
 | ferdium | ferdium | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
 | homarr | homarr | ? | ? | ? | ? | ? | ? | Y | ? | |
 | homarr | redis | Y (999:1000) | ? | ? | ? | ? | ? | Y | ? | |
-| homelabhelpdesk-site | nginx | ? | ? | ? | ? | ? | ? | Y | ? | Custom site image |
-| kai-hamilton-site | nginx | ? | ? | ? | ? | ? | ? | Y | ? | Custom site image |
+| homelabhelpdesk-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
+| kai-hamilton-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
 | organizr | organizr | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
-| precisionplanit-site | nginx | ? | ? | ? | ? | ? | ? | Y | ? | Custom site image |
-| sofmeright-site | nginx | ? | ? | ? | ? | ? | ? | Y | ? | Custom site image |
-| yesimvegan-site | nginx | ? | ? | ? | ? | ? | ? | Y | ? | Custom site image |
+| precisionplanit-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
+| sofmeright-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
+| yesimvegan-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
 
 ### pedestal-of-time (Restricted/Privileged)
 
@@ -909,6 +909,7 @@ kubectl get pods -n <ns> -o custom-columns=\
 | 2026-02-05 | Added compliance framework mapping (CIS, SOC 2, NIST 800-53) |
 | 2026-02-05 | Added PSA, RBAC, Secrets, Image Security, Backup/DR, Runtime, Audit, Encryption sections |
 | 2026-02-05 | Added priority action list ranked by severity |
+| 2026-08-20 | Hardened all 8 lost-woods static sites to the non-root static-site base (uid 10001, readOnlyRootFilesystem, drop ALL, seccomp RuntimeDefault, :8080) |
 
 ---
 
