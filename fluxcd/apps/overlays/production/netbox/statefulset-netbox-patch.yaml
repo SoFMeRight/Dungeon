@@ -49,33 +49,6 @@ spec:
                 secretKeyRef:
                   name: netbox-secrets
                   key: OIDC_CLIENT_SECRET
-            - name: NETBOX_BOOTSTRAP_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  name: netbox-secrets
-                  key: SUPERUSER_EMAIL
-            - name: NETBOX_BOOTSTRAP_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: netbox-secrets
-                  key: SUPERUSER_PASSWORD
-            - name: NETBOX_BOOTSTRAP_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: netbox-secrets
-                  key: SUPERUSER_USERNAME
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - /bin/sh
-                  - -c
-                  - |
-                    for i in $(seq 1 60); do
-                      /lsiopy/bin/python3 /app/netbox/netbox/manage.py migrate --check >/dev/null 2>&1 && break
-                      sleep 5
-                    done
-                    /lsiopy/bin/python3 /app/netbox/netbox/manage.py shell < /auth-config/bootstrap-superuser.py || true
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_CONFIG_DATA
