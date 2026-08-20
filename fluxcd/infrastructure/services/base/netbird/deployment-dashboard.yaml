@@ -28,9 +28,15 @@ spec:
             - name: NETBIRD_MGMT_GRPC_API_ENDPOINT
               value: "https://netbird.prplanit.com:443"
             - name: AUTH_AUDIENCE
-              value: "305223206304813058"
+              valueFrom:
+                secretKeyRef:
+                  name: netbird-secrets
+                  key: AUTH_AUDIENCE
             - name: AUTH_CLIENT_ID
-              value: "305223206304813058"
+              valueFrom:
+                secretKeyRef:
+                  name: netbird-secrets
+                  key: AUTH_CLIENT_ID
             - name: AUTH_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
