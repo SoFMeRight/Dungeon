@@ -24,8 +24,6 @@ spec:
             app.kubernetes.io/name: gatus
       toPorts:
         - ports:
-            - port: "25"
-              protocol: TCP
             - port: "53"
               protocol: TCP
             - port: "80"
@@ -59,6 +57,8 @@ spec:
             - port: "2368"
               protocol: TCP
             - port: "2468"
+              protocol: TCP
+            - port: "2525"
               protocol: TCP
             - port: "3000"
               protocol: TCP
@@ -215,6 +215,8 @@ spec:
             - port: "9795"
               protocol: TCP
             - port: "9980"
+              protocol: TCP
+            - port: "10000"
               protocol: TCP
             - port: "11434"
               protocol: TCP

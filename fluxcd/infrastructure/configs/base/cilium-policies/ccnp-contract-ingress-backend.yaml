@@ -138,6 +138,8 @@ spec:
               protocol: TCP
             - port: "9980"
               protocol: TCP
+            - port: "10000"
+              protocol: TCP
             - port: "11434"
               protocol: TCP
             - port: "20211"
