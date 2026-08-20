@@ -14,9 +14,20 @@ spec:
         app: reactive-resume-app
     spec:
       serviceAccountName: reactive-resume-app
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: app
           image: PLACEHOLDER_APP_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: PORT
               value: "3000"
