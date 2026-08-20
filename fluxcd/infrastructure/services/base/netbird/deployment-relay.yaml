@@ -16,12 +16,24 @@ spec:
         component: relay
     spec:
       serviceAccountName: netbird-relay
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: relay
           image: PLACEHOLDER_IMAGE
           ports:
             - containerPort: 33080
               name: relay
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: NB_LOG_LEVEL
               value: info
