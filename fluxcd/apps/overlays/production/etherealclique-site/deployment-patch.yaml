@@ -12,4 +12,4 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: etherealclique-site
-          image: cr.pcfae.com/prplanit/etherealclique.com:v0.0.2
+          image: cr.pcfae.com/sofmeright/etherealclique.com:v0.0.3
