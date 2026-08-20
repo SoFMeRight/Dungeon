@@ -14,11 +14,22 @@ spec:
         app: erpnext-frontend
     spec:
       serviceAccountName: erpnext-frontend
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: frontend
           image: PLACEHOLDER_ERPNEXT_IMAGE
           command:
             - nginx-entrypoint.sh
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http
