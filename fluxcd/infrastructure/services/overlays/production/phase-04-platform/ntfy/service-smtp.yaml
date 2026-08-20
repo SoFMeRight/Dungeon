@@ -20,6 +20,6 @@ spec:
     app.kubernetes.io/name: ntfy
   ports:
     - port: 25
-      targetPort: 25
+      targetPort: 2525
       protocol: TCP
       name: smtp

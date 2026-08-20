@@ -16,6 +16,12 @@ spec:
 
   image: docker.io/mariadb:11.8.8
 
+  # Match the mutate-pod-hardening seccomp injection so operator pod updates
+  # don't hit the securityContext-immutability lock on roll.
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+
   # High availability with 3-replica Galera cluster
   replicas: 3
 

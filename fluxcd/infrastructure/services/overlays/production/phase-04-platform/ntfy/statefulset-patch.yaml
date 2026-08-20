@@ -16,10 +16,10 @@ spec:
           image: docker.io/binwiederhier/ntfy:v2.27.0
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8080
               protocol: TCP
             - name: smtp
-              containerPort: 25
+              containerPort: 2525
               protocol: TCP
           env:
             - name: NTFY_BASE_URL
@@ -35,7 +35,7 @@ spec:
             # - name: NTFY_CACHE_BATCH_TIMEOUT
             #   value: "1s"
             - name: NTFY_SMTP_SERVER_LISTEN
-              value: ":25"
+              value: ":2525"
             - name: NTFY_SMTP_SERVER_DOMAIN
               value: "m.ntfy.prplanit.com"
             - name: NTFY_SMTP_SERVER_ADDR_PREFIX
