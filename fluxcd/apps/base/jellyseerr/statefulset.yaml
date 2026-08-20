@@ -18,6 +18,18 @@ spec:
       containers:
         - name: jellyseerr
           image: docker.io/fallenbagel/jellyseerr:PLACEHOLDER_IMAGE_TAG
+          # App runs non-root (uid 1000, /app/config PVC is 1000-owned). Container-level
+          # only — the gluetun sidecar legitimately keeps its VPN caps.
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: TZ
               value: "PLACEHOLDER_TIMEZONE"
