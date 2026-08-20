@@ -19,9 +19,22 @@ spec:
         policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: boundary-controller
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: render-config
           image: docker.io/prplanit/oh-ci:0.0.1
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -41,6 +54,12 @@ spec:
         - name: boundary
           image: PLACEHOLDER_IMAGE
           command: ["boundary", "server", "-config", "/boundary/controller.hcl"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: api
               containerPort: 9200
@@ -55,6 +74,8 @@ spec:
             - name: config
               mountPath: /boundary
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
           readinessProbe:
             httpGet:
               path: /health
@@ -78,4 +99,6 @@ spec:
           configMap:
             name: boundary-controller
         - name: config
+          emptyDir: {}
+        - name: tmp
           emptyDir: {}
