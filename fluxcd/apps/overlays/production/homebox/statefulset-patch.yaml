@@ -8,6 +8,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       securityContext:
         runAsUser: 1000
@@ -16,6 +17,23 @@ spec:
       containers:
         - name: homebox
           image: ghcr.io/sysadminsmedia/homebox:0.26.2
+          env:
+            - name: HBOX_OPTIONS_TRUST_PROXY
+              value: "true"
+            - name: HBOX_OIDC_ENABLED
+              value: "true"
+            - name: HBOX_OIDC_ISSUER_URL
+              value: "https://sso.prplanit.com"
+            - name: HBOX_OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: homebox-secrets
+                  key: OIDC_CLIENT_ID
+            - name: HBOX_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: homebox-secrets
+                  key: OIDC_CLIENT_SECRET
           volumeMounts:
             - name: pedestal-of-time-homebox-data
               mountPath: /data
