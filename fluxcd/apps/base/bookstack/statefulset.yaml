@@ -16,16 +16,6 @@ spec:
         policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: bookstack
-      # LSIO/s6 image: PUID/PGID=1000 and /config is already owned 1000:1000, so running
-      # the whole container as 1000 with fsGroup 1000 lets s6 init see correct ownership,
-      # skip the root chown, and run non-root.
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
-        seccompProfile:
-          type: RuntimeDefault
       initContainers:
         - name: wait-for-db
           image: PLACEHOLDER_INIT_IMAGE
@@ -41,8 +31,6 @@ spec:
       containers:
         - name: bookstack
           image: PLACEHOLDER_IMAGE
-          securityContext:
-            allowPrivilegeEscalation: false
           env:
             - name: PUID
               value: "PLACEHOLDER_PUID"
