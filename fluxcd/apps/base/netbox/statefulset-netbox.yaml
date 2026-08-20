@@ -72,16 +72,6 @@ spec:
               value: "0"
             - name: REDIS_DB_CACHE
               value: "1"
-            - name: SUPERUSER_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  name: netbox-secrets
-                  key: SUPERUSER_EMAIL
-            - name: SUPERUSER_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: netbox-secrets
-                  key: SUPERUSER_PASSWORD
           volumeMounts:
             - name: PLACEHOLDER_CONFIG_DATA
               mountPath: /config

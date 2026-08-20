@@ -15,6 +15,11 @@ data:
     SOCIAL_AUTH_OIDC_KEY = os.environ.get('OIDC_CLIENT_ID')
     SOCIAL_AUTH_OIDC_SECRET = os.environ.get('OIDC_CLIENT_SECRET')
 
+    # Login button label + icon (overrides the default "OpenID Connect")
+    SOCIAL_AUTH_BACKEND_ATTRS = {
+        'oidc': ('PrPlanIT SSO', 'shield-key'),
+    }
+
     # Link SSO logins to an existing NetBox user by verified email
     # (so kai.hamil@gmail.com maps onto the existing superuser instead of
     # creating a new permissionless account).
