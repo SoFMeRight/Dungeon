@@ -20,12 +20,19 @@ spec:
       containers:
         - name: backend
           image: docker.io/penpotapp/backend:2.17.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           env:
             - name: PENPOT_FLAGS
               value: >-
-                enable-registration enable-login-with-password enable-login-with-oidc
-                enable-oidc-registration disable-email-verification enable-insecure-register
-                enable-smtp enable-prepl-server disable-secure-session-cookies
+                enable-login-with-password enable-login-with-oidc
+                enable-oidc-registration enable-smtp disable-registration
             - name: PENPOT_PUBLIC_URI
               value: "https://design.pcfae.com"
             - name: PENPOT_SMTP_HOST

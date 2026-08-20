@@ -13,3 +13,11 @@ spec:
       containers:
         - name: exporter
           image: docker.io/penpotapp/exporter:2.17.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
