@@ -6,6 +6,8 @@ spec:
   clusterSize: 3
   serviceAccountName: homarr-redis
   podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
     runAsUser: 1000
     runAsGroup: 1000
     fsGroup: 1000
