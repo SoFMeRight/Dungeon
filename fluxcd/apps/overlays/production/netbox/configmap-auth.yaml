@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: netbox-oidc-config
+  name: netbox-auth-config
 data:
   oidc.py: |
     # BEGIN OIDC (gitops-managed)
@@ -35,3 +35,22 @@ data:
         'social_core.pipeline.user.user_details',
     )
     # END OIDC (gitops-managed)
+  bootstrap-superuser.py: |
+    # Idempotent: create the configured superuser only when the DB has no
+    # superuser yet (fresh install). No-op on an existing install. Username,
+    # email and password all come from env (nothing hardcoded).
+    import os
+    from django.contrib.auth import get_user_model
+    U = get_user_model()
+    username = (os.environ.get('NETBOX_BOOTSTRAP_USERNAME') or '').strip()
+    if not username:
+        print('bootstrap: NETBOX_BOOTSTRAP_USERNAME unset, skipping')
+    elif U.objects.filter(is_superuser=True).exists():
+        print('bootstrap: superuser already exists, skipping')
+    else:
+        U.objects.create_superuser(
+            username,
+            os.environ.get('NETBOX_BOOTSTRAP_EMAIL', ''),
+            os.environ.get('NETBOX_BOOTSTRAP_PASSWORD') or None,
+        )
+        print('bootstrap: created superuser ' + username)

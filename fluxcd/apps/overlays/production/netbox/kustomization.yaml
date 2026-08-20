@@ -7,7 +7,7 @@ resources:
   - ../../../base/netbox
   - httproute.yaml
   - httproute-cell-membrane.yaml
-  - configmap-oidc.yaml
+  - configmap-auth.yaml
 
 patches:
   - path: statefulset-postgres-patch.yaml
