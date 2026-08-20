@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: linkwarden-config
 data:
-  NEXTAUTH_URL: "https://bookmarks.prplanit.com/api/v1/auth"
+  NEXTAUTH_URL: "https://lwd.optcp.com/api/v1/auth"
   ZITADEL_CUSTOM_NAME: "PrecisionPlanIT.com SSO"
   ZITADEL_ISSUER: "https://sso.prplanit.com"
