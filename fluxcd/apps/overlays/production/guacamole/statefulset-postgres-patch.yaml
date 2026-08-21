@@ -13,9 +13,18 @@ spec:
         runAsUser: 70
         runAsGroup: 70
         fsGroup: 70
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: postgres
           image: docker.io/postgres:15-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
@@ -24,6 +33,10 @@ spec:
               name: PLACEHOLDER_POSTGRES_DATA
             - name: hookshot-guacamole-postgres-data
               mountPath: /var/lib/postgresql/data
+            - name: postgres-run
+              mountPath: /var/run/postgresql
+            - name: postgres-tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: "250m"
@@ -31,6 +44,11 @@ spec:
             limits:
               cpu: "1000m"
               memory: "2Gi"
+      volumes:
+        - name: postgres-run
+          emptyDir: {}
+        - name: postgres-tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: hookshot-guacamole-postgres-data

@@ -13,14 +13,27 @@ spec:
         runAsUser: 70
         runAsGroup: 70
         fsGroup: 70
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: postgres
           image: docker.io/postgres:15-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_POSTGRES_DATA
             - name: zeldas-lullaby-netbox-postgres-data
               mountPath: /var/lib/postgresql/data
+            - name: postgres-run
+              mountPath: /var/run/postgresql
+            - name: postgres-tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: "2m"
@@ -28,6 +41,11 @@ spec:
             limits:
               cpu: "50m"
               memory: "64Mi"
+      volumes:
+        - name: postgres-run
+          emptyDir: {}
+        - name: postgres-tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: zeldas-lullaby-netbox-postgres-data

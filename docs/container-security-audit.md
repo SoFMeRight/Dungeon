@@ -366,6 +366,75 @@ See postgres upgrade plan at `~/.claude/plans/goofy-baking-shamir.md`.
 
 ---
 
+## Database Workload Hardening (per-engine recipe)
+
+The ~72 database/cache workloads (redis, postgres, mariadb, mongo) are the highest-leverage
+hardening target: they run a handful of shared upstream images, so a per-engine recipe
+hardens many workloads at once. Every DB splits into two delivery populations:
+
+- **Operator-managed** — the CRD carries the securityContext. `mariadb.spec` and
+  `redisreplication.spec` / `redissentinel.spec` each expose **both** `podSecurityContext`
+  (pod-level) and `securityContext` (container-level), so no operator fork is needed. **CNPG
+  postgres self-hardens to full 5/5 already** (`ownerRef: Cluster`, ~15 workloads — nothing to do).
+- **Plain StatefulSets/Deployments** — hand-written manifests, edit the overlay patch (or base)
+  directly.
+
+### Recipe: plain redis — full 5/5
+
+Official redis/valkey writes only to `/data` (the PVC), so `readOnlyRootFilesystem` needs **no**
+emptyDir. Keep the workload's existing uid/gid.
+```yaml
+# pod securityContext:   runAsNonRoot: true; seccompProfile: {type: RuntimeDefault}   (+ existing runAsUser/Group/fsGroup)
+# redis container securityContext:
+#   allowPrivilegeEscalation: false
+#   readOnlyRootFilesystem: true
+#   capabilities: {drop: [ALL]}
+```
+
+### Recipe: plain postgres — full 5/5
+
+Postgres writes PGDATA to the PVC, but under a read-only rootfs it also needs the unix-socket
+dir and scratch space as emptyDirs. uid is image-specific: **alpine = 70, debian/official = 999**.
+```yaml
+# pod securityContext:   runAsUser/Group/fsGroup: <70|999>; runAsNonRoot: true; seccompProfile: {type: RuntimeDefault}
+# postgres container securityContext:  allowPrivilegeEscalation: false; readOnlyRootFilesystem: true; capabilities: {drop: [ALL]}
+# extra volumeMounts + emptyDir volumes:
+#   - /var/run/postgresql   (unix socket)   -> emptyDir
+#   - /tmp                  (scratch)        -> emptyDir
+```
+Harmless startup warning `chmod: /var/run/postgresql: Operation not permitted` — the entrypoint
+can't chmod the emptyDir as non-root, but postgres still creates the socket there and starts
+normally. Do not try to suppress it.
+
+### Documented exception: operator redis (opstree) caps at 4/5
+
+`quay.io/opstree/redis[-sentinel]` writes `/etc/redis/redis.conf` **and** its PID file to the
+**rootfs**, and the operator exposes no emptyDir for those paths, so `readOnlyRootFilesystem: true`
+crash-loops it (`/etc/redis/redis.conf: Read-only file system`, `Failed to write PID file`).
+Apply the other four dimensions only (`securityContext: {allowPrivilegeEscalation: false,
+capabilities: {drop: [ALL]}}` + `podSecurityContext.runAsNonRoot: true`; seccomp already present).
+**RO-rootfs is N/A here — this is an upstream-image constraint, not a gap.**
+
+### Rollout status (2026-08-21)
+
+| Engine / population | Target | Status |
+|---|---|---|
+| Postgres — CNPG (`ownerRef: Cluster`) | 5/5 | **Done** (self-hardened, ~15) |
+| Redis — plain (official image) | 5/5 | **Done** — 9 workloads (netbox, erpnext cache+queue, invoiceninja, appflowy, paperless, penpot, opnform, searxng) |
+| Redis — operator (opstree) | 4/5 (RO N/A) | **Done** — 8 CRs (homarr, nextcloud, gitlab, zitadel × RedisReplication+RedisSentinel) |
+| Postgres — plain | 5/5 | **In progress** — linkwarden proven (canary); alpine batch + debian to follow |
+| MariaDB — plain (~16) + galera CRs | 5/5 / TBD | **Pending** — galera already pod-level (999+seccomp); RO needs `/run/mysqld` + `/tmp` emptyDirs (highest risk: entrypoint init/chown) |
+| Redis — harbor (Helm), immich/semaphore (multi-container) | — | **Deferred** — harbor via chart values; multi-ctr pods need per-container review |
+
+Notes: seccomp is also auto-injected fleet-wide on next roll by the `mutate-pod-hardening`
+Kyverno policy; the DB recipe carries it explicitly so the posture is visible in git. When an
+operator-managed pod crash-loops on a bad securityContext, the `apps`/phase kustomization
+health-gates and won't advance to the fix revision — break the deadlock by `kubectl patch`-ing
+the live CR to remove the bad field, then `kubectl delete pod` so the StatefulSet recreates from
+the corrected template (git stays source-of-truth; the patch only matches the fix commit).
+
+---
+
 ## Hardening Phases
 
 ### Phase 1: Non-root where possible (In Progress)
@@ -404,6 +473,7 @@ See postgres upgrade plan at `~/.claude/plans/goofy-baking-shamir.md`.
 | 2026-02-05 | Claude | speedtest-tracker LSIO non-root pattern (pioneer), updated LSIO section with Mode column, created workload-compliance-manifest.md |
 | 2026-02-06 | Claude | TacticalRMM full hardening: all 11 components in hookshot namespace (SEC-1 through SEC-8). Redis/MongoDB init chown removed (fsGroup handles ownership), wait-for-* init containers hardened as nobody, tactical-init documented exception for root with minimal caps |
 | 2026-08-14 | Claude | Live posture sweep (233 workloads, 12 exposed namespaces): non-root 44% / no-privesc 19% / drop-caps 22% / ro-fs 7% / seccomp 17%. Added Current Posture Snapshot + exposed-first priority (52 front-ends, tiered). Network layer verified strong (istio ambient + Cilium default-deny everywhere) and corrected the stale "0%/Planning" NET entries in workload-compliance-manifest.md. Repaired 2 invalid Cilium default-deny-ingress policies (temple-of-time, hyrule-castle → VALID). |
+| 2026-08-21 | Claude | Database-workload hardening pass (see Database Workload Hardening section). Redis: 9 plain redis → 5/5, 8 opstree operator CRs → 4/5 (RO-rootfs N/A — image writes conf+PID to rootfs). Postgres: linkwarden canary → 5/5 (socket/tmp emptyDirs), alpine batch + debian to follow; CNPG already 5/5. Established per-engine recipes + operator-vs-plain split. Zitadel SSO redis rolled clean (no repeat of the master-label incident). |
 
 ## Related Documents
 
