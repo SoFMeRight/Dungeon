@@ -7,9 +7,9 @@ spec:
   selector:
     app: vaultwarden
   ports:
-  - name: http
-    port: PLACEHOLDER_HTTP_PORT
-    targetPort: 80
-  - name: websocket
-    port: PLACEHOLDER_WEBSOCKET_PORT
-    targetPort: 3012
+    - name: http
+      port: PLACEHOLDER_HTTP_PORT
+      targetPort: 8080
+    - name: websocket
+      port: PLACEHOLDER_WEBSOCKET_PORT
+      targetPort: 3012

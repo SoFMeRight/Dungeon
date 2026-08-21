@@ -15,15 +15,31 @@ spec:
         policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: vaultwarden
+      # Non-root: fsGroup 1000 makes /data (and the root-written rsa_key.pem) group-readable
+      # by uid 1000; ROCKET_PORT=8080 moves the web server off the privileged :80.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: vaultwarden
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               name: http
             - containerPort: 3012
               name: websocket
           env:
+            - name: ROCKET_PORT
+              value: "8080"
             - name: DOMAIN
               value: "PLACEHOLDER_DOMAIN"
             - name: DATABASE_URL
