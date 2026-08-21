@@ -15,9 +15,21 @@ spec:
         app: nextcloud-notify-push
     spec:
       serviceAccountName: nextcloud-notify-push
+      # Go binary, postgres/redis-backed (no writable state). Runs non-root; :7867 unprivileged.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: notify-push
           image: docker.io/icewind1991/notify_push:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: http
               containerPort: 7867

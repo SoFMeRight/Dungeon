@@ -15,9 +15,23 @@ spec:
         app: nextcloud-talk-hpb
     spec:
       serviceAccountName: nextcloud-talk-hpb
+      # Go signaling server + a render-config init (cp/sed the config into a shared emptyDir). Runs
+      # non-root; fsGroup 1000 makes the config emptyDir writable by the init. :8080 is unprivileged.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: render-config
           image: docker.io/alpine/k8s:1.36.2
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -40,6 +54,11 @@ spec:
       containers:
         - name: signaling
           image: docker.io/strukturag/nextcloud-spreed-signaling:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: http
               containerPort: 8080

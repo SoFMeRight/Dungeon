@@ -15,9 +15,21 @@ spec:
         app: nextcloud-whiteboard
     spec:
       serviceAccountName: nextcloud-whiteboard
+      # Node websocket server, redis-backed (no writable state). Runs non-root; :3002 unprivileged.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: whiteboard
           image: ghcr.io/nextcloud-releases/whiteboard:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: http
               containerPort: 3002
