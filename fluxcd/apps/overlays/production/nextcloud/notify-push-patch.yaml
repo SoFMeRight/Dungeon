@@ -12,5 +12,9 @@ spec:
         - name: notify-push
           image: docker.io/icewind1991/notify_push:1.4.0
           env:
+            # Server-side connection to nextcloud over the in-cluster service (istio-ambient
+            # east-west) — a meshed pod can't hairpin to the gateway LB IP, and the direct svc path
+            # is gated by the allow-notify-push-to-nextcloud AuthorizationPolicy. The public push URL
+            # for clients is configured separately (occ notify_push:setup) + routed via the HTTPRoute.
             - name: NEXTCLOUD_URL
-              value: "https://ncloud.optcp.com"
+              value: "http://nextcloud.temple-of-time.svc.cluster.local"
