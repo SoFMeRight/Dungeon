@@ -17,9 +17,23 @@ spec:
         app: echo-ip
     spec:
       serviceAccountName: echo-ip
+      # Go apps (geoipupdate init + echoip), run non-root as uid 1000; fsGroup 1000 makes the GeoIP
+      # data PVC writable by the init. Port 8080 is unprivileged. drop ALL — no capabilities needed.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: geoip-update
           image: docker.io/maxmindinc/geoipupdate:v7.1.1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: GEOIPUPDATE_ACCOUNT_ID
               valueFrom:
@@ -46,6 +60,11 @@ spec:
       containers:
         - name: echo-ip
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http
