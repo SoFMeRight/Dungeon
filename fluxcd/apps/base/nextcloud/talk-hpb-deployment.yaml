@@ -15,12 +15,10 @@ spec:
         app: nextcloud-talk-hpb
     spec:
       serviceAccountName: nextcloud-talk-hpb
-      # Go signaling server + a render-config init (cp/sed the config into a shared emptyDir). Runs
-      # non-root; fsGroup 1000 makes the config emptyDir writable by the init. :8080 is unprivileged.
+      # The signaling image starts as root and su-exec-drops to its own user, so it can't run non-root.
+      # Partial hardening: seccomp + drop ALL, adding back only SETUID/SETGID for the su-exec drop.
+      # fsGroup 1000 makes the config emptyDir writable by the render-config init.
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
@@ -54,11 +52,15 @@ spec:
       containers:
         - name: signaling
           image: docker.io/strukturag/nextcloud-spreed-signaling:latest
+          # Image starts root + su-exec-drops to its own user — needs SETUID/SETGID.
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
+              add:
+                - SETUID
+                - SETGID
           ports:
             - name: http
               containerPort: 8080
