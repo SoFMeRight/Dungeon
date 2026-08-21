@@ -13,9 +13,18 @@ spec:
         runAsUser: 999
         runAsGroup: 1000
         fsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: redis
           image: docker.io/redis:alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_REDIS_DATA
