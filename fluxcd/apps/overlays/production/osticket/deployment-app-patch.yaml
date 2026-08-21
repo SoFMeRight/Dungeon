@@ -9,6 +9,7 @@ spec:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.mariadb: "true"
         policy.prplanit.com/access-scope-mariadb: hyrule-castle.osticket.mariadb
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
