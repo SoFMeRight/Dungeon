@@ -15,9 +15,22 @@ spec:
         app: shlink-app
     spec:
       serviceAccountName: shlink-app
+      # RoadRunner/PHP app (shlinkio/shlink), mariadb-backed (no PVC). Runs as uid 1001; port 8080
+      # is unprivileged. drop ALL — no capabilities needed.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: shlink-app
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http
