@@ -231,6 +231,8 @@ data:
           answer: 10.40.9.104
         - domain: ipleek.com
           answer: 10.40.9.104
+        - domain: yesimvegan.com
+          answer: 172.22.30.70
       safe_fs_patterns:
         - /opt/adguardhome/work/userfilters/*
       safebrowsing_cache_size: 1048576
