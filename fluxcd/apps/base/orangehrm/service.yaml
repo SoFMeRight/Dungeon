@@ -19,10 +19,7 @@ spec:
   type: ClusterIP
   ports:
     - port: 8442
-      targetPort: 80
+      targetPort: 8080
       name: http
-    - port: 8443
-      targetPort: 443
-      name: https
   selector:
     app: orangehrm

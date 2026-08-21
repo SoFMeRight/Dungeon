@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orangehrm-apache-config
+data:
+  # Apache moved off the privileged :80 so the container runs fully non-root (uid 33 www-data).
+  # CRI-O does not honour ip_unprivileged_port_start, so a high port is the only non-root path.
+  ports.conf: |
+    Listen 8080
+  000-default.conf: |
+    <VirtualHost *:8080>
+      ServerAdmin webmaster@localhost
+      DocumentRoot /var/www/html
+      ErrorLog ${APACHE_LOG_DIR}/error.log
+      CustomLog ${APACHE_LOG_DIR}/access.log combined
+    </VirtualHost>

@@ -15,9 +15,25 @@ spec:
         app: orangehrm
     spec:
       serviceAccountName: orangehrm
+      # Fully non-root: orangehrm is plain php:apache (not s6/LSIO), so it runs as uid 33 (www-data,
+      # the image's own owner of the writable app dirs). Apache is moved to :8080 via the mounted
+      # config (CRI-O won't let non-root bind :80); /var/run/apache2 + /var/log/apache2 are emptyDirs
+      # and fsGroup 33 makes them + the /orangehrm PVC writable. drop ALL — no capabilities needed.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 33
+        runAsGroup: 33
+        fsGroup: 33
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: wait-for-mariadb
           image: PLACEHOLDER_BUSYBOX_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -29,11 +45,14 @@ spec:
       containers:
         - name: orangehrm
           image: PLACEHOLDER_ORANGEHRM_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               name: http
-            - containerPort: 443
-              name: https
           env:
             - name: ORANGEHRM_DATABASE_HOST
               value: "orangehrm-mariadb"
@@ -46,13 +65,27 @@ spec:
                   key: MYSQL_PASS
             - name: ORANGEHRM_DATABASE_NAME
               value: "orangehrm"
-            - name: PUID
-              value: "998"
-            - name: PGID
-              value: "100"
           volumeMounts:
             - name: PLACEHOLDER_ORANGEHRM_DATA
               mountPath: /orangehrm
+            - name: apache-config
+              mountPath: /etc/apache2/ports.conf
+              subPath: ports.conf
+            - name: apache-config
+              mountPath: /etc/apache2/sites-enabled/000-default.conf
+              subPath: 000-default.conf
+            - name: apache-run
+              mountPath: /var/run/apache2
+            - name: apache-logs
+              mountPath: /var/log/apache2
+      volumes:
+        - name: apache-config
+          configMap:
+            name: orangehrm-apache-config
+        - name: apache-run
+          emptyDir: {}
+        - name: apache-logs
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_ORANGEHRM_DATA

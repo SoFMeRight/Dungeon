@@ -1,6 +1,3 @@
 - op: replace
   path: /spec/ports/0/port
   value: 8442
-- op: replace
-  path: /spec/ports/1/port
-  value: 8443

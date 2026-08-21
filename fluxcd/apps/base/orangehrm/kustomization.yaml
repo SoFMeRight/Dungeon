@@ -5,4 +5,5 @@ resources:
   - statefulset-mariadb.yaml
   - statefulset-orangehrm.yaml
   - service.yaml
+  - configmap-apache.yaml
   - externalsecret.yaml

@@ -14,11 +14,21 @@ spec:
       containers:
         - name: orangehrm
           image: docker.io/orangehrm/orangehrm:5.9
+          # Full mount set (this list replaces the base's). PVC + the non-root apache overrides
+          # (config on :8080, writable run/log dirs). Volumes are defined in the base.
           volumeMounts:
-            - $patch: delete
-              name: PLACEHOLDER_ORANGEHRM_DATA
             - name: hyrule-castle-orangehrm-data
               mountPath: /orangehrm
+            - name: apache-config
+              mountPath: /etc/apache2/ports.conf
+              subPath: ports.conf
+            - name: apache-config
+              mountPath: /etc/apache2/sites-enabled/000-default.conf
+              subPath: 000-default.conf
+            - name: apache-run
+              mountPath: /var/run/apache2
+            - name: apache-logs
+              mountPath: /var/log/apache2
           resources:
             requests:
               cpu: "500m"
