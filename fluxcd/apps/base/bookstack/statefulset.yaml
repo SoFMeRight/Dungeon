@@ -16,9 +16,22 @@ spec:
         policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: bookstack
+      # LSIO/s6-overlay image: MUST start as root PID 1 (s6 chowns /run + setuidgid-drops to PUID);
+      # can't run non-root without a rebuild. Partial hardening: seccomp + drop ALL, adding back only
+      # s6's needs (chown/chmod/setuid) + NET_BIND_SERVICE for the privileged :443/:80 bind.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: wait-for-db
           image: PLACEHOLDER_INIT_IMAGE
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -31,6 +44,18 @@ spec:
       containers:
         - name: bookstack
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
+                - NET_BIND_SERVICE
           env:
             - name: PUID
               value: "PLACEHOLDER_PUID"
