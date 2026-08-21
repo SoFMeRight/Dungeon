@@ -15,9 +15,22 @@ spec:
         app: wikijs-vegan
     spec:
       serviceAccountName: wikijs-vegan
+      # Node app (Wiki.js), postgres-backed (no PVC). Already runs as uid 1000; port 3000 is
+      # unprivileged. drop ALL — no capabilities needed.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: wikijs
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 3000
               name: http
