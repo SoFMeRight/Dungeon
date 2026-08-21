@@ -15,9 +15,22 @@ spec:
         app: dolibarr-web
     spec:
       serviceAccountName: dolibarr-web
+      # dolibarr/dolibarr (apache/php): entrypoint chowns conf.php + install.lock as root and binds
+      # :80 — can't run non-root without a rebuild. Partial hardening: seccomp + drop ALL, adding back
+      # only the entrypoint/apache needs + NET_BIND_SERVICE for :80.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: wait-for-mariadb
           image: docker.io/busybox:1.38
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -29,6 +42,18 @@ spec:
       containers:
         - name: dolibarr
           image: PLACEHOLDER_DOLIBARR_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
+                - NET_BIND_SERVICE
           ports:
             - containerPort: 80
               name: http
