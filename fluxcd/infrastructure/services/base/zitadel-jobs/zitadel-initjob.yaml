@@ -8,9 +8,20 @@ spec:
     spec:
       restartPolicy: OnFailure
       serviceAccountName: zitadel
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: wait-for-postgres
           image: PLACEHOLDER_POSTGRES_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -18,6 +29,11 @@ spec:
       containers:
         - name: zitadel-init
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: ZITADEL_MASTERKEY
               valueFrom:

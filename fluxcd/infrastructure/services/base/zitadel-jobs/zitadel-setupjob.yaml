@@ -8,9 +8,23 @@ spec:
     spec:
       restartPolicy: OnFailure
       serviceAccountName: zitadel
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        # setup (uid 1000) writes the machinekey/login-client emptyDirs; the writer
+        # containers read them — fsGroup makes those shared volumes group-writable.
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: wait-for-db
           image: PLACEHOLDER_KUBECTL_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -24,6 +38,11 @@ spec:
       containers:
         - name: zitadel-setup
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: ZITADEL_MASTERKEY
               valueFrom:
@@ -71,6 +90,11 @@ spec:
               cpu: 500m
         - name: machinekey-writer
           image: PLACEHOLDER_KUBECTL_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: POD_NAME
               valueFrom:
@@ -95,6 +119,11 @@ spec:
               readOnly: true
         - name: machine-pat-writer
           image: PLACEHOLDER_KUBECTL_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: POD_NAME
               valueFrom:
@@ -119,6 +148,11 @@ spec:
               readOnly: true
         - name: login-client-pat-writer
           image: PLACEHOLDER_KUBECTL_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: POD_NAME
               valueFrom:

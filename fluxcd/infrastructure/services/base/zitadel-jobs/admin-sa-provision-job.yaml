@@ -12,9 +12,20 @@ spec:
     spec:
       serviceAccountName: zitadel
       restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: wait-for-secret
           image: PLACEHOLDER_KUBECTL_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -28,6 +39,11 @@ spec:
       containers:
         - name: sync-to-vault
           image: PLACEHOLDER_CURL_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: VAULT_ADDR
               value: http://vault.zeldas-lullaby.svc.cluster.local:8200

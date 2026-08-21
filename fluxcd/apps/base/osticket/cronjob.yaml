@@ -27,6 +27,11 @@ spec:
           initContainers:
             - name: wait-for-db
               image: PLACEHOLDER_BUSYBOX_IMAGE
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
               command:
                 - sh
                 - -c
