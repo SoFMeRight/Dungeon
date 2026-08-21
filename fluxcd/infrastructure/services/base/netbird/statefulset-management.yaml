@@ -18,9 +18,23 @@ spec:
         policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: netbird-management
+      # Non-root: fsGroup 65532 makes the /var/lib/netbird PVC and the generated-config
+      # emptyDir writable for uid 65532; --port 10000 moves the API off the privileged :80.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: config-generator
           image: docker.io/busybox:1.38.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -187,13 +201,20 @@ spec:
       containers:
         - name: management
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           args:
             - --config
             - /etc/netbird/config.json
+            - --port
+            - "10000"
             - --log-file
             - console
           ports:
-            - containerPort: 80
+            - containerPort: 10000
               name: http
           env:
             - name: NETBIRD_STORE_ENGINE
