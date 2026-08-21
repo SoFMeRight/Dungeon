@@ -38,8 +38,6 @@ spec:
       trustedDomains:
         - ncloud.optcp.com
         - ncloud.pcfae.com
-        # In-cluster host notify-push connects to (server-side); only resolvable/reachable in-mesh.
-        - nextcloud.temple-of-time.svc.cluster.local
 
       mail:
         enabled: true

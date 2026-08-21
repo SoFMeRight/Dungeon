@@ -12,7 +12,6 @@ spec:
         - source:
             principals:
               - cluster.local/ns/temple-of-time/sa/nextcloud
-              - cluster.local/ns/temple-of-time/sa/nextcloud-notify-push
               - cluster.local/ns/temple-of-time/sa/nextcloud-whiteboard
       to:
         - operation:
