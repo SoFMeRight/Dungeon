@@ -87,6 +87,27 @@ spec:
           maxUnavailable: 1
           maxSurge: 0
 
+      # Partial hardening — nextcloud:apache MUST run as root PID 1 (apache binds the privileged :80
+      # and the entrypoint chowns /var/www/html); it cannot run non-root without switching to the
+      # fpm+nginx flavor. Verified boot with this set (AH00163 + status.php 200): seccomp RuntimeDefault
+      # + drop ALL, adding back only apache's needs — chown/chmod/setuid for the entrypoint chown and
+      # worker drop to www-data, plus NET_BIND_SERVICE for the privileged :80 bind.
+      podSecurityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+          add:
+            - CHOWN
+            - DAC_OVERRIDE
+            - FOWNER
+            - SETUID
+            - SETGID
+            - NET_BIND_SERVICE
+
     externalDatabase:
       host: nextcloud-postgres-rw
       database: nextcloud
@@ -101,6 +122,19 @@ spec:
     cronjob:
       enabled: true
       type: sidecar
+      # Cron sidecar runs the same image (cron.php, no :80 bind) — same minimal caps minus NET_BIND_SERVICE.
+      sidecar:
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+            add:
+              - CHOWN
+              - DAC_OVERRIDE
+              - FOWNER
+              - SETUID
+              - SETGID
 
     startupProbe:
       initialDelaySeconds: 30
