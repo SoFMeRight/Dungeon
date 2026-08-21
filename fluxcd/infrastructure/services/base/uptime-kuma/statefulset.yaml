@@ -17,9 +17,24 @@ spec:
         app.kubernetes.io/name: uptime-kuma
     spec:
       serviceAccountName: uptime-kuma
+      # Node app, runs clean as uid 1000 (verified); fsGroup 1000 makes the /app/data PVC writable.
+      # drop ALL — NET_RAW intentionally omitted; add it back only if ICMP ping/traceroute monitors
+      # are used (HTTP/TCP/keyword monitors need no capability).
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: uptime-kuma
           image: louislam/uptime-kuma:PLACEHOLDER_VERSION
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: http
               containerPort: 3001
