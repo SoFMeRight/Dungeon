@@ -15,9 +15,28 @@ spec:
         app: plex
     spec:
       serviceAccountName: plex
+      # plexinc/pms-docker bundles s6-overlay v2: the container MUST start as root PID 1 — s6
+      # chowns its cont-init.d scripts and setuidgid-drops to PUID at boot (needs root); it cannot
+      # run non-root without a vendor rebuild. Partial hardening staying-root (verified: s6 init,
+      # first-run, and HW-transcode init all exit 0): seccomp RuntimeDefault + drop ALL caps,
+      # adding back only the set s6 needs (chown/chmod/setuidgid).
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: plex
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: ADVERTISE_IP
               value: "PLEX_ADVERTISE_IP_PLACEHOLDER"

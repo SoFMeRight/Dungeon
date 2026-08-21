@@ -15,9 +15,23 @@ spec:
         app: netbox-server
     spec:
       serviceAccountName: netbox-server
+      # netbox is LinuxServer.io (s6-overlay v3): the container MUST start as root PID 1 — s6
+      # chowns /run and setuidgid-drops to PUID at boot, which needs root; it cannot run non-root
+      # without a vendor rebuild. Partial hardening staying-root (verified boots clean): seccomp
+      # RuntimeDefault + drop ALL caps, adding back only the set s6 needs (chown/chmod/setuidgid).
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: wait-for-postgres
           image: PLACEHOLDER_BUSYBOX_IMAGE
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -28,6 +42,13 @@ spec:
               done
         - name: wait-for-redis
           image: PLACEHOLDER_BUSYBOX_IMAGE
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -39,6 +60,17 @@ spec:
       containers:
         - name: netbox
           image: PLACEHOLDER_NETBOX_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 8000
               name: http
