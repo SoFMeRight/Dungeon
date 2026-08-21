@@ -19,7 +19,7 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: geoipupdate
-              image: docker.io/maxmindinc/geoipupdate:v7.1.1
+              image: docker.io/maxmindinc/geoipupdate:v8.0.0
               env:
                 - name: GEOIPUPDATE_ACCOUNT_ID
                   valueFrom:
