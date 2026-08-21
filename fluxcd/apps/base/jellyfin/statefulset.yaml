@@ -18,6 +18,14 @@ spec:
       containers:
         - name: jellyfin
           image: docker.io/jellyfin/jellyfin:latest
+          # Runs non-root as uid 1000 (set in the overlay). CPU transcoding (ffmpeg subprocess) needs
+          # no capability; drop ALL. The DLNA :1900 UDP bind is already unavailable to non-root and
+          # unaffected here (main HTTP is :8096).
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8096
               name: http
