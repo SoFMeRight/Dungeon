@@ -14,6 +14,10 @@ spec:
     spec:
       securityContext:
         fsGroup: 1000
+        # /config holds ~180k files; only re-chown when the root dir's ownership is wrong, so a
+        # roll doesn't spend minutes recursively chowning every restart.
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
         seccompProfile:
