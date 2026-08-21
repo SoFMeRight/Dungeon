@@ -422,7 +422,7 @@ capabilities: {drop: [ALL]}}` + `podSecurityContext.runAsNonRoot: true`; seccomp
 | Postgres — CNPG (`ownerRef: Cluster`) | 5/5 | **Done** (self-hardened, ~15) |
 | Redis — plain (official image) | 5/5 | **Done** — 9 workloads (netbox, erpnext cache+queue, invoiceninja, appflowy, paperless, penpot, opnform, searxng) |
 | Redis — operator (opstree) | 4/5 (RO N/A) | **Done** — 8 CRs (homarr, nextcloud, gitlab, zitadel × RedisReplication+RedisSentinel) |
-| Postgres — plain | 5/5 | **In progress** — linkwarden proven (canary); alpine batch + debian to follow |
+| Postgres — plain | 5/5 | **Done** — 13 workloads: 7 alpine (umami, guacamole, paperless, reactive-resume, wikijs-vegan, netbox, tactical) + 5 debian (linkwarden, mealie, joplin, penpot, opnform) at full 5/5; speedtest-tracker's postgres container is 5/5 but the pod keeps a root `init-permissions` chown-init (documented exception — postgres needs the data dir chowned + chmod 700, so the pod can't be fully non-root). uid: alpine 70, debian 999. |
 | MariaDB — plain (~16) + galera CRs | 5/5 / TBD | **Pending** — galera already pod-level (999+seccomp); RO needs `/run/mysqld` + `/tmp` emptyDirs (highest risk: entrypoint init/chown) |
 | Redis — harbor (Helm), immich/semaphore (multi-container) | — | **Deferred** — harbor via chart values; multi-ctr pods need per-container review |
 
@@ -473,7 +473,7 @@ the corrected template (git stays source-of-truth; the patch only matches the fi
 | 2026-02-05 | Claude | speedtest-tracker LSIO non-root pattern (pioneer), updated LSIO section with Mode column, created workload-compliance-manifest.md |
 | 2026-02-06 | Claude | TacticalRMM full hardening: all 11 components in hookshot namespace (SEC-1 through SEC-8). Redis/MongoDB init chown removed (fsGroup handles ownership), wait-for-* init containers hardened as nobody, tactical-init documented exception for root with minimal caps |
 | 2026-08-14 | Claude | Live posture sweep (233 workloads, 12 exposed namespaces): non-root 44% / no-privesc 19% / drop-caps 22% / ro-fs 7% / seccomp 17%. Added Current Posture Snapshot + exposed-first priority (52 front-ends, tiered). Network layer verified strong (istio ambient + Cilium default-deny everywhere) and corrected the stale "0%/Planning" NET entries in workload-compliance-manifest.md. Repaired 2 invalid Cilium default-deny-ingress policies (temple-of-time, hyrule-castle → VALID). |
-| 2026-08-21 | Claude | Database-workload hardening pass (see Database Workload Hardening section). Redis: 9 plain redis → 5/5, 8 opstree operator CRs → 4/5 (RO-rootfs N/A — image writes conf+PID to rootfs). Postgres: linkwarden canary → 5/5 (socket/tmp emptyDirs), alpine batch + debian to follow; CNPG already 5/5. Established per-engine recipes + operator-vs-plain split. Zitadel SSO redis rolled clean (no repeat of the master-label incident). |
+| 2026-08-21 | Claude | Database-workload hardening pass (see Database Workload Hardening section). Redis: 9 plain redis → 5/5, 8 opstree operator CRs → 4/5 (RO-rootfs N/A — image writes conf+PID to rootfs). Postgres: all 13 plain-postgres → 5/5 (socket/tmp emptyDirs; alpine uid 70, debian uid 999; speedtest-tracker keeps a root chown-init exception); CNPG already 5/5. Established per-engine recipes + operator-vs-plain split. Zitadel SSO redis rolled clean (no repeat of the master-label incident). |
 
 ## Related Documents
 
