@@ -9,11 +9,34 @@ spec:
         policy.prplanit.com/access-class: postgres
         policy.prplanit.com/service-scope: temple-of-time.penpot.postgres
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: docker-io-pull-secret
       containers:
         - name: postgres
           image: docker.io/postgres:15
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: postgres-run
+              mountPath: /var/run/postgresql
+            - name: postgres-tmp
+              mountPath: /tmp
+      volumes:
+        - name: postgres-run
+          emptyDir: {}
+        - name: postgres-tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: temple-of-time-penpot-postgres-data
