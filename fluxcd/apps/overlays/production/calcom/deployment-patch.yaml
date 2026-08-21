@@ -15,11 +15,22 @@ spec:
         runAsUser: 1001
         runAsGroup: 1001
         fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: fix-yarn-perms
           image: docker.io/calcom/cal.com:v6.2.0
+          # Runs as root only to chown the yarn-cache emptyDir to 1001; keep just the file-perm caps.
           securityContext:
             runAsUser: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
           command:
             - sh
             - -c
