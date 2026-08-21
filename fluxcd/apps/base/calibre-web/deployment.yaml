@@ -16,11 +16,26 @@ spec:
         app: calibre-web
     spec:
       serviceAccountName: calibre-web
+      # LSIO/s6-overlay image: MUST start as root PID 1 (s6 chowns /run + setuidgid-drops to PUID).
+      # Partial hardening: seccomp + drop ALL, adding back only s6's needs. :8083 is unprivileged.
       securityContext:
         fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: calibre-web
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 8083
               name: web
