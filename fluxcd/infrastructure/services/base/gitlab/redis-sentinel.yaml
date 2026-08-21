@@ -21,7 +21,7 @@ spec:
     runAsGroup: 1000
     fsGroup: 1000
   kubernetesConfig:
-    image: quay.io/opstree/redis-sentinel:v7.4.8
+    image: quay.io/opstree/redis-sentinel:v7.4.11
     imagePullPolicy: IfNotPresent
     redisSecret:
       name: gitlab-redis-password
