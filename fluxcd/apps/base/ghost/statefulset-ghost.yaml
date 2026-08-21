@@ -15,9 +15,23 @@ spec:
         app: ghost
     spec:
       serviceAccountName: ghost
+      # Node app (library/ghost), runs clean as uid 1000 (verified); fsGroup 1000 makes the
+      # /var/lib/ghost/content PVC writable. Port 2368 is unprivileged. drop ALL — no caps needed.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: ghost
           image: PLACEHOLDER_GHOST_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: database__client
               value: mysql
