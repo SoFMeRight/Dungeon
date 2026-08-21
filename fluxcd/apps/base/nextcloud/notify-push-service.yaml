@@ -9,7 +9,10 @@ spec:
   ports:
     - name: http
       port: 7867
-      targetPort: http
+      targetPort: notify-push
       protocol: TCP
+  # notify_push now runs as a sidecar in the nextcloud app pods (see the HelmRelease
+  # extraSidecarContainers), so this Service targets those pods on the sidecar's :7867.
   selector:
-    app: nextcloud-notify-push
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/component: app

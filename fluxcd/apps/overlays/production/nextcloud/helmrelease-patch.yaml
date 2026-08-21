@@ -110,6 +110,67 @@ spec:
             - SETGID
             - NET_BIND_SERVICE
 
+      # notify_push co-located as a sidecar: talks to nextcloud over localhost (no gateway hairpin,
+      # no istio east-west, no trusted-domain juggling). Clients still reach it via the public URL
+      # through the nextcloud-notify-push Service (repointed at these pods) + the /push HTTPRoute.
+      extraSidecarContainers:
+        - name: notify-push
+          image: docker.io/icewind1991/notify_push:1.4.0
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          ports:
+            - name: notify-push
+              containerPort: 7867
+          env:
+            - name: PORT
+              value: "7867"
+            - name: NEXTCLOUD_URL
+              value: "http://localhost:80"
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: nextcloud-aux-config
+                  key: POSTGRES_HOST
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: nextcloud-aux-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secrets
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secrets
+                  key: POSTGRES_PASSWORD
+            - name: DATABASE_URL
+              value: "postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST)/$(POSTGRES_DB)"
+            - name: DATABASE_PREFIX
+              value: "oc_"
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: nextcloud-aux-config
+                  key: REDIS_HOST
+            - name: REDIS_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secrets
+                  key: REDIS_HOST_PASSWORD
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_HOST_PASSWORD)@$(REDIS_HOST):6379"
+
     externalDatabase:
       host: nextcloud-postgres-rw
       database: nextcloud

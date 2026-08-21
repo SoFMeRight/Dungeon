@@ -23,7 +23,6 @@ patches:
   - path: elasticsearch-patch.yaml
   - path: talk-hpb-configmap-patch.yaml
   - path: talk-hpb-patch.yaml
-  - path: notify-push-patch.yaml
   - path: whiteboard-patch.yaml
   - path: externalsecret-postgres-backup-patch.yaml
   - path: service-nextcloud-ingress-patch.yaml

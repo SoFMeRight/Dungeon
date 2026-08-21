@@ -20,7 +20,6 @@ resources:
   - clamav-statefulset.yaml
   - clamav-service.yaml
   # Real-time
-  - notify-push-deployment.yaml
   - notify-push-service.yaml
   # Communication
   - talk-hpb-deployment.yaml
