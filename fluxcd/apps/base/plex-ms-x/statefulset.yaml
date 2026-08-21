@@ -16,9 +16,28 @@ spec:
     spec:
       serviceAccountName: plex-ms-x
       runtimeClassName: nvidia
+      # plexinc/pms-docker bundles s6-overlay v2: MUST start as root PID 1 (s6 chowns cont-init.d
+      # and setuidgid-drops to PUID at boot) — cannot run non-root without a vendor rebuild. Partial
+      # hardening staying-root: seccomp RuntimeDefault + drop ALL caps, adding back only s6's set.
+      # NVIDIA GPU access is via the nvidia runtime + device cgroups, NOT Linux caps, so the drop
+      # does not affect it (mirrors the CPU plex, whose HW-transcode init verified clean).
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: plex-ms-x
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: ADVERTISE_IP
               value: "PLEX_ADVERTISE_IP_PLACEHOLDER"
