@@ -16,9 +16,24 @@ spec:
         policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: mealie
+      # Runs non-root as uid 1000 directly — the image's PUID/PGID root-init chown is skipped
+      # when started as non-root; fsGroup 1000 makes the /app/data PVC writable. (Verified: the
+      # server + all DB migrations run cleanly as uid 1000.)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mealie
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 9000
           env:
