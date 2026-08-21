@@ -47,6 +47,13 @@ spec:
               else
                 echo "SERVICE_ACCOUNT.JSON already exists, skipping."
               fi
+              mkdir -p /config/.storage
+              if [ ! -f /config/.storage/http ]; then
+                echo "Seeding .storage/http (network settings / trusted_proxies)..."
+                cp /seed/storage-http.json /config/.storage/http
+              else
+                echo ".storage/http already exists, skipping."
+              fi
               mkdir -p /config/themes
               [ -f /config/automations.yaml ] || echo "[]" > /config/automations.yaml
               [ -f /config/scripts.yaml ] || echo "" > /config/scripts.yaml
