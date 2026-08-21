@@ -18,6 +18,16 @@ spec:
       initContainers:
         - name: setup-dirs
           image: PLACEHOLDER_BUSYBOX_IMAGE
+          # Runs as root to mkdir + chmod the PVC mounts; keep only the file-permission caps.
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
           command:
             - sh
             - -c
@@ -33,6 +43,13 @@ spec:
               mountPath: /storage
         - name: wait-for-mysql
           image: PLACEHOLDER_BUSYBOX_IMAGE
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -43,6 +60,13 @@ spec:
               done
         - name: wait-for-redis
           image: PLACEHOLDER_BUSYBOX_IMAGE
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -54,6 +78,20 @@ spec:
       containers:
         - name: app
           image: PLACEHOLDER_APP_IMAGE
+          # invoiceninja-debian php-fpm: the entrypoint copies public assets + chowns storage as root
+          # then drops the php-fpm workers — can't run non-root. Partial hardening: drop ALL, add back
+          # only file-perm + setuid caps. php-fpm listens on :9000 (unprivileged, no NET_BIND_SERVICE).
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 9000
               name: php-fpm
@@ -137,13 +175,31 @@ spec:
               mountPath: /var/www/html/storage
         - name: nginx
           image: PLACEHOLDER_NGINX_IMAGE
+          # Full non-root: stock nginx moved to :8080, uid 101, read-only rootfs with pid/temp under
+          # a /tmp emptyDir (full nginx.conf in the configmap). drop ALL — no capabilities needed.
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 101
+            runAsGroup: 101
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               name: http
           volumeMounts:
             - name: nginx-config
-              mountPath: /etc/nginx/conf.d
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
               readOnly: true
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
             - name: PLACEHOLDER_APP_PUBLIC
               mountPath: /var/www/html/public
               readOnly: true
@@ -154,6 +210,8 @@ spec:
         - name: nginx-config
           configMap:
             name: invoiceninja-nginx-config
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_APP_CACHE

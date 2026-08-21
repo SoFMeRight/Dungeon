@@ -14,6 +14,8 @@ spec:
     spec:
       securityContext:
         fsGroup: 82
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: setup-dirs
           image: docker.io/busybox:1.38
@@ -62,14 +64,19 @@ spec:
               memory: "4Gi"
         - name: nginx
           image: docker.io/nginx:alpine
+          # Full mount set (this list replaces the base's): full nginx.conf + server block via subPath,
+          # /tmp emptyDir for pid/temp (read-only rootfs), and the app public/storage read-only.
           volumeMounts:
-            - $patch: delete
-              name: PLACEHOLDER_APP_PUBLIC
-            - $patch: delete
-              name: PLACEHOLDER_APP_STORAGE
             - name: nginx-config
-              mountPath: /etc/nginx/conf.d
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
               readOnly: true
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
             - name: hyrule-castle-invoiceninja-app-public
               mountPath: /var/www/html/public
               readOnly: true

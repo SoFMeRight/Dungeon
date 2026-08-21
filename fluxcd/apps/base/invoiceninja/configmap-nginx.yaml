@@ -3,9 +3,31 @@ kind: ConfigMap
 metadata:
   name: invoiceninja-nginx-config
 data:
+  # Full main config so nginx runs fully non-root (uid 101) with a read-only root filesystem:
+  # pid + all temp paths under a writable /tmp emptyDir, logs to stdout/stderr, no `user` directive.
+  nginx.conf: |
+    worker_processes auto;
+    error_log /dev/stderr warn;
+    pid /tmp/nginx.pid;
+    events {
+        worker_connections 1024;
+    }
+    http {
+        include /etc/nginx/mime.types;
+        default_type application/octet-stream;
+        access_log /dev/stdout;
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path /tmp/proxy_temp;
+        fastcgi_temp_path /tmp/fastcgi_temp;
+        uwsgi_temp_path /tmp/uwsgi_temp;
+        scgi_temp_path /tmp/scgi_temp;
+        sendfile on;
+        keepalive_timeout 65;
+        include /etc/nginx/conf.d/*.conf;
+    }
   default.conf: |
     server {
-        listen 80;
+        listen 8080;
         server_name _;
         root /var/www/html/public;
         index index.php index.html;
