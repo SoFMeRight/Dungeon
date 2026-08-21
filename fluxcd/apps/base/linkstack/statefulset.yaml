@@ -15,9 +15,28 @@ spec:
         app: linkstack
     spec:
       serviceAccountName: linkstack
+      # apache/php image whose entrypoint regenerates /etc/apache2 + /etc/php83 config as root at
+      # boot and binds the privileged :443 — cannot run non-root without a rebuild. Partial hardening
+      # staying-root (verified boot): seccomp RuntimeDefault + drop ALL, adding back only apache's
+      # needs (chown/chmod/setuid for the entrypoint + worker drop, NET_BIND_SERVICE for :443).
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: linkstack
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
+                - NET_BIND_SERVICE
           ports:
             - containerPort: 443
               name: https
