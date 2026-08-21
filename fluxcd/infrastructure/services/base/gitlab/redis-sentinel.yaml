@@ -20,6 +20,12 @@ spec:
     runAsUser: 1000
     runAsGroup: 1000
     fsGroup: 1000
+    runAsNonRoot: true
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
   kubernetesConfig:
     image: quay.io/opstree/redis-sentinel:v7.4.8
     imagePullPolicy: IfNotPresent
