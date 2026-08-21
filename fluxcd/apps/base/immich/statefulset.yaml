@@ -16,6 +16,9 @@ spec:
     spec:
       serviceAccountName: immich
       enableServiceLinks: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: fix-library-permissions
           image: docker.io/library/busybox:1.38
@@ -35,9 +38,40 @@ spec:
           volumeMounts:
             - name: postgres
               mountPath: /var/lib/postgresql/data
+        - name: fix-model-cache-permissions
+          image: docker.io/library/busybox:1.38
+          # Chowns the fresh model-cache PVC to 1000 so the (now non-root) ML container can write it.
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+          command:
+            - sh
+            - -c
+            - chown -R 1000:1000 /cache && chmod -R 755 /cache
+          volumeMounts:
+            - name: model-cache
+              mountPath: /cache
       containers:
         - name: immich-server
           image: ghcr.io/immich-app/immich-server:v2.5.6
+          # Node app, uid 1000 owns the library (init-chowned). GPU (video transcode) is runtime/
+          # cgroup-based, unaffected by dropping caps. :2283 unprivileged.
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 2283
               name: http
@@ -79,6 +113,16 @@ spec:
               mountPath: /usr/src/app/upload
         - name: immich-machine-learning
           image: ghcr.io/immich-app/immich-machine-learning:v2.5.0-cuda
+          # Python ML, uid 1000 writes the model-cache (init-chowned). GPU access is runtime/cgroup-
+          # based, unaffected by dropping caps.
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: DB_HOSTNAME
               value: localhost
@@ -111,14 +155,27 @@ spec:
               mountPath: /cache
         - name: redis
           image: docker.io/library/redis:6.2-alpine
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 6379
               name: redis
         - name: postgres
           image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0
           securityContext:
+            runAsNonRoot: true
             runAsUser: 999
             runAsGroup: 999
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           args:
             - -c
             - shared_preload_libraries=vectors.so
