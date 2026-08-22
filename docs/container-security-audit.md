@@ -454,6 +454,20 @@ down. Target = **4/5**, with `runAsNonRoot` (SEC-1) the sole documented exceptio
 ```
 For the cephfs-init chown Jobs the minimal cap set is `CHOWN`, `DAC_OVERRIDE`, `FOWNER`.
 
+**Not every init/setup Job needs root — prefer full 5/5 when the work is a pure client.**
+The `ceph-rgw-*-setup` Jobs (create an RGW S3 user + buckets) and `ceph-rgw-init` (realm/
+zonegroup/zone bootstrap) reach **5/5** (non-root 1000, RO-rootfs, drop `[ALL]`, seccomp,
+`/tmp` emptyDir): `radosgw-admin` is a network client, and bucket creation was rewritten from
+`dnf install s3cmd` + `s3cmd mb` (which forced root + a writable rootfs) to a **signed `curl`
+PUT** — SigV2 via `openssl` HMAC-SHA1, both already in the ceph image. Lesson: a "provision an
+S3 bucket" step needs neither a client package nor root — sign one request with the tools
+already present. Fixing `ceph-rgw-init` also surfaced two latent bugs it had never gotten past:
+it invoked `radosgw-admin` with no `--name`, so it authed as `client.admin` (whose key isn't in
+the mounted keyring) → `failed to fetch mon config`; and a `sed s/…/…/` whose replacement held
+the endpoint URL, whose slashes broke the expression (fixed with a `|` delimiter). Its
+env-specifics (client, realm, zonegroup, zone, endpoint) are job env vars and the display-only
+pool names are derived from `zone.json` — the script body stays pure logic.
+
 **Two findings worth keeping:**
 - **Non-root + added `CAP_CHOWN` is not reliable** for cross-owner chown: the uid chown
   succeeds but **chgrp fails** under `no_new_privs` (`allowPrivilegeEscalation:false`). These
@@ -515,6 +529,7 @@ finalizers, then remove the label.
 | 2026-08-21 | Claude | Database-workload hardening pass (see Database Workload Hardening section). Redis: 9 plain redis → 5/5, 8 opstree operator CRs → 4/5 (RO-rootfs N/A — image writes conf+PID to rootfs). Postgres: all 13 plain-postgres → 5/5 (socket/tmp emptyDirs; alpine uid 70, debian uid 999; speedtest-tracker keeps a root chown-init exception); CNPG already 5/5. Established per-engine recipes + operator-vs-plain split. Zitadel SSO redis rolled clean (no repeat of the master-label incident). |
 | 2026-08-22 | Claude | MariaDB engine complete. 10 official plain mariadb/mysql → 5/5 (uid 999, `/run/mysqld` + `/tmp` emptyDirs; mysql 5.7/8/8.4 + mariadb 10.11/11 all clean). Galera CRs (kimai, osticket) → 4/5 via container SC on the MariaDB CR (RO N/A: `/run/mysqld` is rootfs; GaleraReady held True through both rolls). 4 LinuxServer.io mariadb images (bookstack, dolibarr, romm, shlink) documented as root+s6 exceptions. DB hardening initiative complete across redis/postgres/mariadb. |
 | 2026-08-22 | Claude | Privileged init/maintenance Jobs hardened (see Privileged Init/Maintenance Jobs section). 13 `cephfs-init-*` Jobs (gorons-bracelet) → 4/5 min-priv root: drop ALL caps + add only CHOWN/DAC_OVERRIDE/FOWNER, no-privesc, seccomp, RO-rootfs, ansible tmp on `/tmp` emptyDir + `ANSIBLE_REMOTE_TMP`. Verified all 13 run to success; cleaned up 7d orphaned pods stuck on the `batch.kubernetes.io/job-tracking` finalizer (owner Jobs gone). Complements the velero maintenance-job hardening (`717e538c`) — same min-priv-root shape for the privileged-Job class. |
+| 2026-08-22 | Claude | Ceph RGW Jobs hardened to full 5/5 (non-root 1000, RO, drop [ALL], seccomp). 7 `*-rgw-setup` Jobs: rewrote bucket creation from runtime `dnf install s3cmd` to a signed `curl` PUT (SigV2 via openssl) — no package install, no root, no rootfs writes. `ceph-rgw-init` bootstrap: hardened + fixed two pre-existing bugs that had kept it Failed (missing `--name client.dungeon-rgw` → auth/`failed to fetch mon config`; `sed` `/` delimiter clashing with the endpoint URL); env-specifics externalized to job env vars, pool-name display derived from zone.json. All verified: buckets created, RGW healthy post-period-commit. |
 
 ## Related Documents
 
