@@ -52,46 +52,58 @@ spec:
               # RGW_CLIENT selects the identity the mounted keyring holds
               # (mons reject the default client.admin).
               RGW="radosgw-admin --name ${RGW_CLIENT}"
+              CHANGED=0
 
               echo "=== RGW init (idempotent) ==="
 
-              # Realm / zonegroup / zone are created ONLY if missing. We never
-              # run `zonegroup set`/`zone set --infile` — that overwrites the whole
-              # object (incl. its id), which orphans every existing bucket. Config
-              # that IS safe to re-assert (pool placement) is applied with targeted,
-              # idempotent `zone placement modify` below.
-
+              # Create realm / zonegroup / zone ONLY if missing. We never
+              # `zonegroup set`/`zone set` a whole object from a file — that
+              # overwrites the object's identity (id) and orphans every bucket
+              # created under the old id. Config that IS safe to re-assert (pool
+              # placement) is applied with a targeted, idempotent command below.
               if ! $RGW realm get --rgw-realm="${RGW_REALM}" >/dev/null 2>&1; then
                 echo "creating realm ${RGW_REALM}"
                 $RGW realm create --rgw-realm="${RGW_REALM}" --default
+                CHANGED=1
               fi
-
               if ! $RGW zonegroup get --rgw-zonegroup="${RGW_ZONEGROUP}" >/dev/null 2>&1; then
                 echo "creating zonegroup ${RGW_ZONEGROUP}"
                 $RGW zonegroup create --rgw-zonegroup="${RGW_ZONEGROUP}" \
                   --rgw-realm="${RGW_REALM}" --endpoints="${RGW_ENDPOINT}" --master --default
+                CHANGED=1
               fi
-
               if ! $RGW zone get --rgw-zone="${RGW_ZONE}" >/dev/null 2>&1; then
                 echo "creating zone ${RGW_ZONE}"
                 $RGW zone create --rgw-zonegroup="${RGW_ZONEGROUP}" --rgw-zone="${RGW_ZONE}" \
                   --endpoints="${RGW_ENDPOINT}" --master --default
+                CHANGED=1
               fi
 
-              # Pool placement — idempotent, only touches pool names (not identity).
-              echo "ensuring placement pools (${RGW_METADATA_POOL}, ${RGW_DATA_POOL})"
-              $RGW zone placement modify --rgw-zone="${RGW_ZONE}" \
-                --placement-id=default-placement \
-                --index-pool="${RGW_METADATA_POOL}" \
-                --data-pool="${RGW_DATA_POOL}" \
-                --data-extra-pool="${RGW_METADATA_POOL}"
+              # Pool placement: only modify when the data pool differs (avoids churn).
+              CUR_DATA="$($RGW zone get --rgw-zone="${RGW_ZONE}" 2>/dev/null \
+                | grep -m1 '"data_pool"' | cut -d'"' -f4 || true)"
+              if [ "${CUR_DATA}" != "${RGW_DATA_POOL}" ]; then
+                echo "setting placement pools (${RGW_METADATA_POOL} / ${RGW_DATA_POOL})"
+                $RGW zone placement modify --rgw-zone="${RGW_ZONE}" \
+                  --placement-id=default-placement \
+                  --index-pool="${RGW_METADATA_POOL}" \
+                  --data-pool="${RGW_DATA_POOL}" \
+                  --data-extra-pool="${RGW_METADATA_POOL}"
+                CHANGED=1
+              else
+                echo "placement pools ok (${CUR_DATA})"
+              fi
 
-              # Commit the period so any newly-created realm/zonegroup/zone propagates.
-              # Re-committing an unchanged config is harmless (only bumps the epoch);
-              # it does NOT rewrite object identities the way `zonegroup set` did.
-              $RGW period update --commit >/dev/null
+              # Commit the period only if something actually changed — a steady-state
+              # run bumps no epoch.
+              if [ "${CHANGED}" = "1" ]; then
+                echo "committing period"
+                $RGW period update --commit >/dev/null
+              else
+                echo "no changes; period commit skipped"
+              fi
 
-              echo "=== RGW init complete ==="
+              echo "=== RGW init complete (changed=${CHANGED}) ==="
           volumeMounts:
             - name: tmp
               mountPath: /tmp

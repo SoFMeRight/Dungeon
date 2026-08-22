@@ -4,6 +4,9 @@ namespace: gorons-bracelet
 resources:
   - ../../../../base/ceph-rgw
   - httproute-s3.yaml
+  # One-time recovery of the zonegroup id clobbered by the old init-job.
+  # Remove this (and the file) once it has run and the RGW is healthy.
+  - recover-zonegroup-id-job.yaml
 patches:
   - path: configmap-patch.yaml
   - path: statefulset-patch.yaml
