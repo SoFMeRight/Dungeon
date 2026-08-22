@@ -17,11 +17,17 @@ spec:
           type: RuntimeDefault
       containers:
         - name: photoprism
+          # photoprism is an s6-overlay image: preinit chowns /run to the run-uid. Runs non-root
+          # (2432) but needs CHOWN/DAC_OVERRIDE/FOWNER so s6 can fix /run (fsGroup doesn't help).
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
           env:
             - name: PHOTOPRISM_SITE_URL
               value: "https://photos.pcfae.com"
