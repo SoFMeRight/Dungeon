@@ -8,6 +8,12 @@ spec:
   template:
     spec:
       restartPolicy: OnFailure
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: setup
           image: docker.io/prplanit/ansible-oci:2.20.1-v2
@@ -16,12 +22,29 @@ spec:
             - /scripts/cephfs-init-rootpaths.yml
             - -e
             - path=/dungeon/nvme/apps/grafana/plugins owner=472:472 mode=0755
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+          env:
+            - name: HOME
+              value: /tmp
+            - name: ANSIBLE_LOCAL_TEMP
+              value: /tmp/.ansible
           volumeMounts:
             - name: cephfs-root
               mountPath: /cephfs
             - name: setup-script
               mountPath: /scripts
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - name: cephfs-root
           persistentVolumeClaim:
@@ -29,3 +52,5 @@ spec:
         - name: setup-script
           configMap:
             name: cephfs-setup-script
+        - name: tmp
+          emptyDir: {}
