@@ -250,6 +250,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
 | urbackup-server | urbackup | ? | ? | ? | ? | ? | ? | Y | ? | |
+| velero (repo-maintenance) | velero-repo-maintenance | X | N | Y | ? | ? | ? | Y | ? | Exception (partial) — root-required: velero hardcodes writing the kopia repo config to `/udmrepo` at the container root fs (no volume), so forcing non-root fatals `mkdir /udmrepo: permission denied`. Controller-generated (Velero spawns one Job per BackupRepository; PodSpec non-configurable, upstream #7911) → no overlay to patch, so hardened via scoped Kyverno mutate `mutate-velero-maintenance-hardening` on the `velero.io/repo-name` label: SEC-5/6 (allowPrivilegeEscalation:false + drop ALL) + seccomp RuntimeDefault, stays root. Maintenance verified succeeds (exit 0). |
 
 ### gossip-stone (Monitoring Services)
 
