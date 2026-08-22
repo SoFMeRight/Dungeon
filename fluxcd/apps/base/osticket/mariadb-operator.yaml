@@ -27,6 +27,14 @@ spec:
     seccompProfile:
       type: RuntimeDefault
 
+  # readOnlyRootFilesystem is omitted deliberately: the socket dir /run/mysqld is
+  # on the rootfs (not an operator-mounted volume), so RO would break the socket.
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
   # High availability with 3-replica Galera cluster
   replicas: 3
 
