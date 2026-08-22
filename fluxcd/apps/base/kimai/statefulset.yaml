@@ -44,6 +44,13 @@ spec:
       initContainers:
         - name: prepare-env
           image: docker.io/busybox:1.38
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -86,6 +93,13 @@ spec:
               mountPath: /env-config
         - name: wait-for-db
           image: docker.io/busybox:1.38
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -96,6 +110,21 @@ spec:
               done
         - name: run-migrations
           image: docker.io/kimai/kimai2:apache
+          # apache-root (master root → setuid workers www-data 33, entrypoint chowns Symfony var).
+          # Partial hardening: drop ALL + file-perm/setuid caps + seccomp (:8001 unprivileged).
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           command:
             - /bin/bash
             - -c
@@ -119,6 +148,21 @@ spec:
               readOnly: true
         - name: create-admin-user
           image: docker.io/kimai/kimai2:apache
+          # apache-root (master root → setuid workers www-data 33, entrypoint chowns Symfony var).
+          # Partial hardening: drop ALL + file-perm/setuid caps + seccomp (:8001 unprivileged).
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           command:
             - /bin/bash
             - -c
@@ -164,6 +208,21 @@ spec:
       containers:
         - name: kimai
           image: docker.io/kimai/kimai2:apache
+          # apache-root (master root → setuid workers www-data 33, entrypoint chowns Symfony var).
+          # Partial hardening: drop ALL + file-perm/setuid caps + seccomp (:8001 unprivileged).
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - name: http
               containerPort: 8001

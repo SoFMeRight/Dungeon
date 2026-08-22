@@ -16,9 +16,20 @@ spec:
         app: open-webui-sentinel
     spec:
       serviceAccountName: open-webui-sentinel
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: config
           image: PLACEHOLDER_REDIS_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -70,6 +81,11 @@ spec:
       containers:
         - name: sentinel
           image: PLACEHOLDER_REDIS_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - redis-sentinel
             - /etc/redis/sentinel.conf
