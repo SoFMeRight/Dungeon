@@ -35,9 +35,22 @@ spec:
               mountPath: /config
             - name: dshm
               mountPath: /dev/shm
+          # LSIO/s6-overlay: s6 preinit requires root-owned /run and setuid-drops to PUID/PGID —
+          # can't run non-root. Partial hardening: keep root, drop ALL, add back only s6's file-perm
+          # + setuid caps. Ports 3000/3001 unprivileged (no NET_BIND_SERVICE).
           securityContext:
             seccompProfile:
               type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
       volumes:
         - name: dshm
           emptyDir:

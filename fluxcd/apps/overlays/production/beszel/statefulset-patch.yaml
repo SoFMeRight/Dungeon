@@ -11,14 +11,22 @@ spec:
         policy.prplanit.com/cap.oidc: "true"
     spec:
       securityContext:
+        runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: beszel
           image: docker.io/henrygd/beszel:0.18.7
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           volumeMounts:
             - name: gossip-stone-beszel-data
               mountPath: /beszel_data
