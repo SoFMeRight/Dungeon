@@ -10,9 +10,25 @@ spec:
         policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
         istio.io/dataplane-mode: none
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: init
           image: quay.io/ceph/ceph:v19
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HOME
+              value: /tmp
           command:
             - /bin/bash
             - -c
@@ -80,6 +96,8 @@ spec:
               echo "  - dungeon-rgw.* (metadata)"
               echo "  - dungeon-rgw-data (object data)"
           volumeMounts:
+            - name: tmp
+              mountPath: /tmp
             - name: ceph-config
               mountPath: /etc/ceph/ceph.conf
               subPath: ceph.conf
@@ -92,6 +110,8 @@ spec:
               mountPath: /config
               readOnly: true
       volumes:
+        - name: tmp
+          emptyDir: {}
         - name: ceph-config
           configMap:
             name: ceph-config
