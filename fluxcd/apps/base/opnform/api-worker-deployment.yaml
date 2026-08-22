@@ -15,10 +15,22 @@ spec:
         app: opnform-api-worker
     spec:
       serviceAccountName: opnform-api-worker
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 82
+        runAsGroup: 82
+        fsGroup: 82
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: worker
           image: docker.io/jhumanj/opnform-api:1.13.2
           command: ["php", "artisan", "queue:work"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: APP_NAME
               value: "OpnForm"

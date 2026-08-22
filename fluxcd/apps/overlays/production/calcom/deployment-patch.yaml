@@ -12,6 +12,7 @@ spec:
         policy.prplanit.com/access-scope-postgres: hyrule-castle.calcom.postgres
     spec:
       securityContext:
+        runAsNonRoot: true
         runAsUser: 1001
         runAsGroup: 1001
         fsGroup: 1001
@@ -22,6 +23,7 @@ spec:
           image: docker.io/calcom/cal.com:v6.2.0
           # Runs as root only to chown the yarn-cache emptyDir to 1001; keep just the file-perm caps.
           securityContext:
+            runAsNonRoot: false
             runAsUser: 0
             allowPrivilegeEscalation: false
             capabilities:

@@ -15,9 +15,23 @@ spec:
         app: opnform-api
     spec:
       serviceAccountName: opnform-api
+      # opnform-api is php-fpm; running the master directly as www-data (uid 82) avoids the
+      # root-master→setuid-worker pattern. Storage is www-data-owned + fsGroup 82 keeps it writable.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 82
+        runAsGroup: 82
+        fsGroup: 82
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: wait-for-db
           image: docker.io/busybox:1.38
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -28,6 +42,11 @@ spec:
               done
         - name: wait-for-redis
           image: docker.io/busybox:1.38
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -39,6 +58,11 @@ spec:
       containers:
         - name: api
           image: docker.io/jhumanj/opnform-api:1.13.2
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: fastcgi
               containerPort: 9000
