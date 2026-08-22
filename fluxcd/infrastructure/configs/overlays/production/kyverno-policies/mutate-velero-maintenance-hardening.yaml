@@ -12,16 +12,16 @@ metadata:
       narrowly-scoped admission mutate is the sanctioned exception to the "carry the four
       non-seccomp dimensions explicitly per-app in overlays" doctrine (see mutate-pod-hardening):
       it targets ONLY pods carrying the velero.io/repo-name label.
-      ROOT IS REQUIRED here, not hardened away: velero hardcodes writing the kopia repo config
-      to /udmrepo at the container root filesystem (no volume, no writable dir), so the pod MUST
-      run as root to create it — forcing runAsNonRoot breaks maintenance with
-      "mkdir /udmrepo: permission denied" (verified on a live cycle). So this rule hardens the
-      dimensions that are safe while root: no-privilege-escalation (the reported SEC-3 audit
-      failure), drop-all capabilities (root needs none for kopia prune/gc against S3), and
-      seccomp RuntimeDefault (self-contained if mutate-pod-hardening is suspended on the backup
-      namespace). runAsNonRoot and readOnlyRootFilesystem are intentionally left off — both break
-      the job. Add-only (+() anchors, never overrides); ADMISSION-TIME ONLY — maintenance Jobs are
-      recreated each cycle, so new pods are covered within one interval (no mutateExisting).
+      FULL non-root: velero hardcodes writing the kopia repo config to /udmrepo at the container
+      root filesystem (no volume) — as root it just mkdir's /udmrepo, but a non-root uid cannot
+      write /. So this rule injects a writable emptyDir at /udmrepo (+ fsGroup 1000) so the pod
+      CAN run non-root and still write its kopia config/cache, then applies the full set:
+      runAsNonRoot + runAsUser/Group 1000, allowPrivilegeEscalation false, drop-all capabilities,
+      seccomp RuntimeDefault. Without the /udmrepo volume, forcing runAsNonRoot fatals with
+      "mkdir /udmrepo: permission denied" (verified on a live cycle). readOnlyRootFilesystem is
+      intentionally left off — kopia writes a local cache under /udmrepo. Add-only (+() anchors on
+      scalars; volume/mount merge by name); ADMISSION-TIME ONLY — maintenance Jobs are recreated
+      each cycle, so new pods are covered within one interval (no mutateExisting).
 spec:
   background: true
   rules:
@@ -39,8 +39,16 @@ spec:
         patchStrategicMerge:
           spec:
             securityContext:
+              +(runAsNonRoot): true
+              +(runAsUser): 1000
+              +(runAsGroup): 1000
+              +(fsGroup): 1000
               +(seccompProfile):
                 type: RuntimeDefault
+            volumes:
+              - name: udmrepo
+                emptyDir:
+                  sizeLimit: 2Gi
             containers:
               - (name): "*"
                 securityContext:
@@ -48,3 +56,6 @@ spec:
                   +(capabilities):
                     drop:
                       - ALL
+                volumeMounts:
+                  - name: udmrepo
+                    mountPath: /udmrepo
