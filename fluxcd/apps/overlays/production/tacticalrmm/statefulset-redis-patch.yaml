@@ -28,7 +28,7 @@ spec:
               drop: [ALL]
       containers:
         - name: redis
-          image: docker.io/redis:7-alpine
+          image: docker.io/redis:8-alpine
           securityContext:
             runAsUser: 999
             runAsGroup: 999

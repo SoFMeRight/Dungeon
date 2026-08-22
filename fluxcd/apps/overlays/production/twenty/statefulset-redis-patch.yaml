@@ -14,7 +14,7 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: redis
-          image: docker.io/redis:8.8.0-alpine
+          image: docker.io/redis:8.10.1-alpine
   volumeClaimTemplates:
     - metadata:
         name: hyrule-castle-twenty-redis

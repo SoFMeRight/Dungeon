@@ -11,7 +11,7 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: config
-          image: docker.io/redis:7.4-alpine
+          image: docker.io/redis:8.10-alpine
           command:
             - sh
             - -c
@@ -59,4 +59,4 @@ spec:
               cat /etc/redis/sentinel.conf
       containers:
         - name: sentinel
-          image: docker.io/redis:7.4-alpine
+          image: docker.io/redis:8.10-alpine

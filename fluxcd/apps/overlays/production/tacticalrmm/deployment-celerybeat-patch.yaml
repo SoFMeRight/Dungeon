@@ -33,7 +33,7 @@ spec:
             capabilities:
               drop: [ALL]
         - name: wait-for-redis
-          image: docker.io/redis:6.2-alpine
+          image: docker.io/redis:8.10-alpine
           command:
             - sh
             - -c
