@@ -11,11 +11,19 @@ spec:
         policy.prplanit.com/access-scope-postgres: temple-of-time.joplin.postgres
     spec:
       securityContext:
+        runAsNonRoot: true
         runAsUser: 1001
         runAsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: joplin
           image: docker.io/joplin/server:3.7.1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: APP_BASE_URL
               value: "https://joplin.pcfae.com"

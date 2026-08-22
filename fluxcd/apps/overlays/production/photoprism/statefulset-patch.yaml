@@ -9,11 +9,19 @@ spec:
         policy.prplanit.com/ingress: "true"
     spec:
       securityContext:
+        runAsNonRoot: true
         runAsUser: 2432
         runAsGroup: 1000
         fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: photoprism
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: PHOTOPRISM_SITE_URL
               value: "https://photos.pcfae.com"
