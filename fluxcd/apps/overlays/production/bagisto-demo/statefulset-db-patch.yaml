@@ -6,26 +6,48 @@ spec:
   replicas: 1
   template:
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
-      - name: mysql
-        image: docker.io/mysql:8
+        - name: mysql
+          image: docker.io/mysql:8
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: hyrule-castle-bagisto-demo-mysql
+              mountPath: /var/lib/mysql
+            - name: mysql-run
+              mountPath: /run/mysqld
+            - name: mysql-tmp
+              mountPath: /tmp
+      volumes:
+        - name: mysql-run
+          emptyDir: {}
+        - name: mysql-tmp
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: hyrule-castle-bagisto-demo-mysql
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-rbd
         resources:
           requests:
-            cpu: 100m
-            memory: 256Mi
-          limits:
-            cpu: 500m
-            memory: 512Mi
-        volumeMounts:
-        - name: hyrule-castle-bagisto-demo-mysql
-          mountPath: /var/lib/mysql
-  volumeClaimTemplates:
-  - metadata:
-      name: hyrule-castle-bagisto-demo-mysql
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      storageClassName: ceph-rbd
-      resources:
-        requests:
-          storage: 10Gi
+            storage: 10Gi

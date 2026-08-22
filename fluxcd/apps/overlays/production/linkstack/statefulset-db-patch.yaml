@@ -10,9 +10,18 @@ spec:
         runAsUser: 999
         runAsGroup: 999
         fsGroup: 999
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mariadb
           image: docker.io/mariadb:11.8.8
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 3306
               name: mysql
@@ -30,6 +39,15 @@ spec:
           volumeMounts:
             - name: kokiri-forest-linkstack-mariadb
               mountPath: /var/lib/mysql
+            - name: mysql-run
+              mountPath: /run/mysqld
+            - name: mysql-tmp
+              mountPath: /tmp
+      volumes:
+        - name: mysql-run
+          emptyDir: {}
+        - name: mysql-tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: kokiri-forest-linkstack-mariadb

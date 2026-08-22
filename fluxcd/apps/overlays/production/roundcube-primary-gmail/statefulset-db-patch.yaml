@@ -6,20 +6,42 @@ spec:
   replicas: 1
   template:
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
-      - name: mysql
-        image: docker.io/library/mysql:5.7
-        args:
-        - --datadir=/var/lib/mysql/data
-        volumeMounts:
-        - name: pedestal-of-time-roundcube-primary-gmail-mysql
-          mountPath: /var/lib/mysql
+        - name: mysql
+          image: docker.io/library/mysql:5.7
+          args:
+            - --datadir=/var/lib/mysql/data
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: pedestal-of-time-roundcube-primary-gmail-mysql
+              mountPath: /var/lib/mysql
+            - name: mysql-run
+              mountPath: /run/mysqld
+            - name: mysql-tmp
+              mountPath: /tmp
+      volumes:
+        - name: mysql-run
+          emptyDir: {}
+        - name: mysql-tmp
+          emptyDir: {}
   volumeClaimTemplates:
-  - metadata:
-      name: pedestal-of-time-roundcube-primary-gmail-mysql
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: ceph-rbd-retain
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: pedestal-of-time-roundcube-primary-gmail-mysql
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: ceph-rbd-retain
+        resources:
+          requests:
+            storage: 10Gi

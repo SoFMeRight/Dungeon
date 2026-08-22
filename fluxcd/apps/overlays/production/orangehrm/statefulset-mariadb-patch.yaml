@@ -6,29 +6,49 @@ spec:
   template:
     spec:
       securityContext:
+        runAsUser: 999
+        runAsGroup: 999
         fsGroup: 999
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
-      - name: mariadb
-        image: docker.io/mariadb:10.11
-        volumeMounts:
-        - $patch: delete
-          name: PLACEHOLDER_MARIADB_DATA
-        - name: hyrule-castle-orangehrm-mariadb-data
-          mountPath: /var/lib/mysql
+        - name: mariadb
+          image: docker.io/mariadb:10.11
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - $patch: delete
+              name: PLACEHOLDER_MARIADB_DATA
+            - name: hyrule-castle-orangehrm-mariadb-data
+              mountPath: /var/lib/mysql
+            - name: mysql-run
+              mountPath: /run/mysqld
+            - name: mysql-tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+      volumes:
+        - name: mysql-run
+          emptyDir: {}
+        - name: mysql-tmp
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: hyrule-castle-orangehrm-mariadb-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-rbd
         resources:
           requests:
-            cpu: "250m"
-            memory: "512Mi"
-          limits:
-            cpu: "1000m"
-            memory: "2Gi"
-  volumeClaimTemplates:
-  - metadata:
-      name: hyrule-castle-orangehrm-mariadb-data
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      storageClassName: ceph-rbd
-      resources:
-        requests:
-          storage: 10Gi
+            storage: 10Gi

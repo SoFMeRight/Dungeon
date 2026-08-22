@@ -6,18 +6,40 @@ spec:
   replicas: 1
   template:
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
-      - name: mysql
-        image: docker.io/library/mysql:8.4
-        volumeMounts:
-        - name: temple-of-time-ghost-mysql-data
-          mountPath: /var/lib/mysql
+        - name: mysql
+          image: docker.io/library/mysql:8.4
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: temple-of-time-ghost-mysql-data
+              mountPath: /var/lib/mysql
+            - name: mysql-run
+              mountPath: /run/mysqld
+            - name: mysql-tmp
+              mountPath: /tmp
+      volumes:
+        - name: mysql-run
+          emptyDir: {}
+        - name: mysql-tmp
+          emptyDir: {}
   volumeClaimTemplates:
-  - metadata:
-      name: temple-of-time-ghost-mysql-data
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: ceph-rbd-retain
-      resources:
-        requests:
-          storage: 5Gi
+    - metadata:
+        name: temple-of-time-ghost-mysql-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: ceph-rbd-retain
+        resources:
+          requests:
+            storage: 5Gi

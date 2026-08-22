@@ -14,6 +14,13 @@ spec:
         app: photoprism-mariadb
     spec:
       serviceAccountName: photoprism-mariadb
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mariadb
           image: docker.io/mariadb:11
@@ -57,8 +64,22 @@ spec:
           volumeMounts:
             - name: database
               mountPath: /var/lib/mysql
+            - name: mysql-run
+              mountPath: /run/mysqld
+            - name: mysql-tmp
+              mountPath: /tmp
           securityContext:
             privileged: false
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: mysql-run
+          emptyDir: {}
+        - name: mysql-tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: database

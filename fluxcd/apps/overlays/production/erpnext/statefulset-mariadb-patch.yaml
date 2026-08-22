@@ -9,9 +9,22 @@ spec:
         policy.prplanit.com/access-class: mariadb
         policy.prplanit.com/service-scope: hyrule-castle.erpnext.mariadb
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mariadb
           image: docker.io/mariadb:10.11
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           command: []
           args:
             - --character-set-server=utf8mb4
@@ -23,6 +36,10 @@ spec:
               name: PLACEHOLDER_MARIADB_DATA
             - name: hyrule-castle-erpnext-mariadb-data
               mountPath: /var/lib/mysql
+            - name: mysql-run
+              mountPath: /run/mysqld
+            - name: mysql-tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: "500m"
@@ -30,6 +47,11 @@ spec:
             limits:
               cpu: "2000m"
               memory: "4Gi"
+      volumes:
+        - name: mysql-run
+          emptyDir: {}
+        - name: mysql-tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: hyrule-castle-erpnext-mariadb-data
