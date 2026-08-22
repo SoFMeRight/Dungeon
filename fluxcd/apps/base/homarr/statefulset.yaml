@@ -18,7 +18,7 @@ spec:
       serviceAccountName: homarr
       containers:
         - name: homarr
-          image: ghcr.io/homarr-labs/homarr:v1.74.0
+          image: ghcr.io/homarr-labs/homarr:v1.76.0
           # run.sh supervises nginx (master root, binds :80 internally + :7575) + next-server and
           # writes /appdata as root — can't run non-root. Partial hardening: keep root, drop ALL,
           # add back file-perm + setuid caps + NET_BIND_SERVICE for nginx's internal :80 bind.
