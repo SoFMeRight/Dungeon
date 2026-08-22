@@ -11,14 +11,17 @@ metadata:
       cannot be hardened through an app overlay the way every other workload is. This
       narrowly-scoped admission mutate is the sanctioned exception to the "carry the four
       non-seccomp dimensions explicitly per-app in overlays" doctrine (see mutate-pod-hardening):
-      it targets ONLY pods carrying the velero.io/repo-name label. The velero image runs as
-      cnb (uid 1000) already and repo maintenance needs no privileges, so enforcing non-root +
-      no-privilege-escalation + drop-all-caps hardens without breaking the job. seccomp is
-      added here too so the rule is self-contained if mutate-pod-hardening is suspended on the
-      backup namespace. readOnlyRootFilesystem is intentionally NOT set — kopia maintenance
-      writes a local cache, and forcing RO-fs would break backups. Add-only (+() anchors, never
-      overrides); ADMISSION-TIME ONLY — maintenance Jobs are recreated each cycle, so new pods
-      are covered within one interval (no mutateExisting, no fleet restart).
+      it targets ONLY pods carrying the velero.io/repo-name label.
+      ROOT IS REQUIRED here, not hardened away: velero hardcodes writing the kopia repo config
+      to /udmrepo at the container root filesystem (no volume, no writable dir), so the pod MUST
+      run as root to create it — forcing runAsNonRoot breaks maintenance with
+      "mkdir /udmrepo: permission denied" (verified on a live cycle). So this rule hardens the
+      dimensions that are safe while root: no-privilege-escalation (the reported SEC-3 audit
+      failure), drop-all capabilities (root needs none for kopia prune/gc against S3), and
+      seccomp RuntimeDefault (self-contained if mutate-pod-hardening is suspended on the backup
+      namespace). runAsNonRoot and readOnlyRootFilesystem are intentionally left off — both break
+      the job. Add-only (+() anchors, never overrides); ADMISSION-TIME ONLY — maintenance Jobs are
+      recreated each cycle, so new pods are covered within one interval (no mutateExisting).
 spec:
   background: true
   rules:
@@ -36,9 +39,6 @@ spec:
         patchStrategicMerge:
           spec:
             securityContext:
-              +(runAsNonRoot): true
-              +(runAsUser): 1000
-              +(runAsGroup): 1000
               +(seccompProfile):
                 type: RuntimeDefault
             containers:
