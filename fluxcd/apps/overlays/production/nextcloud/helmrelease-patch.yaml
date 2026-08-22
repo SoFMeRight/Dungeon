@@ -244,3 +244,15 @@ spec:
 
     imaginary:
       enabled: true
+      # h2non/imaginary (Go) already runs as uid 1000 — full non-root.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: false
+        capabilities:
+          drop:
+            - ALL
+        seccompProfile:
+          type: RuntimeDefault
