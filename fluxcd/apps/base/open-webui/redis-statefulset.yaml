@@ -16,9 +16,20 @@ spec:
         app: open-webui-redis
     spec:
       serviceAccountName: open-webui-redis
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: config
           image: PLACEHOLDER_REDIS_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -53,6 +64,11 @@ spec:
       containers:
         - name: redis
           image: PLACEHOLDER_REDIS_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - redis-server
             - /etc/redis/redis.conf

@@ -14,9 +14,21 @@ spec:
         app: reactive-resume-chrome
     spec:
       serviceAccountName: reactive-resume-chrome
+      # browserless/chromium already runs as uid 999 (headless chrome, --no-sandbox) — full non-root.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: chrome
           image: PLACEHOLDER_CHROME_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: HEALTH
               value: "true"

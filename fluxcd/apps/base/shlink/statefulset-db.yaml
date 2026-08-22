@@ -18,6 +18,21 @@ spec:
       containers:
         - name: mariadb
           image: PLACEHOLDER_IMAGE
+          # LSIO/s6-overlay mariadb: s6 preinit + setuid-drop to PUID. Root-required. Partial
+          # hardening: drop ALL + s6 file-perm/setuid caps + seccomp.
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 3306
               name: mysql

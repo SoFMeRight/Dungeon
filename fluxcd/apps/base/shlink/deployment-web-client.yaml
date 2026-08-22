@@ -14,9 +14,21 @@ spec:
         app: shlink-web-client
     spec:
       serviceAccountName: shlink-web-client
+      # nginx SPA already runs as uid 101 on :8080 — full non-root.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: shlink-web-client
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http
