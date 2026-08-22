@@ -19,3 +19,5 @@ resources:
   - nextcloud-rgw-setup.yaml
   - renovate-rgw-credentials-externalsecret.yaml
   - renovate-rgw-setup.yaml
+  - reactive-resume-rgw-credentials-externalsecret.yaml
+  - reactive-resume-rgw-setup.yaml
