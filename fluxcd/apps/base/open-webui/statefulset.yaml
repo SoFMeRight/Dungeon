@@ -16,9 +16,22 @@ spec:
         policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: open-webui
+      # open-webui (Python) runs root by default; works as 1000 with a writable /app/backend/data (fsGroup).
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: open-webui
           image: PLACEHOLDER_OPEN_WEBUI_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http

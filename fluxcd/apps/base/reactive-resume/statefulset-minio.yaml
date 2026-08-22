@@ -15,9 +15,22 @@ spec:
         app: reactive-resume-minio
     spec:
       serviceAccountName: reactive-resume-minio
+      # minio runs root by default but supports any uid with a writable /data (fsGroup).
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: minio
           image: PLACEHOLDER_MINIO_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - minio
             - server

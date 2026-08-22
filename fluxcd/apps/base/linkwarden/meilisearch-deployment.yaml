@@ -13,9 +13,22 @@ spec:
         app: linkwarden-meilisearch
     spec:
       serviceAccountName: linkwarden-meilisearch
+      # meilisearch (Go) runs root by default but works as any uid with a writable /meili_data (fsGroup).
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: meilisearch
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: MEILI_MASTER_KEY
               valueFrom:
