@@ -24,7 +24,7 @@ spec:
         fsGroup: 1000 # keep the data volume group at 1000 (no re-chown churn; root accesses it regardless)
       initContainers:
         - name: wait-for-postgres
-          image: docker.io/library/postgres:16-alpine
+          image: docker.io/library/postgres:18-alpine
         - name: wait-for-meilisearch
           image: docker.io/curlimages/curl:8.21.0
       containers:
