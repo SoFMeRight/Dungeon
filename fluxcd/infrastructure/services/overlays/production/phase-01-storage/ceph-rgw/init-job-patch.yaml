@@ -29,76 +29,83 @@ spec:
           env:
             - name: HOME
               value: /tmp
+            - name: RGW_CLIENT
+              value: client.dungeon-rgw
+            - name: RGW_REALM
+              value: dungeon
+            - name: RGW_ZONEGROUP
+              value: default
+            - name: RGW_ZONE
+              value: default
+            - name: RGW_ENDPOINT
+              value: http://ceph-rgw.gorons-bracelet.svc.cluster.local
           command:
             - /bin/bash
             - -c
             - |
               set -e
 
-              # The mounted keyring holds client.dungeon-rgw (not client.admin),
-              # so every call must select that identity to reach the mons.
-              RGW="radosgw-admin --name client.dungeon-rgw"
+              # radosgw-admin base command — RGW_CLIENT selects the identity the
+              # mounted keyring actually holds (mons reject the default client.admin).
+              RGW="radosgw-admin --name ${RGW_CLIENT}"
 
               echo "=== RGW Initialization Starting ==="
 
               # Create realm if it doesn't exist
-              if ! $RGW realm get --rgw-realm=dungeon 2>/dev/null; then
-                echo "Creating realm dungeon..."
-                $RGW realm create --rgw-realm=dungeon --default
+              if ! $RGW realm get --rgw-realm="${RGW_REALM}" 2>/dev/null; then
+                echo "Creating realm ${RGW_REALM}..."
+                $RGW realm create --rgw-realm="${RGW_REALM}" --default
               else
-                echo "Realm dungeon already exists"
+                echo "Realm ${RGW_REALM} already exists"
               fi
 
               # Get or create zonegroup
-              if ! $RGW zonegroup get --rgw-zonegroup=default 2>/dev/null; then
-                echo "Creating zonegroup default..."
-                $RGW zonegroup create --rgw-zonegroup=default --rgw-realm=dungeon --master --default
+              if ! $RGW zonegroup get --rgw-zonegroup="${RGW_ZONEGROUP}" 2>/dev/null; then
+                echo "Creating zonegroup ${RGW_ZONEGROUP}..."
+                $RGW zonegroup create --rgw-zonegroup="${RGW_ZONEGROUP}" --rgw-realm="${RGW_REALM}" --master --default
               else
-                echo "Zonegroup default already exists"
+                echo "Zonegroup ${RGW_ZONEGROUP} already exists"
               fi
 
               # Apply zonegroup config from ConfigMap
               echo "Applying zonegroup configuration..."
-              ZONEGROUP_ID=$($RGW zonegroup get --rgw-zonegroup=default 2>/dev/null | grep '"id"' | head -1 | cut -d'"' -f4)
+              ZONEGROUP_ID=$($RGW zonegroup get --rgw-zonegroup="${RGW_ZONEGROUP}" 2>/dev/null | grep '"id"' | head -1 | cut -d'"' -f4)
+              REALM_ID=$($RGW realm get --rgw-realm="${RGW_REALM}" | grep '"id"' | head -1 | cut -d'"' -f4)
               cat /config/zonegroup.json | sed "s/\"id\": \"[^\"]*\"/\"id\": \"$ZONEGROUP_ID\"/" | \
-                sed "s/\"realm_id\": \"[^\"]*\"/\"realm_id\": \"$($RGW realm get --rgw-realm=dungeon | grep '"id"' | head -1 | cut -d'"' -f4)\"/" > /tmp/zonegroup.json
-              $RGW zonegroup set --rgw-zonegroup=default --infile=/tmp/zonegroup.json
+                sed "s/\"realm_id\": \"[^\"]*\"/\"realm_id\": \"$REALM_ID\"/" > /tmp/zonegroup.json
+              $RGW zonegroup set --rgw-zonegroup="${RGW_ZONEGROUP}" --infile=/tmp/zonegroup.json
 
               # Get or create zone
-              if ! $RGW zone get --rgw-zone=default 2>/dev/null; then
-                echo "Creating zone default..."
-                $RGW zone create --rgw-zonegroup=default --rgw-zone=default --master --default --endpoints=http://ceph-rgw.gorons-bracelet.svc.cluster.local
+              if ! $RGW zone get --rgw-zone="${RGW_ZONE}" 2>/dev/null; then
+                echo "Creating zone ${RGW_ZONE}..."
+                $RGW zone create --rgw-zonegroup="${RGW_ZONEGROUP}" --rgw-zone="${RGW_ZONE}" --master --default --endpoints="${RGW_ENDPOINT}"
               else
-                echo "Zone default already exists"
+                echo "Zone ${RGW_ZONE} already exists"
               fi
 
               # Apply zone config from ConfigMap
               echo "Applying zone configuration with custom pool names..."
-              ZONE_ID=$($RGW zone get --rgw-zone=default 2>/dev/null | grep '"id"' | head -1 | cut -d'"' -f4)
-              REALM_ID=$($RGW realm get --rgw-realm=dungeon | grep '"id"' | head -1 | cut -d'"' -f4)
+              ZONE_ID=$($RGW zone get --rgw-zone="${RGW_ZONE}" 2>/dev/null | grep '"id"' | head -1 | cut -d'"' -f4)
               cat /config/zone.json | \
                 sed "s/\"id\": \"[^\"]*\"/\"id\": \"$ZONE_ID\"/" | \
                 sed "s/\"realm_id\": \"[^\"]*\"/\"realm_id\": \"$REALM_ID\"/" > /tmp/zone.json
-              $RGW zone set --rgw-zone=default --infile=/tmp/zone.json
+              $RGW zone set --rgw-zone="${RGW_ZONE}" --infile=/tmp/zone.json
 
               # Update zonegroup to reference the zone
               echo "Updating zonegroup with zone reference..."
-              $RGW zonegroup get --rgw-zonegroup=default > /tmp/zonegroup-current.json
-              ZONE_ENTRY="{\"id\": \"$ZONE_ID\", \"name\": \"default\","
-              ZONE_ENTRY="$ZONE_ENTRY \"endpoints\": [\"http://ceph-rgw.gorons-bracelet.svc.cluster.local\"]}"
+              $RGW zonegroup get --rgw-zonegroup="${RGW_ZONEGROUP}" > /tmp/zonegroup-current.json
+              ZONE_ENTRY="{\"id\": \"$ZONE_ID\", \"name\": \"${RGW_ZONE}\","
+              ZONE_ENTRY="$ZONE_ENTRY \"endpoints\": [\"${RGW_ENDPOINT}\"]}"
               cat /tmp/zonegroup-current.json | \
                 sed "s/\"master_zone\": \"[^\"]*\"/\"master_zone\": \"$ZONE_ID\"/" | \
                 sed "s/\"zones\": \[\]/\"zones\": [$ZONE_ENTRY]/" > /tmp/zonegroup-updated.json
-              $RGW zonegroup set --rgw-zonegroup=default --infile=/tmp/zonegroup-updated.json
+              $RGW zonegroup set --rgw-zonegroup="${RGW_ZONEGROUP}" --infile=/tmp/zonegroup-updated.json
 
               # Commit period
               echo "Committing period..."
               $RGW period update --commit
 
               echo "=== RGW Initialization Complete ==="
-              echo "Configured pools:"
-              echo "  - dungeon-rgw.* (metadata)"
-              echo "  - dungeon-rgw-data (object data)"
           volumeMounts:
             - name: tmp
               mountPath: /tmp
