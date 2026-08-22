@@ -23,29 +23,6 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
-      initContainers:
-        # minio requires /data owned by its run-uid; fsGroup alone left it unwritable (pre-existing
-        # outage). Chown the backend to 1000 as root before minio starts.
-        - name: fix-data-perms
-          image: docker.io/busybox:1.38
-          securityContext:
-            runAsNonRoot: false
-            runAsUser: 0
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-              add:
-                - CHOWN
-                - DAC_OVERRIDE
-                - FOWNER
-          command:
-            - sh
-            - -c
-            - chown -R 1000:1000 /data && chmod -R u+rwX /data
-          volumeMounts:
-            - name: minio-data
-              mountPath: /data
       containers:
         - name: minio
           image: PLACEHOLDER_MINIO_IMAGE
