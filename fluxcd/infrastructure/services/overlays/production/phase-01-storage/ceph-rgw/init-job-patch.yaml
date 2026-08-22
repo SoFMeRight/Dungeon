@@ -35,61 +35,65 @@ spec:
             - |
               set -e
 
+              # The mounted keyring holds client.dungeon-rgw (not client.admin),
+              # so every call must select that identity to reach the mons.
+              RGW="radosgw-admin --name client.dungeon-rgw"
+
               echo "=== RGW Initialization Starting ==="
 
               # Create realm if it doesn't exist
-              if ! radosgw-admin realm get --rgw-realm=dungeon 2>/dev/null; then
+              if ! $RGW realm get --rgw-realm=dungeon 2>/dev/null; then
                 echo "Creating realm dungeon..."
-                radosgw-admin realm create --rgw-realm=dungeon --default
+                $RGW realm create --rgw-realm=dungeon --default
               else
                 echo "Realm dungeon already exists"
               fi
 
               # Get or create zonegroup
-              if ! radosgw-admin zonegroup get --rgw-zonegroup=default 2>/dev/null; then
+              if ! $RGW zonegroup get --rgw-zonegroup=default 2>/dev/null; then
                 echo "Creating zonegroup default..."
-                radosgw-admin zonegroup create --rgw-zonegroup=default --rgw-realm=dungeon --master --default
+                $RGW zonegroup create --rgw-zonegroup=default --rgw-realm=dungeon --master --default
               else
                 echo "Zonegroup default already exists"
               fi
 
               # Apply zonegroup config from ConfigMap
               echo "Applying zonegroup configuration..."
-              ZONEGROUP_ID=$(radosgw-admin zonegroup get --rgw-zonegroup=default 2>/dev/null | grep '"id"' | head -1 | cut -d'"' -f4)
+              ZONEGROUP_ID=$($RGW zonegroup get --rgw-zonegroup=default 2>/dev/null | grep '"id"' | head -1 | cut -d'"' -f4)
               cat /config/zonegroup.json | sed "s/\"id\": \"[^\"]*\"/\"id\": \"$ZONEGROUP_ID\"/" | \
-                sed "s/\"realm_id\": \"[^\"]*\"/\"realm_id\": \"$(radosgw-admin realm get --rgw-realm=dungeon | grep '"id"' | head -1 | cut -d'"' -f4)\"/" > /tmp/zonegroup.json
-              radosgw-admin zonegroup set --rgw-zonegroup=default --infile=/tmp/zonegroup.json
+                sed "s/\"realm_id\": \"[^\"]*\"/\"realm_id\": \"$($RGW realm get --rgw-realm=dungeon | grep '"id"' | head -1 | cut -d'"' -f4)\"/" > /tmp/zonegroup.json
+              $RGW zonegroup set --rgw-zonegroup=default --infile=/tmp/zonegroup.json
 
               # Get or create zone
-              if ! radosgw-admin zone get --rgw-zone=default 2>/dev/null; then
+              if ! $RGW zone get --rgw-zone=default 2>/dev/null; then
                 echo "Creating zone default..."
-                radosgw-admin zone create --rgw-zonegroup=default --rgw-zone=default --master --default --endpoints=http://ceph-rgw.gorons-bracelet.svc.cluster.local
+                $RGW zone create --rgw-zonegroup=default --rgw-zone=default --master --default --endpoints=http://ceph-rgw.gorons-bracelet.svc.cluster.local
               else
                 echo "Zone default already exists"
               fi
 
               # Apply zone config from ConfigMap
               echo "Applying zone configuration with custom pool names..."
-              ZONE_ID=$(radosgw-admin zone get --rgw-zone=default 2>/dev/null | grep '"id"' | head -1 | cut -d'"' -f4)
-              REALM_ID=$(radosgw-admin realm get --rgw-realm=dungeon | grep '"id"' | head -1 | cut -d'"' -f4)
+              ZONE_ID=$($RGW zone get --rgw-zone=default 2>/dev/null | grep '"id"' | head -1 | cut -d'"' -f4)
+              REALM_ID=$($RGW realm get --rgw-realm=dungeon | grep '"id"' | head -1 | cut -d'"' -f4)
               cat /config/zone.json | \
                 sed "s/\"id\": \"[^\"]*\"/\"id\": \"$ZONE_ID\"/" | \
                 sed "s/\"realm_id\": \"[^\"]*\"/\"realm_id\": \"$REALM_ID\"/" > /tmp/zone.json
-              radosgw-admin zone set --rgw-zone=default --infile=/tmp/zone.json
+              $RGW zone set --rgw-zone=default --infile=/tmp/zone.json
 
               # Update zonegroup to reference the zone
               echo "Updating zonegroup with zone reference..."
-              radosgw-admin zonegroup get --rgw-zonegroup=default > /tmp/zonegroup-current.json
+              $RGW zonegroup get --rgw-zonegroup=default > /tmp/zonegroup-current.json
               ZONE_ENTRY="{\"id\": \"$ZONE_ID\", \"name\": \"default\","
               ZONE_ENTRY="$ZONE_ENTRY \"endpoints\": [\"http://ceph-rgw.gorons-bracelet.svc.cluster.local\"]}"
               cat /tmp/zonegroup-current.json | \
                 sed "s/\"master_zone\": \"[^\"]*\"/\"master_zone\": \"$ZONE_ID\"/" | \
                 sed "s/\"zones\": \[\]/\"zones\": [$ZONE_ENTRY]/" > /tmp/zonegroup-updated.json
-              radosgw-admin zonegroup set --rgw-zonegroup=default --infile=/tmp/zonegroup-updated.json
+              $RGW zonegroup set --rgw-zonegroup=default --infile=/tmp/zonegroup-updated.json
 
               # Commit period
               echo "Committing period..."
-              radosgw-admin period update --commit
+              $RGW period update --commit
 
               echo "=== RGW Initialization Complete ==="
               echo "Configured pools:"
