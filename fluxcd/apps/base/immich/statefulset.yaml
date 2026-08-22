@@ -154,7 +154,7 @@ spec:
             - name: model-cache
               mountPath: /cache
         - name: redis
-          image: docker.io/library/redis:6.2-alpine
+          image: docker.io/library/redis:8.10-alpine
           securityContext:
             runAsNonRoot: true
             runAsUser: 999
