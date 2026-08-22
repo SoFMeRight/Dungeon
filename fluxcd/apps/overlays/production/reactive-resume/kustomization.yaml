@@ -6,7 +6,6 @@ resources:
   - httproute.yaml
 patches:
   - path: statefulset-postgres-patch.yaml
-  - path: statefulset-minio-patch.yaml
   - path: deployment-chrome-patch.yaml
   - path: deployment-app-patch.yaml
   - path: externalsecret-patch.yaml

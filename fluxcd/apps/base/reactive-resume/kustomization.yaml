@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - serviceaccounts.yaml
   - statefulset-postgres.yaml
-  - statefulset-minio.yaml
   - deployment-chrome.yaml
   - deployment-app.yaml
   - service.yaml
