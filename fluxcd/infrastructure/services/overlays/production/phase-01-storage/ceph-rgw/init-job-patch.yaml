@@ -96,9 +96,11 @@ spec:
               $RGW zonegroup get --rgw-zonegroup="${RGW_ZONEGROUP}" > /tmp/zonegroup-current.json
               ZONE_ENTRY="{\"id\": \"$ZONE_ID\", \"name\": \"${RGW_ZONE}\","
               ZONE_ENTRY="$ZONE_ENTRY \"endpoints\": [\"${RGW_ENDPOINT}\"]}"
+              # '|' delimiter: $ZONE_ENTRY contains the endpoint URL, whose slashes
+              # would otherwise terminate a s/.../.../ expression.
               cat /tmp/zonegroup-current.json | \
-                sed "s/\"master_zone\": \"[^\"]*\"/\"master_zone\": \"$ZONE_ID\"/" | \
-                sed "s/\"zones\": \[\]/\"zones\": [$ZONE_ENTRY]/" > /tmp/zonegroup-updated.json
+                sed "s|\"master_zone\": \"[^\"]*\"|\"master_zone\": \"$ZONE_ID\"|" | \
+                sed "s|\"zones\": \[\]|\"zones\": [$ZONE_ENTRY]|" > /tmp/zonegroup-updated.json
               $RGW zonegroup set --rgw-zonegroup="${RGW_ZONEGROUP}" --infile=/tmp/zonegroup-updated.json
 
               # Commit period
