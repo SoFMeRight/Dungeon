@@ -18,6 +18,22 @@ spec:
       containers:
         - name: netbootxyz
           image: ghcr.io/netbootxyz/netbootxyz:0.7.6-nbxyz10
+          # s6-overlay image; setuid-drops to PUID/PGID and binds :80 + :69 (TFTP). Partial hardening:
+          # keep root, drop ALL, add back s6's file-perm + setuid caps + NET_BIND_SERVICE.
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
+                - NET_BIND_SERVICE
           ports:
             - containerPort: 3000
               name: web-app

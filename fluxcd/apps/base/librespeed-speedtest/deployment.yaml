@@ -17,6 +17,22 @@ spec:
       containers:
         - name: librespeed-speedtest
           image: PLACEHOLDER_IMAGE
+          # apache image: master runs root → setuid-drops workers to www-data. Partial hardening:
+          # keep root, drop ALL, add back apache's file-perm + setuid + privileged-bind caps.
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
+                - NET_BIND_SERVICE
           ports:
             - containerPort: 8080
               name: http

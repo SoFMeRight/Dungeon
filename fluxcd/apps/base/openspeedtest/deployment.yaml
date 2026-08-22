@@ -14,9 +14,21 @@ spec:
         app: openspeedtest
     spec:
       serviceAccountName: openspeedtest
+      # openspeedtest image already runs as nginx (uid 101) on unprivileged 3000/3001 — full non-root.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: openspeedtest
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 3000
               name: http
