@@ -6,18 +6,40 @@ spec:
   replicas: 1
   template:
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
-      - name: mariadb
-        image: docker.io/mariadb:11
-        volumeMounts:
-        - name: pedestal-of-time-monica-mysql
-          mountPath: /var/lib/mysql
+        - name: mariadb
+          image: docker.io/mariadb:11
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: pedestal-of-time-monica-mysql
+              mountPath: /var/lib/mysql
+            - name: mysql-run
+              mountPath: /run/mysqld
+            - name: mysql-tmp
+              mountPath: /tmp
+      volumes:
+        - name: mysql-run
+          emptyDir: {}
+        - name: mysql-tmp
+          emptyDir: {}
   volumeClaimTemplates:
-  - metadata:
-      name: pedestal-of-time-monica-mysql
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: ceph-rbd-retain
-      resources:
-        requests:
-          storage: 10Gi
+    - metadata:
+        name: pedestal-of-time-monica-mysql
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: ceph-rbd-retain
+        resources:
+          requests:
+            storage: 10Gi
