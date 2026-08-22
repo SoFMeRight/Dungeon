@@ -12,14 +12,15 @@ metadata:
       narrowly-scoped admission mutate is the sanctioned exception to the "carry the four
       non-seccomp dimensions explicitly per-app in overlays" doctrine (see mutate-pod-hardening):
       it targets ONLY pods carrying the velero.io/repo-name label.
-      FULL non-root: velero hardcodes writing the kopia repo config to /udmrepo at the container
-      root filesystem (no volume) — as root it just mkdir's /udmrepo, but a non-root uid cannot
-      write /. So this rule injects a writable emptyDir at /udmrepo (+ fsGroup 1000) so the pod
-      CAN run non-root and still write its kopia config/cache, then applies the full set:
-      runAsNonRoot + runAsUser/Group 1000, allowPrivilegeEscalation false, drop-all capabilities,
-      seccomp RuntimeDefault. Without the /udmrepo volume, forcing runAsNonRoot fatals with
-      "mkdir /udmrepo: permission denied" (verified on a live cycle). readOnlyRootFilesystem is
-      intentionally left off — kopia writes a local cache under /udmrepo. Add-only (+() anchors on
+      FULL non-root: velero writes to two root-filesystem paths a non-root uid can't create —
+      the kopia repo config at /udmrepo (hardcoded) and the kopia cache at $HOME/.cache (HOME is
+      unset → /.cache). So this rule injects ONE writable emptyDir at /udmrepo (+ fsGroup 1000)
+      and repoints HOME=/udmrepo, so the config lands in the mount and the cache lands in
+      /udmrepo/.cache — both writable — then applies the full set: runAsNonRoot + runAsUser/Group
+      1000, allowPrivilegeEscalation false, drop-all capabilities, seccomp RuntimeDefault. Without
+      these, forcing runAsNonRoot fatals with "mkdir /udmrepo" then "mkdir /.cache: permission
+      denied" (both verified on live cycles). readOnlyRootFilesystem is intentionally left off —
+      the cache is written at runtime. Add-only (+() anchors on
       scalars; volume/mount merge by name); ADMISSION-TIME ONLY — maintenance Jobs are recreated
       each cycle, so new pods are covered within one interval (no mutateExisting).
 spec:
@@ -56,6 +57,9 @@ spec:
                   +(capabilities):
                     drop:
                       - ALL
+                env:
+                  - name: HOME
+                    value: /udmrepo
                 volumeMounts:
                   - name: udmrepo
                     mountPath: /udmrepo
