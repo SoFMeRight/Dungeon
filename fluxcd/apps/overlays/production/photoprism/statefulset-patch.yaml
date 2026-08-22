@@ -17,10 +17,14 @@ spec:
           type: RuntimeDefault
       containers:
         - name: photoprism
-          # photoprism is an s6-overlay image: preinit chowns /run to the run-uid. Runs non-root
-          # (2432) but needs CHOWN/DAC_OVERRIDE/FOWNER so s6 can fix /run (fsGroup doesn't help).
+          # photoprism is an s6-overlay image running NON-ROOT (uid 2432): preinit must chown /run
+          # to the run-uid, which needs CHOWN/DAC_OVERRIDE/FOWNER to be *effective*. As a non-root
+          # process that requires allowPrivilegeEscalation:true (NoNewPrivs would block raising the
+          # added caps into the effective set — verified: false → "preinit: /run belongs to uid 0
+          # ... lacking the privileges to fix it", exit 100). So this keeps the valuable non-root
+          # property + drop-ALL + seccomp (3/4 audit dims); privesc:false is the one it can't take.
           securityContext:
-            allowPrivilegeEscalation: false
+            allowPrivilegeEscalation: true
             capabilities:
               drop:
                 - ALL
@@ -28,6 +32,8 @@ spec:
                 - CHOWN
                 - DAC_OVERRIDE
                 - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: PHOTOPRISM_SITE_URL
               value: "https://photos.pcfae.com"
