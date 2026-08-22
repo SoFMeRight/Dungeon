@@ -8,6 +8,15 @@ spec:
   template:
     spec:
       restartPolicy: OnFailure
+      # Runs as root: it chowns cephfs subpaths to arbitrary app uid:gid (a
+      # cross-owner operation CAP_CHOWN can't do reliably as non-root under
+      # no_new_privs). Blast radius is minimised — all caps dropped except the
+      # three chown/mkdir needs, no-privesc, seccomp, read-only rootfs.
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: setup
           image: docker.io/prplanit/ansible-oci:2.20.1-v2
@@ -16,12 +25,31 @@ spec:
             - /scripts/cephfs-init-rootpaths.yml
             - -e
             - path=/dungeon/nvme/apps/nextcloud/html owner=33:33 mode=0755
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+          env:
+            - name: HOME
+              value: /tmp
+            - name: ANSIBLE_LOCAL_TEMP
+              value: /tmp/.ansible
+            - name: ANSIBLE_REMOTE_TMP
+              value: /tmp/.ansible
           volumeMounts:
             - name: cephfs-root
               mountPath: /cephfs
             - name: setup-script
               mountPath: /scripts
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - name: cephfs-root
           persistentVolumeClaim:
@@ -29,3 +57,5 @@ spec:
         - name: setup-script
           configMap:
             name: cephfs-setup-script
+        - name: tmp
+          emptyDir: {}
