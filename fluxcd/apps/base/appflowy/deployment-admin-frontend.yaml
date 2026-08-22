@@ -19,11 +19,10 @@ spec:
         component: admin-ui
     spec:
       serviceAccountName: appflowy-admin-frontend
-      # Next.js admin server; serves prebuilt .next. HOME→/tmp (image default /root).
+      # Next.js admin server: the entrypoint rewrites /app/apps/super/server.js in place (sed) to
+      # inject runtime config — needs to write the root-owned /app, so it's root-required. Partial
+      # hardening: keep root, drop ALL (root writes /app + binds :3000 without caps) + seccomp.
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -34,9 +33,6 @@ spec:
             capabilities:
               drop:
                 - ALL
-          env:
-            - name: HOME
-              value: /tmp
           ports:
             - name: http
               containerPort: 3000
