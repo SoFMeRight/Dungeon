@@ -6,9 +6,11 @@ kind: ClusterRole
 metadata:
   name: weave-gitops-read-only
 rules:
-  # Core resources for the resource-tree views. `secrets` is deliberately excluded
-  # so the UI can't read secret values cluster-wide; the chart grants read on the
-  # two auth secrets (cluster-user-auth, oidc-auth) by name separately.
+  # Core resources for the dashboard. `secrets` is required — weave-gitops's
+  # collector watches Secrets as the impersonated user, and its recommended user
+  # role includes them; denying it empties every view. Secret VALUES are protected
+  # by the UI (redacted) and by users having no kubeconfig (impersonation-only), not
+  # by withholding this grant. Enumerated (not "*") so access is at least explicit.
   - apiGroups: [""]
     resources:
       - configmaps
@@ -23,6 +25,7 @@ rules:
       - pods/log
       - replicationcontrollers
       - resourcequotas
+      - secrets
       - serviceaccounts
       - services
     verbs: ["get", "list", "watch"]
