@@ -8,10 +8,13 @@ spec:
   template:
     spec:
       restartPolicy: OnFailure
+      # Runs as root: it chowns cephfs subpaths to arbitrary app uid:gid (a
+      # cross-owner operation CAP_CHOWN can't do reliably as non-root under
+      # no_new_privs). Blast radius is minimised — all caps dropped except the
+      # three chown/mkdir needs, no-privesc, seccomp, read-only rootfs.
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        runAsNonRoot: true
+        runAsUser: 0
+        runAsGroup: 0
         seccompProfile:
           type: RuntimeDefault
       containers:
