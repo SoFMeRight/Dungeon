@@ -39,7 +39,7 @@ spec:
               mountPath: /opt/adguardhome/conf
       containers:
         - name: adguard
-          image: docker.io/adguard/adguardhome:v0.107.78
+          image: docker.io/adguard/adguardhome:v0.107.79
           # AdGuardHome runs as root throughout (no user drop) and binds privileged :53/:80/:443/
           # :853/:784/:5443. DHCP is disabled → no NET_RAW. Partial hardening: drop ALL + NET_BIND_SERVICE.
           securityContext:
