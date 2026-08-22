@@ -15,7 +15,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: mysql
-          image: docker.io/library/mysql:5.7
+          image: docker.io/library/mysql:26.7
           args:
             - --datadir=/var/lib/mysql/data
           securityContext:
