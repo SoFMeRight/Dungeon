@@ -1,0 +1,50 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: mutate-velero-maintenance-hardening
+  annotations:
+    policies.kyverno.io/title: Mutate Velero Maintenance Job Hardening
+    policies.kyverno.io/description: >-
+      Velero's repository-maintenance Jobs (kopia prune/gc, one per BackupRepository) are
+      generated on the fly by the Velero server with no securityContext, and Velero
+      deliberately keeps the maintenance PodSpec non-configurable (upstream #7911) — so they
+      cannot be hardened through an app overlay the way every other workload is. This
+      narrowly-scoped admission mutate is the sanctioned exception to the "carry the four
+      non-seccomp dimensions explicitly per-app in overlays" doctrine (see mutate-pod-hardening):
+      it targets ONLY pods carrying the velero.io/repo-name label. The velero image runs as
+      cnb (uid 1000) already and repo maintenance needs no privileges, so enforcing non-root +
+      no-privilege-escalation + drop-all-caps hardens without breaking the job. seccomp is
+      added here too so the rule is self-contained if mutate-pod-hardening is suspended on the
+      backup namespace. readOnlyRootFilesystem is intentionally NOT set — kopia maintenance
+      writes a local cache, and forcing RO-fs would break backups. Add-only (+() anchors, never
+      overrides); ADMISSION-TIME ONLY — maintenance Jobs are recreated each cycle, so new pods
+      are covered within one interval (no mutateExisting, no fleet restart).
+spec:
+  background: true
+  rules:
+    - name: harden-velero-maintenance-pods
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              selector:
+                matchExpressions:
+                  - key: velero.io/repo-name
+                    operator: Exists
+      mutate:
+        patchStrategicMerge:
+          spec:
+            securityContext:
+              +(runAsNonRoot): true
+              +(runAsUser): 1000
+              +(runAsGroup): 1000
+              +(seccompProfile):
+                type: RuntimeDefault
+            containers:
+              - (name): "*"
+                securityContext:
+                  +(allowPrivilegeEscalation): false
+                  +(capabilities):
+                    drop:
+                      - ALL

@@ -10,4 +10,5 @@ resources:
   - mutate-probe-on-ingress.yaml
   - audit-pod-hardening.yaml
   - mutate-pod-hardening.yaml
+  - mutate-velero-maintenance-hardening.yaml
   - mutate-smb-pv-mount-options.yaml
