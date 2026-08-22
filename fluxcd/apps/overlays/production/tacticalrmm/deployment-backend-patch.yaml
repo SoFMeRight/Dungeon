@@ -20,7 +20,7 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       initContainers:
         - name: wait-for-postgres
-          image: docker.io/postgres:13-alpine
+          image: docker.io/postgres:18-alpine
           command:
             - sh
             - -c

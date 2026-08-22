@@ -24,7 +24,7 @@ spec:
           runAsUser: 0
       containers:
       - name: postgres
-        image: docker.io/postgres:16
+        image: docker.io/postgres:18
         resources:
           requests:
             cpu: 100m

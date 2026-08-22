@@ -20,7 +20,7 @@ spec:
         - name: docker-io-pull-secret
       containers:
         - name: postgres
-          image: docker.io/postgres:15
+          image: docker.io/postgres:18
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

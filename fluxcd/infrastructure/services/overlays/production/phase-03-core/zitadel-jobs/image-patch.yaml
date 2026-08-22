@@ -8,7 +8,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-postgres
-          image: docker.io/postgres:16-alpine
+          image: docker.io/postgres:18-alpine
           command:
             - sh
             - -c

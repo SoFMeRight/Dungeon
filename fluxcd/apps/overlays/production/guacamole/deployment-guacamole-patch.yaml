@@ -17,7 +17,7 @@ spec:
         - name: generate-initdb
           image: docker.io/guacamole/guacamole@sha256:e211ca63f47d34018833a8fd7cd37914bc24f1f56b3c2a84d9d5495ec71f8948
         - name: init-db
-          image: docker.io/postgres:15-alpine
+          image: docker.io/postgres:18-alpine
       containers:
         - name: guacamole
           image: docker.io/guacamole/guacamole@sha256:e211ca63f47d34018833a8fd7cd37914bc24f1f56b3c2a84d9d5495ec71f8948
