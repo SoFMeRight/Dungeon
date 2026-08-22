@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-reactive-resume-to-rgw
+spec:
+  selector:
+    matchLabels:
+      app: ceph-rgw
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - "cluster.local/ns/temple-of-time/sa/reactive-resume-app"
+      to:
+        - operation:
+            ports: ["8080"]

@@ -59,9 +59,9 @@ spec:
             - name: MAIL_FROM
               value: PLACEHOLDER_MAIL_FROM
             - name: STORAGE_ENDPOINT
-              value: reactive-resume-minio
+              value: ceph-rgw.gorons-bracelet.svc.cluster.local
             - name: STORAGE_PORT
-              value: "9000"
+              value: "80"
             - name: STORAGE_REGION
               value: us-east-1
             - name: STORAGE_BUCKET
@@ -70,16 +70,16 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: reactive-resume-secrets
-                  key: minio_root_user
+                  key: s3_access_key
             - name: STORAGE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: reactive-resume-secrets
-                  key: minio_root_password
+                  key: s3_secret_key
             - name: STORAGE_USE_SSL
               value: "false"
             - name: STORAGE_SKIP_BUCKET_CHECK
-              value: "false"
+              value: "true"
           ports:
             - containerPort: 3000
               name: http

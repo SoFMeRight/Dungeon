@@ -8,5 +8,6 @@ resources:
   - allow-webhook-cnpg.yaml
   - allow-webhook-mariadb-operator.yaml
   - allow-harbor-to-rgw.yaml
+  - allow-reactive-resume-to-rgw.yaml
   - allow-rgw-admin-jobs.yaml
   - allow-gateway-ingress-xylem.yaml
