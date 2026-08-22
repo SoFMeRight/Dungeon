@@ -19,6 +19,21 @@ spec:
       containers:
         - name: clamav
           image: docker.io/clamav/clamav:stable
+          # clamd starts root then drops to the clamav user (SETUID/SETGID) and manages /var/lib/clamav
+          # (CHOWN). Root-required. Partial hardening: drop ALL + those caps + seccomp.
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - name: clamd
               containerPort: 3310

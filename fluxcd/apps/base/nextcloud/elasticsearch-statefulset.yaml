@@ -16,14 +16,25 @@ spec:
         app: nextcloud-elasticsearch
     spec:
       serviceAccountName: nextcloud-elasticsearch
+      # elasticsearch runs as uid 1000; vm.max_map_count defaulted at the node — full non-root.
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
         fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       # No privileged sysctl init container: nodes already default vm.max_map_count
       # to 1048576 (kernel 6.8), 4x above ES's 262144, and single-node ES skips the
       # bootstrap check anyway. The init container only tripped PodSecurity baseline.
       containers:
         - name: elasticsearch
           image: docker.io/library/elasticsearch:9.4.4
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: http
               containerPort: 9200
