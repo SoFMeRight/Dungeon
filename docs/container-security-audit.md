@@ -437,6 +437,43 @@ the corrected template (git stays source-of-truth; the patch only matches the fi
 
 ---
 
+## Privileged Init/Maintenance Jobs
+
+A class of infra `Job`s legitimately needs root — they chown/mkdir across shared storage
+on behalf of many apps (e.g. `cephfs-init-*` in gorons-bracelet) or manage a repo owned by
+root (e.g. velero kopia maintenance). They can't be non-root, but everything else is locked
+down. Target = **4/5**, with `runAsNonRoot` (SEC-1) the sole documented exception.
+
+**Recipe (min-privilege root):**
+```yaml
+# pod:  securityContext: { runAsUser: 0, runAsGroup: 0, seccompProfile: { type: RuntimeDefault } }
+# ctr:  securityContext:
+#   allowPrivilegeEscalation: false
+#   readOnlyRootFilesystem: true
+#   capabilities: { drop: [ALL], add: [<only what the task needs>] }
+```
+For the cephfs-init chown Jobs the minimal cap set is `CHOWN`, `DAC_OVERRIDE`, `FOWNER`.
+
+**Two findings worth keeping:**
+- **Non-root + added `CAP_CHOWN` is not reliable** for cross-owner chown: the uid chown
+  succeeds but **chgrp fails** under `no_new_privs` (`allowPrivilegeEscalation:false`). These
+  chown-arbitrary-owner tasks genuinely need root, not a capability graft.
+- **RO-rootfs breaks ansible unless its tmp is redirected.** As root, ansible resolves
+  `remote_tmp = ~/.ansible/tmp` from **passwd (`/root`)**, ignoring `$HOME` — so `/root`
+  (read-only) fails. Mount a `/tmp` emptyDir and set `ANSIBLE_REMOTE_TMP=/tmp/.ansible`
+  (plus `ANSIBLE_LOCAL_TEMP` and `HOME`) so all ansible scratch lands on the emptyDir.
+
+**Immutable-Job gotcha:** a `Job`'s pod template can't be updated in place, so changing the
+manifest requires deleting the old Job for Flux to recreate it hardened. If an old Job was
+deleted while its pods still carried the `batch.kubernetes.io/job-tracking` finalizer, those
+pods get stuck Terminating (the owning Job that would clear the finalizer is gone) — strip it
+with `kubectl patch pod … -p '{"metadata":{"finalizers":null}}'`. That patch is a pod UPDATE,
+so the Kyverno hardening **mutation** rejects it (can't change securityContext on a live pod);
+briefly label the namespace `policy.prplanit.com/mutate-hardening: suspended`, strip the
+finalizers, then remove the label.
+
+---
+
 ## Hardening Phases
 
 ### Phase 1: Non-root where possible (In Progress)
@@ -477,6 +514,7 @@ the corrected template (git stays source-of-truth; the patch only matches the fi
 | 2026-08-14 | Claude | Live posture sweep (233 workloads, 12 exposed namespaces): non-root 44% / no-privesc 19% / drop-caps 22% / ro-fs 7% / seccomp 17%. Added Current Posture Snapshot + exposed-first priority (52 front-ends, tiered). Network layer verified strong (istio ambient + Cilium default-deny everywhere) and corrected the stale "0%/Planning" NET entries in workload-compliance-manifest.md. Repaired 2 invalid Cilium default-deny-ingress policies (temple-of-time, hyrule-castle → VALID). |
 | 2026-08-21 | Claude | Database-workload hardening pass (see Database Workload Hardening section). Redis: 9 plain redis → 5/5, 8 opstree operator CRs → 4/5 (RO-rootfs N/A — image writes conf+PID to rootfs). Postgres: all 13 plain-postgres → 5/5 (socket/tmp emptyDirs; alpine uid 70, debian uid 999; speedtest-tracker keeps a root chown-init exception); CNPG already 5/5. Established per-engine recipes + operator-vs-plain split. Zitadel SSO redis rolled clean (no repeat of the master-label incident). |
 | 2026-08-22 | Claude | MariaDB engine complete. 10 official plain mariadb/mysql → 5/5 (uid 999, `/run/mysqld` + `/tmp` emptyDirs; mysql 5.7/8/8.4 + mariadb 10.11/11 all clean). Galera CRs (kimai, osticket) → 4/5 via container SC on the MariaDB CR (RO N/A: `/run/mysqld` is rootfs; GaleraReady held True through both rolls). 4 LinuxServer.io mariadb images (bookstack, dolibarr, romm, shlink) documented as root+s6 exceptions. DB hardening initiative complete across redis/postgres/mariadb. |
+| 2026-08-22 | Claude | Privileged init/maintenance Jobs hardened (see Privileged Init/Maintenance Jobs section). 13 `cephfs-init-*` Jobs (gorons-bracelet) → 4/5 min-priv root: drop ALL caps + add only CHOWN/DAC_OVERRIDE/FOWNER, no-privesc, seccomp, RO-rootfs, ansible tmp on `/tmp` emptyDir + `ANSIBLE_REMOTE_TMP`. Verified all 13 run to success; cleaned up 7d orphaned pods stuck on the `batch.kubernetes.io/job-tracking` finalizer (owner Jobs gone). Complements the velero maintenance-job hardening (`717e538c`) — same min-priv-root shape for the privileged-Job class. |
 
 ## Related Documents
 
