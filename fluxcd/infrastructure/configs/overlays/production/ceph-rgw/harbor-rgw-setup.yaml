@@ -12,10 +12,25 @@ spec:
     spec:
       serviceAccountName: rgw-admin
       restartPolicy: OnFailure
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: setup
           image: quay.io/ceph/ceph:v19
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           env:
+            - name: HOME
+              value: /tmp
             - name: ACCESS_KEY
               valueFrom:
                 secretKeyRef:
@@ -33,6 +48,8 @@ spec:
             - --display-name="Harbor Container Registry User"
             - --buckets=harbor-registry
           volumeMounts:
+            - name: tmp
+              mountPath: /tmp
             - name: setup-script
               mountPath: /scripts
               readOnly: true
@@ -45,6 +62,8 @@ spec:
               subPath: keyring
               readOnly: true
       volumes:
+        - name: tmp
+          emptyDir: {}
         - name: setup-script
           configMap:
             name: ceph-rgw-setup-script
