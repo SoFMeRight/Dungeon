@@ -109,31 +109,31 @@ data:
       echo "User already exists: ${UID_NAME}"
     fi
 
-    # Install s3cmd for bucket creation
-    echo ""
-    echo "Installing s3cmd..."
-    dnf install -y s3cmd >/dev/null 2>&1
+    # Create buckets with a signed S3 PUT (signature v2, which Ceph RGW accepts).
+    # Uses only curl + openssl (already in the ceph image) — no package install,
+    # no rootfs writes — so the Job stays a pure non-root, read-only-rootfs client.
+    RGW_HOST="ceph-rgw.gorons-bracelet.svc.cluster.local"
 
-    # Configure s3cmd (signature_v2 needed for Ceph RGW)
-    printf '%s\n' \
-      "[default]" \
-      "access_key = ${ACCESS_KEY}" \
-      "secret_key = ${SECRET_KEY}" \
-      "host_base = ceph-rgw.gorons-bracelet.svc.cluster.local" \
-      "host_bucket = ceph-rgw.gorons-bracelet.svc.cluster.local/%(bucket)" \
-      "use_https = False" \
-      "signature_v2 = True" \
-      > /root/.s3cfg
+    create_bucket() {
+      local bucket="$1" date sig
+      date="$(date -u '+%a, %d %b %Y %H:%M:%S +0000')"
+      sig="$(printf '%b' "PUT\n\n\n${date}\n/${bucket}/" \
+        | openssl sha1 -hmac "${SECRET_KEY}" -binary | base64)"
+      curl -sf -X PUT "http://${RGW_HOST}/${bucket}/" \
+        -H "Host: ${RGW_HOST}" \
+        -H "Date: ${date}" \
+        -H "Authorization: AWS ${ACCESS_KEY}:${sig}"
+    }
 
-    # Create buckets
+    # Create buckets (PUT is idempotent — RGW returns 200 for a bucket you own)
     echo ""
     echo "Creating buckets..."
     for bucket in "${BUCKETS[@]}"; do
-      if ! s3cmd ls "s3://${bucket}" >/dev/null 2>&1; then
-        echo "  Creating bucket: ${bucket}"
-        s3cmd mb "s3://${bucket}"
+      if create_bucket "${bucket}"; then
+        echo "  Bucket ready: ${bucket}"
       else
-        echo "  Bucket exists: ${bucket}"
+        echo "  ERROR: failed to create bucket ${bucket}"
+        exit 1
       fi
     done
 
