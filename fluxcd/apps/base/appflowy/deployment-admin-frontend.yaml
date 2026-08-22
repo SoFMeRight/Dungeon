@@ -19,9 +19,24 @@ spec:
         component: admin-ui
     spec:
       serviceAccountName: appflowy-admin-frontend
+      # Next.js admin server; serves prebuilt .next. HOME→/tmp (image default /root).
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: admin-frontend
           image: PLACEHOLDER_ADMIN_FRONTEND_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HOME
+              value: /tmp
           ports:
             - name: http
               containerPort: 3000

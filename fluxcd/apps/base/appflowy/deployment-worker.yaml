@@ -19,10 +19,24 @@ spec:
         component: worker
     spec:
       serviceAccountName: appflowy-worker
+      # Rust worker binary; runs fine non-root (no /app writes). HOME→/tmp (image default /root).
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: appflowy-worker
           image: PLACEHOLDER_WORKER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
+            - name: HOME
+              value: /tmp
             - name: APPFLOWY_ENVIRONMENT
               value: "production"
             - name: APPFLOWY_WORKER_ENVIRONMENT
