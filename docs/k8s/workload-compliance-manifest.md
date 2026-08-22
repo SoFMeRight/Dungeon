@@ -235,9 +235,12 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
 | echo-ip | geoip-update | ? | ? | ? | ? | ? | ? | Y | ? | |
 | echo-ip | echo-ip | ? | ? | ? | ? | ? | ? | Y | ? | |
-| librespeed-speedtest | librespeed-speedtest | ? | ? | ? | ? | ? | ? | Y | ? | Runs as root |
-| netbootxyz | netbootxyz | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
-| openspeedtest | openspeedtest | Y (101:101) | N | ? | ? | ? | ? | Y | ? | nginx-unprivileged |
+| librespeed-speedtest | librespeed-speedtest | X | N | Y | ? | ? | ? | Y | ? | Partial — apache-root (master root → www-data workers), :8080; drop ALL + [CHOWN,DAC_OVERRIDE,FOWNER,SETUID,SETGID,NET_BIND_SERVICE] + seccomp |
+| netbootxyz | netbootxyz | X | N | Y | ? | ? | ? | Y | ? | Partial — s6-overlay, binds :80 + :69 TFTP; drop ALL + [CHOWN,DAC_OVERRIDE,FOWNER,SETUID,SETGID,NET_BIND_SERVICE] + seccomp |
+| openspeedtest | openspeedtest | Y (101:101) | N | Y | ? | ? | ? | Y | ? | Full non-root — nginx uid 101 on :3000/3001; drop ALL + seccomp |
+| adguard | adguard | X | N | Y | ? | ? | ? | Y | ? | Partial — AdGuardHome runs root throughout, binds privileged :53/:80/:443/:853/:784/:5443, DHCP disabled (no NET_RAW); drop ALL + NET_BIND_SERVICE + seccomp. HA 2/2 |
+| adguardhome-sync | adguardhome-sync | X | N | Y | ? | ? | ? | Y | ? | Partial — LSIO s6-overlay, :8080; drop ALL + [CHOWN,DAC_OVERRIDE,FOWNER,SETUID,SETGID] + seccomp |
+| chrony | chrony | X | N | Y | ? | ? | ? | Y | ? | Partial — chronyd starts root (chowns /run/chrony, binds :123, drops to chrony user); drop ALL + [CHOWN,DAC_OVERRIDE,FOWNER,SETUID,SETGID,NET_BIND_SERVICE] + seccomp; no SYS_TIME (serving-only) |
 
 ### delivery-bag (Mail Services)
 
@@ -256,7 +259,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| beszel | beszel | ? | ? | ? | ? | ? | ? | Y | ? | |
+| beszel | beszel | Y (1000) | N | Y | ? | ? | ? | Y | ? | Full non-root — Go/distroless uid 1000, fsGroup 1000; drop ALL + seccomp |
 | netalertx | netalertx | ? | N | ? | ? | ? | ? | Y | ? | Has NET_RAW/NET_ADMIN caps |
 | speedtest-tracker | speedtest-tracker | Y (1000:1000) | N | N | Y | Y | ? | Y | Y | LSIO non-root pattern |
 | speedtest-tracker | postgres | ? | ? | ? | Y | ? | ? | Y | ? | |
@@ -288,18 +291,18 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | bagisto-demo | mysql | ? | ? | ? | ? | ? | ? | Y | ? | |
 | bookstack | bookstack | X | ? | ? | ? | ? | ? | Y | ? | Exception — LSIO/s6-overlay preinit requires root-owned /run; non-root fatal (exit 100) |
 | bookstack | mysql | ? | ? | ? | ? | ? | ? | Y | ? | |
-| calcom | calcom | ? | ? | ? | ? | ? | ? | Y | ? | |
+| calcom | calcom | Y (1001) | N | Y | ? | ? | ? | Y | ? | Full non-root — uid 1001, fsGroup 1001; drop ALL + seccomp; root fix-yarn-perms init (runAsNonRoot:false) |
 | dolibarr | dolibarr | X | ? | ? | ? | ? | ? | Y | ? | Exception — root entrypoint (chown conf.php/install.lock); non-root needs vendor rebuild |
 | dolibarr | mariadb | ? | ? | ? | ? | ? | ? | Y | ? | |
 | erpnext | multiple (8+) | ? | ? | ? | ? | ? | ? | Y | ? | Complex multi-container |
-| invoiceninja | invoiceninja | ? | ? | ? | ? | ? | ? | Y | ? | |
+| invoiceninja | invoiceninja | X | N | Y | ? | ? | ? | Y | ? | Partial — entrypoint chowns storage + copies assets as root (php-fpm), :9000; drop ALL + [CHOWN,DAC_OVERRIDE,FOWNER,SETUID,SETGID] + seccomp. nginx sidecar non-root 101 |
 | invoiceninja | mysql | ? | ? | ? | ? | ? | ? | Y | ? | |
 | invoiceninja | redis | Y (999:1000) | ? | ? | ? | ? | ? | Y | ? | |
 | kimai | kimai | X | ? | ? | ? | ? | ? | Y | ? | No USER directive |
 | netbox | netbox | ? | ? | ? | ? | ? | ? | Y | ? | |
 | netbox | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
 | netbox | redis | Y (999:1000) | ? | ? | ? | ? | ? | Y | ? | |
-| opnform | multiple | P | ? | ? | ? | ? | ? | Y | ? | ingress(nginx) hardened non-root 101 :8080 (RO rootfs, drop ALL); api/client PHP pending |
+| opnform | multiple | Y (82) | N | Y | ? | ? | ? | Y | ? | Full non-root — api/scheduler/worker php-fpm run master directly as www-data 82 (drop ALL + seccomp, no root setuid); ingress nginx non-root 101 :8080 (RO rootfs) |
 | orangehrm | orangehrm | ? | ? | ? | ? | ? | ? | Y | ? | |
 | orangehrm | mariadb | ? | ? | ? | ? | ? | ? | Y | ? | |
 | osticket | osticket | X | ? | ? | ? | ? | ? | Y | ? | Apache root pattern |
@@ -348,8 +351,8 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | astralfocal-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
 | enamorafoto-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
 | etherealclique-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
-| ferdium | ferdium | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
-| homarr | homarr | ? | ? | ? | ? | ? | ? | Y | ? | |
+| ferdium | ferdium | X | N | Y | ? | ? | ? | Y | ? | Partial — LSIO s6-overlay, :3000/3001; drop ALL + [CHOWN,DAC_OVERRIDE,FOWNER,SETUID,SETGID] + seccomp |
+| homarr | homarr | X | N | Y | ? | ? | ? | Y | ? | Partial — run.sh root supervisor (nginx master binds :80 + :7575, next-server), writes /appdata as root; drop ALL + [CHOWN,DAC_OVERRIDE,FOWNER,SETUID,SETGID,NET_BIND_SERVICE] + seccomp |
 | homarr | redis | Y (999:1000) | ? | ? | ? | ? | ? | Y | ? | |
 | homelabhelpdesk-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
 | kai-hamilton-site | nginx | Y (10001) | Y | Y | Y | Y | ? | Y | ? | Hardened non-root static-site base (uid 10001, RO rootfs, :8080) |
