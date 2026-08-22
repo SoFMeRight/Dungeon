@@ -36,8 +36,10 @@ spec:
           envFrom:
             - configMapRef:
                 name: chrony-config
-          # chronyd starts root, binds :123, then drops to the chrony user (needs SETUID/SETGID).
-          # Serving-only (no clock discipline) so SYS_TIME is not needed unless ENABLE_SYSCLK.
+          # chronyd starts root; the entrypoint chowns /run/chrony then chronyd binds :123 and
+          # drops to the chrony user. Needs CHOWN/DAC_OVERRIDE/FOWNER (chown /run/chrony),
+          # SETUID/SETGID (user drop), NET_BIND_SERVICE (:123). Serving-only → no SYS_TIME
+          # unless ENABLE_SYSCLK.
           securityContext:
             runAsUser: 0
             allowPrivilegeEscalation: false
@@ -47,9 +49,12 @@ spec:
               drop:
                 - ALL
               add:
-                - NET_BIND_SERVICE
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
                 - SETUID
                 - SETGID
+                - NET_BIND_SERVICE
                 # Add SYS_TIME only if ENABLE_SYSCLK is true in production overlay
                 # - SYS_TIME
           volumeMounts:
