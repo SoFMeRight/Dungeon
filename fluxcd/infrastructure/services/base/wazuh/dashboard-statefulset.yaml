@@ -15,9 +15,27 @@ spec:
     spec:
       serviceAccountName: wazuh-dashboard
       hostname: wazuh-dashboard
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: fix-permissions
           image: docker.io/busybox:1.38
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
           command: ['sh', '-c', 'chown -R 1000:1000 /usr/share/wazuh-dashboard/data']
           volumeMounts:
             - name: dashboard-data
@@ -25,6 +43,11 @@ spec:
       containers:
         - name: wazuh-dashboard
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 5601
               name: http

@@ -16,7 +16,12 @@ spec:
       serviceAccountName: wazuh-indexer
       hostname: wazuh-indexer
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
         fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: wazuh-indexer
           image: PLACEHOLDER_IMAGE
@@ -28,7 +33,10 @@ spec:
             - secretRef:
                 name: PLACEHOLDER_ENV_SECRET
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
+              drop:
+                - ALL
               add:
                 - IPC_LOCK
                 - SYS_RESOURCE

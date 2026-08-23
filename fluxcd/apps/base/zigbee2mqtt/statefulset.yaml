@@ -15,9 +15,22 @@ spec:
         app: zigbee2mqtt
     spec:
       serviceAccountName: zigbee2mqtt
+      # Zigbee coordinator is network-attached (tcp://), no USB device — full non-root.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: seed-config
           image: docker.io/busybox:PLACEHOLDER_TAG
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -43,6 +56,11 @@ spec:
       containers:
         - name: zigbee2mqtt
           image: ghcr.io/koenkk/zigbee2mqtt:PLACEHOLDER_TAG
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: http
               containerPort: 8080

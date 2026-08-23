@@ -15,9 +15,21 @@ spec:
         app: mosquitto
     spec:
       serviceAccountName: mosquitto
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1883
+        runAsGroup: 1883
+        fsGroup: 1883
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: init-passwd
           image: docker.io/eclipse-mosquitto:PLACEHOLDER_TAG
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -41,6 +53,11 @@ spec:
       containers:
         - name: mosquitto
           image: docker.io/eclipse-mosquitto:PLACEHOLDER_TAG
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: mqtt
               containerPort: 1883
