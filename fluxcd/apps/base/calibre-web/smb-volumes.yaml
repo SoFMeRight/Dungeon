@@ -16,10 +16,9 @@ spec:
     - gid=1000
     - file_mode=0777
     - dir_mode=0777
-    # Calibre metadata.db is SQLite on this share: nobrl avoids the SMB lock failures
-    # behind "database is locked" (safe only while replicas=1); cache=none avoids stale DB pages.
+    # Calibre metadata.db is SQLite here: cache=loose made CIFS lock ops laggy/stale ->
+    # persistent "database is locked"; cache=none keeps them immediate so SQLite retries resolve.
     - cache=none
-    - nobrl
   csi:
     driver: smb.csi.k8s.io
     readOnly: false
