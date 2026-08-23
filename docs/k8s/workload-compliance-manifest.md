@@ -504,7 +504,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| anubis | anubis | ? | ? | ? | ? | ? | ? | Y | ? | Multiple containers |
+| anubis | anubis | Y (1000:1000) | N | Y | ? | ? | ? | Y | ? | full non-root (Go proxy, ports 8080/9090 high) |
 
 ### zeldas-lullaby (Administrative Services)
 
