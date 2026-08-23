@@ -16,9 +16,21 @@ spec:
         component: coturn
     spec:
       serviceAccountName: netbird-coturn
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: config-generator
           image: docker.io/busybox:1.38.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -70,6 +82,11 @@ spec:
       containers:
         - name: coturn
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 3478
               name: turn-udp

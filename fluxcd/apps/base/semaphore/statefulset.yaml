@@ -16,11 +16,22 @@ spec:
     spec:
       serviceAccountName: semaphore
       securityContext:
+        runAsNonRoot: true
         fsGroup: PLACEHOLDER_GID
+        seccompProfile:
+          type: RuntimeDefault
       containers:
-        # PostgreSQL 14 sidecar
+        # PostgreSQL 14 sidecar — runs non-root as uid 999 (postgres); PGDATA is already 999-owned,
+        # so the entrypoint skips its root chown/gosu path and starts postgres directly.
         - name: postgres
           image: PLACEHOLDER_POSTGRES_IMAGE
+          securityContext:
+            runAsUser: 999
+            runAsGroup: 999
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: POSTGRES_DB
               value: semaphore
@@ -56,6 +67,10 @@ spec:
           securityContext:
             runAsUser: PLACEHOLDER_UID
             runAsGroup: PLACEHOLDER_GID
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: SEMAPHORE_DB_DIALECT
               value: postgres

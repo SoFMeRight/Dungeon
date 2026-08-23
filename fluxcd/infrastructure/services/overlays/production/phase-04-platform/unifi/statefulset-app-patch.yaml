@@ -12,6 +12,11 @@ spec:
       initContainers:
         - name: import-cert
           image: docker.io/linuxserver/unifi-network-application:9.5.21
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -50,6 +55,7 @@ spec:
               mountPath: /tls
               readOnly: true
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL

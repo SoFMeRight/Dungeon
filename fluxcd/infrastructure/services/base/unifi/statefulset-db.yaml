@@ -15,6 +15,13 @@ spec:
         app: unifi-db
     spec:
       serviceAccountName: unifi-db
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mongo
           image: PLACEHOLDER_IMAGE

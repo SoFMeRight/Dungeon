@@ -15,6 +15,12 @@ spec:
         app: unifi-app
     spec:
       serviceAccountName: unifi-app
+      # linuxserver/unifi-network-application is s6-overlay managed (preinit fatals as non-root:
+      # "/run belongs to uid 0"). Root-required. Partial hardening: seccomp + drop ALL, adding back
+      # only the file-ownership/setuid caps s6 needs to drop privileges to PUID/PGID at startup.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: unifi-app
           image: PLACEHOLDER_IMAGE
