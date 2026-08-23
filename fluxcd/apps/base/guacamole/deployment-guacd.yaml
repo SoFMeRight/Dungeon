@@ -14,9 +14,21 @@ spec:
         app: guacamole-guacd
     spec:
       serviceAccountName: guacamole-guacd
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: guacd
           image: PLACEHOLDER_GUACD_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 4822
               name: guacd

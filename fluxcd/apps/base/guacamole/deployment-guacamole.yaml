@@ -14,9 +14,21 @@ spec:
         app: guacamole
     spec:
       serviceAccountName: guacamole
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: generate-initdb
           image: PLACEHOLDER_GUACAMOLE_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -27,6 +39,11 @@ spec:
               mountPath: /initdb
         - name: init-db
           image: PLACEHOLDER_POSTGRES_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -58,6 +75,11 @@ spec:
       containers:
         - name: guacamole
           image: PLACEHOLDER_GUACAMOLE_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http
