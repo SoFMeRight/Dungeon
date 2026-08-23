@@ -5,6 +5,7 @@ resources:
   - serviceaccount.yaml
   - vault-secret.yaml
   - smb-volumes.yaml
+  - custom-init-configmap.yaml
   - deployment.yaml
   - service.yaml
   # pvc-config.yaml removed - production uses static RBD provisioning

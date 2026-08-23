@@ -51,6 +51,8 @@ spec:
               mountPath: /config
             - name: books
               mountPath: /books
+            - name: custom-init
+              mountPath: /custom-cont-init.d
           resources:
             requests:
               memory: "256Mi"
@@ -77,3 +79,7 @@ spec:
         - name: books
           persistentVolumeClaim:
             claimName: calibre-web-books-pvc
+        - name: custom-init
+          configMap:
+            name: calibre-web-custom-init
+            defaultMode: 0755

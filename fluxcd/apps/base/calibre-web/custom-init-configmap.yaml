@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: calibre-web-custom-init
+  labels:
+    app: calibre-web
+data:
+  # LSIO runs every executable in /custom-cont-init.d as root at boot (init-custom-files).
+  10-kepubify-symlink.sh: |
+    #!/bin/bash
+    # Self-heal kepubify naming for Calibre-Web.
+    #
+    # Calibre-Web (Linux) only accepts the kepubify binary under the upstream
+    # release-asset names kepubify-linux-64bit / -32bit (cps/binary_helper.py),
+    # but the LSIO image ships it as plain /usr/bin/kepubify. The two have drifted,
+    # so out of the box Calibre-Web reports "Kepubify binary not found". Recreate
+    # correctly-named symlinks on every boot so it survives image rebuilds. Idempotent.
+    set -u
+    PUID="${PUID:-1000}"
+    PGID="${PGID:-1000}"
+    LINK_NAME="kepubify-linux-64bit"
+
+    SRC="$(command -v kepubify 2>/dev/null || true)"
+    [ -z "${SRC}" ] && [ -f /usr/bin/kepubify ] && SRC=/usr/bin/kepubify
+    if [ -z "${SRC}" ]; then
+      echo "[custom-init] kepubify-symlink: no kepubify binary in image, nothing to do"
+      exit 0
+    fi
+    chmod a+rx "${SRC}" 2>/dev/null || true
+
+    # 1) config_kepubifypath target (/config/bin) — persisted in the PVC, matches app.db
+    mkdir -p /config/bin
+    ln -sf "${SRC}" "/config/bin/${LINK_NAME}"
+    chown -h "${PUID}:${PGID}" "/config/bin/${LINK_NAME}" 2>/dev/null || true
+    chown "${PUID}:${PGID}" /config/bin 2>/dev/null || true
+
+    # 2) autodetect fallback (/opt/kepubify) — used if config_kepubifypath ever resets to None
+    mkdir -p /opt/kepubify
+    ln -sf "${SRC}" "/opt/kepubify/${LINK_NAME}"
+
+    echo "[custom-init] kepubify-symlink: ${LINK_NAME} -> ${SRC} (config/bin + opt/kepubify)"
