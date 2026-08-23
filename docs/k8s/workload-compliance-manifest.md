@@ -277,11 +277,13 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| guacamole | guacamole | ? | ? | ? | ? | ? | ? | Y | ? | |
-| guacamole | guacd | ? | ? | ? | ? | ? | ? | Y | ? | |
-| guacamole | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
-| rustdesk-server | rustdesk | ? | ? | ? | ? | ? | ? | Y | ? | |
-| tacticalrmm | multiple (10+) | ? | ? | ? | ? | ? | ? | Y | ? | Complex multi-container |
+| boundary | controller | Y (65532:65532) | Y | Y | ? | ? | ? | Y | ? | full non-root + readOnlyRootFilesystem |
+| boundary | worker | Y (65532:65532) | Y | Y | ? | ? | ? | Y | ? | full non-root + readOnlyRootFilesystem (mirrors controller) |
+| guacamole | guacamole | Y (1001:1001) | N | Y | ? | ? | ? | Y | ? | full non-root (app + generate-initdb + init-db) |
+| guacamole | guacd | Y (1000:1000) | N | Y | ? | ? | ? | Y | ? | full non-root |
+| guacamole | postgres | Y (70:70) | N | Y | ? | ? | ? | Y | ? | full non-root |
+| rustdesk-server | rustdesk (hbbs+hbbr) | Y (2000:2000) | N | Y | ? | ? | ? | Y | ? | full non-root, scratch image, all ports high |
+| tacticalrmm | multiple (10+) | Y | N | Y | ? | ? | ? | Y | ? | full/partial non-root across the stack (already hardened) |
 
 ### hyrule-castle (Business/Work Services)
 
