@@ -500,14 +500,17 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| 2fauth | twofauth | ? | ? | ? | ? | ? | ? | Y | ? | |
-| netbox | netbox | ? | ? | ? | ? | ? | ? | Y | ? | |
+| 2fauth | twofauth | Y (1000:1000) | N | Y | ? | ? | ? | Y | ? | full non-root, port 8000 |
+| netbird | coturn | Y (65534) | N | Partial | ? | ? | ? | Y | ? | non-root; privesc+NET_BIND_SERVICE — turnserver has a cap_net_bind_service file capability |
+| netbird | dashboard | N (root) | N | Partial | ? | ? | ? | Y | ? | supervisord+nginx:80, root-required; drop ALL + curated caps + seccomp |
+| netbox | netbox | N (root) | N | Partial | ? | ? | ? | Y | ? | s6-overlay root-required (chowns /run, setuidgid-drops to PUID); drop ALL + curated caps + seccomp |
 | netbox | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
 | netbox | redis | Y (999:1000) | ? | ? | ? | ? | ? | Y | ? | |
-| oauth2-proxy | oauth2-proxy | ? | ? | ? | ? | ? | ? | Y | ? | |
-| semaphore | semaphore | Y (1000:1000) | N | N | ? | ? | ? | Y | ? | |
-| unifi | unifi | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
-| unifi | mongodb | ? | ? | ? | ? | ? | ? | Y | ? | |
+| oauth2-proxy | oauth2-proxy | Y (65532:65532) | N | Y | ? | ? | ? | Y | ? | full non-root, distroless, port 4180 |
+| semaphore | postgres | Y (999:999) | N | Y | ? | ? | ? | Y | ? | non-root sidecar — pgdata pre-owned 999, entrypoint skips root chown |
+| semaphore | semaphore | Y (1000:1000) | N | Y | ? | ? | ? | Y | ? | full non-root (runs ansible over SSH, no in-container root needed) |
+| unifi | unifi-app | N (root) | N | Partial | ? | ? | ? | Y | ? | LSIO s6-overlay root-required; drop ALL + curated caps + seccomp; import-cert init derooted |
+| unifi | mongodb | Y (999:999) | N | Y | ? | ? | ? | Y | ? | non-root — /data/db pre-owned 999, entrypoint skips root gosu |
 
 ---
 
