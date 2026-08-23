@@ -11,7 +11,7 @@ spec:
     spec:
       initContainers:
         - name: import-cert
-          image: docker.io/linuxserver/unifi-network-application:9.5.21
+          image: docker.io/linuxserver/unifi-network-application:10.5.67
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -46,7 +46,7 @@ spec:
               readOnly: true
       containers:
         - name: unifi-app
-          image: docker.io/linuxserver/unifi-network-application:9.5.21
+          image: docker.io/linuxserver/unifi-network-application:10.5.67
           env:
             - name: TZ
               value: "America/Los_Angeles"
