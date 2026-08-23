@@ -15,9 +15,21 @@ spec:
         app: endlessh-go
     spec:
       serviceAccountName: endlessh-go
+      # Go SSH tarpit, no state, binds :2222/:2112 (unprivileged) — full non-root.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: endlessh-go
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           args:
             # Preserve original MSDELAY=10000
             - -interval_ms=10000

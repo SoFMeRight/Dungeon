@@ -14,12 +14,20 @@ spec:
     spec:
       serviceAccountName: searxng
       securityContext:
+        runAsNonRoot: true
         fsGroup: 977
         runAsUser: 977
         runAsGroup: 977
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: searxng
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http
