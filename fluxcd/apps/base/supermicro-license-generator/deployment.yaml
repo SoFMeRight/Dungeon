@@ -14,9 +14,20 @@ spec:
         app: supermicro-license-generator
     spec:
       serviceAccountName: supermicro-license-generator
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 100
+        runAsGroup: 100
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: supermicro-license-generator
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http

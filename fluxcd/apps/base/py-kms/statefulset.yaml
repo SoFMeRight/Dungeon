@@ -15,9 +15,21 @@ spec:
         app: py-kms
     spec:
       serviceAccountName: py-kms
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 100
+        runAsGroup: 100
+        fsGroup: 100
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: py-kms
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 1688
               name: kms

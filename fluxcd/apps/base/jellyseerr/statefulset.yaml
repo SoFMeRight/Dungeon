@@ -15,6 +15,9 @@ spec:
         app: jellyseerr
     spec:
       serviceAccountName: jellyseerr
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: jellyseerr
           image: docker.io/fallenbagel/jellyseerr:PLACEHOLDER_IMAGE_TAG
@@ -50,6 +53,7 @@ spec:
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:PLACEHOLDER_IMAGE_TAG
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               add:
                 - NET_ADMIN

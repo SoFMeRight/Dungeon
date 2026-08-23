@@ -15,9 +15,20 @@ spec:
         app: byparr
     spec:
       serviceAccountName: byparr
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: byparr
           image: ghcr.io/thephaseless/byparr:PLACEHOLDER_IMAGE_TAG
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: TZ
               value: "PLACEHOLDER_TIMEZONE"
@@ -36,6 +47,7 @@ spec:
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:PLACEHOLDER_IMAGE_TAG
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               add:
                 - NET_ADMIN

@@ -17,6 +17,8 @@ spec:
       serviceAccountName: pinchflat
       securityContext:
         fsGroup: 3141
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: pinchflat
           image: ghcr.io/kieraneglin/pinchflat:PLACEHOLDER_IMAGE_TAG
@@ -38,8 +40,13 @@ spec:
                   name: pinchflat-auth-secret
                   key: password
           securityContext:
+            runAsNonRoot: true
             runAsUser: 3000
             runAsGroup: 3141
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           resources:
             requests:
               cpu: 200m
@@ -55,6 +62,7 @@ spec:
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:PLACEHOLDER_IMAGE_TAG
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               add:
                 - NET_ADMIN

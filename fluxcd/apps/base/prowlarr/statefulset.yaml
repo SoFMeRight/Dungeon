@@ -15,9 +15,25 @@ spec:
         app: prowlarr
     spec:
       serviceAccountName: prowlarr
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: prowlarr
           image: ghcr.io/hotio/prowlarr:PLACEHOLDER_IMAGE_TAG
+          # hotio s6-overlay: starts root, drops to PUID. Root-required partial:
+          # drop ALL + the caps s6 needs to drop privileges.
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: PUID
               value: "1000"
@@ -38,6 +54,7 @@ spec:
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:PLACEHOLDER_IMAGE_TAG
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               add:
                 - NET_ADMIN

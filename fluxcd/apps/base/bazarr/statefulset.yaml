@@ -15,9 +15,25 @@ spec:
         app: bazarr
     spec:
       serviceAccountName: bazarr
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: bazarr
           image: docker.io/linuxserver/bazarr:PLACEHOLDER_IMAGE_TAG
+          # LSIO s6-overlay: starts root, setuidgid-drops to PUID. Root-required partial:
+          # drop ALL + the caps s6 needs to drop privileges.
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: TZ
               value: "PLACEHOLDER_TIMEZONE"
@@ -42,6 +58,7 @@ spec:
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:PLACEHOLDER_IMAGE_TAG
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               add:
                 - NET_ADMIN

@@ -15,11 +15,15 @@ spec:
         app: neko-vpn
     spec:
       serviceAccountName: neko-vpn
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         # Gluetun VPN Gateway
         - name: gluetun
           image: PLACEHOLDER_GLUETUN_IMAGE
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               add:
                 - NET_ADMIN
@@ -82,6 +86,19 @@ spec:
         # Neko Browser
         - name: neko
           image: PLACEHOLDER_NEKO_IMAGE
+          # neko runs supervisord managing X/pulseaudio/browser as multiple users; root-required.
+          # Partial: drop ALL + the caps supervisord needs to spawn/drop into those service users.
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: NEKO_DESKTOP_INPUT_ENABLED
               value: "true"

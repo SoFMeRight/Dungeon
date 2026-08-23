@@ -15,9 +15,19 @@ spec:
         app: downloadarrs
     spec:
       serviceAccountName: downloadarrs
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: cross-seed-config-init
           image: docker.io/busybox:1.38
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: QBITTORRENT_USERNAME
               valueFrom:
@@ -76,6 +86,7 @@ spec:
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:v3.41.3
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               add:
                 - NET_ADMIN
@@ -161,6 +172,17 @@ spec:
         # qBittorrent - full downloads access
         - name: qbittorrent
           image: docker.io/linuxserver/qbittorrent:5.2.3
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: TZ
               value: PLACEHOLDER_TZ
@@ -192,6 +214,14 @@ spec:
         # Port Manager for qBittorrent
         - name: port-manager
           image: docker.io/prplanit/qbittorrent-port-manager:1.3
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: QBITTORRENT_SERVER
               value: "localhost"
@@ -218,6 +248,17 @@ spec:
         # Radarr - only zz-radarr subpath
         - name: radarr
           image: docker.io/linuxserver/radarr:6.3.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: TZ
               value: PLACEHOLDER_TZ
@@ -244,6 +285,17 @@ spec:
         # Sonarr - only zz-sonarr subpath
         - name: sonarr
           image: docker.io/linuxserver/sonarr:4.0.19
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: TZ
               value: PLACEHOLDER_TZ
@@ -270,6 +322,17 @@ spec:
         # Lidarr
         - name: lidarr
           image: docker.io/linuxserver/lidarr:3.1.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: TZ
               value: PLACEHOLDER_TZ
@@ -296,6 +359,17 @@ spec:
         # Readarr
         - name: readarr
           image: docker.io/linuxserver/readarr:0.4.19-nightly
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: TZ
               value: PLACEHOLDER_TZ
@@ -322,12 +396,17 @@ spec:
         # Cross-seed
         - name: cross-seed
           image: docker.io/crossseed/cross-seed:6.13.7
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: TZ
               value: PLACEHOLDER_TZ
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
           volumeMounts:
             - name: cross-seed-config
               mountPath: /config

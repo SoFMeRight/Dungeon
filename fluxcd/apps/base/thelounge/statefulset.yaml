@@ -15,9 +15,25 @@ spec:
         app: thelounge
     spec:
       serviceAccountName: thelounge
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: thelounge
           image: ghcr.io/thelounge/thelounge:PLACEHOLDER_IMAGE_TAG
+          # Official node image runs as root (config dir root-owned); kept root pending a verified
+          # non-root config owner. Partial: drop ALL + file-ownership caps + no-privesc.
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: TZ
               value: "PLACEHOLDER_TIMEZONE"
@@ -34,6 +50,7 @@ spec:
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:PLACEHOLDER_IMAGE_TAG
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               add:
                 - NET_ADMIN

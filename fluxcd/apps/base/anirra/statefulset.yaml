@@ -17,9 +17,21 @@ spec:
         app.kubernetes.io/name: anirra
     spec:
       serviceAccountName: anirra
+      # anirra is a custom monolithic image (bash /start.sh launches a node frontend + python backend);
+      # no shell available to verify a non-root run and /project/data ownership is unknown, so it stays
+      # root for now. Partial hardening: seccomp + drop ALL + no-privesc. Full non-root pending a
+      # verified data-dir owner.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: config-init
           image: docker.io/library/busybox:1.38
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -61,6 +73,11 @@ spec:
       containers:
         - name: anirra
           image: jpyles0524/anirra:xiFwhijN
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command: ["bash", "/start.sh"]
           ports:
             - name: frontend

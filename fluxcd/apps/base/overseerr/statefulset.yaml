@@ -15,9 +15,22 @@ spec:
         app: overseerr
     spec:
       serviceAccountName: overseerr
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: overseerr
           image: docker.io/sctx/overseerr:PLACEHOLDER_IMAGE_TAG
+          # App runs non-root (uid 1000; /app/config PVC is 1000-owned). Container-level only —
+          # the gluetun sidecar keeps its VPN caps.
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: TZ
               value: "PLACEHOLDER_TIMEZONE"
@@ -38,6 +51,7 @@ spec:
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:PLACEHOLDER_IMAGE_TAG
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               add:
                 - NET_ADMIN
