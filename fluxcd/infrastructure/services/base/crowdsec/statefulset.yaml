@@ -20,9 +20,21 @@ spec:
         component: engine
     spec:
       serviceAccountName: crowdsec
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: crowdsec
           image: PLACEHOLDER_CROWDSEC_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: api
               containerPort: 8080

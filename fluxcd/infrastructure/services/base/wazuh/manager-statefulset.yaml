@@ -17,12 +17,25 @@ spec:
       hostname: wazuh-manager
       securityContext:
         fsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: wazuh-manager
-          image: PLACEHOLDER_IMAGE
+          # s6-managed SIEM: analysisd/remoted run in a chroot (SYS_CHROOT), binds :514 syslog.
+          # Root-required. Partial: drop ALL + chroot/file-perm/setuid caps + NET_BIND_SERVICE.
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
-              add: ["SYS_CHROOT"]
+              drop:
+                - ALL
+              add:
+                - SYS_CHROOT
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
+                - NET_BIND_SERVICE
           ports:
             - containerPort: 1514
               name: agent-events

@@ -20,9 +20,21 @@ spec:
         component: bouncer
     spec:
       serviceAccountName: crowdsec-cloudflare-bouncer
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: cloudflare-bouncer
           image: PLACEHOLDER_BOUNCER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - name: metrics
               containerPort: 2112
