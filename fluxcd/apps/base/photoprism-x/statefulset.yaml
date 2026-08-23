@@ -29,7 +29,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: photoprism
-          image: docker.io/photoprism/photoprism:251130
+          image: docker.io/photoprism/photoprism:20220121
           securityContext:
             allowPrivilegeEscalation: true
             capabilities:

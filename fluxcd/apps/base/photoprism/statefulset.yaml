@@ -18,7 +18,7 @@ spec:
       serviceAccountName: photoprism
       containers:
         - name: photoprism
-          image: docker.io/photoprism/photoprism:251130
+          image: docker.io/photoprism/photoprism:20220121
           ports:
             - containerPort: 2342
               name: http
