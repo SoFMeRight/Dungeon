@@ -82,11 +82,17 @@ spec:
       containers:
         - name: coturn
           image: PLACEHOLDER_IMAGE
+          # turnserver carries a cap_net_bind_service file capability (setcap +ep in the image); under
+          # NoNewPrivs (allowPrivilegeEscalation:false) the kernel refuses to exec it ("Operation not
+          # permitted"). Runs non-root (65534) with privesc enabled + NET_BIND_SERVICE back — the
+          # hardened form this file-capability binary permits.
           securityContext:
-            allowPrivilegeEscalation: false
+            allowPrivilegeEscalation: true
             capabilities:
               drop:
                 - ALL
+              add:
+                - NET_BIND_SERVICE
           ports:
             - containerPort: 3478
               name: turn-udp
