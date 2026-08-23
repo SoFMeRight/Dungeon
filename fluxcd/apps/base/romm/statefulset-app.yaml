@@ -15,9 +15,25 @@ spec:
         app: romm
     spec:
       serviceAccountName: romm
+      # romm bundles nginx + gunicorn + valkey under a supervisor that starts root and drops to the
+      # service user. Root-required partial: drop ALL + the caps the supervisor needs + seccomp.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: romm
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 7007
               name: http

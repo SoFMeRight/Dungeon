@@ -15,9 +15,23 @@ spec:
         app: minecraft
     spec:
       serviceAccountName: minecraft
+      # itzg starts root to chown /data then su-execs to the run user; /data is already 1000-owned,
+      # so running directly as 1000 skips that path. Full non-root.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: minecraft
           image: docker.io/itzg/minecraft-server:java25
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 35566
               name: minecraft

@@ -15,9 +15,25 @@ spec:
         app: romm-db
     spec:
       serviceAccountName: romm-db
+      # LSIO mariadb is s6-overlay managed (starts root, setuidgid-drops to PUID). Root-required
+      # partial: drop ALL + the caps s6 needs + seccomp.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mariadb
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 3306
               name: mysql
