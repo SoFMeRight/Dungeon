@@ -15,9 +15,23 @@ spec:
         app: ollama
     spec:
       serviceAccountName: ollama
+      # ollama stores models in the /root/.ollama PVC mount (fsGroup-writable). GPU access is
+      # runtime/cgroup-based, unaffected by dropping caps. Full non-root.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: ollama
           image: docker.io/ollama/ollama:0.32.9
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 11434
               name: http

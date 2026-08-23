@@ -15,9 +15,23 @@ spec:
         app: stable-diffusion-webui
     spec:
       serviceAccountName: stable-diffusion-webui
+      # Models/outputs on the /data PVC mount (fsGroup-writable). GPU is runtime/cgroup-based,
+      # unaffected by dropping caps. Full non-root.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: webui
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 7860
               name: http

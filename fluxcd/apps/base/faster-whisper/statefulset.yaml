@@ -18,6 +18,21 @@ spec:
       containers:
         - name: faster-whisper
           image: docker.io/linuxserver/faster-whisper:gpu
+          # LSIO/s6-overlay (PUID/PGID), root-required. Partial hardening: drop ALL + s6's
+          # file-perm/setuid caps + seccomp. GPU is runtime/cgroup-based (caps don't affect it).
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 10300
               name: http
