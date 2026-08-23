@@ -386,10 +386,14 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| emulatorjs | emulatorjs | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
-| minecraft-optcp | minecraft | ? | ? | ? | ? | ? | ? | Y | ? | |
-| romm | romm | X | ? | ? | ? | ? | ? | Y | ? | Known bugs #1302,#1327,#1338 |
-| romm | mysql | ? | ? | ? | ? | ? | ? | Y | ? | |
+| ark-sa | theisland | Y (7777:7777) | N | Y | ? | ? | ? | Y | ? | ASA via Proton/Wine; full non-root — Proton prefix rebuild + launch confirmed under drop ALL + no-privesc |
+| ark-sa | valguero | Y (7777:7777) | N | Y | ? | ? | ? | Y | ? | ASA via Proton/Wine; full non-root |
+| ark-sa | admin-list nginx | X | N | P | ? | ? | ? | Y | ? | stock nginx :80; root-partial (drop ALL + caps + NET_BIND_SERVICE) |
+| ark-se | theisland | X | N | N | ? | ? | ? | Y | ? | drpsychick root/sudo-required (arkmanager+crontab); PRE-EXISTING crashloop (arkmanager not found since drpsychick migration) — hardening exception |
+| emulatorjs | emulatorjs | X | N | P | ? | ? | ? | Y | ? | LSIO s6 root→PUID; drop ALL + s6 caps + NET_BIND_SERVICE |
+| minecraft-optcp | minecraft | Y (1000:1000) | N | Y | ? | ? | ? | Y | ? | full non-root (itzg, /data pre-owned 1000) |
+| romm | romm | X | N | P | ? | ? | ? | Y | ? | nginx+gunicorn+valkey supervisor, root-partial; Known bugs #1302,#1327,#1338 |
+| romm | mysql | X | N | P | ? | ? | ? | Y | ? | LSIO mariadb s6, root-partial |
 
 ### swift-sail (Arr Apps & Downloaders)
 
