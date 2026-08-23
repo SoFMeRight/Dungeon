@@ -15,9 +15,21 @@ spec:
         app: roundcube-primary-gmail
     spec:
       serviceAccountName: roundcube-primary-gmail
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 82
+        runAsGroup: 82
+        fsGroup: 82
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: roundcube
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: ROUNDCUBEMAIL_DB_TYPE
               value: "mysql"
@@ -55,6 +67,11 @@ spec:
               cpu: 500m
         - name: nginx
           image: docker.io/nginxinc/nginx-unprivileged:alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http

@@ -16,9 +16,21 @@ spec:
         policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: actualbudget
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: actualbudget
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 5006
               name: http

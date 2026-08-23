@@ -10,9 +10,12 @@ spec:
         policy.prplanit.com/ingress: "true"
     spec:
       securityContext:
+        runAsNonRoot: true
         runAsUser: 101
         runAsGroup: 101
         fsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: init-permissions
           image: docker.io/phitux/dailytxt:2.6.2
@@ -20,8 +23,19 @@ spec:
             - sh
             - -c
             - cp -a /usr/share/nginx/html/. /html/ && chown -R 101:101 /html /data
+          # Runs as root to chown the html/data volumes to 101 for the app; drop ALL but keep
+          # the file-ownership caps the chown needs.
           securityContext:
+            runAsNonRoot: false
             runAsUser: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
           volumeMounts:
             - name: html
               mountPath: /html

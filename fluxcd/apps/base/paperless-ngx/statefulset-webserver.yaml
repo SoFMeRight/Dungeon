@@ -16,9 +16,25 @@ spec:
         policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: paperless-webserver
+      # paperless-ngx bundles s6-overlay (PID 1 = s6-svscan): starts root, setuidgid-drops to PUID.
+      # Root-required partial: drop ALL + the caps s6 needs to drop privileges + seccomp.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: paperless
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 8000
               name: http

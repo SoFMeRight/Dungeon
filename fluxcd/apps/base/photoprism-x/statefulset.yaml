@@ -17,9 +17,30 @@ spec:
     spec:
       serviceAccountName: photoprism-x
       runtimeClassName: nvidia
+      # photoprism bundles s6-overlay and runs non-root as uid 2432; NoNewPrivs (privesc:false) would
+      # block s6 from raising its added caps into the effective set, so allowPrivilegeEscalation stays
+      # true. GPU access is via the nvidia runtime + device cgroups, unaffected by the cap drop.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2432
+        runAsGroup: 2432
+        fsGroup: 2432
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: photoprism
           image: docker.io/photoprism/photoprism:251130
+          securityContext:
+            allowPrivilegeEscalation: true
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 2342
               name: http
@@ -159,8 +180,6 @@ spec:
               mountPath: /photoprism/originals
             - name: import
               mountPath: /photoprism/import
-          securityContext:
-            privileged: false
       volumes:
         - name: originals
           persistentVolumeClaim:

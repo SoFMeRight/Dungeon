@@ -15,16 +15,42 @@ spec:
         app: monica
     spec:
       serviceAccountName: monica
+      # PHP-FPM app image: the copy-app init and fpm master run root (fpm forks www-data workers),
+      # nginx binds :80. Root-required partial: drop ALL + file-ownership/setuid caps + seccomp.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
         - name: copy-app
           image: PLACEHOLDER_IMAGE
           command: ['sh', '-c', 'cp -a /var/www/html/. /app-files/']
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
           volumeMounts:
             - name: app-files
               mountPath: /app-files
       containers:
         - name: nginx
           image: PLACEHOLDER_NGINX_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
+                - NET_BIND_SERVICE
           ports:
             - containerPort: 80
               name: http
@@ -44,6 +70,17 @@ spec:
               cpu: 100m
         - name: monica
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: APP_URL
               value: "PLACEHOLDER_APP_URL"
