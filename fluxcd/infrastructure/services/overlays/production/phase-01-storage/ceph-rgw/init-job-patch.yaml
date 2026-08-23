@@ -104,20 +104,18 @@ spec:
               # bucket named <domain> -> 404. Desired = internal service host (derived from
               # RGW_ENDPOINT) + RGW_HOSTNAMES. get -> rewrite only hostnames -> set (id kept).
               INTERNAL_HOST="$(printf '%s' "${RGW_ENDPOINT}" | sed -E 's#^[a-z]+://##; s#[:/].*$##')"
-              export INTERNAL_HOST
               $RGW zonegroup get --rgw-zonegroup="${RGW_ZONEGROUP}" > /tmp/zg.json
-              printf '%s\n' \
-                'import json, os' \
-                'i = os.environ["INTERNAL_HOST"]' \
-                'raw = os.environ.get("RGW_HOSTNAMES", "").split(",")' \
-                'want = list(dict.fromkeys([i] + [h.strip() for h in raw if h.strip()]))' \
-                'z = json.load(open("/tmp/zg.json"))' \
-                'changed = (z.get("hostnames") or []) != want' \
-                'z["hostnames"] = want' \
-                'json.dump(z, open("/tmp/zg.json", "w"))' \
-                'print("yes" if changed else "no")' > /tmp/hn.py
-              if [ "$(python3 /tmp/hn.py)" = "yes" ]; then
-                echo "reconciling zonegroup hostnames -> ${INTERNAL_HOST},${RGW_HOSTNAMES}"
+
+              # Desired hostnames = internal service host + declared public domains,
+              # trimmed, non-empty, deduped (unique also sorts, so the compare is stable).
+              WANT="$(jq -cn --arg internal "${INTERNAL_HOST}" --arg extra "${RGW_HOSTNAMES}" \
+                '[$internal] + ($extra | split(",")) | map(gsub("^ +| +$";"")) | map(select(length > 0)) | unique')"
+
+              if [ "$(jq -c '(.hostnames // []) | unique' /tmp/zg.json)" != "${WANT}" ]; then
+                echo "reconciling zonegroup hostnames -> ${WANT}"
+                # rewrite ONLY the hostnames field; every other field (id!) is passed through
+                jq --argjson want "${WANT}" '.hostnames = $want' /tmp/zg.json > /tmp/zg.new
+                mv /tmp/zg.new /tmp/zg.json
                 $RGW zonegroup set --rgw-zonegroup="${RGW_ZONEGROUP}" --infile=/tmp/zg.json >/dev/null
                 CHANGED=1
               else
