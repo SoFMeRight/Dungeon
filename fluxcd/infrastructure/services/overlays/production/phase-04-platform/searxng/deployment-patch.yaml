@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: searxng
-          image: docker.io/searxng/searxng:2026.1.30-ad42b553b
+          image: ghcr.io/searxng/searxng:2026.8.22-9fea41204
           env:
             - name: SEARXNG_BASE_URL
               value: "https://search.pcfae.com/"

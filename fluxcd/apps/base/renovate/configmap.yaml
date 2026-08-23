@@ -262,6 +262,16 @@ data:
           "groupName": "nextcloud",
           "matchPackageNames": ["nextcloud", "**/library/nextcloud"],
           "commitMessagePrefix": "chore(nextcloud):"
+        },
+        {
+          // SearXNG official tags are <calver>-<git-sha> (e.g. 2026.8.22-9fea41204); the
+          // hash changes every release, so default docker versioning treats each release as
+          // an incompatible variant and never detects an update — same failure mode as Plex.
+          // Parse the numeric calver and ignore the hash. Registry-agnostic glob so it matches
+          // whether pinned on ghcr.io (no alias) or docker.io (rewritten to docker.cr.pcfae.com).
+          "matchPackageNames": ["**/searxng/searxng"],
+          "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-[0-9a-f]+$",
+          "commitMessagePrefix": "chore(searxng):"
         }
       ],
 
