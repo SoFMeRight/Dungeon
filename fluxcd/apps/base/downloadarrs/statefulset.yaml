@@ -214,10 +214,9 @@ spec:
         # Port Manager for qBittorrent
         - name: port-manager
           image: docker.io/prplanit/qbittorrent-port-manager:1.3
+          # start.sh is root-owned/root-executable in the image, so a non-root exec fails
+          # ("Permission denied"). Stays root pending an image rebuild. Partial: drop ALL + no-privesc.
           securityContext:
-            runAsNonRoot: true
-            runAsUser: 1000
-            runAsGroup: 1000
             allowPrivilegeEscalation: false
             capabilities:
               drop:
