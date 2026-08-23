@@ -18,11 +18,23 @@ spec:
       enableServiceLinks: false
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
+      # acekorneya ASA via Proton/Wine as uid 7777; the theisland canary confirmed Proton's prefix
+      # rebuild + server launch work under drop ALL + NoNewPrivs.
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 7777
+        runAsGroup: 7777
         fsGroup: 7777
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: valguero
           image: docker.io/acekorneya/asa_server:2_1_latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command: ["/bin/bash", "-c"]
           args:
             - |
