@@ -18,11 +18,23 @@ spec:
       enableServiceLinks: false
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
+      # acekorneya ASA runs the server via Proton/Wine as uid 7777 (non-root). Canary for the drop-ALL
+      # + NoNewPrivs posture — revert to the prior (default-caps) form if Proton's prefix rebuild breaks.
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 7777
+        runAsGroup: 7777
         fsGroup: 7777
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: theisland
           image: docker.io/acekorneya/asa_server:2_1_latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           command: ["/bin/bash", "-c"]
           args:
             - |
