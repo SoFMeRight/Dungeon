@@ -43,6 +43,10 @@ spec:
               value: dungeon-rgw
             - name: RGW_DATA_POOL
               value: dungeon-rgw-data
+            # Declared public S3 endpoint domain(s), comma-separated. The internal service
+            # host is derived from RGW_ENDPOINT and always kept — only the public bit is env.
+            - name: RGW_HOSTNAMES
+              value: s3.pcfae.com
           command:
             - /bin/bash
             - -c
@@ -56,11 +60,12 @@ spec:
 
               echo "=== RGW init (idempotent) ==="
 
-              # Create realm / zonegroup / zone ONLY if missing. We never
-              # `zonegroup set`/`zone set` a whole object from a file — that
-              # overwrites the object's identity (id) and orphans every bucket
-              # created under the old id. Config that IS safe to re-assert (pool
-              # placement) is applied with a targeted, idempotent command below.
+              # Create realm / zonegroup / zone ONLY if missing — never re-create over an
+              # existing object. Mutable config is re-asserted idempotently below: pool
+              # placement via a targeted modify, and hostnames via get -> edit ONLY that
+              # field -> set (which preserves the id). What orphaned buckets before was
+              # writing a hand-built object with the WRONG id, not editing one field of the
+              # live one.
               if ! $RGW realm get --rgw-realm="${RGW_REALM}" >/dev/null 2>&1; then
                 echo "creating realm ${RGW_REALM}"
                 $RGW realm create --rgw-realm="${RGW_REALM}" --default
@@ -92,6 +97,31 @@ spec:
                 CHANGED=1
               else
                 echo "placement pools ok (${CUR_DATA})"
+              fi
+
+              # Reconcile zonegroup hostnames to declared intent. RGW must recognise its
+              # public domain(s) as endpoint hostnames, else `Host: <domain>` is parsed as a
+              # bucket named <domain> -> 404. Desired = internal service host (derived from
+              # RGW_ENDPOINT) + RGW_HOSTNAMES. get -> rewrite only hostnames -> set (id kept).
+              INTERNAL_HOST="$(printf '%s' "${RGW_ENDPOINT}" | sed -E 's#^[a-z]+://##; s#[:/].*$##')"
+              export INTERNAL_HOST
+              $RGW zonegroup get --rgw-zonegroup="${RGW_ZONEGROUP}" > /tmp/zg.json
+              printf '%s\n' \
+                'import json, os' \
+                'i = os.environ["INTERNAL_HOST"]' \
+                'raw = os.environ.get("RGW_HOSTNAMES", "").split(",")' \
+                'want = list(dict.fromkeys([i] + [h.strip() for h in raw if h.strip()]))' \
+                'z = json.load(open("/tmp/zg.json"))' \
+                'changed = (z.get("hostnames") or []) != want' \
+                'z["hostnames"] = want' \
+                'json.dump(z, open("/tmp/zg.json", "w"))' \
+                'print("yes" if changed else "no")' > /tmp/hn.py
+              if [ "$(python3 /tmp/hn.py)" = "yes" ]; then
+                echo "reconciling zonegroup hostnames -> ${INTERNAL_HOST},${RGW_HOSTNAMES}"
+                $RGW zonegroup set --rgw-zonegroup="${RGW_ZONEGROUP}" --infile=/tmp/zg.json >/dev/null
+                CHANGED=1
+              else
+                echo "hostnames already match declared intent"
               fi
 
               # Commit the period only if something actually changed — a steady-state
