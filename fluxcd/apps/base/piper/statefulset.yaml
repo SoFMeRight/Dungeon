@@ -15,9 +15,21 @@ spec:
         app: piper
     spec:
       serviceAccountName: piper
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: piper
           image: docker.io/rhasspy/wyoming-piper:PLACEHOLDER_TAG
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           args:
             - --voice
             - en_US-lessac-medium

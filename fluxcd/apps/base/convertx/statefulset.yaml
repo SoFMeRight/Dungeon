@@ -15,14 +15,28 @@ spec:
         app: convertx
     spec:
       serviceAccountName: convertx
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: convertx
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 3000
               name: http
               protocol: TCP
           env:
+            - name: HOME
+              value: /tmp
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:

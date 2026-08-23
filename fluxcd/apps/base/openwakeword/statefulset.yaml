@@ -15,9 +15,21 @@ spec:
         app: openwakeword
     spec:
       serviceAccountName: openwakeword
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: openwakeword
           image: docker.io/rhasspy/wyoming-openwakeword:PLACEHOLDER_TAG
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           args:
             - --preload-model
             - ok_nabu
