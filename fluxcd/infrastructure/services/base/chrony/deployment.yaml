@@ -76,6 +76,15 @@ spec:
               cpu: "100m"
         - name: ntp-healthcheck
           image: PLACEHOLDER_SIDECAR_IMAGE
+          # Just runs chronyc + nc on a high port — needs no caps. Stays root alongside the
+          # chronyd container (NTP clock discipline is the accepted SEC-1/2 root exception).
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
           command:
             - sh
             - -c
