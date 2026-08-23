@@ -393,37 +393,39 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| anirra | anirra | ? | ? | ? | ? | ? | ? | Y | ? | Custom image, unknown |
-| bazarr | gluetun | P | N | P | ? | ? | ? | Y | ? | NET_ADMIN required |
-| bazarr | bazarr | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
-| byparr | gluetun | P | N | P | Y | ? | ? | Y | Y | NET_ADMIN required |
-| byparr | byparr | Y (1000:1000) | N | ? | Y | ? | ? | Y | Y | emptyDir for venv |
-| downloadarrs | gluetun | P | N | P | Y | ? | ? | Y | Y | NET_ADMIN required |
-| downloadarrs | qbittorrent | Y (1000:1000) | N | ? | Y | ? | ? | Y | Y | LSIO image |
-| downloadarrs | radarr | Y (1000:1000) | N | ? | Y | ? | ? | Y | Y | LSIO image |
-| downloadarrs | sonarr | Y (1000:1000) | N | ? | Y | ? | ? | Y | Y | LSIO image |
-| downloadarrs | lidarr | Y (1000:1000) | N | ? | Y | ? | ? | Y | Y | LSIO image |
-| downloadarrs | readarr | Y (1000:1000) | N | ? | Y | ? | ? | Y | Y | LSIO image |
-| downloadarrs | cross-seed | Y (1000:1000) | N | ? | Y | ? | ? | Y | Y | |
-| jellyseerr | gluetun | P | N | P | ? | ? | ? | Y | ? | NET_ADMIN required |
-| jellyseerr | jellyseerr | Y (1000) | ? | ? | ? | ? | ? | Y | ? | app hardened non-root 1000, drop ALL, seccomp (gluetun sidecar keeps VPN caps) |
-| overseerr | gluetun | P | N | P | ? | ? | ? | Y | ? | NET_ADMIN required |
-| overseerr | overseerr | X | ? | ? | ? | ? | ? | Y | ? | No USER directive |
-| pinchflat | gluetun | P | N | P | ? | ? | ? | Y | Y | NET_ADMIN required |
-| pinchflat | pinchflat | Y (3000:3141) | N | ? | ? | ? | ? | Y | Y | Already non-root |
-| prowlarr | gluetun | P | N | P | ? | ? | ? | Y | ? | NET_ADMIN required |
-| prowlarr | prowlarr | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
-| pyload-ng | gluetun | P | N | P | ? | ? | ? | Y | ? | NET_ADMIN required |
-| pyload-ng | pyload-ng | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
-| sabnzbd | gluetun | P | N | P | ? | ? | ? | Y | ? | NET_ADMIN required |
-| sabnzbd | sabnzbd | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
-| thelounge | gluetun | P | N | P | ? | ? | ? | Y | ? | NET_ADMIN required |
-| thelounge | thelounge | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
+| anirra | anirra | X | N | P | ? | ? | ? | Y | ? | Custom no-shell image, root-partial (drop ALL + seccomp) pending verified data owner |
+| bazarr | gluetun | X | N | P | ? | ? | ? | Y | ? | VPN sidecar — root + NET_ADMIN caps, no-privesc + seccomp |
+| bazarr | bazarr | X | N | P | ? | ? | ? | Y | ? | LSIO s6 root→PUID; drop ALL + s6 caps + seccomp |
+| byparr | gluetun | X | N | P | Y | ? | ? | Y | Y | VPN sidecar |
+| byparr | byparr | Y (1000:1000) | N | Y | Y | ? | ? | Y | Y | full non-root |
+| downloadarrs | gluetun | X | N | P | Y | ? | ? | Y | Y | VPN sidecar |
+| downloadarrs | qbittorrent | X | N | P | Y | ? | ? | Y | Y | LSIO s6 root→PUID |
+| downloadarrs | radarr | X | N | P | Y | ? | ? | Y | Y | LSIO s6 root→PUID |
+| downloadarrs | sonarr | X | N | P | Y | ? | ? | Y | Y | LSIO s6 root→PUID |
+| downloadarrs | lidarr | X | N | P | Y | ? | ? | Y | Y | LSIO s6 root→PUID |
+| downloadarrs | readarr | X | N | P | Y | ? | ? | Y | Y | LSIO s6 root→PUID |
+| downloadarrs | cross-seed | Y (1000:1000) | N | Y | Y | ? | ? | Y | Y | full non-root |
+| downloadarrs | port-manager | X | N | P | Y | ? | ? | Y | Y | start.sh root-only-executable; root-partial pending image rebuild |
+| jellyseerr | gluetun | X | N | P | ? | ? | ? | Y | ? | VPN sidecar |
+| jellyseerr | jellyseerr | Y (1000:1000) | N | Y | ? | ? | ? | Y | ? | full non-root (config pre-owned 1000) |
+| overseerr | gluetun | X | N | P | ? | ? | ? | Y | ? | VPN sidecar |
+| overseerr | overseerr | Y (1000:1000) | N | Y | ? | ? | ? | Y | ? | full non-root (config pre-owned 1000) |
+| pinchflat | gluetun | X | N | P | ? | ? | ? | Y | Y | VPN sidecar |
+| pinchflat | pinchflat | Y (3000:3141) | N | Y | ? | ? | ? | Y | Y | full non-root |
+| prowlarr | gluetun | X | N | P | ? | ? | ? | Y | ? | VPN sidecar |
+| prowlarr | prowlarr | X | N | P | ? | ? | ? | Y | ? | hotio s6 root→PUID; drop ALL + s6 caps + seccomp |
+| pyload-ng | gluetun | X | N | P | ? | ? | ? | Y | ? | VPN sidecar |
+| pyload-ng | pyload-ng | X | N | P | ? | ? | ? | Y | ? | LSIO s6 root→PUID; drop ALL + s6 caps + seccomp |
+| sabnzbd | gluetun | X | N | P | ? | ? | ? | Y | ? | VPN sidecar |
+| sabnzbd | sabnzbd | X | N | P | ? | ? | ? | Y | ? | LSIO s6 root→PUID; init derooted to 1000 |
+| thelounge | gluetun | X | N | P | ? | ? | ? | Y | ? | VPN sidecar |
+| thelounge | thelounge | X | N | P | ? | ? | ? | Y | ? | official node, config root-owned; root-partial pending verified owner |
 | whisparr | whisparr | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
-| neko-vpn | gluetun | P | N | P | ? | ? | ? | Y | Y | NET_ADMIN required |
-| neko-vpn | neko | ? | ? | ? | ? | ? | ? | Y | Y | |
-| py-kms | py-kms | ? | ? | ? | ? | ? | ? | Y | ? | Likely has non-root |
-| supermicro-license-generator | app | Y (100:101) | N | ? | ? | ? | ? | Y | ? | Fixed image |
+| neko-vpn | gluetun | X | N | P | ? | ? | ? | Y | Y | VPN sidecar |
+| neko-vpn | neko | X | N | P | ? | ? | ? | Y | Y | supervisord browser env, root-required partial |
+| neko-gateway | stunner-daemon | X | N | ? | ? | ? | ? | Y | ? | STUNner-operator-generated pod — hardening deferred to Dataplane CR |
+| py-kms | py-kms | Y (100:100) | N | Y | ? | ? | ? | Y | ? | full non-root (data pre-owned 100) |
+| supermicro-license-generator | app | Y (100:100) | N | Y | ? | ? | ? | Y | ? | full non-root |
 | vlmcsd | vlmcsd | Y (65534:65534) | N | ? | ? | ? | ? | Y | ? | nobody user |
 
 ### temple-of-time (Archival/Content Management & Media)
