@@ -16,9 +16,12 @@ spec:
     - gid=1000
     - file_mode=0777
     - dir_mode=0777
-    # Calibre metadata.db is SQLite here: cache=loose made CIFS lock ops laggy/stale ->
-    # persistent "database is locked"; cache=none keeps them immediate so SQLite retries resolve.
+    # Calibre metadata.db is SQLite here. calibre-web uses ONE shared connection (StaticPool),
+    # so lock errors aren't in-process contention -> they're CIFS byte-range locks erroring over
+    # SMB. nobrl skips them (safe: single connection + replicas=1); cache=none avoids stale pages.
+    # Verified: cache=none WITHOUT nobrl still throws "database is locked". Keep nobrl.
     - cache=none
+    - nobrl
   csi:
     driver: smb.csi.k8s.io
     readOnly: false
