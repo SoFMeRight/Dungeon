@@ -14,9 +14,24 @@ spec:
         app: it-tools
     spec:
       serviceAccountName: it-tools
+      # nginx already listens on 8080 as uid 101 and writes pid/temp to /tmp (see the
+      # nginx configmap), so a full non-root + read-only-rootfs lockdown is clean.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        fsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: it-tools
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               name: http
@@ -24,6 +39,10 @@ spec:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf
               subPath: nginx.conf
+            - name: tmp
+              mountPath: /tmp
+            - name: nginx-logs
+              mountPath: /var/log/nginx
           resources:
             requests:
               memory: "128Mi"
@@ -47,3 +66,7 @@ spec:
         - name: nginx-config
           configMap:
             name: it-tools-nginx-config
+        - name: tmp
+          emptyDir: {}
+        - name: nginx-logs
+          emptyDir: {}
