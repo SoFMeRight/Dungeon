@@ -23,7 +23,16 @@ spec:
             - name: output
               mountPath: /outputs
           securityContext:
+            runAsNonRoot: false
             runAsUser: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
       containers:
         - name: webui
           image: ghcr.io/ai-dock/stable-diffusion-webui:v2-cuda-12.1.1-base-22.04-v1.10.1
