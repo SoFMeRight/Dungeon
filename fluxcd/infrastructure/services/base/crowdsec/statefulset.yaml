@@ -20,11 +20,10 @@ spec:
         component: engine
     spec:
       serviceAccountName: crowdsec
+      # Root-required: the entrypoint rsyncs default config into the image-owned /etc/crowdsec at
+      # startup ("mkstemp /etc/crowdsec/.simulation.yaml: Permission denied" as non-root). Partial:
+      # drop ALL + seccomp, stays root.
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       containers:
