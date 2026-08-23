@@ -14,9 +14,20 @@ spec:
         app: graphite-exporter-truenas
     spec:
       serviceAccountName: graphite-exporter-truenas
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: graphite-exporter
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           args:
             - '--graphite.mapping-config=/etc/graphite_mappings.yaml'
             - '--graphite.listen-address=:2003'

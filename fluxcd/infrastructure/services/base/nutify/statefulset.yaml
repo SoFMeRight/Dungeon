@@ -18,6 +18,21 @@ spec:
       containers:
         - name: nutify
           image: cr.pcfae.com/prplanit/nutify-ssh@sha256:2566846f241b14668fa90a9fff43cddaa90c6ee0f6886447b82bd8bac3882063
+          # start-services.sh supervisor runs python + NUT snmp-ups driver (network SNMP, -u root).
+          # Root-required. Partial hardening: drop ALL + file-perm/setuid caps + seccomp.
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 3493
               name: nut

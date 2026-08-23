@@ -15,6 +15,13 @@ spec:
         app: vmstorage
     spec:
       serviceAccountName: vmstorage
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       # Hard spread: one replica per node (matches kimai) — survives node loss; a replica
       # stays Pending if fewer eligible nodes are free (acceptable on a 5-worker cluster).
       topologySpreadConstraints:
@@ -31,6 +38,11 @@ spec:
       containers:
         - name: vmstorage
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           args:
             - -storageDataPath=/storage
             - -retentionPeriod=30d

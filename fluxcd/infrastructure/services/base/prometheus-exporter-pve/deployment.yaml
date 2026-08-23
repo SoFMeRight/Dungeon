@@ -17,9 +17,20 @@ spec:
         prometheus.io/port: "9221"
     spec:
       serviceAccountName: prometheus-exporter-pve
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: exporter
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 9221
               name: metrics

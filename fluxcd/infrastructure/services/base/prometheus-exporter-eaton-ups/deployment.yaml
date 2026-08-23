@@ -17,13 +17,21 @@ spec:
         prometheus.io/port: "9795"
     spec:
       securityContext:
+        runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       serviceAccountName: prometheus-exporter-eaton-ups
       containers:
         - name: exporter
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 9795
               name: metrics

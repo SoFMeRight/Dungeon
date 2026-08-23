@@ -14,9 +14,20 @@ spec:
         app: vmselect
     spec:
       serviceAccountName: vmselect
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: vmselect
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           args:
             - -storageNode=vmstorage-0.vmstorage:8401,vmstorage-1.vmstorage:8401,vmstorage-2.vmstorage:8401
             - -httpListenAddr=:8481
