@@ -18,23 +18,14 @@ spec:
       enableServiceLinks: false
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
-      # drpsychick ARK:SE (steamcmd native) runs as the steam user (PUID/fsGroup 1001). Attempt
-      # non-root + drop ALL + no-privesc; revert if steamcmd/the server can't access its 1001-owned data.
+      # drpsychick/arkserver is root/sudo-required: its entrypoint (run.sh + arkmanager) needs root to
+      # fix perms and set up crontab, and running non-root breaks it ("not sudo-capable", "cannot setup
+      # Crontab", "arkmanager: command not found", exit 127). Left unhardened as a game-server exception.
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1001
-        runAsGroup: 1001
         fsGroup: 1001
-        seccompProfile:
-          type: RuntimeDefault
       containers:
         - name: theisland
           image: docker.io/drpsychick/arkserver:latest-v1.6.62
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
           ports:
             - containerPort: 7797
               protocol: UDP
