@@ -4,7 +4,7 @@ metadata:
   name: rook-ceph-external
 spec:
   cephVersion:
-    image: quay.io/ceph/ceph:v19
+    image: quay.io/ceph/ceph:v21
   # Crash collector disabled - no Ceph daemons run in K8s for external clusters
   crashCollector:
     disable: true
