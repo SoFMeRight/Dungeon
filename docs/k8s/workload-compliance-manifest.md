@@ -365,19 +365,21 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| actualbudget | actualbudget | Y (1000:1000) | N | ? | ? | ? | ? | Y | ? | |
-| dailytxt | dailytxt | Y (101:101) | N | ? | ? | ? | ? | Y | Y | nginx ConfigMap override |
-| homebox | homebox | ? | ? | ? | ? | ? | ? | Y | ? | |
-| lubelogger | lubelogger | X | ? | ? | ? | ? | ? | Y | ? | Mounts /root/.aspnet |
-| monica | monica | X | ? | ? | ? | ? | ? | Y | ? | No USER directive |
+| actualbudget | actualbudget | Y (1000:1000) | N | Y | ? | ? | ? | Y | ? | full non-root |
+| dailytxt | dailytxt | Y (101:101) | N | Y | ? | ? | ? | Y | Y | full non-root; root init keeps CHOWN caps for its chown |
+| homebox | homebox | Y (1000:1000) | N | Y | ? | ? | ? | Y | ? | full non-root |
+| lubelogger | lubelogger | X | N | P | ? | ? | ? | Y | ? | /App/data root-owned 755, non-root can't write; root-partial (drop ALL + no-privesc) |
+| monica | nginx | X | N | P | ? | ? | ? | Y | ? | binds :80; root-partial (drop ALL + caps + NET_BIND_SERVICE) |
+| monica | monica | X | N | P | ? | ? | ? | Y | ? | php-fpm master root; root-partial (drop ALL + setuid/file caps) |
 | monica | mysql | ? | ? | ? | ? | ? | ? | Y | ? | |
-| paperless-ngx | paperless | ? | ? | ? | ? | ? | ? | Y | ? | |
+| paperless-ngx | paperless | X | N | P | ? | ? | ? | Y | ? | s6-svscan PID 1, root→PUID; root-partial (drop ALL + s6 caps) |
 | paperless-ngx | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
 | paperless-ngx | redis | ? | ? | ? | ? | ? | ? | Y | ? | |
 | photoprism | photoprism | Y (2432:1000) | N | ? | ? | ? | ? | Y | Y | PHOTOPRISM_UID/GID |
-| photoprism-x | photoprism | Y (2432:1000) | N | ? | ? | ? | ? | Y | Y | PHOTOPRISM_UID/GID |
-| plex-ms-x | plex | ? | ? | ? | ? | ? | ? | Y | ? | |
-| roundcube | roundcube | ? | ? | ? | ? | ? | ? | Y | ? | |
+| photoprism-x | photoprism | Y (2432:2432) | N | P | ? | ? | ? | Y | Y | full non-root; s6 needs allowPrivilegeEscalation:true; GPU via nvidia runtime |
+| plex-ms-x | plex | X | N | P | ? | ? | ? | Y | ? | plexinc s6-overlay root-required (documented); drop ALL + s6 caps; NVIDIA via runtime |
+| roundcube | roundcube | Y (82:82) | N | Y | ? | ? | ? | Y | ? | full non-root (fpm-nonroot image) |
+| roundcube | nginx | Y (82:82) | N | Y | ? | ? | ? | Y | ? | nginx-unprivileged |
 | roundcube | mariadb | ? | ? | ? | ? | ? | ? | Y | ? | |
 
 ### shooting-gallery (Game Servers)
