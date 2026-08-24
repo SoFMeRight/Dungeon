@@ -71,7 +71,7 @@ spec:
               all:
                 - key: "{{ element.name }}"
                   operator: AnyIn
-                  value: [vault, bank-vaults, prometheus-exporter]
+                  value: [openbao, bank-vaults, prometheus-exporter]
             patchStrategicMerge:
               spec:
                 containers:
@@ -87,7 +87,7 @@ spec:
               all:
                 - key: "{{ element.name }}"
                   operator: Equals
-                  value: vault
+                  value: openbao
             patchStrategicMerge:
               spec:
                 containers:

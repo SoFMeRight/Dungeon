@@ -20,6 +20,7 @@ spec:
     prometheus.io/scrape: "true"
     prometheus.io/port: "9091"
   vaultContainerSpec:
+    name: openbao                       # CRD-required; also the pod's vault-container name
     securityContext:
       capabilities:
         add:
