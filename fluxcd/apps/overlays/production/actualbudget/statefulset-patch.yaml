@@ -16,12 +16,20 @@ spec:
       containers:
         - name: actualbudget
           image: docker.io/actualbudget/actual-server:sha-37e807f-alpine
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: ACTUAL_OPENID_SERVER_HOSTNAME
               value: "https://budget.pcfae.com"
           volumeMounts:
             - name: pedestal-of-time-actualbudget-data
               mountPath: /data
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: budget files on /data PVC; Node uses /tmp scratch.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: pedestal-of-time-actualbudget-data

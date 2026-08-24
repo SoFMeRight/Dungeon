@@ -34,9 +34,17 @@ spec:
                 secretKeyRef:
                   name: homebox-secrets
                   key: OIDC_CLIENT_SECRET
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - name: pedestal-of-time-homebox-data
               mountPath: /data
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: sqlite + attachments on /data PVC; /tmp is scratch.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: pedestal-of-time-homebox-data
