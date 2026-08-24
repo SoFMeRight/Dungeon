@@ -8,6 +8,8 @@ spec:
       containers:
         - name: openwakeword
           image: docker.io/rhasspy/wyoming-openwakeword:2.1.0
+          securityContext:
+            readOnlyRootFilesystem: true
           resources:
             requests:
               cpu: 50m
@@ -15,6 +17,13 @@ spec:
             limits:
               cpu: "1"
               memory: 512Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: models load from the custom PVC; /tmp is defensive scratch.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: custom

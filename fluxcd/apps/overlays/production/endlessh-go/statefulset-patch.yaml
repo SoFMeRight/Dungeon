@@ -12,3 +12,12 @@ spec:
       containers:
         - name: endlessh-go
           image: docker.io/shizunge/endlessh-go:2025.0914.0
+          securityContext:
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: endlessh-go is a stateless tarpit; /tmp is defensive scratch.
+        - name: tmp
+          emptyDir: {}

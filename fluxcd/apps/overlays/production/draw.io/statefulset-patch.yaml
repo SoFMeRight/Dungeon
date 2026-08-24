@@ -15,6 +15,8 @@ spec:
       containers:
         - name: draw-io
           image: docker.io/jgraph/drawio:29.7.12
+          securityContext:
+            readOnlyRootFilesystem: true
           resources:
             requests:
               cpu: "15m"
@@ -22,3 +24,22 @@ spec:
             limits:
               cpu: "100m"
               memory: "104Mi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: tomcat-temp
+              mountPath: /usr/local/tomcat/temp
+            - name: tomcat-work
+              mountPath: /usr/local/tomcat/work
+            - name: tomcat-logs
+              mountPath: /usr/local/tomcat/logs
+      volumes:
+        # readOnlyRootFilesystem: Tomcat needs writable temp/work/logs + /tmp scratch.
+        - name: tmp
+          emptyDir: {}
+        - name: tomcat-temp
+          emptyDir: {}
+        - name: tomcat-work
+          emptyDir: {}
+        - name: tomcat-logs
+          emptyDir: {}

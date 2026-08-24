@@ -12,6 +12,8 @@ spec:
       containers:
         - name: convertx
           image: ghcr.io/c4illin/convertx:v0.18.0
+          securityContext:
+            readOnlyRootFilesystem: true
           resources:
             requests:
               cpu: "50m"
@@ -22,6 +24,13 @@ spec:
           env:
             - name: HTTP_ALLOWED
               value: "true"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: conversion tools (ffmpeg/imagemagick/libreoffice) write temp to /tmp.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: tingle-tuner-convertx-data

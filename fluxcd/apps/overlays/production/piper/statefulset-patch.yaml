@@ -8,6 +8,8 @@ spec:
       containers:
         - name: piper
           image: docker.io/rhasspy/wyoming-piper:2.4.0
+          securityContext:
+            readOnlyRootFilesystem: true
           resources:
             requests:
               cpu: 100m
@@ -15,6 +17,13 @@ spec:
             limits:
               cpu: "2"
               memory: 1Gi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: voices download to the data PVC; /tmp is defensive scratch.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data
