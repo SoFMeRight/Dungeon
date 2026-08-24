@@ -665,7 +665,7 @@
           | grep -vE '\S+\.(ya?ml|sh)[[:space:]]*$'
           | grep -viE 'vaultwarden|bank-vaults|kind: Vault|{{ old }}\.banzaicloud\.com|{{ old }}\.pcfae\.com'
           | grep -viE '{{ old }}-unseal-keys|{{ old }}-oidc-credentials|serviceAccount:|external-secrets-{{ old }}|{{ old }}-tokenreview'
-          | grep -viE '{{ old }}-sa-auth|{{ old }}-admin|zitadel-{{ old }}-sync|/{{ old }}/(data|config)|[[:space:]]{{ old }}:|[[:space:]]name: {{ old }}$' || true
+          | grep -viE '{{ old }}-sa-auth|{{ old }}-admin|zitadel-{{ old }}-sync|/{{ old }}/(data|config)|[[:space:]]{{ old }}:|[[:space:]]name: {{ old }}$|[[:space:]]-[[:space:]]{{ old }}$' || true
         chdir: "{{ repo_dir }}"
       register: stray
       changed_when: false
