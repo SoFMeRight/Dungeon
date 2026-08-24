@@ -1,0 +1,51 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: mutate-vault-sidecar-hardening
+  annotations:
+    policies.kyverno.io/title: Mutate Vault Sidecar Hardening
+    policies.kyverno.io/description: >-
+      bank-vaults injects the "bank-vaults" (unseal/configurer) and "prometheus-exporter"
+      sidecars into the Vault raft pods with no container securityContext, and the Vault
+      CRD has no field for them. This foreach targets ONLY those two sidecars by name
+      (precondition) and sets their securityContext directly — it never touches the vault
+      container (whose caps are CR-managed, and whose openbao image declares a NON-NUMERIC
+      user, so pod-level runAsNonRoot is impossible without breaking it with
+      CreateContainerConfigError — deliberately omitted). failurePolicy: Ignore is required
+      because Kyverno runs in this same namespace (zeldas-lullaby): with the default Fail a
+      webhook-rebuild blip blocks the Vault StatefulSet from creating pods. ADMISSION-TIME
+      ONLY — applies on the next vault pod roll.
+spec:
+  background: true
+  failurePolicy: Ignore
+  rules:
+    - name: harden-vault-sidecars
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - zeldas-lullaby
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: vault
+      mutate:
+        foreach:
+          - list: "request.object.spec.containers"
+            preconditions:
+              all:
+                - key: "{{ element.name }}"
+                  operator: AnyIn
+                  value:
+                    - bank-vaults
+                    - prometheus-exporter
+            patchStrategicMerge:
+              spec:
+                containers:
+                  - (name): "{{ element.name }}"
+                    securityContext:
+                      allowPrivilegeEscalation: false
+                      capabilities:
+                        drop:
+                          - ALL
