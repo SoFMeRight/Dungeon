@@ -8,7 +8,7 @@ spec:
     - name: VAULT_OIDC_CLIENT_SECRET
       valueFrom:
         secretKeyRef:
-          name: vault-oidc-credentials
+          name: openbao-oidc-credentials
           key: client-secret
   vaultPodSpec:
     imagePullSecrets:
