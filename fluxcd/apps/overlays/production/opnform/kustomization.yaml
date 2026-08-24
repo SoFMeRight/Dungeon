@@ -10,6 +10,9 @@ patches:
   - path: statefulset-storage-patch.yaml
   - path: cephfs-storage-patch.yaml
   - path: app-url-patch.yaml
+  - path: deployment-api-patch.yaml
+  - path: deployment-api-scheduler-patch.yaml
+  - path: deployment-api-worker-patch.yaml
   - path: service-patch.yaml
   - path: service-opnform-ingress-ingress-patch.yaml
     target:

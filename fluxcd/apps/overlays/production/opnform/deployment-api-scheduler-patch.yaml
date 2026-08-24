@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opnform-api-scheduler
+spec:
+  template:
+    spec:
+      containers:
+        - name: scheduler
+          securityContext:
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            # readOnlyRootFilesystem: Laravel storage is on the PVC; bootstrap/cache
+            # (compiled config) is written under the app root at boot; /tmp for PHP.
+            - name: tmp
+              mountPath: /tmp
+            - name: bootstrap-cache
+              mountPath: /usr/share/nginx/html/bootstrap/cache
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: bootstrap-cache
+          emptyDir: {}
