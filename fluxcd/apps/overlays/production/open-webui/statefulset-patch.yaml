@@ -54,6 +54,11 @@ spec:
               name: PLACEHOLDER_DATA
             - name: temple-of-time-open-webui-data
               mountPath: /app/backend/data
+            # readOnlyRootFilesystem: /tmp must be a writable emptyDir (Python tempfile,
+            # uploads). Declared here in the overlay because this patch's volumeMounts list
+            # replaces the base container's, dropping the base /tmp mount.
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: "500m"

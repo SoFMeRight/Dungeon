@@ -36,14 +36,14 @@ kubectl exec -n vault vault-0 -- vault operator init \
 
 ### 3. Store Unseal Keys in SOPS
 
-Edit the vault-unseal-keys.enc.yaml file with the keys from initialization:
+Edit the openbao-unseal-keys.enc.yaml file with the keys from initialization:
 
 ```bash
 # Edit the file
-vim vault-unseal-keys.enc.yaml
+vim openbao-unseal-keys.enc.yaml
 
 # Encrypt with SOPS
-sops --encrypt --in-place vault-unseal-keys.enc.yaml
+sops --encrypt --in-place openbao-unseal-keys.enc.yaml
 ```
 
 ### 4. Unseal Vault

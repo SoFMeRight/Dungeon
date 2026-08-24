@@ -7,7 +7,7 @@ VAULT_POD=$(kubectl get pod -n ${VAULT_NAMESPACE} -l app.kubernetes.io/name=vaul
 VAULT_SA_NAME="external-secrets-vault"
 
 # Get the Vault root token
-VAULT_ROOT_TOKEN=$(kubectl get secret vault-unseal-keys -n ${VAULT_NAMESPACE} -o jsonpath='{.data.vault-root}' | base64 -d)
+VAULT_ROOT_TOKEN=$(kubectl get secret openbao-unseal-keys -n ${VAULT_NAMESPACE} -o jsonpath='{.data.vault-root}' | base64 -d)
 
 # Get the JWT token and CA cert from the ServiceAccount token secret
 SA_JWT_TOKEN=$(kubectl get secret external-secrets-vault-token -n ${VAULT_NAMESPACE} -o jsonpath='{.data.token}' | base64 -d)
