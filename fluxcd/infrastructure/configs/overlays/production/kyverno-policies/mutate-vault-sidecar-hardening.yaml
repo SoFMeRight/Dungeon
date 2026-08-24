@@ -62,6 +62,22 @@ spec:
                     securityContext:
                       capabilities:
                         drop: [ALL]
+          # readOnlyRootFilesystem on all three. Each writes only to mounted volumes
+          # (openbao: /vault/data + /vault/config + /openbao/config; statsd: its /tmp is a
+          # read-only configmap mount and it doesn't write; bank-vaults: no rootfs writes
+          # observed) — verified RO-clean by canary before commit. No extra emptyDirs needed.
+          - list: "request.object.spec.containers"
+            preconditions:
+              all:
+                - key: "{{ element.name }}"
+                  operator: AnyIn
+                  value: [vault, bank-vaults, prometheus-exporter]
+            patchStrategicMerge:
+              spec:
+                containers:
+                  - (name): "{{ element.name }}"
+                    securityContext:
+                      readOnlyRootFilesystem: true
     - name: harden-vault-configurer-pod
       match:
         any:
