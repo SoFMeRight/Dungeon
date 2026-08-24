@@ -19,6 +19,8 @@ spec:
       containers:
         - name: anubis
           image: ghcr.io/techarohq/anubis:v1.27.0
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: DIFFICULTY
               value: "4"
@@ -37,3 +39,10 @@ spec:
             limits:
               memory: 512Mi
               cpu: 500m
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: anubis is a stateless proxy; /tmp is defensive scratch.
+        - name: tmp
+          emptyDir: {}
