@@ -783,8 +783,8 @@
     # not-ready (sealed) during a fresh bootstrap, so the configurer gets no endpoint and can
     # never init/unseal them (deadlock). Publish not-ready addresses so it can. (Per-pod services
     # already do; the main one doesn't, and bank-vaults doesn't manage this field, so it sticks.)
-    # If the configurer still can't init (mesh/timing), a fresh cluster can be bootstrapped by
-    # hand: `bao operator init` on openbao-0 via localhost, unseal, then Phase-5's restore runs.
+    # If the configurer still can't init (mesh/timing), the CUTOVER tasks below bootstrap a fresh
+    # cluster automatically: `bao operator init` on openbao-0 via localhost, unseal, then restore.
     - name: "CUTOVER: publish not-ready addresses on the openbao Service (cold-bootstrap reachability)"
       kubernetes.core.k8s:
         state: patched
@@ -796,7 +796,14 @@
           spec: {publishNotReadyAddresses: true}
       when: not (rehearse | bool)
 
-    - name: "CUTOVER: wait for openbao to report initialized (bank-vaults inits it empty)"
+    # COLD-BOOTSTRAP: bank-vaults does NOT reliably auto-init a fresh raft cluster here (the sidecar
+    # tries to JOIN rather than bootstrap and the configurer just waits) — proven in the live cutover,
+    # where openbao-0 sat uninitialized until inited by hand. Give bank-vaults a short grace window;
+    # if openbao-0 is still uninitialized, bootstrap it here (localhost, no mesh): init a single temp
+    # key + unseal, so the -force restore below can lay the OLD barrier + data back over it. Race-safe:
+    # the init is gated on "still uninitialized" and tolerates a bank-vaults init that lands first (the
+    # root-selection task then falls back to the secret's root instead of the temp one).
+    - name: "CUTOVER: grace window for bank-vaults to auto-init (best-effort, never fails)"
       kubernetes.core.k8s_exec:
         namespace: "{{ ns }}"
         pod: "{{ new }}-0"
@@ -804,8 +811,68 @@
         command: sh -c "wget -qO- '{{ bao_addr }}/v1/sys/health?{{ health_qs }}'"
       register: new_health
       until: ('"initialized":true' in (new_health.stdout | default('')))
-      retries: 60
+      retries: 6
       delay: 10
+      failed_when: false
+      when: not (rehearse | bool)
+
+    - name: "CUTOVER: is openbao-0 initialized yet?"
+      ansible.builtin.set_fact:
+        openbao_initialized: "{{ '\"initialized\":true' in (new_health.stdout | default('')) }}"
+      when: not (rehearse | bool)
+
+    - name: "CUTOVER: BOOTSTRAP openbao-0 by hand if bank-vaults didn't (single temp key, runs once)"
+      kubernetes.core.k8s_exec:
+        namespace: "{{ ns }}"
+        pod: "{{ new }}-0"
+        container: "{{ new }}"
+        command: >
+          sh -c "export VAULT_ADDR={{ bao_addr }};
+                 bao operator init -key-shares=1 -key-threshold=1 -format=json"
+      register: boot_init
+      failed_when: >
+        boot_init.rc != 0 and
+        ('already initialized' not in ((boot_init.stdout | default('')) ~ (boot_init.stderr | default(''))))
+      no_log: true
+      when:
+        - not (rehearse | bool)
+        - not (openbao_initialized | bool)
+
+    - name: "CUTOVER: parse the temp unseal key + root from the hand bootstrap (if it ran)"
+      ansible.builtin.set_fact:
+        boot_unseal: "{{ (boot_init.stdout | from_json).unseal_keys_b64[0] }}"
+        boot_root: "{{ (boot_init.stdout | from_json).root_token }}"
+      no_log: true
+      when:
+        - not (rehearse | bool)
+        - boot_init is defined
+        - "'unseal_keys_b64' in (boot_init.stdout | default(''))"
+
+    - name: "CUTOVER: unseal openbao-0 with the temp bootstrap key"
+      kubernetes.core.k8s_exec:
+        namespace: "{{ ns }}"
+        pod: "{{ new }}-0"
+        container: "{{ new }}"
+        command: >
+          sh -c "export VAULT_ADDR={{ bao_addr }};
+                 bao operator unseal '{{ boot_unseal }}'"
+      register: boot_unseal_res
+      failed_when: boot_unseal_res.rc != 0
+      no_log: true
+      when:
+        - not (rehearse | bool)
+        - boot_unseal is defined
+
+    - name: "CUTOVER: confirm openbao-0 is initialized (via grace window or hand bootstrap)"
+      kubernetes.core.k8s_exec:
+        namespace: "{{ ns }}"
+        pod: "{{ new }}-0"
+        container: "{{ new }}"
+        command: sh -c "wget -qO- '{{ bao_addr }}/v1/sys/health?{{ health_qs }}'"
+      register: post_boot_health
+      until: ('"initialized":true' in (post_boot_health.stdout | default('')))
+      retries: 12
+      delay: 5
       when: not (rehearse | bool)
 
     - name: "CUTOVER: copy the local snapshot back into openbao-0 (writable /vault/data, not RO /tmp)"
@@ -828,13 +895,22 @@
       failed_when: (in_pod_snap.stdout | trim | int) < 1024
       when: not (rehearse | bool)
 
-    - name: "CUTOVER: read the FRESH temp root token bank-vaults just generated (same secret, kept name)"
+    - name: "CUTOVER: read the root the freshly-initialized cluster currently holds (kept secret name)"
       kubernetes.core.k8s_info:
         api_version: v1
         kind: Secret
         namespace: "{{ ns }}"
         name: "{{ unseal_secret_name }}"
       register: new_secret
+      no_log: true
+      when: not (rehearse | bool)
+
+    # Which root authenticates against the empty cluster depends on WHO inited it: the hand bootstrap
+    # (boot_root, temp) or bank-vaults (in the secret). Prefer boot_root when it was minted; else the
+    # secret's root. This root only has to survive until the -force restore swaps the barrier back.
+    - name: "CUTOVER: pick the root that authenticates against the freshly-initialized cluster"
+      ansible.builtin.set_fact:
+        cutover_root: "{{ boot_root if (boot_root is defined and (boot_root | length) > 0) else (new_secret.resources[0].data['vault-root'] | b64decode) }}"
       no_log: true
       when: not (rehearse | bool)
 
@@ -845,7 +921,7 @@
         container: "{{ new }}"
         command: >
           sh -c "export VAULT_ADDR={{ bao_addr }};
-                 export VAULT_TOKEN='{{ new_secret.resources[0].data['vault-root'] | b64decode }}';
+                 export VAULT_TOKEN='{{ cutover_root }}';
                  bao operator raft snapshot restore -force {{ restore_in_pod }}"
       register: restore
       failed_when: restore.rc != 0
