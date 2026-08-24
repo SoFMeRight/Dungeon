@@ -18,4 +18,4 @@ spec:
               image: docker.io/busybox:1.38
           containers:
             - name: osticket-cron
-              image: ghcr.io/homelabhd/osticket:v0.0.1
+              image: ghcr.io/homelabhd/osticket:v1.18.4
