@@ -40,7 +40,11 @@ spec:
             # ipleek.com branding/theme (escape-hatch env; image ships stock when unset)
             - configMapRef:
                 name: echo-ip-branding
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
+            - name: tmp
+              mountPath: /tmp
             - name: compass-echo-ip-data
               mountPath: /data
               readOnly: true
@@ -50,6 +54,11 @@ spec:
             # in a future STS recreate.
             - name: compass-echo-ip-html
               mountPath: /html
+      volumes:
+        # readOnlyRootFilesystem: echoip is a static Go server (reads mmdb + baked
+        # templates); /tmp is defensive scratch only.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: compass-echo-ip-data
