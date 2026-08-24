@@ -24,12 +24,15 @@ spec:
           image: docker.io/henrygd/beszel:0.18.7
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
           volumeMounts:
             - name: gossip-stone-beszel-data
               mountPath: /beszel_data
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: 50m
@@ -37,6 +40,10 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+      volumes:
+        # readOnlyRootFilesystem: beszel writes runtime temp to /tmp (data is on the PVC).
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: gossip-stone-beszel-data
