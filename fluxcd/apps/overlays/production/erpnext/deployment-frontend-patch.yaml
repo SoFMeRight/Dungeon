@@ -31,7 +31,7 @@ spec:
             - name: tmp
               mountPath: /tmp
             - name: nginx-cache
-              mountPath: /var/cache/nginx
+              mountPath: /var/lib/nginx
             - name: nginx-run
               mountPath: /var/run
             - name: nginx-confd
