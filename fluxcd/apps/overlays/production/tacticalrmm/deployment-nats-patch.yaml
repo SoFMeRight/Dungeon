@@ -39,11 +39,13 @@ spec:
             - name: tactical-data
               mountPath: /opt/tactical
       containers:
+        # readOnlyRootFilesystem EXCEPTION: the tactical-nats entrypoint writes a generated
+        # config_watcher.sh into /usr/local/bin (a rootfs binary dir) at startup — cannot be
+        # emptyDir'd without hiding the image's binaries. Needs an image rebuild to relocate it.
         - name: nats
           image: docker.io/tacticalrmm/tactical-nats:1.5.2
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
             capabilities:
               drop: [ALL]
           resources:
@@ -53,13 +55,8 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
-          volumeMounts:
-            - name: tmp
-              mountPath: /tmp
       volumes:
         - $patch: replace
-        - name: tmp
-          emptyDir: {}
         - name: tactical-data
           persistentVolumeClaim:
             claimName: hookshot-tactical-data-pvc

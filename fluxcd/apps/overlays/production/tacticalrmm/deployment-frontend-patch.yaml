@@ -31,11 +31,14 @@ spec:
             - name: tactical-data
               mountPath: /opt/tactical
       containers:
+        # readOnlyRootFilesystem EXCEPTION: the tactical-frontend entrypoint injects runtime
+        # config by writing /usr/share/nginx/html/env-config.js into its baked web root, and
+        # the stock nginx init edits /etc/nginx/conf.d in place — rootfs writes that cannot be
+        # emptyDir'd without erasing baked content. Needs an image rebuild to relocate them.
         - name: frontend
           image: docker.io/tacticalrmm/tactical-frontend:1.5.2
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
             capabilities:
               drop: [ALL]
           resources:
@@ -45,25 +48,8 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
-          volumeMounts:
-            - name: tmp
-              mountPath: /tmp
-            - name: nginx-cache
-              mountPath: /var/cache/nginx
-            - name: nginx-run
-              mountPath: /var/run
-            - name: nginx-log
-              mountPath: /var/log/nginx
       volumes:
         - $patch: replace
-        - name: tmp
-          emptyDir: {}
-        - name: nginx-cache
-          emptyDir: {}
-        - name: nginx-run
-          emptyDir: {}
-        - name: nginx-log
-          emptyDir: {}
         - name: tactical-data
           persistentVolumeClaim:
             claimName: hookshot-tactical-data-pvc
