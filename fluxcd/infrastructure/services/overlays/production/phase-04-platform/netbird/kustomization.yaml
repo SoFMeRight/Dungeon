@@ -76,7 +76,7 @@ patches:
   - patch: |-
       - op: replace
         path: /spec/secretStoreRef/name
-        value: vault-zeldas-letter
+        value: openbao-zeldas-letter
       - op: replace
         path: /spec/data/0/remoteRef/key
         value: apps/netbird

@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: zeldas-lullaby
 
 resources:
-  - ../../../base/vault           # Vault CR base
+  - ../../../base/openbao           # Vault CR base
   - vault-unseal-keys.enc.yaml    # SOPS-encrypted unseal keys (reinitialized 2025-09-26)
   - vault-oidc-credentials.enc.yaml  # SOPS-encrypted OIDC client secret for Zitadel SSO
   - external-secrets-sa.yaml      # ServiceAccount for External Secrets Kubernetes auth
@@ -19,7 +19,7 @@ patches:
   - path: vault-cr-patch.yaml
     target:
       kind: Vault
-      name: vault
+      name: openbao
   - path: vault-sa-auth-delegator-patch.yaml
     target:
       kind: ClusterRoleBinding

@@ -1,7 +1,7 @@
 apiVersion: vault.banzaicloud.com/v1alpha1
 kind: Vault
 metadata:
-  name: vault
+  name: openbao
 spec:
   size: 3
   image: PLACEHOLDER_VAULT_IMAGE
@@ -21,7 +21,7 @@ spec:
         path: /vault/data
         node_id: "${ env `POD_NAME` }"
         retry_join:
-          - leader_api_addr: "http://vault-0.zeldas-lullaby.svc.cluster.local:8200"
+          - leader_api_addr: "http://openbao-0.zeldas-lullaby.svc.cluster.local:8200"
     listener:
       tcp:
         address: "0.0.0.0:8200"
@@ -34,7 +34,7 @@ spec:
   # Volume claim templates for raft storage (one per pod)
   volumeClaimTemplates:
     - metadata:
-        name: vault-data
+        name: openbao-data
       spec:
         accessModes:
           - ReadWriteOnce
@@ -45,7 +45,7 @@ spec:
 
   # Volume mounts for raft storage
   volumeMounts:
-    - name: vault-data
+    - name: openbao-data
       mountPath: /vault/data
 
   # Resources
@@ -99,5 +99,5 @@ spec:
                 - key: app.kubernetes.io/name
                   operator: In
                   values:
-                    - vault
+                    - openbao
             topologyKey: kubernetes.io/hostname

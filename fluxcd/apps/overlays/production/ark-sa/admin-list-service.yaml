@@ -6,7 +6,7 @@ metadata:
 spec:
   refreshInterval: 30s
   secretStoreRef:
-    name: vault-operationtimecapsule
+    name: openbao-operationtimecapsule
     kind: ClusterSecretStore
   target:
     name: ark-sa-tmc-admin-list-source

@@ -13,7 +13,7 @@ patches:
         value: jcr-pcfae-dungeon-pull-secret
       - op: replace
         path: /spec/secretStoreRef/name
-        value: vault-zeldas-letter
+        value: openbao-zeldas-letter
       - op: replace
         path: /spec/target/name
         value: jcr-pcfae-dungeon-pull-secret

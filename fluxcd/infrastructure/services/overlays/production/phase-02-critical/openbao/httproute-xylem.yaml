@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: vault-xylem
+  name: openbao-xylem
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Administration (Zelda's Lullaby🎵)"
@@ -17,5 +17,5 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: vault
+        - name: openbao
           port: 8200

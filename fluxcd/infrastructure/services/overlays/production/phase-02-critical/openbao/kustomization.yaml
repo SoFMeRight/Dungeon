@@ -4,11 +4,11 @@ kind: Kustomization
 namespace: zeldas-lullaby
 
 resources:
-  - ../../../../base/vault
+  - ../../../../base/openbao
   - httproute-xylem.yaml
 
 patches:
   - path: pvc-patch.yaml
     target:
       kind: PersistentVolumeClaim
-      name: vault-data
+      name: openbao-data

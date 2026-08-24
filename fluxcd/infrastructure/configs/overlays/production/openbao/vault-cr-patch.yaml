@@ -1,7 +1,7 @@
 apiVersion: vault.banzaicloud.com/v1alpha1
 kind: Vault
 metadata:
-  name: vault
+  name: openbao
 spec:
   image: docker.io/openbao/openbao:2.6.1
   envsConfig:
@@ -31,11 +31,11 @@ spec:
         drop:
           - ALL
     volumeMounts:
-      - name: vault-config
+      - name: openbao-config
         mountPath: /vault/config
-      - name: vault-data
+      - name: openbao-data
         mountPath: /vault/data
-      - name: vault-config
+      - name: openbao-config
         mountPath: /openbao/config
   unsealConfig:
     kubernetes:

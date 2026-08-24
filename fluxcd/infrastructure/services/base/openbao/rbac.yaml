@@ -6,7 +6,7 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: vault-secrets-reader
+  name: openbao-secrets-reader
 rules:
 - apiGroups: [""]
   resources: ["secrets"]
@@ -15,11 +15,11 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: vault-secrets-reader
+  name: openbao-secrets-reader
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: vault-secrets-reader
+  name: openbao-secrets-reader
 subjects:
 - kind: ServiceAccount
   name: default

@@ -68,7 +68,7 @@ spec:
                 secretKeyRef:
                   name: appflowy-shared-secrets
                   key: GOTRUE_ADMIN_PASSWORD
-            # S3/RGW credentials from separate secret (vault-zeldas-letter)
+            # S3/RGW credentials from separate secret (openbao-zeldas-letter)
             - name: APPFLOWY_S3_ACCESS_KEY
               valueFrom:
                 secretKeyRef:

@@ -14,7 +14,7 @@ spec:
         - name: appflowy-worker
           image: docker.io/appflowyinc/appflowy_worker:0.17.10
           env:
-            # Override S3 credentials to use separate secret (vault-zeldas-letter)
+            # Override S3 credentials to use separate secret (openbao-zeldas-letter)
             - name: APPFLOWY_S3_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
