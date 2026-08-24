@@ -12,7 +12,7 @@ spec:
     options: {}  # Empty options object required by CRD
     kubernetes:
       secretNamespace: PLACEHOLDER_NAMESPACE
-      secretName: vault-unseal-keys
+      secretName: openbao-unseal-keys
 
   # Vault configuration for HA with Raft storage
   config:
