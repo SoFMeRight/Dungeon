@@ -13,6 +13,11 @@ spec:
   vaultPodSpec:
     imagePullSecrets:
       - name: cr-pcfae-admin-pull-secret
+    # openbao writes a temp file to /tmp during raft snapshot restore; readOnlyRootFilesystem
+    # (kyverno hardening) makes / RO, so give it a writable /tmp emptyDir.
+    volumes:
+      - name: tmp
+        emptyDir: {}
   vaultLabels:
     policy.prplanit.com/ingress: "true"
     policy.prplanit.com/cap.oidc: "true"
@@ -38,6 +43,8 @@ spec:
         mountPath: /vault/data
       - name: vault-config
         mountPath: /openbao/config
+      - name: tmp
+        mountPath: /tmp
   unsealConfig:
     kubernetes:
       secretNamespace: zeldas-lullaby
