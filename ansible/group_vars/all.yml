@@ -2,8 +2,8 @@
 # (ansible/k8s/provision-hosts.yml) and Renovate tracks (k8s-nodes group: patch
 # bumps auto-PR within the minor; a minor bump is a deliberate, approved move in
 # lockstep with the cluster's kubernetes minor).
-crio_version: "1.35.6"
-kubernetes_version: "1.35.7"
+crio_version: "1.35.7"
+kubernetes_version: "1.35.8"
 
 # ── Fleet OS-patch wiring ────────────────────────────────────────────────────
 # Environment-specific values the maintenance play reads — override per-inventory
