@@ -45,6 +45,8 @@ spec:
       containers:
         - name: calcom
           image: docker.io/calcom/cal.com:v6.2.0
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: NEXT_PUBLIC_WEBAPP_URL
               value: https://cal.prplanit.com
@@ -57,8 +59,13 @@ spec:
               mountPath: /calcom/.yarn
             - name: turbo-dir
               mountPath: /calcom/.turbo
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - name: yarn-dir
           emptyDir: {}
         - name: turbo-dir
+          emptyDir: {}
+        # readOnlyRootFilesystem: DB-backed; yarn/turbo on emptyDirs + /tmp scratch.
+        - name: tmp
           emptyDir: {}

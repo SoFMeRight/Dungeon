@@ -15,6 +15,8 @@ spec:
       containers:
         - name: frontend
           image: docker.io/frappe/erpnext:v15.119.1
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: UPSTREAM_REAL_IP_ADDRESS
               value: "172.22.30.71"
@@ -25,6 +27,15 @@ spec:
             limits:
               cpu: "1000m"
               memory: "2Gi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /var/run
+            - name: nginx-confd
+              mountPath: /etc/nginx/conf.d
       volumes:
         - name: sites-data
           persistentVolumeClaim:
@@ -32,3 +43,12 @@ spec:
         - name: logs-data
           persistentVolumeClaim:
             claimName: hyrule-castle-erpnext-logs
+        # readOnlyRootFilesystem: frappe nginx templates config into conf.d; cache/pid/tmp scratch.
+        - name: tmp
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}
+        - name: nginx-confd
+          emptyDir: {}
