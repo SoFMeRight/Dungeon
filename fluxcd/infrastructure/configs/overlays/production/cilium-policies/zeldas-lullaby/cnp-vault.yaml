@@ -11,7 +11,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      app: openbao
+      app: vault
   ingress:
     - fromEndpoints:
         - matchLabels:

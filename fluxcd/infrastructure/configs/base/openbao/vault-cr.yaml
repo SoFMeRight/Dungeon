@@ -99,5 +99,5 @@ spec:
                 - key: app.kubernetes.io/name
                   operator: In
                   values:
-                    - openbao
+                    - vault
             topologyKey: kubernetes.io/hostname

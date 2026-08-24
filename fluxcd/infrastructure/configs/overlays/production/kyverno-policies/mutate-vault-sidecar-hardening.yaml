@@ -8,11 +8,11 @@ metadata:
       The bank-vaults operator injects sidecars (bank-vaults, prometheus-exporter) into the
       Vault raft pods and runs a vault-configurer Deployment, none with a container
       securityContext, and the Vault CRD has no field for them. This hardens the CR-managed
-      pods (raft pods app.kubernetes.io/name=vault + the openbao-configurator pod) that the
+      pods (raft pods app.kubernetes.io/name=vault + the vault-configurator pod) that the
       per-app-overlay doctrine can't reach. Rule 1 (foreach): adds allowPrivilegeEscalation
       :false to EVERY container (merges, so the vault container keeps its CR-managed caps —
       never clobbered) and drop-ALL to the bank-vaults/prometheus-exporter containers. Rule
-      2: seccomp RuntimeDefault + runAsNonRoot on the openbao-configurator pod only (its
+      2: seccomp RuntimeDefault + runAsNonRoot on the vault-configurator pod only (its
       bank-vaults container runs uid 65534). NOT applied to the raft pods: pod-level
       runAsNonRoot is impossible there (openbao image has a non-numeric user ->
       CreateContainerConfigError). readOnlyRootFilesystem is left off (runtime writes).
@@ -31,13 +31,13 @@ spec:
               namespaces: [zeldas-lullaby]
               selector:
                 matchLabels:
-                  app.kubernetes.io/name: openbao
+                  app.kubernetes.io/name: vault
           - resources:
               kinds: [Pod]
               namespaces: [zeldas-lullaby]
               selector:
                 matchLabels:
-                  app.kubernetes.io/name: openbao-configurator
+                  app.kubernetes.io/name: vault-configurator
       mutate:
         foreach:
           # allowPrivilegeEscalation:false on EVERY container (merge — vault keeps its caps)
@@ -116,7 +116,7 @@ spec:
               namespaces: [zeldas-lullaby]
               selector:
                 matchLabels:
-                  app.kubernetes.io/name: openbao-configurator
+                  app.kubernetes.io/name: vault-configurator
       mutate:
         patchStrategicMerge:
           spec:

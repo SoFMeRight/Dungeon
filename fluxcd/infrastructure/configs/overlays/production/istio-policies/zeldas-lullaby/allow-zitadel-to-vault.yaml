@@ -9,7 +9,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: openbao
+      app.kubernetes.io/name: vault
   action: ALLOW
   rules:
     - from:
