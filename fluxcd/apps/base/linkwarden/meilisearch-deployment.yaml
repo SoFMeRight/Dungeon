@@ -26,6 +26,7 @@ spec:
           image: PLACEHOLDER_IMAGE
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -49,6 +50,8 @@ spec:
           volumeMounts:
             - name: meilisearch-data
               mountPath: /meili_data
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               memory: "256Mi"
@@ -68,6 +71,11 @@ spec:
               port: 7700
             initialDelaySeconds: 5
             periodSeconds: 5
+      volumes:
+        # readOnlyRootFilesystem: meilisearch writes dumps/snapshots/uploads to /tmp
+        # (the index itself lives on the /meili_data PVC).
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: meilisearch-data
