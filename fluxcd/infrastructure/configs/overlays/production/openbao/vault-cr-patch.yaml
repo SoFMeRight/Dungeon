@@ -10,14 +10,14 @@ spec:
         secretKeyRef:
           name: vault-oidc-credentials
           key: client-secret
+    # raft snapshot restore writes a temp file via os.CreateTemp; readOnlyRootFilesystem makes
+    # /tmp RO, so point TMPDIR at the writable raft PVC (/vault/data) instead of adding a volume
+    # (bank-vaults' vaultPodSpec.volumes replaces its auto-generated set and breaks the STS).
+    - name: TMPDIR
+      value: /vault/data
   vaultPodSpec:
     imagePullSecrets:
       - name: cr-pcfae-admin-pull-secret
-    # openbao writes a temp file to /tmp during raft snapshot restore; readOnlyRootFilesystem
-    # (kyverno hardening) makes / RO, so give it a writable /tmp emptyDir.
-    volumes:
-      - name: tmp
-        emptyDir: {}
   vaultLabels:
     policy.prplanit.com/ingress: "true"
     policy.prplanit.com/cap.oidc: "true"
@@ -43,8 +43,6 @@ spec:
         mountPath: /vault/data
       - name: vault-config
         mountPath: /openbao/config
-      - name: tmp
-        mountPath: /tmp
   unsealConfig:
     kubernetes:
       secretNamespace: zeldas-lullaby
