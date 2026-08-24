@@ -17,3 +17,20 @@ spec:
       containers:
         - name: shlink-web-client
           image: docker.io/shlinkio/shlink-web-client:4.8.1
+          securityContext:
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /var/run
+      volumes:
+        # readOnlyRootFilesystem: nginx serving the SPA; cache/pid/tmp scratch.
+        - name: tmp
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}

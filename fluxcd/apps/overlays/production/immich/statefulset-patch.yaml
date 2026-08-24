@@ -53,18 +53,31 @@ spec:
               mountPath: /var/lib/postgresql/data
       containers:
         - name: immich-server
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - name: library
               mountPath: /usr/src/app/upload
+            - name: tmp-server
+              mountPath: /tmp
         - name: immich-machine-learning
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - name: model-cache
               mountPath: /cache
+            - name: tmp-ml
+              mountPath: /tmp
         - name: postgres
           volumeMounts:
             - name: postgres
               mountPath: /var/lib/postgresql/data
       volumes:
+        # readOnlyRootFilesystem: uploads/cache on PVCs; per-container /tmp scratch (ffmpeg/ml).
+        - name: tmp-server
+          emptyDir: {}
+        - name: tmp-ml
+          emptyDir: {}
         - name: library
           persistentVolumeClaim:
             claimName: optcp-immich-library

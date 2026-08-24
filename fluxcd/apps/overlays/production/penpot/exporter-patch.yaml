@@ -16,8 +16,16 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
             seccompProfile:
               type: RuntimeDefault
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: exporter runs headless chrome; /tmp for browser scratch.
+        - name: tmp
+          emptyDir: {}

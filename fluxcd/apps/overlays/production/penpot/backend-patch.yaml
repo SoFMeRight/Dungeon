@@ -24,6 +24,7 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -55,8 +56,13 @@ spec:
           volumeMounts:
             - name: penpot-assets
               mountPath: /opt/data/assets
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - name: penpot-assets
           persistentVolumeClaim:
             claimName: penpot-assets-pvc
+        # readOnlyRootFilesystem: assets on the PVC; JVM temp/uploads on /tmp.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates: []

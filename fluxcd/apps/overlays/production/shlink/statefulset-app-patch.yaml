@@ -17,8 +17,22 @@ spec:
       containers:
         - name: shlink-app
           image: docker.io/shlinkio/shlink:5.1.5
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: TZ
               value: "America/Los_Angeles"
             - name: DEFAULT_DOMAIN
               value: "sh.uni2.cc"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: shlink-data
+              mountPath: /etc/shlink/data
+      volumes:
+        # readOnlyRootFilesystem: RoadRunner/shlink write cache/locks/GeoLite2 under
+        # /etc/shlink/data (URLs live in the external DB); /tmp scratch.
+        - name: tmp
+          emptyDir: {}
+        - name: shlink-data
+          emptyDir: {}

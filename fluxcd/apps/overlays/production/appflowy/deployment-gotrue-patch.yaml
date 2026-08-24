@@ -13,6 +13,8 @@ spec:
       containers:
         - name: gotrue
           image: docker.io/appflowyinc/gotrue:0.17.10
+          securityContext:
+            readOnlyRootFilesystem: true
           ports:
             - name: http
               containerPort: 9999
@@ -108,3 +110,10 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: gotrue is a stateless Go auth service (DB-backed); /tmp scratch.
+        - name: tmp
+          emptyDir: {}

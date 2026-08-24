@@ -13,6 +13,8 @@ spec:
       containers:
         - name: appflowy-worker
           image: docker.io/appflowyinc/appflowy_worker:0.17.10
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             # Override S3 credentials to use separate secret (openbao-zeldas-letter)
             - name: APPFLOWY_S3_ACCESS_KEY
@@ -32,3 +34,10 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: worker is stateless (S3/DB-backed); /tmp scratch.
+        - name: tmp
+          emptyDir: {}

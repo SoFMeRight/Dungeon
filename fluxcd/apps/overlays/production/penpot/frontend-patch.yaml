@@ -20,6 +20,7 @@ spec:
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -35,8 +36,25 @@ spec:
           volumeMounts:
             - name: penpot-assets
               mountPath: /opt/data/assets
+            - name: tmp
+              mountPath: /tmp
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: nginx-run
+              mountPath: /var/run
+            - name: nginx-confd
+              mountPath: /etc/nginx/conf.d
       volumes:
         - name: penpot-assets
           persistentVolumeClaim:
             claimName: penpot-assets-pvc
+        # readOnlyRootFilesystem: nginx frontend templates config into conf.d; cache/pid/tmp scratch.
+        - name: tmp
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
+        - name: nginx-run
+          emptyDir: {}
+        - name: nginx-confd
+          emptyDir: {}
   volumeClaimTemplates: []
