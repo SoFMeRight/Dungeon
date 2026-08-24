@@ -1,16 +1,16 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: vault
+  name: openbao
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: openbao-secrets-reader
 rules:
-- apiGroups: [""]
-  resources: ["secrets"]
-  verbs: ["create", "get", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create", "get", "update", "patch"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -21,7 +21,7 @@ roleRef:
   kind: Role
   name: openbao-secrets-reader
 subjects:
-- kind: ServiceAccount
-  name: default
-- kind: ServiceAccount
-  name: vault
+  - kind: ServiceAccount
+    name: default
+  - kind: ServiceAccount
+    name: openbao

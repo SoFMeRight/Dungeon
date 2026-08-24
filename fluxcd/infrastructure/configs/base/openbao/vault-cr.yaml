@@ -76,7 +76,7 @@ spec:
   serviceRegistrationEnabled: false
 
   # Use the vault service account
-  serviceAccount: vault
+  serviceAccount: openbao
 
   # Fix statsd exporter image with full registry path
   statsdImage: docker.io/prom/statsd-exporter:v0.29.0

@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/zeldas-lullaby/sa/vault
+              - cluster.local/ns/zeldas-lullaby/sa/openbao
       to:
         - operation:
             # 8201 = raft cluster port (steady state); 8200 = API, needed for the raft bootstrap
