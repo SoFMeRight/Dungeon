@@ -11,7 +11,7 @@ resources:
   - ceph-rgw  # Ceph RGW keyring for S3 object storage
   - ceph-rook-ceph  # Rook external Ceph cluster connection secrets
   - volume-snapshot-class  # VolumeSnapshotClass (requires snapshot-controller CRDs)
-  - vault  # Bank-Vaults with SOPS-encrypted keys
+  - openbao  # Bank-Vaults (openbao) with SOPS-encrypted keys
   - velero  # Backup and disaster recovery credentials
   - zitadel  # Identity and Access Management
   - adguard  # DNS filtering and ad blocking

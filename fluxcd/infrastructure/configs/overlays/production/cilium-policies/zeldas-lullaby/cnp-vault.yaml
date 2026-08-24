@@ -4,7 +4,7 @@ metadata:
   name: allow-vault-internal
 spec:
   description: >-
-    Allow external-secrets pods, the zitadel-admin-sa-to-vault Job, and Alloy
+    Allow external-secrets pods, the zitadel-admin-sa-to-openbao Job, and Alloy
     (host/remote-node) to reach vault on 8200/TCP. Also LAN-only for vault UI access.
   enableDefaultDeny:
     ingress: false
@@ -20,11 +20,11 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
-    # zitadel-admin-sa-to-vault Job pushes the zitadel admin SA token into Vault
+    # zitadel-admin-sa-to-openbao Job pushes the zitadel admin SA token into Vault
     # (zeldas-letter/apps/zitadel); external-secrets reads it back via admin-sa-externalsecret.
     - fromEndpoints:
         - matchLabels:
-            app.kubernetes.io/name: zitadel-admin-sa-to-vault
+            app.kubernetes.io/name: zitadel-admin-sa-to-openbao
       toPorts:
         - ports:
             - port: "8200"

@@ -4,4 +4,4 @@ kind: Kustomization
 resources:
   - ./adguard
   - ./chrony
-  - ./vault
+  - ./openbao

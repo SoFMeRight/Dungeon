@@ -44,7 +44,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: zitadel-admin-sa-to-vault
+  name: zitadel-admin-sa-to-openbao
 spec:
   template:
     spec:

@@ -1,4 +1,4 @@
-# The zitadel-admin-sa-to-vault Job (runs as sa/zitadel) pushes the admin SA token
+# The zitadel-admin-sa-to-openbao Job (runs as sa/zitadel) pushes the admin SA token
 # into Vault at zeldas-letter/apps/zitadel; external-secrets reads it back. Mirrors
 # allow-external-secrets-to-vault. sa/zitadel is zitadel's app identity (STS + jobs),
 # already granted to postgres/redis by allow-zitadel-to-zitadel-{postgres,redis}.
