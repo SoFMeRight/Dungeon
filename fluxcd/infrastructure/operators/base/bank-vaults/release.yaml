@@ -26,10 +26,10 @@ spec:
     resources:
       requests:
         cpu: 5m
-        memory: 96Mi
+        memory: 128Mi
       limits:
         cpu: 50m
-        memory: 128Mi
+        memory: 192Mi
     webhook:
       enabled: true
       image:
