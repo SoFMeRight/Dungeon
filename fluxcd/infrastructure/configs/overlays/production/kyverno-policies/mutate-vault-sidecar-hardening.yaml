@@ -5,47 +5,76 @@ metadata:
   annotations:
     policies.kyverno.io/title: Mutate Vault Sidecar Hardening
     policies.kyverno.io/description: >-
-      bank-vaults injects the "bank-vaults" (unseal/configurer) and "prometheus-exporter"
-      sidecars into the Vault raft pods with no container securityContext, and the Vault
-      CRD has no field for them. This foreach targets ONLY those two sidecars by name
-      (precondition) and sets their securityContext directly — it never touches the vault
-      container (whose caps are CR-managed, and whose openbao image declares a NON-NUMERIC
-      user, so pod-level runAsNonRoot is impossible without breaking it with
-      CreateContainerConfigError — deliberately omitted). failurePolicy: Ignore is required
-      because Kyverno runs in this same namespace (zeldas-lullaby): with the default Fail a
-      webhook-rebuild blip blocks the Vault StatefulSet from creating pods. ADMISSION-TIME
-      ONLY — applies on the next vault pod roll.
+      The bank-vaults operator injects sidecars (bank-vaults, prometheus-exporter) into the
+      Vault raft pods and runs a vault-configurer Deployment, none with a container
+      securityContext, and the Vault CRD has no field for them. This hardens the CR-managed
+      pods (raft pods app.kubernetes.io/name=vault + the vault-configurator pod) that the
+      per-app-overlay doctrine can't reach. Rule 1 (foreach): adds allowPrivilegeEscalation
+      :false to EVERY container (merges, so the vault container keeps its CR-managed caps —
+      never clobbered) and drop-ALL to the bank-vaults/prometheus-exporter containers. Rule
+      2: seccomp RuntimeDefault + runAsNonRoot on the vault-configurator pod only (its
+      bank-vaults container runs uid 65534). NOT applied to the raft pods: pod-level
+      runAsNonRoot is impossible there (openbao image has a non-numeric user ->
+      CreateContainerConfigError). readOnlyRootFilesystem is left off (runtime writes).
+      failurePolicy: Ignore is required — Kyverno shares this namespace (zeldas-lullaby), so
+      a Fail webhook-rebuild blip would block Vault StatefulSet pod creation. Validate with
+      kubectl create --dry-run=server before rolling real pods. ADMISSION-TIME ONLY.
 spec:
   background: true
   failurePolicy: Ignore
   rules:
-    - name: harden-vault-sidecars
+    - name: harden-vault-cr-container-security
       match:
         any:
           - resources:
-              kinds:
-                - Pod
-              namespaces:
-                - zeldas-lullaby
+              kinds: [Pod]
+              namespaces: [zeldas-lullaby]
               selector:
                 matchLabels:
                   app.kubernetes.io/name: vault
+          - resources:
+              kinds: [Pod]
+              namespaces: [zeldas-lullaby]
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: vault-configurator
       mutate:
         foreach:
+          # allowPrivilegeEscalation:false on EVERY container (merge — vault keeps its caps)
           - list: "request.object.spec.containers"
-            preconditions:
-              all:
-                - key: "{{ element.name }}"
-                  operator: AnyIn
-                  value:
-                    - bank-vaults
-                    - prometheus-exporter
             patchStrategicMerge:
               spec:
                 containers:
                   - (name): "{{ element.name }}"
                     securityContext:
                       allowPrivilegeEscalation: false
+          # drop-ALL caps on the operator sidecar containers (raft sidecars + configurer)
+          - list: "request.object.spec.containers"
+            preconditions:
+              all:
+                - key: "{{ element.name }}"
+                  operator: AnyIn
+                  value: [bank-vaults, prometheus-exporter]
+            patchStrategicMerge:
+              spec:
+                containers:
+                  - (name): "{{ element.name }}"
+                    securityContext:
                       capabilities:
-                        drop:
-                          - ALL
+                        drop: [ALL]
+    - name: harden-vault-configurer-pod
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              namespaces: [zeldas-lullaby]
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: vault-configurator
+      mutate:
+        patchStrategicMerge:
+          spec:
+            securityContext:
+              +(seccompProfile):
+                type: RuntimeDefault
+              +(runAsNonRoot): true
