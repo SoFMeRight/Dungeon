@@ -27,6 +27,18 @@ spec:
     env:
       - name: TMPDIR
         value: /vault/data
+    # Sealed-tolerant liveness (sealedcode/uninitcode=200): bank-vaults' default probe returns
+    # 503 while sealed and kills the pod in ~30s — fatal on a COLD start (all nodes sealed at
+    # once) where the configurer needs a stable window to init+unseal. Unsealed nodes still pass.
+    livenessProbe:
+      httpGet:
+        path: /v1/sys/health?standbyok=true&perfstandbyok=true&sealedcode=200&uninitcode=200&drsecondarycode=200
+        port: api-port
+        scheme: HTTP
+      failureThreshold: 3
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 3
     securityContext:
       capabilities:
         add:
