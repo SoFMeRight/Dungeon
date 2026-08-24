@@ -21,12 +21,20 @@
       "Bash(done)",
       "Bash(find:*)"
     ],
-    "deny": [],
+    "deny": [
+      "Bash(git clean:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git checkout --:*)",
+      "Bash(git checkout .:*)"
+    ],
     "ask": [
       "Bash(kubectl apply:*)",
       "Bash(kubectl patch:*)",
       "Bash(kubectl edit:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(git restore:*)",
+      "Bash(git reset --keep:*)",
+      "Bash(git reset --merge:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
