@@ -15,9 +15,13 @@ spec:
       containers:
         - name: umami
           image: ghcr.io/umami-software/umami:postgresql-latest
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - name: gossip-stone-umami-data
               mountPath: /app/data
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: 100m
@@ -25,6 +29,10 @@ spec:
             limits:
               cpu: 1000m
               memory: 1Gi
+      volumes:
+        # readOnlyRootFilesystem: umami data on PVC; Next.js/Node use /tmp scratch.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: gossip-stone-umami-data
