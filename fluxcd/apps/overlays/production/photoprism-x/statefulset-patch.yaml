@@ -14,6 +14,8 @@ spec:
         fsGroup: 1000
       containers:
         - name: photoprism
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: PHOTOPRISM_DISABLE_TLS
               value: "true"
@@ -21,3 +23,10 @@ spec:
               value: "false"
             - name: PHOTOPRISM_DISABLE_CHOWN
               value: "true"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: storage/originals on PVCs; /tmp for thumbnail/convert scratch.
+        - name: tmp
+          emptyDir: {}

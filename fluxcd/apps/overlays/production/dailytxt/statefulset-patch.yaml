@@ -44,6 +44,8 @@ spec:
       containers:
         - name: dailytxt
           image: docker.io/phitux/dailytxt:2.6.2
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: ALLOWED_HOSTS
               value: "shiplog.pcfae.com"
@@ -56,6 +58,14 @@ spec:
               subPath: default.conf
             - name: html
               mountPath: /usr/share/nginx/html
+            - name: tmp
+              mountPath: /tmp
+            - name: var-run
+              mountPath: /var/run
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+            - name: var-log
+              mountPath: /var/log
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -67,3 +77,12 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 4Mi
+        # readOnlyRootFilesystem: nginx + supervisord need writable run/cache/log; /tmp scratch.
+        - name: tmp
+          emptyDir: {}
+        - name: var-run
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
+        - name: var-log
+          emptyDir: {}

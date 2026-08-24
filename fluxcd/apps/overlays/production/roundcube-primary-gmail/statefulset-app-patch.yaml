@@ -16,6 +16,8 @@ spec:
       containers:
         - name: roundcube
           image: docker.io/roundcube/roundcubemail:1.7.3-fpm-alpine-nonroot
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: ROUNDCUBEMAIL_SKIN
               value: "elastic"
@@ -30,8 +32,14 @@ spec:
           volumeMounts:
             - name: pedestal-of-time-roundcube-primary-gmail-html
               mountPath: /var/www/html
+            - name: roundcube-tmp
+              mountPath: /tmp
+            - name: roundcube-run
+              mountPath: /var/run
         - name: nginx
           image: docker.io/nginxinc/nginx-unprivileged:1.31-alpine
+          securityContext:
+            readOnlyRootFilesystem: true
           volumeMounts:
             - $patch: delete
               name: html
@@ -41,6 +49,20 @@ spec:
             - name: nginx-config
               mountPath: /etc/nginx/conf.d/default.conf
               subPath: default.conf
+            - name: nginx-tmp
+              mountPath: /tmp
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+      volumes:
+        # readOnlyRootFilesystem: PHP-FPM run dir + nginx-unprivileged pid/cache; /tmp scratch.
+        - name: roundcube-tmp
+          emptyDir: {}
+        - name: roundcube-run
+          emptyDir: {}
+        - name: nginx-tmp
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: pedestal-of-time-roundcube-primary-gmail-html
