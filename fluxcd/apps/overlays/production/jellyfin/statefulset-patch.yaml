@@ -53,6 +53,8 @@ spec:
       containers:
         - name: jellyfin
           image: docker.io/jellyfin/jellyfin:10.11.11
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: JELLYFIN_PublishedServerUrl
               value: "https://jfish.optcp.com"
@@ -61,7 +63,12 @@ spec:
               mountPath: /config
             - name: cache
               mountPath: /cache
+            - name: tmp
+              mountPath: /tmp
       volumes:
+        # readOnlyRootFilesystem: /config + /cache on PVCs; /tmp for transcode/scratch.
+        - name: tmp
+          emptyDir: {}
         - name: config
           persistentVolumeClaim:
             claimName: optcp-jellyfin-config

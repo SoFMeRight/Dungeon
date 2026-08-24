@@ -16,3 +16,12 @@ spec:
       containers:
         - name: wikijs
           image: ghcr.io/requarks/wiki:2
+          securityContext:
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: content lives in the external postgres DB; /tmp scratch.
+        - name: tmp
+          emptyDir: {}

@@ -21,6 +21,7 @@ spec:
           image: docker.io/joplin/server:3.7.1
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -29,3 +30,10 @@ spec:
               value: "https://joplin.pcfae.com"
             - name: PM2_HOME
               value: /tmp/pm2
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: data in the external postgres DB; PM2_HOME + scratch on /tmp.
+        - name: tmp
+          emptyDir: {}

@@ -16,12 +16,20 @@ spec:
       containers:
         - name: ghost
           image: docker.io/library/ghost:5-alpine
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: url
               value: "https://blog.sofmeright.com/"
           volumeMounts:
             - name: temple-of-time-ghost-data
               mountPath: /var/lib/ghost/content
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: content on the PVC; Node/Ghost use /tmp scratch.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: temple-of-time-ghost-data

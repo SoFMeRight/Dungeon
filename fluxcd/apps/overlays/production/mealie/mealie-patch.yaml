@@ -14,6 +14,8 @@ spec:
       containers:
         - name: mealie
           image: ghcr.io/mealie-recipes/mealie:nightly
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: BASE_URL
               value: "https://mealie.yesimvegan.com"
@@ -24,7 +26,12 @@ spec:
           volumeMounts:
             - name: mealie-data
               mountPath: /app/data
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - name: mealie-data
           persistentVolumeClaim:
             claimName: optcp-mealie-data
+        # readOnlyRootFilesystem: app data on the PVC; /tmp scratch.
+        - name: tmp
+          emptyDir: {}
