@@ -114,7 +114,7 @@ stencils:
     label: updated
     message: "{commit.date}"        # YYYY-MM-DD — only churns the README when the date changes
     color: "#236144"
-  cluster-inventory: {type: k8s-inventory}
+  cluster-inventory: {type: k8s-inventory, catalog: .stagefreight-catalog.yml}
 
   # ── AI stencils (lazy — ollama is only called when a notification dispatches) ──
   ci-detail:

@@ -1,0 +1,16 @@
+# StageFreight catalog — human-curated metadata that overrides live Kubernetes discovery
+# for the Apps & Services inventory. Cluster tells you WHAT exists; catalog tells you HOW to
+# describe it. Catalog is for exceptions only — exposure rules live on gitops.cluster.
+catalog:
+  apps:
+    # The bank-vaults secret store was migrated vault -> openbao (CR/StatefulSet/pods/PVCs/
+    # service/HTTPRoute/ClusterSecretStores all renamed). But bank-vaults HARDCODES
+    # app.kubernetes.io/name: vault on the pods — relabeling it would orphan the CCNP/istio
+    # policies keyed on that selector — and the public domain vault.pcfae.com is deliberately
+    # kept. So discovery faithfully derives "Vault" from the live label. This override sets the
+    # display name to the real engine without touching the risky label or the domain.
+    - match:
+        namespace: zeldas-lullaby
+        identity: vault
+      friendly_name: OpenBao
+      source_url: https://github.com/openbao/openbao
