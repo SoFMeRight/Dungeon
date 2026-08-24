@@ -13,9 +13,11 @@ spec:
         runAsGroup: 1000
         fsGroup: 1000
       containers:
+        # readOnlyRootFilesystem EXCEPTION: the photoprism image is s6-overlay-based; its
+        # preinit s6-chown fatals ("unable to chown /run: Read-only file system") under a
+        # read-only rootfs, and being non-root + drop-ALL it cannot chown a writable /run
+        # either. Cannot enable ro-rootfs without an image rebuild. Stays non-root + seccomp.
         - name: photoprism
-          securityContext:
-            readOnlyRootFilesystem: true
           env:
             - name: PHOTOPRISM_DISABLE_TLS
               value: "true"
@@ -23,10 +25,3 @@ spec:
               value: "false"
             - name: PHOTOPRISM_DISABLE_CHOWN
               value: "true"
-          volumeMounts:
-            - name: tmp
-              mountPath: /tmp
-      volumes:
-        # readOnlyRootFilesystem: storage/originals on PVCs; /tmp for thumbnail/convert scratch.
-        - name: tmp
-          emptyDir: {}
