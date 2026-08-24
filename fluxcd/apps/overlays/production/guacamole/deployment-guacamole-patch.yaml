@@ -21,6 +21,8 @@ spec:
       containers:
         - name: guacamole
           image: docker.io/guacamole/guacamole@sha256:e211ca63f47d34018833a8fd7cd37914bc24f1f56b3c2a84d9d5495ec71f8948
+          securityContext:
+            readOnlyRootFilesystem: true
           resources:
             requests:
               cpu: "250m"
@@ -28,3 +30,22 @@ spec:
             limits:
               cpu: "1000m"
               memory: "2Gi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: tomcat-temp
+              mountPath: /usr/local/tomcat/temp
+            - name: tomcat-work
+              mountPath: /usr/local/tomcat/work
+            - name: tomcat-logs
+              mountPath: /usr/local/tomcat/logs
+      volumes:
+        # readOnlyRootFilesystem: Tomcat needs writable temp/work/logs + /tmp scratch.
+        - name: tmp
+          emptyDir: {}
+        - name: tomcat-temp
+          emptyDir: {}
+        - name: tomcat-work
+          emptyDir: {}
+        - name: tomcat-logs
+          emptyDir: {}

@@ -11,6 +11,8 @@ spec:
       containers:
         - name: guacd
           image: docker.io/guacamole/guacd@sha256:2d266a525a72ad55d8ea7cd4ca8342a1b44075759b03660d8684821b3636a922
+          securityContext:
+            readOnlyRootFilesystem: true
           resources:
             requests:
               cpu: "250m"
@@ -18,3 +20,10 @@ spec:
             limits:
               cpu: "1000m"
               memory: "2Gi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: guacd writes recordings/drawings to /tmp scratch.
+        - name: tmp
+          emptyDir: {}
