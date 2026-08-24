@@ -73,6 +73,7 @@ spec:
             runAsGroup: 1000
             runAsNonRoot: true
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: [ALL]
           env:
@@ -85,8 +86,13 @@ spec:
             limits:
               cpu: "500m"
               memory: "1Gi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - $patch: replace
+        - name: tmp
+          emptyDir: {}
         - name: tactical-data
           persistentVolumeClaim:
             claimName: hookshot-tactical-data-pvc

@@ -43,6 +43,7 @@ spec:
           image: docker.io/tacticalrmm/tactical-nats:1.5.2
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop: [ALL]
           resources:
@@ -52,8 +53,13 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - $patch: replace
+        - name: tmp
+          emptyDir: {}
         - name: tactical-data
           persistentVolumeClaim:
             claimName: hookshot-tactical-data-pvc

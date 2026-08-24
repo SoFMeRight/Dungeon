@@ -62,6 +62,10 @@ spec:
             - name: meshcentral-data
               mountPath: /meshdata
       containers:
+        # readOnlyRootFilesystem EXCEPTION: this container's startup command cp's newer
+        # MeshAgent binaries into /home/node/app/node_modules/meshcentral/agents (a rootfs
+        # path) and rewrites the entrypoint in place — both need a writable rootfs. Cannot
+        # enable ro-rootfs without reworking the agent-replacement approach.
         - name: meshcentral
           image: docker.io/tacticalrmm/tactical-meshcentral:1.5.2
           command:
