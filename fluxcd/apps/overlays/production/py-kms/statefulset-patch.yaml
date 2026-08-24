@@ -12,9 +12,18 @@ spec:
       containers:
         - name: py-kms
           image: ghcr.io/py-kms-organization/py-kms:python3-next
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: TZ
               value: "America/Los_Angeles"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: the client-db is on the PVC; /tmp is defensive scratch.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: swift-sail-py-kms-db

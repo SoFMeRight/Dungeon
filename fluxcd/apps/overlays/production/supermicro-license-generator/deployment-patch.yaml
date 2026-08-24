@@ -15,6 +15,8 @@ spec:
       containers:
         - name: supermicro-license-generator
           image: docker.io/prplanit/sm-lickitung-oci:v0.0.5
+          securityContext:
+            readOnlyRootFilesystem: true
           resources:
             requests:
               cpu: 50m
@@ -22,3 +24,10 @@ spec:
             limits:
               cpu: 200m
               memory: 128Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: stateless license generator; /tmp is defensive scratch.
+        - name: tmp
+          emptyDir: {}
