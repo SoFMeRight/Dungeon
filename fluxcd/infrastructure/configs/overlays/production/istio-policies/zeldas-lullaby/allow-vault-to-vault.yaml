@@ -14,4 +14,6 @@ spec:
               - cluster.local/ns/zeldas-lullaby/sa/vault
       to:
         - operation:
-            ports: ["8201"]
+            # 8201 = raft cluster port (steady state); 8200 = API, needed for the raft bootstrap
+            # challenge + the vault-SA configurer's init/unseal on a FRESH cluster (self-hairpin).
+            ports: ["8200", "8201"]
