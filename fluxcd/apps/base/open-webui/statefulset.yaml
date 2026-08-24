@@ -29,6 +29,7 @@ spec:
           image: PLACEHOLDER_OPEN_WEBUI_IMAGE
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -86,6 +87,13 @@ spec:
           volumeMounts:
             - name: PLACEHOLDER_DATA
               mountPath: /app/backend/data
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: open-webui writes temp files to /tmp; its data
+        # (DB, uploads, embedding cache) lives on the /app/backend/data PVC.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_DATA
