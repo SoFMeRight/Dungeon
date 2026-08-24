@@ -12,9 +12,14 @@ spec:
       containers:
         - name: pinchflat
           image: ghcr.io/kieraneglin/pinchflat@sha256:01b4f98aabaf3f5fe394213f7a32578c9e84e42080f52e2f8334021a4473b202
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: TZ
               value: "America/Los_Angeles"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:v3.41.3
           env:
@@ -34,4 +39,7 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: optcp-pinchflat-config
+        # readOnlyRootFilesystem (pinchflat container): data on config PVC; yt-dlp/BEAM use /tmp.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates: []

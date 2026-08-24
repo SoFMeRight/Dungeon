@@ -42,9 +42,14 @@ spec:
               value: "America/Los_Angeles"
         - name: cross-seed
           command: ["cross-seed", "daemon"]
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: TZ
               value: "America/Los_Angeles"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
       volumes:
         # Gluetun
         - name: gluetun-config
@@ -89,6 +94,9 @@ spec:
         - name: cross-seed-config
           persistentVolumeClaim:
             claimName: swift-sail-cross-seed-config
+        # readOnlyRootFilesystem (cross-seed container): config on PVC; /tmp scratch.
+        - name: tmp
+          emptyDir: {}
         # Shared seeding/completed
         - name: tv-shows-seeding
           persistentVolumeClaim:

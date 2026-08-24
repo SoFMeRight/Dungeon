@@ -15,6 +15,7 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
+            readOnlyRootFilesystem: true
           image: ghcr.io/thephaseless/byparr:2.1.0
           env:
             - name: TZ
@@ -30,6 +31,8 @@ spec:
               mountPath: /app/.cache
             - name: venv
               mountPath: /app/.venv
+            - name: tmp
+              mountPath: /tmp
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:v3.41.3
           env:
@@ -50,6 +53,9 @@ spec:
         - name: venv
           emptyDir:
             sizeLimit: 1Gi
+        # readOnlyRootFilesystem (byparr container): headless browser writes temp to /tmp.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: screenshots
