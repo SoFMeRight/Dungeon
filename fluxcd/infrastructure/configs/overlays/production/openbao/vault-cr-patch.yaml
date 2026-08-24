@@ -10,11 +10,6 @@ spec:
         secretKeyRef:
           name: vault-oidc-credentials
           key: client-secret
-    # raft snapshot restore writes a temp file via os.CreateTemp; readOnlyRootFilesystem makes
-    # /tmp RO, so point TMPDIR at the writable raft PVC (/vault/data) instead of adding a volume
-    # (bank-vaults' vaultPodSpec.volumes replaces its auto-generated set and breaks the STS).
-    - name: TMPDIR
-      value: /vault/data
   vaultPodSpec:
     imagePullSecrets:
       - name: cr-pcfae-admin-pull-secret
@@ -26,6 +21,12 @@ spec:
     prometheus.io/port: "9091"
   vaultContainerSpec:
     name: openbao                       # CRD-required; also the pod's vault-container name
+    # raft snapshot restore writes a temp file via os.CreateTemp; readOnlyRootFilesystem (kyverno)
+    # makes /tmp RO, so point TMPDIR at the writable raft PVC. Must be a real container env
+    # (bank-vaults' envsConfig does NOT reach the openbao container's process env).
+    env:
+      - name: TMPDIR
+        value: /vault/data
     securityContext:
       capabilities:
         add:
