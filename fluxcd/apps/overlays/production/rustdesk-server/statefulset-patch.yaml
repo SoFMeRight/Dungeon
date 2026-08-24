@@ -15,6 +15,8 @@ spec:
       containers:
         - name: hbbs
           image: docker.io/rustdesk/rustdesk-server:1.1.16
+          securityContext:
+            readOnlyRootFilesystem: true
           resources:
             requests:
               cpu: 10m
@@ -22,8 +24,13 @@ spec:
             limits:
               cpu: 500m
               memory: 256Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
         - name: hbbr
           image: docker.io/rustdesk/rustdesk-server:1.1.16
+          securityContext:
+            readOnlyRootFilesystem: true
           resources:
             requests:
               cpu: 10m
@@ -31,6 +38,13 @@ spec:
             limits:
               cpu: 500m
               memory: 256Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: rustdesk id/key + db live on the data PVC; /tmp scratch.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data
