@@ -20,6 +20,8 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+            - name: yt-dlp-config
+              mountPath: /etc/yt-dlp
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:v3.41.3
           env:
@@ -41,5 +43,8 @@ spec:
             claimName: optcp-pinchflat-config
         # readOnlyRootFilesystem (pinchflat container): data on config PVC; yt-dlp/BEAM use /tmp.
         - name: tmp
+          emptyDir: {}
+        # pinchflat's release check writes to /etc/yt-dlp; runtime scratch (config/DB are on the PVC).
+        - name: yt-dlp-config
           emptyDir: {}
   volumeClaimTemplates: []
