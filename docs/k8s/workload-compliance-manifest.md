@@ -307,7 +307,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | opnform | multiple | Y (82) | N | Y | ? | ? | ? | Y | ? | Full non-root — api/scheduler/worker php-fpm run master directly as www-data 82 (drop ALL + seccomp, no root setuid); ingress nginx non-root 101 :8080 (RO rootfs) |
 | orangehrm | orangehrm | ? | ? | ? | ? | ? | ? | Y | ? | |
 | orangehrm | mariadb | ? | ? | ? | ? | ? | ? | Y | ? | |
-| osticket | osticket | X | ? | ? | ? | ? | ? | Y | ? | Apache root pattern |
+| osticket | osticket | Y (1000) | Y | Y | ? | ? | ? | Y | ? | full non-root + readOnlyRootFilesystem (hlhd/osticket v1.18.4: ost-config.php symlinked to /run/osticket emptyDir; nginx+php-fpm rootless) |
 | penpot | backend | ? | ? | ? | ? | ? | ? | Y | ? | |
 | penpot | frontend | ? | ? | ? | ? | ? | ? | Y | ? | |
 | penpot | exporter | ? | ? | ? | ? | ? | ? | Y | ? | |
