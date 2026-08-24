@@ -21,6 +21,8 @@ spec:
       containers:
         - name: zigbee2mqtt
           image: ghcr.io/koenkk/zigbee2mqtt:2.13.0
+          securityContext:
+            readOnlyRootFilesystem: true
           # z2m has no built-in health endpoint (gh#1310) and the
           # container has no mosquitto_sub binary for MQTT probes.
           # TCP check on the web UI port is the best available option.
@@ -37,6 +39,13 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: z2m config/db on the data PVC; /tmp is scratch.
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data
