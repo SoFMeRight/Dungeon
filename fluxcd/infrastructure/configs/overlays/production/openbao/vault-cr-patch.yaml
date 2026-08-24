@@ -32,11 +32,11 @@ spec:
         drop:
           - ALL
     volumeMounts:
-      - name: openbao-config
+      - name: vault-config
         mountPath: /vault/config
       - name: openbao-data
         mountPath: /vault/data
-      - name: openbao-config
+      - name: vault-config
         mountPath: /openbao/config
   unsealConfig:
     kubernetes:
