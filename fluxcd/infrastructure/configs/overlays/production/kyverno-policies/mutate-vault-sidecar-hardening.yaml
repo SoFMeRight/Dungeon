@@ -78,6 +78,36 @@ spec:
                   - (name): "{{ element.name }}"
                     securityContext:
                       readOnlyRootFilesystem: true
+          # runAsNonRoot + a NUMERIC runAsUser so admission can verify non-root. openbao's
+          # image declares a non-numeric user, so runAsNonRoot alone -> CreateContainerConfig
+          # Error; pin each to the uid it already runs as (vault=100, sidecars=65534) = a
+          # runtime no-op. statsd-exporter also ships a non-numeric user, hence pinning it too.
+          - list: "request.object.spec.containers"
+            preconditions:
+              all:
+                - key: "{{ element.name }}"
+                  operator: Equals
+                  value: vault
+            patchStrategicMerge:
+              spec:
+                containers:
+                  - (name): "{{ element.name }}"
+                    securityContext:
+                      runAsNonRoot: true
+                      runAsUser: 100
+          - list: "request.object.spec.containers"
+            preconditions:
+              all:
+                - key: "{{ element.name }}"
+                  operator: AnyIn
+                  value: [bank-vaults, prometheus-exporter]
+            patchStrategicMerge:
+              spec:
+                containers:
+                  - (name): "{{ element.name }}"
+                    securityContext:
+                      runAsNonRoot: true
+                      runAsUser: 65534
     - name: harden-vault-configurer-pod
       match:
         any:
