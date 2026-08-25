@@ -10,7 +10,7 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: postgres
-          image: docker.io/library/postgres:16
+          image: docker.io/library/postgres:18
   volumeClaimTemplates:
     - metadata:
         name: hyrule-castle-twenty-postgres

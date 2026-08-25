@@ -11,7 +11,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-postgres
-          image: docker.io/library/postgres:15-alpine
+          image: docker.io/library/postgres:18-alpine
       containers:
         - name: umami
           image: ghcr.io/umami-software/umami:postgresql-latest
@@ -60,7 +60,7 @@ spec:
         fsGroup: 70
       containers:
         - name: postgres
-          image: docker.io/library/postgres:15-alpine
+          image: docker.io/library/postgres:18-alpine
           volumeMounts:
             - name: gossip-stone-umami-postgres
               mountPath: /var/lib/postgresql/data
