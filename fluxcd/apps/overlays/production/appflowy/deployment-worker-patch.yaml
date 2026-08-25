@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: appflowy-worker
-          image: docker.io/appflowyinc/appflowy_worker:0.17.10
+          image: docker.io/appflowyinc/appflowy_worker:0.17.12
           securityContext:
             readOnlyRootFilesystem: true
           env:
