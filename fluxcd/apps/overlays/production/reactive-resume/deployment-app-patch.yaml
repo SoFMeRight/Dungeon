@@ -26,7 +26,12 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+            - name: data
+              mountPath: /app/data
       volumes:
-        # readOnlyRootFilesystem: DB + object-storage backed; /tmp scratch.
+        # readOnlyRootFilesystem: resumes go to object storage (STORAGE_URL); LOCAL_STORAGE_PATH
+        # (/app/data) still must be writable at boot; /tmp scratch.
         - name: tmp
+          emptyDir: {}
+        - name: data
           emptyDir: {}

@@ -27,7 +27,11 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+            - name: cached-fonts
+              mountPath: /app/dist/server/logic/cachedFonts
       volumes:
-        # readOnlyRootFilesystem: /tmp is defensive scratch (font cache is lazy, request-time).
         - name: tmp
+          emptyDir: {}
+        # readOnlyRootFilesystem: gwfh caches downloaded fonts here at request-time (rootfs path).
+        - name: cached-fonts
           emptyDir: {}
