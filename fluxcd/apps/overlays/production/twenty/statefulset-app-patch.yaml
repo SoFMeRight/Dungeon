@@ -28,12 +28,19 @@ spec:
           image: docker.io/twentycrm/twenty:v2.34.0
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
           env:
             - name: SERVER_URL
               value: "https://twenty.pcfae.com"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: hyrule-castle-twenty-app-data

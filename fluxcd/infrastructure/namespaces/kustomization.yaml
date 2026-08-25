@@ -22,3 +22,4 @@ resources:
   - hookshot.yaml
   - lakitu.yaml
   - gerudo-crest.yaml
+  - training-dummy.yaml

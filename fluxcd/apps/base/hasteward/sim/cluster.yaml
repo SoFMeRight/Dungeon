@@ -1,0 +1,26 @@
+# Disposable CNPG cluster for the training-dummy disaster lab. Minimal + tiny PVCs so a
+# disk can be filled fast, matching the real fleet's operator/image/storage so recovery
+# behaviour is faithful. NOT in any kustomization — applied on demand, wrecked freely.
+#   kubectl apply -f cluster.yaml   # stand it up
+#   kubectl delete -f cluster.yaml  # tear it down (then delete leftover PVCs)
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: training-dummy-postgres
+  namespace: training-dummy
+spec:
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.0
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: 1Gi
+    storageClass: ceph-rbd
+  # No barmanObjectStore: a throwaway sim needs no off-cluster backups; WAL recycles via
+  # checkpoints. The disk-full scenario is induced directly (fill the PVC), not via a
+  # broken WAL archive.
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
