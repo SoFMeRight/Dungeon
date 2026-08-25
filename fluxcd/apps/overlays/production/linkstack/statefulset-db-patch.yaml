@@ -15,7 +15,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: mariadb
-          image: docker.io/mariadb:11.8.9
+          image: docker.io/mariadb:12.3.3
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

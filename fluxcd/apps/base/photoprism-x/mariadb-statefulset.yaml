@@ -23,7 +23,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: mariadb
-          image: docker.io/mariadb:11
+          image: docker.io/mariadb:12
           args:
             - --innodb-buffer-pool-size=512M
             - --transaction-isolation=READ-COMMITTED
