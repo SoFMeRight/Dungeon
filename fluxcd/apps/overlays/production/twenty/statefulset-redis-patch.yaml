@@ -5,6 +5,10 @@ metadata:
 spec:
   replicas: 1
   template:
+    metadata:
+      labels:
+        policy.prplanit.com/access-class: redis
+        policy.prplanit.com/service-scope: hyrule-castle.twenty.redis
     spec:
       securityContext:
         runAsUser: 999

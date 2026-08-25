@@ -5,6 +5,12 @@ metadata:
 spec:
   replicas: 1
   template:
+    metadata:
+      labels:
+        policy.prplanit.com/cap.postgres: "true"
+        policy.prplanit.com/access-scope-postgres: hyrule-castle.twenty.postgres
+        policy.prplanit.com/cap.redis: "true"
+        policy.prplanit.com/access-scope-redis: hyrule-castle.twenty.redis
     spec:
       securityContext:
         runAsUser: 1000

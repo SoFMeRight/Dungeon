@@ -5,12 +5,16 @@ metadata:
 spec:
   replicas: 1
   template:
+    metadata:
+      labels:
+        policy.prplanit.com/access-class: postgres
+        policy.prplanit.com/service-scope: hyrule-castle.twenty.postgres
     spec:
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: postgres
-          image: docker.io/library/postgres:18
+          image: docker.io/library/postgres:18-alpine
   volumeClaimTemplates:
     - metadata:
         name: hyrule-castle-twenty-postgres
