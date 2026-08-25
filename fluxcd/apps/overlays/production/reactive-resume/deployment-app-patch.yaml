@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: docker.io/amruthpillai/reactive-resume:v5.2.5
+          image: docker.io/amruthpillai/reactive-resume:v5.2.8
           securityContext:
             readOnlyRootFilesystem: true
           env:
