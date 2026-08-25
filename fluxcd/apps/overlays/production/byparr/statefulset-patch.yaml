@@ -16,7 +16,7 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
             readOnlyRootFilesystem: true
-          image: ghcr.io/thephaseless/byparr:2.1.0
+          image: ghcr.io/thephaseless/byparr:3.0.4
           env:
             - name: TZ
               value: "America/Los_Angeles"
