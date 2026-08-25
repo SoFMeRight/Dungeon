@@ -142,7 +142,7 @@ stencils:
   applications: {render: shield, label: Applications, message: "{inventory.dungeon.count}", color: "#0F1689", logo: kubernetes, logo_color: white, link: "docs/Apps_&_Services-Overview.md"}
   docker-compose: {render: shield, label: Docker-Compose, message: stacks, color: "#2496ED", logo: docker, logo_color: white, link: "docker-compose"}
 
-  cluster-inventory: {type: k8s-inventory, catalog: .stagefreight-catalog.yml}
+  cluster-inventory: {type: k8s-inventory, catalog: .stagefreight/catalog.yml}
 
   # ── AI stencils (lazy — ollama is only called when a notification dispatches) ──
   ci-detail:

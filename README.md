@@ -41,7 +41,7 @@ This repository seeks to be the source of truth regarding the active state of my
 | 🖥️ Hardware         | [In-depth details regarding most of the hardware in this lab.](./docs/Hardware.md)                                |
 | 📦 Kubernetes Pods  | [A pipeline generated list of applications I have deployed within kubernetes](./docs/Apps_&_Services-Overview.md) |
 
-## Related Projects:
+## Related Projects
 |                                                           |                                                                                        |
 | --------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | [Ansible](https://github.com/HomeLabHD/ansible)           | Lightweight Alpine-based Ansible image with Windows support and community collections  |
