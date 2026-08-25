@@ -5,7 +5,6 @@ resources:
   - ../../../../base/istio-policies
   - allow-calcom-to-calcom-postgres.yaml
   - allow-bookstack-to-bookstack-db.yaml
-  - allow-orangehrm-to-orangehrm-mariadb.yaml
   - allow-dolibarr-web-to-dolibarr-mariadb.yaml
   - allow-invoiceninja-app-to-invoiceninja-mysql.yaml
   - allow-invoiceninja-app-to-invoiceninja-redis.yaml

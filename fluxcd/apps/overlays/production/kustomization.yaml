@@ -42,7 +42,6 @@ resources:
   - erpnext
   - invoiceninja
   - kimai
-  - orangehrm
   - opnform
   - osticket
   # Document & Design
