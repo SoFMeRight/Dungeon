@@ -99,9 +99,9 @@ Our peak hours are typically 6:00AM – 10:00PM PST. Backups are scheduled to mi
 
 | Technology           | Purpose Used                                                         |
 | -------------------- | -------------------------------------------------------------------- |
-| pfSense              | 2 VMs running on Avocado & Bamboo Highly Available routing via CARP, Dual-stack IPv4/6, BGP. (future: evaluate opnSense again) |
+| pfSense              | 2 VMs running on Avocado & Bamboo Highly Available routing via CARP, Dual-stack IPv4/6, BGP. (future: evaluate OPNsense again) |
 | OSPFv6               | Proxmox/Ceph private/internal network                                |
-| BGP                  | Kubernetes Load Balancers (Cillim peers with pfsense).               |
+| BGP                  | Kubernetes Load Balancers (Cilium peers with pfsense).               |
 | kube-vip             | Kubernetes API Load balancing                                        |
 | Istio                | The chosen cluster mesh.                                             |
 | AdGuardHome          | DNS Server & Highly Available with 1 master and 1 replica, likely migrating to Technitium  or Gravity soon. |
