@@ -14,10 +14,11 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
       containers:
+        # readOnlyRootFilesystem EXCEPTION: the 2fauth entrypoint sets up persistence by creating
+        # symlinks inside its baked app tree (ln /srv/database/database.sqlite -> the /2fauth PVC),
+        # which needs a writable rootfs. Cannot enable ro-rootfs without an image rebuild.
         - name: twofauth
           image: docker.io/2fauth/2fauth:6.1.3
-          securityContext:
-            readOnlyRootFilesystem: true
           env:
             - name: APP_URL
               value: "https://2fa.pcfae.com"
@@ -35,16 +36,6 @@ spec:
           volumeMounts:
             - name: zeldas-lullaby-twofauth-data
               mountPath: /2fauth
-            - name: tmp
-              mountPath: /tmp
-            - name: run
-              mountPath: /run
-      volumes:
-        # readOnlyRootFilesystem: app data on the /2fauth PVC; /tmp + /run for php-fpm/nginx/s6 pids.
-        - name: tmp
-          emptyDir: {}
-        - name: run
-          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: zeldas-lullaby-twofauth-data
