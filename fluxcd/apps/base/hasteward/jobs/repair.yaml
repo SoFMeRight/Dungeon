@@ -1,0 +1,54 @@
+# HASteward targeted repair — triage → safety gate → escrow backup → re-clone/heal the
+# unhealthy instance from the primary. Requires a RUNNING primary (aborts otherwise).
+#   ../jobs/run.sh repair -c <cluster> -n <namespace> -i <instance>
+# Vars: ENGINE(cnpg|galera) CLUSTER NAMESPACE INSTANCE IMAGE — filled by run.sh.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: hasteward-repair-${CLUSTER}-
+  namespace: fairy-bottle
+  labels:
+    app.kubernetes.io/name: hasteward
+    hasteward.prplanit.com/verb: repair
+    hasteward.prplanit.com/target: ${CLUSTER}
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hasteward
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: hasteward
+      restartPolicy: Never
+      containers:
+        - name: hasteward
+          image: ${IMAGE}
+          args: ["repair", "--instance", "${INSTANCE}"]
+          env:
+            - name: HASTEWARD_ENGINE
+              value: "${ENGINE}"
+            - name: HASTEWARD_CLUSTER
+              value: "${CLUSTER}"
+            - name: HASTEWARD_NAMESPACE
+              value: "${NAMESPACE}"
+            - name: HASTEWARD_BACKUPS_PATH
+              value: /backups
+            - name: RESTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hasteward-restic
+                  key: password
+          volumeMounts:
+            - name: backups
+              mountPath: /backups
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: backups
+          persistentVolumeClaim:
+            claimName: hasteward-backups
+        - name: tmp
+          emptyDir: {}

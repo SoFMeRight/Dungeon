@@ -8,14 +8,32 @@ kind: ClusterRole
 metadata:
   name: hasteward
 rules:
-  # CNPG Cluster CRs — watch, get, list, patch annotations
+  # CNPG Cluster CRs — watch, get, list, patch annotations (fence, reconciliationLoop)
   - apiGroups: ["postgresql.cnpg.io"]
     resources: ["clusters"]
     verbs: ["get", "list", "watch", "patch"]
+  # CNPG Cluster status subresource — realign targetPrimary to cancel a stuck failover
+  # after deadlock-recover (settlePrimary). A subresource needs its own rule; the
+  # "clusters" patch verb above does NOT cover it.
+  - apiGroups: ["postgresql.cnpg.io"]
+    resources: ["clusters/status"]
+    verbs: ["get", "patch", "update"]
   # CNPG Backup CRs — create native backups
   - apiGroups: ["postgresql.cnpg.io"]
     resources: ["backups"]
     verbs: ["get", "list", "watch", "create", "delete"]
+  # VolumeSnapshots — escrow the PVC before an in-place deadlock-recover (create + poll
+  # readyToUse), and clean up old escrows. VolumeSnapshotClasses + StorageClasses are read
+  # to auto-discover the snapshot class matching the PVC provisioner.
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
   # MariaDB CRs — watch, get, list, patch annotations
   - apiGroups: ["k8s.mariadb.com"]
     resources: ["mariadbs"]

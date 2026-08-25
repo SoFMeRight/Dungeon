@@ -1,0 +1,55 @@
+# HASteward rebuild-around-authority promotion — escrow the cluster, persist a proof, and
+# promote --instance N when the AUTHORITY is not the primary (leader-not-primary / diverged).
+# Refuses when the target is already the authority/primary. Use --dry-run first (edit args).
+#   ../jobs/run.sh promote -c <cluster> -n <namespace> -i <instance>
+# Vars: ENGINE(cnpg) CLUSTER NAMESPACE INSTANCE IMAGE — filled by run.sh.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: hasteward-promote-${CLUSTER}-
+  namespace: fairy-bottle
+  labels:
+    app.kubernetes.io/name: hasteward
+    hasteward.prplanit.com/verb: promote
+    hasteward.prplanit.com/target: ${CLUSTER}
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hasteward
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: hasteward
+      restartPolicy: Never
+      containers:
+        - name: hasteward
+          image: ${IMAGE}
+          args: ["repair", "--instance", "${INSTANCE}", "--promote"]
+          env:
+            - name: HASTEWARD_ENGINE
+              value: "${ENGINE}"
+            - name: HASTEWARD_CLUSTER
+              value: "${CLUSTER}"
+            - name: HASTEWARD_NAMESPACE
+              value: "${NAMESPACE}"
+            - name: HASTEWARD_BACKUPS_PATH
+              value: /backups
+            - name: RESTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hasteward-restic
+                  key: password
+          volumeMounts:
+            - name: backups
+              mountPath: /backups
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: backups
+          persistentVolumeClaim:
+            claimName: hasteward-backups
+        - name: tmp
+          emptyDir: {}
