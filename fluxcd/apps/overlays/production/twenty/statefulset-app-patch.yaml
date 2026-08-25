@@ -17,11 +17,19 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: twenty-app
           image: docker.io/twentycrm/twenty:v2.34.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           env:
             - name: SERVER_URL
               value: "http://moor:2020"
@@ -29,8 +37,16 @@ spec:
     - metadata:
         name: hyrule-castle-twenty-app-data
       spec:
+        accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
+        resources:
+          requests:
+            storage: 10Gi
     - metadata:
         name: hyrule-castle-twenty-docker-data
       spec:
+        accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
+        resources:
+          requests:
+            storage: 5Gi

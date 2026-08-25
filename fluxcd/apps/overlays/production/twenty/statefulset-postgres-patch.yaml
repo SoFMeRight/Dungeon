@@ -10,13 +10,43 @@ spec:
         policy.prplanit.com/access-class: postgres
         policy.prplanit.com/service-scope: hyrule-castle.twenty.postgres
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: postgres
           image: docker.io/library/postgres:18-alpine
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: postgres-run
+              mountPath: /var/run/postgresql
+            - name: postgres-tmp
+              mountPath: /tmp
+      volumes:
+        - name: postgres-run
+          emptyDir: {}
+        - name: postgres-tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: hyrule-castle-twenty-postgres
       spec:
+        accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
+        resources:
+          requests:
+            storage: 10Gi

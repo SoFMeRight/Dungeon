@@ -14,13 +14,26 @@ spec:
         runAsUser: 999
         runAsGroup: 1000
         fsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: redis
           image: docker.io/redis:8.10.1-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
   volumeClaimTemplates:
     - metadata:
         name: hyrule-castle-twenty-redis
       spec:
+        accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
+        resources:
+          requests:
+            storage: 5Gi
