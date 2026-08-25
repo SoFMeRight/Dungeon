@@ -4,6 +4,7 @@ resources:
   # Infrastructure
   - 2fauth
   - anubis
+  - hasteward
   - netbootxyz
   - netbox
   - oauth2-proxy
