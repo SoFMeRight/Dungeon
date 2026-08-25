@@ -11,7 +11,7 @@ spec:
         runAsGroup: 1000
       containers:
         - name: endlessh-go
-          image: docker.io/shizunge/endlessh-go:2025.0914.0
+          image: docker.io/shizunge/endlessh-go:2026.0730.0
           securityContext:
             readOnlyRootFilesystem: true
           volumeMounts:
