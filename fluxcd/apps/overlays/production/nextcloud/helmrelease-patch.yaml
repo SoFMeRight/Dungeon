@@ -6,7 +6,7 @@ spec:
   chart:
     spec:
       # renovate: datasource=helm depName=nextcloud registryUrl=https://nextcloud.github.io/helm/
-      version: "9.1.4"
+      version: "9.2.6"
   values:
     podLabels:
       policy.prplanit.com/ingress: "true"
