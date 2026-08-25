@@ -13,7 +13,7 @@ data:
       "requireConfig": "ignored",
       "repositories": ["SoFMeRight/dungeon"],
 
-      "ignorePaths": ["docker-compose/**", "**/zz-graveyard/**"],
+      "ignorePaths": ["docker-compose/**", "**/zz-graveyard/**", "**/*(disabled)*/**", "**/*not-deployed*"],
 
       "registryAliases": {
         "docker.io": "docker.cr.pcfae.com"
