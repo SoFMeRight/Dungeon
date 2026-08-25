@@ -1,7 +1,7 @@
 ![Banner](./docs/assets/dungeon-banner.png)
 
 <!-- sf:badges:start -->
-[![build](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/build.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![license](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/license.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/LICENSE) ![updated](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/updated.svg)
+[![build](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/build.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![license](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/license.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/LICENSE) ![updated](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/updated.svg) [![GitHub](https://img.shields.io/badge/GitHub-mirror-181717?logo=github&logoColor=white)](https://github.com/sofmeright/Dungeon) [![inventory](https://img.shields.io/badge/inventory-fleet-1A1918?logo=ansible&logoColor=white)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/ansible/inventory)
 <!-- sf:badges:end -->
 
 > _"When the cluster's down, and the world is on fire, at least you can still run Ansible."_ 🔥
