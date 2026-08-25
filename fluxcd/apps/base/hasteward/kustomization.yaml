@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - rbac.yaml
   - pvc-backups.yaml
+  - externalsecret-restic.yaml
