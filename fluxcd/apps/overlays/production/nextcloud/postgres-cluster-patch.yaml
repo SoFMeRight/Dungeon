@@ -27,11 +27,7 @@ spec:
 
   storage:
     storageClass: ceph-rbd
-    # Bumped 8Gi->20Gi 2026-08-25: WAL archiving to S3 had stalled and un-archived WAL
-    # (8GB) filled the volume, crashlooping the primary on "Not enough disk space". The
-    # headroom lets the primary start and drain the WAL backlog to S3 (archive creds verified
-    # working). 85MB of actual data; WAL returns to normal once drained.
-    size: 20Gi
+    size: 8Gi
 
   backup:
     barmanObjectStore:
