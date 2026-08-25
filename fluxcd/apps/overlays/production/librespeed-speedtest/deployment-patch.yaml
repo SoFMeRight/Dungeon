@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: librespeed-speedtest
-          image: ghcr.io/librespeed/speedtest:5.5.1
+          image: ghcr.io/librespeed/speedtest:6.2.1
           resources:
             requests:
               cpu: 100m
