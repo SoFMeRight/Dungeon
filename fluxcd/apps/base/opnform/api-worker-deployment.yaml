@@ -24,7 +24,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: worker
-          image: docker.io/jhumanj/opnform-api:1.13.2
+          image: docker.io/jhumanj/opnform-api:2.4.0
           command: ["php", "artisan", "queue:work"]
           securityContext:
             allowPrivilegeEscalation: false

@@ -57,7 +57,7 @@ spec:
               done
       containers:
         - name: api
-          image: docker.io/jhumanj/opnform-api:1.13.2
+          image: docker.io/jhumanj/opnform-api:2.4.0
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
