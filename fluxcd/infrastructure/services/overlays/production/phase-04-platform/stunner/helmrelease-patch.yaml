@@ -7,4 +7,4 @@ spec:
   chart:
     spec:
       # renovate: datasource=helm depName=stunner registryUrl=https://l7mp.io/stunner
-      version: "1.1.0"
+      version: "1.2.1"
