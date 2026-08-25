@@ -17,7 +17,7 @@ spec:
 
     image:
       # renovate: datasource=docker depName=library/nextcloud
-      tag: "33.0.5"
+      tag: "34.0.3"
 
     replicaCount: 3
 
