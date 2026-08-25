@@ -33,7 +33,7 @@ spec:
                 - ALL
           env:
             - name: SERVER_URL
-              value: "http://moor:2020"
+              value: "https://twenty.pcfae.com"
   volumeClaimTemplates:
     - metadata:
         name: hyrule-castle-twenty-app-data
