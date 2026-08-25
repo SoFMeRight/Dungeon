@@ -20,7 +20,7 @@ spec:
         - name: docker-io-pull-secret
       containers:
         - name: redis
-          image: docker.io/redis:7
+          image: docker.io/redis:8
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
