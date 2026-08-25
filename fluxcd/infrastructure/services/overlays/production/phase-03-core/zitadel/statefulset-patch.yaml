@@ -12,3 +12,16 @@ spec:
         policy.prplanit.com/access-scope-postgres: zeldas-lullaby.zitadel.postgres
         policy.prplanit.com/cap.redis: "true"
         policy.prplanit.com/access-scope-redis: zeldas-lullaby.zitadel.redis
+    spec:
+      containers:
+        - name: zitadel
+          securityContext:
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # readOnlyRootFilesystem: zitadel is DB-backed (postgres + redis) with config read-only
+        # from a configMap; /tmp is defensive scratch.
+        - name: tmp
+          emptyDir: {}
