@@ -5,6 +5,11 @@ forges:
     provider: gitlab
     url: "https://gitlab.prplanit.com"
 
+  github:
+    provider: github
+    url: "https://github.com"
+    credentials: GITHUB              # → GITHUB_TOKEN (PROTECTED forge variable) for the mirror push
+
 repos:
   primary:
     forge: gitlab
@@ -13,6 +18,15 @@ repos:
     branches:
       default: main
     worktree: "."
+
+  # Public mirror on GitHub — GitLab stays authoritative; git refs replicate one way.
+  github-mirror:
+    forge: github
+    project: "sofmeright/Dungeon"
+    roles: [mirror]
+    sync:
+      branches: all
+      tags: all
 
 ci:
   image: docker.cr.pcfae.com/prplanit/stagefreight:latest-dev
@@ -29,22 +43,20 @@ lifecycle:
   mode: gitops
 
 gitops:
-  backend: flux
-  cluster:
-    name: dungeon
-    server: https://172.22.144.105:6443
+  dungeon:
+    backend: flux
+    endpoint: https://172.22.144.105:6443
     exposure:
-      rules:
-        - level: internet
-          gateways: [phloem-gateway, cell-membrane-gateway]
-        - level: intranet
-          gateways: [xylem-gateway]
-        - level: cluster
-          service_types: [ClusterIP]
-        - level: intranet
-          service_types: [NodePort]
-  oidc:
-    audience: stagefreight
+      - level: internet
+        gateways: [phloem-gateway, cell-membrane-gateway]
+      - level: intranet
+        gateways: [xylem-gateway]
+      - level: cluster
+        service_types: [ClusterIP]
+      - level: intranet
+        service_types: [NodePort]
+    oidc:
+      audience: stagefreight
 
 ansible:
   image: docker.io/hlhd/ansible:2.20.4-v1
@@ -114,6 +126,11 @@ stencils:
     label: updated
     message: "{commit.date}"        # YYYY-MM-DD — only churns the README when the date changes
     color: "#236144"
+
+  # ── navigation shields ──
+  github: {render: shield, label: GitHub, message: mirror, color: "#181717", logo: github, logo_color: white, link: "https://github.com/sofmeright/Dungeon"}
+  inventory: {render: shield, label: inventory, message: fleet, color: "#1A1918", logo: ansible, logo_color: white, link: "ansible/inventory"}
+
   cluster-inventory: {type: k8s-inventory, catalog: .stagefreight-catalog.yml}
 
   # ── AI stencils (lazy — ollama is only called when a notification dispatches) ──
@@ -169,7 +186,7 @@ scribe:
       file: "README.md"
       between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
       inline: true
-      items: [build, license, updated]
+      items: [build, license, updated, github, inventory]
     apps.inventory:
       file: "docs/Apps_&_Services-Overview.md"
       between: ["<!-- sf:k8s-inventory:start -->", "<!-- sf:k8s-inventory:end -->"]
