@@ -4,6 +4,10 @@ metadata:
   name: rook-ceph-operator
 spec:
   targetNamespace: gorons-bracelet
+  # Correct out-of-band drift (e.g. the rook 1.18->1.20 CSI-operator migration that
+  # dropped the cephfs ctrlplugin ServiceAccount/RBAC) by re-applying chart resources.
+  driftDetection:
+    mode: enabled
   chart:
     spec:
       # renovate: datasource=helm depName=rook-ceph registryUrl=https://charts.rook.io/release
