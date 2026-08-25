@@ -116,6 +116,74 @@ data:
           "minimumReleaseAge": "30 days"
         },
         {
+          // Relational-DB (postgres, mysql) major bumps are NOT drop-in: the on-disk data
+          // format changes and the official image refuses to start on an older-major data
+          // dir — a major MUST be paired with a manual dump/restore (or pg_upgrade /
+          // mysql_upgrade) first. So park these DB MAJORS behind explicit dependency-
+          // dashboard approval; this is the one place "drift" is correct — it waits for a
+          // deliberate migration instead of merging a routine-looking image MR that would
+          // brick the DB. Minor/patch (same major, data-compatible) still auto-flow.
+          // Plain images only, NOT CNPG's cloudnative-pg/postgresql nor the mariadb-operator
+          // (operator-managed upgrades, grouped separately below).
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/postgres", "**/mysql"],
+          "matchUpdateTypes": ["major"],
+          "dependencyDashboardApproval": true
+        },
+        {
+          // Ceph (Rook) is critical stateful storage — a MAJOR is a deliberate, multi-step
+          // Rook cluster upgrade, never an image MR, and Renovate mis-reads quay's non-
+          // release tags (it proposed a bogus v21 while we run Squid/v19). Fence to the v19
+          // line so only v19.x patches surface; the next major (Tentacle) is a planned
+          // operation done by bumping this pin deliberately.
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/ceph/ceph"],
+          "allowedVersions": "/^v19/"
+        },
+        {
+          // Photoprism ships date tags and switched formats (YYYYMMDD -> YYMMDD). Default
+          // semver mis-orders them — it proposed a 2022 DOWNGRADE (20220121) over the
+          // current 251130 because 20,220,121 > 251,130 numerically. Pin the versioning to
+          // the current 6-digit YYMMDD scheme and only allow 6-digit tags, so newest-date
+          // wins and the legacy 8-digit tags are ignored.
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/photoprism/**"],
+          "versioning": "regex:^(?<major>\\d{2})(?<minor>\\d{2})(?<patch>\\d{2})$",
+          "allowedVersions": "/^\\d{6}$/"
+        },
+        {
+          // it-tools ships YYYY.M.D-<git-sha> calver tags; default semver can't order them
+          // and would misfire. Extract the date so newest-date wins. (searxng/plex already
+          // have their own X.Y.Z-sha rules below.)
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/it-tools"],
+          "versioning": "regex:^(?<major>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d{1,2})"
+        },
+        {
+          // LinuxServer projectsend uses version-r<N>; order by the r-number so it keeps
+          // getting real updates instead of being stuck (or mis-ordered).
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/linuxserver/projectsend"],
+          "versioning": "regex:^version-r(?<major>\\d+)$"
+        },
+        {
+          // Rolling/bespoke tags with NO orderable version (latest, nightly, gpu, stable,
+          // channel names, svn revisions, build hashes). Renovate can't semver these, so
+          // pin the digest: immutable + forward-only digest tracking when the tag moves,
+          // and worst case it simply doesn't move — never the silent downgrade a bad
+          // semver guess would cause. (Self-managed prplanit/* dev images excluded — we
+          // push those tags deliberately.)
+          "matchDatasources": ["docker"],
+          "matchPackageNames": [
+            "**/mealie", "**/readarr", "**/faster-whisper", "**/jellyfin", "**/pihole",
+            "**/clamav", "**/py-kms", "**/umami", "**/whiteboard",
+            "**/nextcloud-spreed-signaling", "**/vlmcsd", "**/asa_server", "**/arkserver",
+            "**/anirra", "**/minecraft-server", "**/kasm", "**/whisparr", "**/tikiwiki",
+            "**/frigate"
+          ],
+          "pinDigests": true
+        },
+        {
           "matchDatasources": ["helm"],
           "commitMessagePrefix": "chore(helm):",
           "semanticCommits": "enabled"
