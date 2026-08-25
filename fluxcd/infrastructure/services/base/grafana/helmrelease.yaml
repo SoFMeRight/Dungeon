@@ -19,7 +19,7 @@ spec:
     fullnameOverride: "grafana"
     image:
       repository: "grafana/grafana"
-      tag: "12.4.9"
+      tag: "13.2.0"
 
     admin:
       existingSecret: "grafana-admin"
