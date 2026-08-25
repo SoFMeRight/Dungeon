@@ -18,7 +18,7 @@ spec:
         # symlinks inside its baked app tree (ln /srv/database/database.sqlite -> the /2fauth PVC),
         # which needs a writable rootfs. Cannot enable ro-rootfs without an image rebuild.
         - name: twofauth
-          image: docker.io/2fauth/2fauth:6.1.3
+          image: docker.io/2fauth/2fauth:8.0.1
           env:
             - name: APP_URL
               value: "https://2fa.pcfae.com"
