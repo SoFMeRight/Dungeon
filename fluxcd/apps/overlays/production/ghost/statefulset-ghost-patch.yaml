@@ -15,7 +15,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: ghost
-          image: docker.io/library/ghost:5-alpine
+          image: docker.io/library/ghost:6-alpine
           securityContext:
             readOnlyRootFilesystem: true
           env:
