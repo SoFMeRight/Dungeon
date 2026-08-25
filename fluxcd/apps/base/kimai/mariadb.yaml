@@ -14,7 +14,7 @@ spec:
     name: kimai-mariadb
     key: user-password
 
-  image: docker.io/mariadb:11.8.8
+  image: docker.io/mariadb:11.8.9
 
   # Full podSecurityContext (this CR field is a REPLACE, not a merge — must
   # restate the operator's mysql-999 defaults) + seccomp to pre-match the
