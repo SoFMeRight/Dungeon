@@ -10,6 +10,7 @@ spec:
         policy.prplanit.com/access-class: postgres
         policy.prplanit.com/service-scope: hyrule-castle.twenty.postgres
     spec:
+      serviceAccountName: twenty
       securityContext:
         runAsUser: 999
         runAsGroup: 999

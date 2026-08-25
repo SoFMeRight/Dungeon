@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-twenty-to-twenty-redis
+spec:
+  selector:
+    matchLabels:
+      app: twenty-redis
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/hyrule-castle/sa/twenty
+      to:
+        - operation:
+            ports: ["6379"]

@@ -10,6 +10,7 @@ spec:
         policy.prplanit.com/access-class: redis
         policy.prplanit.com/service-scope: hyrule-castle.twenty.redis
     spec:
+      serviceAccountName: twenty
       securityContext:
         runAsUser: 999
         runAsGroup: 1000

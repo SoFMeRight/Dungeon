@@ -13,6 +13,7 @@ spec:
         policy.prplanit.com/cap.redis: "true"
         policy.prplanit.com/access-scope-redis: hyrule-castle.twenty.redis
     spec:
+      serviceAccountName: twenty
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
