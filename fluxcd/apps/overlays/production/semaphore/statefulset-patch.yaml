@@ -19,11 +19,24 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
+            readOnlyRootFilesystem: true
           env:
             - name: TZ
               value: "Etc/UTC"
             - name: SEMAPHORE_PORT
               value: "3000"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: home
+              mountPath: /home/semaphore
+      volumes:
+        # readOnlyRootFilesystem: config/playbooks/keys on PVCs; /tmp + HOME writable so ansible
+        # runs can write ~/.ansible tmp and ~/.ssh known_hosts.
+        - name: tmp
+          emptyDir: {}
+        - name: home
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: postgres-data
