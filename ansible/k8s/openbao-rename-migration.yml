@@ -503,6 +503,10 @@
         - {path: "fluxcd/infrastructure/configs/base/{{ new }}/{{ old }}-sa-auth-delegator.yaml", re: '^(\s*)name: {{ old }}\s*$', rep: '\1name: {{ new }}'}
         - {path: "fluxcd/infrastructure/configs/overlays/production/{{ new }}/{{ old }}-sa-auth-delegator-patch.yaml", re: '{{ old }}-tokenreview-binding', rep: '{{ new }}-tokenreview-binding'}
         - {path: "fluxcd/infrastructure/configs/overlays/production/{{ new }}/{{ old }}-sa-auth-delegator-patch.yaml", re: '^(\s*)name: {{ old }}\s*$', rep: '\1name: {{ new }}'}
+        # The overlay's patch TARGET selector must track the renamed binding too, or the patch
+        # silently no-ops and the base's PLACEHOLDER_NAMESPACE subject reaches the cluster -> the
+        # openbao SA loses system:auth-delegator -> every k8s-auth login 403s (prod outage).
+        - {path: "fluxcd/infrastructure/configs/overlays/production/{{ new }}/kustomization.yaml", re: 'name: {{ old }}-tokenreview-binding', rep: 'name: {{ new }}-tokenreview-binding'}
         # istio mTLS principal for the vault->vault (raft + configurer) allow follows the SA rename.
         - {path: "fluxcd/infrastructure/configs/overlays/production/istio-policies/{{ ns }}/allow-{{ old }}-to-{{ old }}.yaml", re: 'sa/{{ old }}\b', rep: 'sa/{{ new }}'}
       when: not (rehearse | bool)
