@@ -45,7 +45,6 @@ resources:
   - orangehrm
   - opnform
   - osticket
-  - twenty
   # Document & Design
   - appflowy
   - bookstack

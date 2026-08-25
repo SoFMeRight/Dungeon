@@ -4,8 +4,6 @@ namespace: hyrule-castle
 resources:
   - ../../../../base/istio-policies
   - allow-calcom-to-calcom-postgres.yaml
-  - allow-twenty-to-twenty-postgres.yaml
-  - allow-twenty-to-twenty-redis.yaml
   - allow-bookstack-to-bookstack-db.yaml
   - allow-orangehrm-to-orangehrm-mariadb.yaml
   - allow-dolibarr-web-to-dolibarr-mariadb.yaml
