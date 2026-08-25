@@ -181,3 +181,48 @@ patches:
     target:
       kind: Service
       name: netbird-relay
+  # readOnlyRootFilesystem hardening (SEC-4): both are Go binaries; data on PVC/emptyDir.
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem
+        value: true
+      - op: add
+        path: /spec/template/spec/containers/0/volumeMounts/-
+        value:
+          name: tmp
+          mountPath: /tmp
+      - op: add
+        path: /spec/template/spec/volumes/-
+        value:
+          name: tmp
+          emptyDir: {}
+    target:
+      kind: StatefulSet
+      name: netbird-management
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem
+        value: true
+      - op: add
+        path: /spec/template/spec/containers/0/volumeMounts/-
+        value:
+          name: var-tmp
+          mountPath: /var/tmp
+      - op: add
+        path: /spec/template/spec/containers/0/volumeMounts/-
+        value:
+          name: tmp
+          mountPath: /tmp
+      - op: add
+        path: /spec/template/spec/volumes/-
+        value:
+          name: var-tmp
+          emptyDir: {}
+      - op: add
+        path: /spec/template/spec/volumes/-
+        value:
+          name: tmp
+          emptyDir: {}
+    target:
+      kind: Deployment
+      name: netbird-coturn

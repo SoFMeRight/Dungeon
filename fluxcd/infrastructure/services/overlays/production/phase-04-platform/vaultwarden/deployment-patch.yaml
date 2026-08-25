@@ -19,6 +19,8 @@ spec:
       containers:
         - name: vaultwarden
           image: docker.io/vaultwarden/server:1.37.1
+          securityContext:
+            readOnlyRootFilesystem: true
           env:
             - name: DOMAIN
               value: "https://vw.prplanit.com"
@@ -40,6 +42,8 @@ spec:
               value: "^\\d{18}$"
           volumeMounts:
             - $patch: replace
+            - name: tmp
+              mountPath: /tmp
             - name: vaultwarden-data
               mountPath: /data
             - name: rsa-key
@@ -55,6 +59,9 @@ spec:
               memory: 64Mi
       volumes:
         - $patch: replace
+        # readOnlyRootFilesystem: attachments/icons/sends on the /data PVC; /tmp is scratch.
+        - name: tmp
+          emptyDir: {}
         - name: vaultwarden-data
           persistentVolumeClaim:
             claimName: vaultwarden-data
