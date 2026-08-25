@@ -112,24 +112,35 @@ llms:
 
 stencils:
   # badges write to scribe.store/{id}.svg (default .stagefreight/scribe) — no output: needed
-  build:
-    label: build
-    message: "{env:BUILD_STATUS}"
-    color: auto
-    link: "https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines"
+
+  # ── Row 1: identity / meta ──
+  github: {render: shield, label: GitHub, message: mirror, color: "#181717", logo: github, logo_color: white, link: "https://github.com/sofmeright/Dungeon"}
+  gitlab: {render: shield, label: GitLab, message: source, color: "#FC6D26", logo: gitlab, logo_color: white, link: "https://gitlab.prplanit.com/SoFMeRight/dungeon"}
+  updated:
+    label: updated
+    message: "{commit.date}"        # YYYY-MM-DD — only churns the README when the date changes
+    color: "#236144"
   license:
     label: license
     message: "AGPL-3.0"
     color: "#310937"
     link: LICENSE
-  updated:
-    label: updated
-    message: "{commit.date}"        # YYYY-MM-DD — only churns the README when the date changes
-    color: "#236144"
 
-  # ── navigation shields ──
-  github: {render: shield, label: GitHub, message: mirror, color: "#181717", logo: github, logo_color: white, link: "https://github.com/sofmeright/Dungeon"}
-  inventory: {render: shield, label: inventory, message: fleet, color: "#1A1918", logo: ansible, logo_color: white, link: "ansible/inventory"}
+  # ── Row 2: pipeline / tooling ──
+  stagefreight: {render: shield, label: "managed by StageFreight", message: "{stagefreight.version}", color: "#310937", link: "https://github.com/sofmeright/stagefreight"}
+  pipeline:
+    label: pipeline
+    message: "{env:BUILD_STATUS}"
+    color: auto
+    link: "https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines"
+  security: {render: shield, label: Security, message: report, color: "#4B275F", link: "docs/container-security-audit.md"}
+
+  # ── Row 3: stack at a glance ──
+  ansible: {render: shield, label: Ansible, message: playbooks, color: "#EE0000", logo: ansible, logo_color: white, link: "ansible"}
+  kubernetes: {render: shield, label: Kubernetes, message: "v1.35", color: "#326CE5", logo: kubernetes, logo_color: white, link: "docs/Hardware.md"}
+  fluxcd: {render: shield, label: FluxCD, message: gitops, color: "#5468FF", logo: flux, logo_color: white, link: "fluxcd"}
+  applications: {render: shield, label: Applications, message: "{inventory.dungeon.count}", color: "#0F1689", logo: kubernetes, logo_color: white, link: "docs/Apps_&_Services-Overview.md"}
+  docker-compose: {render: shield, label: Docker-Compose, message: stacks, color: "#2496ED", logo: docker, logo_color: white, link: "docker-compose"}
 
   cluster-inventory: {type: k8s-inventory, catalog: .stagefreight-catalog.yml}
 
@@ -182,11 +193,21 @@ notifications:
 
 scribe:
   files:
-    readme.badges:
+    readme.badges:       # Row 1 — identity / meta
       file: "README.md"
       between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
       inline: true
-      items: [build, license, updated, github, inventory]
+      items: [github, gitlab, updated, license]
+    readme.tooling:      # Row 2 — pipeline / tooling
+      file: "README.md"
+      between: ["<!-- sf:tooling:start -->", "<!-- sf:tooling:end -->"]
+      inline: true
+      items: [stagefreight, pipeline, security]
+    readme.stack:        # Row 3 — stack at a glance
+      file: "README.md"
+      between: ["<!-- sf:stack:start -->", "<!-- sf:stack:end -->"]
+      inline: true
+      items: [ansible, kubernetes, fluxcd, applications, docker-compose]
     apps.inventory:
       file: "docs/Apps_&_Services-Overview.md"
       between: ["<!-- sf:k8s-inventory:start -->", "<!-- sf:k8s-inventory:end -->"]
