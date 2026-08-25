@@ -14,11 +14,11 @@ spec:
           image: docker.io/zelon88/hrconvert2:v3.4.5
           resources:
             requests:
-              cpu: "2m"
-              memory: "12Mi"
-            limits:
               cpu: "10m"
-              memory: "16Mi"
+              memory: "32Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
           volumeMounts:
             - name: tingle-tuner-hrconvert2-config
               mountPath: /var/www/html/HRProprietary/HRConvert2/config.php
