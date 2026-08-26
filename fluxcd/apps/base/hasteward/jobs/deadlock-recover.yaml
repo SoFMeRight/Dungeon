@@ -29,6 +29,9 @@ spec:
       containers:
         - name: hasteward
           image: ${IMAGE}
+          # ${IMAGE} defaults to the rolling latest-dev tag; always pull so a run never
+          # executes a stale cached image on the scheduling node.
+          imagePullPolicy: Always
           args: ["prune-wal", "--deadlock-recover", "--instance", "${INSTANCE}"]
           env:
             - name: HASTEWARD_ENGINE
