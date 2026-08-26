@@ -8,6 +8,16 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
     spec:
+      # ai-dock's /opt/ai-dock/bin/init.sh REQUIRES root + a writable rootfs: it runs
+      # useradd/groupadd/usermod, appends /etc/sudoers, sed-substitutes $USER_NAME into the
+      # supervisord confs, and writes /var/log,/run,/etc. As the base's non-root uid 1000 with
+      # caps dropped, every step fails (and supervisord dies on the literal "$USER_NAME").
+      # roRootFS is infeasible here; run as root (image drops to its baked `user` internally).
+      # fsGroup 1000 + seccomp RuntimeDefault are inherited from the base.
+      securityContext:
+        runAsNonRoot: false
+        runAsUser: 0
+        runAsGroup: 0
       initContainers:
         - name: fix-permissions
           image: docker.io/busybox:1.38
@@ -36,7 +46,18 @@ spec:
       containers:
         - name: webui
           image: ghcr.io/ai-dock/stable-diffusion-webui:v2-cuda-12.1.1-base-22.04-v1.10.1
+          # Root container: clear the base's drop-ALL (init.sh's useradd + supervisord's
+          # per-program user-switching need SETUID/SETGID/CHOWN/DAC_OVERRIDE/FOWNER) and allow
+          # privilege management. No readOnlyRootFilesystem (init.sh writes across /etc,/root,/var).
+          securityContext:
+            allowPrivilegeEscalation: true
+            capabilities:
+              drop: []
           env:
+            # Only start the webui supervisor program — silences cloudflared/jupyter/sshd/etc,
+            # incl. the cf_tunnel program that was erroring on the (now-substituted) $USER_NAME.
+            - name: SUPERVISOR_NO_AUTOSTART
+              value: "cloudflared,jupyter,sshd,syncthing,caddy,serviceportal,quicktunnel"
             - name: WEBUI_PORT
               value: "7860"
             - name: DIRECT_ADDRESS
