@@ -23,6 +23,11 @@ spec:
         any:
           - resources:
               kinds: [Pod]
+              # CREATE-only: hardening is admission-time (see description). On UPDATE the
+              # securityContext fields are immutable anyway, and the mutation would re-inject
+              # them onto controller-issued pod updates (finalizer removal, status) → the API
+              # rejects the update → finalizers/GC wedge. Scope out UPDATE.
+              operations: [CREATE]
               namespaceSelector:
                 matchLabels:
                   istio.io/dataplane-mode: ambient

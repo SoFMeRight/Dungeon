@@ -32,6 +32,11 @@ spec:
           - resources:
               kinds:
                 - Pod
+              # CREATE-only: admission-time hardening. Firing on UPDATE re-injects the immutable
+              # securityContext/volume onto the maintenance pod's own finalizer-removal update →
+              # API rejects it → the failed kopia-maintain pods wedge Terminating with the
+              # batch.kubernetes.io/job-tracking finalizer forever. Scope out UPDATE.
+              operations: [CREATE]
               selector:
                 matchExpressions:
                   - key: velero.io/repo-name
