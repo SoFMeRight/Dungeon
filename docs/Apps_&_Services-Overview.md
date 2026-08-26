@@ -4,9 +4,9 @@
 > Generated from live Kubernetes state
 > Cluster: dungeon
 
-## Apps & Services (114)
+## Apps & Services (117)
 
-✅ 105 healthy · ⚠️ 4 degraded · ❌ 5 down
+✅ 114 healthy · ⚠️ 3 degraded
 
 ### Administrative (zeldas-lullaby)
 
@@ -32,12 +32,6 @@
 | Librespeed Speedtest | ✅ | 🔒 speedtester.pcfae.com | [open](https://speedtester.pcfae.com) |
 | Netbootxyz | ✅ | 🔒 netboot.pcfae.com | [open](https://netboot.pcfae.com) |
 | Openspeedtest | ✅ | 🔒 speedtest.pcfae.com | [open](https://speedtest.pcfae.com) |
-
-### Storage Services (gorons-bracelet)
-
-| App | Status | Exposure | Links |
-| --- | --- | --- | --- |
-| Ceph (3 components) | ✅ | 🔒 s3.pcfae.com | [open](https://s3.pcfae.com) |
 
 ### Monitoring (gossip-stone)
 
@@ -78,6 +72,8 @@
 | Apt Cacher Ng | ✅ | 🔒 apt.pcfae.com | [open](https://apt.pcfae.com) |
 | Bookstack (2 components) | ✅ | 🌐 kb.precisionplanit.com | [open](https://kb.precisionplanit.com) |
 | Calcom | ✅ | 🌐 cal.prplanit.com | [open](https://cal.prplanit.com) |
+| Dolibarr (2 components) | ✅ | 🌐 dolibarr.prplanit.com | [open](https://dolibarr.prplanit.com) |
+| Erpnext (9 components) | ✅ | 🌐 erpnext.prplanit.com | [open](https://erpnext.prplanit.com) |
 | Harbor Proxy Cache Proxy | ✅ | 🔒 docker.cr.pcfae.com | [open](https://docker.cr.pcfae.com) |
 | Invoiceninja (3 components) | ✅ | ❓ invoice.pcfae.com | [open](https://invoice.pcfae.com) |
 | Osticket App | ✅ | ❓ support.pcfae.com | [open](https://support.pcfae.com) |
@@ -103,7 +99,7 @@
 | Ghost (2 components) | ✅ | ❓ blog.pcfae.com | [open](https://blog.pcfae.com) |
 | Immich | ✅ | 🔒 images.pcfae.com | [open](https://images.pcfae.com) |
 | Jellyfin | ✅ | 🌐 flix.optcp.com | [open](https://flix.optcp.com) |
-| Joplin (2 components) | ✅ | 🏠 |  |
+| Joplin (2 components) | ✅ | 🔒 joplin.pcfae.com | [open](https://joplin.pcfae.com) |
 | Kimai (2 components) | ✅ | 🔒 kimai.pcfae.com | [open](https://kimai.pcfae.com) |
 | Linkwarden (3 components) | ✅ | ❓ bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
 | Mealie (2 components) | ✅ | ❓ mealie.yesimvegan.com | [open](https://mealie.yesimvegan.com) |
@@ -112,9 +108,9 @@
 | Penpot (5 components) | ✅ | 🏠 |  |
 | Photoprism (2 components) | ✅ | 🔒 photos.pcfae.com | [open](https://photos.pcfae.com) |
 | Plex | ✅ | 🌐 plex.optcp.com | [open](https://plex.optcp.com) |
-| Reactive Resume (3 components) | ✅ | 🏠 |  |
-| Shlink (3 components) | ✅ | 🔒 shlink.pcfae.com | [open](https://shlink.pcfae.com) |
-| Wikijs (2 components) | ⚠️ | 🏠 |  |
+| Reactive Resume (3 components) | ✅ | 🌐 resume.sofmeright.com | [open](https://resume.sofmeright.com) |
+| Shlink (3 components) | ✅ | ❓ sh.pcfae.com | [open](https://sh.pcfae.com) |
+| Wikijs (2 components) | ⚠️ | 🌐 wiki.yesimvegan.com | [open](https://wiki.yesimvegan.com) |
 
 ### Discovery & Dashboards (lost-woods)
 
@@ -138,10 +134,10 @@
 | --- | --- | --- | --- |
 | Anirra | ✅ | 🔒 anime.pcfae.com | [open](https://anime.pcfae.com) |
 | Bazarr | ✅ | 🔒 bazarr.pcfae.com | [open](https://bazarr.pcfae.com) |
-| Byparr | ❌ | 🏠 |  |
+| Byparr | ✅ | 🏠 |  |
 | Downloadarrs | ✅ | 🔒 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
 | Jellyseerr | ✅ | 🌐 jseer.optcp.com | [open](https://jseer.optcp.com) |
-| Neko (2 components) | ✅ | 🔒 web.pcfae.com | [open](https://web.pcfae.com) |
+| Neko (2 components) | ✅ | 🏠 |  |
 | Overseerr | ✅ | 🔒 overseer.pcfae.com | [open](https://overseer.pcfae.com) |
 | Pinchflat | ✅ | 🔒 pinchflat.pcfae.com | [open](https://pinchflat.pcfae.com) |
 | Prowlarr | ✅ | 🔒 prowlarr.pcfae.com | [open](https://prowlarr.pcfae.com) |
@@ -155,10 +151,10 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Ark (4 components) | ⚠️ | 🏠 |  |
+| Ark (4 components) | ✅ | 🏠 |  |
 | Emulatorjs | ✅ | 🔒 emulatorjs.pcfae.com | [open](https://emulatorjs.pcfae.com) |
 | Minecraft | ✅ | 🏠 |  |
-| Romm (2 components) | ❌ | 🔒 romm.pcfae.com | [open](https://romm.pcfae.com) |
+| Romm (2 components) | ✅ | 🔒 romm.pcfae.com | [open](https://romm.pcfae.com) |
 
 ### Mail Services (delivery-bag)
 
@@ -185,7 +181,7 @@
 | Fairer Pages | ✅ | ❓ *.arbitorium.com | [open](https://*.arbitorium.com) |
 | Faster Whisper | ✅ | 🏠 |  |
 | Google Webfonts Helper | ✅ | 🔒 gwfonts.pcfae.com | [open](https://gwfonts.pcfae.com) |
-| Hrconvert2 | ❌ | 🔒 hrconvert2.pcfae.com | [open](https://hrconvert2.pcfae.com) |
+| Hrconvert2 | ✅ | 🔒 hrconvert2.pcfae.com | [open](https://hrconvert2.pcfae.com) |
 | It Tools | ✅ | 🔒 ittools.pcfae.com | [open](https://ittools.pcfae.com) |
 | Libretranslate | ✅ | 🔒 translate.pcfae.com | [open](https://translate.pcfae.com) |
 | Mazanoke | ✅ | 🔒 mazanoke.pcfae.com | [open](https://mazanoke.pcfae.com) |
@@ -193,7 +189,7 @@
 | Openwakeword | ✅ | 🏠 |  |
 | Piper | ✅ | 🏠 |  |
 | Searxng (2 components) | ✅ | 🔒 search.pcfae.com | [open](https://search.pcfae.com) |
-| Stable Diffusion Webui | ❌ | 🔒 sdiff.pcfae.com | [open](https://sdiff.pcfae.com) |
+| Stable Diffusion Webui | ✅ | 🔒 sdiff.pcfae.com | [open](https://sdiff.pcfae.com) |
 
 ### Privileged Services (pedestal-of-time)
 
@@ -204,13 +200,15 @@
 | Homebox | ✅ | 🔒 inventory.pcfae.com | [open](https://inventory.pcfae.com) |
 | Lubelogger | ✅ | 🔒 lubelogger.pcfae.com | [open](https://lubelogger.pcfae.com) |
 | Monica (2 components) | ✅ | 🔒 monica.pcfae.com | [open](https://monica.pcfae.com) |
+| Photoprism (2 components) | ✅ | 🔒 fotos.pcfae.com | [open](https://fotos.pcfae.com) |
 | Plex Ms X | ✅ | 🔒 plexx.pcfae.com | [open](https://plexx.pcfae.com) |
+| Roundcube Primary (2 components) | ✅ | 🔒 mail.pcfae.com | [open](https://mail.pcfae.com) |
 
 ### Uncategorized (lakitu)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Netalertx | ❌ | 🔒 hosts.pcfae.com | [open](https://hosts.pcfae.com) |
+| Netalertx | ✅ | 🔒 hosts.pcfae.com | [open](https://hosts.pcfae.com) |
 
 <details>
 <summary>App details</summary>
@@ -221,11 +219,11 @@
 - Hosts: netbird.prplanit.com
 - Gateway: cell-membrane-gateway
 - Components:
-  - netbird-management (StatefulSet)
-  - netbird-relay (Deployment)
-  - netbird-signal (StatefulSet)
   - netbird-dashboard (Deployment)
+  - netbird-management (StatefulSet)
   - netbird-coturn (Deployment)
+  - netbird-signal (StatefulSet)
+  - netbird-relay (Deployment)
 
 **Netbox — 3 components** — StatefulSet — 
 - Namespace: zeldas-lullaby
@@ -234,8 +232,8 @@
 - Gateway: cell-membrane-gateway
 - Components:
   - netbox-server (StatefulSet)
-  - netbox-redis (StatefulSet, cache)
   - netbox-postgres (StatefulSet, database)
+  - netbox-redis (StatefulSet, cache)
 
 **Oauth2 Proxy** — Deployment — v7.15.4
 - Namespace: zeldas-lullaby
@@ -322,16 +320,6 @@
 - Hosts: speedtest.pcfae.com
 - Gateway: xylem-gateway
 
-**Ceph — 3 components** — Mixed — 
-- Namespace: gorons-bracelet
-- Replicas: 9/9
-- Hosts: s3.pcfae.com
-- Gateway: xylem-gateway
-- Components:
-  - ceph-rgw (StatefulSet)
-  - ceph-csi-rbd-provisioner (Deployment)
-  - ceph-csi-rbd-nodeplugin (DaemonSet)
-
 **Beszel** — StatefulSet — 0.18.8
 - Namespace: gossip-stone
 - Replicas: 1/1
@@ -407,8 +395,8 @@
 - Replicas: 3/3
 - Components:
   - crowdsec (StatefulSet)
-  - crowdsec-dashboard (Deployment)
   - crowdsec-cloudflare-bouncer (StatefulSet)
+  - crowdsec-dashboard (Deployment)
 
 **Frigate** — StatefulSet — 
 - Namespace: lens-of-truth
@@ -431,8 +419,8 @@
 - Replicas: 3/3
 - Components:
   - wazuh-manager (StatefulSet)
-  - wazuh-dashboard (StatefulSet)
   - wazuh-indexer (StatefulSet)
+  - wazuh-dashboard (StatefulSet)
 
 **Zigbee2mqtt** — StatefulSet — 2.13.0
 - Namespace: lens-of-truth
@@ -466,6 +454,31 @@
 - Replicas: 3/3
 - Hosts: cal.prplanit.com
 - Gateway: cell-membrane-gateway
+
+**Dolibarr — 2 components** — StatefulSet — 
+- Namespace: hyrule-castle
+- Replicas: 2/2
+- Hosts: dolibarr.prplanit.com
+- Gateway: cell-membrane-gateway
+- Components:
+  - dolibarr-web (StatefulSet)
+  - dolibarr-mariadb (StatefulSet, database)
+
+**Erpnext — 9 components** — Mixed — 
+- Namespace: hyrule-castle
+- Replicas: 9/9
+- Hosts: erpnext.prplanit.com
+- Gateway: cell-membrane-gateway
+- Components:
+  - erpnext-frontend (Deployment)
+  - erpnext-websocket (Deployment)
+  - erpnext-scheduler (Deployment)
+  - erpnext-redis-cache (Deployment, cache)
+  - erpnext-sites (StatefulSet)
+  - erpnext-queue-short (Deployment)
+  - erpnext-queue-long (Deployment)
+  - erpnext-redis-queue (StatefulSet, cache)
+  - erpnext-mariadb (StatefulSet, database)
 
 **Harbor Proxy Cache Proxy** — Deployment — 1.31.1.1-alpine
 - Namespace: hyrule-castle
@@ -508,14 +521,14 @@
 - Namespace: temple-of-time
 - Replicas: 9/9
 - Components:
-  - appflowy-gotrue (Deployment)
-  - appflowy-nginx (Deployment)
+  - appflowy-ai (Deployment)
   - appflowy-redis (StatefulSet, cache)
   - appflowy-web (Deployment)
-  - appflowy-worker (Deployment)
-  - appflowy-ai (Deployment)
-  - appflowy-admin-frontend (Deployment)
+  - appflowy-gotrue (Deployment)
   - appflowy-cloud (Deployment)
+  - appflowy-admin-frontend (Deployment)
+  - appflowy-nginx (Deployment)
+  - appflowy-worker (Deployment)
 
 **Calibre Web** — Deployment — 0.6.27
 - Namespace: temple-of-time
@@ -547,9 +560,11 @@
 **Joplin — 2 components** — StatefulSet — 
 - Namespace: temple-of-time
 - Replicas: 2/2
+- Hosts: joplin.pcfae.com
+- Gateway: xylem-gateway
 - Components:
-  - joplin-postgres (StatefulSet, database)
   - joplin-app (StatefulSet)
+  - joplin-postgres (StatefulSet, database)
 
 **Kimai — 2 components** — StatefulSet — apache
 - Namespace: temple-of-time
@@ -602,16 +617,16 @@
 - Gateway: xylem-gateway
 - Components:
   - open-webui (StatefulSet)
-  - open-webui-redis (StatefulSet, cache)
   - open-webui-sentinel (StatefulSet, cache)
+  - open-webui-redis (StatefulSet, cache)
 
 **Penpot — 5 components** — StatefulSet — 
 - Namespace: temple-of-time
 - Replicas: 5/5
 - Components:
+  - penpot-redis (StatefulSet, cache)
   - penpot-exporter (StatefulSet)
   - penpot-frontend (StatefulSet)
-  - penpot-redis (StatefulSet, cache)
   - penpot-backend (StatefulSet)
   - penpot-postgres (StatefulSet, database)
 
@@ -633,27 +648,31 @@
 **Reactive Resume — 3 components** — Mixed — 
 - Namespace: temple-of-time
 - Replicas: 3/3
+- Hosts: resume.sofmeright.com
+- Gateway: phloem-gateway
 - Components:
-  - reactive-resume-chrome (Deployment)
-  - reactive-resume-postgres (StatefulSet, database)
   - reactive-resume-app (Deployment)
+  - reactive-resume-postgres (StatefulSet, database)
+  - reactive-resume-chrome (Deployment)
 
 **Shlink — 3 components** — Mixed — 
 - Namespace: temple-of-time
 - Replicas: 3/3
-- Hosts: shlink.pcfae.com
-- Gateway: xylem-gateway
+- Hosts: sh.pcfae.com, sh.uni2.cc
+- Gateway: cell-membrane-gateway
 - Components:
-  - shlink-web-client (Deployment)
   - shlink-app (StatefulSet)
+  - shlink-web-client (Deployment)
   - shlink-db (StatefulSet, database)
 
 **Wikijs — 2 components** — StatefulSet — 
 - Namespace: temple-of-time
 - Replicas: 1/2
+- Hosts: wiki.yesimvegan.com
+- Gateway: phloem-gateway
 - Components:
-  - wikijs-vegan-db (StatefulSet, database)
   - wikijs-vegan (StatefulSet)
+  - wikijs-vegan-db (StatefulSet, database)
 
 **Astralfocal Site** — Deployment — v0.0.3
 - Namespace: lost-woods
@@ -739,7 +758,7 @@
 
 **Byparr** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 0/1
+- Replicas: 1/1
 
 **Downloadarrs** — StatefulSet — 
 - Namespace: swift-sail
@@ -756,11 +775,9 @@
 **Neko — 2 components** — Mixed — 
 - Namespace: swift-sail
 - Replicas: 2/2
-- Hosts: web.pcfae.com
-- Gateway: xylem-gateway
 - Components:
-  - neko-vpn (StatefulSet)
   - neko-gateway (Deployment)
+  - neko-vpn (StatefulSet)
 
 **Overseerr** — StatefulSet — 
 - Namespace: swift-sail
@@ -812,12 +829,12 @@
 
 **Ark — 4 components** — Mixed — 
 - Namespace: shooting-gallery
-- Replicas: 3/4
+- Replicas: 4/4
 - Components:
-  - ark-sa-tmc-theisland (StatefulSet)
-  - ark-se-tmc-theisland (StatefulSet)
-  - ark-sa-tmc-valguero (StatefulSet)
   - ark-sa-tmc-admin-list-server (Deployment)
+  - ark-sa-tmc-theisland (StatefulSet)
+  - ark-sa-tmc-valguero (StatefulSet)
+  - ark-se-tmc-theisland (StatefulSet)
 
 **Emulatorjs** — StatefulSet — 1.9.2
 - Namespace: shooting-gallery
@@ -831,7 +848,7 @@
 
 **Romm — 2 components** — StatefulSet — 5.2.0
 - Namespace: shooting-gallery
-- Replicas: 0/1
+- Replicas: 1/1
 - Hosts: romm.pcfae.com
 - Gateway: xylem-gateway
 - Components:
@@ -871,17 +888,17 @@
 - Namespace: hookshot
 - Replicas: 10/11
 - Components:
-  - tactical-redis (StatefulSet, cache)
   - tactical-meshcentral (Deployment)
+  - tactical-websockets (Deployment)
+  - tactical-redis (StatefulSet, cache)
+  - tactical-mongodb (StatefulSet)
   - tactical-celery (Deployment)
   - tactical-nginx (Deployment)
-  - tactical-mongodb (StatefulSet)
-  - tactical-postgres (StatefulSet, database)
   - tactical-backend (Deployment)
+  - tactical-celerybeat (Deployment)
   - tactical-frontend (Deployment)
   - tactical-nats (Deployment, queue)
-  - tactical-celerybeat (Deployment)
-  - tactical-websockets (Deployment)
+  - tactical-postgres (StatefulSet, database)
 
 **Convertx** — StatefulSet — v0.18.0
 - Namespace: tingle-tuner
@@ -917,7 +934,7 @@
 
 **Hrconvert2** — StatefulSet — v3.7.2
 - Namespace: tingle-tuner
-- Replicas: 0/1
+- Replicas: 1/1
 - Hosts: hrconvert2.pcfae.com
 - Gateway: xylem-gateway
 
@@ -964,7 +981,7 @@
 
 **Stable Diffusion Webui** — StatefulSet — v2-cuda-12.1.1-base-22.04-v1.10.1
 - Namespace: tingle-tuner
-- Replicas: 0/1
+- Replicas: 1/1
 - Hosts: sdiff.pcfae.com
 - Gateway: xylem-gateway
 
@@ -1001,20 +1018,38 @@
   - monica (StatefulSet)
   - monica-db (StatefulSet, database)
 
+**Photoprism — 2 components** — StatefulSet — 
+- Namespace: pedestal-of-time
+- Replicas: 2/2
+- Hosts: fotos.pcfae.com
+- Gateway: xylem-gateway
+- Components:
+  - photoprism-x (StatefulSet)
+  - photoprism-x-mariadb (StatefulSet, database)
+
 **Plex Ms X** — StatefulSet — 1.43.3.10896-cb3ebc72d
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: plexx.pcfae.com
 - Gateway: xylem-gateway
 
+**Roundcube Primary — 2 components** — StatefulSet — 
+- Namespace: pedestal-of-time
+- Replicas: 2/2
+- Hosts: mail.pcfae.com
+- Gateway: xylem-gateway
+- Components:
+  - roundcube-primary-gmail (StatefulSet)
+  - roundcube-primary-gmail-db (StatefulSet, database)
+
 **Netalertx** — StatefulSet — 26.8.5
 - Namespace: lakitu
-- Replicas: 0/1
+- Replicas: 1/1
 - Hosts: hosts.pcfae.com
 - Gateway: xylem-gateway
 
 </details>
-## Platform Components (55)
+## Platform Components (52)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
@@ -1031,6 +1066,7 @@
 | Istiod | king-of-red-lions | ✅ |
 | Stunner (2 components) | king-of-red-lions | ✅ |
 | Ztunnel | king-of-red-lions | ✅ |
+| Ceph (3 components) | gorons-bracelet | ✅ |
 | Ceph Csi (2 components) | gorons-bracelet | ✅ |
 | Cloudnative Pg | gorons-bracelet | ✅ |
 | Csi Driver Smb (3 components) | gorons-bracelet | ✅ |
@@ -1051,8 +1087,6 @@
 | Reflector | gerudo-crest | ✅ |
 | Bagisto (2 components) | hyrule-castle | ✅ |
 | Cell Membrane Gateway Istio | hyrule-castle | ✅ |
-| Dolibarr (2 components) | hyrule-castle | ✅ |
-| Erpnext (9 components) | hyrule-castle | ✅ |
 | Gitlab (11 components) | hyrule-castle | ✅ |
 | Gitlab Gitlab Runner | hyrule-castle | ✅ |
 | Harbor (6 components) | hyrule-castle | ✅ |
@@ -1060,9 +1094,7 @@
 | Opnform (7 components) | hyrule-castle | ✅ |
 | Phloem Gateway Istio | kokiri-forest | ✅ |
 | Xylem Gateway Istio | arylls-lookout | ✅ |
-| Paperless (3 components) | pedestal-of-time | ⚠️ |
-| Photoprism (2 components) | pedestal-of-time | ✅ |
-| Roundcube Primary (2 components) | pedestal-of-time | ✅ |
+| Paperless (3 components) | pedestal-of-time | ✅ |
 | Cilium Agent | kube-system | ✅ |
 | Cilium Envoy | kube-system | ✅ |
 | Cilium Operator | kube-system | ✅ |
@@ -1128,6 +1160,10 @@
 **Ztunnel** — DaemonSet — 1.30.3
 - Namespace: king-of-red-lions
 - Replicas: 10/10
+
+**Ceph** — Mixed — 
+- Namespace: gorons-bracelet
+- Replicas: 9/9
 
 **Ceph Csi** — Deployment — 
 - Namespace: gorons-bracelet
@@ -1209,14 +1245,6 @@
 - Namespace: hyrule-castle
 - Replicas: 3/3
 
-**Dolibarr** — StatefulSet — 
-- Namespace: hyrule-castle
-- Replicas: 2/2
-
-**Erpnext** — Mixed — 
-- Namespace: hyrule-castle
-- Replicas: 9/9
-
 **Gitlab** — Mixed — v18.11.11
 - Namespace: hyrule-castle
 - Replicas: 22/22
@@ -1247,15 +1275,7 @@
 
 **Paperless** — StatefulSet — 
 - Namespace: pedestal-of-time
-- Replicas: 2/3
-
-**Photoprism** — StatefulSet — 
-- Namespace: pedestal-of-time
-- Replicas: 2/2
-
-**Roundcube Primary** — StatefulSet — 
-- Namespace: pedestal-of-time
-- Replicas: 2/2
+- Replicas: 3/3
 
 **Cilium Agent** — DaemonSet — 
 - Namespace: kube-system
