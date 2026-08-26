@@ -144,12 +144,16 @@ data:
           // Collabora CODE 26.04.3.1.1 breaks Nextcloud Office on NC 34: richdocuments 11.1
           // calls /wopi/settings and getSettings($type) receives null -> TypeError 500 ->
           // coolwsd "Failed to install config" -> document load fails (Collabora bug #16040,
-          // WOPISrc query-param mangling). The upstream fix merged 2026-08-20 but is not in
-          // any published image yet. Hold on the 25.04 line until a fixed 26.04.x ships, then
-          // bump this pin deliberately.
+          // WOPISrc query-param mangling). No coolwsd toggle (hasSettingIframeSupport is
+          // hard-coded) and no richdocuments patch exist; the #16040 fix merged upstream
+          // 2026-08-20 but is not in any published image yet (newest 26.04.3.1.1 is 08-11).
+          // Held on 25.04.10.3.1. Park collabora bumps behind dependency-dashboard approval
+          // (like the DB majors) — NOT allowedVersions, which would hide 26.04 entirely: the
+          // dashboard must SURFACE each new 26.04.x as it publishes (the watch) so it can be
+          // approved deliberately once a build past the #16040 fix ships.
           "matchDatasources": ["docker"],
           "matchPackageNames": ["**/collabora/code"],
-          "allowedVersions": "/^25\\.04\\./"
+          "dependencyDashboardApproval": true
         },
         {
           // Photoprism ships date tags and switched formats (YYYYMMDD -> YYMMDD). Default
