@@ -57,8 +57,13 @@ spec:
           value: "192.168.144.0/20"
         - name: OVERWRITECLIURL
           value: "https://ncloud.optcp.com"
-        - name: OVERWRITEPROTOCOL
-          value: "https"
+        # OVERWRITEPROTOCOL is deliberately NOT set. Forcing overwriteprotocol=https applies
+        # UNCONDITIONALLY (overwritecondaddr unset), so internal HTTP requests — Collabora's
+        # preset/settings fetch over the in-cluster service (wopi_callback_url) — get https://
+        # URLs they can't reach on the HTTP:80 service, breaking document loading (richdocuments
+        # builds them via getAbsoluteURL, whose scheme = overwriteprotocol). Instead Nextcloud
+        # derives the scheme from X-Forwarded-Proto (the gateway sets it and is a trusted_proxy):
+        # browser->gateway = https, coolwsd internal (no XFP) = http. Verified both ways.
         - name: PHP_MEMORY_LIMIT
           value: "1G"
         - name: PHP_UPLOAD_LIMIT
