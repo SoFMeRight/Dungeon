@@ -97,13 +97,17 @@ spec:
       hooks:
         before-starting: |-
           #!/bin/sh
-          # Both settings must go through occ, not chart values: wopi_callback_url is DB
-          # app-config, and trusted_domains is only seeded by the chart at INSTALL time (the
-          # NEXTCLOUD_TRUSTED_DOMAINS env is ignored on upgrades). Index 10 is a reserved slot
-          # for the internal host so it never collides with the chart-managed 0-2. Idempotent.
+          # These must go through occ, not chart values: wopi_callback_url is DB app-config;
+          # trusted_domains is only seeded by the chart at INSTALL time (NEXTCLOUD_TRUSTED_DOMAINS
+          # env ignored on upgrades) — index 10 is a reserved slot so it never collides with the
+          # chart-managed 0-2. The overwriteprotocol delete scrubs any value an earlier occ op
+          # persisted into config.php: with the OVERWRITEPROTOCOL env removed above, the scheme
+          # must come from X-Forwarded-Proto (else internal coolwsd preset URLs come out https and
+          # break document loading). All idempotent.
           su -p www-data -s /bin/sh -c '
             php /var/www/html/occ config:app:set richdocuments wopi_callback_url --value "http://nextcloud.temple-of-time.svc.cluster.local"
             php /var/www/html/occ config:system:set trusted_domains 10 --value "nextcloud.temple-of-time.svc.cluster.local"
+            php /var/www/html/occ config:system:delete overwriteprotocol
           ' || true
 
       strategy:
