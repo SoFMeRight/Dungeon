@@ -92,7 +92,14 @@ spec:
       hooks:
         before-starting: |-
           #!/bin/sh
-          su -p www-data -s /bin/sh -c 'php /var/www/html/occ config:app:set richdocuments wopi_callback_url --value "http://nextcloud.temple-of-time.svc.cluster.local"' || true
+          # Both settings must go through occ, not chart values: wopi_callback_url is DB
+          # app-config, and trusted_domains is only seeded by the chart at INSTALL time (the
+          # NEXTCLOUD_TRUSTED_DOMAINS env is ignored on upgrades). Index 10 is a reserved slot
+          # for the internal host so it never collides with the chart-managed 0-2. Idempotent.
+          su -p www-data -s /bin/sh -c '
+            php /var/www/html/occ config:app:set richdocuments wopi_callback_url --value "http://nextcloud.temple-of-time.svc.cluster.local"
+            php /var/www/html/occ config:system:set trusted_domains 10 --value "nextcloud.temple-of-time.svc.cluster.local"
+          ' || true
 
       strategy:
         type: RollingUpdate
