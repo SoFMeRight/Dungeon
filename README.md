@@ -9,13 +9,15 @@ This repository seeks to be the source of truth regarding the active state of my
 > Maintained by [SoFMeRight](https://github.com/sofmeright) for [PrPlanIT](https://prplanit.com) — Real world results for your real world expectations. <br>
 
 <!-- sf:badges:start -->
-[![build](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/build.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![license](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/license.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/LICENSE) ![updated](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/updated.svg) [![GitHub](https://img.shields.io/badge/GitHub-mirror-181717?logo=github&logoColor=white)](https://github.com/sofmeright/Dungeon) [![inventory](https://img.shields.io/badge/inventory-fleet-1A1918?logo=ansible&logoColor=white)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/ansible/inventory)
+[![GitHub](https://img.shields.io/badge/GitHub-mirror-181717?logo=github&logoColor=white)](https://github.com/sofmeright/Dungeon) [![GitLab](https://img.shields.io/badge/GitLab-source-FC6D26?logo=gitlab&logoColor=white)](https://gitlab.prplanit.com/SoFMeRight/dungeon) ![updated](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/updated.svg) [![license](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/license.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/LICENSE)
 <!-- sf:badges:end -->
 
 <!-- sf:tooling:start -->
+[![managed by StageFreight](https://img.shields.io/badge/managed_by_StageFreight-%7Bstagefreight.version%7D-310937)](https://github.com/sofmeright/stagefreight) [![pipeline](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/pipeline.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![Security](https://img.shields.io/badge/Security-report-4B275F)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/docs/container-security-audit.md)
 <!-- sf:tooling:end -->
 
 <!-- sf:stack:start -->
+[![Ansible](https://img.shields.io/badge/Ansible-playbooks-EE0000?logo=ansible&logoColor=white)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/ansible) [![Kubernetes](https://img.shields.io/badge/Kubernetes-v1.35-326CE5?logo=kubernetes&logoColor=white)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/docs/Hardware.md) [![FluxCD](https://img.shields.io/badge/FluxCD-gitops-5468FF?logo=flux&logoColor=white)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/fluxcd) [![Applications](https://img.shields.io/badge/Applications-%7Binventory.dungeon.count%7D-0F1689?logo=kubernetes&logoColor=white)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/docs/Apps_&_Services-Overview.md) [![Docker-Compose](https://img.shields.io/badge/Docker--Compose-stacks-2496ED?logo=docker&logoColor=white)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/docker-compose)
 <!-- sf:stack:end -->
 
 ---
