@@ -245,7 +245,13 @@ spec:
         policy.prplanit.com/ingress: "true"
       image:
         repository: docker.io/collabora/code
-        tag: "26.04.3.1.1"
+        # Held on the 25.04 line (last-known-good; Renovate pin below). On CODE 26.04.3.1.1,
+        # richdocuments 11.1 (NC 34) calls /wopi/settings and getSettings($type) receives null
+        # -> TypeError 500 -> coolwsd "Failed to install config" -> document load fails
+        # (Collabora bug #16040, WOPISrc query-param mangling). The upstream fix merged
+        # 2026-08-20 but is not in any published image yet (newest is 26.04.3.1.1, 2026-08-11).
+        # Bump back to a fixed 26.04.x once it ships.
+        tag: "25.04.10.3.1"
       collabora:
         aliasgroups:
           - host: "https://ncloud.optcp.com:443"

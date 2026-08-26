@@ -141,6 +141,17 @@ data:
           "allowedVersions": "/^v19/"
         },
         {
+          // Collabora CODE 26.04.3.1.1 breaks Nextcloud Office on NC 34: richdocuments 11.1
+          // calls /wopi/settings and getSettings($type) receives null -> TypeError 500 ->
+          // coolwsd "Failed to install config" -> document load fails (Collabora bug #16040,
+          // WOPISrc query-param mangling). The upstream fix merged 2026-08-20 but is not in
+          // any published image yet. Hold on the 25.04 line until a fixed 26.04.x ships, then
+          // bump this pin deliberately.
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/collabora/code"],
+          "allowedVersions": "/^25\\.04\\./"
+        },
+        {
           // Photoprism ships date tags and switched formats (YYYYMMDD -> YYMMDD). Default
           // semver mis-orders them — it proposed a 2022 DOWNGRADE (20220121) over the
           // current 251130 because 20,220,121 > 251,130 numerically. Pin the versioning to
