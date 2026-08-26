@@ -12,6 +12,13 @@ spec:
   instances: 3
   imageName: ghcr.io/cloudnative-pg/postgresql:17.0
   primaryUpdateStrategy: unsupervised
+  # The cluster runs in a deny-default network regime (cilium + istio ambient). This
+  # infrastructure-contract label is what lets the CNPG operator reach each instance's
+  # :8000/pg/status endpoint and instances replicate — without it the operator's status
+  # scrape is reset ("HTTP communication issue"). Mirrors the real fleet's clusters.
+  inheritedMetadata:
+    labels:
+      policy.prplanit.com/cnpg: "managed"
   storage:
     size: 1Gi
     storageClass: ceph-rbd

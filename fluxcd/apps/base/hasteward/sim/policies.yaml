@@ -1,0 +1,46 @@
+# Istio-ambient AuthorizationPolicies the sim CNPG cluster needs. The cilium CCNPs
+# (allow-cnpg-operator, contract-postgres, contract-replication-cnpg) are cluster-wide and
+# already admit the cnpg:managed pods; but the ztunnel AuthorizationPolicies are
+# namespace-scoped and infra-configs only generates them for the real DB namespaces. Without
+# these, ztunnel RESETS the operator's :8000/pg/status scrape ("HTTP communication issue")
+# and blocks replication. Applied with cluster.yaml when standing the sim up.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-cnpg-operator
+  namespace: training-dummy
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      policy.prplanit.com/cnpg: managed
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/gorons-bracelet/sa/cloudnative-pg
+      to:
+        - operation:
+            ports:
+              - "5432"
+              - "8000"
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-training-dummy-postgres-replication
+  namespace: training-dummy
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      cnpg.io/cluster: training-dummy-postgres
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/training-dummy/sa/training-dummy-postgres
+      to:
+        - operation:
+            ports:
+              - "5432"
