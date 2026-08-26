@@ -20,7 +20,10 @@ spec:
         fsGroup: 1001
       containers:
         - name: theisland
-          image: docker.io/drpsychick/arkserver:latest-v1.6.62
+          # Our own fork build (HomeLabHD/ark-se-server) — the upstream drpsychick :latest-v1.6.62
+          # tag ships without arkmanager (broken build). This is arkmanager v1.6.69 with a guarded
+          # install, built via stagefreight from the fork.
+          image: ghcr.io/homelabhd/ark-se-server:v1.6.69
           ports:
             - containerPort: 7797
               protocol: UDP
