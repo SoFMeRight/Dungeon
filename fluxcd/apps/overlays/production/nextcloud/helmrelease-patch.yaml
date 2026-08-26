@@ -38,6 +38,9 @@ spec:
       trustedDomains:
         - ncloud.optcp.com
         - ncloud.pcfae.com
+        # In-cluster host Collabora's WOPI callback connects to (wopi_callback_url below);
+        # only resolvable/reachable in-mesh, so nextcloud must trust it as a valid domain.
+        - nextcloud.temple-of-time.svc.cluster.local
 
       mail:
         enabled: true
@@ -80,6 +83,16 @@ spec:
               . '?auth=' . getenv('REDIS_HOST_PASSWORD')
             );
           }
+
+      # Pin Collabora's WOPI CheckFileInfo callback to the in-cluster nextcloud service, so
+      # coolwsd reaches nextcloud east-west instead of the public LB (a meshed pod can't
+      # hairpin to the gateway LB IP). richdocuments' wopi_callback_url is DB app-config, not
+      # config.php — set it via occ each start (idempotent, self-healing); non-fatal so a
+      # mid-upgrade boot isn't blocked. Browser->Collabora (public_wopi_url) is unaffected.
+      hooks:
+        before-starting: |-
+          #!/bin/sh
+          su -p www-data -s /bin/sh -c 'php /var/www/html/occ config:app:set richdocuments wopi_callback_url --value "http://nextcloud.temple-of-time.svc.cluster.local"' || true
 
       strategy:
         type: RollingUpdate
@@ -229,6 +242,10 @@ spec:
       collabora:
         aliasgroups:
           - host: "https://ncloud.optcp.com:443"
+          # coolwsd validates the WOPISrc host; with wopi_callback_url now pointing at the
+          # in-cluster service, that host must be an accepted WOPI host or it self-rejects
+          # ("Unauthorized WOPI host").
+          - host: "http://nextcloud.temple-of-time.svc.cluster.local:80"
         server_name: ncloud.optcp.com
         extra_params: "--o:ssl.enable=false --o:ssl.termination=true"
       securityContext:

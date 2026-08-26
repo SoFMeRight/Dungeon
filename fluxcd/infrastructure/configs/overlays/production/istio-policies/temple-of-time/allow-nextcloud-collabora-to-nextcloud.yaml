@@ -1,0 +1,21 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-nextcloud-collabora-to-nextcloud
+spec:
+  # Collabora's WOPI CheckFileInfo callback now targets nextcloud over the in-cluster
+  # service (wopi_callback_url) instead of the public LB (a meshed pod can't hairpin to
+  # the gateway LB IP). That east-west hop is ztunnel-reset without this allow.
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nextcloud
+      app.kubernetes.io/component: app
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/temple-of-time/sa/nextcloud-collabora
+      to:
+        - operation:
+            ports: ["80"]
