@@ -15,11 +15,13 @@ spec:
           resources:
             requests:
               cpu: "10m"
-              # 32Mi/256Mi OOMKilled (exit 137) on startup — the image runs Apache + PHP and
-              # spins up headless LibreOffice for document conversion, which needs far more.
-              memory: "128Mi"
+              memory: "256Mi"
             limits:
-              cpu: "1000m"
+              # Only the memory limit mattered: 256Mi OOMKilled (exit 137) on startup — the image
+              # runs Apache + PHP and spins up headless LibreOffice, which needs headroom. CPU
+              # limit left at 500m (it was never the cause). TODO: right-size the memory limit
+              # down toward observed steady-state once it's been healthy for a bit.
+              cpu: "500m"
               memory: "1Gi"
           volumeMounts:
             - name: tingle-tuner-hrconvert2-config
