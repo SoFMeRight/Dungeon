@@ -5,5 +5,6 @@ resources:
   - serviceaccounts.yaml
   - statefulset-app.yaml
   - statefulset-db.yaml
+  - configmap-db-cnf.yaml
   - pvc-smb-games.yaml
   - service.yaml

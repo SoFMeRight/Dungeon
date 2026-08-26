@@ -27,6 +27,13 @@ spec:
                 - NET_ADMIN
                 - NET_BIND_SERVICE
           env:
+            # LSIO-style PUID/PGID: base ships PLACEHOLDER_PUID/PGID (never substituted);
+            # the netalertx image FATALs on a non-numeric PUID. Pin to its default uid 20211
+            # (matches the pod-level fsGroup above).
+            - name: PUID
+              value: "20211"
+            - name: PGID
+              value: "20211"
             - name: PORT
               value: "20211"
             - name: TZ

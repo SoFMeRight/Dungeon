@@ -15,22 +15,22 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-            readOnlyRootFilesystem: true
+            # v3 rearchitected onto uv + camoufox: the venv (/app/.venv) symlinks to a baked
+            # uv-python under $HOME, and a 585MB camoufox browser ships under XDG_CACHE_HOME=/cache
+            # which camoufox writes its profile back into at runtime. The v2-era mounts below
+            # (emptyDir over /app/.venv, PVC over /app/.cache, UV_* redirects) hid those baked
+            # trees → `exec /app/.venv/bin/python: No such file or directory`. Removed. A read-only
+            # rootfs is impractical here (can't both expose the baked /cache browser and let
+            # camoufox write to it), so roRootFS is off — the rest of the hardening stays:
+            # non-root uid 1000, drop-ALL caps, and gluetun VPN-netns isolation.
+            readOnlyRootFilesystem: false
           image: ghcr.io/thephaseless/byparr:3.0.4
           env:
             - name: TZ
               value: "America/Los_Angeles"
-            - name: UV_CACHE_DIR
-              value: "/app/.cache/uv"
-            - name: UV_PYTHON_INSTALL_DIR
-              value: "/app/.cache/uv/python"
           volumeMounts:
             - name: screenshots
               mountPath: /app/screenshots
-            - name: cache
-              mountPath: /app/.cache
-            - name: venv
-              mountPath: /app/.venv
             - name: tmp
               mountPath: /tmp
         - name: gluetun
@@ -47,13 +47,7 @@ spec:
             - name: UPDATER_PERIOD
               value: "24h"
       volumes:
-        - name: cache
-          persistentVolumeClaim:
-            claimName: byparr-cache-pvc
-        - name: venv
-          emptyDir:
-            sizeLimit: 1Gi
-        # readOnlyRootFilesystem (byparr container): headless browser writes temp to /tmp.
+        # headless browser + app temp
         - name: tmp
           emptyDir: {}
   volumeClaimTemplates:

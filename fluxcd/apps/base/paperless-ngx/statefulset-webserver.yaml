@@ -56,6 +56,11 @@ spec:
                 secretKeyRef:
                   name: paperless-secrets
                   key: db_password
+            - name: PAPERLESS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: paperless-secrets
+                  key: secret_key
             - name: PAPERLESS_ACCOUNT_DEFAULT_GROUPS
               value: "user"
             - name: PAPERLESS_APPS

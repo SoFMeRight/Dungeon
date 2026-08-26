@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: romm-db-cnf
+data:
+  # RomM's DB migrations issue CREATE/DROP TRIGGER. linuxserver/mariadb ships with the binary
+  # log enabled, so with binlog on + a non-SUPER app user those statements fail:
+  #   "You do not have the SUPER privilege and binary logging is enabled ..." → migrations abort.
+  # romm-db is single-node (no replication), so binlog is wasted disk. Disable it, which also
+  # removes the SUPER requirement entirely. Mounted at LSIO's /config/custom.cnf.
+  custom.cnf: |
+    [mysqld]
+    skip-log-bin
+    log_bin_trust_function_creators = 1
