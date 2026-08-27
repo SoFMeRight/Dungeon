@@ -69,12 +69,30 @@
     - name: "[sts {{ g_ns }}/{{ g_sts }}] scale StatefulSet back up"
       ansible.builtin.command: kubectl scale -n {{ g_ns }} statefulset/{{ g_sts }} --replicas={{ sts_rep.stdout }}
 
-    - name: "[sts {{ g_ns }}/{{ g_sts }}] wait for the StatefulSet to be Ready again"
+    # Readiness is BEST-EFFORT and NON-fatal: every group PVC is already verified (bound + driver
+    # check in swap-core), so a slow-starting StatefulSet (e.g. ARK pulls a 10GB image + loads a map,
+    # far past any rollout timeout) or an independently-broken pod must NOT roll back a good
+    # migration. On timeout we LEAVE IT MIGRATED and warn loudly instead of triggering rescue.
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] wait for the StatefulSet to be Ready again (best-effort)"
       ansible.builtin.command: kubectl rollout status statefulset/{{ g_sts }} -n {{ g_ns }} --timeout=300s
+      register: rollout_sts
+      changed_when: false
+      failed_when: false
+
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] MIGRATED but NOT Ready in time — LEFT MIGRATED (no rollback)"
+      ansible.builtin.debug:
+        msg: >-
+          ⚠ StatefulSet {{ g_ns }}/{{ g_sts }} — {{ sts_vols | length }} volume(s) re-adopted onto
+          {{ new_driver }} (bind+driver verified) but not Ready within 300s — LEFT MIGRATED, NOT
+          rolled back. The swaps are confirmed good; investigate the workload.
+      when: (rollout_sts.rc | default(0)) != 0
 
     - name: "[sts {{ g_ns }}/{{ g_sts }}] MIGRATED"
       ansible.builtin.debug:
-        msg: "✓ StatefulSet {{ g_ns }}/{{ g_sts }} — {{ sts_vols | length }} volume(s) re-adopted onto {{ new_driver }} (zero-copy)"
+        msg: >-
+          ✓ StatefulSet {{ g_ns }}/{{ g_sts }} — {{ sts_vols | length }} volume(s) re-adopted onto
+          {{ new_driver }} (zero-copy){{
+          ' [pod not yet Ready — see warning]' if (rollout_sts.rc | default(0)) != 0 else '' }}
 
   rescue:
     - name: "[sts {{ g_ns }}/{{ g_sts }}] ROLLBACK — restoring touched PVCs from escrow"

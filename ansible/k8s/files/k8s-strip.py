@@ -13,11 +13,11 @@ for k in ("resourceVersion", "uid", "creationTimestamp", "generation",
 (m.get("annotations") or {}).pop("kubectl.kubernetes.io/last-applied-configuration", None)
 o.pop("status", None)
 
-# A PV's claimRef carries the old PVC's uid/resourceVersion — drop them so the recreated PVC
-# (with a fresh uid) can bind.
-cr = (o.get("spec") or {}).get("claimRef")
-if isinstance(cr, dict):
-    cr.pop("uid", None)
-    cr.pop("resourceVersion", None)
+# Drop a PV's claimRef ENTIRELY. On restore the PV comes back Available and the re-created PVC
+# (which pins spec.volumeName) re-binds it deterministically. Keeping the claimRef — even with
+# uid/resourceVersion stripped — can leave the restored PVC stuck 'Lost' after a rollback
+# (the binder won't reconcile a pre-claimed PV against a freshly-created claim).
+if o.get("kind") == "PersistentVolume":
+    (o.get("spec") or {}).pop("claimRef", None)
 
 json.dump(o, sys.stdout)

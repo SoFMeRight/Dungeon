@@ -40,13 +40,29 @@
       ansible.builtin.command: kubectl scale -n {{ vol.namespace }} deployment/{{ vol.owner_name }} --replicas={{ vol.replicas }}
       when: vol.owner_kind == 'Deployment'
 
-    - name: "[{{ vol.key }}] wait for the Deployment to be Ready again"
+    # Readiness is BEST-EFFORT and NON-fatal: the swap is already verified (PVC bound + driver
+    # check in swap-core), so a slow-starting or independently-broken workload must NOT roll back a
+    # good migration. On timeout we LEAVE IT MIGRATED and warn loudly instead of triggering rescue.
+    - name: "[{{ vol.key }}] wait for the Deployment to be Ready again (best-effort)"
       ansible.builtin.command: kubectl rollout status -n {{ vol.namespace }} deployment/{{ vol.owner_name }} --timeout=180s
+      register: rollout_one
+      changed_when: false
+      failed_when: false
       when: vol.owner_kind == 'Deployment'
+
+    - name: "[{{ vol.key }}] MIGRATED but NOT Ready in time — LEFT MIGRATED (no rollback)"
+      ansible.builtin.debug:
+        msg: >-
+          ⚠ {{ vol.key }} re-adopted onto {{ new_driver }} (bind+driver verified) but not Ready
+          within 180s — LEFT MIGRATED, NOT rolled back. The swap is confirmed good; investigate
+          the workload (slow start / unrelated issue).
+      when: vol.owner_kind == 'Deployment' and (rollout_one.rc | default(0)) != 0
 
     - name: "[{{ vol.key }}] MIGRATED"
       ansible.builtin.debug:
-        msg: "✓ {{ vol.key }} re-adopted onto {{ new_driver }} (zero-copy)"
+        msg: >-
+          ✓ {{ vol.key }} re-adopted onto {{ new_driver }} (zero-copy){{
+          ' [pod not yet Ready — see warning]' if (rollout_one.rc | default(0)) != 0 else '' }}
 
   rescue:
     - name: "[{{ vol.key }}] ROLLBACK — restoring the old driver from escrow"
