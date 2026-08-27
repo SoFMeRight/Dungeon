@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: optcp-overseerr-config-0
     volumeAttributes:
@@ -21,8 +21,8 @@ spec:
       imageName: "optcp-overseerr-config-0"
       staticVolume: "true"
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

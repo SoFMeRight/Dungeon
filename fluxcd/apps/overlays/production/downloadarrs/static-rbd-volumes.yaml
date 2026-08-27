@@ -13,7 +13,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-qbittorrent-config-0
     volumeAttributes:
@@ -22,8 +22,8 @@ spec:
       imageName: "swift-sail-qbittorrent-config-0"
       staticVolume: "true"
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -51,7 +51,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-qbittorrent-downloads-0
     volumeAttributes:
@@ -60,8 +60,8 @@ spec:
       imageName: "swift-sail-qbittorrent-downloads-0"
       staticVolume: "true"
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -89,7 +89,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-qbittorrent-gluetun-config-0
     volumeAttributes:
@@ -98,8 +98,8 @@ spec:
       imageName: "swift-sail-qbittorrent-gluetun-config-0"
       staticVolume: "true"
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -127,7 +127,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-radarr-config-0
     volumeAttributes:
@@ -136,8 +136,8 @@ spec:
       imageName: "swift-sail-radarr-config-0"
       staticVolume: "true"
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -165,7 +165,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-sonarr-config-0
     volumeAttributes:
@@ -174,8 +174,8 @@ spec:
       imageName: "swift-sail-sonarr-config-0"
       staticVolume: "true"
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -203,7 +203,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-lidarr-config-0
     volumeAttributes:
@@ -212,8 +212,8 @@ spec:
       imageName: "swift-sail-lidarr-config-0"
       staticVolume: "true"
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -241,7 +241,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-readarr-config-0
     volumeAttributes:
@@ -250,8 +250,8 @@ spec:
       imageName: "swift-sail-readarr-config-0"
       staticVolume: "true"
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -279,7 +279,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-cross-seed-config-0
     volumeAttributes:
@@ -288,8 +288,8 @@ spec:
       imageName: "swift-sail-cross-seed-config-0"
       staticVolume: "true"
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

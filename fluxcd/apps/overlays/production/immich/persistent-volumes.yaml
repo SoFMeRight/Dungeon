@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: optcp-immich-library-0
     volumeAttributes:
@@ -22,8 +22,8 @@ spec:
       imageName: optcp-immich-library-0
       imageFeatures: layering
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -37,7 +37,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: optcp-immich-model-cache-0
     volumeAttributes:
@@ -47,8 +47,8 @@ spec:
       imageName: optcp-immich-model-cache-0
       imageFeatures: layering
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -62,7 +62,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: optcp-immich-postgres-0
     volumeAttributes:
@@ -72,5 +72,5 @@ spec:
       imageName: optcp-immich-postgres-0
       imageFeatures: layering
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet

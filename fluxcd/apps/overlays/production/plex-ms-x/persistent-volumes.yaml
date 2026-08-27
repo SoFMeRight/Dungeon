@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: kai-plex-ms-x-config-0
     volumeAttributes:
@@ -22,8 +22,8 @@ spec:
       imageName: kai-plex-ms-x-config-0
       imageFeatures: layering
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -37,7 +37,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: kai-plex-ms-x-transcode-0
     volumeAttributes:
@@ -47,5 +47,5 @@ spec:
       imageName: kai-plex-ms-x-transcode-0
       imageFeatures: layering
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet

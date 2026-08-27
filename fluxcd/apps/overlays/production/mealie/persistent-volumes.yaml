@@ -10,12 +10,12 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: optcp-mealie-data-0
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
     volumeAttributes:
       clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
       pool: dungeon
@@ -34,12 +34,12 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: optcp-mealie-postgres-0
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
     volumeAttributes:
       clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
       pool: dungeon
