@@ -10,7 +10,7 @@ resources:
   - ceph-fs  # CephFS root access + static volumes
   - ceph-rgw  # Ceph RGW keyring for S3 object storage
   - ceph-rook-ceph  # Rook external Ceph cluster connection secrets
-  - volume-snapshot-class  # VolumeSnapshotClass (requires snapshot-controller CRDs)
+  # RBD VolumeSnapshotClass now ships with the RBD StorageClasses in storage/../storage-rook (Rook driver)
   - openbao  # Bank-Vaults (openbao) with SOPS-encrypted keys
   - velero  # Backup and disaster recovery credentials
   - zitadel  # Identity and Access Management
