@@ -10,7 +10,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
   csi:
-    driver: rbd.csi.ceph.com
+    driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: kai-dailytxt-data
     volumeAttributes:
@@ -20,5 +20,8 @@ spec:
       imageName: kai-dailytxt-data
       imageFeatures: layering
     nodeStageSecretRef:
-      name: ceph-secret-user
-      namespace: kube-system
+      name: csi-rbd-node
+      namespace: gorons-bracelet
+    controllerExpandSecretRef:
+      name: csi-rbd-provisioner
+      namespace: gorons-bracelet
