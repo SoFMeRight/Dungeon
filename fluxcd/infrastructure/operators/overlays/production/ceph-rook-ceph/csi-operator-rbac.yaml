@@ -1,0 +1,121 @@
+# ServiceAccounts + RBAC for the ceph-csi-operator-driven CSI plugins.
+#
+# The ceph-csi-operator (run by rook-ceph-operator) renders the *-ctrlplugin / *-nodeplugin
+# workloads but does NOT create their ServiceAccounts or bindings. The rook 1.18->1.20
+# migration dropped these, and the rook-ceph Helm chart does not template them, so they are
+# codified here as source (NOT healed by driftDetection — the chart never owned them).
+#
+# CephFS was previously restored out-of-band via `kubectl create` (live-but-not-in-git drift);
+# it is codified here so the whole operator CSI RBAC is declarative. RBD is added to match,
+# bringing the operator RBD ctrlplugin/nodeplugin healthy (idle until the ceph-rbd StorageClasses
+# are cut over to gorons-bracelet.rbd.csi.ceph.com — a separate, deliberate data-path change).
+#
+# ctrlplugin SAs bind the ceph-csi-rbd-provisioner ClusterRole + Role; nodeplugin SAs bind the
+# ceph-csi-rbd-nodeplugin ClusterRole. Those roles are Helm-managed by the ceph-csi-rbd release
+# and shared by both drivers (matching the live cephfs bindings).
+
+# ---- RBD ----
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rbd-ctrlplugin-sa
+  namespace: gorons-bracelet
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: rbd-ctrlplugin-sa
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ceph-csi-rbd-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: rbd-ctrlplugin-sa
+    namespace: gorons-bracelet
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rbd-ctrlplugin-sa
+  namespace: gorons-bracelet
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ceph-csi-rbd-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: rbd-ctrlplugin-sa
+    namespace: gorons-bracelet
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rbd-nodeplugin-sa
+  namespace: gorons-bracelet
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: rbd-nodeplugin-sa
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ceph-csi-rbd-nodeplugin
+subjects:
+  - kind: ServiceAccount
+    name: rbd-nodeplugin-sa
+    namespace: gorons-bracelet
+# ---- CephFS (codifying prior out-of-band kubectl-created SAs) ----
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cephfs-ctrlplugin-sa
+  namespace: gorons-bracelet
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cephfs-ctrlplugin-sa
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ceph-csi-rbd-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: cephfs-ctrlplugin-sa
+    namespace: gorons-bracelet
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cephfs-ctrlplugin-sa
+  namespace: gorons-bracelet
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ceph-csi-rbd-provisioner
+subjects:
+  - kind: ServiceAccount
+    name: cephfs-ctrlplugin-sa
+    namespace: gorons-bracelet
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cephfs-nodeplugin-sa
+  namespace: gorons-bracelet
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cephfs-nodeplugin-sa
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ceph-csi-rbd-nodeplugin
+subjects:
+  - kind: ServiceAccount
+    name: cephfs-nodeplugin-sa
+    namespace: gorons-bracelet
