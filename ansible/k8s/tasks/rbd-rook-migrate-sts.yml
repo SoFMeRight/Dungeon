@@ -83,13 +83,19 @@
 
     # Restore only PVCs that were actually swapped (a -rook PV exists) or left mid-swap (old PV gone);
     # untouched PVCs (old PV still present, no -rook PV) are left exactly as they were.
+    # The STS is still at 0 here (scaled down in the block, scaled up only after this), so removing
+    # PVCs cannot trigger fresh provisioning. Force-clear finalizers so nothing hangs, then restore
+    # the escrowed old PVC+PV. Only touch PVCs that were actually swapped or left mid-swap.
     - name: "[sts {{ g_ns }}/{{ g_sts }}] restore swapped PVCs to the old driver"
       ansible.builtin.shell: |
-        set -o pipefail
+        set -e
         e="{{ escrow_dir }}/{{ (g_ns ~ '_' ~ item.pvc) | regex_replace('[^A-Za-z0-9_.-]', '_') }}"
         if kubectl get pv {{ item.pv }}-rook >/dev/null 2>&1 || ! kubectl get pv {{ item.pv }} >/dev/null 2>&1; then
-          kubectl delete pvc {{ item.pvc }} -n {{ g_ns }} --ignore-not-found --wait=true --timeout=120s
-          kubectl delete pv {{ item.pv }}-rook --ignore-not-found --wait=true --timeout=120s
+          kubectl delete pvc {{ item.pvc }} -n {{ g_ns }} --ignore-not-found --wait=false
+          kubectl patch pvc {{ item.pvc }} -n {{ g_ns }} -p '{"metadata":{"finalizers":null}}' >/dev/null 2>&1 || true
+          kubectl delete pv {{ item.pv }}-rook --ignore-not-found --wait=false
+          kubectl patch pv {{ item.pv }}-rook -p '{"metadata":{"finalizers":null}}' >/dev/null 2>&1 || true
+          for i in $(seq 1 30); do kubectl get pvc {{ item.pvc }} -n {{ g_ns }} >/dev/null 2>&1 || break; sleep 2; done
           kubectl apply -f "$e.pv.json"
           kubectl apply -f "$e.pvc.json"
         fi

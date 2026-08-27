@@ -53,11 +53,18 @@
       ansible.builtin.debug:
         msg: "✗ {{ vol.key }} failed ({{ ansible_failed_result.msg | default('see above') }}) — rolling back. Image was Retain-preserved."
 
+    # Deployment is still at 0 here (scaled up only below), so removing the PVC cannot trigger fresh
+    # provisioning. Force-clear finalizers so nothing hangs.
     - name: "[{{ vol.key }}] remove any new objects (free the image)"
-      ansible.builtin.command: "{{ item }}"
-      loop:
-        - kubectl delete pvc {{ vol.pvc }} -n {{ vol.namespace }} --ignore-not-found --wait=true --timeout=120s
-        - kubectl delete pv {{ vol.pv }}-rook --ignore-not-found --wait=true --timeout=120s
+      ansible.builtin.shell: |
+        kubectl delete pvc {{ vol.pvc }} -n {{ vol.namespace }} --ignore-not-found --wait=false
+        kubectl patch pvc {{ vol.pvc }} -n {{ vol.namespace }} -p '{"metadata":{"finalizers":null}}' >/dev/null 2>&1 || true
+        kubectl delete pv {{ vol.pv }}-rook --ignore-not-found --wait=false
+        kubectl patch pv {{ vol.pv }}-rook -p '{"metadata":{"finalizers":null}}' >/dev/null 2>&1 || true
+        for i in $(seq 1 30); do kubectl get pvc {{ vol.pvc }} -n {{ vol.namespace }} >/dev/null 2>&1 || break; sleep 2; done
+        true
+      args:
+        executable: /bin/bash
 
     - name: "[{{ vol.key }}] recreate old PV + PVC from escrow"
       ansible.builtin.command: "kubectl apply -f {{ escrow_dir }}/{{ item }}"
