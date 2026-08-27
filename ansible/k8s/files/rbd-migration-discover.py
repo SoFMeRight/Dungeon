@@ -9,9 +9,13 @@ A volume is ELIGIBLE (skip_reason == "") only in the low-risk cases:
   - either UNUSED (bound but no pod mounts it — the safest, no scaling), or
   - mounted by exactly ONE Deployment (scaled down/up around the swap = a brief blip).
 
+StatefulSet volumes are the "sts" tier (migrated as a unit via include_sts, scale-to-0 -> swap ->
+scale-up): both volumeClaimTemplate PVCs (matched by name) and standalone PVCs mounted by a running
+StatefulSet (matched by the live pod's owner).
+
 Everything else is reported with a skip_reason and left for a deliberate/manual pass:
-  StatefulSet-owned (databases — need the cascade=orphan procedure), RWX/multi-mount,
-  multiple consumers, DaemonSet/Job/bare-pod owners, or a Released/Available PV.
+  RWX/multi-mount, multiple consumers, DaemonSet/Job/bare-pod owners, CNPG (own procedure),
+  or a Released/Available PV.
 """
 import json
 import re
@@ -150,6 +154,15 @@ def main():
             dep = kget("deploy", "-n", ns, rec["owner_name"])
             rec["replicas"] = dep["spec"].get("replicas", 1)
             rec["tier"] = "auto"                # live single-Deployment RWO — the unambiguous case
+        elif len(owners) == 1 and owners[0][0] == "StatefulSet":
+            # Standalone PVC (NOT a volumeClaimTemplate) mounted by exactly one running StatefulSet.
+            # Fold it into that STS's group so the sts path migrates it in the SAME scale-to-0 blip
+            # as the STS's template PVCs, instead of stranding it. Detected via the live pod's owner,
+            # so this fires only while the STS is running; a scaled-down STS's standalone PVC keeps
+            # the conservative "unused + ordinal name" skip below.
+            rec["owner_kind"], rec["owner_name"] = owners[0]
+            rec["sts_group"] = "%s/%s" % (ns, rec["owner_name"])
+            rec["tier"] = "sts"                 # migrated with its StatefulSet (needs include_sts)
         elif len(owners) == 1:
             rec["owner_kind"], rec["owner_name"] = owners[0]
             rec["skip_reason"] = "%s-owned — migrate manually" % owners[0][0]
