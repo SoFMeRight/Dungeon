@@ -55,7 +55,10 @@ spec:
         memory: 128Mi
         cpu: 100m
       limits:
-        memory: 512Mi
+        # server was OOMKilled (exitCode 137) at 512Mi mid-backup on this large cluster
+        # (300+ RBD volumes, 700+ snapshots), orphaning in-progress backups on restart.
+        # Limit-only bump for headroom; request unchanged.
+        memory: 1Gi
         cpu: 500m
 
     schedules:
