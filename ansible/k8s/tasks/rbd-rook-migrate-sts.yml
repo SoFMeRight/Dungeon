@@ -126,6 +126,9 @@
     - name: "[sts {{ g_ns }}/{{ g_sts }}] scale the StatefulSet back up on the old driver"
       ansible.builtin.command: kubectl scale -n {{ g_ns }} statefulset/{{ g_sts }} --replicas={{ sts_rep.stdout }}
 
-    - name: "[sts {{ g_ns }}/{{ g_sts }}] abort — rolled back, needs investigation"
-      ansible.builtin.fail:
-        msg: "StatefulSet {{ g_ns }}/{{ g_sts }} rolled back to {{ old_driver }} from escrow. No data lost (Retain). Investigate before retrying."
+    # Record the rollback and CONTINUE to the next workload — one flaky detach/terminate must not
+    # abort the whole namespace. The playbook fails at the end if this list is non-empty, so the
+    # exit code still reflects failure, but every migratable workload gets its turn first.
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] record rollback (continue; do not abort the namespace)"
+      ansible.builtin.set_fact:
+        migrate_failures: "{{ (migrate_failures | default([])) + [g_ns ~ '/' ~ g_sts ~ ' (sts, rolled back to ' ~ old_driver ~ ')'] }}"

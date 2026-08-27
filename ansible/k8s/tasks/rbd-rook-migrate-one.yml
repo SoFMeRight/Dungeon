@@ -92,6 +92,7 @@
       ansible.builtin.command: kubectl scale -n {{ vol.namespace }} deployment/{{ vol.owner_name }} --replicas={{ vol.replicas }}
       when: vol.owner_kind == 'Deployment'
 
-    - name: "[{{ vol.key }}] abort — rolled back, needs investigation"
-      ansible.builtin.fail:
-        msg: "{{ vol.key }} rolled back to {{ old_driver }} from escrow. No data lost (Retain). Investigate before retrying."
+    # Record + continue (see rbd-rook-migrate-sts.yml) — don't let one rollback abort the namespace.
+    - name: "[{{ vol.key }}] record rollback (continue; do not abort the namespace)"
+      ansible.builtin.set_fact:
+        migrate_failures: "{{ (migrate_failures | default([])) + [vol.key ~ ' (deploy, rolled back to ' ~ old_driver ~ ')'] }}"

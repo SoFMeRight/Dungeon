@@ -177,3 +177,13 @@
       vars:
         sts_vols: "{{ grp.1 }}"
       when: not dry_run and sts_groups | length > 0
+
+    - name: Report workloads that rolled back (still on the old driver, no data lost)
+      ansible.builtin.debug:
+        msg: "⚠ {{ migrate_failures | length }} workload(s) rolled back (still on {{ old_driver }}): {{ migrate_failures | join('; ') }}"
+      when: not dry_run and (migrate_failures | default([]) | length) > 0
+
+    - name: Fail the run if any workload rolled back (every OTHER selected workload migrated first)
+      ansible.builtin.fail:
+        msg: "{{ migrate_failures | length }} workload(s) rolled back — see the list above. All other selected workloads migrated onto {{ new_driver }}."
+      when: not dry_run and (migrate_failures | default([]) | length) > 0
