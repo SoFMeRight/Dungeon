@@ -14,6 +14,7 @@ spec:
               - cluster.local/ns/hookshot/sa/tactical-backend
               - cluster.local/ns/hookshot/sa/tactical-celery
               - cluster.local/ns/hookshot/sa/tactical-celerybeat
+              - cluster.local/ns/hookshot/sa/tactical-websockets
       to:
         - operation:
             ports: ["5432"]
