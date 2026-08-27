@@ -64,11 +64,10 @@
           driver: "{{ new_driver }}"
           fsType: "{{ vol.fsType }}"
           volumeHandle: "{{ vol.volumeHandle }}"
+          # nodeStageSecretRef only (matches the original static git def exactly, so the git flip
+          # is a clean driver+secret swap). Static PVs never expand, so no controllerExpandSecretRef.
           nodeStageSecretRef:
             name: "{{ node_secret }}"
-            namespace: "{{ operator_ns }}"
-          controllerExpandSecretRef:
-            name: "{{ provisioner_secret }}"
             namespace: "{{ operator_ns }}"
           volumeAttributes: "{{ vol.volumeAttributes }}"
 

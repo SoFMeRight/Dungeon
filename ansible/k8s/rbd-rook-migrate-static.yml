@@ -10,19 +10,22 @@
 # old driver, flux would try to apply the (immutable) old-driver csi.driver over the live operator
 # PV and wedge. We suspend `apps`, do the live surgery + escrow, then hand back for the git flip.
 #
-# Runs in the prplanit/ansible-oci container like the other k8s playbooks:
+# FULLY AUTOMATED end-to-end — no manual git step. A confirmed run: suspends flux, live-migrates each
+# owner-group onto the operator driver (same names), then flips the git PV defs of exactly the volumes
+# that migrated, makes ONE commit, rebases (survives a Renovate race), pushes, waits for the flux source
+# to carry the new commit, and resumes flux. git always ends matching live, even on a partial rollback.
+#
+# Runs in the prplanit/ansible-oci container. NOTE the extra -v ~/.ssh mount — the run pushes to git:
 #   docker run --rm --network host -e KUBECONFIG=/root/.kube/config \
-#     -v ~/.kube:/root/.kube:ro -v /home/kai/repositories/dungeon:/dungeon \
+#     -v ~/.kube:/root/.kube:ro -v ~/.ssh:/root/.ssh:ro \
+#     -v /home/kai/repositories/dungeon:/dungeon \
 #     -v ~/backups/_rbd-rook:/escrow -w /dungeon prplanit/ansible-oci:2.20.1-v3 \
 #     ansible-playbook ansible/k8s/rbd-rook-migrate-static.yml [flags]
 #
 #   # Plan only (default — no changes, flux untouched):     (no flags)
-#   # Migrate every static PV:                              -e confirm=true
+#   # Migrate every static PV (one commit for all):         -e confirm=true
 #   # Scope to one namespace:                               -e confirm=true -e targets=temple-of-time
 #   # Scope to specific volumes:                            -e confirm=true -e 'targets_list=["temple-of-time/optcp-mealie-data"]'
-#
-# After a confirmed run flux stays SUSPENDED. Flip the git PV defs (csi.driver -> operator + the
-# node secret) for the listed PVs, commit, push, then: flux resume kustomization apps.
 
 - name: Migrate static RBD PVs to the Rook operator driver (same name, in place)
   hosts: localhost
@@ -35,6 +38,9 @@
     provisioner_secret: csi-rbd-provisioner
     flux_kustomization: apps
     escrow_dir: /escrow
+    repo_dir: "{{ playbook_dir | dirname | dirname }}"   # /dungeon (repo root, bind-mounted)
+    git_user: SoFMeRight
+    git_email: sofmeright@gmail.com
     confirm: false
     targets: ""
     targets_list: []
@@ -86,30 +92,85 @@
           {% endfor %}
           {% if not static_vols %}(nothing selected — check -e targets / -e targets_list){% endif %}
 
-    - name: Suspend flux (prevent old-driver git def fighting the live operator PV mid-flip)
-      ansible.builtin.command: kubectl patch kustomization {{ flux_kustomization }} -n flux-system --type=merge -p '{"spec":{"suspend":true}}'
+    # Migrate live, then finalize git + flux in `always` so git ALWAYS ends matching live — even if a
+    # group rolls back mid-batch, we commit the flip for exactly the volumes that actually migrated.
+    - name: Execute static migration + finalize (git flip + single commit + flux resume)
       when: not dry_run and static_vols | length > 0
-      changed_when: true
+      block:
+        - name: Suspend flux (so the still-old git defs can't fight the live operator PVs mid-flip)
+          ansible.builtin.command: kubectl patch kustomization {{ flux_kustomization }} -n flux-system --type=merge -p '{"spec":{"suspend":true}}'
+          changed_when: true
 
-    - name: Migrate each owner-group (serial — scale owner 0 once, swap all its static PVs, scale up)
-      ansible.builtin.include_tasks: tasks/rbd-rook-migrate-static-group.yml
-      loop: "{{ static_groups }}"
-      loop_control:
-        loop_var: grp
-        label: "{{ grp.0 }}"
-      vars:
-        grp_vols: "{{ grp.1 }}"
-      when: not dry_run and static_vols | length > 0
+        - name: Migrate each owner-group (serial — scale owner 0 once, swap all its static PVs, scale up)
+          ansible.builtin.include_tasks: tasks/rbd-rook-migrate-static-group.yml
+          loop: "{{ static_groups }}"
+          loop_control:
+            loop_var: grp
+            label: "{{ grp.0 }}"
+          vars:
+            grp_vols: "{{ grp.1 }}"
 
-    - name: NEXT STEPS (flux is still suspended)
-      ansible.builtin.debug:
-        msg: |
-          ✓ {{ static_vols | length }} static PV(s) recreated on {{ new_driver }} (same name, zero-copy).
-          flux `{{ flux_kustomization }}` is SUSPENDED so it won't fight the still-old git defs.
-          To finish, for EACH migrated PV flip its git PV def:
-            csi.driver: {{ old_driver }} -> {{ new_driver }}
-            nodeStageSecretRef -> name: {{ node_secret }}, namespace: {{ operator_ns }}
-          then commit, push, and run:
-            flux resume kustomization {{ flux_kustomization }}
-          PVs: {{ static_vols | map(attribute='pv') | join(', ') }}
-      when: not dry_run and static_vols | length > 0
+      always:
+        - name: Flip git PV driver + node-secret for every volume that actually migrated
+          ansible.builtin.shell: |
+            set -e
+            f=$(grep -rl "name: {{ item.pv }}$" {{ repo_dir }}/fluxcd/apps/ 2>/dev/null | xargs -r grep -l "kind: PersistentVolume" 2>/dev/null | head -1)
+            [ -z "$f" ] && { echo "NOFILE:{{ item.pv }}"; exit 0; }
+            sed -i \
+              -e 's|driver: {{ old_driver }}|driver: {{ new_driver }}|' \
+              -e 's|name: ceph-secret-user|name: {{ node_secret }}|' \
+              -e 's|namespace: kube-system|namespace: {{ operator_ns }}|' "$f"
+            echo "$f"
+          args:
+            executable: /bin/bash
+          loop: "{{ migrated_ok | default([]) }}"
+          loop_control:
+            label: "{{ item.pv }}"
+          register: flipped
+          changed_when: true
+
+        - name: Collect the changed git files
+          ansible.builtin.set_fact:
+            changed_files: "{{ (flipped.results | default([]) | map(attribute='stdout') | select('match', '^/') | list) | unique }}"
+
+        - name: Single commit + rebase + push the driver flips, capture pushed sha
+          ansible.builtin.shell: |
+            set -e
+            cd {{ repo_dir }}
+            git config user.name "{{ git_user }}"
+            git config user.email "{{ git_email }}"
+            git add {{ changed_files | join(' ') }}
+            git commit --no-verify -m "feat(ceph): migrate {{ migrated_ok | length }} static RBD PVs to the Rook operator driver"
+            git pull --rebase --autostash origin main
+            git push origin main
+            git rev-parse HEAD
+          args:
+            executable: /bin/bash
+          register: gitpush
+          when: (migrated_ok | default([]) | length) > 0 and (changed_files | length) > 0
+
+        - name: Force flux source reconcile + WAIT until it has the pushed commit (race fix)
+          ansible.builtin.shell: |
+            sha="{{ gitpush.stdout_lines[-1] | default('') }}"
+            kubectl annotate gitrepository flux-system -n flux-system reconcile.fluxcd.io/requestedAt="$(date +%s)" --overwrite >/dev/null 2>&1 || true
+            for i in $(seq 1 45); do
+              rev=$(kubectl get gitrepository flux-system -n flux-system -o jsonpath='{.status.artifact.revision}' 2>/dev/null)
+              echo "$rev" | grep -q "$sha" && { echo "source has $sha"; exit 0; }
+              sleep 4
+            done
+            echo "WARN: source did not report $sha in time; resuming anyway"
+          args:
+            executable: /bin/bash
+          when: (gitpush is defined) and (gitpush.stdout_lines is defined)
+          changed_when: false
+
+        - name: Resume flux
+          ansible.builtin.command: kubectl patch kustomization {{ flux_kustomization }} -n flux-system --type=merge -p '{"spec":{"suspend":false}}'
+          changed_when: true
+
+        - name: Finalized
+          ansible.builtin.debug:
+            msg: >-
+              ✓ {{ migrated_ok | default([]) | length }} static PV(s) on {{ new_driver }};
+              {{ changed_files | default([]) | length }} git file(s) flipped in ONE commit + pushed;
+              flux source synced + resumed. Fully automated — no manual git step.

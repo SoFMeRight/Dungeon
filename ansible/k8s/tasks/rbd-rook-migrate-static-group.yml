@@ -72,6 +72,10 @@
       changed_when: false
       failed_when: false
 
+    - name: "[static {{ g_ns }}/{{ g_owner }}] record as migrated (for the single final git commit)"
+      ansible.builtin.set_fact:
+        migrated_ok: "{{ (migrated_ok | default([])) + grp_vols }}"
+
     - name: "[static {{ g_ns }}/{{ g_owner }}] MIGRATED"
       ansible.builtin.debug:
         msg: >-
