@@ -13,7 +13,7 @@ This repository seeks to be the source of truth regarding the active state of my
 <!-- sf:badges:end -->
 
 <!-- sf:tooling:start -->
-[![managed by StageFreight](https://img.shields.io/badge/managed_by_StageFreight-0.9.2--dev+501ee6e-310937)](https://github.com/sofmeright/stagefreight) [![pipeline](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/pipeline.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![Security](https://img.shields.io/badge/Security-report-4B275F)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/docs/container-security-audit.md)
+[![managed by StageFreight](https://img.shields.io/badge/managed_by_StageFreight-0.9.2--dev+177b6a5-310937)](https://github.com/sofmeright/stagefreight) [![pipeline](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/pipeline.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![Security](https://img.shields.io/badge/Security-report-4B275F)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/docs/container-security-audit.md)
 <!-- sf:tooling:end -->
 
 <!-- sf:stack:start -->
