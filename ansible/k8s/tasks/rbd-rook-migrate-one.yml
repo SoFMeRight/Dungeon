@@ -30,7 +30,7 @@
       register: consumers
       changed_when: false
       until: consumers.stdout | trim == "0"
-      retries: 30
+      retries: 90
       delay: 5
 
     - name: "[{{ vol.key }}] swap the volume onto the operator driver"

@@ -40,7 +40,7 @@
   register: va_count
   changed_when: false
   until: va_count.stdout | trim == "0"
-  retries: 48
+  retries: 120                 # up to 10m — the retiring old driver detaches slowly under back-to-back load
   delay: 5
 
 - name: "[{{ vol.key }}] delete old PVC (Retain keeps the image; force-clear the finalizer if it lingers)"

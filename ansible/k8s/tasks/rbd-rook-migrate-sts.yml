@@ -56,7 +56,7 @@
       register: sts_pods
       changed_when: false
       until: sts_pods.stdout | trim == "0"
-      retries: 60
+      retries: 120                 # up to 10m — gluetun-sidecar pods (swift-sail) terminate slowly
       delay: 5
 
     - name: "[sts {{ g_ns }}/{{ g_sts }}] swap each group PVC onto the operator driver"
