@@ -1,0 +1,105 @@
+---
+# Swap ONE already-unmounted static RBD PV onto the operator driver KEEPING THE SAME PV NAME (a
+# static PV's name is pinned in its git PVC's immutable spec.volumeName). Operates on `vol` (a
+# discovery record). Does NO scaling, NO escrow, NO rescue — the CALLER (static-group) escrowed the
+# group and scaled the owner to 0, and owns rollback. Zero-copy: the rbd image is Retain-preserved
+# and re-referenced by the same volumeHandle under the operator driver.
+
+- name: "[{{ vol.key }}] verify the rbd image exists before any deletion"
+  ansible.builtin.command: >
+    kubectl exec -n {{ operator_ns }} {{ toolbox_pod }}
+    -- rbd info {{ vol.volumeAttributes.pool }}/{{ vol.volumeAttributes.imageName }}
+  register: rbd_info
+  changed_when: false
+  failed_when: rbd_info.rc != 0
+  when: toolbox_pod | default('') | length > 0
+
+- name: "[{{ vol.key }}] wait for the old volume to detach from its node"
+  ansible.builtin.shell: >
+    set -o pipefail;
+    kubectl get volumeattachment -o json |
+    python3 {{ playbook_dir }}/files/count-pv-attachments.py {{ vol.pv }}
+  args:
+    executable: /bin/bash
+  register: va_count
+  changed_when: false
+  until: va_count.stdout | trim == "0"
+  retries: 48
+  delay: 5
+
+- name: "[{{ vol.key }}] delete old PVC (Retain keeps the image; force-clear finalizer if it lingers)"
+  ansible.builtin.shell: |
+    set -e
+    kubectl delete pvc {{ vol.pvc }} -n {{ vol.namespace }} --ignore-not-found --wait=false
+    for i in $(seq 1 60); do kubectl get pvc {{ vol.pvc }} -n {{ vol.namespace }} >/dev/null 2>&1 || exit 0; sleep 3; done
+    kubectl patch pvc {{ vol.pvc }} -n {{ vol.namespace }} -p '{"metadata":{"finalizers":null}}' >/dev/null 2>&1 || true
+    for i in $(seq 1 10); do kubectl get pvc {{ vol.pvc }} -n {{ vol.namespace }} >/dev/null 2>&1 || exit 0; sleep 2; done
+    exit 1
+  args:
+    executable: /bin/bash
+
+- name: "[{{ vol.key }}] delete old PV (Retain keeps the image)"
+  ansible.builtin.command: kubectl delete pv {{ vol.pv }} --ignore-not-found --wait=true --timeout=300s
+
+- name: "[{{ vol.key }}] create new PV under the SAME name on the operator driver"
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolume
+      metadata:
+        name: "{{ vol.pv }}"
+      spec:
+        capacity:
+          storage: "{{ vol.capacity }}"
+        accessModes: "{{ vol.accessModes }}"
+        persistentVolumeReclaimPolicy: Retain
+        storageClassName: "{{ vol.storageClassName }}"
+        claimRef:
+          apiVersion: v1
+          kind: PersistentVolumeClaim
+          namespace: "{{ vol.namespace }}"
+          name: "{{ vol.pvc }}"
+        csi:
+          driver: "{{ new_driver }}"
+          fsType: "{{ vol.fsType }}"
+          volumeHandle: "{{ vol.volumeHandle }}"
+          nodeStageSecretRef:
+            name: "{{ node_secret }}"
+            namespace: "{{ operator_ns }}"
+          controllerExpandSecretRef:
+            name: "{{ provisioner_secret }}"
+            namespace: "{{ operator_ns }}"
+          volumeAttributes: "{{ vol.volumeAttributes }}"
+
+- name: "[{{ vol.key }}] recreate the PVC pre-bound to the new PV"
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: "{{ vol.pvc }}"
+        namespace: "{{ vol.namespace }}"
+      spec:
+        accessModes: "{{ vol.accessModes }}"
+        storageClassName: "{{ vol.storageClassName }}"
+        volumeName: "{{ vol.pv }}"
+        resources:
+          requests:
+            storage: "{{ vol.capacity }}"
+
+- name: "[{{ vol.key }}] wait for the PVC to bind"
+  ansible.builtin.command: >
+    kubectl wait pvc/{{ vol.pvc }} -n {{ vol.namespace }}
+    --for=jsonpath={.status.phase}=Bound --timeout=300s
+
+- name: "[{{ vol.key }}] verify the volume is now on the operator driver"
+  ansible.builtin.command: kubectl get pv {{ vol.pv }} -o jsonpath={.spec.csi.driver}
+  register: drv_check
+  changed_when: false
+  failed_when: drv_check.stdout != new_driver
+
+- name: "[{{ vol.key }}] swapped (same name, operator driver)"
+  ansible.builtin.debug:
+    msg: "✓ {{ vol.key }} on {{ new_driver }} as {{ vol.pv }} (image {{ vol.volumeAttributes.imageName }}, zero-copy)"

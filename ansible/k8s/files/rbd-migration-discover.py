@@ -131,13 +131,22 @@ def main():
             continue
 
         # Static, git-defined PV (staticVolume=true): its PV name is pinned in a git PVC's
-        # spec.volumeName (immutable). The imperative "-rook" rename this tool does for dynamic
-        # volumes drifts the live PVC from that immutable git spec and WEDGES the flux
-        # Kustomization. Static volumes must be migrated by editing the git PV's csi.driver in
-        # place (same name/volumeHandle) so flux reconciles it — never swept here.
+        # spec.volumeName (immutable). The imperative "-rook" rename the DYNAMIC sweep does drifts
+        # the live PVC from that immutable git spec and WEDGES the flux Kustomization. So static
+        # volumes are their OWN tier: never swept by rbd-rook-migration.yml, migrated instead by
+        # rbd-rook-migrate-static.yml (which recreates the PV under the SAME name on the operator
+        # driver and edits the git PV's csi.driver to match). Owner is resolved here so that
+        # playbook can quiesce the workload.
         if rec["volumeAttributes"].get("staticVolume") == "true":
-            rec["skip_reason"] = ("static/git-managed PV (staticVolume=true) — migrate by editing the "
-                                  "git PV driver in place; the imperative -rook rename breaks flux")
+            owners = sorted(set(owner_of(p) for p in by_claim.get((ns, pvc), [])))
+            if len(owners) == 1:
+                rec["owner_kind"], rec["owner_name"] = owners[0]
+                if owners[0][0] == "Deployment":
+                    rec["replicas"] = kget("deploy", "-n", ns, rec["owner_name"])["spec"].get("replicas", 1)
+            # group key: one scale-cycle per owner (falls back to the PV so grouping never KeyErrors)
+            rec["owner_key"] = "%s/%s" % (ns, rec["owner_name"]) if rec["owner_name"] else ("%s/%s" % (ns, pv))
+            rec["tier"] = "static"
+            rec["skip_reason"] = "static/git-managed PV — migrate via rbd-rook-migrate-static.yml"
             out.append(rec)
             continue
 

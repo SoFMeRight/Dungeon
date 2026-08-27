@@ -1,0 +1,109 @@
+---
+# Migrate ALL of one owner's static RBD PVs onto the operator driver, as a unit — one scale-cycle for
+# the whole StatefulSet/Deployment. grp_vols = the discovery records sharing a namespace + owner.
+# Force-Retain + escrow EVERY group PV first, scale the owner to 0, swap each PV (same name) via the
+# shared static-swap task, scale back up. rescue restores every touched PV+PVC from escrow — lossless.
+# The caller (rbd-rook-migrate-static.yml) has already suspended flux.
+
+- name: "[static] group facts"
+  ansible.builtin.set_fact:
+    g_ns: "{{ grp_vols[0].namespace }}"
+    g_owner: "{{ grp_vols[0].owner_name }}"
+    g_kind: "{{ grp_vols[0].owner_kind }}"
+    g_res: "{{ 'deployment' if grp_vols[0].owner_kind == 'Deployment' else 'statefulset' }}"
+
+- name: "[static {{ g_ns }}/{{ g_owner }}] read current replicas"
+  ansible.builtin.command: kubectl get {{ g_res }} {{ g_owner }} -n {{ g_ns }} -o jsonpath={.spec.replicas}
+  register: owner_rep
+  changed_when: false
+
+- name: "[static {{ g_ns }}/{{ g_owner }}] force Retain on every group PV (protect images before scale-down)"
+  kubernetes.core.k8s:
+    state: patched
+    kind: PersistentVolume
+    name: "{{ item.pv }}"
+    definition:
+      spec:
+        persistentVolumeReclaimPolicy: Retain
+  loop: "{{ grp_vols }}"
+  loop_control:
+    label: "{{ item.pv }}"
+
+- name: "[static {{ g_ns }}/{{ g_owner }}] escrow every group PV + PVC (before scale-down)"
+  ansible.builtin.shell: >
+    set -o pipefail;
+    kubectl get pv {{ item.pv }} -o json | python3 {{ playbook_dir }}/files/k8s-strip.py > {{ escrow_dir }}/{{ e }}.pv.json &&
+    kubectl get pvc {{ item.pvc }} -n {{ g_ns }} -o json | python3 {{ playbook_dir }}/files/k8s-strip.py > {{ escrow_dir }}/{{ e }}.pvc.json
+  args:
+    executable: /bin/bash
+  vars:
+    e: "{{ (g_ns ~ '_' ~ item.pvc) | regex_replace('[^A-Za-z0-9_.-]', '_') }}"
+  loop: "{{ grp_vols }}"
+  loop_control:
+    label: "{{ item.pvc }}"
+  changed_when: true
+
+- name: "[static {{ g_ns }}/{{ g_owner }}] migrate ({{ grp_vols | length }} static PV(s))"
+  block:
+    - name: "[static {{ g_ns }}/{{ g_owner }}] scale {{ g_kind }} to 0"
+      ansible.builtin.command: kubectl scale -n {{ g_ns }} {{ g_res }}/{{ g_owner }} --replicas=0
+
+    - name: "[static {{ g_ns }}/{{ g_owner }}] wait for the owner's pods to terminate"
+      ansible.builtin.command: kubectl get {{ g_res }} {{ g_owner }} -n {{ g_ns }} -o jsonpath={.status.replicas}
+      register: cur_rep
+      changed_when: false
+      until: (cur_rep.stdout | trim | default('0')) in ['', '0']
+      retries: 60
+      delay: 5
+
+    - name: "[static {{ g_ns }}/{{ g_owner }}] swap each group PV onto the operator driver (same name)"
+      ansible.builtin.include_tasks: rbd-rook-migrate-static-swap.yml
+      loop: "{{ grp_vols }}"
+      loop_control:
+        loop_var: vol
+        label: "{{ vol.key }}"
+
+    - name: "[static {{ g_ns }}/{{ g_owner }}] scale {{ g_kind }} back up"
+      ansible.builtin.command: kubectl scale -n {{ g_ns }} {{ g_res }}/{{ g_owner }} --replicas={{ owner_rep.stdout | default('1') }}
+
+    - name: "[static {{ g_ns }}/{{ g_owner }}] wait for the workload to be Ready again (best-effort)"
+      ansible.builtin.command: kubectl rollout status -n {{ g_ns }} {{ g_res }}/{{ g_owner }} --timeout=180s
+      register: rollout_grp
+      changed_when: false
+      failed_when: false
+
+    - name: "[static {{ g_ns }}/{{ g_owner }}] MIGRATED"
+      ansible.builtin.debug:
+        msg: >-
+          ✓ {{ g_ns }}/{{ g_owner }} — {{ grp_vols | length }} static PV(s) re-adopted onto
+          {{ new_driver }} (same names, zero-copy){{
+          ' [pod not yet Ready — investigate; swaps verified]' if (rollout_grp.rc | default(0)) != 0 else '' }}
+
+  rescue:
+    - name: "[static {{ g_ns }}/{{ g_owner }}] ROLLBACK — restoring touched PVs+PVCs from escrow"
+      ansible.builtin.debug:
+        msg: "✗ {{ g_ns }}/{{ g_owner }} failed ({{ ansible_failed_result.msg | default('see above') }}) — rolling back. Images were Retain-preserved."
+
+    - name: "[static {{ g_ns }}/{{ g_owner }}] restore each group PV+PVC to the old driver from escrow"
+      ansible.builtin.shell: |
+        set -e
+        e="{{ escrow_dir }}/{{ (g_ns ~ '_' ~ item.pvc) | regex_replace('[^A-Za-z0-9_.-]', '_') }}"
+        kubectl delete pvc {{ item.pvc }} -n {{ g_ns }} --ignore-not-found --wait=false
+        kubectl patch pvc {{ item.pvc }} -n {{ g_ns }} -p '{"metadata":{"finalizers":null}}' >/dev/null 2>&1 || true
+        kubectl delete pv {{ item.pv }} --ignore-not-found --wait=false
+        kubectl patch pv {{ item.pv }} -p '{"metadata":{"finalizers":null}}' >/dev/null 2>&1 || true
+        for i in $(seq 1 30); do kubectl get pvc {{ item.pvc }} -n {{ g_ns }} >/dev/null 2>&1 || break; sleep 2; done
+        kubectl apply -f "$e.pv.json"
+        kubectl apply -f "$e.pvc.json"
+      args:
+        executable: /bin/bash
+      loop: "{{ grp_vols }}"
+      loop_control:
+        label: "{{ item.pvc }}"
+
+    - name: "[static {{ g_ns }}/{{ g_owner }}] scale the workload back up on the old driver"
+      ansible.builtin.command: kubectl scale -n {{ g_ns }} {{ g_res }}/{{ g_owner }} --replicas={{ owner_rep.stdout | default('1') }}
+
+    - name: "[static {{ g_ns }}/{{ g_owner }}] abort — rolled back, needs investigation"
+      ansible.builtin.fail:
+        msg: "{{ g_ns }}/{{ g_owner }} rolled back to {{ old_driver }} from escrow. No data lost (Retain). Investigate before retrying."

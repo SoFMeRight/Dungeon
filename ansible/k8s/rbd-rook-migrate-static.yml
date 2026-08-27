@@ -1,0 +1,115 @@
+---
+# Migrate STATIC, git-defined RBD PVs (staticVolume=true) from the standalone ceph-csi Helm driver
+# (rbd.csi.ceph.com) onto the Rook operator driver (gorons-bracelet.rbd.csi.ceph.com) — WITHOUT the
+# "-rook" rename the dynamic sweep uses. A static PV's name is pinned in its git PVC's immutable
+# spec.volumeName, so it MUST keep the same name or flux wedges. This playbook recreates each PV
+# under the SAME name on the operator driver (zero-copy, same rbd image), then leaves you to flip
+# the git PV's csi.driver to match and resume flux.
+#
+# Why flux is suspended: while live is being flipped to the operator driver but git still says the
+# old driver, flux would try to apply the (immutable) old-driver csi.driver over the live operator
+# PV and wedge. We suspend `apps`, do the live surgery + escrow, then hand back for the git flip.
+#
+# Runs in the prplanit/ansible-oci container like the other k8s playbooks:
+#   docker run --rm --network host -e KUBECONFIG=/root/.kube/config \
+#     -v ~/.kube:/root/.kube:ro -v /home/kai/repositories/dungeon:/dungeon \
+#     -v ~/backups/_rbd-rook:/escrow -w /dungeon prplanit/ansible-oci:2.20.1-v3 \
+#     ansible-playbook ansible/k8s/rbd-rook-migrate-static.yml [flags]
+#
+#   # Plan only (default — no changes, flux untouched):     (no flags)
+#   # Migrate every static PV:                              -e confirm=true
+#   # Scope to one namespace:                               -e confirm=true -e targets=temple-of-time
+#   # Scope to specific volumes:                            -e confirm=true -e 'targets_list=["temple-of-time/optcp-mealie-data"]'
+#
+# After a confirmed run flux stays SUSPENDED. Flip the git PV defs (csi.driver -> operator + the
+# node secret) for the listed PVs, commit, push, then: flux resume kustomization apps.
+
+- name: Migrate static RBD PVs to the Rook operator driver (same name, in place)
+  hosts: localhost
+  gather_facts: false
+  vars:
+    old_driver: rbd.csi.ceph.com
+    new_driver: gorons-bracelet.rbd.csi.ceph.com
+    operator_ns: gorons-bracelet
+    node_secret: csi-rbd-node
+    provisioner_secret: csi-rbd-provisioner
+    flux_kustomization: apps
+    escrow_dir: /escrow
+    confirm: false
+    targets: ""
+    targets_list: []
+    dry_run: "{{ not (confirm | bool) }}"
+    tl: "{{ targets_list if (targets_list is sequence and targets_list is not string) else (targets_list | from_yaml) }}"
+
+  tasks:
+    - name: Ensure escrow dir exists
+      ansible.builtin.file:
+        path: "{{ escrow_dir }}"
+        state: directory
+        mode: "0700"
+
+    - name: Find the rbd toolbox pod (for the pre-delete image-existence check)
+      ansible.builtin.command: kubectl get pods -n {{ operator_ns }} -o name
+      register: tb_raw
+      changed_when: false
+
+    - name: Set toolbox_pod
+      ansible.builtin.set_fact:
+        toolbox_pod: "{{ (tb_raw.stdout_lines | select('search', 'rbd-toolbox') | list | first | default('')) | regex_replace('^pod/', '') }}"
+
+    - name: Discover + classify RBD volumes
+      ansible.builtin.command: python3 {{ playbook_dir }}/files/rbd-migration-discover.py
+      register: discover_raw
+      changed_when: false
+
+    - name: Select static-tier volumes (optionally scoped)
+      ansible.builtin.set_fact:
+        static_vols: >-
+          {{ (discover_raw.stdout | from_json | selectattr('tier', 'equalto', 'static') | list)
+             | selectattr('key', 'in', tl) | list if (tl | length > 0)
+             else ((discover_raw.stdout | from_json | selectattr('tier', 'equalto', 'static')
+                    | selectattr('namespace', 'equalto', targets) | list) if (targets | length > 0)
+             else (discover_raw.stdout | from_json | selectattr('tier', 'equalto', 'static') | list)) }}
+
+    - name: Group static volumes by owner (one scale-cycle per StatefulSet/Deployment)
+      ansible.builtin.set_fact:
+        static_groups: "{{ static_vols | groupby('owner_key') }}"
+
+    - name: Print the static-migration plan
+      ansible.builtin.debug:
+        msg: |
+          ── static RBD → Rook migration plan ───────────────────────
+          mode      : {{ 'DRY-RUN (no changes)' if dry_run else 'EXECUTE (flux will be suspended)' }}
+          selected  : {{ static_vols | length }} static PV(s) across {{ static_groups | length }} owner(s)
+          {% for grp in static_groups %}
+            ▸ {{ grp.0 }}  ({{ grp.1 | length }} PV(s): {{ grp.1 | map(attribute='pvc') | join(', ') }})
+          {% endfor %}
+          {% if not static_vols %}(nothing selected — check -e targets / -e targets_list){% endif %}
+
+    - name: Suspend flux (prevent old-driver git def fighting the live operator PV mid-flip)
+      ansible.builtin.command: kubectl patch kustomization {{ flux_kustomization }} -n flux-system --type=merge -p '{"spec":{"suspend":true}}'
+      when: not dry_run and static_vols | length > 0
+      changed_when: true
+
+    - name: Migrate each owner-group (serial — scale owner 0 once, swap all its static PVs, scale up)
+      ansible.builtin.include_tasks: tasks/rbd-rook-migrate-static-group.yml
+      loop: "{{ static_groups }}"
+      loop_control:
+        loop_var: grp
+        label: "{{ grp.0 }}"
+      vars:
+        grp_vols: "{{ grp.1 }}"
+      when: not dry_run and static_vols | length > 0
+
+    - name: NEXT STEPS (flux is still suspended)
+      ansible.builtin.debug:
+        msg: |
+          ✓ {{ static_vols | length }} static PV(s) recreated on {{ new_driver }} (same name, zero-copy).
+          flux `{{ flux_kustomization }}` is SUSPENDED so it won't fight the still-old git defs.
+          To finish, for EACH migrated PV flip its git PV def:
+            csi.driver: {{ old_driver }} -> {{ new_driver }}
+            nodeStageSecretRef -> name: {{ node_secret }}, namespace: {{ operator_ns }}
+          then commit, push, and run:
+            flux resume kustomization {{ flux_kustomization }}
+          PVs: {{ static_vols | map(attribute='pv') | join(', ') }}
+      when: not dry_run and static_vols | length > 0
