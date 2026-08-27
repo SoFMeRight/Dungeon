@@ -41,6 +41,7 @@
     repo_dir: "{{ playbook_dir | dirname | dirname }}"   # /dungeon (repo root, bind-mounted)
     git_user: SoFMeRight
     git_email: sofmeright@gmail.com
+    git_ssh_key: dungeon-map-002-id_ed25519              # key in the mounted ~/.ssh that the forge accepts
     confirm: false
     targets: ""
     targets_list: []
@@ -137,6 +138,11 @@
           ansible.builtin.shell: |
             set -e
             cd {{ repo_dir }}
+            # SSH-in-container: the mounted ~/.ssh is owned by the host uid, which sshd rejects; copy
+            # the forge key to a root-owned 0600 path and bypass the mounted config entirely.
+            git config --global --add safe.directory {{ repo_dir }}
+            install -m600 /root/.ssh/{{ git_ssh_key }} /tmp/gitkey
+            export GIT_SSH_COMMAND="ssh -F /dev/null -i /tmp/gitkey -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=/tmp/kh"
             git config user.name "{{ git_user }}"
             git config user.email "{{ git_email }}"
             git add {{ changed_files | join(' ') }}
