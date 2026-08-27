@@ -130,6 +130,17 @@ def main():
             out.append(rec)
             continue
 
+        # Static, git-defined PV (staticVolume=true): its PV name is pinned in a git PVC's
+        # spec.volumeName (immutable). The imperative "-rook" rename this tool does for dynamic
+        # volumes drifts the live PVC from that immutable git spec and WEDGES the flux
+        # Kustomization. Static volumes must be migrated by editing the git PV's csi.driver in
+        # place (same name/volumeHandle) so flux reconciles it — never swept here.
+        if rec["volumeAttributes"].get("staticVolume") == "true":
+            rec["skip_reason"] = ("static/git-managed PV (staticVolume=true) — migrate by editing the "
+                                  "git PV driver in place; the imperative -rook rename breaks flux")
+            out.append(rec)
+            continue
+
         # Stateful ownership by identity (name/label), BEFORE consumer inspection — a scaled-down
         # STS or a stopped CNPG pod must never be misread as "unused/eligible".
         cnpg = cnpg_of(ns, pvc)
