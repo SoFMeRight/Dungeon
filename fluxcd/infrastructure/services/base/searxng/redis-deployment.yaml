@@ -74,6 +74,9 @@ spec:
                 - ping
             initialDelaySeconds: 10
             periodSeconds: 5
+            # redis-cli forks under a tight CPU limit; ping can take ~2s, well past the
+            # default 1s probe timeout. Give it headroom so a busy node doesn't flap NotReady.
+            timeoutSeconds: 5
       volumes:
         - name: redis-data
           persistentVolumeClaim:
