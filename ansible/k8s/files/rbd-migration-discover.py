@@ -106,6 +106,7 @@ def main():
             "owner_kind": "",
             "owner_name": "",
             "replicas": 0,
+            "sts_group": "",           # "ns/sts" for tier == sts (used to migrate a StatefulSet as a unit)
             "skip_reason": "",
             # tier: "auto"  = mounted by one running Deployment, RWO — swept by default (safe blip)
             #       "review"= bound + unused + standalone-looking — migrate only if explicitly named
@@ -136,7 +137,8 @@ def main():
             continue
         if sts:
             rec["owner_kind"], rec["owner_name"] = "StatefulSet", sts
-            rec["skip_reason"] = "StatefulSet-owned (%s) — use the deliberate cascade=orphan procedure" % sts
+            rec["sts_group"] = "%s/%s" % (ns, sts)
+            rec["tier"] = "sts"        # migrated as a group: scale STS to 0 -> swap all its PVCs -> scale up
             out.append(rec)
             continue
 

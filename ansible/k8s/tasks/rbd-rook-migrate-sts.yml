@@ -1,0 +1,107 @@
+---
+# Migrate ALL of one live StatefulSet's old-driver RBD PVCs onto the operator driver, as a unit —
+# one blip for the whole STS. sts_vols = the discovery records for a single StatefulSet (same
+# namespace + owner_name). Force-Retain + escrow EVERY group PVC first (before scale-down, so a
+# whenScaled:Delete policy can't destroy an image), scale the STS to 0, swap each PVC (same name),
+# scale back up. rescue restores every touched PVC from escrow and scales the STS back up — lossless.
+
+- name: "[sts] group facts"
+  set_fact:
+    g_ns: "{{ sts_vols[0].namespace }}"
+    g_sts: "{{ sts_vols[0].owner_name }}"
+
+- name: "[sts {{ g_ns }}/{{ g_sts }}] read current replicas"
+  ansible.builtin.command: kubectl get statefulset {{ g_sts }} -n {{ g_ns }} -o jsonpath={.spec.replicas}
+  register: sts_rep
+  changed_when: false
+
+- name: "[sts {{ g_ns }}/{{ g_sts }}] force Retain on every group PV (protect images before scale-down)"
+  kubernetes.core.k8s:
+    state: patched
+    kind: PersistentVolume
+    name: "{{ item.pv }}"
+    definition:
+      spec:
+        persistentVolumeReclaimPolicy: Retain
+  loop: "{{ sts_vols }}"
+  loop_control:
+    label: "{{ item.pv }}"
+
+- name: "[sts {{ g_ns }}/{{ g_sts }}] escrow every group PV + PVC (before scale-down)"
+  ansible.builtin.shell: >
+    set -o pipefail;
+    kubectl get pv {{ item.pv }} -o json | python3 {{ playbook_dir }}/files/k8s-strip.py > {{ escrow_dir }}/{{ e }}.pv.json &&
+    kubectl get pvc {{ item.pvc }} -n {{ g_ns }} -o json | python3 {{ playbook_dir }}/files/k8s-strip.py > {{ escrow_dir }}/{{ e }}.pvc.json
+  args:
+    executable: /bin/bash
+  vars:
+    e: "{{ (g_ns ~ '_' ~ item.pvc) | regex_replace('[^A-Za-z0-9_.-]', '_') }}"
+  loop: "{{ sts_vols }}"
+  loop_control:
+    label: "{{ item.pvc }}"
+  changed_when: true
+
+- name: "[sts {{ g_ns }}/{{ g_sts }}] migrate ({{ sts_vols | length }} PVC(s))"
+  block:
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] scale StatefulSet to 0"
+      ansible.builtin.command: kubectl scale -n {{ g_ns }} statefulset/{{ g_sts }} --replicas=0
+
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] wait for all StatefulSet pods to terminate"
+      ansible.builtin.shell: >
+        set -o pipefail;
+        kubectl get pods -n {{ g_ns }} -o json |
+        python3 {{ playbook_dir }}/files/count-sts-pods.py {{ g_sts | quote }}
+      args:
+        executable: /bin/bash
+      register: sts_pods
+      changed_when: false
+      until: sts_pods.stdout | trim == "0"
+      retries: 60
+      delay: 5
+
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] swap each group PVC onto the operator driver"
+      ansible.builtin.include_tasks: rbd-rook-swap-core.yml
+      loop: "{{ sts_vols }}"
+      loop_control:
+        loop_var: vol
+        label: "{{ vol.key }}"
+
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] scale StatefulSet back up"
+      ansible.builtin.command: kubectl scale -n {{ g_ns }} statefulset/{{ g_sts }} --replicas={{ sts_rep.stdout }}
+
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] wait for the StatefulSet to be Ready again"
+      ansible.builtin.command: kubectl rollout status statefulset/{{ g_sts }} -n {{ g_ns }} --timeout=300s
+
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] MIGRATED"
+      ansible.builtin.debug:
+        msg: "✓ StatefulSet {{ g_ns }}/{{ g_sts }} — {{ sts_vols | length }} volume(s) re-adopted onto {{ new_driver }} (zero-copy)"
+
+  rescue:
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] ROLLBACK — restoring touched PVCs from escrow"
+      ansible.builtin.debug:
+        msg: "✗ StatefulSet {{ g_ns }}/{{ g_sts }} failed ({{ ansible_failed_result.msg | default('see above') }}) — rolling back. Images were Retain-preserved."
+
+    # Restore only PVCs that were actually swapped (a -rook PV exists) or left mid-swap (old PV gone);
+    # untouched PVCs (old PV still present, no -rook PV) are left exactly as they were.
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] restore swapped PVCs to the old driver"
+      ansible.builtin.shell: |
+        set -o pipefail
+        e="{{ escrow_dir }}/{{ (g_ns ~ '_' ~ item.pvc) | regex_replace('[^A-Za-z0-9_.-]', '_') }}"
+        if kubectl get pv {{ item.pv }}-rook >/dev/null 2>&1 || ! kubectl get pv {{ item.pv }} >/dev/null 2>&1; then
+          kubectl delete pvc {{ item.pvc }} -n {{ g_ns }} --ignore-not-found --wait=true --timeout=120s
+          kubectl delete pv {{ item.pv }}-rook --ignore-not-found --wait=true --timeout=120s
+          kubectl apply -f "$e.pv.json"
+          kubectl apply -f "$e.pvc.json"
+        fi
+      args:
+        executable: /bin/bash
+      loop: "{{ sts_vols }}"
+      loop_control:
+        label: "{{ item.pvc }}"
+
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] scale the StatefulSet back up on the old driver"
+      ansible.builtin.command: kubectl scale -n {{ g_ns }} statefulset/{{ g_sts }} --replicas={{ sts_rep.stdout }}
+
+    - name: "[sts {{ g_ns }}/{{ g_sts }}] abort — rolled back, needs investigation"
+      ansible.builtin.fail:
+        msg: "StatefulSet {{ g_ns }}/{{ g_sts }} rolled back to {{ old_driver }} from escrow. No data lost (Retain). Investigate before retrying."

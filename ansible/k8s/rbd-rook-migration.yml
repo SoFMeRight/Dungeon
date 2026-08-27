@@ -29,10 +29,12 @@
 #     prplanit/ansible-oci:<tag> \
 #     ansible-playbook /dungeon/ansible/k8s/rbd-rook-migration.yml [flags]
 #
-#   # See the full tiered plan (safe, no changes):        (no flags)
-#   # Execute the auto tier:                               -e confirm=true
+#   # See the full tiered plan (safe, no changes):        (no flags; add -e include_sts=true to list STSs)
+#   # Execute the auto tier (Deployment/standalone):       -e confirm=true
 #   # Also migrate specific review volumes:                -e confirm=true -e 'targets_list=["tingle-tuner/searxng-redis-data"]'
-#   # Restrict to one namespace's auto volumes:            -e confirm=true -e targets=lens-of-truth
+#   # Migrate specific StatefulSets (only those):          -e confirm=true -e 'sts_targets=["temple-of-time/ghost-mysql"]'
+#   # Migrate everything in one namespace (auto+review+sts):-e confirm=true -e targets=lens-of-truth -e include_sts=true
+#   # Migrate ALL StatefulSets (big — every DB, serial):   -e confirm=true -e include_sts=true
 #   # Roll a volume back from escrow (old driver):         -e confirm=true -e rollback=NS/PVC
 
 - name: Migrate RBD PVCs onto the Rook operator driver (zero-copy re-adoption)
@@ -49,14 +51,23 @@
     new_storageclass: ceph-rbd
     escrow_dir: /escrow
     confirm: false            # dry_run is the inverse; nothing mutates unless this is true
-    targets: ""               # limit to a single namespace
+    targets: ""               # limit to a single namespace (applies to both tiers)
     targets_list: []          # explicit ["ns/pvc", …] — may include review-tier volumes
+    include_sts: false        # also migrate whole StatefulSets (each: scale 0 -> swap PVCs -> scale up)
+    sts_targets: []           # explicit ["ns/sts", …] StatefulSets to migrate (implies include_sts)
     rollback: ""              # "ns/pvc" — restore that volume to the old driver from escrow
 
   tasks:
     - name: Set run mode
       set_fact:
         dry_run: "{{ not (confirm | bool) }}"
+
+    # `-e list=[a,b]` arrives as a STRING; Jinja's `in` test then substring-matches (e.g. "ghost"
+    # would match "ghost-mysql"). Coerce to real lists so membership is exact.
+    - name: Normalize list inputs
+      set_fact:
+        tl: "{{ targets_list if (targets_list is not string) else (targets_list | from_yaml) }}"
+        stg: "{{ sts_targets if (sts_targets is not string) else (sts_targets | from_yaml) }}"
 
     - name: Locate the ceph toolbox pod (for rbd image checks)
       ansible.builtin.command: kubectl get pods -n {{ operator_ns }} -o jsonpath={.items[*].metadata.name}
@@ -101,15 +112,33 @@
         base_pool: >-
           {{ (candidates | selectattr('tier', 'equalto', 'auto') | list)
              + (candidates | selectattr('tier', 'equalto', 'review')
-                           | selectattr('key', 'in', targets_list) | list) }}
+                           | selectattr('key', 'in', tl) | list) }}
 
-    # Then narrow: explicit targets_list wins; else a namespace filter; else the whole base pool.
+    # Then narrow: explicit targets_list wins; else a namespace filter; else — if the run is scoped
+    # to specific StatefulSets (sts_targets) — nothing (an STS-only run must NOT also sweep auto);
+    # else the whole base pool (the default auto sweep when no scope is given).
     - name: Narrow the selection
       set_fact:
         selected: >-
-          {{ (base_pool | selectattr('key', 'in', targets_list) | list) if (targets_list | length > 0)
+          {{ (base_pool | selectattr('key', 'in', tl) | list) if (tl | length > 0)
              else ((base_pool | selectattr('namespace', 'equalto', targets) | list) if (targets | length > 0)
-             else base_pool) }}
+             else ([] if (stg | length > 0) else base_pool)) }}
+
+    # StatefulSet selection: sts-tier records, enabled by include_sts or sts_targets, optionally
+    # scoped by namespace (targets) or by "ns/sts" (sts_targets), then grouped per StatefulSet.
+    - name: Select StatefulSet volumes
+      set_fact:
+        sts_pool: >-
+          {{ [] if not (include_sts | bool) and (stg | length == 0)
+             else ((candidates | selectattr('tier', 'equalto', 'sts')
+                               | selectattr('sts_group', 'in', stg) | list) if (stg | length > 0)
+             else ((candidates | selectattr('tier', 'equalto', 'sts')
+                               | selectattr('namespace', 'equalto', targets) | list) if (targets | length > 0)
+             else (candidates | selectattr('tier', 'equalto', 'sts') | list))) }}
+
+    - name: Group StatefulSet volumes by StatefulSet
+      set_fact:
+        sts_groups: "{{ sts_pool | groupby('sts_group') }}"
 
     - name: Print the tiered plan
       ansible.builtin.debug:
@@ -119,17 +148,32 @@
           toolbox     : {{ toolbox_pod | default('NONE — image check will be skipped', true) }}
           totals      : auto={{ candidates | selectattr('tier','equalto','auto') | list | length }}
                         review={{ candidates | selectattr('tier','equalto','review') | list | length }}
+                        sts={{ candidates | selectattr('tier','equalto','sts') | list | length }}
                         skip={{ candidates | selectattr('tier','equalto','skip') | list | length }}
-          selected    : {{ selected | length }}
+          selected (Deployment/standalone): {{ selected | length }}
           {% for r in selected %}
             • {{ r.namespace }}/{{ r.pvc }}  ({{ r.capacity }}, tier={{ r.tier }}, owner={{ r.owner_kind }}{{ ':' ~ r.owner_name if r.owner_name else '' }})
           {% endfor %}
-          {% if not selected %}(nothing selected — pass -e targets / -e targets_list, or check the plan above){% endif %}
+          selected StatefulSets: {{ sts_groups | length }} ({{ sts_pool | length }} volume(s))
+          {% for grp in sts_groups %}
+            ▸ {{ grp.0 }}  ({{ grp.1 | length }} PVC(s): {{ grp.1 | map(attribute='pvc') | join(', ') }})
+          {% endfor %}
+          {% if not selected and not sts_groups %}(nothing selected — pass -e targets / -e targets_list / -e include_sts / -e sts_targets){% endif %}
 
-    - name: Migrate each selected volume (serial, one blip at a time)
+    - name: Migrate each selected Deployment/standalone volume (serial)
       ansible.builtin.include_tasks: tasks/rbd-rook-migrate-one.yml
       loop: "{{ selected }}"
       loop_control:
         loop_var: vol
         label: "{{ vol.namespace }}/{{ vol.pvc }}"
       when: not dry_run and selected | length > 0
+
+    - name: Migrate each selected StatefulSet (serial, one STS at a time)
+      ansible.builtin.include_tasks: tasks/rbd-rook-migrate-sts.yml
+      loop: "{{ sts_groups }}"
+      loop_control:
+        loop_var: grp
+        label: "{{ grp.0 }}"
+      vars:
+        sts_vols: "{{ grp.1 }}"
+      when: not dry_run and sts_groups | length > 0
