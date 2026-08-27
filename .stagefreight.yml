@@ -237,10 +237,13 @@ lint:
       enabled: true
 
 toolchains:
-  trivy: "0.x"
-  syft: "1.x"
-  grype: "0.x"
-  osv-scanner: "2.x"
-  cosign: "3.x"
-  flux: "2.x"
-  kubectl: "1.35.x"
+  want:
+    trivy: "0.x"
+    syft: "1.x"
+    grype: "0.x"
+    osv-scanner: "2.x"
+    cosign: "3.x"
+    flux: "2.x"
+    kubectl: "1.35.x"
+  retention:
+    keep_last: 2
