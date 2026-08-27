@@ -99,6 +99,30 @@ spec:
                     securityContext:
                       runAsNonRoot: true
                       runAsUser: 100
+          # Strip IPC_LOCK from the openbao container. vault-operator v1.24.0 hardcodes
+          # capabilities.add [IPC_LOCK, SETFCAP] and APPENDS the CR's vaultContainerSpec caps
+          # (mergo WithAppendSlice) — so the CR cannot remove IPC_LOCK. PSA baseline (enforced on
+          # zeldas-lullaby) forbids it, wedging the raft rollout at the highest ordinal. mlock is
+          # off (config disable_mlock: true) so IPC_LOCK is unused; overwrite add with the intended
+          # set. Kyverno mutation runs before PSA validation, so the rewritten pod admits cleanly.
+          - list: "request.object.spec.containers"
+            preconditions:
+              all:
+                - key: "{{ element.name }}"
+                  operator: Equals
+                  value: openbao
+            patchStrategicMerge:
+              spec:
+                containers:
+                  - (name): "{{ element.name }}"
+                    securityContext:
+                      capabilities:
+                        add:
+                          - CHOWN
+                          - FOWNER
+                          - SETFCAP
+                          - SETGID
+                          - SETUID
           - list: "request.object.spec.containers"
             preconditions:
               all:
