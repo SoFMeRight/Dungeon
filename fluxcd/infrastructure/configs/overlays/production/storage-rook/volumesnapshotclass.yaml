@@ -1,0 +1,13 @@
+# STAGED operator-driver RBD VolumeSnapshotClass — the Rook equivalent of csi-rbdplugin-snapclass.
+# Same name + clusterID + deletionPolicy; driver and snapshotter secret repointed to the operator.
+# NOT reconciled until the flip (see FLIP.md).
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: csi-rbdplugin-snapclass
+driver: gorons-bracelet.rbd.csi.ceph.com
+deletionPolicy: Delete
+parameters:
+  clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
+  csi.storage.k8s.io/snapshotter-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/snapshotter-secret-namespace: gorons-bracelet

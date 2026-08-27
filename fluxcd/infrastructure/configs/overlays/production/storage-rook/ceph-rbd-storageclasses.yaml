@@ -1,0 +1,146 @@
+# STAGED operator-driver RBD StorageClasses — the Rook ceph-csi-operator equivalents of the
+# six live ceph-rbd* classes. IDENTICAL in every parameter (clusterID, pool, imageFeatures,
+# fstype, reclaim, mountOptions, annotations, binding mode, templated naming) EXCEPT:
+#   provisioner: rbd.csi.ceph.com            -> gorons-bracelet.rbd.csi.ceph.com
+#   secrets:     ceph-secret[-user]/kube-system -> csi-rbd-provisioner / csi-rbd-node / gorons-bracelet
+# Both drivers are the same ceph-csi RBD binary against the same external ceph (clusterID
+# 0985467c..., pool dungeon/dungeon_hdd); provisioning+mount validated end-to-end on this driver.
+# NOT reconciled until the flip (see FLIP.md) — this directory is referenced by no active kustomization.
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph-rbd
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: gorons-bracelet.rbd.csi.ceph.com
+parameters:
+  clusterID: "0985467c-d8f3-4483-b27f-f0a512397ec2"
+  pool: "dungeon"
+  imageFeatures: layering
+  csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
+  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/fstype: ext4
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+mountOptions:
+  - discard
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph-rbd-hdd
+provisioner: gorons-bracelet.rbd.csi.ceph.com
+parameters:
+  clusterID: "0985467c-d8f3-4483-b27f-f0a512397ec2"
+  pool: "dungeon_hdd"
+  imageFeatures: layering
+  csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
+  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/fstype: ext4
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+mountOptions:
+  - discard
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph-rbd-templated
+provisioner: gorons-bracelet.rbd.csi.ceph.com
+parameters:
+  clusterID: "0985467c-d8f3-4483-b27f-f0a512397ec2"
+  pool: "dungeon"
+  imageFeatures: layering
+  csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
+  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/fstype: ext4
+  # Templated volume naming - uses PVC name for predictable RBD image names.
+  # Driver-agnostic (external-reprovisioner acts at the PVC/PV layer) — re-verify at flip.
+  external-reprovisioner.anoxape.org/enabled: "true"
+  external-reprovisioner.anoxape.org/volume-name-template: ${pvc.name}
+reclaimPolicy: Retain
+allowVolumeExpansion: true
+volumeBindingMode: Immediate
+mountOptions:
+  - discard
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph-rbd-delete
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "false"
+provisioner: gorons-bracelet.rbd.csi.ceph.com
+parameters:
+  clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
+  pool: dungeon
+  imageFeatures: layering
+  csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
+  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/fstype: ext4
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+mountOptions:
+  - discard
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph-rbd-retain
+provisioner: gorons-bracelet.rbd.csi.ceph.com
+parameters:
+  clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
+  pool: dungeon
+  imageFeatures: layering
+  csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
+  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/fstype: ext4
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+mountOptions:
+  - discard
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ceph-rbd-static
+provisioner: gorons-bracelet.rbd.csi.ceph.com
+parameters:
+  clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
+  pool: dungeon
+  imageFeatures: layering
+  csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
+  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/fstype: ext4
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+mountOptions:
+  - discard
