@@ -1,0 +1,135 @@
+---
+# rbd-rook-migration.yml — re-adopt existing RBD PVCs from the standalone ceph-csi Helm driver
+# (rbd.csi.ceph.com) onto the Rook ceph-csi-operator driver (gorons-bracelet.rbd.csi.ceph.com),
+# ONE volume at a time. ZERO-COPY: the rbd image never moves — a new PV points the operator driver
+# at the SAME image. No data copy, no new space. Each volume is a brief blip; the cluster stays up.
+#
+# WHY re-adoption and not `rbd cp`: both drivers are the same ceph-csi RBD binary against the same
+# external ceph (clusterID 0985467c…, pool dungeon). The volumeHandle encodes clusterID+pool+UUID —
+# NOT the driver name — and the ceph-csi journal lives in the pool, so the operator driver mounts
+# the existing image unchanged, keeping full dynamic management (expand/delete). Proven end-to-end.
+#
+# SCOPE (v1 — deliberately low-risk). The discovery script tiers every RBD PV:
+#   auto   : mounted by exactly one running Deployment, RWO  -> swept by default (scale 0->N = a blip)
+#   review : bound + unused + standalone-looking             -> migrated ONLY if named in targets_list
+#   skip   : StatefulSet / CNPG / RWX / orphaned / ordinal   -> NEVER touched here (needs the
+#            deliberate per-StatefulSet cascade=orphan procedure — the DB crown jewels)
+#
+# SAFETY RAILS (no data loss is the invariant):
+#   - dry_run defaults TRUE — prints the plan, mutates nothing. Add -e confirm=true to execute.
+#   - Per volume: reclaimPolicy forced to Retain BEFORE anything is deleted (the rbd image is never
+#     destroyed), the image's existence is verified in ceph, and the old PV + PVC are ESCROWed to
+#     {{ escrow_dir }} as re-appliable manifests.
+#   - block/rescue ROLLBACK: on ANY failure the new PV/PVC are removed and the old PVC+PV are
+#     recreated from escrow (image was Retain-preserved) and the workload scaled back up. Lossless.
+#   - Serial, one volume at a time; verifies Bound + Deployment Ready before moving on.
+#
+# USAGE (same container pattern as postgres-major-upgrade.yml):
+#   docker run --rm -v ~/.kube:/root/.kube:ro -v /srv/dungeon:/dungeon -v ~/backups/_rbd-rook:/escrow \
+#     prplanit/ansible-oci:<tag> \
+#     ansible-playbook /dungeon/ansible/k8s/rbd-rook-migration.yml [flags]
+#
+#   # See the full tiered plan (safe, no changes):        (no flags)
+#   # Execute the auto tier:                               -e confirm=true
+#   # Also migrate specific review volumes:                -e confirm=true -e 'targets_list=["tingle-tuner/searxng-redis-data"]'
+#   # Restrict to one namespace's auto volumes:            -e confirm=true -e targets=lens-of-truth
+#   # Roll a volume back from escrow (old driver):         -e confirm=true -e rollback=NS/PVC
+
+- name: Migrate RBD PVCs onto the Rook operator driver (zero-copy re-adoption)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    old_driver: rbd.csi.ceph.com
+    new_driver: gorons-bracelet.rbd.csi.ceph.com
+    operator_ns: gorons-bracelet
+    node_secret: csi-rbd-node
+    provisioner_secret: csi-rbd-provisioner
+    new_storageclass: ceph-rbd
+    escrow_dir: /escrow
+    confirm: false            # dry_run is the inverse; nothing mutates unless this is true
+    targets: ""               # limit to a single namespace
+    targets_list: []          # explicit ["ns/pvc", …] — may include review-tier volumes
+    rollback: ""              # "ns/pvc" — restore that volume to the old driver from escrow
+
+  tasks:
+    - name: Set run mode
+      set_fact:
+        dry_run: "{{ not (confirm | bool) }}"
+
+    - name: Locate the ceph toolbox pod (for rbd image checks)
+      ansible.builtin.command: kubectl get pods -n {{ operator_ns }} -o jsonpath={.items[*].metadata.name}
+      register: tb_raw
+      changed_when: false
+
+    - name: Set toolbox pod
+      set_fact:
+        toolbox_pod: "{{ (tb_raw.stdout.split() | select('search', 'rbd-toolbox|rook-ceph-tools') | list | first) | default('', true) }}"
+
+    - name: Ensure escrow dir exists
+      ansible.builtin.file:
+        path: "{{ escrow_dir }}"
+        state: directory
+        mode: "0700"
+
+    # ---------------------------------------------------------------- rollback path
+    - name: Roll back one volume from escrow
+      when: rollback | length > 0
+      block:
+        - name: Rollback
+          ansible.builtin.include_tasks: tasks/rbd-rook-rollback.yml
+          vars:
+            rb_ns: "{{ rollback.split('/')[0] }}"
+            rb_pvc: "{{ rollback.split('/')[1] }}"
+        - name: End play after rollback
+          ansible.builtin.meta: end_play
+
+    # ---------------------------------------------------------------- discovery + plan
+    - name: Discover + classify RBD volumes
+      ansible.builtin.command: python3 {{ playbook_dir }}/files/rbd-migration-discover.py
+      register: discover_raw
+      changed_when: false
+
+    - name: Parse candidates
+      set_fact:
+        candidates: "{{ discover_raw.stdout | from_json }}"
+
+    # Base pool: the auto tier always, plus any review-tier volume explicitly named in targets_list.
+    - name: Build base selectable pool
+      set_fact:
+        base_pool: >-
+          {{ (candidates | selectattr('tier', 'equalto', 'auto') | list)
+             + (candidates | selectattr('tier', 'equalto', 'review')
+                           | selectattr('key', 'in', targets_list) | list) }}
+
+    # Then narrow: explicit targets_list wins; else a namespace filter; else the whole base pool.
+    - name: Narrow the selection
+      set_fact:
+        selected: >-
+          {{ (base_pool | selectattr('key', 'in', targets_list) | list) if (targets_list | length > 0)
+             else ((base_pool | selectattr('namespace', 'equalto', targets) | list) if (targets | length > 0)
+             else base_pool) }}
+
+    - name: Print the tiered plan
+      ansible.builtin.debug:
+        msg: |
+          ── RBD → Rook migration plan ──────────────────────────────
+          mode        : {{ 'DRY-RUN (no changes)' if dry_run else 'EXECUTE' }}
+          toolbox     : {{ toolbox_pod | default('NONE — image check will be skipped', true) }}
+          totals      : auto={{ candidates | selectattr('tier','equalto','auto') | list | length }}
+                        review={{ candidates | selectattr('tier','equalto','review') | list | length }}
+                        skip={{ candidates | selectattr('tier','equalto','skip') | list | length }}
+          selected    : {{ selected | length }}
+          {% for r in selected %}
+            • {{ r.namespace }}/{{ r.pvc }}  ({{ r.capacity }}, tier={{ r.tier }}, owner={{ r.owner_kind }}{{ ':' ~ r.owner_name if r.owner_name else '' }})
+          {% endfor %}
+          {% if not selected %}(nothing selected — pass -e targets / -e targets_list, or check the plan above){% endif %}
+
+    - name: Migrate each selected volume (serial, one blip at a time)
+      ansible.builtin.include_tasks: tasks/rbd-rook-migrate-one.yml
+      loop: "{{ selected }}"
+      loop_control:
+        loop_var: vol
+        label: "{{ vol.namespace }}/{{ vol.pvc }}"
+      when: not dry_run and selected | length > 0

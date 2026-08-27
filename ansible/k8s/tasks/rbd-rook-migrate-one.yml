@@ -1,0 +1,158 @@
+---
+# Migrate ONE RBD volume old->operator driver, zero-copy. Operates on `vol` (a discovery record).
+# Pre-flight (no destructive change): escrow old PV+PVC, force Retain, verify the image exists.
+# block: scale down (Deployment) -> delete old PVC+PV -> create new PV+PVC on operator driver ->
+#        wait Bound -> scale up -> verify. rescue: remove new objects, restore old from escrow, fail.
+
+- name: "[{{ vol.key }}] set per-volume facts"
+  set_fact:
+    esc: "{{ (vol.namespace ~ '_' ~ vol.pvc) | regex_replace('[^A-Za-z0-9_.-]', '_') }}"
+    new_pv: "{{ vol.pv }}-rook"
+
+- name: "[{{ vol.key }}] escrow old PV + PVC (re-appliable)"
+  ansible.builtin.shell: >
+    set -o pipefail;
+    kubectl get pv {{ vol.pv }} -o json | python3 {{ playbook_dir }}/files/k8s-strip.py > {{ escrow_dir }}/{{ esc }}.pv.json &&
+    kubectl get pvc {{ vol.pvc }} -n {{ vol.namespace }} -o json | python3 {{ playbook_dir }}/files/k8s-strip.py > {{ escrow_dir }}/{{ esc }}.pvc.json
+  args:
+    executable: /bin/bash
+  changed_when: true
+
+- name: "[{{ vol.key }}] force reclaimPolicy=Retain (image is never destroyed)"
+  kubernetes.core.k8s:
+    state: patched
+    kind: PersistentVolume
+    name: "{{ vol.pv }}"
+    definition:
+      spec:
+        persistentVolumeReclaimPolicy: Retain
+
+- name: "[{{ vol.key }}] verify the rbd image exists in ceph before any deletion"
+  ansible.builtin.command: >
+    kubectl exec -n {{ operator_ns }} {{ toolbox_pod }}
+    -- rbd info {{ vol.volumeAttributes.pool }}/{{ vol.volumeAttributes.imageName }}
+  register: rbd_info
+  changed_when: false
+  when: toolbox_pod | length > 0
+  failed_when: rbd_info.rc != 0
+
+- name: "[{{ vol.key }}] migrate"
+  block:
+    - name: "[{{ vol.key }}] scale owning Deployment to 0"
+      ansible.builtin.command: kubectl scale -n {{ vol.namespace }} deployment/{{ vol.owner_name }} --replicas=0
+      when: vol.owner_kind == 'Deployment'
+
+    - name: "[{{ vol.key }}] wait for consumers to unmount"
+      ansible.builtin.shell: >
+        set -o pipefail;
+        kubectl get pods -n {{ vol.namespace }} -o json |
+        python3 {{ playbook_dir }}/files/count-pvc-consumers.py {{ vol.pvc | quote }}
+      args:
+        executable: /bin/bash
+      register: consumers
+      changed_when: false
+      until: consumers.stdout | trim == "0"
+      retries: 30
+      delay: 5
+
+    - name: "[{{ vol.key }}] delete old PVC (Retain keeps the image)"
+      ansible.builtin.command: kubectl delete pvc {{ vol.pvc }} -n {{ vol.namespace }} --wait=true --timeout=120s
+
+    - name: "[{{ vol.key }}] delete old PV (Retain keeps the image)"
+      ansible.builtin.command: kubectl delete pv {{ vol.pv }} --wait=true --timeout=120s
+
+    - name: "[{{ vol.key }}] create new PV on the operator driver (same volumeHandle)"
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: PersistentVolume
+          metadata:
+            name: "{{ new_pv }}"
+          spec:
+            capacity:
+              storage: "{{ vol.capacity }}"
+            accessModes: "{{ vol.accessModes }}"
+            persistentVolumeReclaimPolicy: Retain
+            storageClassName: "{{ new_storageclass }}"
+            claimRef:
+              apiVersion: v1
+              kind: PersistentVolumeClaim
+              namespace: "{{ vol.namespace }}"
+              name: "{{ vol.pvc }}"
+            csi:
+              driver: "{{ new_driver }}"
+              volumeHandle: "{{ vol.volumeHandle }}"
+              fsType: "{{ vol.fsType }}"
+              nodeStageSecretRef:
+                name: "{{ node_secret }}"
+                namespace: "{{ operator_ns }}"
+              controllerExpandSecretRef:
+                name: "{{ provisioner_secret }}"
+                namespace: "{{ operator_ns }}"
+              volumeAttributes: "{{ vol.volumeAttributes }}"
+
+    - name: "[{{ vol.key }}] create new PVC pre-bound to the new PV"
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: PersistentVolumeClaim
+          metadata:
+            name: "{{ vol.pvc }}"
+            namespace: "{{ vol.namespace }}"
+          spec:
+            accessModes: "{{ vol.accessModes }}"
+            storageClassName: "{{ new_storageclass }}"
+            volumeName: "{{ new_pv }}"
+            resources:
+              requests:
+                storage: "{{ vol.capacity }}"
+
+    - name: "[{{ vol.key }}] wait for the new PVC to bind"
+      ansible.builtin.command: >
+        kubectl wait pvc/{{ vol.pvc }} -n {{ vol.namespace }}
+        --for=jsonpath={.status.phase}=Bound --timeout=120s
+
+    - name: "[{{ vol.key }}] scale owning Deployment back up"
+      ansible.builtin.command: kubectl scale -n {{ vol.namespace }} deployment/{{ vol.owner_name }} --replicas={{ vol.replicas }}
+      when: vol.owner_kind == 'Deployment'
+
+    - name: "[{{ vol.key }}] wait for the Deployment to be Ready again"
+      ansible.builtin.command: kubectl rollout status -n {{ vol.namespace }} deployment/{{ vol.owner_name }} --timeout=180s
+      when: vol.owner_kind == 'Deployment'
+
+    - name: "[{{ vol.key }}] verify the volume is now on the operator driver"
+      ansible.builtin.command: kubectl get pv {{ new_pv }} -o jsonpath={.spec.csi.driver}
+      register: drv_check
+      changed_when: false
+      failed_when: drv_check.stdout != new_driver
+
+    - name: "[{{ vol.key }}] MIGRATED"
+      ansible.builtin.debug:
+        msg: "✓ {{ vol.key }} re-adopted onto {{ new_driver }} (image {{ vol.volumeAttributes.imageName }}, zero-copy)"
+
+  rescue:
+    - name: "[{{ vol.key }}] ROLLBACK — migration failed, restoring the old driver"
+      ansible.builtin.debug:
+        msg: "✗ {{ vol.key }} failed ({{ ansible_failed_result.msg | default('see above') }}) — rolling back from escrow. Image was Retain-preserved."
+
+    - name: "[{{ vol.key }}] remove any new objects (free the image)"
+      ansible.builtin.command: "{{ item }}"
+      loop:
+        - kubectl delete pvc {{ vol.pvc }} -n {{ vol.namespace }} --ignore-not-found --wait=true --timeout=120s
+        - kubectl delete pv {{ new_pv }} --ignore-not-found --wait=true --timeout=120s
+
+    - name: "[{{ vol.key }}] recreate old PV + PVC from escrow"
+      ansible.builtin.command: "kubectl apply -f {{ escrow_dir }}/{{ item }}"
+      loop:
+        - "{{ esc }}.pv.json"
+        - "{{ esc }}.pvc.json"
+
+    - name: "[{{ vol.key }}] scale the workload back up on the old driver"
+      ansible.builtin.command: kubectl scale -n {{ vol.namespace }} deployment/{{ vol.owner_name }} --replicas={{ vol.replicas }}
+      when: vol.owner_kind == 'Deployment'
+
+    - name: "[{{ vol.key }}] abort — rolled back, needs investigation"
+      ansible.builtin.fail:
+        msg: "{{ vol.key }} rolled back to {{ old_driver }} from escrow. No data lost (Retain). Investigate before retrying."

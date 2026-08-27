@@ -1,0 +1,41 @@
+---
+# Restore ONE previously-migrated volume back to the old driver from its escrow (rb_ns/rb_pvc).
+# The rbd image is untouched (both PVs are Retain); this re-points the k8s objects. Scale the
+# owning workload down first (or accept a blip) — this task does not manage workloads.
+
+- name: "[rollback {{ rb_ns }}/{{ rb_pvc }}] compute escrow name"
+  set_fact:
+    esc: "{{ (rb_ns ~ '_' ~ rb_pvc) | regex_replace('[^A-Za-z0-9_.-]', '_') }}"
+
+- name: "[rollback {{ rb_ns }}/{{ rb_pvc }}] escrow must exist"
+  ansible.builtin.stat:
+    path: "{{ escrow_dir }}/{{ esc }}.pv.json"
+  register: esc_pv
+
+- name: "[rollback {{ rb_ns }}/{{ rb_pvc }}] abort if no escrow"
+  ansible.builtin.fail:
+    msg: "No escrow at {{ escrow_dir }}/{{ esc }}.pv.json — nothing to roll back."
+  when: not esc_pv.stat.exists
+
+- name: "[rollback {{ rb_ns }}/{{ rb_pvc }}] find the current PV bound to the PVC"
+  ansible.builtin.command: kubectl get pvc {{ rb_pvc }} -n {{ rb_ns }} -o jsonpath={.spec.volumeName}
+  register: cur_pv
+  changed_when: false
+  failed_when: false
+
+- name: "[rollback {{ rb_ns }}/{{ rb_pvc }}] delete the current (operator) PVC + PV (Retain keeps the image)"
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - kubectl delete pvc {{ rb_pvc }} -n {{ rb_ns }} --ignore-not-found --wait=true --timeout=120s
+    - kubectl delete pv {{ cur_pv.stdout }} --ignore-not-found --wait=true --timeout=120s
+  when: cur_pv.stdout | length > 0
+
+- name: "[rollback {{ rb_ns }}/{{ rb_pvc }}] restore old PV + PVC from escrow"
+  ansible.builtin.command: "kubectl apply -f {{ escrow_dir }}/{{ item }}"
+  loop:
+    - "{{ esc }}.pv.json"
+    - "{{ esc }}.pvc.json"
+
+- name: "[rollback {{ rb_ns }}/{{ rb_pvc }}] done"
+  ansible.builtin.debug:
+    msg: "✓ {{ rb_ns }}/{{ rb_pvc }} restored to {{ old_driver }} from escrow. Scale its workload back up."
