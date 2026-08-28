@@ -26,32 +26,6 @@ spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-      initContainers:
-        # A fresh PVC mounts EMPTY over the image's /etc/crowdsec, which ships the default
-        # config, hub index and collection layout. Seed it once; the marker makes every
-        # later start a no-op so operator edits and the registered CAPI credentials are
-        # never overwritten.
-        - name: seed-config
-          image: PLACEHOLDER_CROWDSEC_IMAGE
-          command:
-            - /bin/sh
-            - -ec
-            - |
-              if [ ! -f /seed/.seeded ]; then
-                cp -a /etc/crowdsec/. /seed/
-                touch /seed/.seeded
-                echo "seeded /etc/crowdsec"
-              else
-                echo "already seeded; config and credentials left untouched"
-              fi
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-          volumeMounts:
-            - name: PLACEHOLDER_NAMESPACE-crowdsec-config
-              mountPath: /seed
       containers:
         - name: crowdsec
           image: PLACEHOLDER_CROWDSEC_IMAGE
@@ -91,7 +65,10 @@ spec:
           volumeMounts:
             - name: PLACEHOLDER_NAMESPACE-crowdsec-data
               mountPath: /var/lib/crowdsec/data
-            # /etc/crowdsec must PERSIST. The entrypoint decides whether to register a
+            # /etc/crowdsec must PERSIST. The image ships its defaults in
+            # /staging/etc/crowdsec and the entrypoint rsyncs them in with
+            # --ignore-existing, so an empty PVC is populated on first boot and never
+            # overwritten afterwards -- no seeding of our own is needed or wanted. The entrypoint decides whether to register a
             # new CAPI machine by checking whether config.yaml names a credentials_path
             # -- NOT whether the credentials file exists. config.yaml lived on the image's
             # ephemeral filesystem, so every restart reset it, re-ran `cscli capi

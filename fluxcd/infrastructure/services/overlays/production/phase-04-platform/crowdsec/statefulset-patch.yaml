@@ -6,14 +6,6 @@ spec:
   replicas: 1
   template:
     spec:
-      initContainers:
-        # Same image as the agent; it only copies the shipped /etc/crowdsec into the
-        # config PVC on first boot, so the base's placeholder image is pinned here too.
-        - name: seed-config
-          image: ghcr.io/crowdsecurity/crowdsec:v1.7.8
-          volumeMounts:
-            - name: lens-of-truth-crowdsec-config
-              mountPath: /seed
       containers:
         - name: crowdsec
           image: ghcr.io/crowdsecurity/crowdsec:v1.7.8
