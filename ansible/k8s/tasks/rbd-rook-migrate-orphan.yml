@@ -1,0 +1,112 @@
+---
+# Handle ONE orphaned RBD PVC (Bound, on the old driver, mounted by NOTHING — its owning workload
+# was deleted or recreated under a different volumeClaimTemplate name). Two populations, decided by
+# whether the backing rbd image still exists in ceph:
+#   • image PRESENT  -> zero-copy re-adopt onto the operator driver (escrow -> swap-core, no scaling,
+#                       no git flip). Same PVC name, same image; if a scaled-down workload ever
+#                       remounts this exact PVC it lands on the operator driver.
+#   • image GONE     -> a phantom: the PV/PVC point at an rbd image that was already reclaimed, so
+#                       there is nothing to migrate. Left untouched by default; with
+#                       reclaim_phantoms=true the dead PV+PVC are escrowed (object defs, for the
+#                       record) and deleted to clear the old driver.
+# swap-core already refuses to touch a missing image (its own pre-delete check), so the explicit
+# image probe here is what lets us BRANCH cleanly instead of failing every phantom into a rollback.
+# rescue (migrate path only) removes the new objects and restores the old PV+PVC from escrow.
+
+- name: "[{{ vol.key }}] does the backing rbd image still exist?"
+  ansible.builtin.command: >
+    kubectl exec -n {{ operator_ns }} {{ toolbox_pod }}
+    -- rbd info {{ vol.volumeAttributes.pool }}/{{ vol.volumeAttributes.imageName }}
+  register: img_probe
+  changed_when: false
+  failed_when: false
+
+- name: "[{{ vol.key }}] set image_present"
+  ansible.builtin.set_fact:
+    image_present: "{{ (img_probe.rc | default(1)) == 0 }}"
+
+# ── image PRESENT: zero-copy migrate ──────────────────────────────────────────────────────────────
+- name: "[{{ vol.key }}] migrate (orphaned, image present — nothing mounts it)"
+  when: image_present
+  block:
+    - name: "[{{ vol.key }}] escrow old PV + PVC (re-appliable) — before any mutation"
+      ansible.builtin.shell: >
+        set -o pipefail;
+        kubectl get pv {{ vol.pv }} -o json | python3 {{ playbook_dir }}/files/k8s-strip.py > {{ escrow_dir }}/{{ esc0 }}.pv.json &&
+        kubectl get pvc {{ vol.pvc }} -n {{ vol.namespace }} -o json | python3 {{ playbook_dir }}/files/k8s-strip.py > {{ escrow_dir }}/{{ esc0 }}.pvc.json
+      args:
+        executable: /bin/bash
+      vars:
+        esc0: "{{ (vol.namespace ~ '_' ~ vol.pvc) | regex_replace('[^A-Za-z0-9_.-]', '_') }}"
+      changed_when: true
+
+    - name: "[{{ vol.key }}] swap the volume onto the operator driver (preserve its storageClass)"
+      ansible.builtin.include_tasks: rbd-rook-swap-core.yml
+      vars:
+        new_storageclass: "{{ vol.storageClassName }}"
+
+    - name: "[{{ vol.key }}] MIGRATED"
+      ansible.builtin.debug:
+        msg: "✓ {{ vol.key }} orphan re-adopted onto {{ new_driver }} (zero-copy, image {{ vol.volumeAttributes.imageName }})"
+
+  rescue:
+    - name: "[{{ vol.key }}] ROLLBACK — restoring the old driver from escrow"
+      ansible.builtin.debug:
+        msg: "✗ {{ vol.key }} failed ({{ ansible_failed_result.msg | default('see above') }}) — rolling back. Image was Retain-preserved."
+
+    - name: "[{{ vol.key }}] remove any new objects (free the image)"
+      ansible.builtin.shell: |
+        kubectl delete pvc {{ vol.pvc }} -n {{ vol.namespace }} --ignore-not-found --wait=false
+        kubectl patch pvc {{ vol.pvc }} -n {{ vol.namespace }} -p '{"metadata":{"finalizers":null}}' >/dev/null 2>&1 || true
+        kubectl delete pv {{ vol.pv }}-rook --ignore-not-found --wait=false
+        kubectl patch pv {{ vol.pv }}-rook -p '{"metadata":{"finalizers":null}}' >/dev/null 2>&1 || true
+        for i in $(seq 1 30); do kubectl get pvc {{ vol.pvc }} -n {{ vol.namespace }} >/dev/null 2>&1 || break; sleep 2; done
+        true
+      args:
+        executable: /bin/bash
+
+    - name: "[{{ vol.key }}] recreate old PV + PVC from escrow"
+      ansible.builtin.command: "kubectl apply -f {{ escrow_dir }}/{{ item }}"
+      loop:
+        - "{{ (vol.namespace ~ '_' ~ vol.pvc) | regex_replace('[^A-Za-z0-9_.-]', '_') }}.pv.json"
+        - "{{ (vol.namespace ~ '_' ~ vol.pvc) | regex_replace('[^A-Za-z0-9_.-]', '_') }}.pvc.json"
+
+    - name: "[{{ vol.key }}] record rollback (continue; do not abort the sweep)"
+      ansible.builtin.set_fact:
+        migrate_failures: "{{ (migrate_failures | default([])) + [vol.key ~ ' (orphan, rolled back to ' ~ old_driver ~ ')'] }}"
+
+# ── image GONE: phantom ───────────────────────────────────────────────────────────────────────────
+- name: "[{{ vol.key }}] PHANTOM — record (image already gone; nothing to migrate)"
+  when: not image_present
+  ansible.builtin.set_fact:
+    phantom_vols: "{{ (phantom_vols | default([])) + [vol.key] }}"
+
+- name: "[{{ vol.key }}] reclaim phantom (escrow object defs for the record, then delete the dead PV+PVC)"
+  when: not image_present and (reclaim_phantoms | bool)
+  block:
+    - name: "[{{ vol.key }}] escrow the phantom object defs (record only — no image behind them)"
+      ansible.builtin.shell: >
+        set -o pipefail;
+        kubectl get pvc {{ vol.pvc }} -n {{ vol.namespace }} -o json > {{ escrow_dir }}/{{ esc0 }}.phantom.pvc.json;
+        kubectl get pv {{ vol.pv }} -o json > {{ escrow_dir }}/{{ esc0 }}.phantom.pv.json
+      args:
+        executable: /bin/bash
+      vars:
+        esc0: "{{ (vol.namespace ~ '_' ~ vol.pvc) | regex_replace('[^A-Za-z0-9_.-]', '_') }}"
+      changed_when: true
+
+    - name: "[{{ vol.key }}] delete the phantom PVC + PV (force-clear finalizers)"
+      ansible.builtin.shell: |
+        kubectl delete pvc {{ vol.pvc }} -n {{ vol.namespace }} --ignore-not-found --wait=false
+        kubectl patch pvc {{ vol.pvc }} -n {{ vol.namespace }} -p '{"metadata":{"finalizers":null}}' >/dev/null 2>&1 || true
+        kubectl delete pv {{ vol.pv }} --ignore-not-found --wait=false
+        kubectl patch pv {{ vol.pv }} -p '{"metadata":{"finalizers":null}}' >/dev/null 2>&1 || true
+        for i in $(seq 1 30); do kubectl get pv {{ vol.pv }} >/dev/null 2>&1 || break; sleep 2; done
+        true
+      args:
+        executable: /bin/bash
+      changed_when: true
+
+    - name: "[{{ vol.key }}] RECLAIMED"
+      ansible.builtin.set_fact:
+        phantom_reclaimed: "{{ (phantom_reclaimed | default([])) + [vol.key] }}"

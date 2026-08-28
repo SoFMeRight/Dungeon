@@ -1,0 +1,110 @@
+---
+# Zero-copy re-adopt ORPHANED RBD PVCs (Bound, on the standalone ceph-csi driver rbd.csi.ceph.com,
+# mounted by NOTHING) onto the Rook operator driver (gorons-bracelet.rbd.csi.ceph.com). These are
+# dead leftovers: a StatefulSet was recreated under a different volumeClaimTemplate name (the live
+# service already runs on a new-driver PVC) or the owning workload was deleted, so the old PVC was
+# left behind Bound (Retain). Because nothing mounts them, migration is pure in-cluster surgery —
+# NO workload scaling, NO flux suspend, NO git flip (these dynamic PVs are not defined in git).
+# Each swap is escrowed + rescued individually; a failure records the volume and continues.
+#
+# Only tier=orphan volumes are touched. The discovery tool never classifies a live-owned volume as
+# orphan: CNPG clusters (e.g. gitlab-postgresql) resolve to skip "CNPG-managed", and a StatefulSet
+# whose volumeClaimTemplate still matches the PVC (e.g. the active osticket-mariadb galera) resolves
+# to tier=sts — so the two clusters still under DB recovery are excluded by construction. The
+# optional `exclude_owners` is an extra belt-and-suspenders name filter (default: none).
+#
+# Runs in the prplanit/ansible-oci container (escrow dir mounted for lossless rollback):
+#   docker run --rm --network host -e KUBECONFIG=/root/.kube/config \
+#     -v ~/.kube:/root/.kube:ro -v /home/kai/repositories/dungeon:/dungeon \
+#     -v ~/backups/_rbd-rook:/escrow -w /dungeon prplanit/ansible-oci:2.20.1-v3 \
+#     ansible-playbook ansible/k8s/rbd-rook-migrate-orphans.yml [flags]
+#
+#   # Plan only (default — no changes):        (no flags)
+#   # Migrate ONE orphan (VALIDATE first):     -e confirm=true -e 'targets_list=["gossip-stone/data-thanos-receive-0"]'
+#   # Migrate one namespace's orphans:         -e confirm=true -e targets=temple-of-time
+#   # Migrate ALL orphans:                     -e confirm=true
+
+- name: Zero-copy re-adopt orphaned RBD PVCs onto the Rook operator driver
+  hosts: localhost
+  gather_facts: false
+  vars:
+    old_driver: rbd.csi.ceph.com
+    new_driver: gorons-bracelet.rbd.csi.ceph.com
+    operator_ns: gorons-bracelet
+    node_secret: csi-rbd-node
+    provisioner_secret: csi-rbd-provisioner
+    escrow_dir: /escrow
+    confirm: false
+    reclaim_phantoms: false     # true: also DELETE phantoms (orphan whose rbd image is already gone)
+    targets: ""
+    targets_list: []
+    exclude_owners: []          # extra name-substring filter (tier already excludes live-owned vols)
+    dry_run: "{{ not (confirm | bool) }}"
+    tl: "{{ targets_list if (targets_list is sequence and targets_list is not string) else (targets_list | from_yaml) }}"
+
+  tasks:
+    - name: Ensure escrow dir exists
+      ansible.builtin.file:
+        path: "{{ escrow_dir }}"
+        state: directory
+        mode: "0700"
+
+    - name: Find the rbd toolbox pod (for the pre-delete image-existence check)
+      ansible.builtin.command: kubectl get pods -n {{ operator_ns }} -o name
+      register: tb_raw
+      changed_when: false
+
+    - name: Set toolbox_pod
+      ansible.builtin.set_fact:
+        toolbox_pod: "{{ (tb_raw.stdout_lines | select('search', 'rbd-toolbox') | list | first | default('')) | regex_replace('^pod/', '') }}"
+
+    - name: Discover + classify RBD volumes
+      ansible.builtin.command: python3 {{ playbook_dir }}/files/rbd-migration-discover.py
+      register: discover_raw
+      changed_when: false
+
+    - name: Select orphan-tier volumes (optionally scoped; drop any excluded owners)
+      ansible.builtin.set_fact:
+        orphan_vols: >-
+          {{ (discover_raw.stdout | from_json | selectattr('tier', 'equalto', 'orphan') | list
+              | selectattr('key', 'in', tl) | list if (tl | length > 0)
+              else ((discover_raw.stdout | from_json | selectattr('tier', 'equalto', 'orphan')
+                     | selectattr('namespace', 'equalto', targets) | list) if (targets | length > 0)
+              else (discover_raw.stdout | from_json | selectattr('tier', 'equalto', 'orphan') | list)))
+             | rejectattr('pvc', 'search', (exclude_owners | join('|')) if (exclude_owners | length > 0) else '\x00') | list }}
+
+    - name: Print the orphan-migration plan
+      ansible.builtin.debug:
+        msg: |
+          ── orphaned RBD → Rook re-adoption plan ───────────────────
+          mode      : {{ 'DRY-RUN (no changes)' if dry_run else 'EXECUTE (zero-copy re-adopt; no scaling)' }}
+          selected  : {{ orphan_vols | length }} orphaned PV(s) (Bound on {{ old_driver }}, mounted by nothing)
+          {% for v in orphan_vols %}
+            • {{ v.key }}  ({{ v.capacity }}, image {{ v.volumeAttributes.imageName }})
+          {% endfor %}
+          {% if not orphan_vols %}(nothing selected — all orphans re-adopted, or check -e targets / -e targets_list){% endif %}
+
+    - name: Re-adopt each orphan (serial — escrow, zero-copy swap, continue on failure)
+      ansible.builtin.include_tasks: tasks/rbd-rook-migrate-orphan.yml
+      loop: "{{ orphan_vols }}"
+      loop_control:
+        loop_var: vol
+        label: "{{ vol.key }}"
+      when: not dry_run and orphan_vols | length > 0
+
+    - name: Summary
+      ansible.builtin.debug:
+        msg: |
+          ── orphan re-adoption summary ─────────────────────────────
+          re-adopted (zero-copy)   : {{ orphan_vols | length - (phantom_vols | default([]) | length) - (migrate_failures | default([]) | length) }}
+          rolled back (failed)     : {{ migrate_failures | default([]) | length }}{{ '  ' ~ (migrate_failures | join('; ')) if (migrate_failures | default([]) | length) > 0 else '' }}
+          phantoms (image gone)    : {{ phantom_vols | default([]) | length }}
+          phantoms reclaimed       : {{ phantom_reclaimed | default([]) | length }}
+      when: not dry_run and orphan_vols | length > 0
+
+    - name: Note — phantoms left as-is (image already gone; reclaim is opt-in)
+      ansible.builtin.debug:
+        msg: >-
+          {{ phantom_vols | length }} phantom(s) left as-is — their rbd image is already gone.
+          Re-run with -e reclaim_phantoms=true to DELETE the dead PV/PVC objects.
+      when: not dry_run and not (reclaim_phantoms | bool) and (phantom_vols | default([]) | length) > 0

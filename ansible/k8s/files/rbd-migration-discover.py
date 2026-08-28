@@ -187,13 +187,16 @@ def main():
             rec["owner_kind"], rec["owner_name"] = owners[0]
             rec["skip_reason"] = "%s-owned — migrate manually" % owners[0][0]
         else:
-            # Nothing mounts it. An ordinal-suffixed name is the StatefulSet signature — a
-            # scaled-down or not-yet-reconciled STS whose live object we couldn't match. Never sweep.
+            # Nothing mounts it AND no live StatefulSet/CNPG/Deployment owns it by identity (all
+            # matched above) — a genuine orphan: its workload was deleted, or a StatefulSet was
+            # recreated under a different volumeClaimTemplate name and its old PVCs were left behind
+            # (Retain kept them Bound). Zero-copy re-adoption is non-destructive (same PVC name, same
+            # rbd image) and safe even if a scaled-down workload ever remounts this exact PVC — it
+            # simply lands on the operator driver. A still-matching scaled-down STS is caught by
+            # sts_of above (tier=sts), so this branch only ever sees true orphans. Migrated by
+            # rbd-rook-migrate-orphans.yml (escrow -> swap-core; no scaling, no git flip).
             rec["owner_kind"] = "None"
-            if re.search(r"-\d+$", pvc):
-                rec["skip_reason"] = "unused + ordinal name (likely a scaled-down/absent StatefulSet) — verify + use the STS procedure"
-            else:
-                rec["tier"] = "review"          # bound + unused + standalone-looking — human vets first
+            rec["tier"] = "orphan"
         out.append(rec)
 
     print(json.dumps(out, indent=2))
