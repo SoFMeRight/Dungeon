@@ -6,7 +6,7 @@ data:
   bitwarden.yaml: |
     name: prplanit/bitwarden-logs
     description: Parse Bitwarden/Vaultwarden failed logins (identity)
-    stage: s02-parse
+    stage: s01-parse
     filter: "evt.Meta.service == 'bitwarden'"
     onsuccess: next_stage
     debug: false

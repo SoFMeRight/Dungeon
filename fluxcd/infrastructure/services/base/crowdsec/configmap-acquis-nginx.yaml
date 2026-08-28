@@ -8,7 +8,7 @@ data:
     url: PLACEHOLDER_LOKI_URL
     limit: 1000
     query: |
-      {ap_mon_jobsname="docker", ap_mon_srvcname="nginx-extras"} |= "GET"
+      {service_name="nginx-extras"} |= "GET"
     labels:
       type: nginx
-    wait_for_ready: 10s
+    wait_for_ready: 5m

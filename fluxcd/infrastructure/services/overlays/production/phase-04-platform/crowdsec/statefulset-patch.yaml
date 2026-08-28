@@ -6,36 +6,56 @@ spec:
   replicas: 1
   template:
     spec:
+      initContainers:
+        # Same image as the agent; it only copies the shipped /etc/crowdsec into the
+        # config PVC on first boot, so the base's placeholder image is pinned here too.
+        - name: seed-config
+          image: ghcr.io/crowdsecurity/crowdsec:v1.7.8
+          volumeMounts:
+            - name: lens-of-truth-crowdsec-config
+              mountPath: /seed
       containers:
-      - name: crowdsec
-        image: ghcr.io/crowdsecurity/crowdsec:v1.7.8
-        env:
-        - name: CUSTOM_HOSTNAME
-          value: "dungeon-k8s"
-        - name: CROWDSEC_API_PORT
-          value: "3403"
-        - name: ENROLL_KEY
-          value: "cm9ntuqmc000jjx08n5r84rtt"
-        - name: ENROLL_INSTANCE_NAME
-          value: "Dungeon"
-        - name: ENROLL_TAGS
-          value: "k8s linux production"
-        volumeMounts:
-        - name: lens-of-truth-crowdsec-data
-          mountPath: /var/lib/crowdsec/data
+        - name: crowdsec
+          image: ghcr.io/crowdsecurity/crowdsec:v1.7.8
+          env:
+            - name: CUSTOM_HOSTNAME
+              value: "dungeon-k8s"
+            - name: CROWDSEC_API_PORT
+              value: "3403"
+            - name: ENROLL_KEY
+              value: "cm9ntuqmc000jjx08n5r84rtt"
+            - name: ENROLL_INSTANCE_NAME
+              value: "Dungeon"
+            - name: ENROLL_TAGS
+              value: "k8s linux production"
+          volumeMounts:
+            - name: lens-of-truth-crowdsec-data
+              mountPath: /var/lib/crowdsec/data
+            - name: lens-of-truth-crowdsec-config
+              mountPath: /etc/crowdsec
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+  volumeClaimTemplates:
+    # volumeClaimTemplates has no strategic-merge key, so this list REPLACES the base's
+    # -- the config claim must be restated here or it is silently dropped.
+    - metadata:
+        name: lens-of-truth-crowdsec-config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: ceph-rbd
         resources:
           requests:
-            cpu: "250m"
-            memory: "512Mi"
-          limits:
-            cpu: "1000m"
-            memory: "2Gi"
-  volumeClaimTemplates:
-  - metadata:
-      name: lens-of-truth-crowdsec-data
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: ceph-rbd
-      resources:
-        requests:
-          storage: 10Gi
+            storage: 1Gi
+    - metadata:
+        name: lens-of-truth-crowdsec-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: ceph-rbd
+        resources:
+          requests:
+            storage: 10Gi
