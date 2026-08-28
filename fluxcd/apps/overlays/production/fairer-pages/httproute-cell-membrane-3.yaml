@@ -30,7 +30,6 @@ spec:
     - "netbox.prplanit.com"
     - "ntfy.prplanit.com"
     - "orangehrm.prplanit.com"
-    - "pbx.prplanit.com"
     - "penpot.prplanit.com"
   rules:
     - matches:

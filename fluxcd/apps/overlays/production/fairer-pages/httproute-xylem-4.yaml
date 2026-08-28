@@ -14,6 +14,7 @@ spec:
   hostnames:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 
+    - "photos.pcfae.com"
     - "pinchflat.pcfae.com"
     - "podinfo.pcfae.com"
     - "prowlarr.pcfae.com"
@@ -29,7 +30,6 @@ spec:
     - "shiplog.pcfae.com"
     - "shlink.pcfae.com"
     - "smkeygen.pcfae.com"
-    - "sonarr.pcfae.com"
   rules:
     - matches:
         - path:

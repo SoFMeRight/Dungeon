@@ -28,7 +28,6 @@ spec:
     - "kms.pcfae.com"
     - "lidarr.pcfae.com"
     - "links.pcfae.com"
-    - "pbx.pcfae.com"
   rules:
     - matches:
         - path:

@@ -29,7 +29,7 @@ spec:
     - "ollama.pcfae.com"
     - "overseer.pcfae.com"
     - "paperless.pcfae.com"
-    - "photos.pcfae.com"
+    - "pbx.pcfae.com"
   rules:
     - matches:
         - path:
