@@ -1,0 +1,82 @@
+---
+# Migrate CloudNativePG (CNPG) Postgres clusters from the standalone ceph-csi Helm driver
+# (rbd.csi.ceph.com) onto the Rook operator driver (gorons-bracelet.rbd.csi.ceph.com).
+#
+# CNPG PVCs must NOT be swapped zero-copy (deleting a CNPG PVC out-of-band corrupts the instance
+# index). The SAFE, CNPG-native path — validated on training-dummy-postgres — is a per-instance
+# RE-CLONE: the cluster's storageClass already resolves to the operator driver (the ceph-rbd* SCs
+# were flipped), so deleting one instance's PVC+pod makes the operator reprovision that instance on
+# the operator driver via pg_basebackup and rejoin it streaming. Do it ONE instance at a time,
+# replicas first, primary last (after a failover). Never break quorum.
+#
+# HARD SAFETY RAILS (in tasks/cnpg-*.yml):
+#   - a cluster is touched ONLY if it starts fully healthy (readyInstances == instances).
+#   - exactly ONE instance is recloned at a time; the next waits until the previous is back
+#     Ready AND streaming from the primary. A stall FAILS that cluster (no cascade).
+#   - the primary is migrated LAST, via a controlled failover onto an already-migrated replica.
+#
+# Runs in the prplanit/ansible-oci container like the other k8s playbooks:
+#   docker run --rm --network host -e KUBECONFIG=/root/.kube/config \
+#     -v ~/.kube:/root/.kube:ro -v /home/kai/repositories/dungeon:/dungeon \
+#     -w /dungeon prplanit/ansible-oci:2.20.1-v3 \
+#     ansible-playbook ansible/k8s/rbd-rook-migrate-cnpg.yml [flags]
+#
+#   # Plan only (default — no changes):                    (no flags)
+#   # Migrate one cluster (VALIDATE on the dummy first!):  -e confirm=true -e targets=training-dummy/training-dummy-postgres
+#   # Migrate specific clusters:                           -e confirm=true -e 'targets_list=["gossip-stone/gatus-postgres"]'
+#   # Migrate ALL old-driver clusters (serial):            -e confirm=true
+
+- name: Migrate CNPG clusters to the Rook operator driver (per-instance reclone)
+  hosts: localhost
+  gather_facts: false
+  vars:
+    old_driver: rbd.csi.ceph.com
+    new_driver: gorons-bracelet.rbd.csi.ceph.com
+    reclone_retries: 80          # x15s = up to 20m per instance (pg_basebackup of large DBs)
+    reclone_delay: 15
+    confirm: false
+    targets: ""
+    targets_list: []
+    dry_run: "{{ not (confirm | bool) }}"
+    tl: "{{ targets_list if (targets_list is sequence and targets_list is not string) else (targets_list | from_yaml) }}"
+
+  tasks:
+    - name: Discover CNPG clusters + per-instance driver
+      ansible.builtin.command: python3 {{ playbook_dir }}/files/cnpg-discover.py
+      register: cnpg_raw
+      changed_when: false
+
+    - name: Parse clusters
+      ansible.builtin.set_fact:
+        clusters: "{{ cnpg_raw.stdout | from_json }}"
+
+    - name: Select clusters with old-driver instances (optionally scoped)
+      ansible.builtin.set_fact:
+        selected: >-
+          {{ (clusters | selectattr('old_count', 'gt', 0) | selectattr('key', 'in', tl) | list) if (tl | length > 0)
+             else ((clusters | selectattr('old_count', 'gt', 0) | selectattr('key', 'equalto', targets) | list) if (targets | length > 0)
+             else (clusters | selectattr('old_count', 'gt', 0) | list)) }}
+
+    - name: Print the CNPG migration plan
+      ansible.builtin.debug:
+        msg: |
+          ── CNPG → Rook migration plan ─────────────────────────────
+          mode      : {{ 'DRY-RUN (no changes)' if dry_run else 'EXECUTE (per-instance reclone)' }}
+          selected  : {{ selected | length }} cluster(s) with old-driver instances
+          {% for c in selected %}
+            • {{ c.key }}  ({{ c.old_count }}/{{ c.instances }} on old; primary={{ c.primary }}; healthy={{ c.healthy }})
+          {% endfor %}
+          {% if not selected %}(nothing selected — all CNPG already on the operator driver, or check -e targets){% endif %}
+
+    - name: Migrate each cluster (serial, one cluster at a time)
+      ansible.builtin.include_tasks: tasks/cnpg-migrate-cluster.yml
+      loop: "{{ selected }}"
+      loop_control:
+        loop_var: cl
+        label: "{{ cl.key }}"
+      when: not dry_run and selected | length > 0
+
+    - name: Report clusters that could not be fully migrated
+      ansible.builtin.debug:
+        msg: "⚠ {{ cnpg_failures | length }} cluster(s) not fully migrated (see above): {{ cnpg_failures | join('; ') }}"
+      when: not dry_run and (cnpg_failures | default([]) | length) > 0

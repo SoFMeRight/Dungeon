@@ -1,0 +1,53 @@
+---
+# Reclone ONE CNPG instance ({{ inst }}) onto the operator driver. The instance MUST be a replica
+# (never the primary) and the cluster MUST be healthy with full quorum before we touch it. Deleting
+# the instance's pod+PVC makes the operator reprovision it on the cluster's storageClass (which now
+# resolves to the operator driver) via pg_basebackup, then it rejoins streaming. Caller = tasks/
+# cnpg-migrate-cluster.yml; c_ns / c_name / expect_streaming are set there.
+
+- name: "[cnpg {{ c_name }}/{{ inst }}] pre-flight: cluster healthy, full quorum, and this is NOT the primary"
+  ansible.builtin.command: python3 {{ playbook_dir }}/files/cnpg-cluster-state.py {{ c_ns }} {{ c_name }}
+  register: pre_state
+  changed_when: false
+  failed_when: >-
+    (pre_state.stdout | from_json).healthy != true
+    or (pre_state.stdout | from_json).primary == inst
+    or ((pre_state.stdout | from_json).streaming | default(-1)) != expect_streaming
+
+- name: "[cnpg {{ c_name }}/{{ inst }}] delete the instance pod + PVC (operator reprovisions on the operator SC)"
+  ansible.builtin.shell: |
+    set -e
+    kubectl delete pod {{ inst }} -n {{ c_ns }} --ignore-not-found --wait=false
+    kubectl delete pvc {{ inst }} -n {{ c_ns }} --ignore-not-found --wait=false
+    true
+  args:
+    executable: /bin/bash
+  changed_when: true
+
+  # Wait for the instance to reclone onto the operator driver AND rejoin streaming, NUDGING the
+  # operator each pass. CNPG reprovisions via a transient "<inst>-join-*" pg_basebackup pod (the real
+  # "<inst>" pod only appears after the join), and a busy operator (e.g. churning on an unhealthy
+  # sibling cluster) can stall promotion — the periodic cnpg.io/reconcile annotation prods it. The
+  # streaming/quorum + "not in old_instances" check is the definitive done signal.
+- name: "[cnpg {{ c_name }}/{{ inst }}] wait for reclone onto operator + streaming restored (nudging the operator)"
+  ansible.builtin.shell: |
+    for i in $(seq 1 {{ reclone_retries }}); do
+      kubectl annotate cluster.postgresql.cnpg.io {{ c_name }} -n {{ c_ns }} cnpg.io/reconcile="$(date +%s%N)" --overwrite >/dev/null 2>&1 || true
+      if python3 {{ playbook_dir }}/files/cnpg-cluster-state.py {{ c_ns }} {{ c_name }} | python3 -c '
+    import json,sys
+    s=json.load(sys.stdin)
+    sys.exit(0 if (s["healthy"] and s.get("streaming")=={{ expect_streaming }} and "{{ inst }}" not in s["old_instances"]) else 1)'; then
+        echo "reclone-complete"; exit 0
+      fi
+      sleep {{ reclone_delay }}
+    done
+    echo "reclone-timeout"; exit 1
+  args:
+    executable: /bin/bash
+  register: post_wait
+  changed_when: true
+  failed_when: "'reclone-complete' not in post_wait.stdout"
+
+- name: "[cnpg {{ c_name }}/{{ inst }}] reclone RECLONED onto {{ new_driver }} (streaming restored)"
+  ansible.builtin.debug:
+    msg: "✓ {{ c_ns }}/{{ inst }} recloned onto the operator driver; cluster healthy, quorum restored."

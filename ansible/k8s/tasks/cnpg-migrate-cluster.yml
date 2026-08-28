@@ -1,0 +1,86 @@
+---
+# Migrate ONE CNPG cluster ({{ cl.key }}) to the operator driver, one instance at a time, replicas
+# first and the primary last (after a controlled failover). block/rescue: a failure records the
+# cluster and continues to the NEXT cluster (never cascades), leaving this cluster where it was —
+# every reclone is quorum-gated, so a partial cluster is still a healthy running cluster.
+
+- name: "[cnpg {{ cl.key }}] read live state"
+  ansible.builtin.command: python3 {{ playbook_dir }}/files/cnpg-cluster-state.py {{ cl.namespace }} {{ cl.name }}
+  register: cl_state0
+  changed_when: false
+
+- name: "[cnpg {{ cl.key }}] facts"
+  ansible.builtin.set_fact:
+    c_ns: "{{ cl.namespace }}"
+    c_name: "{{ cl.name }}"
+    st0: "{{ cl_state0.stdout | from_json }}"
+    expect_streaming: "{{ (cl_state0.stdout | from_json).instances - 1 }}"
+
+- name: "[cnpg {{ cl.key }}] migrate"
+  block:
+    - name: "[cnpg {{ cl.key }}] SAFETY GATE — refuse unless the cluster starts fully healthy"
+      ansible.builtin.assert:
+        that:
+          - st0.healthy
+          - (st0.streaming | default(-1)) == (expect_streaming | int)
+        fail_msg: "cluster not fully healthy (ready/streaming) — skipping to protect it"
+        success_msg: "cluster healthy ({{ st0.instances }} instances, {{ st0.streaming }} streaming) — proceeding"
+
+    - name: "[cnpg {{ cl.key }}] reclone each REPLICA on the old driver (one at a time)"
+      ansible.builtin.include_tasks: cnpg-reclone-instance.yml
+      loop: "{{ st0.old_replicas }}"
+      loop_control:
+        loop_var: inst
+        label: "{{ inst }}"
+
+    - name: "[cnpg {{ cl.key }}] re-read state (is the primary still on the old driver?)"
+      ansible.builtin.command: python3 {{ playbook_dir }}/files/cnpg-cluster-state.py {{ c_ns }} {{ c_name }}
+      register: cl_state1
+      changed_when: false
+
+    - name: "[cnpg {{ cl.key }}] failover + reclone the old primary (only if it is still on the old driver)"
+      when: (cl_state1.stdout | from_json).primary_on_old
+      block:
+        - name: "[cnpg {{ cl.key }}] controlled failover — delete the primary pod (CNPG promotes a migrated replica)"
+          ansible.builtin.command: kubectl delete pod {{ (cl_state1.stdout | from_json).primary }} -n {{ c_ns }} --wait=false
+
+        - name: "[cnpg {{ cl.key }}] wait for a NEW primary + the old primary rejoined streaming (nudging)"
+          ansible.builtin.shell: |
+            for i in $(seq 1 {{ reclone_retries }}); do
+              kubectl annotate cluster.postgresql.cnpg.io {{ c_name }} -n {{ c_ns }} cnpg.io/reconcile="$(date +%s%N)" --overwrite >/dev/null 2>&1 || true
+              if python3 {{ playbook_dir }}/files/cnpg-cluster-state.py {{ c_ns }} {{ c_name }} | python3 -c '
+            import json,sys
+            s=json.load(sys.stdin)
+            sys.exit(0 if (s["healthy"] and s["primary"]!="{{ (cl_state1.stdout | from_json).primary }}" and s.get("streaming")=={{ expect_streaming }}) else 1)'; then
+                echo "failover-complete"; exit 0
+              fi
+              sleep {{ reclone_delay }}
+            done
+            echo "failover-timeout"; exit 1
+          args:
+            executable: /bin/bash
+          register: fo_wait
+          changed_when: true
+          failed_when: "'failover-complete' not in fo_wait.stdout"
+
+        - name: "[cnpg {{ cl.key }}] reclone the (now-replica) old primary"
+          ansible.builtin.include_tasks: cnpg-reclone-instance.yml
+          vars:
+            inst: "{{ (cl_state1.stdout | from_json).primary }}"
+
+    - name: "[cnpg {{ cl.key }}] verify: NO instance left on the old driver + cluster healthy"
+      ansible.builtin.command: python3 {{ playbook_dir }}/files/cnpg-cluster-state.py {{ c_ns }} {{ c_name }}
+      register: cl_final
+      changed_when: false
+      failed_when: >-
+        ((cl_final.stdout | from_json).old_instances | default(['x']) | length) != 0
+        or (cl_final.stdout | from_json).healthy != true
+
+    - name: "[cnpg {{ cl.key }}] MIGRATED"
+      ansible.builtin.debug:
+        msg: "✓ {{ cl.key }} — all {{ st0.instances }} instances on {{ new_driver }}, cluster healthy, quorum intact."
+
+  rescue:
+    - name: "[cnpg {{ cl.key }}] record failure + continue to the next cluster (this one left as-is)"
+      ansible.builtin.set_fact:
+        cnpg_failures: "{{ (cnpg_failures | default([])) + [cl.key ~ ' (' ~ (ansible_failed_result.msg | default('see above') | truncate(80)) ~ ')'] }}"
