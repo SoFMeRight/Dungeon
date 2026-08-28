@@ -19,7 +19,8 @@ workflow:
   auto_cancel:
     on_new_commit: interruptible
   rules:
-    - if: '$CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^v\d+\.\d+\.\d+$/'
+    - if: '$CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^v?\d+\.\d+\.\d+$/'
+    - if: '$CI_COMMIT_TAG && $CI_COMMIT_TAG =~ /^v?\d+\.\d+\.\d+-.+/'
     - if: $CI_COMMIT_TAG
       when: never
     - if: '$CI_COMMIT_MESSAGE =~ /(?m)^Generated-By: StageFreight/ && $CI_PIPELINE_SOURCE == "push"'
@@ -68,8 +69,6 @@ perform:
   id_tokens:
     STAGEFREIGHT_OIDC:
       aud: stagefreight
-  tags:
-    - k8s-dungeon-production
   variables:
     GIT_DEPTH: 0
     <<: *transport
@@ -103,8 +102,6 @@ publish:
   id_tokens:
     STAGEFREIGHT_OIDC:
       aud: stagefreight
-  tags:
-    - k8s-dungeon-production
   needs:
     - perform
     - review

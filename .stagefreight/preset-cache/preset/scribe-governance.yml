@@ -1,0 +1,22 @@
+# Scribe rows for a governance control repo: it runs CI but builds/releases nothing,
+# so row 2 is pipeline status (not "build") + last-commit + the SF version — no release.
+scribe:
+  files:
+    readme.project:
+      file: README.md
+      between: ["<!-- sf:project:start -->", "<!-- sf:project:end -->"]
+      inline: true
+      items: [repo-gh, repo-gl, license, issues, prs, contributors, donate, sponsor]
+    readme.badges:
+      file: README.md
+      between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
+      inline: true
+      items: [pipeline, last-commit, stagefreight]
+  commit:
+    type: docs
+    message: "refresh generated badges"
+    add:
+      - README.md
+      - ".stagefreight/scribe"
+    push: true
+    skip_ci: true
