@@ -16,3 +16,4 @@ resources:
   - configmap-cloudflare-bouncer.yaml
   - externalsecret.yaml
   - httproute.yaml
+  - httproute-lapi.yaml

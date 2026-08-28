@@ -26,8 +26,15 @@ patches:
   - path: configmap-cloudflare-bouncer-patch.yaml
   # ExternalSecret patch
   - path: externalsecret-patch.yaml
-  # HTTPRoute patch
+  # HTTPRoute patches
   - path: httproute-patch.yaml
+    target:
+      kind: HTTPRoute
+      name: crowdsec-dashboard
+  - path: httproute-lapi-patch.yaml
+    target:
+      kind: HTTPRoute
+      name: crowdsec-lapi
   - path: service-crowdsec-dashboard-ingress-patch.yaml
     target:
       kind: Service
