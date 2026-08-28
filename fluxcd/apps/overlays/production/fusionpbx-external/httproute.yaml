@@ -7,10 +7,10 @@ metadata:
       group: "Business Apps (Hyrule Castle🏰)"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: hyrule-castle
+    - name: xylem-gateway
+      namespace: arylls-lookout
   hostnames:
-    - "pbx.prplanit.com"
+    - "pbx.pcfae.com"
   rules:
     - matches:
         - path:
