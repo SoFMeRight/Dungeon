@@ -7,8 +7,8 @@ spec:
     Allows Prometheus/Alloy metrics scraping from host and remote-node
     entities to pods labelled for metrics collection. Alloy runs as a
     hostNetwork DaemonSet so it appears as the host entity. Covers
-    standard exporter ports (9090-9216), app metrics (8080), and
-    Istio telemetry (15020).
+    standard exporter ports (9090-9216), app metrics (8080), CrowdSec
+    metrics (6060), and Istio telemetry (15020).
   enableDefaultDeny:
     egress: false
     ingress: false
@@ -21,6 +21,9 @@ spec:
         - remote-node
       toPorts:
         - ports:
+            # CrowdSec metrics endpoint
+            - port: "6060"
+              protocol: TCP
             # Standard Prometheus exporter port range
             - port: "9090"
               endPort: 9216

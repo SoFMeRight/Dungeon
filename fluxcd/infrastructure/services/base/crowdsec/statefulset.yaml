@@ -15,19 +15,17 @@ spec:
       component: engine
   template:
     metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "6060"
+        prometheus.io/path: /metrics
       labels:
         app: crowdsec
         component: engine
-        # Opt in to gateway ingress. This namespace is default-deny under BOTH a Cilium
-        # CNP and an istio AuthorizationPolicy; allow-gateway-ingress-xylem selects on
-        # this label, so without it the gateway resolves the route, reaches the pod's
-        # ztunnel, and the mesh refuses -- which surfaces as a 503 from the gateway
-        # rather than as anything logged against crowdsec.
-        #
-        # The LAPI only needs this now that off-cluster bouncers reach it through
-        # xylem; the in-cluster agent and bouncer talk to the ClusterIP service and
-        # never traversed the gateway.
+        # gates allow-gateway-ingress-xylem and allow-prometheus-scrape; without them
+        # the mesh denies and the gateway returns 503
         policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/metrics: "true"
     spec:
       serviceAccountName: crowdsec
       # Root-required: the entrypoint rsyncs default config into the image-owned /etc/crowdsec at

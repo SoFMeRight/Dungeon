@@ -54,6 +54,12 @@ configMapGenerator:
       - docker-monitoring_with_node_selection.json
       - docker-overview_with_CAdvisor_docker_state_exporter_node_exporter.json
 
+  # Security dashboards (~90KB)
+  - name: grafana-dashboards-security
+    files:
+      - crowdsec-metrics.json
+      - crowdsec-firewall-bouncer.json
+
   # Logs & DNS dashboards (~120KB)
   - name: grafana-dashboards-logs
     files:
