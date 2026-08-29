@@ -24,10 +24,11 @@ spec:
         prometheus.io/port: "3100"
       storage:
         s3:
-          endpoint: s3.pcfae.com
+          endpoint: ceph-rgw.gorons-bracelet.svc.cluster.local:8080
           region: default
           s3ForcePathStyle: true
-          insecure: false
+          # plaintext in-cluster; the ambient mesh provides mTLS
+          insecure: true
           signatureVersion: v4
     # Global imagePullSecrets for all Loki pods
     global:
