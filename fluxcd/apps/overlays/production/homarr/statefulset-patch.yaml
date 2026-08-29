@@ -26,7 +26,8 @@ spec:
             - -c
             # Fail-open: the DO block swallows schema errors; this "|| echo" swallows
             # connect errors — the seed is best-effort and never blocks Homarr's start.
-            - psql -v ON_ERROR_STOP=1 -f /seed/seed-groups.sql || echo "[group-seed] WARNING: seed did not run (db unreachable?); continuing to start Homarr"
+            # Single-quoted so the colon/pipes stay inside one string scalar.
+            - 'psql -v ON_ERROR_STOP=1 -f /seed/seed-groups.sql || echo "[group-seed] WARNING seed did not run (db unreachable); continuing to start Homarr"'
           env:
             - name: PGHOST
               value: "homarr-postgres-rw"
