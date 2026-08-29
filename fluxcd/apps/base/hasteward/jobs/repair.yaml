@@ -1,7 +1,7 @@
 # HASteward targeted repair — triage → safety gate → escrow backup → re-clone/heal the
 # unhealthy instance from the primary. Requires a RUNNING primary (aborts otherwise).
-#   ../jobs/run.sh repair -c <cluster> -n <namespace> -i <instance>
-# Vars: ENGINE(cnpg|galera) CLUSTER NAMESPACE INSTANCE IMAGE — filled by run.sh.
+#   ../jobs/run.sh repair -c <cluster> -n <namespace> -i <instance> [-f]
+# Vars: ENGINE(cnpg|galera) CLUSTER NAMESPACE INSTANCE IMAGE FORCE — filled by run.sh.
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -31,6 +31,9 @@ spec:
           imagePullPolicy: Always
           args: ["repair", "--instance", "${INSTANCE}"]
           env:
+            # empty unless run.sh was given -f; HASteward reads "" as false
+            - name: HASTEWARD_FORCE
+              value: "${FORCE}"
             - name: HASTEWARD_ENGINE
               value: "${ENGINE}"
             - name: HASTEWARD_CLUSTER

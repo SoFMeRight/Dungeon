@@ -9,11 +9,15 @@
 #
 # Flags: -c cluster (req)  -n namespace (req)  -i instance  -e engine (default cnpg)
 #        --image <ref> (default docker.io/prplanit/hasteward:latest-dev)
+#        -f|--force  carry out the operation HASteward refuses on its own. Triage withholds
+#                    a donor when authority is ambiguous (split-brain) because picking the
+#                    surviving lineage is unrecoverable and therefore a human's call; this
+#                    flag is how that decision is handed back to the tool once made.
 # Follow logs after it starts:  kubectl -n fairy-bottle logs -f job/<printed-name>
 set -euo pipefail
 
 VERB="${1:-}"
-[ -n "$VERB" ] || { echo "usage: run.sh <verb> -c <cluster> -n <namespace> [-i <instance>] [-e <engine>] [--image <ref>]"; exit 2; }
+[ -n "$VERB" ] || { echo "usage: run.sh <verb> -c <cluster> -n <namespace> [-i <instance>] [-e <engine>] [--image <ref>] [-f|--force]"; exit 2; }
 shift
 
 ENGINE=cnpg
@@ -21,6 +25,7 @@ INSTANCE=""
 IMAGE="docker.io/prplanit/hasteward:latest-dev"
 CLUSTER=""
 NAMESPACE=""
+FORCE=""
 while [ $# -gt 0 ]; do
   case "$1" in
     -c) CLUSTER="$2"; shift 2 ;;
@@ -28,6 +33,7 @@ while [ $# -gt 0 ]; do
     -i) INSTANCE="$2"; shift 2 ;;
     -e) ENGINE="$2"; shift 2 ;;
     --image) IMAGE="$2"; shift 2 ;;
+    -f|--force) FORCE=true; shift ;;
     *) echo "unknown arg: $1" >&2; exit 2 ;;
   esac
 done
@@ -45,8 +51,12 @@ if grep -q '\${INSTANCE}' "$TEMPLATE" && [ -z "$INSTANCE" ]; then
   echo "verb '$VERB' needs -i <instance>" >&2
   exit 2
 fi
+if [ -n "$FORCE" ] && ! grep -q '\${FORCE}' "$TEMPLATE"; then
+  echo "verb '$VERB' does not accept --force" >&2
+  exit 2
+fi
 
-export ENGINE CLUSTER NAMESPACE INSTANCE IMAGE
+export ENGINE CLUSTER NAMESPACE INSTANCE IMAGE FORCE
 # create (not apply): generateName gives each run a unique Job name, so repeated runs never
 # collide and the history is auditable until ttlSecondsAfterFinished reaps it.
-envsubst '${ENGINE} ${CLUSTER} ${NAMESPACE} ${INSTANCE} ${IMAGE}' < "$TEMPLATE" | kubectl create -f -
+envsubst '${ENGINE} ${CLUSTER} ${NAMESPACE} ${INSTANCE} ${IMAGE} ${FORCE}' < "$TEMPLATE" | kubectl create -f -

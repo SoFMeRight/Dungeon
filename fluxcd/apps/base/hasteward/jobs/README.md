@@ -24,7 +24,23 @@ purpose — they are operational runbooks applied on demand, never reconciled.
 ```
 
 Flags: `-c` cluster (required), `-n` namespace (required), `-i` instance, `-e` engine
-(`cnpg` default, or `galera`), `--image` (default `docker.io/prplanit/hasteward:latest-dev`).
+(`cnpg` default, or `galera`), `--image` (default `docker.io/prplanit/hasteward:latest-dev`),
+`-f`/`--force` (`repair` and `promote` only).
+
+### `--force`, and how to earn it
+
+Triage returns `safeToHeal: false` with `recommendedDonor: none` when authority is
+**ambiguous** — committed WAL exists on more than one lineage past a shared fork. HASteward
+refuses there on purpose: choosing the surviving lineage is unrecoverable, so it is a human's
+call. `--force` is how that decision is handed back once it has been made.
+
+Decide it on **content, not WAL volume**. The "N GB past fork" figure is LSN distance, so an
+idle branch still accrues it from checkpoints and heartbeats. Snapshot the losing instance's
+PVC (`VolumeSnapshotClass csi-rbdplugin-snapclass`), restore it to a scratch PVC, open it as a
+standalone server — delete `standby.signal`, `chmod 0750` the pgdata, start with
+`-c ssl=off -c archive_mode=off -c listen_addresses='' -c logging_collector=off` — and diff real
+`count(*)` per table against the primary. `pg_stat_user_tables.n_live_tup` is useless here; a
+recovered clone has reset statistics. Then force toward the branch you proved.
 
 Each run gets a unique Job name via `generateName`. Follow it:
 
@@ -39,8 +55,8 @@ kubectl -n fairy-bottle logs -f job/<printed-name>
 |------|---------|--------|-------|
 | `triage` | `triage` | — | Read-only. Run first; trust `safeToHeal`/`mostAdvanced`. |
 | `deadlock-recover` | `prune-wal --deadlock-recover -i N` | VolumeSnapshot | In-place WAL replay+recycle for a disk-full-DEADLOCKED instance, then settles the primary (cancels a stuck failover). No PVC growth. |
-| `repair` | `repair -i N` | restic | Re-clone/heal an unhealthy instance from the primary. |
-| `promote` | `repair -i N --promote` | restic | Rebuild-around-authority when the authority is not the primary. `--dry-run` first (edit args). |
+| `repair` | `repair -i N` | restic | Re-clone/heal an unhealthy instance from the primary. Accepts `-f`. |
+| `promote` | `repair -i N --promote` | restic | Rebuild-around-authority when the authority is not the primary. `--dry-run` first (edit args). Accepts `-f`. |
 
 `deadlock-recover` escrows via a CSI VolumeSnapshot (no backups PVC needed); `repair` /
 `promote` escrow to the restic repo on the `hasteward-backups` PVC using `RESTIC_PASSWORD`
