@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: organizr-oidc-seed
+data:
+  # Seeds the critical zitadel-OIDC keys into Organizr's flat config.php on every
+  # pod start. Idempotent (enforces the declared keys, preserves all other ~912
+  # keys incl. the hashKey), validates the rendered file before atomically replacing.
+  seed-oidc.php: |
+    <?php
+    $cfgFile = getenv('ORGANIZR_CONFIG') ?: '/config/www/organizr/data/config/config.php';
+
+    if (!file_exists($cfgFile)) {
+        fwrite(STDERR, "[oidc-seed] $cfgFile not present yet; app not initialized — skipping\n");
+        exit(0); // let Organizr create it on first run; next restart seeds
+    }
+
+    $clientId = getenv('OIDC_CLIENT_ID') ?: '';
+    $clientSecret = getenv('OIDC_CLIENT_SECRET') ?: '';
+    if ($clientId === '' || $clientSecret === '') {
+        fwrite(STDERR, "[oidc-seed] OIDC_CLIENT_ID/SECRET missing from env — refusing to seed\n");
+        exit(1);
+    }
+
+    $overrides = [
+        'oidcEnabled'             => true,
+        'oidcZitadelEnabled'      => true,
+        'oidcZitadelName'         => getenv('OIDC_NAME') ?: 'PrecisionPlanIT SSO',
+        'oidcZitadelClientId'     => $clientId,
+        'oidcZitadelClientSecret' => $clientSecret,
+        'oidcZitadelDiscoveryUrl' => getenv('OIDC_DISCOVERY_URL') ?: '',
+        'oidcDefaultGroupId'      => getenv('OIDC_DEFAULT_GROUP_ID') ?: '4',
+        'oidcAutoCreateUsers'     => true,
+        'oidcLinkExistingUsers'   => true,
+        'oidcUpdateGroupsOnLogin' => true,
+    ];
+    // Optional: JSON map of zitadel role -> Organizr group_id. Empty = leave default.
+    $gm = getenv('OIDC_GROUP_MAPPINGS');
+    if ($gm !== false && trim($gm) !== '') {
+        $overrides['oidcGroupMappings'] = $gm;
+    }
+
+    $config = include $cfgFile;
+    if (!is_array($config)) {
+        fwrite(STDERR, "[oidc-seed] config.php did not return an array — aborting\n");
+        exit(1);
+    }
+
+    $changed = false;
+    foreach ($overrides as $k => $v) {
+        if (!array_key_exists($k, $config) || $config[$k] !== $v) {
+            $config[$k] = $v;
+            $changed = true;
+        }
+    }
+    if (!$changed) {
+        echo "[oidc-seed] already in desired state — no change\n";
+        exit(0);
+    }
+
+    $out = "<?php\nreturn " . var_export($config, true) . ";\n";
+    $tmp = $cfgFile . '.seedtmp';
+    if (file_put_contents($tmp, $out) === false) {
+        fwrite(STDERR, "[oidc-seed] failed to write temp file\n");
+        exit(1);
+    }
+    $check = @include $tmp;
+    if (!is_array($check) || empty($check['oidcZitadelClientId'])) {
+        fwrite(STDERR, "[oidc-seed] rendered config failed validation — not applying\n");
+        @unlink($tmp);
+        exit(1);
+    }
+    @copy($cfgFile, $cfgFile . '.bak.oidcseed');
+    if (!rename($tmp, $cfgFile)) {
+        fwrite(STDERR, "[oidc-seed] failed to replace config.php\n");
+        @unlink($tmp);
+        exit(1);
+    }
+    echo "[oidc-seed] seeded zitadel OIDC into config.php (" . count($config) . " keys)\n";

@@ -5,6 +5,8 @@ resources:
   - ../../../base/organizr
   - httproute.yaml
   - httproute-xylem.yaml
+  - externalsecret.yaml
+  - configmap-oidc-seed.yaml
 patches:
   - path: statefulset-patch.yaml
     target:
