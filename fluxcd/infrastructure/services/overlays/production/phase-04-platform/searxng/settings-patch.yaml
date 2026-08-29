@@ -821,6 +821,14 @@ data:
         engine: duckduckgo
         shortcut: ddg
 
+      # The default duckduckgo engine queries html.duckduckgo.com, which CAPTCHAs
+      # our egress IPs almost immediately. This WEB variant queries via
+      # duckduckgo.com -> links.duckduckgo.com/d.js instead, which is not blocked.
+      # Engine module shipped upstream by searxng/searxng PR #6192 (fixes issue #4824).
+      - name: duckduckgo web
+        engine: duckduckgo_web
+        shortcut: ddgw
+
       - name: duckduckgo images
         engine: duckduckgo_extra
         categories: [images, web]
