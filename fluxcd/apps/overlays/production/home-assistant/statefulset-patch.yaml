@@ -8,6 +8,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       dnsConfig:
         options:

@@ -36,6 +36,9 @@ spec:
             k8s:io.kubernetes.pod.namespace: lost-woods
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: lens-of-truth
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: hookshot
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
