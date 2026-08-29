@@ -3,8 +3,14 @@ kind: DestinationRule
 metadata:
   name: fusionpbx-external
 spec:
+  # Exported cluster-wide so the cross-namespace xylem-gateway applies TLS origination.
+  exportTo:
+    - "*"
   host: bluebell.prplanit.internal
   trafficPolicy:
     tls:
+      # Originate TLS to bluebell (FusionPBX terminates HTTPS on :443). bluebell
+      # serves a self-signed cert, so verification is skipped — the segment from the
+      # gateway to bluebell is on the trusted internal network.
       mode: SIMPLE
-      sni: bluebell.prplanit.internal
+      insecureSkipVerify: true

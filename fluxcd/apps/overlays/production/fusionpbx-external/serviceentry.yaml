@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1
+kind: ServiceEntry
+metadata:
+  name: fusionpbx-external
+spec:
+  # Exported cluster-wide so the xylem-gateway (arylls-lookout) can program this
+  # external cluster — the gateway lives in a different namespace than this overlay.
+  exportTo:
+    - "*"
+  hosts:
+    - bluebell.prplanit.internal
+  location: MESH_EXTERNAL
+  resolution: STATIC
+  ports:
+    - number: 443
+      name: http
+      protocol: HTTP
+  endpoints:
+    - address: 10.30.1.69
