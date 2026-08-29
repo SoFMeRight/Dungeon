@@ -7,6 +7,9 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
+        # Egress to the IdP (sso.prplanit.com) for OIDC discovery/JWKS/token —
+        # gated into the cell-membrane gateway by cnp-cell-membrane-oidc-consumers.
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       initContainers:
         # Enforce the critical zitadel-OIDC keys in config.php before Organizr starts.
@@ -29,7 +32,7 @@ spec:
             - name: OIDC_DISCOVERY_URL
               value: "https://sso.prplanit.com/.well-known/openid-configuration"
             - name: OIDC_NAME
-              value: "PrecisionPlanIT SSO"
+              value: "PrPlanIT SSO"
             # no-role/unknown authenticated logins land here (Guest); real access is
             # earned via a mapped role. User(4) is only for the explicit `user` role.
             - name: OIDC_DEFAULT_GROUP_ID
