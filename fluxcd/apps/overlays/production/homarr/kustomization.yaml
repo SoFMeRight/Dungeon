@@ -9,6 +9,7 @@ resources:
   - cephfs-images-pv.yaml
   - httproute-xylem.yaml
   - destinationrule.yaml
+  - configmap-group-seed.yaml
 
 patches:
   - path: statefulset-patch.yaml

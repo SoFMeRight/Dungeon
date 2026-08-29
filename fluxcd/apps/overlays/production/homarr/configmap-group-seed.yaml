@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homarr-group-seed
+data:
+  # Enforces the OIDC role -> group model on every pod start (idempotent, guarded).
+  # owner group = full admin (incl. the master `admin` flag = user/system administration).
+  # admin group = co-admin (all content perms, but NEVER the master `admin` flag).
+  # Group MEMBERSHIP is not managed here — Homarr's OIDC sync maps role names to these
+  # groups by name on login. Safe on a fresh DB: skips until Homarr has migrated its schema.
+  seed-groups.sql: |
+    DO $$
+    DECLARE
+      owner_gid text;
+      full_perms text[] := ARRAY[
+        'admin','app-create','app-full-all','app-modify-all','app-use-all',
+        'board-create','board-full-all','board-modify-all','board-view-all',
+        'integration-create','integration-full-all','integration-interact-all','integration-use-all',
+        'media-full-all','media-upload','media-view-all','other-view-logs',
+        'search-engine-create','search-engine-full-all','search-engine-modify-all'
+      ];
+      p text;
+    BEGIN
+      IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='group') THEN
+        RAISE NOTICE '[group-seed] group table not present yet; skipping (Homarr not migrated)';
+        RETURN;
+      END IF;
+
+      -- 1) ensure the 'owner' group exists (keep its id if already present)
+      SELECT id INTO owner_gid FROM "group" WHERE name='owner';
+      IF owner_gid IS NULL THEN
+        owner_gid := 'o' || substr(md5(random()::text || clock_timestamp()::text), 1, 23);
+        INSERT INTO "group"(id, name, position)
+          VALUES (owner_gid, 'owner', (SELECT COALESCE(MAX(position),0)+1 FROM "group"));
+        RAISE NOTICE '[group-seed] created owner group %', owner_gid;
+      END IF;
+
+      -- 2) owner group = exact full-admin permission set (declarative reset)
+      DELETE FROM "groupPermission" WHERE group_id = owner_gid;
+      FOREACH p IN ARRAY full_perms LOOP
+        INSERT INTO "groupPermission"(group_id, permission) VALUES (owner_gid, p);
+      END LOOP;
+
+      -- 3) admin group = co-admin: must never hold the master 'admin' flag
+      DELETE FROM "groupPermission"
+        WHERE group_id = (SELECT id FROM "group" WHERE name='admin')
+          AND permission = 'admin';
+
+      RAISE NOTICE '[group-seed] enforced owner(full) + admin(co-admin)';
+    EXCEPTION WHEN OTHERS THEN
+      -- Fail OPEN + LOUD: a Homarr schema change must never block the app from
+      -- starting. Log loudly and leave the groups unmanaged this boot rather than
+      -- crashlooping the pod. This only ever touches the owner group + the admin
+      -- group's master flag, so a partial run cannot corrupt other data.
+      RAISE WARNING '[group-seed] SKIPPED (%). Homarr schema may have changed; groups left unmanaged this boot.', SQLERRM;
+    END $$;

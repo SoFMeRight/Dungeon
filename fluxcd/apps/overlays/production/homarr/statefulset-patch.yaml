@@ -16,6 +16,50 @@ spec:
         prometheus.io/scrape: "true"
         prometheus.io/port: "7575"
     spec:
+      initContainers:
+        # Enforce the OIDC role->group model (owner=full, admin=co-admin) in Homarr's
+        # DB before the app starts. Idempotent + guarded; membership is left to OIDC sync.
+        - name: seed-groups
+          image: docker.io/postgres:17-alpine
+          command:
+            - sh
+            - -c
+            # Fail-open: the DO block swallows schema errors; this "|| echo" swallows
+            # connect errors — the seed is best-effort and never blocks Homarr's start.
+            - psql -v ON_ERROR_STOP=1 -f /seed/seed-groups.sql || echo "[group-seed] WARNING: seed did not run (db unreachable?); continuing to start Homarr"
+          env:
+            - name: PGHOST
+              value: "homarr-postgres-rw"
+            - name: PGPORT
+              value: "5432"
+            - name: PGDATABASE
+              value: "homarr"
+            - name: PGUSER
+              value: "homarr"
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: homarr-postgres-credentials
+                  key: password
+            - name: HOME
+              value: "/tmp"
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 70
+            runAsGroup: 70
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: group-seed
+              mountPath: /seed
+              readOnly: true
+            - name: seed-tmp
+              mountPath: /tmp
       containers:
         - name: homarr
           volumeMounts:
@@ -91,3 +135,8 @@ spec:
         - name: homarr-images-shared
           persistentVolumeClaim:
             claimName: homarr-images
+        - name: group-seed
+          configMap:
+            name: homarr-group-seed
+        - name: seed-tmp
+          emptyDir: {}
