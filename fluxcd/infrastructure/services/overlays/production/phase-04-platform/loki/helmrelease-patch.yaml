@@ -24,7 +24,7 @@ spec:
         prometheus.io/port: "3100"
       storage:
         s3:
-          endpoint: ceph-rgw.gorons-bracelet.svc.cluster.local:8080
+          endpoint: ceph-rgw.gorons-bracelet.svc.cluster.local:80
           region: default
           s3ForcePathStyle: true
           # plaintext in-cluster; the ambient mesh provides mTLS
