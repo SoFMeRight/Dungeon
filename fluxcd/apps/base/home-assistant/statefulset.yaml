@@ -37,6 +37,15 @@ spec:
               else
                 echo "configuration.yaml already exists, skipping."
               fi
+              # idempotently manage the auth_oidc block: drop any prior copy, re-append
+              # the current one (only when OIDC creds are present)
+              if [ -f /config/configuration.yaml ]; then
+                sed '/# >>> auth_oidc/,/# <<< auth_oidc/d' /config/configuration.yaml > /config/configuration.yaml.tmp
+                if [ -n "$OIDC_CLIENT_ID" ]; then
+                  cat /seed/auth_oidc.yaml >> /config/configuration.yaml.tmp
+                fi
+                mv /config/configuration.yaml.tmp /config/configuration.yaml
+              fi
               if [ ! -f /config/SERVICE_ACCOUNT.JSON ]; then
                 echo "Assembling SERVICE_ACCOUNT.JSON from template + secrets..."
                 jq --arg pk_id "$GOOGLE_PRIVATE_KEY_ID" \
@@ -54,6 +63,11 @@ spec:
               else
                 echo ".storage/http already exists, skipping."
               fi
+              # refresh the oidc_* entries in secrets.yaml, leaving any other keys intact
+              touch /config/secrets.yaml
+              grep -vE '^oidc_client_(id|secret):' /config/secrets.yaml > /config/secrets.yaml.tmp 2>/dev/null || true
+              printf 'oidc_client_id: "%s"\noidc_client_secret: "%s"\n' "$OIDC_CLIENT_ID" "$OIDC_CLIENT_SECRET" >> /config/secrets.yaml.tmp
+              mv /config/secrets.yaml.tmp /config/secrets.yaml
               mkdir -p /config/themes
               [ -f /config/automations.yaml ] || echo "[]" > /config/automations.yaml
               [ -f /config/scripts.yaml ] || echo "" > /config/scripts.yaml
@@ -74,6 +88,16 @@ spec:
                 secretKeyRef:
                   name: home-assistant-secret
                   key: GOOGLE_CLIENT_ID
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: home-assistant-secret
+                  key: OIDC_CLIENT_ID
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: home-assistant-secret
+                  key: OIDC_CLIENT_SECRET
           volumeMounts:
             - name: config
               mountPath: /config
@@ -89,6 +113,7 @@ spec:
               while eval "name=\$COMP_${i}_NAME" && [ -n "$name" ]; do
                 eval "version=\$COMP_${i}_VERSION"
                 eval "url=\$COMP_${i}_URL"
+                eval "subdir=\$COMP_${i}_SUBDIR"
                 dir="/config/custom_components/$name"
                 marker="$dir/.version"
                 if [ -f "$marker" ] && [ "$(cat "$marker")" = "$version" ]; then
@@ -97,14 +122,19 @@ spec:
                   echo "Installing $name $version..."
                   rm -rf /tmp/${name}.zip /tmp/${name}_extract
                   if wget -q -O /tmp/${name}.zip "$url" && unzip -o -q /tmp/${name}.zip -d /tmp/${name}_extract; then
+                    src="/tmp/${name}_extract"
+                    top=$(ls "$src")
+                    # source archives nest files under one top-level dir; unwrap it, then
+                    # SUBDIR (if set) descends to the integration dir, e.g. custom_components/frigate
+                    if [ $(echo "$top" | wc -l) = 1 ] && [ -d "$src/$top" ]; then
+                      src="$src/$top"
+                    fi
+                    if [ -n "$subdir" ]; then
+                      src="$src/$subdir"
+                    fi
                     rm -rf "$dir"
                     mkdir -p "$dir"
-                    top=$(ls /tmp/${name}_extract)
-                    if [ $(echo "$top" | wc -l) = 1 ] && [ -d "/tmp/${name}_extract/$top" ]; then
-                      cp -a /tmp/${name}_extract/$top/* "$dir/"
-                    else
-                      cp -a /tmp/${name}_extract/* "$dir/"
-                    fi
+                    cp -a "$src"/* "$dir/"
                     echo "$version" > "$marker"
                     echo "$name $version installed."
                   elif [ -d "$dir" ]; then

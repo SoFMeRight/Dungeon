@@ -40,6 +40,31 @@ spec:
               value: "1.0.11"
             - name: COMP_2_URL
               value: "https://github.com/Tasshack/dreame-vacuum/releases/download/v1.0.8/dreame_vacuum.zip"
+            - name: COMP_3_NAME
+              value: auth_oidc
+            # renovate: datasource=github-releases depName=christiaangoossens/hass-oidc-auth
+            - name: COMP_3_VERSION
+              value: "1.2.1"
+            - name: COMP_3_URL
+              value: "https://github.com/christiaangoossens/hass-oidc-auth/releases/download/v1.2.1/hass-oidc-auth.zip"
+            - name: COMP_4_NAME
+              value: frigate
+            # renovate: datasource=github-releases depName=blakeblackshear/frigate-hass-integration
+            - name: COMP_4_VERSION
+              value: "5.15.4"
+            - name: COMP_4_URL
+              value: "https://github.com/blakeblackshear/frigate-hass-integration/archive/refs/tags/v5.15.4.zip"
+            - name: COMP_4_SUBDIR
+              value: "custom_components/frigate"
+            - name: COMP_5_NAME
+              value: ge_home
+            # renovate: datasource=github-releases depName=simbaja/ha_gehome
+            - name: COMP_5_VERSION
+              value: "2026.8.0"
+            - name: COMP_5_URL
+              value: "https://github.com/simbaja/ha_gehome/archive/refs/tags/v2026.8.0.zip"
+            - name: COMP_5_SUBDIR
+              value: "custom_components/ge_home"
           resources:
             requests:
               cpu: 10m
