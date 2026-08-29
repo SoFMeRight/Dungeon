@@ -106,7 +106,20 @@ data:
         --secret-key="${SECRET_KEY}"
       echo "User created: ${UID_NAME}"
     else
-      echo "User already exists: ${UID_NAME}"
+      # user create only sets the key on creation; without this a rotated secret leaves
+      # the consumer holding a credential RGW never had, and the job still reports success
+      if radosgw-admin --name client.dungeon-rgw user info --uid="${UID_NAME}" \
+           | grep -q "\"access_key\": \"${ACCESS_KEY}\""; then
+        echo "User already exists with the expected key: ${UID_NAME}"
+      else
+        echo "User exists but the key differs — reconciling: ${UID_NAME}"
+        radosgw-admin --name client.dungeon-rgw key create \
+          --uid="${UID_NAME}" \
+          --key-type=s3 \
+          --access-key="${ACCESS_KEY}" \
+          --secret-key="${SECRET_KEY}"
+        echo "Key reconciled: ${UID_NAME}"
+      fi
     fi
 
     # Create buckets with a signed S3 PUT (signature v2, which Ceph RGW accepts).
