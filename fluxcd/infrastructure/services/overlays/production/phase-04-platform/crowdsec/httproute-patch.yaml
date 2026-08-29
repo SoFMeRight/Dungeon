@@ -8,6 +8,6 @@ metadata:
 spec:
   parentRefs:
     - name: xylem-gateway
-      namespace: king-of-red-lions
+      namespace: arylls-lookout
   hostnames:
     - "crowdsec.pcfae.com"

@@ -12,9 +12,6 @@ metadata:
 spec:
   parentRefs:
     - name: xylem-gateway
-      # arylls-lookout, where the Gateway actually lives. The neighbouring dashboard
-      # route says king-of-red-lions and has never attached because of it -- that goes
-      # unnoticed only because crowdsec.pcfae.com resolves somewhere else entirely.
       namespace: arylls-lookout
   hostnames:
     - "crowdsec-lapi.pcfae.com"
