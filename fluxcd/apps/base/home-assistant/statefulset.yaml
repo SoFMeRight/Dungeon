@@ -58,10 +58,18 @@ spec:
               fi
               mkdir -p /config/.storage
               if [ ! -f /config/.storage/http ]; then
-                echo "Seeding .storage/http (network settings / trusted_proxies)..."
+                echo "Seeding .storage/http (fresh install)..."
                 cp /seed/storage-http.json /config/.storage/http
               else
-                echo ".storage/http already exists, skipping."
+                # ENFORCE, not seed: the http network config (trusted_proxies,
+                # use_x_forwarded_for, ssl_profile, …) is ours to declare, and HA does not
+                # expose it in the UI — so merge our declared data.stable over the live file
+                # every boot, making the IaC authoritative instead of write-once-then-drift.
+                # HA's schema version/minor_version and any keys we don't set are preserved.
+                echo "Enforcing managed .storage/http keys over live values..."
+                jq -s '.[0] * {data: {stable: .[1].data.stable}}' \
+                  /config/.storage/http /seed/storage-http.json > /config/.storage/http.tmp \
+                  && mv /config/.storage/http.tmp /config/.storage/http
               fi
               # refresh the oidc_* entries in secrets.yaml, leaving any other keys intact
               touch /config/secrets.yaml
