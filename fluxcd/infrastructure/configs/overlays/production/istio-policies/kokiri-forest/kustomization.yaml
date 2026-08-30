@@ -5,6 +5,5 @@ resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
   - allow-linkstack-to-linkstack-db.yaml
-  - allow-phloem-gateway-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
-  - allow-gateway-ingress-phloem.yaml
+  - allow-gateway-ingress-cell-membrane.yaml

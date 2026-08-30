@@ -4,15 +4,12 @@ resources:
   - ../../../base/gateway-api
   # ── EnvoyFilters: fairer-pages (default error pages) ───────
   - envoyfilter-fairer-pages-cell-membrane.yaml
-  - envoyfilter-fairer-pages-phloem.yaml
   - envoyfilter-fairer-pages-xylem.yaml
   # ── EnvoyFilters: HSTS headers ─────────────────────────────
   - envoyfilter-hsts-cell-membrane.yaml
-  - envoyfilter-hsts-phloem.yaml
   - envoyfilter-hsts-xylem.yaml
   # ── EnvoyFilters: http→https Location rewrite ──────────────
   - envoyfilter-https-location-cell-membrane.yaml
-  - envoyfilter-https-location-phloem.yaml
   - envoyfilter-https-location-xylem.yaml
   # ── EnvoyFilters: app-specific ─────────────────────────────
   - envoyfilter-ceph-dashboard-health-xylem.yaml
@@ -21,17 +18,12 @@ resources:
   - envoyfilter-ntfy-timeout-xylem.yaml
   # ── HTTPRoutes ─────────────────────────────────────────────
   - httproute-http-redirect-cell-membrane.yaml
-  - httproute-http-redirect-phloem.yaml
   - httproute-http-redirect-xylem.yaml
 patches:
   - path: gateway-patch-xylem.yaml
     target:
       kind: Gateway
       name: xylem-gateway
-  - path: gateway-patch-phloem.yaml
-    target:
-      kind: Gateway
-      name: phloem-gateway
   - path: gateway-patch-cell-membrane.yaml
     target:
       kind: Gateway
@@ -44,14 +36,6 @@ patches:
     target:
       kind: Gateway
       name: xylem-gateway
-  # Set namespace for phloem-gateway to kokiri-forest
-  - patch: |-
-      - op: add
-        path: /metadata/namespace
-        value: kokiri-forest
-    target:
-      kind: Gateway
-      name: phloem-gateway
   # Set namespace for cell-membrane-gateway to hyrule-castle
   - patch: |-
       - op: add

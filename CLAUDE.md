@@ -49,7 +49,7 @@
       - fairy-bottle: Backup services (velero, urbackup - restores/saves state)
       - gorons-bracelet: Storage services (minio, longhorn, rook-ceph - provides strength/lifting power)
       - arylls-lookout: Gateway for internal-only services (xylem replacement)
-      - kokiri-forest: Gateway for personal/public services (phloem replacement)
+      - kokiri-forest: Personal/public app workloads (e.g. linkstack); routed via the cell-membrane gateway
       - hyrule-castle: Gateway for business/work services (cell-membrane replacement)
       - king-of-red-lions: Routing & Gateway infrastructure (traefik, stunner - guides you across the sea)
       - shooting-gallery: Game servers (minecraft, etc - aiming for fun)
@@ -278,8 +278,7 @@
   - **IP-based Domain Isolation**: Use separate Gateway resources with unique LoadBalancer IPs to enable firewall-based internet exposure control (pfSense NAT rules per IP)
   - **Gateway Architecture**:
     - **xylem-gateway** (172.22.30.69, sharing-key: arylls-lookout): Internal-only services (*.pcfae.com) - NO pfSense port forward = internal only, can be enabled on-demand
-    - **phloem-gateway** (172.22.30.70, sharing-key: kokiri-forest): Personal/public services (*.sofmeright.com, *.arbitorium.com, *.yesimvegan.com) - pfSense forwards port 443
-    - **cell-membrane-gateway** (172.22.30.71, sharing-key: hyrule-castle): Business/work services (*.precisionplanit.com, *.prplanit.com, *.optcp.com, *.ipleek.com, *.uni2.cc) - pfSense forwards port 443
+    - **cell-membrane-gateway** (172.22.30.71, sharing-key: hyrule-castle): The single public gateway (pfSense forwards port 443) — business/work (*.precisionplanit.com, *.prplanit.com, *.optcp.com, *.ipleek.com, *.uni2.cc, *.homelabhelpdesk.com, *.operationtimecapsule.com) AND personal (*.sofmeright.com, *.arbitorium.com, *.yesimvegan.com, kai-hamilton.com, astralfocal.com, *.etherealclique.com)
   - Each Gateway has its own:
     - Unique LoadBalancer IP via `lbipam.cilium.io/ips` annotation
     - Dedicated TLS certificate (cert-manager + Let's Encrypt)

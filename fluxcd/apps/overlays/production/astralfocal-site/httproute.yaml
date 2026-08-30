@@ -7,8 +7,8 @@ metadata:
       group: "Discovery & Dashboards (Lost Woods🌲)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: kokiri-forest
+    - name: cell-membrane-gateway
+      namespace: hyrule-castle
   hostnames:
     - "astralfocal.com"
   rules:

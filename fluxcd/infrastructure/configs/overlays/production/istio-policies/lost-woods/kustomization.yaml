@@ -9,5 +9,4 @@ resources:
   - allow-homarr-postgres-replication.yaml
   - allow-homarr-redis-intra-cluster.yaml
   - allow-gateway-ingress-xylem.yaml
-  - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml

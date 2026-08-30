@@ -32,21 +32,21 @@ patches:
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: kokiri-forest
+        value: hyrule-castle
     target:
       kind: Certificate
       name: sofmeright-com-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: kokiri-forest
+        value: hyrule-castle
     target:
       kind: Certificate
       name: arbitorium-com-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: kokiri-forest
+        value: hyrule-castle
     target:
       kind: Certificate
       name: yesimvegan-com-tls
@@ -102,21 +102,21 @@ patches:
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: kokiri-forest
+        value: hyrule-castle
     target:
       kind: Certificate
       name: kai-hamilton-com-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: kokiri-forest
+        value: hyrule-castle
     target:
       kind: Certificate
       name: astralfocal-com-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: kokiri-forest
+        value: hyrule-castle
     target:
       kind: Certificate
       name: etherealclique-com-tls

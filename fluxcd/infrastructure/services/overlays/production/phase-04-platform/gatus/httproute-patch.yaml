@@ -7,7 +7,7 @@ metadata:
       group: "Monitoring (Gossip Stone💬)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: kokiri-forest
+    - name: cell-membrane-gateway
+      namespace: hyrule-castle
   hostnames:
     - status.sofmeright.com

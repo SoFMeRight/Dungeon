@@ -18,4 +18,4 @@ spec:
               - cluster.local/ns/hyrule-castle/sa/cell-membrane-gateway-istio
       to:
         - operation:
-            ports: ["80", "3000", "3002", "7867", "8080", "8083", "8096", "9980", "32400"]
+            ports: ["80", "2368", "3000", "3002", "7867", "8080", "8083", "8096", "9000", "9980", "32400"]

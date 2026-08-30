@@ -3,5 +3,4 @@ kind: Kustomization
 namespace: kokiri-forest
 resources:
   - cnp-default-deny-ingress.yaml
-  - cnp-phloem-gateway.yaml
   - cnp-linkstack-db.yaml

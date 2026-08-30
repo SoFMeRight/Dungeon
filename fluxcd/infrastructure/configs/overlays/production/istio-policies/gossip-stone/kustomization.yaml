@@ -22,6 +22,5 @@ resources:
   - allow-loki-intra-cluster.yaml
   - allow-vmstorage-intra-cluster.yaml
   - allow-gateway-ingress-xylem.yaml
-  - allow-gateway-ingress-phloem.yaml
   - allow-crowdsec-to-loki.yaml
   - allow-gateway-ingress-cell-membrane.yaml

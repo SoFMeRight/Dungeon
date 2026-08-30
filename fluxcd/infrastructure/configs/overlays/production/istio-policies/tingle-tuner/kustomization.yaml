@@ -7,7 +7,6 @@ resources:
   - allow-searxng-to-searxng-redis.yaml
   - allow-endlessh-go-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
-  - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
   - allow-home-assistant-to-faster-whisper.yaml
   - allow-home-assistant-to-piper.yaml

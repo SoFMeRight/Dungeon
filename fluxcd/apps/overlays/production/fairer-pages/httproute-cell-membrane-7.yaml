@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: fairer-pages-phloem-0
+  name: fairer-pages-cell-membrane-7
   namespace: tingle-tuner
   annotations:
     gatus.home-operations.com/endpoint: |
@@ -9,8 +9,8 @@ metadata:
     gatus.home-operations.com/enabled: "false"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: kokiri-forest
+    - name: cell-membrane-gateway
+      namespace: hyrule-castle
   hostnames:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 

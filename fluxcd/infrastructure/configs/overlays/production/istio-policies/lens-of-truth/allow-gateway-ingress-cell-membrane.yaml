@@ -5,7 +5,7 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-gateway-ingress-phloem
+  name: allow-gateway-ingress-cell-membrane
 spec:
   selector:
     matchLabels:
@@ -15,7 +15,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/kokiri-forest/sa/phloem-gateway-istio
+              - cluster.local/ns/hyrule-castle/sa/cell-membrane-gateway-istio
       to:
         - operation:
-            ports: ["80", "8080"]
+            ports: ["8123"]

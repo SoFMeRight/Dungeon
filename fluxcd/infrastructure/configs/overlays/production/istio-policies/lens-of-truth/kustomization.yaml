@@ -11,4 +11,4 @@ resources:
   - allow-wazuh-manager-loadbalancer.yaml
   - allow-crowdsec-bouncer-to-crowdsec.yaml
   - allow-gateway-ingress-xylem.yaml
-  - allow-gateway-ingress-phloem.yaml
+  - allow-gateway-ingress-cell-membrane.yaml

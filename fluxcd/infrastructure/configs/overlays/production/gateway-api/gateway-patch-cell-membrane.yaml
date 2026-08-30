@@ -140,3 +140,124 @@ spec:
         certificateRefs:
           - kind: Secret
             name: operationtimecapsule-com-tls
+    # ── Personal & public site domains ──
+    - name: https-sofmeright
+      protocol: HTTPS
+      port: 443
+      hostname: "*.sofmeright.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: sofmeright-com-tls
+    - name: https-arbitorium
+      protocol: HTTPS
+      port: 443
+      hostname: "*.arbitorium.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: arbitorium-com-tls
+    - name: https-yesimvegan
+      protocol: HTTPS
+      port: 443
+      hostname: "*.yesimvegan.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: yesimvegan-com-tls
+    - name: https-kai-hamilton
+      protocol: HTTPS
+      port: 443
+      hostname: "kai-hamilton.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: kai-hamilton-com-tls
+    - name: https-sofmeright-bare
+      protocol: HTTPS
+      port: 443
+      hostname: "sofmeright.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: sofmeright-com-tls
+    - name: https-arbitorium-bare
+      protocol: HTTPS
+      port: 443
+      hostname: "arbitorium.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: arbitorium-com-tls
+    - name: https-yesimvegan-bare
+      protocol: HTTPS
+      port: 443
+      hostname: "yesimvegan.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: yesimvegan-com-tls
+    - name: https-astralfocal
+      protocol: HTTPS
+      port: 443
+      hostname: "astralfocal.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: astralfocal-com-tls
+    - name: https-etherealclique
+      protocol: HTTPS
+      port: 443
+      hostname: "*.etherealclique.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: etherealclique-com-tls
+    - name: https-etherealclique-bare
+      protocol: HTTPS
+      port: 443
+      hostname: "etherealclique.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: etherealclique-com-tls

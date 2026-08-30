@@ -7,8 +7,8 @@ metadata:
       group: "Security & IoT (Lens of Truth🔍)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: kokiri-forest
+    - name: cell-membrane-gateway
+      namespace: hyrule-castle
   hostnames:
     - "hass.arbitorium.com"
   rules:
