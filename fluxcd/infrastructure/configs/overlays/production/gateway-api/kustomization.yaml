@@ -15,6 +15,7 @@ resources:
   - envoyfilter-ceph-dashboard-health-xylem.yaml
   - envoyfilter-home-assistant-websocket-cell-membrane.yaml
   - envoyfilter-meshcentral-websocket-cell-membrane.yaml
+  - envoyfilter-tacticalrmm-websocket-cell-membrane.yaml
   - envoyfilter-ntfy-timeout-cell-membrane.yaml
   - envoyfilter-ntfy-timeout-xylem.yaml
   # ── HTTPRoutes ─────────────────────────────────────────────

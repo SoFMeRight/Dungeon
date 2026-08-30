@@ -1,0 +1,48 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: tacticalrmm-websocket-cell-membrane
+  namespace: hyrule-castle
+spec:
+  # TacticalRMM's agent + dashboard connections are long-lived WebSockets. Disable the route
+  # timeout + idle-timeout so they aren't reaped. Browsers use the standard HTTP/1.1 WebSocket
+  # upgrade (istio's default) — no gateway-wide h2 allow_connect.
+  # SCOPED to trmm.prplanit.com + trmm-api.prplanit.com ONLY — never affects other apps.
+  workloadSelector:
+    labels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  configPatches:
+    - applyTo: HTTP_ROUTE
+      match:
+        context: GATEWAY
+        routeConfiguration:
+          vhost:
+            name: trmm.prplanit.com:443
+            route:
+              action: ANY
+      patch:
+        operation: MERGE
+        value:
+          route:
+            timeout: 0s
+            idle_timeout: 0s
+            upgrade_configs:
+              - upgrade_type: websocket
+                enabled: true
+    - applyTo: HTTP_ROUTE
+      match:
+        context: GATEWAY
+        routeConfiguration:
+          vhost:
+            name: trmm-api.prplanit.com:443
+            route:
+              action: ANY
+      patch:
+        operation: MERGE
+        value:
+          route:
+            timeout: 0s
+            idle_timeout: 0s
+            upgrade_configs:
+              - upgrade_type: websocket
+                enabled: true
