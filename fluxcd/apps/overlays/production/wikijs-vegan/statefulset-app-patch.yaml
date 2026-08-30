@@ -21,7 +21,13 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+            - name: data
+              mountPath: /wiki/data
       volumes:
-        # readOnlyRootFilesystem: content lives in the external postgres DB; /tmp scratch.
+        # readOnlyRootFilesystem: page content lives in the external postgres DB, but wikijs
+        # still needs a writable working dir at /wiki/data (uploads/cache) — without it, the
+        # background upload purge fails to mkdir /wiki/data/uploads and the app 500s. /tmp scratch.
         - name: tmp
+          emptyDir: {}
+        - name: data
           emptyDir: {}
