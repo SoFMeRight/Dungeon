@@ -78,7 +78,7 @@ data:
           "use_x_forwarded_for": true,
           "trusted_proxies": [
             "192.168.144.0/20",
-            "172.22.30.70/32",
+            "172.22.30.71/32",
             "172.22.144.0/24"
           ],
           "ssl_profile": "modern",
