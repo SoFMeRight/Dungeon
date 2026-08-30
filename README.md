@@ -9,7 +9,7 @@ This repository seeks to be the source of truth regarding the active state of my
 > Maintained by [SoFMeRight](https://github.com/sofmeright) for [PrPlanIT](https://prplanit.com) — Real world results for your real world expectations. <br>
 
 <!-- sf:badges:start -->
-[![pipeline](https://raw.githubusercontent.com/SoFMeRight/dungeon/main/.stagefreight/scribe/pipeline.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![Last Commit](https://img.shields.io/github/last-commit/SoFMeRight/dungeon)](https://github.com/SoFMeRight/dungeon/commits) [![StageFreight](https://img.shields.io/badge/StageFreight-0.9.2--dev+ad99951-310937?logo=readthedocs&logoColor=white)](https://stagefreight.prplanit.com)
+[![pipeline](https://raw.githubusercontent.com/SoFMeRight/dungeon/main/.stagefreight/scribe/pipeline.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![Last Commit](https://img.shields.io/github/last-commit/SoFMeRight/dungeon)](https://github.com/SoFMeRight/dungeon/commits) [![StageFreight](https://img.shields.io/badge/StageFreight-0.10.0-310937?logo=readthedocs&logoColor=white)](https://stagefreight.prplanit.com)
 <!-- sf:badges:end -->
 
 <!-- sf:tooling:start -->
