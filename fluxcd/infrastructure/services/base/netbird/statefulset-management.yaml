@@ -228,6 +228,10 @@ spec:
               value: zitadel
             - name: NETBIRD_METRICS_INTERVAL_IN_SECONDS
               value: "43200"
+            # netbird's own default (1ms). Set explicitly so the network-map controller
+            # doesn't parse an empty string on boot and log a strconv.Atoi warning.
+            - name: NB_PEER_UPDATE_INTERVAL_MS
+              value: "1"
             - name: NETBIRD_IDP_MGMT_CLIENT_ID
               valueFrom:
                 secretKeyRef:
