@@ -10,6 +10,7 @@ spec:
   values:
     podLabels:
       policy.prplanit.com/ingress: "true"
+      policy.prplanit.com/cap.oidc: "true"
       policy.prplanit.com/cap.postgres: "true"
       policy.prplanit.com/access-scope-postgres: temple-of-time.nextcloud.postgres
       policy.prplanit.com/cap.redis: "true"
