@@ -100,10 +100,33 @@ data:
             "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: registryUrl=(?<registryUrl>\\S+))?\\s+version:\\s+\"?(?<currentValue>[^\"\\s]+)\"?"
           ],
           "description": "Annotation-driven tracking for base/overlay-split image tags and chart versions"
+        },
+        {
+          // netbird's real image tags live ONLY in the overlay's JSON6902 patch `value:`
+          // fields (base manifests are PLACEHOLDER_IMAGE), so neither the kubernetes nor
+          // the kustomize manager ever sees them and Renovate never opened a single MR.
+          // Match the value lines directly — depName + tag both come from the ref.
+          "customType": "regex",
+          "fileMatch": ["fluxcd/infrastructure/services/overlays/production/phase-04-platform/netbird/kustomization\\.yaml$"],
+          "matchStrings": [
+            "value:\\s+(?<depName>docker\\.io/netbirdio/[^:\\s]+):(?<currentValue>[^\"\\s]+)"
+          ],
+          "datasourceTemplate": "docker",
+          "description": "netbird server + dashboard images, set via overlay JSON6902 patch values"
         }
       ],
 
       "packageRules": [
+        {
+          // netbird ships management/signal/relay in lockstep (one server release), so
+          // group them into a single MR. dashboard versions separately (v2.x) — left alone.
+          "matchPackageNames": [
+            "docker.io/netbirdio/management",
+            "docker.io/netbirdio/signal",
+            "docker.io/netbirdio/relay"
+          ],
+          "groupName": "netbird"
+        },
         {
           // Majors surface as an MR (a real notification), but only once the release
           // has aged 30 days — matured enough to be a reasonable upgrade, letting the
