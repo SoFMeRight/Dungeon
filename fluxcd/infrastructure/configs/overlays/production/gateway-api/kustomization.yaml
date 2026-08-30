@@ -13,6 +13,7 @@ resources:
   - envoyfilter-https-location-xylem.yaml
   # ── EnvoyFilters: app-specific ─────────────────────────────
   - envoyfilter-ceph-dashboard-health-xylem.yaml
+  - envoyfilter-home-assistant-websocket-cell-membrane.yaml
   - envoyfilter-meshcentral-websocket-cell-membrane.yaml
   - envoyfilter-ntfy-timeout-cell-membrane.yaml
   - envoyfilter-ntfy-timeout-xylem.yaml

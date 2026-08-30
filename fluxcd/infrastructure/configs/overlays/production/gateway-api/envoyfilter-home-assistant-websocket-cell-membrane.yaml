@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: home-assistant-websocket-cell-membrane
+  namespace: hyrule-castle
+spec:
+  # Home Assistant's frontend holds a live wss://.../api/websocket. cell-membrane advertises
+  # HTTP/2 Extended CONNECT (RFC 8441) gateway-wide (allow_connect from the tacticalrmm filter),
+  # so browsers loading the page over h2 attempt an HTTP/2 WebSocket — which needs the route to
+  # declare a websocket upgrade_config, or the connection fails ("logged in → Unable to connect").
+  # timeout/idle_timeout 0 keeps the long-lived socket from being reaped. Mirrors the meshcentral
+  # and tacticalrmm WebSocket routes on this gateway.
+  workloadSelector:
+    labels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  configPatches:
+    - applyTo: HTTP_ROUTE
+      match:
+        context: GATEWAY
+        routeConfiguration:
+          vhost:
+            name: hass.arbitorium.com:443
+            route:
+              action: ANY
+      patch:
+        operation: MERGE
+        value:
+          route:
+            timeout: 0s
+            idle_timeout: 0s
+            upgrade_configs:
+              - upgrade_type: websocket
+                enabled: true
