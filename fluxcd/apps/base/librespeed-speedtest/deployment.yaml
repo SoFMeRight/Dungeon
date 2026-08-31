@@ -14,28 +14,27 @@ spec:
         app: librespeed-speedtest
     spec:
       serviceAccountName: librespeed-speedtest
+      # Full non-root: it's a speedtest on unprivileged :8080 — no root needed. The official
+      # librespeed image defaults to root apache only by convention (stock master→setuid-drop);
+      # every path it writes is 1777 world-writable + www-data-owned — /var/www/html (the
+      # entrypoint cp's the frontend there at boot), /run/apache2 + /var/lock/apache2 (apache
+      # pid/lock) — so it runs cleanly as uid 33 (www-data) with no caps.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 33
+        runAsGroup: 33
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: librespeed-speedtest
           image: PLACEHOLDER_IMAGE
-          # apache image: master runs root → setuid-drops workers to www-data. Partial hardening:
-          # keep root, drop ALL, add back apache's file-perm + setuid + privileged-bind caps.
-          # SEC-4 readOnlyRootFilesystem EXCEPTION: the entrypoint templates the frontend into the
-          # baked web root /var/www/html at boot (cp design-switch.js/speedtest.js/... from env),
-          # which needs a writable rootfs. Can't enable RO-root without an image rebuild.
+          # readOnlyRootFilesystem NOT enabled: the entrypoint cp's the frontend into the baked
+          # web root /var/www/html at boot, which needs a writable rootfs.
           securityContext:
-            seccompProfile:
-              type: RuntimeDefault
             allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
-              add:
-                - CHOWN
-                - DAC_OVERRIDE
-                - FOWNER
-                - SETUID
-                - SETGID
-                - NET_BIND_SERVICE
           ports:
             - containerPort: 8080
               name: http

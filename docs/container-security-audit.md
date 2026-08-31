@@ -332,7 +332,6 @@ These apps require root for legitimate technical reasons.
 | openwakeword | pedestal-of-time | rhasspy/wyoming-openwakeword | Root, no USER | - |
 | reactive-resume (app) | hyrule-castle | amruthpillai/reactive-resume | No USER, untested upstream | - |
 | meilisearch | temple-of-time | getmeili/meilisearch | Non-root reverted in v0.25.0 | - |
-| librespeed-speedtest | compass | linuxserver/librespeed | Apache root (setuid-drop to www-data); RO-root blocked — entrypoint templates frontend JS into the baked /var/www/html at boot (cp speedtest.js/design-switch.js/… from env) | 2026-08-31 |
 
 ---
 
