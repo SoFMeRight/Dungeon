@@ -53,20 +53,21 @@ spec:
             matchLabels:
               app: photoprism-x
       # netbird-coturn: turnserver is a file-capability binary (NoNewPrivs strips its caps on exec).
-      # bank-vaults operator + openbao (Vault) pods. TIGHTENABLE: openbao's prometheus-exporter
-      # (statsd-exporter) sidecar doesn't need privesc — set via the Vault CR's containerSecurityContext.
+      # bank-vaults operator + openbao (Vault) pods — openbao's sidecars are hardened by the
+      # mutate-vault-sidecar-hardening policy on create; this exception is the safety belt for that
+      # policy's failurePolicy:Ignore (a Kyverno blip must not block Vault pod creation).
       - resources:
           kinds: [Pod]
           namespaces: [zeldas-lullaby]
           names: ["netbird-coturn-*", "bank-vaults-operator-*", "openbao-*"]
-      # osticket mariadb: mariadb-operator `agent` sidecar (TIGHTENABLE via the MariaDB CR).
       # harbor openresty + redis (Helm): neither escalates — TIGHTENABLE via harbor chart securityContext.
+      # (osticket-mariadb agent now hardened via the MariaDB CR galera.agent.securityContext.)
       - resources:
           kinds: [Pod]
           namespaces: [hyrule-castle]
-          names: ["osticket-mariadb-*", "harbor-proxy-cache-*", "harbor-redis-*"]
-      # kimai mariadb agent (operator, TIGHTENABLE via CR). nextcloud-collabora (Helm chroot sandbox).
+          names: ["harbor-proxy-cache-*", "harbor-redis-*"]
+      # nextcloud-collabora (Helm chroot sandbox). (kimai-mariadb agent now hardened via the CR.)
       - resources:
           kinds: [Pod]
           namespaces: [temple-of-time]
-          names: ["kimai-mariadb-*", "nextcloud-collabora-*"]
+          names: ["nextcloud-collabora-*"]

@@ -108,9 +108,10 @@ spec:
                 matchLabels:
                   policy.prplanit.com/except-drop-caps: "true"
           # Helm/operator-managed exceptions that can't carry a pod label (PolicyExceptions are
-          # disabled in this Kyverno). harbor + gitlab (Helm), bank-vaults (operator), osticket/
-          # kimai mariadb (mariadb-operator init+agent sidecars), neko-gateway (STUNner dataplane),
-          # nextcloud-collabora (Helm subchart, keeps MKNOD/SYS_CHROOT sandbox caps).
+          # disabled in this Kyverno). harbor + gitlab (Helm), bank-vaults (operator),
+          # neko-gateway (STUNner dataplane), nextcloud-collabora (Helm subchart, keeps
+          # MKNOD/SYS_CHROOT sandbox caps). (osticket/kimai mariadb agents now hardened via the
+          # MariaDB CR galera.agent.securityContext — no longer excepted.)
           - resources:
               names:
                 - "harbor-proxy-cache-*"
@@ -118,8 +119,6 @@ spec:
                 - "gitlab-praefect-db-init-*"
                 - "bank-vaults-operator-*"
                 - "openbao-*"
-                - "osticket-mariadb-*"
-                - "kimai-mariadb-*"
                 - "neko-gateway-*"
                 - "nextcloud-collabora-*"
       validate:
