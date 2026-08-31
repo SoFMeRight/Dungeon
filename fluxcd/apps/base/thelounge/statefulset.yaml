@@ -20,9 +20,10 @@ spec:
           type: RuntimeDefault
       containers:
         - name: thelounge
-          image: ghcr.io/thelounge/thelounge:PLACEHOLDER_IMAGE_TAG
-          # Official node image runs as root (config dir root-owned); kept root pending a verified
-          # non-root config owner. Partial: drop ALL + file-ownership caps + no-privesc.
+          image: docker.io/linuxserver/thelounge:PLACEHOLDER_IMAGE_TAG
+          # LSIO/s6-overlay image: starts root PID 1 so s6 chowns /config and setuidgid-drops to
+          # abc (uid 1000); can't run non-root without a rebuild. RO-root blocked (s6 writes /run
+          # + /config). Partial: drop ALL + s6's file-ownership caps + no-privesc.
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -45,8 +46,10 @@ spec:
               cpu: 200m
               memory: 256Mi
           volumeMounts:
+            # LSIO thelounge persists to /config (the official image's THELOUNGE_HOME=/var/opt/thelounge
+            # is not used here) — the PVC must land on /config or all state stays on ephemeral overlayfs.
             - name: config
-              mountPath: /var/opt/thelounge
+              mountPath: /config
         - name: gluetun
           image: docker.io/qmcgaw/gluetun:PLACEHOLDER_IMAGE_TAG
           securityContext:
