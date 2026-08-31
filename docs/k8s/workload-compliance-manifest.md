@@ -252,7 +252,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| urbackup-server | urbackup | ? | ? | ? | ? | ? | ? | Y | ? | |
+| urbackup-server | urbackup | X | X | Y | ? | ? | ? | Y | ? | X: uroni root backup server (stores arbitrary-owner client files) + hostNetwork → non-root/RO-root infeasible. seccomp + drop ALL / add [CHOWN,DAC_OVERRIDE,FOWNER,SETUID,SETGID] + no-privesc. Undeployed/frozen |
 | velero (repo-maintenance) | velero-repo-maintenance | Y (1000) | N | Y | ? | ? | ? | Y | ? | Full non-root via Kyverno mutate `mutate-velero-maintenance-hardening` on the `velero.io/repo-name` label (controller-generated: Velero spawns one Job per BackupRepository, PodSpec non-configurable upstream #7911 → no overlay to patch). Velero writes to two root-fs paths a non-root uid can't create — kopia config at `/udmrepo` (hardcoded) + cache at `$HOME/.cache` (HOME unset → `/.cache`); mutate injects a writable `/udmrepo` emptyDir (2Gi) + `fsGroup 1000` + `HOME=/udmrepo` (cache → `/udmrepo/.cache`), then runAsNonRoot + runAsUser/Group 1000 + allowPrivilegeEscalation:false + drop ALL + seccomp. SEC-4 (RO-fs) off — kopia writes the cache. Verified: maintenance succeeds exit 0 under uid 1000. |
 
 ### gossip-stone (Monitoring Services)
@@ -260,7 +260,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
 | beszel | beszel | Y (1000) | N | Y | ? | ? | ? | Y | ? | Full non-root — Go/distroless uid 1000, fsGroup 1000; drop ALL + seccomp |
-| netalertx | netalertx | ? | N | ? | ? | ? | ? | Y | ? | Has NET_RAW/NET_ADMIN caps |
+| netalertx | netalertx | X | Y | Y | ? | ? | ? | Y | ? | X: root for raw-socket scanners (NET_RAW) + hostNetwork. seccomp + RO-root + no-privesc, drop ALL / add [NET_RAW,NET_ADMIN,NET_BIND_SERVICE]; arp-scan verified live |
 | speedtest-tracker | speedtest-tracker | Y (1000:1000) | N | N | Y | Y | ? | Y | Y | LSIO non-root pattern |
 | speedtest-tracker | postgres | ? | ? | ? | Y | ? | ? | Y | ? | |
 | umami | umami | Y (1001) | ? | Y | ? | ? | ? | Y | ? | Hardened non-root 1001, fsGroup, drop ALL, seccomp |
@@ -291,7 +291,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
 | bagisto-demo | bagisto | ? | ? | ? | ? | ? | ? | Y | ? | |
 | bagisto-demo | mysql | ? | ? | ? | ? | ? | ? | Y | ? | |
-| bookstack | bookstack | X | ? | ? | ? | ? | ? | Y | ? | Exception — LSIO/s6-overlay preinit requires root-owned /run; non-root fatal (exit 100) |
+| bookstack | bookstack | X | X | Y | ? | ? | ? | Y | ? | Exception — LSIO/s6-overlay preinit requires root-owned /run; non-root fatal (exit 100). At Mode-A ceiling: seccomp + drop ALL + s6 caps + no-privesc |
 | bookstack | mysql | ? | ? | ? | ? | ? | ? | Y | ? | |
 | calcom | calcom | Y (1001) | N | Y | ? | ? | ? | Y | ? | Full non-root — uid 1001, fsGroup 1001; drop ALL + seccomp; root fix-yarn-perms init (runAsNonRoot:false) |
 | dolibarr | dolibarr | X | ? | ? | ? | ? | ? | Y | ? | Exception — root entrypoint (chown conf.php/install.lock); non-root needs vendor rebuild |
@@ -379,7 +379,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | paperless-ngx | redis | ? | ? | ? | ? | ? | ? | Y | ? | |
 | photoprism | photoprism | Y (2432:1000) | N | ? | ? | ? | ? | Y | Y | PHOTOPRISM_UID/GID |
 | photoprism-x | photoprism | Y (2432:2432) | N | P | ? | ? | ? | Y | Y | full non-root; s6 needs allowPrivilegeEscalation:true; GPU via nvidia runtime |
-| plex-ms-x | plex | X | N | P | ? | ? | ? | Y | ? | plexinc s6-overlay root-required (documented); drop ALL + s6 caps; NVIDIA via runtime |
+| plex-ms-x | plex | X | X | Y | ? | ? | ? | Y | ? | plexinc s6-overlay root-required (documented); seccomp + drop ALL + s6 caps + no-privesc; NVIDIA via runtime |
 | roundcube | roundcube | Y (82:82) | N | Y | ? | ? | ? | Y | ? | full non-root (fpm-nonroot image) |
 | roundcube | nginx | Y (82:82) | N | Y | ? | ? | ? | Y | ? | nginx-unprivileged |
 | roundcube | mariadb | ? | ? | ? | ? | ? | ? | Y | ? | |
@@ -388,12 +388,12 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| ark-sa | theisland | Y (7777:7777) | N | Y | ? | ? | ? | Y | ? | ASA via Proton/Wine; full non-root — Proton prefix rebuild + launch confirmed under drop ALL + no-privesc |
-| ark-sa | valguero | Y (7777:7777) | N | Y | ? | ? | ? | Y | ? | ASA via Proton/Wine; full non-root |
+| ark-sa | theisland | Y (7777:7777) | X | Y | ? | ? | ? | Y | ? | ASA via Proton/Wine; full non-root. SEC-4 X: Proton/steamcmd write the self-updating install + prefix across rootfs → RO-root infeasible |
+| ark-sa | valguero | Y (7777:7777) | X | Y | ? | ? | ? | Y | ? | ASA via Proton/Wine; full non-root. SEC-4 X: Proton install/prefix on rootfs |
 | ark-sa | admin-list nginx | X | N | P | ? | ? | ? | Y | ? | stock nginx :80; root-partial (drop ALL + caps + NET_BIND_SERVICE) |
-| ark-se | theisland | X | N | N | ? | ? | ? | Y | ? | drpsychick root/sudo-required (arkmanager+crontab); PRE-EXISTING crashloop (arkmanager not found since drpsychick migration) — hardening exception |
+| ark-se | theisland | X | X | N | ? | ? | ? | Y | ? | homelabhd fork (arkmanager v1.6.69, guarded install); root/sudo-required → non-root/RO-root need a rebuild. Added seccomp RuntimeDefault (the one axis it can take) |
 | emulatorjs | emulatorjs | X | N | P | ? | ? | ? | Y | ? | LSIO s6 root→PUID; drop ALL + s6 caps + NET_BIND_SERVICE |
-| minecraft-optcp | minecraft | Y (1000:1000) | N | Y | ? | ? | ? | Y | ? | full non-root (itzg, /data pre-owned 1000) |
+| minecraft-optcp | minecraft | Y (1000:1000) | Y | Y | ? | ? | ? | Y | ? | 5/5 — full non-root (itzg, HOME=/data PVC pre-owned 1000) + RO-root (/tmp emptyDir for JVM); verified live |
 | romm | romm | X | N | P | ? | ? | ? | Y | ? | nginx+gunicorn+valkey supervisor, root-partial; Known bugs #1302,#1327,#1338 |
 | romm | mysql | X | N | P | ? | ? | ? | Y | ? | LSIO mariadb s6, root-partial |
 
@@ -401,7 +401,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| anirra | anirra | X | N | P | ? | ? | ? | Y | ? | Custom no-shell image, root-partial (drop ALL + seccomp) pending verified data owner |
+| anirra | anirra | X | X | Y | ? | ? | ? | Y | ? | X: custom supervisord image — no baked non-root user + supervisord logs to the app dir on rootfs → non-root/RO-root need image changes. seccomp + drop ALL + no-privesc |
 | bazarr | gluetun | X | N | P | ? | ? | ? | Y | ? | VPN sidecar — root + NET_ADMIN caps, no-privesc + seccomp |
 | bazarr | bazarr | X | N | P | ? | ? | ? | Y | ? | LSIO s6 root→PUID; drop ALL + s6 caps + seccomp |
 | byparr | gluetun | X | N | P | Y | ? | ? | Y | Y | VPN sidecar |
@@ -427,8 +427,8 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | sabnzbd | gluetun | X | N | P | ? | ? | ? | Y | ? | VPN sidecar |
 | sabnzbd | sabnzbd | X | N | P | ? | ? | ? | Y | ? | LSIO s6 root→PUID; init derooted to 1000 |
 | thelounge | gluetun | X | N | P | ? | ? | ? | Y | ? | VPN sidecar |
-| thelounge | thelounge | X | N | P | ? | ? | ? | Y | ? | official node, config root-owned; root-partial pending verified owner |
-| whisparr | whisparr | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
+| thelounge | thelounge | X | X | Y | ? | ? | ? | Y | ? | LSIO s6 root-start (not official node); config now persists on PVC (fixed mount path /var/opt/thelounge→/config). seccomp + drop ALL + CHOWN + no-privesc (Mode-A ceiling) |
+| whisparr | whisparr | X | X | Y | ? | ? | ? | Y | ? | hotio s6 root-start; seccomp + drop ALL + s6 caps + NET_ADMIN + no-privesc. Undeployed/frozen |
 | neko-vpn | gluetun | X | N | P | ? | ? | ? | Y | Y | VPN sidecar |
 | neko-vpn | neko | X | N | P | ? | ? | ? | Y | Y | supervisord browser env, root-required partial |
 | neko-gateway | stunner-daemon | X | N | ? | ? | ? | ? | Y | ? | STUNner-operator-generated pod — hardening deferred to Dataplane CR |
@@ -462,7 +462,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | penpot | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
 | penpot | redis | Y (999:1000) | ? | ? | ? | ? | ? | Y | ? | |
 | photoprism | photoprism | Y (2432:1000) | N | ? | ? | ? | ? | Y | Y | |
-| plex | plex | ? | ? | ? | ? | ? | ? | Y | ? | |
+| plex | plex | X | X | Y | ? | ? | ? | Y | ? | plexinc s6-overlay root-required (documented); seccomp + drop ALL + s6 caps + no-privesc; HW-transcode via /dev/dri |
 | projectsend | projectsend | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
 | projectsend | mysql | ? | ? | ? | ? | ? | ? | Y | ? | |
 | reactive-resume | reactive-resume | Y (1000) | ? | ? | ? | ? | ? | Y | ? | app container hardened non-root 1000, drop ALL, seccomp |
@@ -474,7 +474,7 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | shlink | web-client | ? | ? | ? | ? | ? | ? | Y | ? | |
 | wikijs-vegan | wikijs | ? | ? | ? | ? | ? | ? | Y | ? | |
 | wikijs-vegan | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
-| xbackbone | xbackbone | ? | ? | ? | ? | ? | ? | Y | ? | LSIO image |
+| xbackbone | xbackbone | X | X | Y | ? | ? | ? | Y | ? | LSIO s6 root-start (:80/:443); seccomp + drop ALL + s6 caps + NET_BIND_SERVICE + no-privesc. Undeployed/frozen |
 
 ### tingle-tuner (Tools & Utilities)
 
@@ -494,11 +494,11 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 | lenpaste | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
 | libretranslate | libretranslate | Y (1032:1032) | N | ? | ? | ? | ? | Y | ? | nvidia runtime |
 | mazanoke | mazanoke | ? | ? | ? | ? | ? | ? | Y | ? | nginx:alpine, needs ConfigMap |
-| ollama | ollama | X | ? | ? | ? | ? | ? | Y | ? | Stores data in /root/.ollama |
+| ollama | ollama | Y (1000:1000) | Y | Y | ? | ? | ? | Y | ? | 5/5 — non-root (ubuntu) + seccomp + drop ALL + RO-root (~/.nv + /tmp emptyDirs). Fixed data-loss bug: PVC was at unreachable /root/.ollama, repointed to /home/ubuntu/.ollama; verified live |
 | openwakeword | openwakeword | X | ? | ? | ? | ? | ? | Y | ? | Root, no USER |
 | piper | piper | X | ? | ? | ? | ? | ? | Y | ? | Root, no USER |
-| renovate | renovate | Y (1000:1000) | ? | ? | ? | ? | N/A | Y | ? | CronJob |
-| stable-diffusion-webui | sdwebui | ? | ? | ? | ? | ? | ? | Y | ? | |
+| renovate | renovate | Y (1000:1000) | X | Y | ? | ? | N/A | Y | ? | CronJob; 4/5 — non-root + seccomp + drop ALL + no-privesc. SEC-4 X: containerbase installs language toolchains at runtime (writes /opt/containerbase) — RO-root FATALs; verified via test job |
+| stable-diffusion-webui | sdwebui | X | X | P | ? | ? | ? | Y | ? | ai-dock root-start (init.sh useradd/sudoers + writes /etc,/root,/var → supervisord drops to user). Least-privilege cap set (drop ALL / add [CHOWN,DAC_OVERRIDE,FOWNER,SETUID,SETGID,SETPCAP,KILL]) + seccomp; privEsc kept for sudoers provisioning; GPU verified |
 
 ### wallmaster (Bot Protection & Security)
 
@@ -528,11 +528,15 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 
 ### Container Security (Estimated)
 
+_Re-estimated 2026-08-31 from an app-level scan: 74 of 111 deployed app overlays carry
+`readOnlyRootFilesystem`; the remainder are documented exceptions (LSIO/s6, gluetun, ai-dock,
+root-required vendor images) or external no-pod services. Counts are per deployed app, approximate._
+
 | Category | Compliant | Non-Compliant | Exceptions | Unknown |
 |----------|-----------|---------------|------------|---------|
-| SEC-1/2 (Non-root) | ~25 | ~10 | ~20 | ~65 |
-| SEC-4 (ReadOnlyRoot) | ~0 | ~30 | ~0 | ~90 |
-| SEC-5/6 (Caps/PrivEsc) | ~12 (gluetun) | ~10 | ~0 | ~98 |
+| SEC-1/2 (Non-root) | ~68 | ~5 | ~37 | ~5 |
+| SEC-4 (ReadOnlyRoot) | ~74 | ~8 | ~28 | ~5 |
+| SEC-5/6 (Caps/PrivEsc) | ~85 | ~5 | ~10 | ~15 |
 | RES (Resources) | ~15 | ~5 | ~0 | ~100 |
 | OBS-1 (Logging) | ~5 | ~0 | ~0 | ~115 |
 | OBS-2/3 (Probes) | ~0 | ~0 | ~0 | ~120 |
@@ -938,6 +942,7 @@ kubectl get pods -n <ns> -o custom-columns=\
 | 2026-08-21 | Applied FULL partial-hardening (stays-root) to all three s6 exceptions: netbox-server, plex, plex-ms-x — pod `seccompProfile: RuntimeDefault` + container `allowPrivilegeEscalation: false` + `drop:[ALL] add:[CHOWN,DAC_OVERRIDE,FOWNER,SETUID,SETGID]`. Cap set + no_new_privs pre-validated in docker (s6 init / first-run / HW-transcode cont-init all exit 0), then verified in-cluster: all three Ready 0 restarts, s6 `correct perms...exited 0` (was fatal under non-root). GPU intact on plex-ms-x — `nvidia-smi` returns GTX 980 Ti under the dropped caps, confirming GPU access is runtime/cgroup-based not cap-based. netbox init busybox waiters also locked to non-root 65532 + drop ALL. Attack surface cut from full root caps to 5. |
 | 2026-08-21 | Gateway-sweep batch (cell-membrane + phloem routed workloads). FULL non-root: uptime-kuma (node uid 1000), ghost (node 1000), wikijs-vegan (node 1000, postgres-backed), echo-ip (Go 1000 + geoipupdate init, fsGroup for GeoIP PVC), shlink-app (RoadRunner/PHP 1001), calcom (Next.js 1001 + root fix-yarn-perms init keeping CHOWN/DAC_OVERRIDE/FOWNER), jellyfin (media, 1000 + root fix-permissions init; drop ALL — CPU transcode/ffmpeg subprocess unaffected; added fsGroupChangePolicy OnRootMismatch for the ~180k-file /config, and the root init needs explicit runAsNonRoot:false under a pod-level runAsNonRoot:true). fairer-pages: added seccomp (completes the fallback server, both gateways). linkstack: apache-root (regenerates /etc/apache2+/etc/php83 config as root, binds :443) → root+caps incl NET_BIND_SERVICE. invoiceninja: MIXED — nginx sidecar full non-root (uid 101, :8080 via full nginx.conf configmap, RO rootfs, /tmp emptyDir, drop ALL; Service targetPort→8080) + php-fpm app root+curated caps (entrypoint copies public assets/chowns storage as root) + inits hardened; verified curl / → 200 through nginx→fastcgi→app. Also: plex metadata "break" diagnosed to DNS rebinding (Unbound stripping private-IP *.plex.direct), NOT the hardening — fixed on the resolver (Unbound `private-domain: "plex.direct"`), plex securityContext retained. |
 | 2026-08-21 | Root-exception tier (partial-caps, stays-root) — closes the cell-membrane/phloem sweep. LSIO/s6 + apache-root + supervisord images, each cap-set pre-validated in docker: bookstack (LSIO s6, :443 → +NET_BIND_SERVICE), calibre-web (LSIO s6, :8083), organizr (s6, :80 → +NET_BIND_SERVICE), dolibarr-web (chown-entrypoint apache, :80 → +NET_BIND_SERVICE), netbird-dashboard (supervisord, :80 → +NET_BIND_SERVICE) — all seccomp + drop ALL / add [CHOWN,DAC_OVERRIDE,FOWNER,SETUID,SETGID](+NET_BIND_SERVICE), busybox init waiters non-root 65532. Nextcloud sidecars: whiteboard (Node) FULL non-root uid 1000; talk-hpb signaling is root+su-exec (needs SETUID/SETGID — full non-root broke it with `su-exec: setgroups: Operation not permitted`), render-config init drop ALL; notify-push (Go) non-root applied but has a PRE-EXISTING crashloop (old pod 2953 restarts/8d) failing its self-test to ncloud.optcp.com — orthogonal to hardening, needs the notify_push↔nextcloud link fixed. collabora keeps its MKNOD/SYS_CHROOT sandbox caps (as-hardened-as-it-gets). Every cell-membrane + phloem workload is now non-root or partial-hardened. |
+| 2026-08-31 | SEC-4 ro-rootfs tail closeout. Full 5/5: minecraft-optcp (RO-root + /tmp emptyDir), ollama (RO-root; also fixed a data-loss bug — PVC was mounted at unreachable /root/.ollama while the uid-1000 process used ephemeral /home/ubuntu/.ollama, repointed), netalertx (seccomp + RO-root + no-privesc, root kept for raw-socket scanners; arp-scan verified live). Partial/exception: stable-diffusion-webui (narrowed the ai-dock root container to a least-privilege cap set), renovate CronJob (4/5 — RO-root proven infeasible via a test job: containerbase installs toolchains to /opt at runtime), whisparr/xbackbone/urbackup-server (s6 ceiling by construction, undeployed), ark-se (+seccomp). Documented root-required exceptions: plex, plex-ms-x, ark-sa (Proton writes the self-updating install/prefix across rootfs), ark-se, anirra (custom supervisord, no baked non-root user), bookstack. thelounge fixed same PVC-path data bug + LSIO ceiling. Every deployed workload is now hardened to its ceiling or a documented exception. |
 
 ---
 
