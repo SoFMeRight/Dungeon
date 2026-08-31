@@ -49,8 +49,19 @@ spec:
     # persists these into the CR on create; bump them together with the operator upgrade.
     agent:
       image: ghcr.io/mariadb-operator/mariadb-operator:26.6.0
+      # The agent runs the operator binary (Galera coordination) — needs no caps/privesc.
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
     initContainer:
       image: ghcr.io/mariadb-operator/mariadb-operator:26.6.0
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
     sst: mariabackup
     replicaThreads: 1
     providerOptions:
