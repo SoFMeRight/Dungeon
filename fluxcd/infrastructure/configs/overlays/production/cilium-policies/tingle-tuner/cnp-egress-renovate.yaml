@@ -1,0 +1,30 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-renovate-egress
+spec:
+  description: >-
+    renovate is a trusted internal maintenance CronJob that scans the repo
+    against an open-ended, ever-growing upstream set: git forges (internal
+    GitLab, GitHub), every container registry (ghcr, quay, Harbor), helm
+    repos, and language toolchain mirrors (npm, PyPI) pulled at runtime by
+    containerbase. Any allowlist would break silently as new datasource
+    hosts appear, so this is a documented broad grant on 443/80 TCP. The
+    cluster entity covers its internal targets (gitlab.prplanit.com API +
+    s3.pcfae.com repo cache) reached via in-cluster LoadBalancer IPs.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: renovate
+  egress:
+    - toEntities:
+        - world
+        - cluster
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP

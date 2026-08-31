@@ -1,0 +1,38 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-faster-whisper-egress
+spec:
+  description: >-
+    faster-whisper pulls its speech-to-text model from HuggingFace on first
+    start, then serves from the config PVC. Allow egress to the HuggingFace
+    model repo + LFS/Xet CDN on 443/TCP, with L7 DNS so Cilium learns the
+    FQDN addresses. Steady-state (model cached) needs none of this.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: faster-whisper
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "huggingface.co"
+        - matchPattern: "*.huggingface.co"
+        - matchPattern: "*.hf.co"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

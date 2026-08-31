@@ -1,0 +1,38 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-google-webfonts-helper-egress
+spec:
+  description: >-
+    google-webfonts-helper fetches font metadata from the Google Fonts
+    Developer API and the font files from Google's CDN at request time,
+    caching them locally. Allow egress to the Google Fonts API + gstatic
+    CDN on 443/TCP, with L7 DNS so Cilium learns the FQDN addresses.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: google-webfonts-helper
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "www.googleapis.com"
+        - matchName: "fonts.googleapis.com"
+        - matchName: "fonts.gstatic.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
