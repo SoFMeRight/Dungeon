@@ -1,0 +1,60 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: enforce-pod-hardening
+  annotations:
+    policies.kyverno.io/title: Enforce Pod Hardening (graduated dimensions)
+    policies.kyverno.io/description: >-
+      The Enforce companion to audit-pod-hardening. Dimensions graduate here ONE AT A TIME, only
+      after their audit-pod-hardening PolicyReport is clean of non-exception workloads. Each rule
+      is CREATE-only (securityContext is immutable on UPDATE; validating UPDATE would reject
+      controller-issued pod updates — finalizer/status — and wedge GC, the same trap the mutate
+      policy scopes out). Existing non-compliant pods are grandfathered and comply on next roll.
+      Per-workload exceptions: label the workload policy.prplanit.com/except-<dimension>: "true"
+      (e.g. except-nonroot, except-ro-rootfs) — the matching rule excludes it, kept visible in git.
+      Namespace escape hatch: policy.prplanit.com/enforce-hardening=suspended.
+
+      Graduated so far:
+        - seccomp (2026-08-31): mutate-pod-hardening injects RuntimeDefault on every CREATE
+          fleet-wide, so this rule is a pure backstop — it rejects only an explicit Unconfined.
+      Not yet graduated (still audit-only, long legitimate-exception tails): drop-caps,
+      no-privilege-escalation, non-root, read-only-root-fs.
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: require-seccomp-runtime-default
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              operations: [CREATE]
+              namespaceSelector:
+                matchLabels:
+                  istio.io/dataplane-mode: ambient
+      exclude:
+        any:
+          - resources:
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: kyverno
+          - resources:
+              namespaceSelector:
+                matchLabels:
+                  policy.prplanit.com/enforce-hardening: "suspended"
+          - resources:
+              selector:
+                matchLabels:
+                  policy.prplanit.com/except-seccomp: "true"
+      validate:
+        message: "SEC-7: seccompProfile must be RuntimeDefault/Localhost (pod-level or every container). mutate-pod-hardening adds it automatically — this rejects an explicit Unconfined."
+        anyPattern:
+          - spec:
+              securityContext:
+                seccompProfile:
+                  type: "RuntimeDefault | Localhost"
+          - spec:
+              containers:
+                - securityContext:
+                    seccompProfile:
+                      type: "RuntimeDefault | Localhost"
