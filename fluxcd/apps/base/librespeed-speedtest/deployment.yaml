@@ -32,7 +32,19 @@ spec:
         # alpine config tree has no symlinks, so a plain recursive copy is faithful.
         - name: seed-apache-config
           image: PLACEHOLDER_IMAGE
-          command: ["sh", "-c", "cp -r /etc/apache2/. /seed/"]
+          command:
+            - sh
+            - -c
+            - |
+              cp -r /etc/apache2/. /seed/
+              # Point apache's logs at a piped logger: /bin/cat inherits the container's stdout
+              # and writes there. A child writing to an INHERITED fd is non-root-safe, unlike
+              # reopening the /dev/stderr,/dev/stdout log symlinks (EACCES) — so logs reach
+              # `kubectl logs` while the process stays non-root.
+              sed -i \
+                -e 's#ErrorLog logs/error.log#ErrorLog "|/bin/cat"#' \
+                -e 's#CustomLog logs/access.log combined#CustomLog "|/bin/cat" combined#' \
+                /seed/httpd.conf
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -66,10 +78,10 @@ spec:
               mountPath: /run/apache2
             - name: tmp
               mountPath: /tmp
-            # /var/www/logs → /var/log/apache2, whose error.log/access.log symlink to
-            # /dev/stderr,/dev/stdout — a non-root process can't reopen those (CRI-O's stdio
-            # pipes are root-owned → EACCES). Give apache a writable dir so it writes real log
-            # files instead. Trade-off: logs land here, not in `kubectl logs`.
+            # Writable fallback for /var/log/apache2 (where the /dev/stdout,/dev/stderr log
+            # symlinks live). Logs actually flow through the initContainer's piped-logger config
+            # to the container stdout (kubectl logs); this just keeps the dir writable so apache
+            # never fails on it.
             - name: apache-logs
               mountPath: /var/log/apache2
           resources:
