@@ -11,6 +11,8 @@ spec:
     spec:
       securityContext:
         fsGroup: 20211
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: netalertx
           image: ghcr.io/jokob-sk/netalertx:26.8.5
@@ -18,7 +20,13 @@ spec:
             - containerPort: 20211
               name: http
               hostPort: 20211
+          # Stays root for its raw-socket scanners (arp-scan/nmap/fping — no file-caps, need
+          # NET_RAW as root), but drop ALL bar the network caps + no-privesc (no setuid/file-cap
+          # binary is used to gain privs). readOnlyRootFilesystem: the overlay rootfs takes zero
+          # writes — every writable path is a mount (/tmp tmpfs, /data emptyDir, PVC subPaths).
           securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
