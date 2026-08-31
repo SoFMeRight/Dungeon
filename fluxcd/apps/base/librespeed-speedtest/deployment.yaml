@@ -17,12 +17,15 @@ spec:
       containers:
         - name: librespeed-speedtest
           image: PLACEHOLDER_IMAGE
-          # apache image: master runs root → setuid-drops workers to www-data. Partial hardening:
-          # keep root, drop ALL, add back apache's file-perm + setuid + privileged-bind caps.
+          # apache image: master runs root → setuid-drops workers to www-data. Stays root
+          # (drop ALL + file-perm/setuid/bind caps), but the rootfs is now immutable
+          # (readOnlyRootFilesystem): apache's writable dirs — APACHE_RUN_DIR (/run/apache2),
+          # APACHE_LOCK_DIR (/run/lock/apache2) and /tmp — are emptyDirs; logs → stdout/stderr.
           securityContext:
             seccompProfile:
               type: RuntimeDefault
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -47,3 +50,17 @@ spec:
             limits:
               cpu: PLACEHOLDER_CPU_LIMIT
               memory: PLACEHOLDER_MEMORY_LIMIT
+          volumeMounts:
+            - name: apache-run
+              mountPath: /run/apache2
+            - name: apache-lock
+              mountPath: /run/lock/apache2
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: apache-run
+          emptyDir: {}
+        - name: apache-lock
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
