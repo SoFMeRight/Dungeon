@@ -4,15 +4,22 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for kokiri-forest namespace.
-    Gateway pods get world ingress via cnp-phloem-gateway.
-    linkstack gets ingress from ingress-backend CCNP.
-    linkstack-db gets ingress from linkstack via cnp-linkstack-db.
+    Default-deny ingress AND egress for kokiri-forest namespace.
+    Ingress: gateway pods via cnp-phloem-gateway; linkstack via
+    ingress-backend CCNP; linkstack-db from linkstack via cnp-linkstack-db.
+    Egress: both apps are DNS + mesh-only (linkstack->linkstack-db rides
+    HBONE, no external deps), so the universal DNS/HBONE CCNPs cover them
+    and no per-app cnp-egress-* is needed. Both directions use a
+    reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor
