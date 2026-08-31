@@ -19,6 +19,11 @@ spec:
         component: ai-service
     spec:
       serviceAccountName: appflowy-ai
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: appflowy-ai
           image: PLACEHOLDER_AI_IMAGE

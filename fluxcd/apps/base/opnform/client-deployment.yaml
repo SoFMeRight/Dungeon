@@ -15,6 +15,11 @@ spec:
         app: opnform-client
     spec:
       serviceAccountName: opnform-client
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: client
           image: docker.io/jhumanj/opnform-client:2.4.0

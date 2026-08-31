@@ -14,6 +14,11 @@ spec:
         app: erpnext-queue-long
     spec:
       serviceAccountName: erpnext-queue-long
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
         - name: queue-long
           image: PLACEHOLDER_ERPNEXT_IMAGE

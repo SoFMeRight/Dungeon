@@ -15,6 +15,11 @@ spec:
         app: erpnext-sites
     spec:
       serviceAccountName: erpnext-sites
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       initContainers:
         - name: copy-assets
           image: PLACEHOLDER_ERPNEXT_IMAGE
