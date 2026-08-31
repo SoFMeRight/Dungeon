@@ -5,6 +5,14 @@ metadata:
 spec:
   targetNamespace: zeldas-lullaby
   values:
+    # PolicyExceptions: the scalable exception model for enforce-pod-hardening's larger phases
+    # (no-privesc / non-root / RO-root have 25 / 67 / 127 exceptions — name patterns don't scale).
+    # Restricted to zeldas-lullaby so exceptions can only be created in this one admin-controlled,
+    # flux-managed namespace (a compromised app namespace can't self-except).
+    features:
+      policyExceptions:
+        enabled: true
+        namespace: zeldas-lullaby
     admissionController:
       container:
         image:
