@@ -7,7 +7,7 @@ stencils:
   ansible:           { render: shield, label: Ansible, message: automation, color: "#EE0000", logo: ansible, logo_color: white, link: ansible }
   kubernetes:        { render: shield, label: Kubernetes, message: k8s, color: "#326CE5", logo: kubernetes, logo_color: white, link: fluxcd }
   fluxcd:            { render: shield, label: FluxCD, message: gitops, color: "#5468FF", logo: flux, logo_color: white, link: fluxcd }
-  docker-compose:    { render: shield, label: Compose, message: stacks, color: "#2496ED", logo: docker, logo_color: white, link: docker }
+  docker-compose:    { render: shield, label: Compose, message: stacks, color: "#2496ED", logo: docker, logo_color: white, link: docker-compose }
   applications:      { render: shield, label: Applications, message: "{inventory.dungeon.count}", color: "#0F1689", logo: kubernetes, logo_color: white, link: "docs/Apps_&_Services-Overview.md" }
   cluster-inventory: { type: k8s-inventory, catalog: .stagefreight/catalog.yml }
   security:          { render: shield, label: Security, message: report, color: "#4B275F", link: "docs/container-security-audit.md" }
