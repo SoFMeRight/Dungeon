@@ -187,6 +187,15 @@ spec:
 
 All 12 gluetun VPN sidecars have been hardened with minimum required capabilities.
 
+**SEC-4 RO-root status — these pods are `readOnlyRootFilesystem` exceptions.** The shared-netns VPN
+architecture forbids pod-level hardening: gluetun must run as root with NET_ADMIN/MKNOD to build the
+tunnel + create `/dev/net/tun`, so a pod-level `runAsNonRoot` would break the tunnel. Each container is
+instead hardened to its own ceiling — gluetun (root + the caps below), and the app container (seccomp +
+drop-ALL + curated caps; non-root where the image allows, e.g. byparr, sabnzbd). `readOnlyRootFilesystem`
+is not applied: gluetun writes its tunnel config/state, and the app images are s6/LSIO (bazarr, pyload-ng,
+prowlarr) or write config as root (thelounge — a node app, convertible to non-root pending a verified
+config owner). Re-verified per-container at ceiling 2026-08-31.
+
 | App | Namespace | Caps Added | Last Audit |
 |-----|-----------|------------|------------|
 | downloadarrs | swift-sail | NET_ADMIN,CHOWN,DAC_OVERRIDE,FOWNER,MKNOD,SETUID,SETGID | 2026-02-05 |
