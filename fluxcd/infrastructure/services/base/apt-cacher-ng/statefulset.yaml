@@ -26,10 +26,19 @@ spec:
       containers:
         - name: apt-cacher-ng
           image: PLACEHOLDER_IMAGE
+          # Root-start image: entrypoint chowns the cache/log dirs then drops to the apt-cacher-ng
+          # user. drop ALL + the curated file-ownership + privilege-drop caps (still satisfies the
+          # drop-ALL enforce rule).
           securityContext:
             capabilities:
               drop:
                 - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 3142
               name: http
