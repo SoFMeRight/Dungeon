@@ -16,8 +16,13 @@ spec:
     spec:
       serviceAccountName: ark-se-tmc
       enableServiceLinks: false
+      # ARK:SE server needs root/sudo (arkmanager install/update path), so non-root/RO-root aren't
+      # feasible without an image rebuild — see the Root Required section of docs/container-security-audit.md.
+      # seccomp RuntimeDefault is the one axis it can take without touching that.
       securityContext:
         fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: theisland
           # Our own fork build (HomeLabHD/ark-se-server) — the upstream drpsychick :latest-v1.6.62

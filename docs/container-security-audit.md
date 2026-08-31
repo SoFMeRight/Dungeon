@@ -283,8 +283,8 @@ These use s6-overlay init system. Two approaches are supported:
 | sonarr | swift-sail | linuxserver/sonarr | A (root→drop) | 1000/1000 | 1000 | 2026-02-05 |
 | lidarr | swift-sail | linuxserver/lidarr | A (root→drop) | 1000/1000 | 1000 | 2026-02-05 |
 | readarr | swift-sail | linuxserver/readarr | A (root→drop) | 1000/1000 | 1000 | 2026-02-05 |
-| bazarr | swift-sail | linuxserver/bazarr | ? | ? | ? | - |
-| bookstack | temple-of-time | linuxserver/bookstack | ? | ? | ? | - |
+| bazarr | swift-sail | linuxserver/bazarr | A (hardened) | 1000/1000 | 1000 | 2026-08-31 |
+| bookstack | temple-of-time | linuxserver/bookstack | A (hardened) | 1000/1000 | 1000 | 2026-08-31 |
 | calibre-web | temple-of-time | linuxserver/calibre-web | A (hardened) | 8083/1000 | 1000 | 2026-08-31 |
 | code-server | tingle-tuner | linuxserver/code-server | ? | ? | ? | - |
 | emulatorjs | shooting-gallery | linuxserver/emulatorjs | A (hardened) | 1000/1000 | - | 2026-08-31 |
@@ -293,13 +293,13 @@ These use s6-overlay init system. Two approaches are supported:
 | netbootxyz | compass | linuxserver/netbootxyz | A (hardened) | 1000/1000 | - | 2026-08-31 |
 | organizr | lost-woods | linuxserver/organizr | ? | ? | ? | - |
 | projectsend | temple-of-time | linuxserver/projectsend | ? | ? | ? | - |
-| prowlarr | swift-sail | linuxserver/prowlarr | ? | ? | ? | - |
-| pyload-ng | swift-sail | linuxserver/pyload-ng | ? | ? | ? | - |
-| sabnzbd | swift-sail | linuxserver/sabnzbd | ? | ? | ? | - |
-| thelounge | swift-sail | linuxserver/thelounge | ? | ? | ? | - |
+| prowlarr | swift-sail | linuxserver/prowlarr | A (hardened) | 1000/1000 | 1000 | 2026-08-31 |
+| pyload-ng | swift-sail | linuxserver/pyload-ng | A (hardened) | 1000/1000 | 1000 | 2026-08-31 |
+| sabnzbd | swift-sail | linuxserver/sabnzbd | A (hardened) | 1000/1000 | 1000 | 2026-08-31 |
+| thelounge | swift-sail | linuxserver/thelounge | A (hardened) | 1000/1000 | - | 2026-08-31 |
 | unifi | compass | linuxserver/unifi-network-application | ? | ? | ? | - |
-| whisparr | swift-sail | linuxserver/whisparr | ? | ? | ? | - |
-| xbackbone | temple-of-time | linuxserver/xbackbone | ? | ? | ? | - |
+| whisparr | swift-sail | linuxserver/whisparr | A (hardened, undeployed) | 1000/1000 | - | 2026-08-31 |
+| xbackbone | temple-of-time | linuxserver/xbackbone | A (hardened, undeployed) | 1000/1000 | - | 2026-08-31 |
 
 ---
 
@@ -325,7 +325,6 @@ These apps require root for legitimate technical reasons.
 
 | App | Namespace | Image | Reason | Last Audit |
 |-----|-----------|-------|--------|------------|
-| ollama | tingle-tuner | ollama/ollama | Stores data in /root/.ollama | - |
 | romm | temple-of-time | rommapp/romm | Known bugs (#1302, #1327, #1338, #2432) | - |
 | lubelogger | temple-of-time | hargata/lubelogger | Mounts /root/.aspnet/DataProtection-Keys | - |
 | jellyseerr | swift-sail | fallenbagel/jellyseerr | Root (UID 0), no USER directive | - |
@@ -345,6 +344,11 @@ These apps require root for legitimate technical reasons.
 | openwakeword | pedestal-of-time | rhasspy/wyoming-openwakeword | Root, no USER | - |
 | reactive-resume (app) | hyrule-castle | amruthpillai/reactive-resume | No USER, untested upstream | - |
 | meilisearch | temple-of-time | getmeili/meilisearch | Non-root reverted in v0.25.0 | - |
+| plex | temple-of-time | plexinc/pms-docker | s6 root-start (chowns cont-init.d + setuidgid-drops to PUID); RO-root/non-root need a rebuild. At seccomp + drop-ALL + curated-caps + no-privesc ceiling | 2026-08-31 |
+| plex-ms-x | pedestal-of-time | plexinc/pms-docker | Second Plex instance — same s6 root-start ceiling as plex | 2026-08-31 |
+| ark-sa | shooting-gallery | acekorneya/asa_server | Proton/Wine + steamcmd write the self-updating game install + prefix across the rootfs → RO-root infeasible. Already non-root (7777) + seccomp + drop-ALL + no-privesc (4/5) | 2026-08-31 |
+| ark-se | shooting-gallery | homelabhd/ark-se-server | ARK:SE server needs root/sudo (arkmanager install/update path); at fsGroup + seccomp only | 2026-08-31 |
+| anirra | swift-sail | jpyles0524/anirra | Custom supervisord image: no non-root user baked in, and supervisord logs to the app dir on the rootfs → non-root/RO-root need image changes. At seccomp + drop-ALL + no-privesc (3/5) | 2026-08-31 |
 
 ---
 
@@ -352,15 +356,10 @@ These apps require root for legitimate technical reasons.
 
 Apps requiring further research before hardening.
 
-| App | Namespace | Image | Notes | Last Audit |
-|-----|-----------|-------|-------|------------|
-| anirra | swift-sail | jpyles0524/anirra | Custom image, no public docs, UID unknown | - |
-| convertx | tingle-tuner | c4illin/convertx | No USER, uncertain with SQLite permissions | - |
-| mazanoke | tingle-tuner | civilblur/mazanoke | nginx:alpine port 80, needs ConfigMap override | - |
-| py-kms | tingle-tuner | py-kms-organization/py-kms | Likely has non-root user, UID unknown | - |
-| librespeed-speedtest | tingle-tuner | librespeed/speedtest | Maintainers say unprivileged, runs as root | - |
-| netalertx | gossip-stone | jokob-sk/netalertx | Has fsGroup: 20211 + NET_RAW/NET_ADMIN caps, complex | - |
-| linkstack | kokiri-forest | linkstackorg/linkstack | Partial: fsGroup: 101, Apache on 8080, init needs root | - |
+_None outstanding (2026-08-31). All prior entries resolved: convertx, mazanoke, py-kms,
+librespeed-speedtest, netalertx, and linkstack were hardened (readOnlyRootFilesystem +
+seccomp + drop-caps); anirra moved to [Root Required](#root-required-cannot-change-without-upstream-fixes)
+(custom supervisord image, no baked non-root user)._
 
 ---
 
@@ -543,6 +542,7 @@ finalizers, then remove the label.
 | 2026-08-22 | Claude | MariaDB engine complete. 10 official plain mariadb/mysql → 5/5 (uid 999, `/run/mysqld` + `/tmp` emptyDirs; mysql 5.7/8/8.4 + mariadb 10.11/11 all clean). Galera CRs (kimai, osticket) → 4/5 via container SC on the MariaDB CR (RO N/A: `/run/mysqld` is rootfs; GaleraReady held True through both rolls). 4 LinuxServer.io mariadb images (bookstack, dolibarr, romm, shlink) documented as root+s6 exceptions. DB hardening initiative complete across redis/postgres/mariadb. |
 | 2026-08-22 | Claude | Privileged init/maintenance Jobs hardened (see Privileged Init/Maintenance Jobs section). 13 `cephfs-init-*` Jobs (gorons-bracelet) → 4/5 min-priv root: drop ALL caps + add only CHOWN/DAC_OVERRIDE/FOWNER, no-privesc, seccomp, RO-rootfs, ansible tmp on `/tmp` emptyDir + `ANSIBLE_REMOTE_TMP`. Verified all 13 run to success; cleaned up 7d orphaned pods stuck on the `batch.kubernetes.io/job-tracking` finalizer (owner Jobs gone). Complements the velero maintenance-job hardening (`717e538c`) — same min-priv-root shape for the privileged-Job class. |
 | 2026-08-22 | Claude | Ceph RGW Jobs hardened to full 5/5 (non-root 1000, RO, drop [ALL], seccomp). 7 `*-rgw-setup` Jobs: rewrote bucket creation from runtime `dnf install s3cmd` to a signed `curl` PUT (SigV2 via openssl) — no package install, no root, no rootfs writes. `ceph-rgw-init` bootstrap: hardened + fixed two pre-existing bugs that had kept it Failed (missing `--name client.dungeon-rgw` → auth/`failed to fetch mon config`; `sed` `/` delimiter clashing with the endpoint URL); env-specifics externalized to job env vars, pool-name display derived from zone.json. All verified: buckets created, RGW healthy post-period-commit. |
+| 2026-08-31 | Claude | SEC-4 ro-rootfs tail closeout. Hardened: netalertx (seccomp + RO-root + no-privesc, scanning verified live), stable-diffusion-webui (least-privilege cap set on the root ai-dock container, GPU verified), minecraft-optcp (RO-root + /tmp emptyDir → 5/5), ollama (fixed a data-loss bug — PVC was mounted at unreachable /root/.ollama while the uid-1000 process used ephemeral /home/ubuntu/.ollama; repointed + RO-root → 5/5), renovate CronJob (full hardening + RO-root, /tmp+HOME emptyDirs), whisparr/xbackbone/urbackup-server (partial s6 ceiling, undeployed — by construction). thelounge fixed same PVC-path data bug + documented LSIO exception. Documented as root-required exceptions: plex, plex-ms-x, ark-sa (Proton writes install/prefix across rootfs), ark-se, anirra (custom supervisord, no baked non-root user). LSIO table updated (bookstack/bazarr/prowlarr/pyload-ng/sabnzbd/thelounge/whisparr/xbackbone → A hardened). Needs-Investigation cleared. |
 
 ## Related Documents
 
