@@ -28,6 +28,7 @@ spec:
           image: PLACEHOLDER_IMAGE
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -40,6 +41,8 @@ spec:
               mountPath: /etc/prometheus/pve.yml
               subPath: pve.yml
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: PLACEHOLDER_CPU
@@ -51,3 +54,5 @@ spec:
         - name: config
           secret:
             secretName: PLACEHOLDER_SECRET
+        - name: tmp
+          emptyDir: {}

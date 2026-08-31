@@ -29,6 +29,7 @@ spec:
           image: PLACEHOLDER_APPFLOWY_CLOUD_IMAGE
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -36,6 +37,9 @@ spec:
             - name: http
               containerPort: 8000
               protocol: TCP
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           # Environment variables configured in overlay patches
           resources:
             requests:
@@ -60,3 +64,6 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 3
             failureThreshold: 3
+      volumes:
+        - name: tmp
+          emptyDir: {}

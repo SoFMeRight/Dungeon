@@ -25,6 +25,7 @@ spec:
           image: PLACEHOLDER_IMAGE
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -41,6 +42,8 @@ spec:
               mountPath: /etc/searxng
             - name: searxng-data
               mountPath: /var/log/uwsgi
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               memory: "256Mi"
@@ -67,3 +70,5 @@ spec:
         - name: searxng-data
           persistentVolumeClaim:
             claimName: searxng-data
+        - name: tmp
+          emptyDir: {}

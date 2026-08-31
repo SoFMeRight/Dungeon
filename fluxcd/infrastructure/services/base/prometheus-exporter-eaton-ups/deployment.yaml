@@ -29,6 +29,7 @@ spec:
           image: PLACEHOLDER_IMAGE
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -41,6 +42,8 @@ spec:
               mountPath: /usr/src/app/etc/config.json
               subPath: config.json
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: PLACEHOLDER_CPU
@@ -52,3 +55,5 @@ spec:
         - name: config
           secret:
             secretName: PLACEHOLDER_SECRET
+        - name: tmp
+          emptyDir: {}

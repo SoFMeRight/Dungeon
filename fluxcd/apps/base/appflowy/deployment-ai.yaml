@@ -29,6 +29,7 @@ spec:
           image: PLACEHOLDER_AI_IMAGE
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -36,6 +37,9 @@ spec:
             - name: http
               containerPort: 5001
               protocol: TCP
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           env:
             # AI-specific secrets
             - name: OPENAI_API_KEY
@@ -64,3 +68,6 @@ spec:
             limits:
               cpu: PLACEHOLDER_CPU_LIMIT
               memory: PLACEHOLDER_MEMORY_LIMIT
+      volumes:
+        - name: tmp
+          emptyDir: {}

@@ -40,6 +40,7 @@ spec:
           image: PLACEHOLDER_IMAGE
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -59,6 +60,8 @@ spec:
           volumeMounts:
             - name: storage
               mountPath: /storage
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: PLACEHOLDER_CPU

@@ -32,6 +32,7 @@ spec:
           image: louislam/uptime-kuma:PLACEHOLDER_VERSION
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -42,6 +43,8 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /app/data
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -49,6 +52,9 @@ spec:
             limits:
               cpu: PLACEHOLDER_CPU_LIMIT
               memory: PLACEHOLDER_MEMORY_LIMIT
+      volumes:
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data
