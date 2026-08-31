@@ -43,7 +43,6 @@ spec:
             - "gitlab-*"
             - "harbor-*"
             - "invoiceninja-app-*"
-            - "opnform-client-*"
             - "osticket-*"
       - resources:
           kinds: [Pod]
