@@ -1,0 +1,5 @@
+# Status set for a repo that runs CI but builds/releases NOTHING (e.g. a governance
+# control repo) — compose after stencils-base.yml. Same pass/fail value as build
+# ({env:BUILD_STATUS} is the aggregate PipelineStatus), labelled "pipeline"; no release.
+stencils:
+  pipeline: { label: pipeline, message: "{env:BUILD_STATUS}", color: auto, font: monofur, link: "https://gitlab.prplanit.com/{path.gitlab}/-/pipelines" }

@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # GENERATED / ENFORCED BY STAGEFREIGHT GOVERNANCE
 # Source repo: PrPlanIT/MaintenancePolicy
-# Source ref: 7da191914c2f4f4edb86a3df3a95fbef30f7f062
+# Source ref: 7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
 # Profile: sofmeright-gitops
 # This .stagefreight.yml is governed, not purely local.
 # To disable governance, detach from the control repo workflow.
@@ -10,17 +10,17 @@
 
 version: 1
 scribe:
-  preset: preset/scribe-gitops.yml
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/scribe-gitops.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
 lint:
-  preset: preset/lint-generic.yml
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/lint-generic.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
 security:
-  preset: preset/security.yml
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/security.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
 dependency:
-  preset: preset/dependency.yml
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/dependency.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
 commit:
-  preset: preset/commit.yml
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/commit.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
 release:
-  preset: preset/release.yml
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/release.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
 lifecycle:
   mode: gitops
 ci:
@@ -28,9 +28,9 @@ ci:
     - gitlab
   image: docker.cr.pcfae.com/prplanit/stagefreight:latest-dev
 forges:
-  preset: preset/forges.yml
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/forges.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
 git:
-  preset: preset/git.yml
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/git.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
 metadata:
   category: infrastructure
   description:
@@ -53,12 +53,6 @@ orgs:
       github: SoFMeRight
       handle: sofmeright
     maintainer: SoFMeRight <sofmeright@gmail.com>
-preset_source:
-  cache_policy: authoritative
-  project_id: PrPlanIT/MaintenancePolicy
-  provider: gitlab
-  ref: 7da191914c2f4f4edb86a3df3a95fbef30f7f062
-  repo_url: https://gitlab.prplanit.com
 repos:
   github-mirror:
     forge: github
@@ -79,9 +73,9 @@ repos:
     worktree: .
 stencils:
   presets:
-    - preset/stencils-base.yml
-    - preset/stencils-status.yml
-    - preset/stencils-pipeline.yml
-    - preset/stencils-gitops.yml
+    - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-base.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
+    - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-status.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
+    - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-pipeline.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
+    - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-gitops.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
 toolchains:
-  preset: preset/toolchains.yml
+  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/toolchains.yml@7f7d1ad99bfa5e68c75b5b0b3efb24860987f7b5
