@@ -8,9 +8,12 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
     spec:
+      initContainers:
+        - name: seed-apache-config
+          image: ghcr.io/librespeed/speedtest:6.2.1-alpine
       containers:
         - name: librespeed-speedtest
-          image: ghcr.io/librespeed/speedtest:6.2.1
+          image: ghcr.io/librespeed/speedtest:6.2.1-alpine
           resources:
             requests:
               cpu: 100m

@@ -14,22 +14,37 @@ spec:
         app: librespeed-speedtest
     spec:
       serviceAccountName: librespeed-speedtest
-      # Full non-root: it's a speedtest on unprivileged :8080 — no root needed. The official
-      # librespeed image defaults to root apache only by convention (stock master→setuid-drop);
-      # every path it writes is 1777 world-writable + www-data-owned — /var/www/html (the
-      # entrypoint cp's the frontend there at boot), /run/apache2 + /var/lock/apache2 (apache
-      # pid/lock) — so it runs cleanly as uid 33 (www-data) with no caps.
+      # Full non-root on the lean alpine image: a speedtest on unprivileged :8080 needs no root.
+      # Alpine apache runs as apache (uid 100 / gid 101) and bakes its runtime dirs 0755-root, so
+      # every path the entrypoint/apache writes is an emptyDir — /var/www/html (frontend cp),
+      # /run/apache2 (pid + mutex), /tmp — plus /etc/apache2 (entrypoint sed's Listen + docroot
+      # into httpd.conf), seeded writable by an initContainer. Logs are symlinked to stdout/stderr.
       securityContext:
         runAsNonRoot: true
-        runAsUser: 33
-        runAsGroup: 33
+        runAsUser: 100
+        runAsGroup: 101
+        fsGroup: 101
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        # Seed a writable copy of the baked /etc/apache2 so the non-root entrypoint can rewrite
+        # httpd.conf (Listen port + docroot). Runs as uid 100, so the copy is uid-100-owned; the
+        # alpine config tree has no symlinks, so a plain recursive copy is faithful.
+        - name: seed-apache-config
+          image: PLACEHOLDER_IMAGE
+          command: ["sh", "-c", "cp -r /etc/apache2/. /seed/"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: apache-config
+              mountPath: /seed
       containers:
         - name: librespeed-speedtest
           image: PLACEHOLDER_IMAGE
-          # readOnlyRootFilesystem NOT enabled: the entrypoint cp's the frontend into the baked
-          # web root /var/www/html at boot, which needs a writable rootfs.
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -42,6 +57,15 @@ spec:
           envFrom:
             - configMapRef:
                 name: PLACEHOLDER_CONFIGMAP
+          volumeMounts:
+            - name: apache-config
+              mountPath: /etc/apache2
+            - name: www-html
+              mountPath: /var/www/html
+            - name: apache-run
+              mountPath: /run/apache2
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: PLACEHOLDER_CPU
@@ -49,3 +73,12 @@ spec:
             limits:
               cpu: PLACEHOLDER_CPU_LIMIT
               memory: PLACEHOLDER_MEMORY_LIMIT
+      volumes:
+        - name: apache-config
+          emptyDir: {}
+        - name: www-html
+          emptyDir: {}
+        - name: apache-run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
