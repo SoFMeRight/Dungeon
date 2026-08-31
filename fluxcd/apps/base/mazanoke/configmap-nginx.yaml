@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mazanoke-nginx
+data:
+  nginx.conf: |
+    # Non-root nginx: listens on the unprivileged :8080 (no NET_BIND_SERVICE / root needed),
+    # error_log uses the `stderr` keyword (writes the inherited fd 2 — dodges the /dev/stderr
+    # reopen EACCES that hits non-root), pid + temp paths under the writable /tmp emptyDir.
+    worker_processes  auto;
+    error_log  stderr notice;
+    pid        /tmp/nginx.pid;
+    events {
+        worker_connections  1024;
+    }
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+        access_log    off;
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path       /tmp/proxy_temp;
+        fastcgi_temp_path     /tmp/fastcgi_temp;
+        uwsgi_temp_path       /tmp/uwsgi_temp;
+        scgi_temp_path        /tmp/scgi_temp;
+        sendfile      on;
+        keepalive_timeout  65;
+        server {
+            listen 8080;
+            root /usr/share/nginx/html;
+            location = /index.html {
+            }
+            location / {
+                try_files $uri $uri/ /index.html;
+            }
+            location /manifest.json {
+            }
+            location /service-worker.js {
+                default_type application/javascript;
+            }
+            location /assets/ {
+            }
+            error_page 404 /index.html;
+        }
+    }
