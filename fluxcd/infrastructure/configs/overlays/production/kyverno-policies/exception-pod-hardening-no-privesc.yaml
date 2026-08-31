@@ -1,0 +1,62 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: enforce-pod-hardening-no-privesc
+  namespace: zeldas-lullaby
+  annotations:
+    policies.kyverno.io/description: >-
+      Workloads exempt from enforce-pod-hardening's require-no-privilege-escalation rule.
+      Two classes: (1) genuine escalators that need allowPrivilegeEscalation:true, and
+      (2) Helm/operator-managed pods that don't need it but can't carry a pod-level
+      securityContext without chart/CR value changes — flagged TIGHTENABLE below as follow-ups.
+spec:
+  exceptions:
+    - policyName: enforce-pod-hardening
+      ruleNames:
+        - require-no-privilege-escalation
+  match:
+    any:
+      # frigate: privileged NVR (privileged implies allowPrivEsc).
+      - resources:
+          kinds: [Pod]
+          namespaces: [lens-of-truth]
+          names: ["frigate-*"]
+      # ark-se: arkmanager uses sudo. stable-diffusion-webui: ai-dock init.sh sudo/sudoers.
+      - resources:
+          kinds: [Pod]
+          namespaces: [shooting-gallery]
+          names: ["ark-se-tmc-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [tingle-tuner]
+          names: ["stable-diffusion-webui-*"]
+      # neko-gateway: STUNner stunnerd TURN dataplane (file-cap class, operator-managed).
+      - resources:
+          kinds: [Pod]
+          namespaces: [swift-sail]
+          names: ["neko-gateway-*"]
+      # photoprism-x: LSIO s6 image whose added caps must survive the setuid drop to run — documented
+      # allowPrivilegeEscalation:true. RE-EVALUATE: if speedtest-tracker (same pattern) rolls clean
+      # under privesc:false, this can tighten too.
+      - resources:
+          kinds: [Pod]
+          namespaces: [pedestal-of-time]
+          names: ["photoprism-x-*"]
+      # netbird-coturn: turnserver is a file-capability binary (NoNewPrivs strips its caps on exec).
+      # bank-vaults operator + openbao (Vault) pods. TIGHTENABLE: openbao's prometheus-exporter
+      # (statsd-exporter) sidecar doesn't need privesc — set via the Vault CR's containerSecurityContext.
+      - resources:
+          kinds: [Pod]
+          namespaces: [zeldas-lullaby]
+          names: ["netbird-coturn-*", "bank-vaults-operator-*", "openbao-*"]
+      # osticket mariadb: mariadb-operator `agent` sidecar (TIGHTENABLE via the MariaDB CR).
+      # harbor openresty + redis (Helm): neither escalates — TIGHTENABLE via harbor chart securityContext.
+      - resources:
+          kinds: [Pod]
+          namespaces: [hyrule-castle]
+          names: ["osticket-mariadb-*", "harbor-proxy-cache-*", "harbor-redis-*"]
+      # kimai mariadb agent (operator, TIGHTENABLE via CR). nextcloud-collabora (Helm chroot sandbox).
+      - resources:
+          kinds: [Pod]
+          namespaces: [temple-of-time]
+          names: ["kimai-mariadb-*", "nextcloud-collabora-*"]

@@ -3,6 +3,9 @@ kind: ClusterPolicy
 metadata:
   name: enforce-pod-hardening
   annotations:
+    # Pod-only (match uses operations:[CREATE]); disable controller autogen so the rule names
+    # stay stable for PolicyException references.
+    pod-policies.kyverno.io/autogen-controllers: none
     policies.kyverno.io/title: Enforce Pod Hardening (graduated dimensions)
     policies.kyverno.io/description: >-
       The Enforce companion to audit-pod-hardening. Dimensions graduate here ONE AT A TIME, only
@@ -20,10 +23,11 @@ metadata:
         - drop-caps (2026-08-31): app namespaces only — the 6 infra namespaces (root CSI/backup/
           gateway/reflector daemonsets) are excluded by name and stay audit-only. Repo-manifest
           exceptions carry the except-drop-caps label; Helm/operator workloads that can't be
-          pod-labelled are excluded by name pattern (PolicyExceptions are disabled in this Kyverno
-          — enable them before the far larger non-root/RO-root phases).
-      Not yet graduated (still audit-only, long legitimate-exception tails):
-      no-privilege-escalation, non-root, read-only-root-fs.
+          pod-labelled are excluded by name pattern (predates PolicyExceptions being enabled).
+        - no-privesc (2026-08-31): app namespaces only. Exceptions now use a PolicyException CR
+          (exception-pod-hardening-no-privesc, in zeldas-lullaby) — the scalable model for the
+          large phases ahead — plus the except-no-privesc label for repo-manifest self-documentation.
+      Not yet graduated (still audit-only, long legitimate-exception tails): non-root, read-only-root-fs.
 spec:
   validationFailureAction: Enforce
   background: false
@@ -120,3 +124,45 @@ spec:
               - securityContext:
                   capabilities:
                     drop: ["ALL"]
+    - name: require-no-privilege-escalation
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              operations: [CREATE]
+              namespaceSelector:
+                matchLabels:
+                  istio.io/dataplane-mode: ambient
+      exclude:
+        any:
+          - resources:
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: kyverno
+          - resources:
+              namespaceSelector:
+                matchLabels:
+                  policy.prplanit.com/enforce-hardening: "suspended"
+          # App namespaces only: infra namespaces (root CSI/backup/gateway/reflector) stay audit-only.
+          - resources:
+              namespaces:
+                - gorons-bracelet
+                - fairy-bottle
+                - king-of-red-lions
+                - gerudo-crest
+                - lakitu
+                - arylls-lookout
+          # Repo-manifest self-documenting exceptions.
+          - resources:
+              selector:
+                matchLabels:
+                  policy.prplanit.com/except-no-privesc: "true"
+      # Genuine escalators (sudo / file-cap binaries / privileged) + operator/Helm pods are
+      # exempted via the PolicyException exception-pod-hardening-no-privesc (zeldas-lullaby).
+      validate:
+        message: "SEC-3: allowPrivilegeEscalation must be false on every container. Exempt a genuine escalator via the no-privesc PolicyException or except-no-privesc label."
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  allowPrivilegeEscalation: false

@@ -11,6 +11,7 @@ resources:
   - audit-pod-hardening.yaml
   - mutate-pod-hardening.yaml
   - enforce-pod-hardening.yaml
+  - exception-pod-hardening-no-privesc.yaml
   - mutate-velero-maintenance-hardening.yaml
   - mutate-vault-sidecar-hardening.yaml
   - mutate-smb-pv-mount-options.yaml
