@@ -108,17 +108,27 @@ metadata:
 data:
   nginx.conf: |
     load_module modules/ngx_http_js_module.so;
+    # Non-root nginx: log via the stderr keyword (inherited fd, dodges the /dev/stderr reopen
+    # EACCES that hits non-root); pid + temp paths under the /tmp emptyDir.
+    error_log stderr notice;
+    pid /tmp/nginx.pid;
 
     events {
       worker_connections 1024;
     }
 
     http {
+      client_body_temp_path /tmp/client_temp;
+      proxy_temp_path /tmp/proxy_temp;
+      fastcgi_temp_path /tmp/fastcgi_temp;
+      uwsgi_temp_path /tmp/uwsgi_temp;
+      scgi_temp_path /tmp/scgi_temp;
+      access_log off;
       js_path "/etc/nginx/njs/";
       js_import admin from admin-list.js;
 
       server {
-        listen 80;
+        listen 8080;
         server_name _;
 
         location /AllowedCheaterSteamIDs.txt {
@@ -156,9 +166,13 @@ spec:
         vault-data-version: "1"
     spec:
       serviceAccountName: ark-sa-tmc-admin-list-server
-      # Stock nginx: master starts root, binds :80, drops to the nginx user for workers.
-      # Root-required partial: drop ALL + file-ownership/setuid caps + NET_BIND_SERVICE + seccomp.
+      # Full non-root: nginx serves the admin lists on the unprivileged :8080 (config via the
+      # nginx-conf configmap — stderr logging + /tmp pid/temp), run as the image's nginx uid 101.
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        fsGroup: 101
         seccompProfile:
           type: RuntimeDefault
       containers:
@@ -169,15 +183,8 @@ spec:
             capabilities:
               drop:
                 - ALL
-              add:
-                - CHOWN
-                - DAC_OVERRIDE
-                - FOWNER
-                - SETUID
-                - SETGID
-                - NET_BIND_SERVICE
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               name: http
           volumeMounts:
             - name: nginx-conf
@@ -188,7 +195,11 @@ spec:
             - name: vault-data
               mountPath: /vault-data
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
       volumes:
+        - name: tmp
+          emptyDir: {}
         - name: nginx-conf
           configMap:
             name: ark-sa-tmc-admin-list-nginx-conf
@@ -212,6 +223,6 @@ spec:
     app: ark-sa-tmc-admin-list-server
   ports:
     - port: 28019
-      targetPort: 80
+      targetPort: 8080
       protocol: TCP
       name: http
