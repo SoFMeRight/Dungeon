@@ -5,7 +5,9 @@ metadata:
 data:
   nginx.conf: |
     worker_processes auto;
-    error_log /dev/stderr warn;
+    # Non-root: error_log via the `stderr` keyword writes the inherited fd (dodges the /dev/stderr
+    # reopen EACCES that hits a non-root master); pid + proxy temp buffers under the /tmp emptyDir.
+    error_log stderr warn;
     pid /tmp/nginx.pid;
 
     events {
@@ -13,7 +15,14 @@ data:
     }
 
     http {
-      access_log /dev/stdout;
+      # access_log off: this nginx is a routing shim — Harbor itself logs the registry operations.
+      # (A non-root master can't reopen /dev/stdout anyway.)
+      access_log off;
+      client_body_temp_path /tmp/client_temp;
+      proxy_temp_path /tmp/proxy_temp;
+      fastcgi_temp_path /tmp/fastcgi_temp;
+      uwsgi_temp_path /tmp/uwsgi_temp;
+      scgi_temp_path /tmp/scgi_temp;
       resolver kube-dns.kube-system.svc.cluster.local valid=10s;
 
       # Map subdomain to Harbor proxy cache project name

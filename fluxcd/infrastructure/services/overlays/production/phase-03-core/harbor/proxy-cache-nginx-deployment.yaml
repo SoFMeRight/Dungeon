@@ -16,9 +16,24 @@ spec:
         policy.prplanit.com/ingress: "true"
     spec:
       serviceAccountName: harbor-proxy-cache-proxy
+      # Full non-root: openresty routing proxy on the unprivileged :8080 (config points logs at the
+      # stderr keyword + temp/pid at /tmp), run as nobody with a read-only rootfs.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: openresty
           image: docker.io/openresty/openresty:1.31.1.1-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8080
               protocol: TCP
@@ -27,6 +42,8 @@ spec:
               mountPath: /usr/local/openresty/nginx/conf/nginx.conf
               subPath: nginx.conf
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
           resources:
             requests:
               cpu: 50m
@@ -47,3 +64,5 @@ spec:
         - name: config
           configMap:
             name: harbor-proxy-cache-nginx
+        - name: tmp
+          emptyDir: {}
