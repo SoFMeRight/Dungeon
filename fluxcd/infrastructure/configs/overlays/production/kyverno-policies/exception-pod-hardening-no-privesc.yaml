@@ -35,13 +35,23 @@ spec:
           kinds: [Pod]
           namespaces: [swift-sail]
           names: ["neko-gateway-*"]
-      # photoprism-x: LSIO s6 image whose added caps must survive the setuid drop to run — documented
-      # allowPrivilegeEscalation:true. RE-EVALUATE: if speedtest-tracker (same pattern) rolls clean
-      # under privesc:false, this can tighten too.
+      # photoprism + photoprism-x: same app/image, two instances. Both start NON-ROOT (uid 2432)
+      # with added caps (CHOWN/DAC_OVERRIDE/FOWNER/SETUID/SETGID) that a non-root process needs in
+      # its effective set — NoNewPrivs blocks raising them, so both genuinely require privesc:true.
+      # (Contrast root-start images like apt-cacher/speedtest-tracker, which are fine at false.)
+      # Matched by app label to exclude the compliant mariadb sidecars.
+      - resources:
+          kinds: [Pod]
+          namespaces: [temple-of-time]
+          selector:
+            matchLabels:
+              app: photoprism
       - resources:
           kinds: [Pod]
           namespaces: [pedestal-of-time]
-          names: ["photoprism-x-*"]
+          selector:
+            matchLabels:
+              app: photoprism-x
       # netbird-coturn: turnserver is a file-capability binary (NoNewPrivs strips its caps on exec).
       # bank-vaults operator + openbao (Vault) pods. TIGHTENABLE: openbao's prometheus-exporter
       # (statsd-exporter) sidecar doesn't need privesc — set via the Vault CR's containerSecurityContext.
