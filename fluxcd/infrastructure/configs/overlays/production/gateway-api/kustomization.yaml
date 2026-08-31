@@ -8,6 +8,7 @@ resources:
   # ── EnvoyFilters: HSTS headers ─────────────────────────────
   - envoyfilter-hsts-cell-membrane.yaml
   - envoyfilter-hsts-xylem.yaml
+  - envoyfilter-anubis-realip-xylem.yaml
   # ── EnvoyFilters: http→https Location rewrite ──────────────
   - envoyfilter-https-location-cell-membrane.yaml
   - envoyfilter-https-location-xylem.yaml

@@ -1,0 +1,43 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: anubis-realip-xylem
+  namespace: arylls-lookout
+spec:
+  # anubis (v1.27.0) hard-fails every request with 500 "[misconfiguration]
+  # X-Real-Ip header is not set" unless the upstream proxy provides the client
+  # IP. The xylem gateway forwards neither X-Real-Ip nor X-Forwarded-For, so
+  # inject X-Real-Ip from the gateway's downstream client address on request.
+  # Scoped to anubis.pcfae.com so no other xylem backend is affected.
+  workloadSelector:
+    labels:
+      gateway.networking.k8s.io/gateway-name: xylem-gateway
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: GATEWAY
+        listener:
+          portNumber: 443
+          filterChain:
+            filter:
+              name: envoy.filters.network.http_connection_manager
+              subFilter:
+                name: envoy.filters.http.router
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: anubis-realip-lua
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+            defaultSourceCode:
+              inlineString: |
+                function envoy_on_request(request_handle)
+                  local host = request_handle:headers():get(":authority")
+                  if host and string.find(host, "anubis.pcfae.com", 1, true) then
+                    local addr = request_handle:streamInfo():downstreamDirectRemoteAddress()
+                    if addr then
+                      local ip = addr:gsub(":%d+$", ""):gsub("^%[", ""):gsub("%]$", "")
+                      request_handle:headers():replace("x-real-ip", ip)
+                    end
+                  end
+                end
