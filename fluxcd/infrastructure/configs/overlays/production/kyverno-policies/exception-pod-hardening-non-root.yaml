@@ -31,7 +31,7 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [hyrule-castle]
-          names: ["apt-cacher-ng-*", "bagisto-demo-*", "bookstack-*", "harbor-proxy-cache-*", "harbor-redis-*", "invoiceninja-app-*"]
+          names: ["apt-cacher-ng-*", "bagisto-demo-*", "bookstack-*", "invoiceninja-app-*"]
       # kokiri-forest — linkstack (apache-root, regenerates /etc/apache2 + binds :443)
       - resources:
           kinds: [Pod]

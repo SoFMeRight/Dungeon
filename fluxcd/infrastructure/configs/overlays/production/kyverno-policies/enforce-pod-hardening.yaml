@@ -114,8 +114,6 @@ spec:
           # MariaDB CR galera.agent.securityContext — no longer excepted.)
           - resources:
               names:
-                - "harbor-proxy-cache-*"
-                - "harbor-redis-*"
                 - "gitlab-praefect-db-init-*"
                 - "bank-vaults-operator-*"
                 - "openbao-*"

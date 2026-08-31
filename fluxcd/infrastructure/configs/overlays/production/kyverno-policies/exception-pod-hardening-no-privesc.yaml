@@ -60,13 +60,8 @@ spec:
           kinds: [Pod]
           namespaces: [zeldas-lullaby]
           names: ["netbird-coturn-*", "bank-vaults-operator-*", "openbao-*"]
-      # harbor openresty + redis (Helm): neither escalates — TIGHTENABLE via harbor chart securityContext.
-      # (osticket-mariadb agent now hardened via the MariaDB CR galera.agent.securityContext.)
-      - resources:
-          kinds: [Pod]
-          namespaces: [hyrule-castle]
-          names: ["harbor-proxy-cache-*", "harbor-redis-*"]
-      # nextcloud-collabora (Helm chroot sandbox). (kimai-mariadb agent now hardened via the CR.)
+      # nextcloud-collabora (Helm chroot sandbox). (kimai/osticket-mariadb agents + harbor-redis +
+      # harbor-proxy-cache all hardened directly — no longer excepted here.)
       - resources:
           kinds: [Pod]
           namespaces: [temple-of-time]
