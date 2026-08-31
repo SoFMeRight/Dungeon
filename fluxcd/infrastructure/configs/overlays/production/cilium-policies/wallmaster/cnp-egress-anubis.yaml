@@ -1,0 +1,25 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-anubis-egress
+spec:
+  description: >-
+    anubis is a bot-protection reverse proxy; its only egress dependency is
+    the upstream backend it protects, configured as TARGET
+    http://10.55.6.136:5005 (an external RFC1918 LAN host, outside all
+    cluster CIDRs). OG_PASSTHROUGH fetches OpenGraph metadata from that same
+    target. Narrow toCIDR allow on 5005/TCP; DNS + mesh ride the universal
+    CCNP baseline. Inert until egress default-deny is enabled for the ns.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: anubis
+  egress:
+    - toCIDR:
+        - "10.55.6.136/32"
+      toPorts:
+        - ports:
+            - port: "5005"
+              protocol: TCP
