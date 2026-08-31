@@ -15,6 +15,13 @@ spec:
         app: libretranslate
     spec:
       serviceAccountName: libretranslate
+      # GPU/CUDA workload. seccomp (RuntimeDefault) at pod scope covers both the root
+      # fix-permissions init and the main container; non-root is enforced on the main container
+      # (the init must stay root to chown the models volume). readOnlyRootFilesystem stays off
+      # on the app (CUDA writes /tmp).
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -45,6 +52,9 @@ spec:
             - containerPort: 5000
               name: http
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 1032
+            runAsGroup: 1032
             allowPrivilegeEscalation: false
             capabilities:
               drop:

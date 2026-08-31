@@ -15,9 +15,26 @@ spec:
         app: bookstack-db
     spec:
       serviceAccountName: bookstack-db
+      # LSIO/s6-overlay mariadb: MUST start as root PID 1 (s6 chowns /config + setuidgid-drops to
+      # PUID); can't run non-root without a rebuild. Partial hardening: seccomp + drop ALL, adding
+      # back only s6's needs (chown/chmod/setuid). :3306 is unprivileged — no NET_BIND_SERVICE.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: mariadb
           image: PLACEHOLDER_DB_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           env:
             - name: PUID
               value: "PLACEHOLDER_PUID"
