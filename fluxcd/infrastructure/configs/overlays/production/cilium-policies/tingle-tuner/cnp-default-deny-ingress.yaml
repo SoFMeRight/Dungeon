@@ -4,15 +4,21 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for tingle-tuner namespace.
-    Most apps have ingress labels — CCNPs cover kubelet-probes,
-    istio-ambient, prometheus-scrape, and ingress-gateway traffic.
-    searxng-redis has contract labels covered by redis contract CCNP.
+    Default-deny ingress AND egress for tingle-tuner namespace.
+    Ingress: CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape,
+    and ingress-gateway traffic; searxng-redis via the redis contract CCNP.
+    Egress: universal CCNPs cover DNS + mesh HBONE; per-app cnp-egress-*
+    grant model-fetcher (toFQDNs) and documented-broad (world) egress.
+    Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor
