@@ -546,4 +546,4 @@ finalizers, then remove the label.
 
 ## Related Documents
 
-- **[Workload Compliance Manifest](workload-compliance-manifest.md)** - Comprehensive tracking of all ~120 workloads against all production standards (security, resources, observability, reliability, images, network)
+- **[Workload Compliance Manifest](k8s/workload-compliance-manifest.md)** - Comprehensive tracking of all ~120 workloads against all production standards (security, resources, observability, reliability, images, network)
