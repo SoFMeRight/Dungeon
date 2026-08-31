@@ -91,6 +91,39 @@ spec:
             limits:
               cpu: 2000m
               memory: 2Gi
+          # UniFi wedges silently: if the web context fails to init (e.g. mongo unreachable at
+          # startup) tomcat keeps listening on 8443 and /status returns HTTP 200 with {"up":false}
+          # forever, so a status-code probe never catches it. Probe the /status BODY for up:true.
+          # startupProbe gives the slow JVM + DB-migration init up to 10m before liveness engages;
+          # liveness then auto-restarts a wedged context instead of leaving it stuck "starting up".
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -sk --max-time 4 https://localhost:8443/status | grep -q 'up.:true'"
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -sk --max-time 4 https://localhost:8443/status | grep -q 'up.:true'"
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -sk --max-time 4 https://localhost:8443/status | grep -q 'up.:true'"
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
   volumeClaimTemplates:
     - metadata:
         name: zeldas-lullaby-unifi-config
