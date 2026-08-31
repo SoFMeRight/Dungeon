@@ -46,13 +46,25 @@ spec:
       containers:
         - name: webui
           image: ghcr.io/ai-dock/stable-diffusion-webui:v2-cuda-12.1.1-base-22.04-v1.10.1
-          # Root container: clear the base's drop-ALL (init.sh's useradd + supervisord's
-          # per-program user-switching need SETUID/SETGID/CHOWN/DAC_OVERRIDE/FOWNER) and allow
-          # privilege management. No readOnlyRootFilesystem (init.sh writes across /etc,/root,/var).
+          # Root container (ai-dock init.sh needs root + a writable rootfs). Drop ALL and add back
+          # only what init.sh + supervisord require: CHOWN/DAC_OVERRIDE/FOWNER (useradd, chown -R,
+          # sudoers append), SETUID/SETGID/SETPCAP (supervisord drops each program to the baked
+          # `user`), KILL (root supervisord signals the uid-1000 webui process — the uids differ,
+          # so CAP_KILL is required to stop/restart it). privEsc stays on for init.sh's sudoers
+          # provisioning. No readOnlyRootFilesystem (init.sh writes across /etc,/root,/var).
           securityContext:
             allowPrivilegeEscalation: true
             capabilities:
-              drop: []
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
+                - SETPCAP
+                - KILL
           env:
             # Only start the webui supervisor program — silences cloudflared/jupyter/sshd/etc,
             # incl. the cf_tunnel program that was erroring on the (now-substituted) $USER_NAME.
