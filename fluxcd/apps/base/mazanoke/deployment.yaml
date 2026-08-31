@@ -19,12 +19,16 @@ spec:
       containers:
         - name: mazanoke
           image: ghcr.io/civilblur/mazanoke:v1.1.6
-          # nginx serving static (client-side image optimizer), binds :80. Partial hardening:
-          # drop ALL + file-perm/setuid caps + NET_BIND_SERVICE for the :80 bind + seccomp.
+          # nginx serving static (client-side image optimizer), binds :80. Root master
+          # setuid-drops workers, so it stays root with curated caps + NET_BIND_SERVICE for
+          # the :80 bind + seccomp. readOnlyRootFilesystem on top: nginx's only writes are
+          # /run/nginx.pid + the /var/cache/nginx temp dirs (emptyDirs below); access/error
+          # logs are symlinked to stdout/stderr, so nothing else touches the rootfs.
           securityContext:
             seccompProfile:
               type: RuntimeDefault
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -46,3 +50,13 @@ spec:
             limits:
               cpu: 500m
               memory: 128Mi
+          volumeMounts:
+            - name: run
+              mountPath: /run
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+      volumes:
+        - name: run
+          emptyDir: {}
+        - name: nginx-cache
+          emptyDir: {}
