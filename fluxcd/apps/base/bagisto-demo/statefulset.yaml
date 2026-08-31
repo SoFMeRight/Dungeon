@@ -19,6 +19,7 @@ spec:
         - name: copy-app
           image: PLACEHOLDER_IMAGE
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
@@ -39,6 +40,7 @@ spec:
         - name: configure-env
           image: docker.io/busybox:1.38
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
@@ -84,6 +86,7 @@ spec:
         - name: setup-db
           image: PLACEHOLDER_IMAGE
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
@@ -113,6 +116,7 @@ spec:
           # Root-start apache/Laravel image: entrypoint sed-writes env, chowns storage, drops to
           # www-data, binds :80. drop ALL + the curated apache-root caps (still satisfies drop-ALL).
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL

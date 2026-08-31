@@ -43,7 +43,10 @@ spec:
           # dac_override/fsetid for /config ownership, kill for s6 supervision,
           # net_bind_service for nginx on :80/:443). Plus default seccomp.
           securityContext:
-            allowPrivilegeEscalation: true
+            # allowPrivilegeEscalation:false is compatible with the s6 privilege drop — s6 drops to
+            # PUID via the setuid()/setgid() syscalls (granted by the SETUID/SETGID caps below), which
+            # NoNewPrivs does NOT block; it only blocks GAINING privileges via setuid/file-cap binary exec.
+            allowPrivilegeEscalation: false
             seccompProfile:
               type: RuntimeDefault
             capabilities:

@@ -154,6 +154,7 @@ spec:
             - name: import
               mountPath: /photoprism/import
           securityContext:
+            allowPrivilegeEscalation: false
             privileged: false
       volumes:
         - name: originals

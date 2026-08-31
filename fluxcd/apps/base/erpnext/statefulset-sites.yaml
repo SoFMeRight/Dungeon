@@ -19,6 +19,7 @@ spec:
         - name: copy-assets
           image: PLACEHOLDER_ERPNEXT_IMAGE
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
@@ -38,6 +39,7 @@ spec:
         - name: configurator
           image: PLACEHOLDER_ERPNEXT_IMAGE
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
@@ -74,6 +76,7 @@ spec:
         - name: create-site
           image: PLACEHOLDER_ERPNEXT_IMAGE
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
@@ -128,6 +131,7 @@ spec:
         - name: backend
           image: PLACEHOLDER_ERPNEXT_IMAGE
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL

@@ -23,6 +23,7 @@ spec:
         - name: appflowy-ai
           image: PLACEHOLDER_AI_IMAGE
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL

@@ -20,6 +20,7 @@ spec:
           image: PLACEHOLDER_IMAGE
           command: ["true"]
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
@@ -30,6 +31,7 @@ spec:
           # user. drop ALL + the curated file-ownership + privilege-drop caps (still satisfies the
           # drop-ALL enforce rule).
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL

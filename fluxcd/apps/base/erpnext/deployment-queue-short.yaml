@@ -18,6 +18,7 @@ spec:
         - name: queue-short
           image: PLACEHOLDER_ERPNEXT_IMAGE
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
