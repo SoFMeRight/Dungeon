@@ -180,6 +180,7 @@ spec:
           image: docker.io/library/nginx:alpine
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
