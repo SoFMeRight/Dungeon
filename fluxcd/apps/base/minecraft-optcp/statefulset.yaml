@@ -29,6 +29,7 @@ spec:
           image: docker.io/itzg/minecraft-server:java25
           securityContext:
             allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -54,6 +55,10 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /data
+            # readOnlyRootFilesystem: HOME=/data (PVC) carries all runtime state; only /tmp lives
+            # on the (now read-only) rootfs — the JVM writes hsperfdata + jar/temp extraction there.
+            - name: tmp
+              mountPath: /tmp
           stdin: true
           tty: true
           resources:
@@ -63,6 +68,9 @@ spec:
             limits:
               cpu: 500m
               memory: 10Gi
+      volumes:
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data
