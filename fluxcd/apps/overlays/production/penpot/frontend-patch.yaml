@@ -33,6 +33,23 @@ spec:
                 enable-oidc-registration enable-smtp disable-registration
             - name: PENPOT_PUBLIC_URI
               value: "https://penpot.prplanit.com"
+          # Frontend nginx serves the SPA on 8080; probe it so a non-serving
+          # frontend surfaces as not-ready instead of "Running" behind a 503.
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
           volumeMounts:
             - name: penpot-assets
               mountPath: /opt/data/assets
@@ -42,19 +59,17 @@ spec:
               mountPath: /var/cache/nginx
             - name: nginx-run
               mountPath: /var/run
-            - name: nginx-confd
-              mountPath: /etc/nginx/conf.d
       volumes:
         - name: penpot-assets
           persistentVolumeClaim:
             claimName: penpot-assets-pvc
-        # readOnlyRootFilesystem: nginx frontend templates config into conf.d; cache/pid/tmp scratch.
+        # readOnlyRootFilesystem: nginx needs writable pid/cache/temp scratch only.
+        # conf.d stays on the read-only rootfs — it holds the image's shipped
+        # server config (listen 8080) that nginx loads via include.
         - name: tmp
           emptyDir: {}
         - name: nginx-cache
           emptyDir: {}
         - name: nginx-run
-          emptyDir: {}
-        - name: nginx-confd
           emptyDir: {}
   volumeClaimTemplates: []
