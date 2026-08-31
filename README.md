@@ -17,7 +17,7 @@ This repository seeks to be the source of truth regarding the active state of my
 <!-- sf:badges:end -->
 
 <!-- sf:stack:start -->
-[![Ansible](https://img.shields.io/badge/Ansible-automation-EE0000?logo=ansible&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/ansible) [![Kubernetes](https://img.shields.io/badge/Kubernetes-k8s-326CE5?logo=kubernetes&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/fluxcd) [![FluxCD](https://img.shields.io/badge/FluxCD-gitops-5468FF?logo=flux&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/fluxcd) [![Applications](https://img.shields.io/badge/Applications-169-0F1689?logo=kubernetes&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/docs/Apps_&_Services-Overview.md) [![Compose](https://img.shields.io/badge/Compose-stacks-2496ED?logo=docker&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/docker)
+[![Ansible](https://img.shields.io/badge/Ansible-automation-EE0000?logo=ansible&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/ansible) [![Kubernetes](https://img.shields.io/badge/Kubernetes-k8s-326CE5?logo=kubernetes&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/fluxcd) [![FluxCD](https://img.shields.io/badge/FluxCD-gitops-5468FF?logo=flux&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/fluxcd) [![Applications](https://img.shields.io/badge/Applications-169-0F1689?logo=kubernetes&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/docs/Apps_&_Services-Overview.md) [![Compose](https://img.shields.io/badge/Compose-stacks-2496ED?logo=docker&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/docker-compose)
 <!-- sf:stack:end -->
 
 ---
