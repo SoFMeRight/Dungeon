@@ -55,6 +55,10 @@ spec:
           containers:
             - name: kimai
               image: docker.io/kimai/kimai2:apache
+              securityContext:
+                capabilities:
+                  drop:
+                    - ALL
               command: ["/bin/bash", "-c"]
               args:
                 - |

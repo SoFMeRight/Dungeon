@@ -19,9 +19,17 @@ spec:
         - name: init
           image: PLACEHOLDER_IMAGE
           command: ["true"]
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
       containers:
         - name: apt-cacher-ng
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 3142
               name: http

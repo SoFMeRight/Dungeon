@@ -18,6 +18,10 @@ spec:
       initContainers:
         - name: copy-app
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -34,6 +38,10 @@ spec:
               mountPath: /data
         - name: configure-env
           image: docker.io/busybox:1.38
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -75,6 +83,10 @@ spec:
               mountPath: /data
         - name: setup-db
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           command:
             - sh
             - -c
@@ -98,6 +110,10 @@ spec:
       containers:
         - name: bagisto-demo
           image: PLACEHOLDER_IMAGE
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 80
               name: http

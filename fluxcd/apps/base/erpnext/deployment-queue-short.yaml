@@ -17,6 +17,10 @@ spec:
       containers:
         - name: queue-short
           image: PLACEHOLDER_ERPNEXT_IMAGE
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           command:
             - bench
             - worker

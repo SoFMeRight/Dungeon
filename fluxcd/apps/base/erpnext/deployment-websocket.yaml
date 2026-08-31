@@ -17,6 +17,10 @@ spec:
       containers:
         - name: websocket
           image: PLACEHOLDER_ERPNEXT_IMAGE
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           command:
             - node
             - /home/frappe/frappe-bench/apps/frappe/socketio.js

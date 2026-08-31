@@ -17,6 +17,10 @@ spec:
       containers:
         - name: minio
           image: PLACEHOLDER_MINIO_IMAGE
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 9000
               name: api

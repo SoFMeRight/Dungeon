@@ -18,6 +18,10 @@ spec:
       initContainers:
         - name: copy-assets
           image: PLACEHOLDER_ERPNEXT_IMAGE
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           command:
             - bash
             - -c
@@ -33,6 +37,10 @@ spec:
               mountPath: /mnt/sites
         - name: configurator
           image: PLACEHOLDER_ERPNEXT_IMAGE
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           command:
             - bash
             - -c
@@ -65,6 +73,10 @@ spec:
               mountPath: /home/frappe/frappe-bench/logs
         - name: create-site
           image: PLACEHOLDER_ERPNEXT_IMAGE
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           command:
             - bash
             - -c
@@ -115,6 +127,10 @@ spec:
       containers:
         - name: backend
           image: PLACEHOLDER_ERPNEXT_IMAGE
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8000
               name: backend
