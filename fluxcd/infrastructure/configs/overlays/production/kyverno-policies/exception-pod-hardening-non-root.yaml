@@ -1,0 +1,97 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: enforce-pod-hardening-non-root
+  namespace: zeldas-lullaby
+  annotations:
+    policies.kyverno.io/description: >-
+      Workloads exempt from enforce-pod-hardening's require-run-as-non-root rule. All are
+      genuinely root-required (LSIO/s6 root-start, apache/php-fpm bind+chown, gluetun shared-netns,
+      root-only vendor images, host-level network/security tools, operator/Helm pods). RE-EVALUATE
+      tags mark node/elixir apps that MIGHT harden with more work — follow-ups, not dead ends.
+spec:
+  exceptions:
+    - policyName: enforce-pod-hardening
+      ruleNames:
+        - require-run-as-non-root
+  match:
+    any:
+      # compass — host network/DNS/time services (bind :53/:123, need host access) + LSIO netbootxyz
+      - resources:
+          kinds: [Pod]
+          namespaces: [compass]
+          names: ["adguard-*", "adguardhome-sync-*", "chrony-*", "netbootxyz-*"]
+      # gossip-stone — nutify (UPS, needs device) + speedtest-tracker (LSIO s6)
+      - resources:
+          kinds: [Pod]
+          namespaces: [gossip-stone]
+          names: ["nutify-*", "speedtest-tracker-*"]
+      # hyrule-castle — apt-cacher-ng/bagisto (root-start chown), bookstack(+db) LSIO, invoiceninja
+      # apache-root, harbor (Helm openresty/redis)
+      - resources:
+          kinds: [Pod]
+          namespaces: [hyrule-castle]
+          names: ["apt-cacher-ng-*", "bagisto-demo-*", "bookstack-*", "harbor-proxy-cache-*", "harbor-redis-*", "invoiceninja-app-*"]
+      # kokiri-forest — linkstack (apache-root, regenerates /etc/apache2 + binds :443)
+      - resources:
+          kinds: [Pod]
+          namespaces: [kokiri-forest]
+          names: ["linkstack-*"]
+      # lens-of-truth — crowdsec/wazuh (SIEM, host access), frigate (privileged), home-assistant (devices)
+      - resources:
+          kinds: [Pod]
+          namespaces: [lens-of-truth]
+          names: ["crowdsec-*", "frigate-*", "home-assistant-*", "wazuh-manager-*"]
+      # lost-woods — ferdium/organizr LSIO s6; homarr (RE-EVALUATE: node app, possibly hardenable)
+      - resources:
+          kinds: [Pod]
+          namespaces: [lost-woods]
+          names: ["ferdium-*", "homarr-*", "organizr-*"]
+      # pedestal-of-time — lubelogger (DataProtection keys), monica (php-fpm root), paperless (root init),
+      # plex-ms-x (s6 root-start)
+      - resources:
+          kinds: [Pod]
+          namespaces: [pedestal-of-time]
+          names: ["lubelogger-*", "monica-*", "paperless-webserver-*", "plex-ms-x-*"]
+      # shooting-gallery — ark-se (root/sudo game), emulatorjs LSIO, romm(+db) root vendor
+      - resources:
+          kinds: [Pod]
+          namespaces: [shooting-gallery]
+          names: ["ark-se-tmc-*", "emulatorjs-*", "romm-*"]
+      # swift-sail — gluetun cohort (shared netns, can't pod-level non-root) + LSIO *arr + root-vendor.
+      # RE-EVALUATE: byparr/pinchflat/jellyseerr/overseerr (node/elixir) may harden with work.
+      - resources:
+          kinds: [Pod]
+          namespaces: [swift-sail]
+          names:
+            - "anirra-*"
+            - "bazarr-*"
+            - "byparr-*"
+            - "downloadarrs-*"
+            - "jellyseerr-*"
+            - "neko-gateway-*"
+            - "neko-vpn-*"
+            - "overseerr-*"
+            - "pinchflat-*"
+            - "prowlarr-*"
+            - "pyload-ng-*"
+            - "sabnzbd-*"
+            - "thelounge-*"
+      # temple-of-time — appflowy web/admin (entrypoint sed-writes root-owned /app), calibre-web LSIO,
+      # kimai/nextcloud apache-root(+ their cronjobs/sidecars), linkwarden (deliberately root), plex s6,
+      # shlink-db LSIO mariadb
+      - resources:
+          kinds: [Pod]
+          namespaces: [temple-of-time]
+          names: ["appflowy-admin-frontend-*", "appflowy-web-*", "calibre-web-*", "kimai-*", "linkwarden-*", "nextcloud-*", "plex-*", "shlink-db-*"]
+      # tingle-tuner — faster-whisper LSIO, hrconvert2 apache-root, stable-diffusion-webui ai-dock root
+      - resources:
+          kinds: [Pod]
+          namespaces: [tingle-tuner]
+          names: ["faster-whisper-*", "hrconvert2-*", "stable-diffusion-webui-*"]
+      # zeldas-lullaby — bank-vaults/openbao (Vault operator), netbird-dashboard (supervisord),
+      # netbox-server LSIO, unifi-app LSIO
+      - resources:
+          kinds: [Pod]
+          namespaces: [zeldas-lullaby]
+          names: ["bank-vaults-operator-*", "netbird-dashboard-*", "netbox-server-*", "openbao-*", "unifi-app-*"]

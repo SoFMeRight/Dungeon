@@ -27,7 +27,9 @@ metadata:
         - no-privesc (2026-08-31): app namespaces only. Exceptions now use a PolicyException CR
           (exception-pod-hardening-no-privesc, in zeldas-lullaby) — the scalable model for the
           large phases ahead — plus the except-no-privesc label for repo-manifest self-documentation.
-      Not yet graduated (still audit-only, long legitimate-exception tails): non-root, read-only-root-fs.
+        - non-root (2026-08-31): app namespaces only. ~63 genuinely root-required workloads exempted
+          via exception-pod-hardening-non-root (LSIO/s6/apache/gluetun/vendor/security/operator).
+      Not yet graduated (still audit-only, long legitimate-exception tails): read-only-root-fs.
 spec:
   validationFailureAction: Enforce
   background: false
@@ -166,3 +168,48 @@ spec:
             containers:
               - securityContext:
                   allowPrivilegeEscalation: false
+    - name: require-run-as-non-root
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              operations: [CREATE]
+              namespaceSelector:
+                matchLabels:
+                  istio.io/dataplane-mode: ambient
+      exclude:
+        any:
+          - resources:
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: kyverno
+          - resources:
+              namespaceSelector:
+                matchLabels:
+                  policy.prplanit.com/enforce-hardening: "suspended"
+          # App namespaces only: infra namespaces (root CSI/backup/gateway/reflector) stay audit-only.
+          - resources:
+              namespaces:
+                - gorons-bracelet
+                - fairy-bottle
+                - king-of-red-lions
+                - gerudo-crest
+                - lakitu
+                - arylls-lookout
+          # Repo-manifest self-documenting exceptions.
+          - resources:
+              selector:
+                matchLabels:
+                  policy.prplanit.com/except-non-root: "true"
+      # ~63 genuinely root-required workloads are exempted via the PolicyException
+      # exception-pod-hardening-non-root (zeldas-lullaby).
+      validate:
+        message: "SEC-1/2: runAsNonRoot must be true (pod-level or every container). Exempt a root-required workload via the non-root PolicyException or except-non-root label."
+        anyPattern:
+          - spec:
+              securityContext:
+                runAsNonRoot: true
+          - spec:
+              containers:
+                - securityContext:
+                    runAsNonRoot: true
