@@ -9,10 +9,11 @@ This repository seeks to be the source of truth regarding the active state of my
 > Maintained by [SoFMeRight](https://github.com/sofmeright) for [PrPlanIT](https://prplanit.com) — Real world results for your real world expectations. <br>
 
 <!-- sf:project:start -->
+[![GitHub](https://img.shields.io/badge/GitHub-mirror-181717?logo=github)](https://github.com/SoFMeRight/dungeon) [![GitLab](https://img.shields.io/badge/GitLab-source-FC6D26?logo=gitlab)](https://gitlab.prplanit.com/SoFMeRight/dungeon) [![license](https://raw.githubusercontent.com/SoFMeRight/dungeon/main/.stagefreight/scribe/license.svg)](https://github.com/SoFMeRight/dungeon/blob/main/LICENSE) [![Open Issues](https://img.shields.io/github/issues/SoFMeRight/dungeon)](https://github.com/SoFMeRight/dungeon/issues) [![Open PRs](https://img.shields.io/github/issues-pr/SoFMeRight/dungeon)](https://github.com/SoFMeRight/dungeon/pulls) [![Contributors](https://img.shields.io/github/contributors/SoFMeRight/dungeon)](https://github.com/SoFMeRight/dungeon/graphs/contributors) [![donate](https://img.shields.io/badge/donate-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/T6T41IT163) [![sponsor](https://img.shields.io/badge/sponsor-EA4AAA?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/SoFMeRight)
 <!-- sf:project:end -->
 
 <!-- sf:badges:start -->
-[![pipeline](https://raw.githubusercontent.com/SoFMeRight/dungeon/main/.stagefreight/scribe/pipeline.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![Last Commit](https://img.shields.io/github/last-commit/SoFMeRight/dungeon)](https://github.com/SoFMeRight/dungeon/commits) [![StageFreight](https://img.shields.io/badge/StageFreight-0.10.0-310937?logo=readthedocs&logoColor=white)](https://stagefreight.prplanit.com)
+[![release](https://raw.githubusercontent.com/SoFMeRight/dungeon/main/.stagefreight/scribe/release.svg)](https://github.com/SoFMeRight/dungeon/releases) [![pipeline](https://raw.githubusercontent.com/SoFMeRight/dungeon/main/.stagefreight/scribe/pipeline.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![Security](https://img.shields.io/badge/Security-report-4B275F)](https://github.com/SoFMeRight/dungeon/blob/main/docs/container-security-audit.md) [![Last Commit](https://img.shields.io/github/last-commit/SoFMeRight/dungeon)](https://github.com/SoFMeRight/dungeon/commits) [![StageFreight](https://img.shields.io/badge/StageFreight-0.10.0-310937?logo=readthedocs&logoColor=white)](https://stagefreight.prplanit.com)
 <!-- sf:badges:end -->
 
 <!-- sf:stack:start -->
