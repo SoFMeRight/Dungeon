@@ -254,6 +254,10 @@ These use s6-overlay init system. Two approaches are supported:
 - Container starts as root, s6-overlay drops to PUID/PGID
 - Simpler setup but container technically runs as root initially
 - Required if using Docker Mods
+- **SEC-4 RO-root exception:** `readOnlyRootFilesystem` is NOT possible in Mode A — s6's preinit
+  chowns `/run` as root before dropping, which a read-only rootfs blocks. Hardening ceiling =
+  seccomp + drop-ALL + the curated s6 caps (CHOWN, DAC_OVERRIDE, FOWNER, SETUID, SETGID). `A (hardened)`
+  in the table below marks that ceiling reached + audited.
 
 **Option B: True non-root (RECOMMENDED)**
 - Use `runAsUser/runAsGroup/fsGroup` in securityContext
@@ -272,12 +276,12 @@ These use s6-overlay init system. Two approaches are supported:
 | readarr | swift-sail | linuxserver/readarr | A (root→drop) | 1000/1000 | 1000 | 2026-02-05 |
 | bazarr | swift-sail | linuxserver/bazarr | ? | ? | ? | - |
 | bookstack | temple-of-time | linuxserver/bookstack | ? | ? | ? | - |
-| calibre-web | temple-of-time | linuxserver/calibre-web | ? | ? | 1000 | - |
+| calibre-web | temple-of-time | linuxserver/calibre-web | A (hardened) | 8083/1000 | 1000 | 2026-08-31 |
 | code-server | tingle-tuner | linuxserver/code-server | ? | ? | ? | - |
-| emulatorjs | shooting-gallery | linuxserver/emulatorjs | ? | ? | ? | - |
-| ferdium | tingle-tuner | linuxserver/ferdium | ? | ? | ? | - |
-| faster-whisper | tingle-tuner | linuxserver/faster-whisper | ? | ? | ? | - |
-| netbootxyz | pedestal-of-time | linuxserver/netbootxyz | ? | ? | ? | - |
+| emulatorjs | shooting-gallery | linuxserver/emulatorjs | A (hardened) | 1000/1000 | - | 2026-08-31 |
+| ferdium | lost-woods | linuxserver/ferdium | A (hardened) | 1000/1000 | - | 2026-08-31 |
+| faster-whisper | tingle-tuner | linuxserver/faster-whisper | A (hardened) | 1000/1000 | - | 2026-08-31 |
+| netbootxyz | compass | linuxserver/netbootxyz | A (hardened) | 1000/1000 | - | 2026-08-31 |
 | organizr | lost-woods | linuxserver/organizr | ? | ? | ? | - |
 | projectsend | temple-of-time | linuxserver/projectsend | ? | ? | ? | - |
 | prowlarr | swift-sail | linuxserver/prowlarr | ? | ? | ? | - |
