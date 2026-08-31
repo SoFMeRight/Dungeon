@@ -69,6 +69,9 @@ spec:
             limits:
               cpu: PLACEHOLDER_CPU_LIMIT
               memory: PLACEHOLDER_MEMORY_LIMIT
+      volumes:
+        - name: tmp
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: storage
