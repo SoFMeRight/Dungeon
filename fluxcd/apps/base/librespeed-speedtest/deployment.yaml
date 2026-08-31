@@ -66,6 +66,12 @@ spec:
               mountPath: /run/apache2
             - name: tmp
               mountPath: /tmp
+            # /var/www/logs → /var/log/apache2, whose error.log/access.log symlink to
+            # /dev/stderr,/dev/stdout — a non-root process can't reopen those (CRI-O's stdio
+            # pipes are root-owned → EACCES). Give apache a writable dir so it writes real log
+            # files instead. Trade-off: logs land here, not in `kubectl logs`.
+            - name: apache-logs
+              mountPath: /var/log/apache2
           resources:
             requests:
               cpu: PLACEHOLDER_CPU
@@ -81,4 +87,6 @@ spec:
         - name: apache-run
           emptyDir: {}
         - name: tmp
+          emptyDir: {}
+        - name: apache-logs
           emptyDir: {}
