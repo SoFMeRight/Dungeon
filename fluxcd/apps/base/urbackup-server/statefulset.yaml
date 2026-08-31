@@ -16,9 +16,27 @@ spec:
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: urbackup-server
           image: PLACEHOLDER_IMAGE
+          # Backup server: stays root to store client files preserving arbitrary ownership.
+          # Partial ceiling: drop ALL + file-ownership caps (CHOWN/DAC_OVERRIDE/FOWNER) + the
+          # privilege-drop caps (SETUID/SETGID) + no-privesc. non-root/RO-root left off (writes
+          # arbitrary-owner files + hostNetwork). (Undeployed/frozen — verify on resurrection.)
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
           ports:
             - containerPort: 55414
               name: urbackup

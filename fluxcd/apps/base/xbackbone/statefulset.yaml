@@ -14,9 +14,27 @@ spec:
       labels:
         app: xbackbone
     spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: xbackbone
           image: PLACEHOLDER_IMAGE
+          # LSIO s6-overlay: starts root then drops to abc (PUID); RO-root/non-root need a rebuild.
+          # Partial ceiling: drop ALL + s6's file-ownership caps + NET_BIND_SERVICE (nginx binds
+          # :80/:443) + no-privesc. (Undeployed/frozen — verify on resurrection.)
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
+                - NET_BIND_SERVICE
           ports:
             - containerPort: 80
               name: http

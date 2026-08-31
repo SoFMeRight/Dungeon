@@ -15,6 +15,9 @@ spec:
         app: whisparr
     spec:
       shareProcessNamespace: true
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: whisparr
           image: PLACEHOLDER_IMAGE
@@ -36,9 +39,20 @@ spec:
               mountPath: /downloads/zz-whisparr
             - name: smb-xxx-media
               mountPath: /media/Videos
+          # hotio s6-overlay: starts root then s6 drops to PUID; RO-root/non-root need an image
+          # rebuild. Partial ceiling: drop ALL + s6's file-ownership caps + no-privesc. NET_ADMIN
+          # is preserved from the prior VPN-sidecar layout. (Undeployed/frozen — verify on resurrection.)
           securityContext:
+            allowPrivilegeEscalation: false
             capabilities:
+              drop:
+                - ALL
               add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
                 - NET_ADMIN
           resources:
             requests:
