@@ -29,7 +29,11 @@ metadata:
           large phases ahead — plus the except-no-privesc label for repo-manifest self-documentation.
         - non-root (2026-08-31): app namespaces only. ~63 genuinely root-required workloads exempted
           via exception-pod-hardening-non-root (LSIO/s6/apache/gluetun/vendor/security/operator).
-      Not yet graduated (still audit-only, long legitimate-exception tails): read-only-root-fs.
+        - read-only-root-fs (2026-08-31): app namespaces only. Mostly a ratchet — ~124 workloads
+          genuinely can't run a read-only rootfs (DBs, LSIO/s6, gitlab/harbor Helm, apache-root, GPU,
+          ai-dock, gluetun, root-vendor), exempted via exception-pod-hardening-ro-rootfs; the ~10
+          RO-root-clean workloads (stateless exporters, VictoriaMetrics, appflowy rust, uptime-kuma,
+          searxng) are hardened. All five dimensions are now enforced.
 spec:
   validationFailureAction: Enforce
   background: false
@@ -213,3 +217,45 @@ spec:
               containers:
                 - securityContext:
                     runAsNonRoot: true
+    - name: require-readonly-root-fs
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              operations: [CREATE]
+              namespaceSelector:
+                matchLabels:
+                  istio.io/dataplane-mode: ambient
+      exclude:
+        any:
+          - resources:
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: kyverno
+          - resources:
+              namespaceSelector:
+                matchLabels:
+                  policy.prplanit.com/enforce-hardening: "suspended"
+          # App namespaces only: infra namespaces (root CSI/backup/gateway/reflector) stay audit-only.
+          - resources:
+              namespaces:
+                - gorons-bracelet
+                - fairy-bottle
+                - king-of-red-lions
+                - gerudo-crest
+                - lakitu
+                - arylls-lookout
+          # Repo-manifest self-documenting exceptions.
+          - resources:
+              selector:
+                matchLabels:
+                  policy.prplanit.com/except-ro-rootfs: "true"
+      # ~124 workloads that genuinely can't run a read-only rootfs are exempted via the
+      # PolicyException exception-pod-hardening-ro-rootfs (zeldas-lullaby).
+      validate:
+        message: "SEC-4: readOnlyRootFilesystem must be true on every container (mount emptyDir for writable paths). Exempt via the ro-rootfs PolicyException or except-ro-rootfs label."
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  readOnlyRootFilesystem: true

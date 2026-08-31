@@ -13,6 +13,7 @@ resources:
   - enforce-pod-hardening.yaml
   - exception-pod-hardening-no-privesc.yaml
   - exception-pod-hardening-non-root.yaml
+  - exception-pod-hardening-ro-rootfs.yaml
   - mutate-velero-maintenance-hardening.yaml
   - mutate-vault-sidecar-hardening.yaml
   - mutate-smb-pv-mount-options.yaml

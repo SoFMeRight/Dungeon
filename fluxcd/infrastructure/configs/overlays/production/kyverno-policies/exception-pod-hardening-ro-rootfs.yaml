@@ -1,0 +1,120 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: enforce-pod-hardening-ro-rootfs
+  namespace: zeldas-lullaby
+  annotations:
+    policies.kyverno.io/description: >-
+      Workloads exempt from enforce-pod-hardening's require-readonly-root-fs rule. The vast
+      majority genuinely cannot run a read-only rootfs: databases (write data/conf/PID),
+      LSIO/s6 (write /run + /config), gitlab/harbor Helm charts, apache-root apps (write app
+      dir), GPU workloads (writable /tmp/CUDA), ai-dock, gluetun cohort, and root-vendor images.
+      The ~10 genuinely RO-root-clean workloads (stateless exporters, VictoriaMetrics, appflowy
+      rust services, uptime-kuma, searxng) are hardened instead of listed here.
+spec:
+  exceptions:
+    - policyName: enforce-pod-hardening
+      ruleNames:
+        - require-readonly-root-fs
+  match:
+    any:
+      - resources:
+          kinds: [Pod]
+          namespaces: [compass]
+          names: ["adguard-*", "adguardhome-sync-*", "chrony-*", "librespeed-speedtest-*", "netbootxyz-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [gossip-stone]
+          names: ["grafana-*", "nutify-*", "speedtest-tracker-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [hookshot]
+          names: ["tactical-*"]
+      # hyrule-castle — apt-cacher/bagisto/invoiceninja/osticket apache+root, bookstack LSIO,
+      # erpnext (writes /home/frappe + sites), gitlab + harbor Helm charts, opnform-client node.
+      - resources:
+          kinds: [Pod]
+          namespaces: [hyrule-castle]
+          names:
+            - "apt-cacher-ng-*"
+            - "bagisto-demo-*"
+            - "bookstack-*"
+            - "erpnext-*"
+            - "gitlab-*"
+            - "harbor-*"
+            - "invoiceninja-app-*"
+            - "opnform-client-*"
+            - "osticket-*"
+      - resources:
+          kinds: [Pod]
+          namespaces: [kokiri-forest]
+          names: ["linkstack-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [lens-of-truth]
+          names: ["crowdsec-*", "frigate-*", "home-assistant-*", "wazuh-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [lost-woods]
+          names: ["ferdium-*", "homarr-*", "organizr-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [pedestal-of-time]
+          names: ["lubelogger-*", "monica-*", "paperless-webserver-*", "photoprism-x-*", "plex-ms-x-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [shooting-gallery]
+          names: ["ark-sa-*", "ark-se-*", "emulatorjs-*", "romm-*"]
+      # swift-sail — gluetun cohort + LSIO *arr + root-vendor.
+      - resources:
+          kinds: [Pod]
+          namespaces: [swift-sail]
+          names:
+            - "anirra-*"
+            - "bazarr-*"
+            - "byparr-*"
+            - "downloadarrs-*"
+            - "jellyseerr-*"
+            - "neko-*"
+            - "overseerr-*"
+            - "pinchflat-*"
+            - "prowlarr-*"
+            - "pyload-ng-*"
+            - "sabnzbd-*"
+            - "thelounge-*"
+      # temple-of-time — appflowy web/admin (NOT cloud/ai, which are hardened), calibre-web LSIO,
+      # immich, kimai/nextcloud apache + sidecars, linkwarden root, photoprism/plex vendor, DBs.
+      - resources:
+          kinds: [Pod]
+          namespaces: [temple-of-time]
+          names:
+            - "appflowy-admin-frontend-*"
+            - "appflowy-web-*"
+            - "calibre-web-*"
+            - "immich-*"
+            - "kimai-*"
+            - "linkwarden-*"
+            - "nextcloud-*"
+            - "open-webui-*"
+            - "photoprism-*"
+            - "plex-*"
+            - "shlink-db-*"
+      # tingle-tuner — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp), apache
+      # (hrconvert2), renovate (containerbase installs toolchains at runtime). searxng is hardened.
+      - resources:
+          kinds: [Pod]
+          namespaces: [tingle-tuner]
+          names: ["faster-whisper-*", "hrconvert2-*", "libretranslate-*", "renovate-*", "stable-diffusion-webui-*"]
+      # zeldas-lullaby — Vault operator, netbird-dashboard supervisord, netbox/unifi LSIO, DBs.
+      - resources:
+          kinds: [Pod]
+          namespaces: [zeldas-lullaby]
+          names:
+            - "bank-vaults-operator-*"
+            - "netbird-dashboard-*"
+            - "netbox-server-*"
+            - "openbao-*"
+            - "semaphore-*"
+            - "twofauth-*"
+            - "unifi-*"
+            - "zitadel-*"
