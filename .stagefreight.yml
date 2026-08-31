@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # GENERATED / ENFORCED BY STAGEFREIGHT GOVERNANCE
 # Source repo: PrPlanIT/MaintenancePolicy
-# Source ref: a2396c2cfee58771f6753895b0821d18d6f2bc13
+# Source ref: f03f7405316448d8f77585f2def7f4906a8ae56b
 # Profile: sofmeright-gitops
 # This .stagefreight.yml is governed, not purely local.
 # To disable governance, detach from the control repo workflow.
@@ -10,26 +10,7 @@
 
 version: 1
 scribe:
-  files:
-    apps.inventory:
-      between:
-        - <!-- sf:apps:start -->
-        - <!-- sf:apps:end -->
-      file: docs/Apps_&_Services-Overview.md
-      items:
-        - cluster-inventory
-    readme.stack:
-      between:
-        - <!-- sf:stack:start -->
-        - <!-- sf:stack:end -->
-      file: README.md
-      items:
-        - ansible
-        - kubernetes
-        - fluxcd
-        - applications
-        - docker-compose
-  preset: preset/scribe-governance.yml
+  preset: preset/scribe-gitops.yml
 lint:
   preset: preset/lint-generic.yml
 security:
@@ -76,7 +57,7 @@ preset_source:
   cache_policy: authoritative
   project_id: PrPlanIT/MaintenancePolicy
   provider: gitlab
-  ref: a2396c2cfee58771f6753895b0821d18d6f2bc13
+  ref: f03f7405316448d8f77585f2def7f4906a8ae56b
   repo_url: https://gitlab.prplanit.com
 repos:
   github-mirror:
@@ -97,51 +78,10 @@ repos:
       - primary
     worktree: .
 stencils:
-  ansible:
-    color: '#EE0000'
-    label: Ansible
-    link: ansible
-    logo: ansible
-    logo_color: white
-    message: automation
-    render: shield
-  applications:
-    color: '#0F1689'
-    label: Applications
-    link: docs/Apps_&_Services-Overview.md
-    logo: kubernetes
-    logo_color: white
-    message: '{inventory.dungeon.count}'
-    render: shield
-  cluster-inventory:
-    catalog: .stagefreight/catalog.yml
-    type: k8s-inventory
-  docker-compose:
-    color: '#2496ED'
-    label: Compose
-    link: docker
-    logo: docker
-    logo_color: white
-    message: stacks
-    render: shield
-  fluxcd:
-    color: '#5468FF'
-    label: FluxCD
-    link: fluxcd
-    logo: flux
-    logo_color: white
-    message: gitops
-    render: shield
-  kubernetes:
-    color: '#326CE5'
-    label: Kubernetes
-    link: fluxcd
-    logo: kubernetes
-    logo_color: white
-    message: k8s
-    render: shield
   presets:
     - preset/stencils-base.yml
+    - preset/stencils-status.yml
     - preset/stencils-pipeline.yml
+    - preset/stencils-gitops.yml
 toolchains:
   preset: preset/toolchains.yml
