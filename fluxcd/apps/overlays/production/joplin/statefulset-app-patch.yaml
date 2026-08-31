@@ -35,10 +35,15 @@ spec:
               mountPath: /tmp
             - name: logs
               mountPath: /home/joplin/packages/server/logs
+            - name: temp
+              mountPath: /home/joplin/packages/server/temp
       volumes:
         # readOnlyRootFilesystem: data in the external postgres DB; PM2_HOME + scratch on /tmp.
         - name: tmp
           emptyDir: {}
-        # joplin-server writes to packages/server/logs on the read-only rootfs — give it a writable mount.
+        # joplin-server's two runtime dirs (logDir=${rootDir}/logs, tempDir=${rootDir}/temp) land on
+        # the read-only rootfs — give each a writable mount so it can create them on boot.
         - name: logs
+          emptyDir: {}
+        - name: temp
           emptyDir: {}
