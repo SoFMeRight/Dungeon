@@ -10,6 +10,7 @@ resources:
   - mutate-probe-on-ingress.yaml
   - audit-pod-hardening.yaml
   - mutate-pod-hardening.yaml
+  - mutate-automount-sa-token.yaml
   - enforce-pod-hardening.yaml
   - exception-pod-hardening-no-privesc.yaml
   - exception-pod-hardening-non-root.yaml

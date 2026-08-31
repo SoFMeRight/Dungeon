@@ -1,0 +1,95 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: mutate-automount-sa-token
+  annotations:
+    policies.kyverno.io/title: Mutate automountServiceAccountToken false (SEC-8)
+    policies.kyverno.io/description: >-
+      Most app pods carry a projected ServiceAccount token they never use — a live k8s-API
+      credential and pure post-RCE attack surface. This injects automountServiceAccountToken:false
+      on pods in istio-ambient app namespaces whose ServiceAccount has NO RBAC binding (a token
+      that grants nothing). The precondition SKIPS the ServiceAccounts that ARE bound to a
+      Role/ClusterRole (they genuinely call the API — operators, CNPG instance managers, gitlab
+      runner, monitoring); those keep their token. +() anchor = add-only, so an explicit setting is
+      never clobbered. CREATE-only + admission-time: existing pods keep their token until they next
+      roll, so the change lands gradually and observably. Infra namespaces (root CSI/backup/etc.)
+      are excluded — their controllers need the API. Escape hatch: label a namespace
+      policy.prplanit.com/automount-hardening=suspended, or a workload SA to add a RoleBinding to
+      opt back in. New API-consuming SAs must be added to the skip list below.
+spec:
+  background: true
+  rules:
+    - name: default-automount-false
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              operations: [CREATE]
+              namespaceSelector:
+                matchLabels:
+                  istio.io/dataplane-mode: ambient
+      exclude:
+        any:
+          - resources:
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: kyverno
+          - resources:
+              namespaceSelector:
+                matchLabels:
+                  policy.prplanit.com/automount-hardening: "suspended"
+          # Infra namespaces: root CSI/backup/gateway/reflector controllers need the API.
+          - resources:
+              namespaces:
+                - gorons-bracelet
+                - fairy-bottle
+                - king-of-red-lions
+                - gerudo-crest
+                - lakitu
+                - arylls-lookout
+      preconditions:
+        all:
+          # Skip pods whose ServiceAccount is RBAC-bound (genuinely uses the token). Everything
+          # else gets automountServiceAccountToken:false. Keep this list in sync with the app-ns
+          # ServiceAccounts that have a Role/ClusterRoleBinding.
+          - key: "{{ request.object.spec.serviceAccountName || 'default' }}"
+            operator: AnyNotIn
+            value:
+              - gatus
+              - gatus-postgres
+              - grafana
+              - grafana-postgres
+              - kube-state-metrics
+              - loki
+              - mimir-rollout-operator
+              - weave-gitops
+              - boundary-postgres
+              - tacticalrmm-tls-reader
+              - calcom-postgres
+              - gitlab-certmanager-issuer
+              - gitlab-gitlab-runner
+              - gitlab-postgresql
+              - gitlab-praefect-db-init
+              - harbor-postgres
+              - osticket-mariadb
+              - homarr-postgres
+              - appflowy-postgres
+              - kimai
+              - kimai-mariadb
+              - nextcloud
+              - nextcloud-postgres
+              - open-webui-postgres
+              - training-dummy-postgres
+              - bank-vaults-operator
+              - external-secrets
+              - external-secrets-cert-controller
+              - external-secrets-vault
+              - netbird-postgres
+              - openbao
+              - vaultwarden-postgres
+              - zitadel
+              - zitadel-postgres
+      mutate:
+        patchStrategicMerge:
+          spec:
+            +(automountServiceAccountToken): false
