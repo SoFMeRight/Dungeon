@@ -13,6 +13,9 @@ spec:
     metadata:
       labels:
         app: frigate
+        # Privileged NVR (GPU + device access) — cannot drop caps. Excepted from the drop-caps
+        # enforce rule; still audited in audit-pod-hardening.
+        policy.prplanit.com/except-drop-caps: "true"
     spec:
       serviceAccountName: frigate
       # Pin to a GPU with CUDA compute capability >= 7 (Ampere A2000 = 8). The GTX

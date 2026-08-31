@@ -13,6 +13,9 @@ spec:
     metadata:
       labels:
         app: ark-se-tmc
+        # Root/sudo-required game server (arkmanager) — cannot drop caps. Excepted from the
+        # drop-caps enforce rule; still audited in audit-pod-hardening.
+        policy.prplanit.com/except-drop-caps: "true"
     spec:
       serviceAccountName: ark-se-tmc
       enableServiceLinks: false

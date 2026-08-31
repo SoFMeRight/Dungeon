@@ -17,7 +17,12 @@ metadata:
       Graduated so far:
         - seccomp (2026-08-31): mutate-pod-hardening injects RuntimeDefault on every CREATE
           fleet-wide, so this rule is a pure backstop — it rejects only an explicit Unconfined.
-      Not yet graduated (still audit-only, long legitimate-exception tails): drop-caps,
+        - drop-caps (2026-08-31): app namespaces only — the 6 infra namespaces (root CSI/backup/
+          gateway/reflector daemonsets) are excluded by name and stay audit-only. Repo-manifest
+          exceptions carry the except-drop-caps label; Helm/operator workloads that can't be
+          pod-labelled are excluded by name pattern (PolicyExceptions are disabled in this Kyverno
+          — enable them before the far larger non-root/RO-root phases).
+      Not yet graduated (still audit-only, long legitimate-exception tails):
       no-privilege-escalation, non-root, read-only-root-fs.
 spec:
   validationFailureAction: Enforce
@@ -58,3 +63,60 @@ spec:
                 - securityContext:
                     seccompProfile:
                       type: "RuntimeDefault | Localhost"
+    - name: require-drop-all-capabilities
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              operations: [CREATE]
+              namespaceSelector:
+                matchLabels:
+                  istio.io/dataplane-mode: ambient
+      exclude:
+        any:
+          - resources:
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: kyverno
+          - resources:
+              namespaceSelector:
+                matchLabels:
+                  policy.prplanit.com/enforce-hardening: "suspended"
+          # App namespaces only: the infra namespaces host root CSI/backup/gateway/reflector
+          # daemonsets that legitimately hold caps — they stay audit-only.
+          - resources:
+              namespaces:
+                - gorons-bracelet
+                - fairy-bottle
+                - king-of-red-lions
+                - gerudo-crest
+                - lakitu
+                - arylls-lookout
+          # Repo-manifest exceptions (self-documenting label on the workload).
+          - resources:
+              selector:
+                matchLabels:
+                  policy.prplanit.com/except-drop-caps: "true"
+          # Helm/operator-managed exceptions that can't carry a pod label (PolicyExceptions are
+          # disabled in this Kyverno). harbor + gitlab (Helm), bank-vaults (operator), osticket/
+          # kimai mariadb (mariadb-operator init+agent sidecars), neko-gateway (STUNner dataplane),
+          # nextcloud-collabora (Helm subchart, keeps MKNOD/SYS_CHROOT sandbox caps).
+          - resources:
+              names:
+                - "harbor-proxy-cache-*"
+                - "harbor-redis-*"
+                - "gitlab-praefect-db-init-*"
+                - "bank-vaults-operator-*"
+                - "openbao-*"
+                - "osticket-mariadb-*"
+                - "kimai-mariadb-*"
+                - "neko-gateway-*"
+                - "nextcloud-collabora-*"
+      validate:
+        message: "SEC-6: every container must drop ALL capabilities (add back only the minimum). Exempt a workload with the label policy.prplanit.com/except-drop-caps: \"true\"."
+        pattern:
+          spec:
+            containers:
+              - securityContext:
+                  capabilities:
+                    drop: ["ALL"]
