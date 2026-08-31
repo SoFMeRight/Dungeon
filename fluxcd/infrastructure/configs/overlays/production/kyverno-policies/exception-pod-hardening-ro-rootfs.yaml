@@ -95,6 +95,7 @@ spec:
             - "linkwarden-*"
             - "nextcloud-*"
             - "open-webui-*"
+            - "penpot-frontend-*"
             - "photoprism-*"
             - "plex-*"
             - "shlink-db-*"

@@ -17,10 +17,15 @@ spec:
       containers:
         - name: frontend
           image: docker.io/penpotapp/frontend:2.17.1
+          # readOnlyRootFilesystem is deliberately NOT set (RO-root exception):
+          # the frontend entrypoint generates /etc/nginx/nginx.conf from
+          # /tmp/nginx.conf.template and rewrites config.js + /etc/nginx/overrides
+          # on the rootfs at startup (runs as penpot uid 1001, which owns them).
+          # A read-only rootfs — or an emptyDir over /tmp masking the template —
+          # leaves nginx serving the stock welcome page. Other hardening stays.
           securityContext:
             allowPrivilegeEscalation: false
             runAsNonRoot: true
-            readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
@@ -53,23 +58,8 @@ spec:
           volumeMounts:
             - name: penpot-assets
               mountPath: /opt/data/assets
-            - name: tmp
-              mountPath: /tmp
-            - name: nginx-cache
-              mountPath: /var/cache/nginx
-            - name: nginx-run
-              mountPath: /var/run
       volumes:
         - name: penpot-assets
           persistentVolumeClaim:
             claimName: penpot-assets-pvc
-        # readOnlyRootFilesystem: nginx needs writable pid/cache/temp scratch only.
-        # conf.d stays on the read-only rootfs — it holds the image's shipped
-        # server config (listen 8080) that nginx loads via include.
-        - name: tmp
-          emptyDir: {}
-        - name: nginx-cache
-          emptyDir: {}
-        - name: nginx-run
-          emptyDir: {}
   volumeClaimTemplates: []
