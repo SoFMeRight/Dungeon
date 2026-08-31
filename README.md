@@ -8,13 +8,12 @@ This repository seeks to be the source of truth regarding the active state of my
 
 > Maintained by [SoFMeRight](https://github.com/sofmeright) for [PrPlanIT](https://prplanit.com) — Real world results for your real world expectations. <br>
 
+<!-- sf:project:start -->
+<!-- sf:project:end -->
+
 <!-- sf:badges:start -->
 [![pipeline](https://raw.githubusercontent.com/SoFMeRight/dungeon/main/.stagefreight/scribe/pipeline.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![Last Commit](https://img.shields.io/github/last-commit/SoFMeRight/dungeon)](https://github.com/SoFMeRight/dungeon/commits) [![StageFreight](https://img.shields.io/badge/StageFreight-0.10.0-310937?logo=readthedocs&logoColor=white)](https://stagefreight.prplanit.com)
 <!-- sf:badges:end -->
-
-<!-- sf:tooling:start -->
-[![managed by StageFreight](https://img.shields.io/badge/managed_by_StageFreight-0.9.2--dev+177b6a5-310937)](https://github.com/sofmeright/stagefreight) [![pipeline](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/raw/main/.stagefreight/scribe/pipeline.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![Security](https://img.shields.io/badge/Security-report-4B275F)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/blob/main/docs/container-security-audit.md)
-<!-- sf:tooling:end -->
 
 <!-- sf:stack:start -->
 [![Ansible](https://img.shields.io/badge/Ansible-automation-EE0000?logo=ansible&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/ansible) [![Kubernetes](https://img.shields.io/badge/Kubernetes-k8s-326CE5?logo=kubernetes&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/fluxcd) [![FluxCD](https://img.shields.io/badge/FluxCD-gitops-5468FF?logo=flux&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/fluxcd) [![Applications](https://img.shields.io/badge/Applications-%7Binventory.dungeon.count%7D-0F1689?logo=kubernetes&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/docs/Apps_&_Services-Overview.md) [![Compose](https://img.shields.io/badge/Compose-stacks-2496ED?logo=docker&logoColor=white)](https://github.com/SoFMeRight/dungeon/blob/main/docker)
