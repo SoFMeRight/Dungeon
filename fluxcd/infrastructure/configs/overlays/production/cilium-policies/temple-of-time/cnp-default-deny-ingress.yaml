@@ -4,14 +4,24 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default deny all ingress for temple-of-time. Allows are additive
+    Default-deny ingress AND egress for temple-of-time. Allows are additive
     from CCNPs (HBONE guardrail, DNS, probes, metrics, contracts) and
     namespace-specific CNPs below.
+    Egress: DNS + intra-namespace mesh (app->db) + kube-apiserver ride the
+    universal CCNP baseline; per-app cnp-egress-* grant the content/media apps
+    (world+cluster — open-ended external fetch), nextcloud, clamav (freshclam),
+    and collabora (WOPI to nextcloud). DB/cache/frontend and internal-only apps
+    (penpot, whiteboard, joplin) need nothing beyond the mesh.
+    Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor

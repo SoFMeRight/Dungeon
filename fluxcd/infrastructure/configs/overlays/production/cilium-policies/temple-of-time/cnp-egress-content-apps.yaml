@@ -1,0 +1,44 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-content-apps-egress
+spec:
+  description: >-
+    These content/media apps fetch from an open-ended external set as their core
+    function — metadata/artwork providers (jellyfin, plex, calibre-web,
+    photoprism), arbitrary user URLs to archive/scrape/shorten (linkwarden,
+    mealie, shlink), LLM/AI and web-RAG endpoints (open-webui, appflowy-cloud/
+    worker), photo maps + ML models (immich), blog/wiki integrations + email
+    (ghost, wikijs-vegan, kimai), collab signaling (nextcloud-talk-hpb), and
+    external assets for PDF rendering (reactive-resume-chrome). That set cannot
+    be allowlisted, so world+cluster is granted (cluster covers in-cluster deps
+    beyond the mesh). DNS + intra-namespace mesh (app->db) ride the universal
+    CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - immich
+          - open-webui
+          - jellyfin
+          - plex
+          - linkwarden
+          - mealie
+          - calibre-web
+          - ghost
+          - photoprism
+          - shlink-app
+          - wikijs-vegan
+          - appflowy-cloud
+          - appflowy-worker
+          - nextcloud-talk-hpb
+          - kimai
+          - reactive-resume-chrome
+  egress:
+    - toEntities:
+        - world
+        - cluster

@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-nextcloud-clamav-egress
+spec:
+  description: >-
+    nextcloud-clamav runs freshclam, which pulls virus-definition updates from
+    the ClamAV CDN/mirrors (database.clamav.net and CDN edges) on 443/TCP. That
+    resolves to a rotating CDN set, so it is granted world. DNS rides the
+    universal CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: nextcloud-clamav
+  egress:
+    - toEntities:
+        - world

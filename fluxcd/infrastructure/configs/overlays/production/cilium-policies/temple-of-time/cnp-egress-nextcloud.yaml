@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-nextcloud-egress
+spec:
+  description: >-
+    nextcloud reaches an open-ended external set: the app store + update server,
+    federation/external-storage/SMTP, and user-configured integrations, plus its
+    in-cluster collabora/talk/clamav/elasticsearch/redis backends. That cannot be
+    allowlisted, so world+cluster is granted. DNS + intra-namespace mesh ride the
+    universal CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: nextcloud
+  egress:
+    - toEntities:
+        - world
+        - cluster

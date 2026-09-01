@@ -3,6 +3,10 @@ kind: Kustomization
 namespace: temple-of-time
 resources:
   - cnp-default-deny-ingress.yaml
+  - cnp-egress-collabora.yaml
+  - cnp-egress-content-apps.yaml
+  - cnp-egress-nextcloud.yaml
+  - cnp-egress-nextcloud-clamav.yaml
   - cnp-media-servers.yaml
   - cnp-overseerr-to-plex.yaml
   - cnp-galera-replication.yaml

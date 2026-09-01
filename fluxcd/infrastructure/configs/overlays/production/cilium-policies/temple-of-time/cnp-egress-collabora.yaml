@@ -1,0 +1,35 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-collabora-egress
+spec:
+  description: >-
+    collabora (Collabora Online / LibreOffice) serves documents back to nextcloud
+    over WOPI: it reaches nextcloud in-cluster and via its public URL (the WOPI
+    src), so cluster + the ingress gateways are granted. Fonts/assets are baked
+    into the image (no external fetch). DNS rides the universal CCNP baseline.
+    Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: collabora
+  egress:
+    - toEntities:
+        - cluster
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "15021"
+              protocol: TCP
