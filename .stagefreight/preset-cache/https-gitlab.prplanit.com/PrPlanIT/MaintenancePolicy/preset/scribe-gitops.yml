@@ -1,0 +1,35 @@
+# Scribe rows for a GITOPS repo: project + status + a stack-at-a-glance row. The repo IS
+# the cluster state, not an artifact — so the status row carries pipeline (live CI) next to
+# release, plus the estate's security-posture badge. The stack row is the gitops analog of
+# a container repo's image row: it follows badges, so rows 1-2 stay identical to every
+# other repo in the fleet and only the domain row differs.
+scribe:
+  files:
+    readme.project:
+      file: README.md
+      between: ["<!-- sf:project:start -->", "<!-- sf:project:end -->"]
+      inline: true
+      items: [repo-gh, repo-gl, license, issues, prs, contributors, donate, sponsor]
+    readme.badges:
+      file: README.md
+      between: ["<!-- sf:badges:start -->", "<!-- sf:badges:end -->"]
+      inline: true
+      items: [release, pipeline, security, last-commit, stagefreight]
+    readme.stack:
+      file: README.md
+      between: ["<!-- sf:stack:start -->", "<!-- sf:stack:end -->"]
+      inline: true
+      items: [ansible, kubernetes, fluxcd, applications, docker-compose]
+    apps.inventory:
+      file: "docs/Apps_&_Services-Overview.md"
+      between: ["<!-- sf:apps:start -->", "<!-- sf:apps:end -->"]
+      items: [cluster-inventory]
+  commit:
+    type: docs
+    message: "refresh generated badges"
+    add:
+      - README.md
+      - "docs/Apps_&_Services-Overview.md"
+      - ".stagefreight/scribe"
+    push: true
+    skip_ci: true
