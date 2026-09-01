@@ -3,5 +3,10 @@ kind: Kustomization
 namespace: lens-of-truth
 resources:
   - cnp-default-deny-ingress.yaml
+  - cnp-egress-crowdsec.yaml
+  - cnp-egress-crowdsec-cloudflare-bouncer.yaml
+  - cnp-egress-frigate.yaml
+  - cnp-egress-home-assistant.yaml
+  - cnp-egress-wazuh-manager.yaml
   - cnp-loadbalancers.yaml
   - cnp-iot-mesh.yaml

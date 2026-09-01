@@ -1,0 +1,22 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-wazuh-manager-egress
+spec:
+  description: >-
+    wazuh-manager fetches ruleset/CTI/vulnerability feed updates and runs
+    integrations (threat-intel lookups, webhooks) against an open-ended set of
+    external services on 443, so its outbound is granted world. Agents connect
+    inbound (LB CNP); the indexer is in-cluster (mesh/universal CCNP).
+    world+cluster covers external and in-cluster. Inert until egress
+    default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: wazuh-manager
+  egress:
+    - toEntities:
+        - world
+        - cluster

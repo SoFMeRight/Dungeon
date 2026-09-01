@@ -1,0 +1,36 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-crowdsec-cloudflare-bouncer-egress
+spec:
+  description: >-
+    crowdsec-cloudflare-bouncer pushes CrowdSec decisions into Cloudflare's
+    firewall via the Cloudflare API. Allow egress to api.cloudflare.com on
+    443/TCP, with L7 DNS. It reads decisions from the crowdsec LAPI in-cluster
+    (mesh/universal CCNP). Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: crowdsec-cloudflare-bouncer
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "api.cloudflare.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

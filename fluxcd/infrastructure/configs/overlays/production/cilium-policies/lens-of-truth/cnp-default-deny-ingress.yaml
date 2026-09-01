@@ -4,15 +4,25 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for lens-of-truth namespace.
-    IoT mesh, LB, and internal communication covered by explicit CNPs.
-    CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape,
-    and ingress-gateway traffic for labeled pods.
+    Default-deny ingress AND egress for lens-of-truth namespace.
+    Ingress: IoT mesh, LB, and internal communication covered by explicit CNPs;
+    CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, ingress-gw.
+    Egress: DNS + intra-namespace mesh (MQTT, wazuh-indexer) + kube-apiserver
+    ride the universal CCNP baseline; per-app cnp-egress-* grant crowdsec (CTI/
+    CAPI), the Cloudflare bouncer, frigate (LAN cameras + Frigate+), wazuh-manager
+    (feeds), and home-assistant (unbounded integrations); zigbee2mqtt keeps its
+    coordinator/MQTT allow (cnp-iot-mesh). mosquitto, wazuh-indexer/dashboard,
+    and crowdsec-dashboard are internal and need nothing external.
+    Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor

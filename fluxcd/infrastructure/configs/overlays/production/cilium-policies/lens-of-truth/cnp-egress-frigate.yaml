@@ -1,0 +1,38 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-frigate-egress
+spec:
+  description: >-
+    frigate pulls RTSP/HTTP streams from an open-ended set of LAN IP cameras,
+    optionally submits to Frigate+ (api.frigate.video), and its frigate-notify
+    sidecar posts alerts to notification services; that egress spans LAN and
+    public on many ports and cannot be allowlisted, so it is granted world.
+    mosquitto/go2rtc are in-cluster (mesh/universal CCNP). world+cluster covers
+    LAN/external and in-cluster; gateways granted explicitly for URL-based
+    notify targets. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: frigate
+  egress:
+    - toEntities:
+        - world
+        - cluster
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "15021"
+              protocol: TCP

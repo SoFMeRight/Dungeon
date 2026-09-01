@@ -1,0 +1,42 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-crowdsec-egress
+spec:
+  description: >-
+    crowdsec syncs with the CrowdSec Central API (CAPI) for the community
+    blocklist and CTI, and pulls hub collections/parsers/scenarios from the
+    CrowdSec hub CDN and GitHub. Allow egress to those hosts on 443/TCP, with
+    L7 DNS. Its local API is reached in-cluster by the bouncers (mesh/universal
+    CCNP). Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: crowdsec
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "api.crowdsec.net"
+        - matchPattern: "*.crowdsec.net"
+        - matchName: "github.com"
+        - matchName: "raw.githubusercontent.com"
+        - matchName: "objects.githubusercontent.com"
+        - matchPattern: "*.githubusercontent.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

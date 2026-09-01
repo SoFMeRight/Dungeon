@@ -1,0 +1,37 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-home-assistant-egress
+spec:
+  description: >-
+    home-assistant reaches an open-ended, user-configured set of integrations:
+    cloud APIs, LAN/IoT devices, and public services on arbitrary ports, so its
+    egress is inherently unbounded and cannot be allowlisted. world+cluster
+    covers external/LAN and in-cluster targets (mosquitto, openwakeword ride the
+    mesh/universal CCNP); the non-meshed gateways are granted explicitly. Inert
+    until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: home-assistant
+  egress:
+    - toEntities:
+        - world
+        - cluster
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "15021"
+              protocol: TCP
