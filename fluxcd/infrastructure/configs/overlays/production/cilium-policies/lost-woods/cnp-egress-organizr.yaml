@@ -1,0 +1,38 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-organizr-egress
+spec:
+  description: >-
+    organizr is a dashboard/homepage: it probes and proxies an open-ended,
+    user-configured set of services spanning in-cluster pods, LAN devices, and
+    public internet widgets, so its egress is inherently unbounded. world+cluster
+    covers external/LAN and in-cluster targets; the non-meshed gateways are
+    granted explicitly (the cluster entity does not match them). Its postgres/
+    redis are intra-namespace and ride the mesh (universal ambient CCNP). DNS +
+    mesh ride the universal CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: organizr
+  egress:
+    - toEntities:
+        - world
+        - cluster
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "15021"
+              protocol: TCP
