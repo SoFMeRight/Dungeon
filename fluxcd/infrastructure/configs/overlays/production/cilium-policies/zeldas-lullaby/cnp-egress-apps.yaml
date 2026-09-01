@@ -1,0 +1,34 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-apps-egress
+spec:
+  description: >-
+    These administrative apps reach open-ended external sets: zitadel (SMTP,
+    OIDC/SAML federation), netbird (WireGuard management/signal/TURN + peers),
+    oauth2-proxy (OIDC discovery + upstreams), semaphore (Ansible against the
+    LAN/remote fleet + git), unifi-app (LAN UniFi devices + firmware), vaultwarden
+    (push + HIBP), netbox-server (webhooks/scripts), and twofauth (service-icon
+    fetch). Those cannot be allowlisted, so world+cluster is granted; DBs and
+    the mesh ride the universal CCNP baseline. Inert until egress default-deny is
+    enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - zitadel
+          - netbird
+          - oauth2-proxy
+          - semaphore
+          - unifi-app
+          - vaultwarden
+          - netbox-server
+          - twofauth
+  egress:
+    - toEntities:
+        - world
+        - cluster

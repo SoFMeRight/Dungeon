@@ -3,6 +3,8 @@ kind: Kustomization
 namespace: zeldas-lullaby
 resources:
   - cnp-default-deny-ingress.yaml
+  - cnp-egress-apps.yaml
+  - cnp-egress-security-core.yaml
   - cnp-loadbalancers.yaml
   - cnp-webhooks.yaml
   - cnp-vault.yaml

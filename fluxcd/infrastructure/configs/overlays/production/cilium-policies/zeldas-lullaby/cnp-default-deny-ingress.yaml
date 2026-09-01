@@ -4,16 +4,26 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for zeldas-lullaby namespace.
-    Administrative services: vault, zitadel, external-secrets, kyverno,
-    netbird, netbox, oauth2-proxy, semaphore, twofauth, unifi, vaultwarden.
-    CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape,
-    postgres/redis contracts, and ingress-gateway traffic for labeled pods.
+    Default-deny ingress AND egress for zeldas-lullaby namespace.
+    Ingress: administrative services (vault, zitadel, external-secrets, kyverno,
+    netbird, netbox, oauth2-proxy, semaphore, twofauth, unifi, vaultwarden);
+    CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, postgres/redis
+    contracts, and ingress-gateway traffic for labeled pods.
+    Egress: DNS + intra-namespace mesh (app->db, vault raft, redis) +
+    kube-apiserver ride the universal CCNP baseline; cnp-egress-security-core
+    grants vault/external-secrets/kyverno and cnp-egress-apps grants the reaching-
+    external admin apps world+cluster. DBs, vault operators, redis/sentinel, and
+    the ESO cert-controller/webhook need nothing beyond the mesh.
+    Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor

@@ -1,0 +1,31 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-security-core-egress
+spec:
+  description: >-
+    The cluster security/secrets core reaches open-ended external sets: vault
+    forms its raft peer quorum and reaches its auto-unseal/transit + OIDC
+    backends; external-secrets syncs from the Vault LB (172.22.30.86 -> cluster)
+    and any configured external providers; the kyverno controllers verify image
+    signatures/data against arbitrary registries and post reports/webhooks. Those
+    cannot be allowlisted, so world+cluster is granted (kube-apiserver + mesh ride
+    the universal CCNP baseline). Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values:
+          - vault
+          - external-secrets
+          - kyverno-admission-controller
+          - kyverno-background-controller
+          - kyverno-cleanup-controller
+          - kyverno-reports-controller
+  egress:
+    - toEntities:
+        - world
+        - cluster
