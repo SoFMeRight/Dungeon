@@ -41,7 +41,7 @@ Living document tracking all workloads against production best practices aligned
 | 5.2.6 | Minimize SYS_ADMIN capability | SEC-6 | Enforcing |
 | 5.2.7-9 | Minimize host namespace sharing | SEC-9,10,11 | Tracking |
 | 5.2.10 | Minimize containers without securityContext | SEC-* | Enforcing |
-| 5.3.x | Network Policies | NET-* | Deployed (ingress; egress pending) |
+| 5.3.x | Network Policies | NET-* | Enforcing (ingress + egress default-deny) |
 | 5.4.1 | Secrets as files not env vars | SECRETS-2 | Tracking |
 | 5.7.x | General Policies | Various | Partial |
 
@@ -65,7 +65,7 @@ Living document tracking all workloads against production best practices aligned
 | CM (Config Mgmt) | CM-2,6,7 | GitOps, IMG-* | Implemented |
 | CP (Contingtic Plan) | CP-9,10 | BACKUP-* | Tracking |
 | IA (Identification) | IA-2,5 | SECRETS-*, mTLS | Partial |
-| SC (Sys/Comm Prot) | SC-7,8,13 | NET-*, ENCRYPT-* | Partial (NET deployed: istio ambient + Cilium; ENCRYPT tracking) |
+| SC (Sys/Comm Prot) | SC-7,8,13 | NET-*, ENCRYPT-* | Partial (NET enforced: istio ambient + Cilium ingress AND egress default-deny; ENCRYPT tracking) |
 | SI (Sys/Info Integ) | SI-2,3,4 | IMG-*, RUNTIME-* | Tracking |
 
 ---
@@ -138,18 +138,59 @@ Deployed as a two-layer, deny-by-default model across all app namespaces. Design
 |----|-------------|--------|--------|
 | NET-1 | NetworkPolicy exists | Yes | ✅ Cilium `default-deny-ingress` + CCNP contracts in every app namespace |
 | NET-2 | Ingress rules defined | Minimal required | ✅ istio `default-deny` AuthorizationPolicy + explicit per-identity ALLOW rules |
-| NET-3 | Egress rules defined | Minimal required | ⚠️ ingress-side enforced; egress default-deny not yet enabled (`enableDefaultDeny.egress: false`) |
+| NET-3 | Egress rules defined | Minimal required | ✅ egress default-deny (`enableDefaultDeny.egress: true`) enforced in all 16 app namespaces with per-app `cnp-egress-*` allows |
 | NET-4 | mTLS enabled | Yes (where possible) | ✅ istio ambient (ztunnel HBONE) — mTLS for all in-mesh traffic |
 
 > **Verified 2026-08-14:** all 12 internet-exposed namespaces run istio ambient + `default-deny` AuthorizationPolicy + per-identity ALLOWs + Cilium `default-deny-ingress` (VALID). This is the strongest layer of the posture. Two Cilium default-deny policies were found invalid (empty `ingress: []`) and repaired to the `enableDefaultDeny` + anchor-rule shape. App-to-app authz is enforced at the istio layer (ztunnel); Cilium is L3/L4 defense-in-depth (HBONE-aware).
 
-### Pod Security Admission (PSA)
+#### Egress default-deny campaign — COMPLETE 2026-09-01
 
-| ID | Requirement | Target | Notes |
-|----|-------------|--------|-------|
-| PSA-1 | Namespace PSA label | `restricted` or `baseline` | Per-namespace enforcement |
-| PSA-2 | PSA audit mode | `restricted` | Log violations |
-| PSA-3 | PSA warn mode | `restricted` | Warn on violations |
+Cilium L3/L4 egress default-deny is now enforced in **all 16 app namespaces**: `tingle-tuner, kokiri-forest, delivery-bag, compass, gossip-stone, shooting-gallery, pedestal-of-time, lost-woods, lens-of-truth, swift-sail, hookshot, temple-of-time, zeldas-lullaby, hyrule-castle, wallmaster, gerudo-crest`. Each namespace's `cnp-default-deny-ingress.yaml` now carries `enableDefaultDeny: {ingress: true, egress: true}` with a reserved-label egress anchor; per-app grants live in `cnp-egress-<app>.yaml` (inert `enableDefaultDeny: {ingress: false, egress: false}` = purely additive).
+
+**Universal baseline (CCNPs, `endpointSelector: {}`, cover every pod):** `ccnp-allow-dns-egress` (CoreDNS :53), `ccnp-allow-istio-ambient` (in-mesh HBONE :15008 — covers app→DB and all meshed intra-cluster deps), `ccnp-allow-kube-apiserver-egress`. Per-app CNPs therefore only grant **external + non-meshed + LAN** egress.
+
+**Rationalization tiers (per app, from what it DOES — not Hubble-derived):** no-egress · cluster-internal · DNS-only · specific RFC1918 (`toCIDR`) · specific-internet-FQDN (`toFQDNs` + paired L7-DNS rule) · documented-broad (`toEntities: world`/`world,cluster` for apps whose function is open-ended outbound — media metadata, archival/scrape, VPN tunnels, RMM/remote-desktop, LLM/AI, security CTI, admin integrations). VPN-sidecar pods (swift-sail) get `world`+`cluster` only — app traffic is inside the gluetun tunnel and invisible to Cilium.
+
+**Gateway callback caveat:** `toEntities: cluster` does NOT match the non-meshed (`ambient=none`) cell-membrane/xylem gateway pods, so workloads reaching in-cluster services by their public URL need an explicit `toEndpoints` gateway allow (ports 443/80/15021) — same pattern as monitoring probes.
+
+**Rollout method (per namespace):** write inert `cnp-egress-*` allows → set `PolicyAuditMode=Enabled` on all namespace endpoints (log-not-drop, survives policy regen) → commit the `egress: true` flip → watch AUDIT + exercise user-visible paths → disable audit = real enforcement. Every namespace verified with **0 egress drops**. Residual AUDIT/drops are cosmetic: cross-namespace gatus/uptime-kuma monitoring probes to app ports (pre-existing ingress artifact) and Redis-Sentinel retries to dead peer pod-IPs (live quorum rides HBONE).
+
+### Pod Security Admission (PSA) — Enforcing
+
+| ID | Requirement | Target | Status |
+|----|-------------|--------|--------|
+| PSA-1 | Namespace PSA `enforce` label | `baseline` (min) | ✅ `enforce=baseline` on 15 namespaces, `enforce=privileged` (deliberate exemption) on 7, `warn=restricted` on flux-system |
+| PSA-2 | PSA audit mode | set | ✅ `audit=baseline` on most namespaces |
+| PSA-3 | PSA warn mode | set | ✅ `warn=baseline` on most namespaces |
+
+> **Verified 2026-09-01:** native PSA is enforced cluster-wide. 15 namespaces enforce `baseline`; the 7 on `enforce=privileged` are deliberate exemptions for workloads that genuinely need it — `gorons-bracelet` (rook/storage), `swift-sail` (gluetun VPN), `king-of-red-lions` (traefik/stunner gateways), `lens-of-truth` (frigate/IoT), `lakitu` (hostNetwork), `fairy-bottle` (velero/backup), `gerudo-crest` (reflector). PSA `baseline` is the admission floor; the finer-grained SEC-* hardening is enforced above it by Kyverno (below).
+
+#### Kyverno pod-hardening — Enforcing (the SEC-* layer)
+
+Kyverno is deployed and actively enforcing, not merely auditing. Key ClusterPolicies:
+
+| Policy | Action | What it does |
+|--------|--------|--------------|
+| `enforce-pod-hardening` | **Enforce** | Blocks admission of pods violating the five SEC standards: SEC-7 seccompProfile RuntimeDefault/Localhost, SEC-6 drop ALL capabilities, SEC-3 allowPrivilegeEscalation=false, SEC-1/2 runAsNonRoot, SEC-4 readOnlyRootFilesystem — each with a per-workload exemption path |
+| `audit-pod-hardening` | Audit | Same five rules in report-only mode — tracks residual violations among exempted/in-flight workloads (the SEC-4 remediation campaign) |
+| `restrict-default-sa` | **Enforce** | Pods/controllers in ambient-mesh namespaces must set a non-default `serviceAccountName` (mesh identity hygiene) |
+| `gate-breakglass-label` | **Enforce** | Three-gate break-glass: an exemption only holds when kube-system carries `zt.breakglass/active=true` + the workload's label + non-stale; auto-expires stale break-glass |
+| `enforce-image-policy` | Audit | Image provenance/policy checks (report-only) |
+| `mutate-*` (probes, SA-token, sidecar/vault/velero/stunner hardening, contract labels) | Audit/mutate | Auto-inject hardening + contract labels at admission |
+
+`enforce-pod-hardening` matches `Pod` CREATE in ambient-mesh namespaces, excludes kyverno itself, and honors a `policy.prplanit.com/enforce-hardening: suspended` namespace kill-switch. Enforcement is at admission, so the compliant baseline lands as pods roll (existing pods grandfathered until restart).
+
+**Fleet compliance snapshot (audit-pod-hardening PolicyReports, 2026-09-01):**
+
+| SEC dimension | Compliant | Trend vs 2026-08-14 baseline |
+|---------------|-----------|------------------------------|
+| SEC-7 seccomp RuntimeDefault | ~97% | ▲ from 21% |
+| SEC-6 drop ALL capabilities | ~89% | ▲ from 29% |
+| SEC-3 no privilege escalation | ~85% | ▲ from 26% |
+| SEC-1/2 run as non-root | ~77% | ▲ from 27% |
+| SEC-4 readOnlyRootFilesystem | ~48% | ▲ from 16% — the active remaining campaign |
+
+Query to refresh: `kubectl get policyreport -A -o json | jq -r '[.items[].results[]?|select(.policy=="audit-pod-hardening")]|group_by(.rule)[]|"\(.[0].rule): pass \([.[]|select(.result=="pass")]|length) fail \([.[]|select(.result=="fail")]|length)"'`. SEC-4 (writable-rootfs remediation via per-overlay emptyDir mounts) is the one laggard; the other four are effectively enforced fleet-wide.
 
 ### RBAC & Service Accounts (RBAC)
 
@@ -547,8 +588,8 @@ root-required vendor images) or external no-pod services. Counts are per deploye
 
 | Category | Status | Notes |
 |----------|--------|-------|
-| PSA Enforcement | 0% | No namespaces have PSA labels (Kyverno installed, not enforcing pod-security) |
-| Network Policies | ~90% (ingress) | istio ambient `default-deny` + per-identity ALLOWs AND Cilium `default-deny-ingress` in every app namespace; egress default-deny not yet enabled |
+| PSA Enforcement | Enforcing | Native PSA `enforce=baseline` on 15 ns (privileged exemptions on 7); Kyverno `enforce-pod-hardening` (Enforce) applies the full SEC-* set above the baseline floor |
+| Network Policies | 100% (ingress + egress) | istio ambient `default-deny` + per-identity ALLOWs AND Cilium ingress AND egress default-deny (`enableDefaultDeny.egress: true` + per-app `cnp-egress-*`) in all 16 app namespaces |
 | RBAC Audit | 0% | Not audited |
 | Secrets Hygiene | 80% | Vault ESO + SOPS, env vars |
 | Image Scanning | 0% | No automated scanning |
@@ -560,25 +601,28 @@ root-required vendor images) or external no-pod services. Counts are per deploye
 
 ### Overall Compliance Score
 
+> These estimates predate the 2026-09-01 verification of the network (ingress+egress deny) and PSA/Kyverno enforcement layers and are understated for the current state — the two strongest layers (network + pod-security admission) are now fully enforced. Re-scoring pending; the remaining drag is runtime security, image scanning, audit logging, and RBAC review.
+
 | Framework | Estimated Score | Target |
 |-----------|-----------------|--------|
-| CIS Kubernetes Benchmark | ~30% | 80%+ |
-| SOC 2 Security Principle | ~40% | 90%+ |
-| NIST 800-53 (subset) | ~35% | 80%+ |
+| CIS Kubernetes Benchmark | ~30% (understated) | 80%+ |
+| SOC 2 Security Principle | ~40% (understated) | 90%+ |
+| NIST 800-53 (subset) | ~35% (understated) | 80%+ |
 
 ### Priority Actions (Ranked)
 
+> ✅ **Done since this list was written:** deny-all Network Policies (ingress + egress, all 16 app namespaces, 2026-09-01) and PSA labels + Kyverno pod-hardening enforcement (native `enforce=baseline` + `enforce-pod-hardening`). Remaining gaps below.
+
 **Critical (Security Gaps)**:
 1. Deploy Falco for runtime threat detection
-2. Implement Network Policies (deny-all default)
-3. Enable K8s API server audit logging
-4. Verify etcd encryption at rest
+2. Enable K8s API server audit logging
+3. Verify etcd encryption at rest
 
 **High (Compliance Gaps)**:
-5. Add PSA labels to all namespaces
-6. Audit all apps for unknown states (`?` cells)
-7. Implement automated image vulnerability scanning
-8. Document and test backup restore procedures
+4. Audit all apps for unknown states (`?` cells)
+5. Implement automated image vulnerability scanning (Kyverno `enforce-image-policy` exists in Audit — pair with a scanner + move to Enforce)
+6. Document and test backup restore procedures
+7. RBAC audit (least-privilege review of ServiceAccounts/roles)
 
 **Medium (Hardening)**:
 9. Add health probes to all apps
@@ -703,16 +747,16 @@ metadata:
 
 | Item | Status | Notes |
 |------|--------|-------|
-| JCR pull-through cache | Y | Reduces external dependency |
+| Harbor pull-through cache | Y | `cr.pcfae.com` proxy-cache projects (docker/ghcr/quay/lscr); reduces external dependency + rate limits |
 | Image signature verification | N | Not implemented |
 | SBOM generation | N | Not implemented |
-| Admission controller (image policy) | N | Consider Kyverno/OPA |
+| Admission controller (image policy) | Partial | Kyverno deployed; `enforce-image-policy` runs in Audit — needs a scanner + move to Enforce |
 
 **Recommended Tools**:
 - Trivy for vulnerability scanning
 - Cosign for image signing
 - Syft for SBOM generation
-- Kyverno for admission policies
+- Kyverno for admission policies — ✅ deployed (pod-hardening in Enforce; image policy in Audit)
 
 ---
 
@@ -860,22 +904,20 @@ metadata:
 
 ## Network Policy Planning
 
-> **Status**: Not yet implemented. Requires discussion of app-to-app communication patterns.
+> **Status**: Implemented (2026-09-01). Two-layer deny-by-default (istio ambient authz + Cilium L3/L4), ingress AND egress, across all 16 app namespaces. See the **Network (NET)** section above and the POLICY-SPECs (`istio-policies/POLICY-SPEC.md`, `cilium-policies/POLICY-SPEC.md`). The original planning questions are resolved as-built:
 
-### Questions to Resolve
+1. **App→database:** in-mesh over HBONE :15008 (universal `ccnp-allow-istio-ambient`); no per-backend egress rule needed for meshed deps.
+2. **External egress:** per-app `cnp-egress-*` — `toFQDNs`/`toCIDR` where bounded, documented `toEntities: world` where open-ended.
+3. **App→app:** istio per-identity ALLOWs (ingress) + Cilium `cluster` entity / explicit `toEndpoints` (egress).
+4. **VPN-routed apps (swift-sail):** yes — gluetun-sidecar pods get `world`+`cluster` only; real app traffic is inside the tunnel (invisible to Cilium).
+5. **Monitoring:** `ccnp-allow-prometheus-scrape` (contract, `policy.prplanit.com/metrics: "true"`) + `ccnp-allow-kubelet-probes` (universal).
 
-1. Which apps need to talk to which databases?
-2. Which apps need external egress (internet access)?
-3. Which apps need to communicate with each other?
-4. Should VPN-routed apps (swift-sail) have different policies?
-5. What about monitoring/observability traffic (Prometheus scraping)?
+### As-built Approach
 
-### Proposed Approach
-
-1. Start with deny-all default policy per namespace
-2. Explicitly allow required ingress (from Gateway/Traefik)
-3. Explicitly allow required egress (DNS, specific services)
-4. Document all allowed flows
+1. Deny-all default (ingress + egress) per namespace via `enableDefaultDeny` + reserved-label anchors
+2. Ingress: istio `default-deny` AuthorizationPolicy + per-identity ALLOWs; Cilium CCNP contracts (ingress-backend, probes, scrape)
+3. Egress: universal CCNP baseline (DNS + HBONE + kube-apiserver) + per-app `cnp-egress-*`
+4. Flows documented in each `cnp-egress-*` description and the POLICY-SPECs
 
 ### Communication Matrix (To Be Filled)
 
@@ -961,14 +1003,14 @@ Before deploying any new app, verify:
 - [ ] **IMG-1/2**: Pinned tag, fully qualified image name
 - [ ] **SECRETS-1**: No plaintext secrets in manifests
 - [ ] **BACKUP-1**: Velero schedule for stateful data
-- [ ] **NET-1**: NetworkPolicy defined (when implemented)
+- [ ] **NET-1/3**: Cilium ingress + egress default-deny covered (universal CCNPs + any per-app `cnp-egress-*`)
 
 ### Namespace Security Checklist
 
 For each namespace:
 
 - [ ] PSA labels applied (enforce, audit, warn)
-- [ ] Default deny NetworkPolicy deployed
+- [ ] Default deny NetworkPolicy deployed (ingress AND egress: `enableDefaultDeny: {ingress: true, egress: true}` + anchors)
 - [ ] ServiceAccount with minimal RBAC
 - [ ] Resource quotas defined
 - [ ] Limit ranges defined
