@@ -21,3 +21,18 @@ spec:
     - toEntities:
         - world
         - cluster
+    # The non-meshed istio gateway pods are not reliably matched by the cluster
+    # entity, so grant them explicitly for gatus's *.pcfae.com hostname probes.
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
