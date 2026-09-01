@@ -4,14 +4,22 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for delivery-bag namespace.
-    ntfy gets ingress from ingress-backend CCNP (gateway → 8080).
-    SMTP LB gets LAN-only CIDR ingress via cnp-ntfy-smtp.
+    Default-deny ingress AND egress for delivery-bag namespace.
+    Ingress: ntfy from ingress-backend CCNP (gateway → 8080); SMTP LB
+    gets LAN-only CIDR ingress via cnp-ntfy-smtp.
+    Egress: ntfy is inbound-only (pub/sub + inbound email, local SQLite
+    store, no outbound SMTP/web-push/upstream), so the universal DNS/HBONE
+    CCNPs cover it and no per-app cnp-egress-* is needed. Both directions
+    use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor
