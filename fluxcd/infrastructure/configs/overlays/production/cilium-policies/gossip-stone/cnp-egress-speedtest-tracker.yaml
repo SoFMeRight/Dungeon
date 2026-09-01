@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-speedtest-tracker-egress
+spec:
+  description: >-
+    speedtest-tracker runs the Ookla speedtest CLI on a schedule against the
+    geo-selected Ookla server pool (SPEEDTEST_SERVERS empty = auto), an
+    open-ended set of public hosts, plus Ookla config/telemetry. Documented
+    broad world egress on 443/80/8080 TCP; its postgres rides the mesh.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: speedtest-tracker
+  egress:
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "8080"
+              protocol: TCP

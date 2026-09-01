@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-weave-gitops-egress
+spec:
+  description: >-
+    weave-gitops reads Flux CRs + core resources from the Kubernetes API
+    (covered by the universal allow-kube-apiserver-egress CCNP) and hairpins
+    OIDC token validation to sso.prplanit.com via the cell-membrane gateway LB
+    (172.22.30.0/24, 443). No other external egress.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: weave-gitops
+  egress:
+    - toCIDR:
+        - "172.22.30.0/24"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

@@ -1,0 +1,31 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-beszel-egress
+spec:
+  description: >-
+    beszel is the monitoring hub; it polls its agents on 45876/TCP across an
+    open-ended, DB-managed set of LAN/cluster hosts (not enumerable from git),
+    and hairpins OIDC login to sso.prplanit.com via the cell-membrane gateway
+    LB (172.22.30.0/24, 443). Documented broad world+cluster for agent polling
+    + the gateway CIDR for OIDC.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: beszel
+  egress:
+    - toEntities:
+        - world
+        - cluster
+      toPorts:
+        - ports:
+            - port: "45876"
+              protocol: TCP
+    - toCIDR:
+        - "172.22.30.0/24"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

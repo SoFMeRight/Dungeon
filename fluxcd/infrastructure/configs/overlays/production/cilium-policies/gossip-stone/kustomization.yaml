@@ -8,3 +8,13 @@ resources:
   - cnp-loki.yaml
   - cnp-kube-state-metrics.yaml
   - cnp-umami-db.yaml
+  # Egress allows (inert until egress default-deny is enabled for the namespace).
+  # eaton/pve exporters already have egress in cnp-monitoring-lb; the in-cluster
+  # apps (VM cluster, loki, grafana datasources, DBs) ride the mesh/apiserver baseline.
+  - cnp-egress-nutify.yaml
+  - cnp-egress-uptime-kuma.yaml
+  - cnp-egress-speedtest-tracker.yaml
+  - cnp-egress-beszel.yaml
+  - cnp-egress-grafana.yaml
+  - cnp-egress-weave-gitops.yaml
+  - cnp-egress-gatus.yaml

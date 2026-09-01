@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-gatus-egress
+spec:
+  description: >-
+    gatus probes are auto-derived from cluster Services + HTTPRoutes (via its
+    sidecar reading the Kubernetes API — covered by allow-kube-apiserver-egress).
+    In-cluster Service probes and its postgres ride the mesh (HBONE); the
+    *.pcfae.com HTTPRoute-hostname probes hairpin through the gateway LBs
+    (172.22.30.0/24, 443/80). Not broad — targets are enumerable.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: gatus
+  egress:
+    - toCIDR:
+        - "172.22.30.0/24"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP

@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-uptime-kuma-egress
+spec:
+  description: >-
+    uptime-kuma probes arbitrary user-added monitors (HTTP, TCP-port, DNS,
+    etc.) across in-cluster, LAN, and public targets on any port; the monitor
+    list is runtime SQLite-managed and not enumerable from git. Documented
+    broad world+cluster egress by design — a monitor cannot be allowlisted.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: uptime-kuma
+  egress:
+    - toEntities:
+        - world
+        - cluster

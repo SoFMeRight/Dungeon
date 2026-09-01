@@ -5,6 +5,7 @@ resources:
   - ccnp-ambient-mesh-guardrail.yaml
   - ccnp-allow-istio-ambient.yaml
   - ccnp-allow-dns-egress.yaml
+  - ccnp-allow-kube-apiserver-egress.yaml
   - ccnp-allow-prometheus-scrape.yaml
   - ccnp-allow-gatus-healthcheck.yaml
   - ccnp-allow-cnpg-operator.yaml

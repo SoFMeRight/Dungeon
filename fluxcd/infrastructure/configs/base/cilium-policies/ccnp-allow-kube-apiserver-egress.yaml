@@ -1,0 +1,21 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: allow-kube-apiserver-egress
+spec:
+  description: >-
+    Universal egress allowance to the Kubernetes API server for all pods.
+    Operators, controllers, kube-state-metrics, and app sidecars (config/
+    secret/rule watchers) must reach the API server, which sits outside the
+    Istio ambient mesh so the HBONE egress allowance does not cover it. RBAC
+    is the real authorization gate; this only permits L4 reachability to the
+    apiserver identity. A universal baseline alongside allow-dns-egress and
+    allow-istio-ambient, so enabling egress default-deny in any namespace
+    does not sever pods' access to the Kubernetes API.
+  enableDefaultDeny:
+    egress: false
+    ingress: false
+  endpointSelector: {}
+  egress:
+    - toEntities:
+        - kube-apiserver
