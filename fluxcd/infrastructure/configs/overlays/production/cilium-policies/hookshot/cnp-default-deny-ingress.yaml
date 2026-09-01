@@ -4,15 +4,25 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for hookshot namespace.
-    Remote access services: boundary, guacamole, rustdesk, tactical-rmm.
-    CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape,
-    postgres/redis contracts, and ingress-gateway traffic for labeled pods.
+    Default-deny ingress AND egress for hookshot namespace.
+    Ingress: remote access services (boundary, guacamole, rustdesk, tactical-rmm);
+    CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, postgres/redis
+    contracts, and ingress-gateway traffic for labeled pods.
+    Egress: DNS + intra-namespace mesh (existing tactical/guacamole CNPs) +
+    kube-apiserver ride the universal CCNP baseline; per-app cnp-egress-* grant
+    the remote-control components (boundary, guacd, rustdesk, tactical-rmm)
+    world+cluster since they proxy to open-ended LAN/external targets. The DB
+    and frontend/nginx pods need nothing external.
+    Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor

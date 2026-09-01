@@ -1,0 +1,31 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-tactical-rmm-egress
+spec:
+  description: >-
+    The TacticalRMM active components (backend, celery workers, celerybeat,
+    MeshCentral, websockets) manage an open-ended fleet of remote agents and
+    call external services (agent callbacks, MeshCentral relays, update servers,
+    notification/webhook APIs) on arbitrary hosts/ports, which cannot be
+    allowlisted, so world+cluster is granted. The mongodb/postgres/redis/nats
+    backends and nginx/frontend are in-cluster (existing mesh CNPs + universal
+    CCNP baseline). DNS rides the universal CCNP baseline. Inert until egress
+    default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - tactical-backend
+          - tactical-celery
+          - tactical-celerybeat
+          - tactical-meshcentral
+          - tactical-websockets
+  egress:
+    - toEntities:
+        - world
+        - cluster

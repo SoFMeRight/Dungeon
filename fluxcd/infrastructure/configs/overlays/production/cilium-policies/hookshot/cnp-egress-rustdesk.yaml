@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-rustdesk-egress
+spec:
+  description: >-
+    rustdesk runs the ID/rendezvous (hbbs) and relay (hbbr) servers: they relay
+    remote-desktop sessions to an open-ended set of external peers on arbitrary
+    ports, which cannot be allowlisted, so world+cluster is granted. DNS rides
+    the universal CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: rustdesk
+  egress:
+    - toEntities:
+        - world
+        - cluster
