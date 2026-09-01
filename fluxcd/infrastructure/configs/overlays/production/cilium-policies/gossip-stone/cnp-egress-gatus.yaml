@@ -5,12 +5,12 @@ metadata:
 spec:
   description: >-
     gatus auto-derives its probe targets from cluster Services + HTTPRoutes
-    (via its sidecar reading the Kubernetes API). Although enumerable, that set
-    is large and ever-changing and spans in-cluster meshed AND non-meshed pods,
-    Service/LoadBalancer IPs, the (non-meshed) ingress gateways, and external
-    LAN/infra devices (e.g. Ceph MONs) on arbitrary ports — so it cannot be
-    practically allowlisted. Documented broad world+cluster egress, like the
-    other monitors (uptime-kuma). Its postgres also rides the mesh.
+    (via its sidecar reading the Kubernetes API). That set is large, ever-
+    changing, and spans meshed pods, NON-meshed pods (istio gateways, coturn),
+    Service/LoadBalancer IPs, and external LAN/infra (Ceph MONs) on arbitrary
+    ports. Because the cluster entity does not cover non-meshed pods, a monitor
+    needs the all entity (every endpoint, in or out of the cluster) — it cannot
+    be practically allowlisted. Documented broad egress, like uptime-kuma.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -19,20 +19,4 @@ spec:
       app.kubernetes.io/name: gatus
   egress:
     - toEntities:
-        - world
-        - cluster
-    # The non-meshed istio gateway pods are not reliably matched by the cluster
-    # entity, so grant them explicitly for gatus's *.pcfae.com hostname probes.
-    - toEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: hyrule-castle
-            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: arylls-lookout
-            gateway.networking.k8s.io/gateway-name: xylem-gateway
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
-            - port: "80"
-              protocol: TCP
+        - all
