@@ -4,15 +4,23 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for compass namespace non-adguard pods.
-    AdGuard has its own comprehensive CNP deployed via phase-02-critical.
-    Other services get ingress from ingress-backend CCNP.
-    Chrony and netbootxyz get LAN-only LB rules.
+    Default-deny ingress AND egress for compass namespace.
+    Ingress: adguard has its own comprehensive CNP (phase-02-critical);
+    other services get ingress from ingress-backend CCNP; chrony/netbootxyz
+    get LAN-only LB rules.
+    Egress: adguard self-covers via its own CNP; per-app cnp-egress-* grant
+    chrony NTP, cloudflare-ddns/echo-ip/netbootxyz/adguardhome-sync external
+    (toFQDNs/toCIDR); the speedtests are inbound-only on DNS/HBONE baseline.
+    Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor
