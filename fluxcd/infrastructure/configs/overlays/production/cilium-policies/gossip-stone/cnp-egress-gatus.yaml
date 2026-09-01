@@ -7,8 +7,9 @@ spec:
     gatus probes are auto-derived from cluster Services + HTTPRoutes (via its
     sidecar reading the Kubernetes API — covered by allow-kube-apiserver-egress).
     In-cluster Service probes and its postgres ride the mesh (HBONE); the
-    *.pcfae.com HTTPRoute-hostname probes hairpin through the gateway LBs
-    (172.22.30.0/24, 443/80). Not broad — targets are enumerable.
+    *.pcfae.com HTTPRoute-hostname probes reach the cell-membrane + xylem gateway
+    pods directly on 443/80 (the gateways are not mesh-captured). Not broad
+    — targets are enumerable.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -16,8 +17,13 @@ spec:
     matchLabels:
       app.kubernetes.io/name: gatus
   egress:
-    - toCIDR:
-        - "172.22.30.0/24"
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
       toPorts:
         - ports:
             - port: "443"

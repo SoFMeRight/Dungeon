@@ -6,8 +6,8 @@ spec:
   description: >-
     weave-gitops reads Flux CRs + core resources from the Kubernetes API
     (covered by the universal allow-kube-apiserver-egress CCNP) and hairpins
-    OIDC token validation to sso.prplanit.com via the cell-membrane gateway LB
-    (172.22.30.0/24, 443). No other external egress.
+    OIDC token validation to sso.prplanit.com, reaching the (non-meshed)
+    cell-membrane/xylem gateway pods on 443. No other external egress.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -15,8 +15,13 @@ spec:
     matchLabels:
       app.kubernetes.io/name: weave-gitops
   egress:
-    - toCIDR:
-        - "172.22.30.0/24"
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
       toPorts:
         - ports:
             - port: "443"

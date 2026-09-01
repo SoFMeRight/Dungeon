@@ -6,8 +6,8 @@ spec:
   description: >-
     grafana's datasources (VictoriaMetrics, Loki), postgres, and the ntfy
     alert contact point are all in-cluster and ride the mesh (HBONE). Its only
-    non-mesh egress is the OIDC login hairpin to sso.prplanit.com via the
-    cell-membrane gateway LB (172.22.30.0/24, 443). Runtime grafana.com plugin
+    non-mesh egress is the OIDC login hairpin to sso.prplanit.com,
+    reaching the (non-meshed) cell-membrane/xylem gateway pods on 443. Runtime grafana.com plugin
     installs are deliberately NOT allowed (open manually when installing).
   enableDefaultDeny:
     ingress: false
@@ -16,8 +16,13 @@ spec:
     matchLabels:
       app.kubernetes.io/name: grafana
   egress:
-    - toCIDR:
-        - "172.22.30.0/24"
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
       toPorts:
         - ports:
             - port: "443"

@@ -6,9 +6,9 @@ spec:
   description: >-
     beszel is the monitoring hub; it polls its agents on 45876/TCP across an
     open-ended, DB-managed set of LAN/cluster hosts (not enumerable from git),
-    and hairpins OIDC login to sso.prplanit.com via the cell-membrane gateway
-    LB (172.22.30.0/24, 443). Documented broad world+cluster for agent polling
-    + the gateway CIDR for OIDC.
+    and hairpins OIDC login to sso.prplanit.com, reaching the (non-meshed)
+    cell-membrane/xylem gateway pods on 443. Documented broad world+cluster for
+    agent polling + the gateway pods for OIDC.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -23,8 +23,13 @@ spec:
         - ports:
             - port: "45876"
               protocol: TCP
-    - toCIDR:
-        - "172.22.30.0/24"
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
       toPorts:
         - ports:
             - port: "443"
