@@ -4,19 +4,26 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for wallmaster namespace.
-    All ingress allows provided by CCNPs:
+    Default-deny ingress AND egress for wallmaster namespace.
+    Ingress allows provided by CCNPs:
     - contract-ingress-backend (gateway → anubis:8080)
     - allow-prometheus-scrape (host → anubis:9090)
     - allow-kubelet-probes (health checks)
     - allow-istio-ambient (HBONE + probe SNAT)
-    The fromEndpoints selector matches no real pods — it exists only
-    to satisfy the Cilium CRD schema requirement for an ingress field.
+    Egress: DNS + mesh + kube-apiserver ride the universal CCNP baseline;
+    cnp-egress-anubis grants anubis its only external dependency — the upstream
+    backend it protects (TARGET 10.55.6.136:5005).
+    Both anchors' fromEndpoints/toEndpoints match no real pods — they exist only
+    to satisfy the Cilium CRD schema and trigger default-deny enforcement.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor

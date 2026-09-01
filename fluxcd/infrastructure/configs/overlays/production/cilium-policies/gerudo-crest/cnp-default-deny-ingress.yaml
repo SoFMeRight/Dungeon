@@ -1,0 +1,25 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for gerudo-crest namespace.
+    The only workload is reflector, a controller that mirrors annotated
+    secrets/configmaps across namespaces via the Kubernetes API. Its egress
+    (kube-apiserver + DNS + mesh) and its ingress (kubelet /healthz probes on
+    25080) are all covered by the universal CCNP baseline — no app-specific CNP
+    is needed. reflector serves nothing to other pods.
+    Both directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
