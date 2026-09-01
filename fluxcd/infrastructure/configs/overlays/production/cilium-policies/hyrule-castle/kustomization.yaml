@@ -10,6 +10,7 @@ resources:
   - cnp-egress-apt-cacher-ng.yaml
   - cnp-egress-cell-membrane-gateway.yaml
   - cnp-egress-external-apps.yaml
+  - cnp-egress-to-gateway.yaml
   - cnp-galera-replication.yaml
   - cnp-gitlab-webhooks.yaml
   - cnp-harbor.yaml

@@ -1,0 +1,33 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-egress-to-gateway
+spec:
+  description: >-
+    hyrule-castle workloads reach in-cluster services by their PUBLIC URL, which
+    resolves to the cell-membrane gateway (and xylem for internal names). The
+    gateway pods are non-meshed (ambient=none), so the `cluster` entity does not
+    match them — e.g. gitlab CI runners cloning gitlab.prplanit.com and calcom
+    webhook callbacks were denied. Grant every namespace pod egress to the
+    gateway pods on 443/80/15021 explicitly (the same pattern used for monitors
+    elsewhere). Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "15021"
+              protocol: TCP
