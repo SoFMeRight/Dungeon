@@ -4,11 +4,13 @@ metadata:
   name: allow-emulatorjs-egress
 spec:
   description: >-
-    emulatorjs downloads its emulator cores + frontend data from the EmulatorJS
-    CDN into the data PVC on first run / updates, then serves browser-based
-    emulation. Allow toFQDNs the EmulatorJS CDN on 443/TCP, with L7 DNS. Its
-    :3000/:80 are inbound. (The :4001 IPFS P2P path, if ever used, is not granted
-    here — add it explicitly if the audit shows it's needed.)
+    emulatorjs (LinuxServer image) runs an embedded IPFS node to distribute its
+    emulator cores + frontend data over P2P, then serves browser-based emulation.
+    Allow toFQDNs the EmulatorJS CDN and the libp2p DHT bootstrap nodes
+    (*.bootstrap.libp2p.io) on 443/TCP, with L7 DNS. The IPFS swarm (port 4001,
+    TCP + UDP/QUIC) connects to arbitrary DHT peers worldwide and cannot be
+    FQDN-scoped, so it is granted to `world` scoped to :4001 only. Its
+    :3000/:80 are inbound.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -33,7 +35,16 @@ spec:
         - matchName: "cdn.emulatorjs.org"
         - matchName: "data.emulatorjs.org"
         - matchPattern: "*.emulatorjs.org"
+        - matchPattern: "*.bootstrap.libp2p.io"
       toPorts:
         - ports:
             - port: "443"
               protocol: TCP
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "4001"
+              protocol: TCP
+            - port: "4001"
+              protocol: UDP
