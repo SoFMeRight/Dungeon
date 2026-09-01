@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-chrony-egress
+spec:
+  description: >-
+    chrony syncs time from the five Proxmox hypervisors (avocado/bamboo/
+    cosmos/dragonfruit/eggplant → 172.22.22.3-7) as upstream NTP sources on
+    123/UDP. Narrow toCIDR allow; DNS (to resolve the hostnames) + mesh ride
+    the universal CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: chrony
+  egress:
+    - toCIDR:
+        - "172.22.22.3/32"
+        - "172.22.22.4/32"
+        - "172.22.22.5/32"
+        - "172.22.22.6/32"
+        - "172.22.22.7/32"
+      toPorts:
+        - ports:
+            - port: "123"
+              protocol: UDP

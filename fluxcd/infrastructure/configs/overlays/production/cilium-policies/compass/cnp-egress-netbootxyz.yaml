@@ -1,0 +1,39 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-netbootxyz-egress
+spec:
+  description: >-
+    netbootxyz pulls its iPXE menus from boot.netboot.xyz and downloads
+    kernel/initrd boot assets from the netbootxyz GitHub releases on demand
+    into its assets PVC. Allow egress to those hosts on 443/TCP, with L7 DNS.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: netbootxyz
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "boot.netboot.xyz"
+        - matchName: "github.com"
+        - matchName: "objects.githubusercontent.com"
+        - matchName: "raw.githubusercontent.com"
+        - matchPattern: "*.githubusercontent.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

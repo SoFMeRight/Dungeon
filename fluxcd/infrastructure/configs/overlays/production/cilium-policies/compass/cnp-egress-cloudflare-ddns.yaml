@@ -1,0 +1,42 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-cloudflare-ddns-egress
+spec:
+  description: >-
+    cloudflare-ddns pushes the site's public IP into Cloudflare DNS records
+    via the Cloudflare API, and detects the public IP via cloudflare.trace
+    (https://1.1.1.1/cdn-cgi/trace). Allow egress to api.cloudflare.com and
+    1.1.1.1 on 443/TCP, with L7 DNS so Cilium learns the API address.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: cloudflare-ddns
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "api.cloudflare.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    - toCIDR:
+        - "1.1.1.1/32"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

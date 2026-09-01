@@ -1,0 +1,37 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-adguardhome-sync-egress
+spec:
+  description: >-
+    adguardhome-sync replicates AdGuardHome config from the origin instance
+    (dns.pcfae.com) to the replica (dns2.pcfae.com) over 443/TCP on a 10m
+    cron. Allow egress to both hosts, with L7 DNS so Cilium learns whatever
+    address they resolve to (cluster LoadBalancer or a second physical host).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: adguardhome-sync
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "dns.pcfae.com"
+        - matchName: "dns2.pcfae.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
