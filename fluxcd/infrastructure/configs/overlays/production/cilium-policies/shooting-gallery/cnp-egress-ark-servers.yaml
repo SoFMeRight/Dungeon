@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-ark-servers-egress
+spec:
+  description: >-
+    The ARK dedicated servers (ASA theisland/valguero, ASE theisland) auto-update
+    themselves and their Steam Workshop mods via SteamCMD on start, and register
+    for Steam/Epic crossplay. That spans Steam's CDN/content servers, Steam master
+    on 27015-27030, and Epic — an open-ended external set on many ports that cannot
+    be allowlisted. Documented broad world+cluster egress; game-listen ports are
+    inbound (players connect in) and covered by cnp-game-servers.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - ark-sa-tmc-theisland
+          - ark-sa-tmc-valguero
+          - ark-se-tmc-theisland
+  egress:
+    - toEntities:
+        - world
+        - cluster

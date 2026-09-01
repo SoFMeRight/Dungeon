@@ -5,3 +5,8 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-game-servers.yaml
   - cnp-romm-db.yaml
+  # Egress allows (inert until egress default-deny is enabled for the namespace).
+  # admin-list-server + romm + romm-db are DNS/mesh-only (no allow needed).
+  - cnp-egress-ark-servers.yaml
+  - cnp-egress-minecraft.yaml
+  - cnp-egress-emulatorjs.yaml

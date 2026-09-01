@@ -1,0 +1,40 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-minecraft-egress
+spec:
+  description: >-
+    minecraft (PAPER 1.21.4) downloads its server jar from the PaperMC API on
+    start, pulls the vanilla base + metadata from Mojang, and (online-mode on)
+    validates players against Mojang/Microsoft session/auth services at runtime.
+    Plugins live on the PVC (no per-plugin egress). Allow toFQDNs those hosts on
+    443/TCP, with L7 DNS. Its listen port 35566 is inbound (public).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: minecraft
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "api.papermc.io"
+        - matchPattern: "*.mojang.com"
+        - matchName: "api.minecraftservices.com"
+        - matchPattern: "*.minecraft.net"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

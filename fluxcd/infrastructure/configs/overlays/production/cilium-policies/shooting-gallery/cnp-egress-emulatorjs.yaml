@@ -1,0 +1,39 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-emulatorjs-egress
+spec:
+  description: >-
+    emulatorjs downloads its emulator cores + frontend data from the EmulatorJS
+    CDN into the data PVC on first run / updates, then serves browser-based
+    emulation. Allow toFQDNs the EmulatorJS CDN on 443/TCP, with L7 DNS. Its
+    :3000/:80 are inbound. (The :4001 IPFS P2P path, if ever used, is not granted
+    here — add it explicitly if the audit shows it's needed.)
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: emulatorjs
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "cdn.emulatorjs.org"
+        - matchName: "data.emulatorjs.org"
+        - matchPattern: "*.emulatorjs.org"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
