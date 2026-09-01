@@ -4,16 +4,24 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for gossip-stone namespace.
-    Monitoring infrastructure: VictoriaMetrics, Loki, Grafana, Gatus,
-    kube-state-metrics, exporters, and various monitoring apps.
-    CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape,
+    Default-deny ingress AND egress for gossip-stone namespace.
+    Ingress: CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape,
     postgres/redis contracts, and ingress-gateway traffic for labeled pods.
+    Egress: in-cluster monitoring traffic (VictoriaMetrics, Loki, Grafana
+    datasources, DBs) rides the mesh (HBONE); sidecars/ksm reach the API via
+    the universal kube-apiserver CCNP; eaton/pve exporters via cnp-monitoring-lb;
+    per-app cnp-egress-* grant nutify (SNMP/SSH), the broad monitors
+    (uptime-kuma/speedtest/beszel), and the gateway-hairpin apps (grafana/
+    weave-gitops/gatus). Both directions use a reserved-label anchor.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor
