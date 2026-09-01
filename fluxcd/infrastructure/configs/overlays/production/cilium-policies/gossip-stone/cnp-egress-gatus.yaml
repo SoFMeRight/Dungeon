@@ -4,12 +4,13 @@ metadata:
   name: allow-gatus-egress
 spec:
   description: >-
-    gatus probes are auto-derived from cluster Services + HTTPRoutes (via its
-    sidecar reading the Kubernetes API — covered by allow-kube-apiserver-egress).
-    In-cluster Service probes and its postgres ride the mesh (HBONE); the
-    *.pcfae.com HTTPRoute-hostname probes reach the cell-membrane + xylem gateway
-    pods directly on 443/80 (the gateways are not mesh-captured). Not broad
-    — targets are enumerable.
+    gatus auto-derives its probe targets from cluster Services + HTTPRoutes
+    (via its sidecar reading the Kubernetes API). Although enumerable, that set
+    is large and ever-changing and spans in-cluster meshed AND non-meshed pods,
+    Service/LoadBalancer IPs, the (non-meshed) ingress gateways, and external
+    LAN/infra devices (e.g. Ceph MONs) on arbitrary ports — so it cannot be
+    practically allowlisted. Documented broad world+cluster egress, like the
+    other monitors (uptime-kuma). Its postgres also rides the mesh.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -17,16 +18,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: gatus
   egress:
-    - toEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: hyrule-castle
-            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: arylls-lookout
-            gateway.networking.k8s.io/gateway-name: xylem-gateway
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
-            - port: "80"
-              protocol: TCP
+    - toEntities:
+        - world
+        - cluster
