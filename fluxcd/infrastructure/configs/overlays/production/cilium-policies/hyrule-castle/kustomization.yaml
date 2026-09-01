@@ -7,6 +7,9 @@ resources:
   - cnp-cell-membrane-oidc-consumers.yaml
   - cnp-cell-membrane-monitoring.yaml
   - cnp-apt-cacher-ng.yaml
+  - cnp-egress-apt-cacher-ng.yaml
+  - cnp-egress-cell-membrane-gateway.yaml
+  - cnp-egress-external-apps.yaml
   - cnp-galera-replication.yaml
   - cnp-gitlab-webhooks.yaml
   - cnp-harbor.yaml

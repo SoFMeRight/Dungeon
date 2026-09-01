@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-cell-membrane-gateway-egress
+spec:
+  description: >-
+    The cell-membrane gateway (Envoy) terminates public TLS and proxies to
+    backend workloads spread across every namespace, and performs ext_authz/OIDC
+    validation. Its backend set is the whole cluster and its authz/issuer may be
+    reached via public URL, so world+cluster is granted. Mesh (HBONE) rides the
+    universal CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  egress:
+    - toEntities:
+        - world
+        - cluster

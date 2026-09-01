@@ -1,0 +1,49 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-external-apps-egress
+spec:
+  description: >-
+    These business apps reach open-ended external sets as core function: GitLab
+    (CI runner jobs, repo mirrors, package/registry pulls, webhooks, email) via
+    webservice/sidekiq/runner/kas/registry/toolbox/migrations; Harbor + its
+    proxy-cache pulling from upstream registries (docker.io/ghcr/quay/lscr);
+    ERPNext, InvoiceNinja, osticket, opnform, bookstack, calcom, bagisto reaching
+    email/SMTP/IMAP, payment gateways, calendar/video and webhook integrations.
+    That set cannot be allowlisted, so world+cluster is granted; DBs and the mesh
+    ride the universal CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - webservice
+          - sidekiq
+          - gitlab-gitlab-runner
+          - kas
+          - registry
+          - toolbox
+          - migrations
+          - harbor
+          - harbor-proxy-cache-proxy
+          - erpnext-sites
+          - erpnext-queue-long
+          - erpnext-queue-short
+          - erpnext-scheduler
+          - erpnext-websocket
+          - bookstack
+          - calcom
+          - invoiceninja-app
+          - opnform-api
+          - opnform-api-scheduler
+          - opnform-api-worker
+          - osticket-app
+          - osticket-cron
+          - bagisto-demo
+  egress:
+    - toEntities:
+        - world
+        - cluster
