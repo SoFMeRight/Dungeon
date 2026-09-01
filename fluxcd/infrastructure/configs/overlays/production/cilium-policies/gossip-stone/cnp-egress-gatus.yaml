@@ -4,13 +4,13 @@ metadata:
   name: allow-gatus-egress
 spec:
   description: >-
-    gatus auto-derives its probe targets from cluster Services + HTTPRoutes
-    (via its sidecar reading the Kubernetes API). That set is large, ever-
-    changing, and spans meshed pods, NON-meshed pods (istio gateways, coturn),
-    Service/LoadBalancer IPs, and external LAN/infra (Ceph MONs) on arbitrary
-    ports. Because the cluster entity does not cover non-meshed pods, a monitor
-    needs the all entity (every endpoint, in or out of the cluster) — it cannot
-    be practically allowlisted. Documented broad egress, like uptime-kuma.
+    gatus is a broad monitor: it probes a large, changing set spanning meshed
+    pods, external LAN/public targets, and the non-meshed istio gateways.
+    world+cluster covers the meshed/external targets; the gateways are granted
+    explicitly (the cluster entity does not match non-meshed gateway pods).
+    A few non-meshed cross-namespace pods it probes directly may still show as
+    down under egress-deny — a Cilium ambient limitation, cosmetic (the target
+    services themselves are reachable by their real clients).
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -19,4 +19,18 @@ spec:
       app.kubernetes.io/name: gatus
   egress:
     - toEntities:
-        - all
+        - world
+        - cluster
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP

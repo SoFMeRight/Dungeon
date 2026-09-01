@@ -4,12 +4,13 @@ metadata:
   name: allow-uptime-kuma-egress
 spec:
   description: >-
-    uptime-kuma probes arbitrary user-added monitors (HTTP, TCP-port, DNS, etc.)
-    across in-cluster meshed AND non-meshed pods (e.g. the istio gateways),
-    LAN, and public targets on any port; the monitor list is runtime SQLite-
-    managed and not enumerable from git. Because the cluster entity does not
-    cover non-meshed pods, a monitor needs the all entity (every endpoint, in
-    or out of the cluster). Documented broad egress by design.
+    uptime-kuma is a broad monitor: it probes a large, changing set spanning meshed
+    pods, external LAN/public targets, and the non-meshed istio gateways.
+    world+cluster covers the meshed/external targets; the gateways are granted
+    explicitly (the cluster entity does not match non-meshed gateway pods).
+    A few non-meshed cross-namespace pods it probes directly may still show as
+    down under egress-deny — a Cilium ambient limitation, cosmetic (the target
+    services themselves are reachable by their real clients).
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -18,4 +19,18 @@ spec:
       app.kubernetes.io/name: uptime-kuma
   egress:
     - toEntities:
-        - all
+        - world
+        - cluster
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
