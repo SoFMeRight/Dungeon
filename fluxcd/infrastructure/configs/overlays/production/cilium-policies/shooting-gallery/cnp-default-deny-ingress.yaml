@@ -4,15 +4,22 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for shooting-gallery namespace.
-    Game servers use LAN-only LB CNPs. RoMM DB access via explicit
-    CNP. CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape,
-    and ingress-gateway traffic for labeled pods.
+    Default-deny ingress AND egress for shooting-gallery namespace.
+    Ingress: game servers use LAN-only LB CNPs; RoMM DB via cnp-romm-db;
+    CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, ingress-gw.
+    Egress: per-app cnp-egress-* grant the ARK servers (world — SteamCMD/
+    Workshop/Epic) and minecraft/emulatorjs (toFQDNs); admin-list-server,
+    romm, and romm-db are DNS + mesh-only (romm->romm-db rides HBONE).
+    Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor
