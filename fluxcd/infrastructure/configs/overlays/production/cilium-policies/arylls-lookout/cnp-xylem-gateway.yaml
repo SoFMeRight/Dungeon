@@ -52,7 +52,7 @@ spec:
             app.kubernetes.io/name: gatus
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: gossip-stone
-            app: uptime-kuma
+            app.kubernetes.io/name: uptime-kuma
       toPorts:
         - ports:
             - port: "443"
