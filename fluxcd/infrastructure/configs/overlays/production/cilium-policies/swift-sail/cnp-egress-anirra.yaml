@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-anirra-egress
+spec:
+  description: >-
+    anirra is an anime list/discovery manager: it queries external metadata
+    providers (AniList/MAL/TMDB and similar) on 443 and coordinates with the
+    in-cluster arr stack. world+cluster covers external and in-cluster targets;
+    DNS rides the universal CCNP baseline. Inert until egress default-deny is
+    enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: anirra
+  egress:
+    - toEntities:
+        - world
+        - cluster

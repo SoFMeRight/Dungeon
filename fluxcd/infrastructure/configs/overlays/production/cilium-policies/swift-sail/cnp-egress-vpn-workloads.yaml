@@ -1,0 +1,38 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-vpn-workloads-egress
+spec:
+  description: >-
+    These workloads each run a gluetun VPN sidecar and route their application
+    traffic through the tunnel; gluetun's own kill-switch firewall restricts the
+    app containers to VPN-only egress internally. From Cilium's view the pod's
+    only un-tunnelled egress is gluetun establishing/maintaining the tunnel to
+    the PIA endpoint (arbitrary server IPs, OpenVPN/WireGuard ports) and its
+    healthcheck — an external set that cannot be allowlisted, so it is granted
+    world. cluster covers the in-cluster arr-mesh and media backends that gluetun
+    routes around the tunnel (FIREWALL_OUTBOUND_SUBNETS). DNS rides the universal
+    CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - bazarr
+          - byparr
+          - downloadarrs
+          - jellyseerr
+          - neko-vpn
+          - overseerr
+          - pinchflat
+          - prowlarr
+          - pyload-ng
+          - sabnzbd
+          - thelounge
+  egress:
+    - toEntities:
+        - world
+        - cluster

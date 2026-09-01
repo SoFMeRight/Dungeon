@@ -4,14 +4,25 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for swift-sail namespace.
-    Arr apps get ingress from ingress-backend CCNP (gateway → 8080).
+    Default-deny ingress AND egress for swift-sail namespace.
+    Ingress: arr apps get ingress from ingress-backend CCNP (gateway → 8080);
     LB services get LAN-only CIDR rules.
+    Egress: DNS + intra-namespace mesh + kube-apiserver ride the universal CCNP
+    baseline; cnp-egress-vpn-workloads grants the gluetun-sidecar pods world
+    (tunnel to PIA — app traffic is inside the tunnel, kill-switch enforced) +
+    cluster; anirra and stunner get world+cluster for their external work.
+    py-kms and supermicro-license-generator are serve-only and need nothing
+    external.
+    Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor

@@ -4,5 +4,8 @@ namespace: swift-sail
 resources:
   - cnp-arr-mesh.yaml
   - cnp-default-deny-ingress.yaml
+  - cnp-egress-anirra.yaml
+  - cnp-egress-stunner.yaml
+  - cnp-egress-vpn-workloads.yaml
   - cnp-gatus-probes.yaml
   - cnp-loadbalancers.yaml
