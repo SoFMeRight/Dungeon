@@ -67,8 +67,10 @@ spec:
                   key: OAUTH2_PROXY_ALLOWED_GROUPS
             - name: OAUTH2_PROXY_OIDC_ISSUER_URL
               value: "https://sso.prplanit.com"
-            - name: OAUTH2_PROXY_REDIRECT_URL
-              value: "https://oa2p.pcfae.com/oauth2/callback"
+            # No fixed REDIRECT_URL: with reverse-proxy=true oauth2-proxy derives the
+            # OIDC callback per-host from the request (e.g. books.pcfae.com/oauth2/callback),
+            # so login returns to the originating app instead of bouncing to oa2p. Each
+            # SSO host's /oauth2/callback must be registered on the Zitadel app.
             - name: OAUTH2_PROXY_CLIENT_ID
               valueFrom:
                 secretKeyRef:
