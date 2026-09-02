@@ -13,7 +13,7 @@ This repository seeks to be the source of truth regarding the active state of my
 <!-- sf:project:end -->
 
 <!-- sf:badges:start -->
-[![release](https://raw.githubusercontent.com/SoFMeRight/dungeon/main/.stagefreight/scribe/release.svg)](https://github.com/SoFMeRight/dungeon/releases) [![pipeline](https://raw.githubusercontent.com/SoFMeRight/dungeon/main/.stagefreight/scribe/pipeline.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![Security](https://img.shields.io/badge/Security-report-4B275F)](https://github.com/SoFMeRight/dungeon/blob/main/docs/container-security-audit.md) [![Last Commit](https://img.shields.io/github/last-commit/SoFMeRight/dungeon)](https://github.com/SoFMeRight/dungeon/commits) [![StageFreight](https://img.shields.io/badge/StageFreight-0.10.0--dev+802b92f-310937?logo=readthedocs&logoColor=white)](https://stagefreight.prplanit.com)
+[![release](https://raw.githubusercontent.com/SoFMeRight/dungeon/main/.stagefreight/scribe/release.svg)](https://github.com/SoFMeRight/dungeon/releases) [![pipeline](https://raw.githubusercontent.com/SoFMeRight/dungeon/main/.stagefreight/scribe/pipeline.svg)](https://gitlab.prplanit.com/SoFMeRight/dungeon/-/pipelines) [![Security](https://img.shields.io/badge/Security-report-4B275F)](https://github.com/SoFMeRight/dungeon/blob/main/docs/container-security-audit.md) [![Last Commit](https://img.shields.io/github/last-commit/SoFMeRight/dungeon)](https://github.com/SoFMeRight/dungeon/commits) [![StageFreight](https://img.shields.io/badge/StageFreight-0.10.0--dev+b340e94-310937?logo=readthedocs&logoColor=white)](https://stagefreight.prplanit.com)
 <!-- sf:badges:end -->
 
 <!-- sf:stack:start -->
