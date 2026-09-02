@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: netbird-websocket-cell-membrane
+  namespace: hyrule-castle
+spec:
+  # NetBird's relay (rels://netbird.prplanit.com:443, the /relay route) is a long-lived
+  # WebSocket — without the per-route upgrade the gateway answers /relay with 426 and the
+  # relay never establishes, so peers behind CGNAT (e.g. a phone) can't build the tunnel.
+  # Enable the WS upgrade + drop the route/idle timeout so relay + signal streams aren't reaped.
+  # SCOPED to netbird.prplanit.com ONLY — this file must never affect any other app's routes.
+  workloadSelector:
+    labels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  configPatches:
+    - applyTo: HTTP_ROUTE
+      match:
+        context: GATEWAY
+        routeConfiguration:
+          vhost:
+            name: netbird.prplanit.com:443
+            route:
+              action: ANY
+      patch:
+        operation: MERGE
+        value:
+          route:
+            timeout: 0s
+            idle_timeout: 0s
+            upgrade_configs:
+              - upgrade_type: websocket
+                enabled: true
