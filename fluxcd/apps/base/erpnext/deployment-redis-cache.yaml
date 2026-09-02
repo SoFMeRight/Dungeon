@@ -17,6 +17,17 @@ spec:
       containers:
         - name: redis
           image: PLACEHOLDER_REDIS_IMAGE
+          # A cache is rebuilt on demand, so snapshotting it produces a file nothing
+          # reads. Redis writes it to /data, which a read-only rootfs does not provide:
+          # bgsave fails, stop-writes-on-bgsave-error then refuses every write, and the
+          # site runs but cannot function. redis-queue holds real state and has a volume
+          # for that reason; this one has nothing worth persisting.
+          args:
+            - redis-server
+            - --save
+            - ""
+            - --stop-writes-on-bgsave-error
+            - "no"
           securityContext:
             capabilities:
               drop:
