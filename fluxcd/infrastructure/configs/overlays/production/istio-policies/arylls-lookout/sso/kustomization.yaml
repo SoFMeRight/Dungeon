@@ -5,4 +5,4 @@ kind: Kustomization
 # add its <host>.yaml + one line here.
 resources:
   - _gateway-header-strip.yaml
-  # - books.pcfae.com.yaml   # gate DISABLED — ext-authz allow/redirect flow needs fixing before re-enabling
+  - books.pcfae.com.yaml
