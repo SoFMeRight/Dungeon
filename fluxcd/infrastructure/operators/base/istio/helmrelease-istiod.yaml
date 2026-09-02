@@ -58,6 +58,25 @@ spec:
       defaultConfig:
         proxyMetadata:
           ISTIO_META_DNS_CAPTURE: "true"
+      # SSO ext-authz provider: oauth2-proxy (Zitadel OIDC). Referenced by
+      # CUSTOM AuthorizationPolicies to gate hosts behind an SSO login and
+      # inject the identity/roles headers used by per-tier authZ.
+      extensionProviders:
+        - name: oauth2-proxy
+          envoyExtAuthzHttp:
+            service: oauth2-proxy.zeldas-lullaby.svc.cluster.local
+            port: 4180
+            pathPrefix: "/oauth2/auth"
+            includeRequestHeadersInCheck: ["cookie", "authorization"]
+            headersToUpstreamOnAllow:
+              - "x-auth-request-user"
+              - "x-auth-request-email"
+              - "x-auth-request-groups"
+            headersToDownstreamOnDeny:
+              - "content-type"
+              - "set-cookie"
+              - "location"
+              - "www-authenticate"
 
     # Resources for istiod
     resources:

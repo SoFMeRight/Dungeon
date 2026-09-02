@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# SSO ext-authz on the xylem gateway. Shared infra first, then one file per gated
+# host — this list doubles as the index of what's behind SSO. Onboard an app =
+# add its <host>.yaml + one line here.
+resources:
+  - _gateway-header-strip.yaml
+  - books.pcfae.com.yaml

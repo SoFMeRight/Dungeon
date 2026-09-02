@@ -1,0 +1,43 @@
+# calibre-web  ·  SSO required  ·  tier: owner-only  (admits: owner)
+#
+# Self-contained: this file IS the complete access rule for books.pcfae.com.
+# One file per gated host — find an app's rule by its filename, no cross-referencing.
+#   require-login (CUSTOM) → oauth2-proxy proves an SSO session + injects the role header
+#   authz (DENY)          → deny unless the injected role is in `admits` below
+# Widen access by adding roles to notValues (owner is the floor):
+#   owner-only : [owner]   admin: [owner,admin]   trusted: [owner,admin,trusted]   guest: [owner,admin,trusted,guest]
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: sso-books-require-login
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: xylem-gateway
+  action: CUSTOM
+  provider:
+    name: oauth2-proxy
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - books.pcfae.com
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: sso-books-authz
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: xylem-gateway
+  action: DENY
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - books.pcfae.com
+      when:
+        - key: request.headers[x-auth-request-groups]
+          notValues:
+            - owner        # admits: owner
