@@ -10,7 +10,7 @@ spec:
     - name: cell-membrane-gateway
       namespace: hyrule-castle
   hostnames:
-    - "mealie.yesimvegan.com"
+    - "meals.yesimvegan.com"
   rules:
     - matches:
         - path:

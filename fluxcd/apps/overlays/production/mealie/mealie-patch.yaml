@@ -18,7 +18,7 @@ spec:
             readOnlyRootFilesystem: true
           env:
             - name: BASE_URL
-              value: "https://mealie.yesimvegan.com"
+              value: "https://meals.yesimvegan.com"
             - name: OIDC_PROVIDER_NAME
               value: "PrPlanIT.com"
             - name: OIDC_CONFIGURATION_URL

@@ -36,7 +36,7 @@ spec:
     # yesimvegan.com
     - "yesimvegan.com"
     - "*.yesimvegan.com"
-    - "mealie.yesimvegan.com"
+    - "meals.yesimvegan.com"
     - "wiki.yesimvegan.com"
   rules:
     - matches:
