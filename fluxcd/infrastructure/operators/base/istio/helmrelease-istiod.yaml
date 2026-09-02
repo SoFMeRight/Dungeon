@@ -77,6 +77,7 @@ spec:
               - "x-auth-request-user"
               - "x-auth-request-email"
               - "x-auth-request-groups"
+              - "x-auth-request-preferred-username"
             headersToDownstreamOnDeny:
               - "content-type"
               - "set-cookie"

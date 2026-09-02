@@ -25,7 +25,7 @@ spec:
             "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
             inlineCode: |
               function envoy_on_request(handle)
-                for _, h in ipairs({"x-auth-request-user", "x-auth-request-email", "x-auth-request-groups"}) do
+                for _, h in ipairs({"x-auth-request-user", "x-auth-request-email", "x-auth-request-groups", "x-auth-request-preferred-username"}) do
                   handle:headers():remove(h)
                 end
               end
