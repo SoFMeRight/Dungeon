@@ -170,7 +170,7 @@
 | **fairy-bottle** | Velero, Node Agents | ~600m | Keep (backups) |
 | **flux-system** | Flux Controllers | ~350m | Keep (GitOps) |
 | **arylls-lookout** | Xylem Gateway (Istio) | ~300m | Keep (internal gateway) |
-| **kokiri-forest** | Phloem Gateway, Linkstack | ~400m | Keep (public gateway) |
+| **kokiri-forest** | Linkstack | ~400m | Keep (public apps) |
 | **king-of-red-lions** | Traefik, Istio | ~500m | Keep (routing) |
 | **pedestal-of-time** | Paperless, Restricted Apps | ~500m | Keep (restricted) |
 

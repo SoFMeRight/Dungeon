@@ -315,7 +315,7 @@
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: status.pcfae.com, status.sofmeright.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 
 **Grafana** — Deployment — 12.4.9
 - Namespace: gossip-stone
@@ -361,7 +361,7 @@
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: uptime.pcfae.com, uptime.sofmeright.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 
 **Vminsert** — Deployment — v1.97.1-cluster
 - Namespace: gossip-stone
@@ -393,7 +393,7 @@
 - Namespace: lens-of-truth
 - Replicas: 1/1
 - Hosts: hass.arbitorium.com, hass.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 
 **Mosquitto** — StatefulSet — 2.1.2-alpine
 - Namespace: lens-of-truth
@@ -465,7 +465,7 @@
 - Namespace: kokiri-forest
 - Replicas: 1/1
 - Hosts: links.pcfae.com, ls.sofmeright.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 - Components:
   - linkstack (StatefulSet)
   - linkstack-db (StatefulSet, database)
@@ -501,7 +501,7 @@
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: blog.pcfae.com, blog.sofmeright.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 - Components:
   - ghost (StatefulSet)
   - ghost-mysql (StatefulSet, database)
@@ -550,7 +550,7 @@
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: mealie.yesimvegan.com, recipes.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 - Components:
   - mealie (StatefulSet)
   - mealie-postgres (StatefulSet, database)
@@ -626,7 +626,7 @@
 - Namespace: temple-of-time
 - Replicas: 2/2
 - Hosts: wiki.yesimvegan.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 - Components:
   - wikijs-vegan (StatefulSet)
   - wikijs-vegan-db (StatefulSet, database)
@@ -635,7 +635,7 @@
 - Namespace: lost-woods
 - Replicas: 1/1
 - Hosts: astralfocal.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 
 **Enamorafoto Site** — Deployment — v0.0.3
 - Namespace: lost-woods
@@ -647,7 +647,7 @@
 - Namespace: lost-woods
 - Replicas: 1/1
 - Hosts: etherealclique.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 
 **Ferdium** — StatefulSet — 7.2.2
 - Namespace: lost-woods
@@ -675,7 +675,7 @@
 - Namespace: lost-woods
 - Replicas: 1/1
 - Hosts: kai-hamilton.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 
 **Organizr** — StatefulSet — 
 - Namespace: lost-woods
@@ -693,13 +693,13 @@
 - Namespace: lost-woods
 - Replicas: 1/1
 - Hosts: sofmeright.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 
 **Yesimvegan Site** — Deployment — v0.0.3
 - Namespace: lost-woods
 - Replicas: 1/1
 - Hosts: yesimvegan.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 
 **Anirra** — StatefulSet — xiFwhijN
 - Namespace: swift-sail
@@ -877,7 +877,7 @@
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, 2fa.pcfae.com, ai.pcfae.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, bitwarden.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, code.pcfae.com, convertx.pcfae.com, cr.pcfae.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, docker.cr.pcfae.com, dolibarr.prplanit.com, draw.pcfae.com, emulatorjs.pcfae.com, erpnext.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, ghcr.cr.pcfae.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, hass.arbitorium.com, hass.pcfae.com, homelabhelpdesk.com, hosts.pcfae.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, jcr.pcfae.com, joplin.pcfae.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, ls.sofmeright.com, lscr.cr.pcfae.com, lubelogger.pcfae.com, lwd.optcp.com, mail.pcfae.com, mail.precisionplanit.com, mazanoke.pcfae.com, mealie.yesimvegan.com, mimir.pcfae.com, monica.pcfae.com, ncloud.optcp.com, netalertx.pcfae.com, netbird.prplanit.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, orangehrm.prplanit.com, overseer.pcfae.com, paperless.pcfae.com, pbx.prplanit.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, prowlarr.pcfae.com, qbitt.pcfae.com, quay.cr.pcfae.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.pcfae.com, search.pcfae.com, sh.pcfae.com, sh.uni2.cc, shiplog.pcfae.com, shlink.pcfae.com, siem.pcfae.com, smkeygen.pcfae.com, sofmeright.com, sonarr.pcfae.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.prplanit.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.pcfae.com, trmm.prplanit.com, uptime.pcfae.com, uptime.sofmeright.com, vault.pcfae.com, vw.prplanit.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: cell-membrane-gateway
 
 **Faster Whisper** — StatefulSet — gpu
 - Namespace: tingle-tuner
@@ -1034,7 +1034,7 @@
 | Invoiceninja (3 components) | hyrule-castle | ✅ |
 | Mariadb | hyrule-castle | ❓ |
 | Opnform (7 components) | hyrule-castle | ✅ |
-| Phloem Gateway Istio | kokiri-forest | ✅ |
+| Cell-Membrane Gateway Istio | hyrule-castle | ✅ |
 | Xylem Gateway Istio | arylls-lookout | ✅ |
 | Paperless (3 components) | pedestal-of-time | ✅ |
 | Photoprism (2 components) | pedestal-of-time | ✅ |
@@ -1221,8 +1221,8 @@
 - Namespace: hyrule-castle
 - Replicas: 7/7
 
-**Phloem Gateway Istio** — Deployment — 1.30.3-distroless
-- Namespace: kokiri-forest
+**Cell-Membrane Gateway Istio** — Deployment — 1.30.3-distroless
+- Namespace: hyrule-castle
 - Replicas: 3/3
 
 **Xylem Gateway Istio** — Deployment — 1.30.3-distroless
