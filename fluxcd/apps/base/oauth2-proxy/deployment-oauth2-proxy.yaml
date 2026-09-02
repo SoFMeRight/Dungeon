@@ -52,7 +52,10 @@ spec:
             - name: OAUTH2_PROXY_HTTP_ADDRESS
               value: "0.0.0.0:4180"
             - name: OAUTH2_PROXY_UPSTREAMS
-              value: "static://202"
+              # 200, not 202: istio/Envoy ext-authz treats ONLY 200 as "allow" — a 202
+              # is read as a denial and its body ("Authenticated") is returned to the
+              # client instead of forwarding to the app. 200 → allow → request reaches calibre.
+              value: "static://200"
             - name: OAUTH2_PROXY_PROVIDER
               value: "oidc"
             - name: OAUTH2_PROXY_OIDC_GROUPS_CLAIM
