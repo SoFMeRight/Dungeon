@@ -4,6 +4,9 @@
 # One file per gated host — find an app's rule by its filename, no cross-referencing.
 #   require-login (CUSTOM) → oauth2-proxy proves an SSO session + injects the role header
 #   authz (DENY)          → deny unless the injected role is in `admits` below
+# notPaths /oauth2/* : the oauth2-proxy sign-in/callback/static paths must bypass the gate
+#   (else the login page would have to authenticate itself). Served by the oauth2-proxy-signin
+#   HTTPRoute (books.pcfae.com/oauth2/* → oauth2-proxy).
 # Widen access by adding roles to notValues (owner is the floor):
 #   owner-only : [owner]   admin: [owner,admin]   trusted: [owner,admin,trusted]   guest: [owner,admin,trusted,guest]
 apiVersion: security.istio.io/v1
@@ -22,6 +25,8 @@ spec:
         - operation:
             hosts:
               - books.pcfae.com
+            notPaths:
+              - /oauth2/*
 ---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
@@ -37,6 +42,8 @@ spec:
         - operation:
             hosts:
               - books.pcfae.com
+            notPaths:
+              - /oauth2/*
       when:
         - key: request.headers[x-auth-request-groups]
           notValues:
