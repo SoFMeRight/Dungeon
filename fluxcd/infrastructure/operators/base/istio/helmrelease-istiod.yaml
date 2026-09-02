@@ -70,7 +70,9 @@ spec:
             # proxy-handler mode → 302 auto-redirect to login when unauthenticated,
             # 200 (allow) when authenticated. Appending a path (/oauth2/auth/<path>)
             # misses oauth2-proxy's clean /oauth2/auth endpoint and breaks the check.
-            includeRequestHeadersInCheck: ["cookie", "authorization"]
+            # x-forwarded-proto/host so oauth2-proxy (reverse-proxy) derives the correct
+            # https per-host OIDC callback in the ext-authz check (else it defaults to http).
+            includeRequestHeadersInCheck: ["cookie", "authorization", "x-forwarded-proto", "x-forwarded-host"]
             headersToUpstreamOnAllow:
               - "x-auth-request-user"
               - "x-auth-request-email"
