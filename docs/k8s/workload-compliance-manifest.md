@@ -232,11 +232,11 @@ Query to refresh: `kubectl get policyreport -A -o json | jq -r '[.items[].result
 
 ### Runtime Security (RUNTIME)
 
-| ID | Requirement | Target | Notes |
-|----|-------------|--------|-------|
-| RUNTIME-1 | Falco rules | Deployed | Runtime threat detection |
-| RUNTIME-2 | Security alerts | Configured | Alert on anomalies |
-| RUNTIME-3 | Process monitoring | Enabled | Detect unexpected processes |
+| ID | Requirement | Target | Status |
+|----|-------------|--------|--------|
+| RUNTIME-1 | Perimeter/network detection | Deployed | ⚠️ Partial — CrowdSec (lens-of-truth) live at the edge: pfSense firewall log ingestion, the Cloudflare bouncer, and one Vaultwarden/Bitwarden scenario. Scaling planned |
+| RUNTIME-2 | SIEM / host IDS | Deployed | ⚠️ Wazuh (lens-of-truth) deployed but not yet wired to agents/log sources — a shell today. Scaling planned |
+| RUNTIME-3 | In-cluster pod-runtime detection | Enabled | ❌ Not covered — no eBPF syscall-level runtime tooling (Falco/Tetragon); CrowdSec/Wazuh cover perimeter/host, not pod runtime |
 
 ### Audit & Logging (AUDIT)
 
@@ -594,7 +594,7 @@ root-required vendor images) or external no-pod services. Counts are per deploye
 | Secrets Hygiene | 80% | Vault ESO + SOPS, env vars |
 | Image Scanning | 0% | No automated scanning |
 | Backup Testing | 0% | No documented restore tests |
-| Runtime Security | 0% | Falco not deployed |
+| Runtime Security | Perimeter-only | CrowdSec live at the edge (pfSense + Cloudflare bouncer + 1 Vaultwarden rule); Wazuh deployed-but-unwired; NO in-cluster pod-runtime detection (no Falco/Tetragon). Both planned to scale |
 | Audit Logging | ? | K8s API audit unknown |
 | Encryption at Rest | ? | Needs verification |
 | mTLS | ~100% (mesh) | istio ambient (ztunnel HBONE) provides mTLS for all in-mesh traffic across app namespaces |
