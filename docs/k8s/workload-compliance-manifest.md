@@ -17,7 +17,7 @@ Living document tracking all workloads against production best practices aligned
 | [Secrets Management Audit](#secrets-management-audit) | Secrets hygiene tracking |
 | [Image Security Status](#image-security-status) | Vulnerability and supply chain |
 | [Backup & Disaster Recovery](#backup--disaster-recovery) | Backup schedules, RTO/RPO |
-| [Runtime Security](#runtime-security) | Falco and threat detection |
+| [Runtime Security](#runtime-security) | Detection stack (CrowdSec/Wazuh perimeter; pod-runtime pending) |
 | [Audit & Logging Status](#audit--logging-status) | Logging pipeline and compliance |
 | [Encryption Status](#encryption-status) | At-rest and in-transit encryption |
 | [Network Policy Planning](#network-policy-planning) | Zero-trust network segmentation |
@@ -601,7 +601,7 @@ root-required vendor images) or external no-pod services. Counts are per deploye
 
 ### Overall Compliance Score
 
-> These estimates predate the 2026-09-01 verification of the network (ingress+egress deny) and PSA/Kyverno enforcement layers and are understated for the current state — the two strongest layers (network + pod-security admission) are now fully enforced. Re-scoring pending; the remaining drag is runtime security, image scanning, audit logging, and RBAC review.
+> These estimates predate the 2026-09-01 verification of the network (ingress+egress deny) and PSA/Kyverno enforcement layers and are understated for the current state — the two strongest layers (network + pod-security admission) are now fully enforced. Re-scoring pending; the remaining drag is data-at-rest (etcd encryption), API audit logging, image vuln scanning, in-cluster pod-runtime detection, and RBAC review.
 
 | Framework | Estimated Score | Target |
 |-----------|-----------------|--------|
@@ -614,9 +614,9 @@ root-required vendor images) or external no-pod services. Counts are per deploye
 > ✅ **Done since this list was written:** deny-all Network Policies (ingress + egress, all 16 app namespaces, 2026-09-01) and PSA labels + Kyverno pod-hardening enforcement (native `enforce=baseline` + `enforce-pod-hardening`). Remaining gaps below.
 
 **Critical (Security Gaps)**:
-1. Deploy Falco for runtime threat detection
-2. Enable K8s API server audit logging
-3. Verify etcd encryption at rest
+1. Enable etcd encryption at rest (`--encryption-provider-config`) — native k8s Secrets are plaintext in etcd today (verified OFF 2026-09-01)
+2. Enable K8s API server audit logging (`--audit-policy-file`) — verified OFF 2026-09-01
+3. Deploy in-cluster pod-runtime detection (Falco/Tetragon) — perimeter (CrowdSec) is live, pod runtime is not
 
 **High (Compliance Gaps)**:
 4. Audit all apps for unknown states (`?` cells)
@@ -795,23 +795,23 @@ metadata:
 
 ## Runtime Security
 
-### Falco Deployment Status
+### Detection stack — perimeter live, pod-runtime absent
 
-| Item | Status | Notes |
-|------|--------|-------|
-| Falco DaemonSet | N | Not deployed |
-| Custom rules | N | - |
-| Alert routing | N | - |
-| Response automation | N | - |
+| Layer | Status | Notes |
+|-------|--------|-------|
+| CrowdSec (edge/behavioral) | Partial (live) | lens-of-truth: pfSense firewall log ingestion + Cloudflare bouncer + 1 Vaultwarden scenario. Scaling planned |
+| Wazuh (SIEM / host IDS) | Deployed, unwired | lens-of-truth: 3 pods up, not yet connected to agents/log sources. Scaling planned |
+| In-cluster pod-runtime (eBPF) | Not deployed | No Falco/Tetragon — no syscall-level runtime detection/enforcement for workloads |
 
 ### Security Monitoring Gaps
 
 | Gap | Risk | Remediation |
 |-----|------|-------------|
-| No runtime detection | High | Deploy Falco |
+| No in-cluster pod-runtime detection | High | Deploy Falco or Tetragon (eBPF); CrowdSec/Wazuh cover perimeter/host, not pod runtime |
 | No file integrity monitoring | Medium | Falco or AIDE |
-| No network anomaly detection | Medium | Cilium Hubble + alerts |
-| No process anomaly detection | High | Falco |
+| Network anomaly detection | Medium | Cilium Hubble deployed (flow visibility); no alerting wired |
+| No process anomaly detection | High | Falco/Tetragon |
+| Wazuh not ingesting | Medium | Wire agents/log sources to the deployed Wazuh stack |
 
 ### Recommended Falco Rules
 
@@ -853,7 +853,7 @@ metadata:
 | Logs immutable | ? | Check storage config |
 | API server audit logs | ? | Check kube-apiserver config |
 | Auth events logged | ? | Check Zitadel/OAuth2-proxy |
-| Security events alerting | N | Not configured |
+| Security events alerting | P | CrowdSec edge alerting/response (pfSense+Cloudflare); no in-cluster workload alerting |
 
 ### K8s API Server Audit
 
@@ -885,11 +885,11 @@ metadata:
 | Pod → Pod (same ns) | Y | mTLS (Istio Ambient) | All namespaces labeled |
 | Pod → Pod (cross ns) | Y | mTLS (Istio Ambient) | All namespaces labeled |
 
-**Istio Ambient Status:**
-- ztunnel: Deployed
-- Namespaces labeled: 18/18 (all except king-of-red-lions)
-- mTLS mode: PERMISSIVE (allows both mTLS and plaintext)
-- AuthorizationPolicies: Templates created, not deployed yet
+**Istio Ambient Status (verified 2026-09-02):**
+- ztunnel: Deployed; HBONE mTLS for all in-mesh traffic
+- Namespaces labeled `istio.io/dataplane-mode=ambient`: 21
+- No PeerAuthentication resources (ambient default) — the deny-by-default posture is enforced by AuthorizationPolicies, not STRICT PeerAuth
+- **AuthorizationPolicies: 417 deployed and enforcing** (`default-deny` + per-identity ALLOW across all app namespaces)
 
 ### Certificate Management
 
@@ -897,8 +897,8 @@ metadata:
 |------|--------|-------|
 | cert-manager deployed | Y | Let's Encrypt integration |
 | Auto-renewal working | Y | Check cert-manager logs |
-| Internal CA | N | Not implemented |
-| mTLS (service mesh) | N | Not implemented |
+| Internal CA (mesh identity) | Y | istiod issues SPIFFE workload identities for ambient mTLS |
+| mTLS (service mesh) | Y | istio ambient (ztunnel HBONE) — mTLS for all in-mesh traffic |
 
 ---
 
@@ -1021,7 +1021,7 @@ For each namespace:
 - [ ] Run Trivy scan on all images
 - [ ] Verify backup schedules running
 - [ ] Test one restore procedure
-- [ ] Review Falco alerts (when deployed)
+- [ ] Review runtime/detection alerts (CrowdSec today; Falco/Tetragon when deployed)
 - [ ] Check certificate expiration dates
 - [ ] Review RBAC bindings for least privilege
 - [ ] Update image tags for security patches
