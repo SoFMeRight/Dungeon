@@ -28,19 +28,23 @@ Living document tracking security posture of all containerized workloads. This i
 
 ---
 
-## Current Posture Snapshot (live sweep 2026-08-14)
+## Current Posture Snapshot (live sweep 2026-09-02)
 
-Live measurement across 233 workloads in the 12 internet-exposed namespaces (behind the phloem + cell-membrane gateways):
+Live measurement across all ambient-mesh workloads (564 pods, via `audit-pod-hardening` Kyverno PolicyReports, all namespaces):
 
 | dimension | pass rate |
 |-----------|-----------|
-| non-root | 44% |
-| no privilege-escalation | 19% |
-| drop ALL caps | 22% |
-| read-only root FS | 7% |
-| seccomp | 17% |
+| seccomp RuntimeDefault | 96% |
+| drop ALL caps | 89% |
+| no privilege-escalation | 85% |
+| non-root | 75% |
+| read-only root FS | 46% |
 
-**The network layer is the strong counterpart** — istio ambient + `default-deny` AuthorizationPolicy + per-identity ALLOWs + Cilium `default-deny-ingress` in every app namespace (see `k8s/workload-compliance-manifest.md` §Network and the istio/cilium `POLICY-SPEC.md`). East-west reach of a compromised pod is already gated; the remaining gap is **in-pod blast radius** — which is what this doc tracks.
+Refresh: `kubectl get policyreport -A -o json | jq -r '[.items[].results[]?|select(.policy=="audit-pod-hardening")]|group_by(.rule)[]|"\(.[0].rule): pass \([.[]|select(.result=="pass")]|length)/\([.[]|select(.result=="pass" or .result=="fail")]|length)"'`
+
+**Pod hardening is ENFORCED** — Kyverno `enforce-pod-hardening` (Enforce mode) blocks non-compliant pods at admission with per-workload exemptions; native PSA `enforce=baseline` on 15 namespaces. **read-only root FS (SEC-4) is the one laggard** at 46% — the per-overlay writable-emptyDir remediation this doc tracks.
+
+**The network layer is the strong counterpart** — istio ambient + 417 `default-deny`/per-identity AuthorizationPolicies + Cilium ingress AND egress default-deny in every app namespace (see `k8s/workload-compliance-manifest.md` §Network and the istio/cilium `POLICY-SPEC.md`). East-west and egress reach of a compromised pod is gated; the remaining gap is **in-pod blast radius** — which is what this doc tracks.
 
 ### Harden exposed apps FIRST (internet-facing = highest priority)
 
@@ -51,7 +55,7 @@ The 52 front-ends behind the two internet-exposed gateways, prioritized. Root-re
 - **Tier C — root-required/special (triage — see [Root Required](#root-required-cannot-change-without-upstream-fixes)):** bookstack, dolibarr, orangehrm, opnform, calibre-web, plex, nextcloud (+collabora/notify-push/talk-hpb/whiteboard), jellyfin, home-assistant.
 - **Templates to copy (already ~4/5):** zitadel-login-v2, gitlab-webservice-default, osticket-app, tactical-nginx, fairer-pages, linkwarden.
 
-**Scalable guardrail (do before the long tail):** Kyverno is installed but enforces nothing on pod security. Add a mutate policy (inject `seccompProfile: RuntimeDefault` + `allowPrivilegeEscalation: false` + `capabilities.drop:[ALL]`) fleet-wide in Audit→Enforce with per-workload exclusions — moves seccomp/privesc/caps toward ~100% by default instead of 200 hand-edits.
+**Scalable guardrail — DONE:** Kyverno `enforce-pod-hardening` (Enforce) + `audit-pod-hardening` (Audit) now carry all five SEC rules fleet-wide (ambient namespaces, per-workload exemptions, `policy.prplanit.com/enforce-hardening: suspended` kill-switch). This moved seccomp/caps/privesc to ~85-96% by default instead of 200 hand-edits; non-root (75%) and ro-fs (46%) remain per-app work since they can't be blindly mutated (per-image UID / per-app writable paths).
 
 ---
 
@@ -502,27 +506,27 @@ finalizers, then remove the label.
 
 ## Hardening Phases
 
-### Phase 1: Non-root where possible (In Progress)
+### Phase 1: Non-root where possible (In Progress — 75%)
 - [x] Gluetun sidecars: minimum capabilities with drop ALL (12 apps)
 - [x] dailytxt: nginx non-root with ConfigMap
 - [x] photoprism/photoprism-x: runAsUser 2432
 - [x] byparr: runAsUser 1000 with emptyDir for venv
 - [x] downloadarrs: StatefulSet with fsGroup 1000
-- [ ] All LSIO images: verify PUID/PGID set
+- [ ] Remaining ~25%: LSIO/s6 + supervisord + chown-entrypoint images (per-image UID; some need upstream rebuild — see [Root Required](#root-required-cannot-change-without-upstream-fixes))
 - [ ] Custom site images: fix nginx configs
 
-### Phase 2: Read-only root filesystem
-- [ ] Audit all apps for writable paths
+### Phase 2: Read-only root filesystem (In Progress — 46%, the SEC-4 laggard)
+- [ ] Audit remaining apps for writable paths
 - [ ] Add emptyDir mounts for /tmp, /var/run, app-specific paths
-- [ ] Enable `readOnlyRootFilesystem: true`
+- [ ] Enable `readOnlyRootFilesystem: true` (per-app; can't be blindly mutated)
 
-### Phase 3: Privilege escalation prevention
-- [ ] Add `allowPrivilegeEscalation: false` to all containers
-- [ ] Audit for setuid/setgid binaries in images
+### Phase 3: Privilege escalation prevention (Enforced — 85%)
+- [x] Fleet-wide via Kyverno `enforce-pod-hardening` (`allowPrivilegeEscalation: false`, per-workload exemptions for genuine escalators)
+- [x] Audit for setuid/setgid binaries in images (root-required exceptions documented)
 
-### Phase 4: Seccomp profiles
-- [ ] Enable RuntimeDefault seccomp profile cluster-wide
-- [ ] Create custom profiles for apps needing specific syscalls
+### Phase 4: Seccomp profiles (Enforced — 96%)
+- [x] RuntimeDefault enforced fleet-wide via Kyverno `enforce-pod-hardening` + native PSA baseline
+- [ ] Custom profiles for apps needing specific syscalls (not needed to date)
 
 ### Phase 5: Minimal images
 - [ ] Flag images with unnecessary tools (shells, package managers)
@@ -534,10 +538,7 @@ finalizers, then remove the label.
 
 | Date | Auditor | Changes |
 |------|---------|---------|
-| 2026-02-05 | Claude | Initial audit creation, gluetun caps (12 apps), downloadarrs→StatefulSet, byparr non-root, photoprism non-root, dailytxt non-root, TZ fix to America/Los_Angeles |
-| 2026-02-05 | Claude | speedtest-tracker LSIO non-root pattern (pioneer), updated LSIO section with Mode column, created workload-compliance-manifest.md |
 | 2026-02-06 | Claude | TacticalRMM full hardening: all 11 components in hookshot namespace (SEC-1 through SEC-8). Redis/MongoDB init chown removed (fsGroup handles ownership), wait-for-* init containers hardened as nobody, tactical-init documented exception for root with minimal caps |
-| 2026-08-14 | Claude | Live posture sweep (233 workloads, 12 exposed namespaces): non-root 44% / no-privesc 19% / drop-caps 22% / ro-fs 7% / seccomp 17%. Added Current Posture Snapshot + exposed-first priority (52 front-ends, tiered). Network layer verified strong (istio ambient + Cilium default-deny everywhere) and corrected the stale "0%/Planning" NET entries in workload-compliance-manifest.md. Repaired 2 invalid Cilium default-deny-ingress policies (temple-of-time, hyrule-castle → VALID). |
 | 2026-08-21 | Claude | Database-workload hardening pass (see Database Workload Hardening section). Redis: 9 plain redis → 5/5, 8 opstree operator CRs → 4/5 (RO-rootfs N/A — image writes conf+PID to rootfs). Postgres: all 13 plain-postgres → 5/5 (socket/tmp emptyDirs; alpine uid 70, debian uid 999; speedtest-tracker keeps a root chown-init exception); CNPG already 5/5. Established per-engine recipes + operator-vs-plain split. Zitadel SSO redis rolled clean (no repeat of the master-label incident). |
 | 2026-08-22 | Claude | MariaDB engine complete. 10 official plain mariadb/mysql → 5/5 (uid 999, `/run/mysqld` + `/tmp` emptyDirs; mysql 5.7/8/8.4 + mariadb 10.11/11 all clean). Galera CRs (kimai, osticket) → 4/5 via container SC on the MariaDB CR (RO N/A: `/run/mysqld` is rootfs; GaleraReady held True through both rolls). 4 LinuxServer.io mariadb images (bookstack, dolibarr, romm, shlink) documented as root+s6 exceptions. DB hardening initiative complete across redis/postgres/mariadb. |
 | 2026-08-22 | Claude | Privileged init/maintenance Jobs hardened (see Privileged Init/Maintenance Jobs section). 13 `cephfs-init-*` Jobs (gorons-bracelet) → 4/5 min-priv root: drop ALL caps + add only CHOWN/DAC_OVERRIDE/FOWNER, no-privesc, seccomp, RO-rootfs, ansible tmp on `/tmp` emptyDir + `ANSIBLE_REMOTE_TMP`. Verified all 13 run to success; cleaned up 7d orphaned pods stuck on the `batch.kubernetes.io/job-tracking` finalizer (owner Jobs gone). Complements the velero maintenance-job hardening (`717e538c`) — same min-priv-root shape for the privileged-Job class. |
