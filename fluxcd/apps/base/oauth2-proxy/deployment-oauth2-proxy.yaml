@@ -84,3 +84,10 @@ spec:
               value: "PrecisionPlanIT SSO"
             - name: OAUTH2_PROXY_THEME
               value: "dark"
+            # Behind the istio gateway acting as ext-authz for many hosts:
+            - name: OAUTH2_PROXY_REVERSE_PROXY        # trust the gateway's X-Forwarded-* (host/proto) → absolute return URLs
+              value: "true"
+            - name: OAUTH2_PROXY_SET_XAUTHREQUEST     # emit X-Auth-Request-User/Email/Groups so istio authz can read the role
+              value: "true"
+            - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON # unauthenticated → straight to Zitadel (no interstitial page)
+              value: "true"
