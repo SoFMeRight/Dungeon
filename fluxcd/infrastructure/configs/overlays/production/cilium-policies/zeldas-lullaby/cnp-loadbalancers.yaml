@@ -10,8 +10,12 @@ spec:
     ingress: false
     egress: false
   endpointSelector:
+    # The coturn pods are labeled app=netbird, component=coturn — NOT app=netbird-coturn.
+    # The old selector matched zero pods, so default-deny-ingress silently blocked ALL
+    # ingress to coturn (STUN/TURN answered only on loopback). Match the real labels.
     matchLabels:
-      app: netbird-coturn
+      app: netbird
+      component: coturn
   ingress:
     - fromCIDRSet:
         - cidr: "10.0.0.0/8"
