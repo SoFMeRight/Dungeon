@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: erpnext-sites
+  name: frappe-suite-sites
 spec:
   template:
     metadata:
@@ -68,9 +68,9 @@ spec:
       volumes:
         - name: sites-data
           persistentVolumeClaim:
-            claimName: hyrule-castle-erpnext-sites
+            claimName: hyrule-castle-frappe-suite-sites
         - name: logs-data
           persistentVolumeClaim:
-            claimName: hyrule-castle-erpnext-logs
+            claimName: hyrule-castle-frappe-suite-logs
   # Remove volumeClaimTemplates - using pre-provisioned CephFS PVCs instead
   volumeClaimTemplates: []

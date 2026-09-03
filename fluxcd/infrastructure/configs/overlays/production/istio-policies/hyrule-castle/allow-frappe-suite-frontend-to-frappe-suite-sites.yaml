@@ -1,17 +1,17 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-erpnext-frontend-to-erpnext-sites
+  name: allow-frappe-suite-frontend-to-frappe-suite-sites
 spec:
   selector:
     matchLabels:
-      app: erpnext-sites
+      app: frappe-suite-sites
   action: ALLOW
   rules:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hyrule-castle/sa/erpnext-frontend
+              - cluster.local/ns/hyrule-castle/sa/frappe-suite-frontend
       to:
         - operation:
             ports: ["8000"]

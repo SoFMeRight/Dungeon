@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: erpnext-frontend
+  name: frappe-suite-frontend
 spec:
   template:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.mariadb: "true"
-        policy.prplanit.com/access-scope-mariadb: hyrule-castle.erpnext.mariadb
+        policy.prplanit.com/access-scope-mariadb: hyrule-castle.frappe-suite.mariadb
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: hyrule-castle.erpnext.redis
+        policy.prplanit.com/access-scope-redis: hyrule-castle.frappe-suite.redis
     spec:
       containers:
         - name: frontend
@@ -40,10 +40,10 @@ spec:
       volumes:
         - name: sites-data
           persistentVolumeClaim:
-            claimName: hyrule-castle-erpnext-sites
+            claimName: hyrule-castle-frappe-suite-sites
         - name: logs-data
           persistentVolumeClaim:
-            claimName: hyrule-castle-erpnext-logs
+            claimName: hyrule-castle-frappe-suite-logs
         # readOnlyRootFilesystem: frappe nginx templates config into conf.d; cache/pid/tmp scratch.
         - name: tmp
           emptyDir: {}

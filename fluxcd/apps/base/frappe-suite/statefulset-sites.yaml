@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: erpnext-sites
+  name: frappe-suite-sites
 spec:
   revisionHistoryLimit: 5
-  serviceName: erpnext-sites
+  serviceName: frappe-suite-sites
   replicas: 1
   selector:
     matchLabels:
-      app: erpnext-sites
+      app: frappe-suite-sites
   template:
     metadata:
       labels:
-        app: erpnext-sites
+        app: frappe-suite-sites
     spec:
-      serviceAccountName: erpnext-sites
+      serviceAccountName: frappe-suite-sites
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -64,13 +64,13 @@ spec:
               bench set-config -gp socketio_port $SOCKETIO_PORT;
           env:
             - name: DB_HOST
-              value: "erpnext-mariadb"
+              value: "frappe-suite-mariadb"
             - name: DB_PORT
               value: "3306"
             - name: REDIS_CACHE
-              value: "erpnext-redis-cache:6379"
+              value: "frappe-suite-redis-cache:6379"
             - name: REDIS_QUEUE
-              value: "erpnext-redis-queue:6379"
+              value: "frappe-suite-redis-queue:6379"
             - name: SOCKETIO_PORT
               value: "9000"
           volumeMounts:
@@ -89,9 +89,9 @@ spec:
             - bash
             - -c
             - |
-              wait-for-it -t 120 erpnext-mariadb:3306;
-              wait-for-it -t 120 erpnext-redis-cache:6379;
-              wait-for-it -t 120 erpnext-redis-queue:6379;
+              wait-for-it -t 120 frappe-suite-mariadb:3306;
+              wait-for-it -t 120 frappe-suite-redis-cache:6379;
+              wait-for-it -t 120 frappe-suite-redis-queue:6379;
               export start=`date +%s`;
               until [[ -n `grep -hs ^ sites/common_site_config.json | jq -r ".db_host // empty"` ]] && \
                 [[ -n `grep -hs ^ sites/common_site_config.json | jq -r ".redis_cache // empty"` ]] && \
@@ -137,12 +137,12 @@ spec:
             - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: erpnext-secrets
+                  name: frappe-suite-secrets
                   key: ADMIN_PASSWORD
             - name: DB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: erpnext-secrets
+                  name: frappe-suite-secrets
                   key: MYSQL_ROOT_PASSWORD
           volumeMounts:
             - name: PLACEHOLDER_SITES_DATA
@@ -162,18 +162,18 @@ spec:
               name: backend
           env:
             - name: DB_HOST
-              value: "erpnext-mariadb"
+              value: "frappe-suite-mariadb"
             - name: DB_PORT
               value: "3306"
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: erpnext-secrets
+                  name: frappe-suite-secrets
                   key: MYSQL_ROOT_PASSWORD
             - name: MARIADB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: erpnext-secrets
+                  name: frappe-suite-secrets
                   key: MYSQL_ROOT_PASSWORD
           volumeMounts:
             - name: PLACEHOLDER_SITES_DATA

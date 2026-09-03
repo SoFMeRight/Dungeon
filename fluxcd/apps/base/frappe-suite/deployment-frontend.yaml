@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: erpnext-frontend
+  name: frappe-suite-frontend
 spec:
   revisionHistoryLimit: 5
   replicas: 1
   selector:
     matchLabels:
-      app: erpnext-frontend
+      app: frappe-suite-frontend
   template:
     metadata:
       labels:
-        app: erpnext-frontend
+        app: frappe-suite-frontend
     spec:
-      serviceAccountName: erpnext-frontend
+      serviceAccountName: frappe-suite-frontend
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -35,7 +35,7 @@ spec:
               name: http
           env:
             - name: BACKEND
-              value: "erpnext-sites:8000"
+              value: "frappe-suite-sites:8000"
             # The SITE, not the hostname: nginx sends this as X-Frappe-Site-Name and also
             # resolves static files under sites/<value>/public, so it must name a site
             # directory that exists. $host only works where a site is named after the
@@ -47,7 +47,7 @@ spec:
             - name: FRAPPE_SITE_NAME_HEADER
               value: "prplanit"
             - name: SOCKETIO
-              value: "erpnext-websocket:9000"
+              value: "frappe-suite-websocket:9000"
             - name: UPSTREAM_REAL_IP_ADDRESS
               value: "PLACEHOLDER_UPSTREAM_IP"
             - name: UPSTREAM_REAL_IP_HEADER

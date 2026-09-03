@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: erpnext-mariadb
+  name: frappe-suite-mariadb
 spec:
   revisionHistoryLimit: 5
-  serviceName: erpnext-mariadb
+  serviceName: frappe-suite-mariadb
   replicas: 1
   selector:
     matchLabels:
-      app: erpnext-mariadb
+      app: frappe-suite-mariadb
   template:
     metadata:
       labels:
-        app: erpnext-mariadb
+        app: frappe-suite-mariadb
     spec:
-      serviceAccountName: erpnext-mariadb
+      serviceAccountName: frappe-suite-mariadb
       containers:
         - name: mariadb
           image: PLACEHOLDER_MARIADB_IMAGE
@@ -30,12 +30,12 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: erpnext-secrets
+                  name: frappe-suite-secrets
                   key: MYSQL_ROOT_PASSWORD
             - name: MARIADB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: erpnext-secrets
+                  name: frappe-suite-secrets
                   key: MYSQL_ROOT_PASSWORD
           volumeMounts:
             - name: PLACEHOLDER_MARIADB_DATA

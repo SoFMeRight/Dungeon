@@ -31,7 +31,7 @@ spec:
           namespaces: [hookshot]
           names: ["tactical-*"]
       # hyrule-castle — apt-cacher/bagisto/invoiceninja/osticket apache+root, bookstack LSIO,
-      # erpnext (writes /home/frappe + sites), gitlab + harbor Helm charts, opnform-client node.
+      # frappe-suite (writes /home/frappe + sites), gitlab + harbor Helm charts, opnform-client node.
       - resources:
           kinds: [Pod]
           namespaces: [hyrule-castle]
@@ -39,7 +39,7 @@ spec:
             - "apt-cacher-ng-*"
             - "bagisto-demo-*"
             - "bookstack-*"
-            - "erpnext-*"
+            - "frappe-suite-*"
             - "gitlab-*"
             - "harbor-*"
             - "invoiceninja-app-*"

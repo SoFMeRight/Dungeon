@@ -6,7 +6,7 @@ resources:
   - cephfs-setup-script.yaml
   - cephfs-init-ark-sa.yaml
   - cephfs-init-byparr.yaml
-  - cephfs-init-erpnext.yaml
+  - cephfs-init-frappe-suite.yaml
   - cephfs-init-grafana.yaml
   - cephfs-init-harbor.yaml
   - cephfs-init-homarr.yaml

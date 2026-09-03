@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: erpnext-scheduler
+  name: frappe-suite-scheduler
 spec:
   revisionHistoryLimit: 5
   replicas: 1
   selector:
     matchLabels:
-      app: erpnext-scheduler
+      app: frappe-suite-scheduler
   template:
     metadata:
       labels:
-        app: erpnext-scheduler
+        app: frappe-suite-scheduler
     spec:
-      serviceAccountName: erpnext-scheduler
+      serviceAccountName: frappe-suite-scheduler
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000

@@ -21,9 +21,9 @@ patches:
   - path: service-patch.yaml
     target:
       kind: Service
-      name: erpnext-frontend
+      name: frappe-suite-frontend
   - path: externalsecret-patch.yaml
-  - path: service-erpnext-frontend-ingress-patch.yaml
+  - path: service-frappe-suite-frontend-ingress-patch.yaml
     target:
       kind: Service
-      name: erpnext-frontend
+      name: frappe-suite-frontend

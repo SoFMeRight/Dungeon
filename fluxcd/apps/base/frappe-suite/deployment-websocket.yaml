@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: erpnext-websocket
+  name: frappe-suite-websocket
 spec:
   revisionHistoryLimit: 5
   replicas: 1
   selector:
     matchLabels:
-      app: erpnext-websocket
+      app: frappe-suite-websocket
   template:
     metadata:
       labels:
-        app: erpnext-websocket
+        app: frappe-suite-websocket
     spec:
-      serviceAccountName: erpnext-websocket
+      serviceAccountName: frappe-suite-websocket
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000

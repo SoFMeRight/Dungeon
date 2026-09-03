@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: erpnext-redis-queue
+  name: frappe-suite-redis-queue
 spec:
   revisionHistoryLimit: 5
-  serviceName: erpnext-redis-queue
+  serviceName: frappe-suite-redis-queue
   replicas: 1
   selector:
     matchLabels:
-      app: erpnext-redis-queue
+      app: frappe-suite-redis-queue
   template:
     metadata:
       labels:
-        app: erpnext-redis-queue
+        app: frappe-suite-redis-queue
     spec:
-      serviceAccountName: erpnext-redis-queue
+      serviceAccountName: frappe-suite-redis-queue
       containers:
         - name: redis
           image: PLACEHOLDER_REDIS_IMAGE

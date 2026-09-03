@@ -29,11 +29,11 @@ spec:
           - migrations
           - harbor
           - harbor-proxy-cache-proxy
-          - erpnext-sites
-          - erpnext-queue-long
-          - erpnext-queue-short
-          - erpnext-scheduler
-          - erpnext-websocket
+          - frappe-suite-sites
+          - frappe-suite-queue-long
+          - frappe-suite-queue-short
+          - frappe-suite-scheduler
+          - frappe-suite-websocket
           - bookstack
           - calcom
           - invoiceninja-app

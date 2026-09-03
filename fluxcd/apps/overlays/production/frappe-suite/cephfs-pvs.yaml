@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: hyrule-castle-erpnext-sites-pv
+  name: hyrule-castle-frappe-suite-sites-pv
 spec:
   capacity:
     storage: 20Gi
@@ -13,7 +13,7 @@ spec:
   claimRef:
     apiVersion: v1
     kind: PersistentVolumeClaim
-    name: hyrule-castle-erpnext-sites
+    name: hyrule-castle-frappe-suite-sites
     namespace: hyrule-castle
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
@@ -24,28 +24,28 @@ spec:
       clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
       fsName: Seed_Bank
       staticVolume: "true"
-      rootPath: /dungeon/nvme/apps/erpnext/sites
-    volumeHandle: hyrule-castle-erpnext-sites-static
+      rootPath: /dungeon/nvme/apps/frappe-suite/sites
+    volumeHandle: hyrule-castle-frappe-suite-sites-static
 ---
 # ERPNext Sites CephFS PVC
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: hyrule-castle-erpnext-sites
+  name: hyrule-castle-frappe-suite-sites
 spec:
   accessModes:
     - ReadWriteMany
   resources:
     requests:
       storage: 20Gi
-  volumeName: hyrule-castle-erpnext-sites-pv
+  volumeName: hyrule-castle-frappe-suite-sites-pv
   storageClassName: ""
 ---
 # ERPNext Logs CephFS PV
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: hyrule-castle-erpnext-logs-pv
+  name: hyrule-castle-frappe-suite-logs-pv
 spec:
   capacity:
     storage: 5Gi
@@ -55,7 +55,7 @@ spec:
   claimRef:
     apiVersion: v1
     kind: PersistentVolumeClaim
-    name: hyrule-castle-erpnext-logs
+    name: hyrule-castle-frappe-suite-logs
     namespace: hyrule-castle
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
@@ -66,19 +66,19 @@ spec:
       clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
       fsName: Seed_Bank
       staticVolume: "true"
-      rootPath: /dungeon/nvme/apps/erpnext/logs
-    volumeHandle: hyrule-castle-erpnext-logs-static
+      rootPath: /dungeon/nvme/apps/frappe-suite/logs
+    volumeHandle: hyrule-castle-frappe-suite-logs-static
 ---
 # ERPNext Logs CephFS PVC
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: hyrule-castle-erpnext-logs
+  name: hyrule-castle-frappe-suite-logs
 spec:
   accessModes:
     - ReadWriteMany
   resources:
     requests:
       storage: 5Gi
-  volumeName: hyrule-castle-erpnext-logs-pv
+  volumeName: hyrule-castle-frappe-suite-logs-pv
   storageClassName: ""

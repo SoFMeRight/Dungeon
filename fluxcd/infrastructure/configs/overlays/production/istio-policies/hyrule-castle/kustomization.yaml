@@ -11,11 +11,11 @@ resources:
   - allow-bagisto-demo-to-bagisto-demo-db.yaml
   - allow-opnform-to-opnform-postgres.yaml
   - allow-opnform-to-opnform-redis.yaml
-  - allow-erpnext-to-erpnext-mariadb.yaml
-  - allow-erpnext-to-erpnext-redis-cache.yaml
-  - allow-erpnext-to-erpnext-redis-queue.yaml
-  - allow-erpnext-frontend-to-erpnext-sites.yaml
-  - allow-erpnext-frontend-to-erpnext-websocket.yaml
+  - allow-frappe-suite-to-frappe-suite-mariadb.yaml
+  - allow-frappe-suite-to-frappe-suite-redis-cache.yaml
+  - allow-frappe-suite-to-frappe-suite-redis-queue.yaml
+  - allow-frappe-suite-frontend-to-frappe-suite-sites.yaml
+  - allow-frappe-suite-frontend-to-frappe-suite-websocket.yaml
   - allow-harbor-to-harbor-postgres.yaml
   - allow-harbor-to-harbor-redis.yaml
   - allow-gitlab-to-gitlab-postgresql.yaml

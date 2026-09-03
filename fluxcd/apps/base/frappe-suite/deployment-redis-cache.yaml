@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: erpnext-redis-cache
+  name: frappe-suite-redis-cache
 spec:
   revisionHistoryLimit: 5
   replicas: 1
   selector:
     matchLabels:
-      app: erpnext-redis-cache
+      app: frappe-suite-redis-cache
   template:
     metadata:
       labels:
-        app: erpnext-redis-cache
+        app: frappe-suite-redis-cache
     spec:
-      serviceAccountName: erpnext-redis-cache
+      serviceAccountName: frappe-suite-redis-cache
       containers:
         - name: redis
           image: PLACEHOLDER_REDIS_IMAGE

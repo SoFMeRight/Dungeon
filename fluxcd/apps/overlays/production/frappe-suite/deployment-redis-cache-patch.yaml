@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: erpnext-redis-cache
+  name: frappe-suite-redis-cache
 spec:
   template:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: hyrule-castle.erpnext.redis
+        policy.prplanit.com/service-scope: hyrule-castle.frappe-suite.redis
     spec:
       securityContext:
         runAsUser: 999

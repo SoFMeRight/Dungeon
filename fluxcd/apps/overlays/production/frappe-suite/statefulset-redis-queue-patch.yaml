@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: erpnext-redis-queue
+  name: frappe-suite-redis-queue
 spec:
   template:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: hyrule-castle.erpnext.redis
+        policy.prplanit.com/service-scope: hyrule-castle.frappe-suite.redis
     spec:
       securityContext:
         runAsUser: 999
@@ -28,7 +28,7 @@ spec:
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_REDIS_QUEUE_DATA
-            - name: hyrule-castle-erpnext-redis-queue-data
+            - name: hyrule-castle-frappe-suite-redis-queue-data
               mountPath: /data
           resources:
             requests:
@@ -39,7 +39,7 @@ spec:
               memory: "1Gi"
   volumeClaimTemplates:
     - metadata:
-        name: hyrule-castle-erpnext-redis-queue-data
+        name: hyrule-castle-frappe-suite-redis-queue-data
       spec:
         accessModes:
           - ReadWriteOnce

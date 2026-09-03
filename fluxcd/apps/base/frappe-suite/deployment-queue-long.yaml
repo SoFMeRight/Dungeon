@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: erpnext-queue-long
+  name: frappe-suite-queue-long
 spec:
   revisionHistoryLimit: 5
   replicas: 1
   selector:
     matchLabels:
-      app: erpnext-queue-long
+      app: frappe-suite-queue-long
   template:
     metadata:
       labels:
-        app: erpnext-queue-long
+        app: frappe-suite-queue-long
     spec:
-      serviceAccountName: erpnext-queue-long
+      serviceAccountName: frappe-suite-queue-long
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000

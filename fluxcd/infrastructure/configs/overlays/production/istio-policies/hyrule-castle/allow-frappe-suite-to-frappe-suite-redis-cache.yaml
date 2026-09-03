@@ -1,0 +1,20 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-frappe-suite-to-frappe-suite-redis-cache
+spec:
+  selector:
+    matchLabels:
+      app: frappe-suite-redis-cache
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/hyrule-castle/sa/frappe-suite-sites
+              - cluster.local/ns/hyrule-castle/sa/frappe-suite-queue-long
+              - cluster.local/ns/hyrule-castle/sa/frappe-suite-queue-short
+              - cluster.local/ns/hyrule-castle/sa/frappe-suite-scheduler
+      to:
+        - operation:
+            ports: ["6379"]

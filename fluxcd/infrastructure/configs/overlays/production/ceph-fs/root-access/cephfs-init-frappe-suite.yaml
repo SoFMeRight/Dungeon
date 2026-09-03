@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: cephfs-init-erpnext
+  name: cephfs-init-frappe-suite
 spec:
   ttlSecondsAfterFinished: 300
   template:
@@ -24,7 +24,7 @@ spec:
             - ansible-playbook
             - /scripts/cephfs-init-rootpaths.yml
             - -e
-            - path=/dungeon/nvme/apps/erpnext subdirs=sites,logs owner=1000:1000 mode=0755
+            - path=/dungeon/nvme/apps/frappe-suite subdirs=sites,logs owner=1000:1000 mode=0755
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

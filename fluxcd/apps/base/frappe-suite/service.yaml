@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: erpnext-mariadb
+  name: frappe-suite-mariadb
 spec:
   type: ClusterIP
   ports:
@@ -9,12 +9,12 @@ spec:
       targetPort: 3306
       name: mysql
   selector:
-    app: erpnext-mariadb
+    app: frappe-suite-mariadb
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: erpnext-redis-cache
+  name: frappe-suite-redis-cache
 spec:
   type: ClusterIP
   ports:
@@ -22,12 +22,12 @@ spec:
       targetPort: 6379
       name: redis
   selector:
-    app: erpnext-redis-cache
+    app: frappe-suite-redis-cache
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: erpnext-redis-queue
+  name: frappe-suite-redis-queue
 spec:
   type: ClusterIP
   ports:
@@ -35,12 +35,12 @@ spec:
       targetPort: 6379
       name: redis
   selector:
-    app: erpnext-redis-queue
+    app: frappe-suite-redis-queue
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: erpnext-sites
+  name: frappe-suite-sites
 spec:
   type: ClusterIP
   ports:
@@ -48,12 +48,12 @@ spec:
       targetPort: 8000
       name: backend
   selector:
-    app: erpnext-sites
+    app: frappe-suite-sites
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: erpnext-websocket
+  name: frappe-suite-websocket
 spec:
   type: ClusterIP
   ports:
@@ -61,12 +61,12 @@ spec:
       targetPort: 9000
       name: websocket
   selector:
-    app: erpnext-websocket
+    app: frappe-suite-websocket
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: erpnext-frontend
+  name: frappe-suite-frontend
 spec:
   type: ClusterIP
   ports:
@@ -74,4 +74,4 @@ spec:
       targetPort: 8080
       name: http
   selector:
-    app: erpnext-frontend
+    app: frappe-suite-frontend
