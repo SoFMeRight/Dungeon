@@ -114,15 +114,14 @@ spec:
                   --install-app erpnext \
                   --install-app hrms \
                   --install-app helpdesk \
-                  --set-default $SITE_NAME \
+                  --set-default \
                   $SITE_NAME;
               else
                 echo "Site $SITE_NAME already exists, skipping creation";
-              fi;
+              fi
               # Attached rather than implied by the site name, so the site keeps naming
-              # the org while the URL it answers on can change. Idempotent: re-adding a
-              # domain already on the site is a no-op.
-              bench --site $SITE_NAME setup add-domain --tls-certificate-file="" --tls-certificate-key-file="" $SITE_DOMAIN || true
+              # the org while the URL it answers on can change.
+              bench setup add-domain --site $SITE_NAME $SITE_DOMAIN
           env:
             # The site is the tenant boundary: named for the organisation whose books it
             # holds, not for the URL. PrPlanIT, HomeLabHD and SoFMeRight are Companies
