@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: docker.io/frappe/erpnext:v15.119.3
+          image: docker.io/hlhd/frappe-suite:v16.33.0
           securityContext:
             readOnlyRootFilesystem: true
           env:

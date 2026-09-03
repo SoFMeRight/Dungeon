@@ -7,12 +7,14 @@ metadata:
     gatus.home-operations.com/endpoint: |
       group: "Business Apps (Hyrule Castle🏰)"
 spec:
+  # xylem, not cell-membrane: this is the desk of an ERP holding company books, and
+  # cell-membrane terminates the domains that are published to the internet. The site
+  # is reached over the LAN and nothing resolves it from outside.
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: hyrule-castle
-      sectionName: https-prplanit
+    - name: xylem-gateway
+      namespace: arylls-lookout
   hostnames:
-    - "erpnext.prplanit.com"
+    - "hq.pcfae.com"
   rules:
     - matches:
         - path:

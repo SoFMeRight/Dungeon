@@ -105,18 +105,32 @@ spec:
                 fi
               done;
               echo "sites/common_site_config.json found";
-              if [ ! -f sites/frontend/site_config.json ]; then
+              if [ ! -f sites/$SITE_NAME/site_config.json ]; then
                 bench new-site \
                   --mariadb-user-host-login-scope='%' \
                   --admin-password=$ADMIN_PASSWORD \
                   --db-root-username=root \
                   --db-root-password=$DB_ROOT_PASSWORD \
                   --install-app erpnext \
-                  --set-default frontend;
+                  --install-app hrms \
+                  --install-app helpdesk \
+                  --set-default $SITE_NAME \
+                  $SITE_NAME;
               else
-                echo "Site already exists, skipping creation";
-              fi
+                echo "Site $SITE_NAME already exists, skipping creation";
+              fi;
+              # Attached rather than implied by the site name, so the site keeps naming
+              # the org while the URL it answers on can change. Idempotent: re-adding a
+              # domain already on the site is a no-op.
+              bench --site $SITE_NAME setup add-domain --tls-certificate-file="" --tls-certificate-key-file="" $SITE_DOMAIN || true
           env:
+            # The site is the tenant boundary: named for the organisation whose books it
+            # holds, not for the URL. PrPlanIT, HomeLabHD and SoFMeRight are Companies
+            # inside it; another business would be a separate site on this same bench.
+            - name: SITE_NAME
+              value: "prplanit"
+            - name: SITE_DOMAIN
+              value: "hq.pcfae.com"
             - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:

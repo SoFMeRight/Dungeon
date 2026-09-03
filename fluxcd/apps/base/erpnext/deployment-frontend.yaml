@@ -36,8 +36,14 @@ spec:
           env:
             - name: BACKEND
               value: "erpnext-sites:8000"
+            # $host, not a fixed site: nginx resolves the site from the request
+            # hostname, which is what lets one bench serve several sites. A site is a
+            # tenant — separate database, users and installed apps — so another
+            # business gets its own site here rather than a Company inside this one.
+            # Hostnames are attached to a site with `bench setup add-domain`, so a
+            # rename is a route change and not a site migration.
             - name: FRAPPE_SITE_NAME_HEADER
-              value: "frontend"
+              value: "$host"
             - name: SOCKETIO
               value: "erpnext-websocket:9000"
             - name: UPSTREAM_REAL_IP_ADDRESS
