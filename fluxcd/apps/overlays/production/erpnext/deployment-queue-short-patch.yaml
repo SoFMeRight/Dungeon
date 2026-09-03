@@ -8,6 +8,7 @@ spec:
       containers:
         - name: queue-short
           image: docker.io/hlhd/frappe-suite:v16.33.0
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: "250m"

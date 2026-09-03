@@ -8,6 +8,7 @@ spec:
       containers:
         - name: scheduler
           image: docker.io/hlhd/frappe-suite:v16.33.0
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: "10m"

@@ -15,6 +15,7 @@ spec:
       containers:
         - name: frontend
           image: docker.io/hlhd/frappe-suite:v16.33.0
+          imagePullPolicy: Always
           securityContext:
             readOnlyRootFilesystem: true
           env:
