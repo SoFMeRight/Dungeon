@@ -8,6 +8,10 @@ spec:
     - port: 80
       targetPort: 10000
       name: http
+      # Management serves the gRPC ManagementService + the /api HTTP handler on one
+      # port via an h2c handler; mark it h2c so istio speaks cleartext HTTP/2 upstream
+      # (gRPC cannot ride HTTP/1.1). Without this, gRPC calls fail even once routed.
+      appProtocol: kubernetes.io/h2c
   selector:
     app: netbird
     component: management

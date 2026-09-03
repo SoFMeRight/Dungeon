@@ -21,9 +21,12 @@ spec:
         - name: netbird-management
           port: 80
     - matches:
+        # NetBird's management gRPC service lives at /management.ManagementService/ —
+        # a PathPrefix of /management does NOT match it (segment-boundary matching),
+        # so the client's GetServerKey / SSO-config calls must target the dotted name.
         - path:
             type: PathPrefix
-            value: /management
+            value: /management.ManagementService
       timeouts:
         request: 24h
       backendRefs:
@@ -32,7 +35,7 @@ spec:
     - matches:
         - path:
             type: PathPrefix
-            value: /signalexchange
+            value: /signalexchange.SignalExchange
       timeouts:
         request: 24h
       backendRefs:

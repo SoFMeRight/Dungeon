@@ -8,6 +8,8 @@ spec:
     - port: 80
       targetPort: 10000
       name: http
+      # Signal serves the gRPC SignalExchange service; h2c so istio speaks HTTP/2 upstream.
+      appProtocol: kubernetes.io/h2c
   selector:
     app: netbird
     component: signal
