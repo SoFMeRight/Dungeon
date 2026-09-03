@@ -1,11 +1,12 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-netbird-coturn-lan
+  name: allow-netbird-coturn
 spec:
   description: >-
-    LAN-only ingress to netbird-coturn (172.22.30.86) on
-    3478/UDP, 3478/TCP, 5349/TCP.
+    Public STUN/TURN ingress to netbird-coturn (172.22.30.86) — world + cluster on
+    3478/UDP+TCP, 5349/TCP+UDP, and the 49152-65535/UDP relay range. A VPN's TURN
+    server has to be reachable by remote peers (cellular/off-LAN), not just the LAN.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -17,12 +18,13 @@ spec:
       app: netbird
       component: coturn
   ingress:
-    - fromCIDRSet:
-        - cidr: "10.0.0.0/8"
-        - cidr: "172.16.0.0/12"
-        - cidr: "192.168.0.0/16"
-          except:
-            - "192.168.144.0/20"
+    # A VPN's TURN server has to be reachable by peers out on the internet (phones on
+    # cellular, remote nodes behind NAT) — not just the LAN. Allow world + cluster.
+    # STUN binding is unauthenticated (harmless address reflection); TURN allocations
+    # still require the NetBird-issued time-based credentials, so this isn't open relay.
+    - fromEntities:
+        - world
+        - cluster
       toPorts:
         - ports:
             - port: "3478"
@@ -31,6 +33,13 @@ spec:
               protocol: TCP
             - port: "5349"
               protocol: TCP
+            - port: "5349"
+              protocol: UDP
+            # TURN relay media range — needed by symmetric-NAT/CGNAT peers (typical on
+            # cellular) that can't hole-punch and must relay through coturn.
+            - port: "49152"
+              endPort: 65535
+              protocol: UDP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
