@@ -90,8 +90,10 @@ spec:
           namespaces: [tingle-tuner]
           names: ["faster-whisper-*", "hrconvert2-*", "stable-diffusion-webui-*"]
       # zeldas-lullaby — bank-vaults/openbao (Vault operator), netbird-dashboard (supervisord),
-      # netbox-server LSIO, unifi-app LSIO
+      # netbox-server LSIO, unifi-app LSIO, netbird-turn (STUNner dataplane binds :3478 — root-required
+      # under CRI-O; otherwise fully hardened via its Dataplane CR: RO-rootfs, no-privesc, drop-all-caps
+      # + NET_BIND_SERVICE. This is its ONLY exception — unlike neko it doesn't need no-privesc.)
       - resources:
           kinds: [Pod]
           namespaces: [zeldas-lullaby]
-          names: ["bank-vaults-operator-*", "netbird-dashboard-*", "netbox-server-*", "openbao-*", "unifi-app-*"]
+          names: ["bank-vaults-operator-*", "netbird-dashboard-*", "netbird-turn-*", "netbox-server-*", "openbao-*", "unifi-app-*"]

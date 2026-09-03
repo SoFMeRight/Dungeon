@@ -35,6 +35,49 @@ spec:
   authRef:
     name: netbird-turn-auth
     namespace: zeldas-lullaby
+  # Run the hardened Dataplane below instead of the operator's unhardened default.
+  dataplane: netbird-turn
+---
+apiVersion: stunner.l7mp.io/v1
+kind: Dataplane
+metadata:
+  name: netbird-turn
+spec:
+  # Mirrors the operator's default dataplane, plus a real securityContext. stunnerd
+  # must stay root to bind the privileged :3478 (this cluster's CRI-O ignores
+  # ip_unprivileged_port_start and NET_BIND_SERVICE is inert for non-root), but
+  # everything else is locked down: read-only rootfs (stunnerd logs to stdout and
+  # pulls its config from the control plane over the network, so it writes nothing),
+  # no privilege escalation, all caps dropped except the one needed for the bind,
+  # and RuntimeDefault seccomp. Net result: one documented non-root exception, no
+  # privesc exception — strictly tighter than the neko-vpn dataplane.
+  image: docker.io/l7mp/stunnerd:1.2.1
+  imagePullPolicy: IfNotPresent
+  command: ["stunnerd"]
+  args: ["-w", "--udp-thread-num=16", "--log-format=text"]
+  dataplaneResource: Deployment
+  replicas: 1
+  terminationGracePeriodSeconds: 3600
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "128Mi"
+    limits:
+      cpu: "2"
+      memory: "512Mi"
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop:
+        - ALL
+      add:
+        - NET_BIND_SERVICE
 ---
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
