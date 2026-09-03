@@ -128,7 +128,7 @@ spec:
               bench set-config host_name https://$SITE_DOMAIN
               # Identity provider and landing app live in the database, so they are
               # reapplied here rather than surviving only as whatever an operator once ran.
-              /home/frappe/frappe-bench/env/bin/python /scripts/configure-site.py
+              (cd sites && /home/frappe/frappe-bench/env/bin/python /scripts/configure-site.py)
           env:
             # The site is the tenant boundary: named for the organisation whose books it
             # holds, not for the URL. PrPlanIT, HomeLabHD and SoFMeRight are Companies
