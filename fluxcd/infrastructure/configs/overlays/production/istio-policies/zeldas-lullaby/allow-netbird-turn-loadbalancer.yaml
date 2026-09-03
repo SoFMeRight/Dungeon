@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-netbird-turn-loadbalancer
+spec:
+  selector:
+    matchLabels:
+      app: stunner
+      stunner.l7mp.io/related-gateway-name: netbird-turn
+  action: ALLOW
+  rules:
+    # Internet-facing TURN/STUN gateway — source IPs are unpredictable. UDP passes
+    # straight through ztunnel (ambient captures TCP only), but keep the L4 ALLOW
+    # explicit and consistent with the neko-vpn STUNner gateway.
+    - to:
+        - operation:
+            ports: ["3478"]

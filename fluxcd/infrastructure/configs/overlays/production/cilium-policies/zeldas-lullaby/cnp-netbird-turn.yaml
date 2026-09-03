@@ -1,0 +1,51 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-netbird-turn
+spec:
+  description: >-
+    Public STUN/TURN ingress to the NetBird STUNner dataplane (netbird-turn
+    gateway, 172.22.30.86:3478/UDP). A VPN TURN server must be reachable by peers
+    anywhere on the internet, so world+cluster — the restriction is by port and by
+    STUNner's ephemeral TURN credentials, not by source IP (roaming peers have
+    unknowable public IPs).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    # STUNner dataplane pods are labeled app=stunner; scope to THIS gateway's
+    # dataplane with the related-gateway-name label so this doesn't also match the
+    # neko-vpn dataplane in another namespace.
+    matchLabels:
+      app: stunner
+      stunner.l7mp.io/related-gateway-name: netbird-turn
+  ingress:
+    - fromEntities:
+        - world
+        - cluster
+      toPorts:
+        - ports:
+            - port: "3478"
+              protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-netbird-turn-egress
+spec:
+  description: >-
+    The NetBird STUNner dataplane relays media out to peer addresses anywhere on
+    the internet and coordinates with the STUNner control plane in
+    king-of-red-lions in-cluster. world+cluster covers both. Inert until egress
+    default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: stunner
+      stunner.l7mp.io/related-gateway-name: netbird-turn
+  egress:
+    - toEntities:
+        - world
+        - cluster

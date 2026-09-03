@@ -53,15 +53,15 @@ spec:
                   }
                 ],
                 "TURNConfig": {
-                  "TimeBasedCredentials": false,
+                  "TimeBasedCredentials": true,
                   "CredentialsTTL": "12h0m0s",
-                  "Secret": "secret",
+                  "Secret": "${TURN_SHARED_SECRET}",
                   "Turns": [
                     {
                       "Proto": "udp",
                       "URI": "turn:turn.prplanit.com:3478",
-                      "Username": "${COTURN_USER}",
-                      "Password": "${COTURN_PASS}"
+                      "Username": "",
+                      "Password": ""
                     }
                   ]
                 },
@@ -156,8 +156,7 @@ spec:
               sed -i "s|\${AUTH_CLIENT_ID}|${AUTH_CLIENT_ID}|g" /etc/netbird/config.json
               sed -i "s|\${AUTH_CLIENT_SECRET}|${AUTH_CLIENT_SECRET}|g" /etc/netbird/config.json
               sed -i "s|\${IDP_MGMT_CLIENT_ID}|${IDP_MGMT_CLIENT_ID}|g" /etc/netbird/config.json
-              sed -i "s|\${COTURN_USER}|${COTURN_USER}|g" /etc/netbird/config.json
-              sed -i "s|\${COTURN_PASS}|${COTURN_PASS}|g" /etc/netbird/config.json
+              sed -i "s|\${TURN_SHARED_SECRET}|${TURN_SHARED_SECRET}|g" /etc/netbird/config.json
               sed -i "s|\${NETBIRD_RELAY_AUTH_SECRET}|${NETBIRD_RELAY_AUTH_SECRET}|g" /etc/netbird/config.json
               sed -i "s|\${DATASTORE_ENCRYPTION_KEY}|${DATASTORE_ENCRYPTION_KEY}|g" /etc/netbird/config.json
 
@@ -179,16 +178,13 @@ spec:
                 secretKeyRef:
                   name: netbird-secrets
                   key: IDP_MGMT_CLIENT_ID
-            - name: COTURN_USER
+            # Shared TURN secret for STUNner ephemeral auth — same key STUNner's
+            # GatewayConfig authRef reads, so both sides derive matching creds.
+            - name: TURN_SHARED_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: netbird-secrets
-                  key: COTURN_USER
-            - name: COTURN_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: netbird-secrets
-                  key: COTURN_PASS
+                  name: netbird-turn-auth
+                  key: secret
             - name: NETBIRD_RELAY_AUTH_SECRET
               valueFrom:
                 secretKeyRef:

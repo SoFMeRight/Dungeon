@@ -52,14 +52,13 @@ spec:
           selector:
             matchLabels:
               app: photoprism-x
-      # netbird-coturn: turnserver is a file-capability binary (NoNewPrivs strips its caps on exec).
       # bank-vaults operator + openbao (Vault) pods — openbao's sidecars are hardened by the
       # mutate-vault-sidecar-hardening policy on create; this exception is the safety belt for that
       # policy's failurePolicy:Ignore (a Kyverno blip must not block Vault pod creation).
       - resources:
           kinds: [Pod]
           namespaces: [zeldas-lullaby]
-          names: ["netbird-coturn-*", "bank-vaults-operator-*", "openbao-*"]
+          names: ["bank-vaults-operator-*", "openbao-*"]
       # nextcloud-collabora (Helm chroot sandbox). (kimai/osticket-mariadb agents + harbor-redis +
       # harbor-proxy-cache all hardened directly — no longer excepted here.)
       - resources:

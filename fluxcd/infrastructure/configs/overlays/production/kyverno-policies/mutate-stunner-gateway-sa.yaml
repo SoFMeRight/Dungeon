@@ -10,7 +10,7 @@ spec:
         any:
           - resources:
               kinds: [Deployment]
-              namespaces: ["swift-sail"]
+              namespaces: ["swift-sail", "zeldas-lullaby"]
               selector:
                 matchLabels:
                   stunner.l7mp.io/owned-by: stunner
@@ -38,3 +38,20 @@ spec:
           metadata:
             annotations:
               lbipam.cilium.io/ips: "172.22.30.120"
+    # NetBird's STUNner TURN gateway inherits coturn's old address (172.22.30.86,
+    # sharing-key zeldas-lullaby) so turn.prplanit.com DNS and the WAN NAT don't move.
+    - name: set-netbird-turn-lb-ip-on-service
+      match:
+        any:
+          - resources:
+              kinds: [Service]
+              namespaces: ["zeldas-lullaby"]
+              annotations:
+                stunner.l7mp.io/related-gateway-name: "zeldas-lullaby/netbird-turn"
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            annotations:
+              lbipam.cilium.io/ips: "172.22.30.86"
+              lbipam.cilium.io/sharing-key: "zeldas-lullaby"
+              lbipam.cilium.io/sharing-cross-namespace: "*"

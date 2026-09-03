@@ -4,17 +4,14 @@ kind: Kustomization
 resources:
   - serviceaccounts.yaml
   - cluster-postgres.yaml
-  - configmap-coturn.yaml
   - configmap-dashboard-nginx.yaml
   - statefulset-management.yaml
   - statefulset-signal.yaml
   - deployment-dashboard.yaml
   - deployment-relay.yaml
-  - deployment-coturn.yaml
   - service-postgres.yaml
   - service-management.yaml
   - service-signal.yaml
   - service-dashboard.yaml
   - service-relay.yaml
-  - service-coturn.yaml
   - externalsecret.yaml

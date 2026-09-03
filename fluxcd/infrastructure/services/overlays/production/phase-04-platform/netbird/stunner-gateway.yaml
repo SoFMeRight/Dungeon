@@ -1,0 +1,75 @@
+# NetBird's TURN/STUN server, provided by STUNner instead of coturn. STUNner is
+# the Kubernetes-native way to run TURN: it publishes only the single Gateway
+# port (3478) on the LoadBalancer and relays media through its dataplane, so the
+# 49152-65535 relay range never has to be exposed — the problem coturn forced on
+# us simply doesn't exist here. A dedicated GatewayClass gives NetBird its own
+# realm + auth, independent of the neko-vpn STUNner gateway.
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: netbird-turn
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: netbird-turn
+spec:
+  controllerName: "stunner.l7mp.io/gateway-operator"
+  parametersRef:
+    group: "stunner.l7mp.io"
+    kind: GatewayConfig
+    name: netbird-turn
+    namespace: zeldas-lullaby
+  description: "STUNner TURN/STUN gateway for NetBird VPN peers"
+---
+apiVersion: stunner.l7mp.io/v1
+kind: GatewayConfig
+metadata:
+  name: netbird-turn
+spec:
+  realm: netbird.prplanit.com
+  # Ephemeral (time-windowed) auth: STUNner and NetBird share a secret and each
+  # derives per-client, expiring HMAC credentials from it. authRef points at a
+  # Secret carrying type=ephemeral + the shared secret (materialised from Vault).
+  authRef:
+    name: netbird-turn-auth
+    namespace: zeldas-lullaby
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: netbird-turn
+spec:
+  gatewayClassName: netbird-turn
+  # One UDP listener is all NetBird uses (turn:turn.prplanit.com:3478?transport=udp).
+  # The operator auto-creates the LoadBalancer Service; a Kyverno rule pins its IP
+  # to 172.22.30.86 (sharing-key zeldas-lullaby), the address coturn used to hold.
+  listeners:
+    - name: turn-udp
+      port: 3478
+      protocol: TURN-UDP
+---
+apiVersion: stunner.l7mp.io/v1
+kind: StaticService
+metadata:
+  name: netbird-peers
+spec:
+  # NetBird peers live anywhere on the internet, so relay to any address. This is
+  # not an open relay: STUNner only accepts allocations from clients holding valid
+  # ephemeral credentials, and those are minted from the shared secret above.
+  prefixes:
+    - "0.0.0.0/0"
+---
+apiVersion: stunner.l7mp.io/v1
+kind: UDPRoute
+metadata:
+  name: netbird-turn
+spec:
+  parentRefs:
+    - name: netbird-turn
+  rules:
+    - backendRefs:
+        - group: stunner.l7mp.io
+          kind: StaticService
+          name: netbird-peers

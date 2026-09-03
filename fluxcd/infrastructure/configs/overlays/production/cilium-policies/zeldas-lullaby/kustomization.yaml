@@ -6,6 +6,7 @@ resources:
   - cnp-egress-apps.yaml
   - cnp-egress-security-core.yaml
   - cnp-loadbalancers.yaml
+  - cnp-netbird-turn.yaml
   - cnp-webhooks.yaml
   - cnp-vault.yaml
   - cnp-zitadel-internal.yaml

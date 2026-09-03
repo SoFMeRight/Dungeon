@@ -6,6 +6,8 @@ namespace: zeldas-lullaby
 resources:
   - ../../../../base/netbird
   - httproute.yaml
+  - stunner-gateway.yaml
+  - externalsecret-turn-auth.yaml
 
 patches:
   - patch: |-
@@ -62,19 +64,6 @@ patches:
       name: netbird-relay
   - patch: |-
       - op: replace
-        path: /spec/template/spec/initContainers/0/image
-        value: docker.io/library/busybox:1.37.0
-      - op: replace
-        path: /spec/template/spec/initContainers/0/env/2/value
-        value: "71.24.190.221"
-      - op: replace
-        path: /spec/template/spec/containers/0/image
-        value: docker.io/coturn/coturn:4.8.0
-    target:
-      kind: Deployment
-      name: netbird-coturn
-  - patch: |-
-      - op: replace
         path: /spec/secretStoreRef/name
         value: openbao-zeldas-letter
       - op: replace
@@ -110,31 +99,9 @@ patches:
       - op: replace
         path: /spec/data/10/remoteRef/key
         value: apps/netbird
-      - op: replace
-        path: /spec/data/11/remoteRef/key
-        value: apps/netbird
-      - op: replace
-        path: /spec/data/12/remoteRef/key
-        value: apps/netbird
     target:
       kind: ExternalSecret
       name: netbird-secrets
-  - patch: |-
-      - op: add
-        path: /metadata/annotations
-        value:
-          lbipam.cilium.io/ips: "172.22.30.86"
-          lbipam.cilium.io/sharing-key: "zeldas-lullaby"
-          lbipam.cilium.io/sharing-cross-namespace: "*"
-          gatus.home-operations.com/endpoint: |
-            group: "Administration (Zelda's Lullaby🎵)"
-            url: tcp://172.22.30.86:3478
-            interval: 60s
-            conditions:
-              - "[CONNECTED] == true"
-    target:
-      kind: Service
-      name: netbird-coturn
   - patch: |-
       - op: replace
         path: /spec/volumeClaimTemplates/0/spec/storageClassName
@@ -199,30 +166,3 @@ patches:
     target:
       kind: StatefulSet
       name: netbird-management
-  - patch: |-
-      - op: add
-        path: /spec/template/spec/containers/0/securityContext/readOnlyRootFilesystem
-        value: true
-      - op: add
-        path: /spec/template/spec/containers/0/volumeMounts/-
-        value:
-          name: var-tmp
-          mountPath: /var/tmp
-      - op: add
-        path: /spec/template/spec/containers/0/volumeMounts/-
-        value:
-          name: tmp
-          mountPath: /tmp
-      - op: add
-        path: /spec/template/spec/volumes/-
-        value:
-          name: var-tmp
-          emptyDir: {}
-      - op: add
-        path: /spec/template/spec/volumes/-
-        value:
-          name: tmp
-          emptyDir: {}
-    target:
-      kind: Deployment
-      name: netbird-coturn
