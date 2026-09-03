@@ -5,7 +5,9 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: netbird-signal
-  replicas: 3
+  # NetBird OSS Signal is a stateful singleton (peer-relay streams are per-instance);
+  # active-active HA is Enterprise-only. Keep at 1.
+  replicas: 1
   selector:
     matchLabels:
       app: netbird

@@ -5,7 +5,11 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: netbird-management
-  replicas: 3
+  # NetBird OSS Management is a stateful singleton — active-active HA (shared server
+  # key + cross-instance peer coordination) is an Enterprise-only feature. Running >1
+  # replica gives each pod its own WireGuard server key, so load-balanced gRPC calls
+  # (GetServerKey on one pod, Login on another) fail to decrypt. Keep at 1.
+  replicas: 1
   selector:
     matchLabels:
       app: netbird
