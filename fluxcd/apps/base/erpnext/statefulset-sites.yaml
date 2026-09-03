@@ -114,6 +114,7 @@ spec:
                   --install-app erpnext \
                   --install-app hrms \
                   --install-app helpdesk \
+                  --install-app crm \
                   --set-default \
                   $SITE_NAME;
               else
