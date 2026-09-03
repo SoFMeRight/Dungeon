@@ -119,9 +119,12 @@ spec:
               else
                 echo "Site $SITE_NAME already exists, skipping creation";
               fi
-              # Attached rather than implied by the site name, so the site keeps naming
-              # the org while the URL it answers on can change.
-              bench setup add-domain --site $SITE_NAME $SITE_DOMAIN
+              # Routing is nginx's job via FRAPPE_SITE_NAME_HEADER; what the site itself
+              # needs is the URL to put in the links it generates — password resets,
+              # notifications, OAuth redirects — which is host_name. Written to the
+              # default site, which new-site above set. Changing the hostname is this
+              # value plus the HTTPRoute; the site is not involved.
+              bench set-config host_name https://$SITE_DOMAIN
           env:
             # The site is the tenant boundary: named for the organisation whose books it
             # holds, not for the URL. PrPlanIT, HomeLabHD and SoFMeRight are Companies

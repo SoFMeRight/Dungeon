@@ -36,14 +36,16 @@ spec:
           env:
             - name: BACKEND
               value: "erpnext-sites:8000"
-            # $host, not a fixed site: nginx resolves the site from the request
-            # hostname, which is what lets one bench serve several sites. A site is a
-            # tenant — separate database, users and installed apps — so another
-            # business gets its own site here rather than a Company inside this one.
-            # Hostnames are attached to a site with `bench setup add-domain`, so a
-            # rename is a route change and not a site migration.
+            # The SITE, not the hostname: nginx sends this as X-Frappe-Site-Name and also
+            # resolves static files under sites/<value>/public, so it must name a site
+            # directory that exists. $host only works where a site is named after the
+            # domain it answers on; sites here are named for the organisation whose books
+            # they hold, so the URL can change without the site moving.
+            #
+            # A second organisation gets its own site and its own frontend pinned to it,
+            # which is how upstream documents multi-tenancy.
             - name: FRAPPE_SITE_NAME_HEADER
-              value: "$host"
+              value: "prplanit"
             - name: SOCKETIO
               value: "erpnext-websocket:9000"
             - name: UPSTREAM_REAL_IP_ADDRESS
