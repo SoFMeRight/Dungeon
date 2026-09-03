@@ -3,6 +3,23 @@
   hosts: "bluebell"
   # ignore_errors: true
   become: true
+
+  # --- Tunables (override via -e, host_vars/bluebell, or group_vars) ----------
+  # fusionpbx_external_ip: FreeSWITCH's advertised public NAT address for SIP+RTP,
+  # stamped into every call's SDP. NOT hardcoded — left unset, the current public
+  # IP is auto-detected at run time and pinned as a literal (autonat: is avoided;
+  # it re-detects via the gateway's uPnP, which can hand back a stale WAN IP).
+  # Pin/override when you want a different strategy, e.g.:
+  #   fusionpbx_external_ip: "stun:stun.freeswitch.org"   # let FreeSWITCH STUN it
+  #   fusionpbx_external_ip: "host:pbx.prplanit.com"      # follow a DDNS record
+  #   fusionpbx_external_ip: "autonat:203.0.113.7"        # explicit
+  vars:
+    fusionpbx_ip_detect_url: "https://1.1.1.1/cdn-cgi/trace"
+    # local-network-acl for the internal (phone) profile. rfc1918 = all private ranges
+    # are "local", so phones on any LAN VLAN get the PBX's local IP rather than the
+    # public ext-rtp-ip. Set to "localnet.auto" to restrict to the PBX's own subnet.
+    fusionpbx_internal_local_network_acl: "rfc1918"
+
   tasks:
 
     - name: Detecting if there is an active installation of fusionpbx.
@@ -24,3 +41,214 @@
       ansible.builtin.debug:
         msg: "{{ fusionpbx_install.stdout }}"
       when: fusionpbx_dir.stat.exists == 0
+
+    # -------------------------------------------------------------------------
+    # FreeSWITCH external NAT address (external_rtp_ip / external_sip_ip)
+    #
+    # These are stamped into every call's SDP. A stale value (e.g. after a
+    # dynamic-WAN change) makes the far end send RTP into a dead IP -> one-way /
+    # no-way audio. Converge them to the desired public address in BOTH stores
+    # FusionPBX keeps: the v_vars DB row (source of truth) and vars.xml (what
+    # FreeSWITCH actually reads). Idempotent; reloads the profile only on change.
+    # -------------------------------------------------------------------------
+
+    - name: FusionPBX | detect current public IP (when external IP not pinned)
+      ansible.builtin.uri:
+        url: "{{ fusionpbx_ip_detect_url }}"
+        return_content: true
+      register: fusionpbx_ip_trace
+      check_mode: false
+      when: fusionpbx_external_ip is not defined
+
+    - name: FusionPBX | resolve desired external IP value (pinned)
+      ansible.builtin.set_fact:
+        fusionpbx_external_ip_effective: "{{ fusionpbx_external_ip }}"
+      when: fusionpbx_external_ip is defined
+
+    - name: FusionPBX | resolve desired external IP value (auto-detected)
+      # Literal IP, NOT autonat: — autonat re-detects via the gateway's uPnP/NAT-PMP,
+      # which here reports a stale WAN IP. A literal is advertised verbatim.
+      ansible.builtin.set_fact:
+        fusionpbx_external_ip_effective: >-
+          {{ (fusionpbx_ip_trace.content.splitlines()
+              | select('match', '^ip=') | list | first).split('=', 1)[1] | trim }}
+      when: fusionpbx_external_ip is not defined
+
+    - name: FusionPBX | read DB connection settings from config.conf
+      ansible.builtin.slurp:
+        src: /etc/fusionpbx/config.conf
+      register: fusionpbx_config_raw
+      no_log: true
+
+    - name: FusionPBX | parse DB connection settings
+      ansible.builtin.set_fact:
+        fusionpbx_db:
+          name: "{{ _cfg | regex_search('database\\.0\\.name\\s*=\\s*(\\S+)', '\\1') | first }}"
+          user: "{{ _cfg | regex_search('database\\.0\\.username\\s*=\\s*(\\S+)', '\\1') | first }}"
+          host: "{{ _cfg | regex_search('database\\.0\\.host\\s*=\\s*(\\S+)', '\\1') | default(['127.0.0.1'], true) | first }}"
+          password: "{{ _cfg | regex_search('database\\.0\\.password\\s*=\\s*(\\S+)', '\\1') | first }}"
+      vars:
+        _cfg: "{{ fusionpbx_config_raw.content | b64decode }}"
+      no_log: true
+
+    - name: FusionPBX | read current external_rtp_ip from v_vars
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-tAc"
+          - "SELECT var_value FROM v_vars WHERE var_name = 'external_rtp_ip' LIMIT 1;"
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      register: fusionpbx_current_ip
+      changed_when: false
+      no_log: true
+
+    - name: FusionPBX | converge external_*_ip in v_vars (DB source of truth)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - "UPDATE v_vars SET var_value = '{{ fusionpbx_external_ip_effective }}' WHERE var_name IN ('external_rtp_ip','external_sip_ip');"
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      when: fusionpbx_current_ip.stdout | trim != fusionpbx_external_ip_effective
+      no_log: true
+      notify: Reload FreeSWITCH external profile
+
+    - name: FusionPBX | converge external_*_ip in vars.xml (what FreeSWITCH reads)
+      ansible.builtin.lineinfile:
+        path: /etc/freeswitch/vars.xml
+        regexp: '^\s*<X-PRE-PROCESS cmd="set" data="{{ item }}='
+        line: '<X-PRE-PROCESS cmd="set" data="{{ item }}={{ fusionpbx_external_ip_effective }}" />'
+        backup: true
+      loop:
+        - external_rtp_ip
+        - external_sip_ip
+      notify: Reload FreeSWITCH external profile
+
+    - name: FusionPBX | read external profile's ext-rtp-ip binding
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-tAc"
+          - >-
+            SELECT sip_profile_setting_value FROM v_sip_profile_settings
+            WHERE sip_profile_setting_name = 'ext-rtp-ip' AND sip_profile_uuid =
+            (SELECT sip_profile_uuid FROM v_sip_profiles WHERE sip_profile_name = 'external') LIMIT 1;
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      register: fusionpbx_ext_profile_binding
+      changed_when: false
+      no_log: true
+
+    - name: FusionPBX | bind external profile ext-*-ip to the global vars (not a hardcoded IP)
+      # The external SIP profile must reference the global $${external_rtp_ip}/$${external_sip_ip}
+      # like the internal profile does; otherwise it pins a stale literal and ignores our global.
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            UPDATE v_sip_profile_settings
+            SET sip_profile_setting_value = CASE sip_profile_setting_name
+              WHEN 'ext-rtp-ip' THEN '$${external_rtp_ip}'
+              WHEN 'ext-sip-ip' THEN '$${external_sip_ip}' END
+            WHERE sip_profile_setting_name IN ('ext-rtp-ip', 'ext-sip-ip')
+              AND sip_profile_uuid = (SELECT sip_profile_uuid FROM v_sip_profiles WHERE sip_profile_name = 'external');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      when: (fusionpbx_ext_profile_binding.stdout | trim) != '$${external_rtp_ip}'
+      no_log: true
+      notify: Reload FreeSWITCH external profile
+
+    - name: FusionPBX | read internal profile local-network-acl
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-tAc"
+          - >-
+            SELECT sip_profile_setting_value FROM v_sip_profile_settings
+            WHERE sip_profile_setting_name = 'local-network-acl' AND sip_profile_uuid =
+            (SELECT sip_profile_uuid FROM v_sip_profiles WHERE sip_profile_name = 'internal') LIMIT 1;
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      register: fusionpbx_internal_acl
+      changed_when: false
+      no_log: true
+
+    - name: FusionPBX | set internal profile local-network-acl (LAN phones on any private subnet get the local IP)
+      # localnet.auto only covers the PBX's own subnet, so a phone on a different private
+      # VLAN is treated as remote and handed the public ext-rtp-ip -> its audio never
+      # reaches FS. rfc1918 treats every private-range peer as local -> it's given the
+      # local IP and RTP flows. (Off-subnet phones still need inter-VLAN 16384-32768/udp.)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            UPDATE v_sip_profile_settings
+            SET sip_profile_setting_value = '{{ fusionpbx_internal_local_network_acl }}'
+            WHERE sip_profile_setting_name = 'local-network-acl'
+            AND sip_profile_uuid = (SELECT sip_profile_uuid FROM v_sip_profiles WHERE sip_profile_name = 'internal');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      when: (fusionpbx_internal_acl.stdout | trim) != fusionpbx_internal_local_network_acl
+      no_log: true
+      notify: Reload FreeSWITCH internal profile
+
+  handlers:
+    # FusionPBX caches the generated sofia config under /var/cache/fusionpbx with the
+    # resolved ext-*-ip baked in, so a bare reloadxml re-serves the STALE cached IP.
+    # Flush the cache first, THEN reloadxml + restart the external profile so the new
+    # address is regenerated from the DB. Brief (~seconds) trunk blip on restart.
+    - name: Reload FreeSWITCH external profile
+      ansible.builtin.shell: >-
+        rm -f /var/cache/fusionpbx/* ;
+        fs_cli -x 'reloadacl' ;
+        fs_cli -x 'reloadxml' ;
+        fs_cli -x 'sofia profile external restart'
+
+    # local-network-acl is read at profile start, so the internal profile must restart
+    # (briefly drops + re-adds phone registrations) for the ACL change to take effect.
+    - name: Reload FreeSWITCH internal profile
+      ansible.builtin.shell: >-
+        rm -f /var/cache/fusionpbx/* ;
+        fs_cli -x 'reloadacl' ;
+        fs_cli -x 'reloadxml' ;
+        fs_cli -x 'sofia profile internal restart'
