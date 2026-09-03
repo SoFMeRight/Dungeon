@@ -126,6 +126,9 @@ spec:
               # default site, which new-site above set. Changing the hostname is this
               # value plus the HTTPRoute; the site is not involved.
               bench set-config host_name https://$SITE_DOMAIN
+              # Identity provider and landing app live in the database, so they are
+              # reapplied here rather than surviving only as whatever an operator once ran.
+              /home/frappe/frappe-bench/env/bin/python /scripts/configure-site.py
           env:
             # The site is the tenant boundary: named for the organisation whose books it
             # holds, not for the URL. PrPlanIT, HomeLabHD and SoFMeRight are Companies
@@ -144,11 +147,48 @@ spec:
                 secretKeyRef:
                   name: frappe-suite-secrets
                   key: MYSQL_ROOT_PASSWORD
+            # The label names the organisation people log in with, not the software
+            # issuing the token. Frappe derives the record name from it, and the callback
+            # path from that name, so changing it changes the redirect URI the provider
+            # must hold.
+            - name: OIDC_PROVIDER_LABEL
+              value: "PrPlanIT"
+            - name: OIDC_BASE_URL
+              value: "https://sso.prplanit.com"
+            - name: OIDC_AUTHORIZE_PATH
+              value: "/oauth/v2/authorize"
+            - name: OIDC_TOKEN_PATH
+              value: "/oauth/v2/token"
+            - name: OIDC_USERINFO_PATH
+              value: "/oidc/v1/userinfo"
+            - name: OIDC_SCOPES
+              value: "openid profile email"
+            # A site holding books does not hand a User record to everyone the provider
+            # will authenticate; people are provisioned first.
+            - name: OIDC_SIGN_UPS
+              value: "Deny"
+            - name: OIDC_USER_ID_PROPERTY
+              value: "sub"
+            - name: DEFAULT_APP
+              value: "erpnext"
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: frappe-suite-secrets
+                  key: OIDC_CLIENT_ID
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: frappe-suite-secrets
+                  key: OIDC_CLIENT_SECRET
           volumeMounts:
             - name: PLACEHOLDER_SITES_DATA
               mountPath: /home/frappe/frappe-bench/sites
             - name: PLACEHOLDER_LOGS_DATA
               mountPath: /home/frappe/frappe-bench/logs
+            - name: site-setup
+              mountPath: /scripts
+              readOnly: true
       containers:
         - name: backend
           image: PLACEHOLDER_ERPNEXT_IMAGE
@@ -180,6 +220,10 @@ spec:
               mountPath: /home/frappe/frappe-bench/sites
             - name: PLACEHOLDER_LOGS_DATA
               mountPath: /home/frappe/frappe-bench/logs
+      volumes:
+        - name: site-setup
+          configMap:
+            name: frappe-suite-site-setup
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_SITES_DATA

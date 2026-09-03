@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frappe-suite-site-setup
+data:
+  # Frappe keeps identity-provider settings and the landing app in the database, not in
+  # site config, so a rebuilt site comes up with SSO silently absent. This reapplies both
+  # from the environment on every start, which is what makes the record reproducible.
+  configure-site.py: |
+    import json
+    import os
+
+    import frappe
+
+    frappe.init(site=os.environ["SITE_NAME"])
+    frappe.connect()
+
+    client_id = os.environ.get("OIDC_CLIENT_ID")
+    client_secret = os.environ.get("OIDC_CLIENT_SECRET")
+
+    if client_id and client_secret:
+        label = os.environ["OIDC_PROVIDER_LABEL"]
+        # Frappe derives the record name from the label, and the callback path is built
+        # from that name — so the label decides the redirect URI the provider must hold.
+        name = frappe.scrub(label)
+        values = {
+            "social_login_provider": "Custom",
+            "provider_name": label,
+            "enable_social_login": 1,
+            # Without this the relative paths below resolve against the site's own host.
+            "custom_base_url": 1,
+            "base_url": os.environ["OIDC_BASE_URL"],
+            "authorize_url": os.environ["OIDC_AUTHORIZE_PATH"],
+            "access_token_url": os.environ["OIDC_TOKEN_PATH"],
+            "api_endpoint": os.environ["OIDC_USERINFO_PATH"],
+            "redirect_url": "https://{}/api/method/frappe.integrations.oauth2_logins.custom/{}".format(
+                os.environ["SITE_DOMAIN"], name
+            ),
+            "auth_url_data": json.dumps(
+                {"response_type": "code", "scope": os.environ["OIDC_SCOPES"]}
+            ),
+            "sign_ups": os.environ["OIDC_SIGN_UPS"],
+            "user_id_property": os.environ["OIDC_USER_ID_PROPERTY"],
+            "client_id": client_id,
+            "client_secret": client_secret,
+        }
+
+        if frappe.db.exists("Social Login Key", name):
+            doc = frappe.get_doc("Social Login Key", name)
+            doc.update(values)
+        else:
+            doc = frappe.new_doc("Social Login Key")
+            doc.update(values)
+        doc.save(ignore_permissions=True)
+        print("social login key {} applied".format(name))
+    else:
+        print("no OIDC client credentials supplied; skipping social login key")
+
+    default_app = os.environ.get("DEFAULT_APP")
+    if default_app:
+        frappe.db.set_single_value("System Settings", "default_app", default_app)
+        print("default app set to {}".format(default_app))
+
+    frappe.db.commit()
+    frappe.clear_cache()

@@ -13,3 +13,4 @@ resources:
   - deployment-queue-short.yaml
   - service.yaml
   - externalsecret.yaml
+  - configmap-site-setup.yaml

@@ -45,6 +45,9 @@ spec:
               mountPath: /home/frappe/frappe-bench/sites
             - name: logs-data
               mountPath: /home/frappe/frappe-bench/logs
+            - name: site-setup
+              mountPath: /scripts
+              readOnly: true
       containers:
         - name: backend
           image: docker.io/hlhd/frappe-suite:v16.33.0
