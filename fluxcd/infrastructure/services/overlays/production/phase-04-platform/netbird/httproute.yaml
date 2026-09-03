@@ -31,7 +31,8 @@ spec:
         request: 24h
       backendRefs:
         - name: netbird-management
-          port: 80
+          # gRPC → the h2c service port (8081); /api stays on the h1 port (80).
+          port: 8081
     - matches:
         - path:
             type: PathPrefix

@@ -5,12 +5,18 @@ metadata:
 spec:
   type: ClusterIP
   ports:
+    # REST API (/api — the dashboard). Served over HTTP/1.1; do NOT mark this h2c —
+    # proxying REST over cleartext HTTP/2 through the gateway to this handler is
+    # unreliable (request timeouts). The dashboard uses this port.
     - port: 80
       targetPort: 10000
       name: http
-      # Management serves the gRPC ManagementService + the /api HTTP handler on one
-      # port via an h2c handler; mark it h2c so istio speaks cleartext HTTP/2 upstream
-      # (gRPC cannot ride HTTP/1.1). Without this, gRPC calls fail even once routed.
+    # gRPC ManagementService — the SAME pod port (10000 runs an h2c handler that serves
+    # both), exposed as a separate h2c service port so istio speaks HTTP/2 upstream for
+    # the gRPC path only. The HTTPRoute sends /management.ManagementService here.
+    - port: 8081
+      targetPort: 10000
+      name: grpc
       appProtocol: kubernetes.io/h2c
   selector:
     app: netbird
