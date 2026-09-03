@@ -70,8 +70,6 @@ spec:
               protocol: TCP
             - port: "3142"
               protocol: TCP
-            - port: "3478"
-              protocol: TCP
             - port: "3493"
               protocol: TCP
             - port: "3807"
@@ -90,8 +88,6 @@ spec:
               protocol: TCP
             - port: "5340"
               protocol: TCP
-            - port: "5349"
-              protocol: TCP
             - port: "5432"
               protocol: TCP
             - port: "5443"
@@ -104,11 +100,11 @@ spec:
               protocol: TCP
             - port: "6789"
               protocol: TCP
-        - ports:
             - port: "6887"
               protocol: TCP
             - port: "7007"
               protocol: TCP
+        - ports:
             - port: "7575"
               protocol: TCP
             - port: "7745"
@@ -185,11 +181,11 @@ spec:
               protocol: TCP
             - port: "8920"
               protocol: TCP
-        - ports:
             - port: "8971"
               protocol: TCP
             - port: "8989"
               protocol: TCP
+        - ports:
             - port: "9000"
               protocol: TCP
             - port: "9001"

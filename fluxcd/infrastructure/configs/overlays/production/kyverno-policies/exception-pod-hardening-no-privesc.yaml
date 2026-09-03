@@ -30,11 +30,6 @@ spec:
           kinds: [Pod]
           namespaces: [tingle-tuner]
           names: ["stable-diffusion-webui-*"]
-      # neko-gateway: STUNner stunnerd TURN dataplane (file-cap class, operator-managed).
-      - resources:
-          kinds: [Pod]
-          namespaces: [swift-sail]
-          names: ["neko-gateway-*"]
       # photoprism + photoprism-x: same app/image, two instances. Both start NON-ROOT (uid 2432)
       # with added caps (CHOWN/DAC_OVERRIDE/FOWNER/SETUID/SETGID) that a non-root process needs in
       # its effective set — NoNewPrivs blocks raising them, so both genuinely require privesc:true.

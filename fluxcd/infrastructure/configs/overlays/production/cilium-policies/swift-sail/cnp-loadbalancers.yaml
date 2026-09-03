@@ -9,8 +9,12 @@ spec:
     ingress: false
     egress: false
   endpointSelector:
+    # STUNner dataplane pods are labeled app=stunner; the old app=neko-gateway matched
+    # zero pods, so default-deny-ingress silently blocked all TURN to this gateway.
+    # Scope to this gateway's dataplane with the related-gateway-name label.
     matchLabels:
-      app: neko-gateway
+      app: stunner
+      stunner.l7mp.io/related-gateway-name: neko-gateway
   ingress:
     - fromCIDRSet:
         - cidr: "10.0.0.0/8"
