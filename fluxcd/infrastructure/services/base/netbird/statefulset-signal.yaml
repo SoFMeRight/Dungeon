@@ -46,12 +46,15 @@ spec:
             - name: signal-data
               mountPath: /var/lib/netbird
           resources:
+            # Single-replica Signal is light (no peer-state) but signaling spikes during
+            # mass peer reconnects; the old 16Mi/10m could OOM/throttle under a storm.
+            # Modest requests, generous burst ceiling (lighter than Management's).
             requests:
-              memory: "12Mi"
-              cpu: "2m"
-            limits:
-              memory: "16Mi"
+              memory: "32Mi"
               cpu: "10m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
   volumeClaimTemplates:
     - metadata:
         name: signal-data

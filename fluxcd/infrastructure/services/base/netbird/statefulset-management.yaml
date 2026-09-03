@@ -252,12 +252,16 @@ spec:
             - name: generated-config
               mountPath: /etc/netbird
           resources:
+            # Single-replica NetBird Management (OSS isn't HA) carries all peer sync +
+            # dashboard + IdP-sync load. The old 40Mi/10m limits (survivable when split
+            # across 3 replicas) OOMKill and CPU-throttle one instance — throttling made
+            # outbound calls (GitHub version check, IdP) time out and the whole thing lag.
             requests:
-              memory: "32Mi"
-              cpu: "2m"
-            limits:
-              memory: "40Mi"
+              memory: "128Mi"
               cpu: "10m"
+            limits:
+              memory: "512Mi"
+              cpu: "1000m"
       volumes:
         - name: generated-config
           emptyDir: {}
