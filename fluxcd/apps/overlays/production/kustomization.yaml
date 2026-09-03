@@ -38,7 +38,7 @@ resources:
   # Business Tools
   - bagisto-demo
   - calcom
-  - erpnext
+  - frappe-suite
   - invoiceninja
   - kimai
   - opnform

@@ -4,6 +4,11 @@ metadata:
   name: erpnext-sites
 spec:
   template:
+    metadata:
+      labels:
+        # The token exchange and userinfo call are made by this pod, and
+        # sso.prplanit.com resolves to the gateway VIP from inside the cluster.
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       securityContext:
         fsGroup: 1000

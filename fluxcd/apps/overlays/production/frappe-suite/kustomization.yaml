@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: hyrule-castle
 
 resources:
-  - ../../../base/erpnext
+  - ../../../base/frappe-suite
   - httproute.yaml
   - cephfs-pvs.yaml
 
