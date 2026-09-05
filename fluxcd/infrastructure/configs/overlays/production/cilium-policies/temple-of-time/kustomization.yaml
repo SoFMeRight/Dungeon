@@ -7,6 +7,7 @@ resources:
   - cnp-egress-content-apps.yaml
   - cnp-egress-nextcloud.yaml
   - cnp-egress-nextcloud-clamav.yaml
+  - cnp-egress-nextcloud-postgres.yaml
   - cnp-media-servers.yaml
   - cnp-overseerr-to-plex.yaml
   - cnp-galera-replication.yaml

@@ -1,0 +1,25 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-nextcloud-postgres-egress
+spec:
+  description: >-
+    The nextcloud-postgres CNPG cluster archives WAL segments + base backups to
+    the Ceph RGW at s3.pcfae.com (the xylem gateway VIP 172.22.30.69). The egress
+    default-deny rollout allowlisted the nextcloud app/collabora/clamav but missed
+    the DB, so barman-cloud-wal-archive failed (exit 4, TLS handshake dropped),
+    WAL could not be recycled, and it filled the primary's PVC until CNPG shut it
+    down. Allow egress to the RGW VIP only; replication + DNS ride the universal
+    CCNP baseline. Additive (enableDefaultDeny false) so intra-cluster streaming
+    replication is untouched.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: nextcloud-postgres
+  egress:
+    - toEntities:
+        - cluster
+    - toCIDR:
+        - 172.22.30.69/32
