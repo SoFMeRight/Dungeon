@@ -43,6 +43,61 @@ spec:
           volumeMounts:
             - name: webroot
               mountPath: /webroot
+        # Supplying .htconfig.php skips Hubzilla's web installer, and the installer is
+        # also what creates the schema — so it is created here instead. Guarded, because
+        # the schema file uses plain CREATE TABLE and a second unguarded run would fail
+        # the init and stop the pod ever starting. Migrations are NOT handled here:
+        # Hubzilla applies those itself when it sees the database behind DB_UPDATE_VERSION.
+        #
+        # This lives on the cron deployment because it is the single-replica one. On the
+        # web deployment two replicas would race to create the same tables on a first
+        # deploy, and the loser would crash-loop once before recovering.
+        - name: schema
+          image: PLACEHOLDER_MARIADB_IMAGE
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              until mariadb -h "$DB_HOST" -u"$DB_USER" -p"$DB_PASS" -e 'SELECT 1' "$DB_NAME" >/dev/null 2>&1; do
+                echo "waiting for database"
+                sleep 3
+              done
+              if mariadb -h "$DB_HOST" -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" \
+                   -e 'SELECT 1 FROM channel LIMIT 1' >/dev/null 2>&1; then
+                echo "schema already present"
+              else
+                echo "loading schema"
+                mariadb -h "$DB_HOST" -u"$DB_USER" -p"$DB_PASS" "$DB_NAME" \
+                  < /var/www/html/install/schema_mysql.sql
+              fi
+          env:
+            - name: DB_HOST
+              value: hubzilla-mariadb
+            - name: DB_NAME
+              value: hubzilla
+            - name: DB_USER
+              value: hubzilla
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: hubzilla-secrets
+                  key: MYSQL_PASSWORD
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 999
+            runAsGroup: 999
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: webroot
+              mountPath: /var/www/html
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
       containers:
         # A loop rather than a CronJob: the poller wants to run every minute, and a
         # per-minute CronJob is 1440 pods a day for a process that takes seconds.

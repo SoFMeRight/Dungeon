@@ -11,6 +11,8 @@ spec:
       initContainers:
         - name: webroot
           image: docker.io/hlhd/hubzilla:dev-7da3d79
+        - name: schema
+          image: docker.io/mariadb:11.8
       containers:
         - name: cron
           image: docker.io/hlhd/hubzilla:dev-7da3d79
