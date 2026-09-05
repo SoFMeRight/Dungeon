@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hubzilla-mariadb
+  labels:
+    app: hubzilla-mariadb
+spec:
+  serviceName: hubzilla-mariadb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hubzilla-mariadb
+  template:
+    metadata:
+      labels:
+        app: hubzilla-mariadb
+        policy.prplanit.com/access-class: mariadb
+        policy.prplanit.com/service-scope: PLACEHOLDER_DB_SCOPE
+    spec:
+      serviceAccountName: hubzilla-mariadb
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mariadb
+          image: PLACEHOLDER_MARIADB_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hubzilla-secrets
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MARIADB_DATABASE
+              value: hubzilla
+            - name: MARIADB_USER
+              value: hubzilla
+            - name: MARIADB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hubzilla-secrets
+                  key: MYSQL_PASSWORD
+          ports:
+            - containerPort: 3306
+              name: mysql
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+            # A read-only root filesystem still needs somewhere for the socket and the
+            # scratch files the server writes while running.
+            - name: run
+              mountPath: /run/mysqld
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "256Mi"
+            limits:
+              memory: "1Gi"
+      volumes:
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: PLACEHOLDER_DB_STORAGE_SIZE

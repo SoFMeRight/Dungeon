@@ -19,6 +19,9 @@
     # are "local", so phones on any LAN VLAN get the PBX's local IP rather than the
     # public ext-rtp-ip. Set to "localnet.auto" to restrict to the PBX's own subnet.
     fusionpbx_internal_local_network_acl: "rfc1918"
+    # Gateway name of the BulkVS trunk (v_gateways.gateway). caller-id-in-from is forced
+    # on it because BulkVS reads the outbound caller-ID from the From header.
+    fusionpbx_bulkvs_gateway: "sip.bulkvs.com"
 
   tasks:
 
@@ -232,6 +235,49 @@
       no_log: true
       notify: Reload FreeSWITCH internal profile
 
+    - name: FusionPBX | read BulkVS gateway caller-id-in-from
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-tAc"
+          - >-
+            SELECT COALESCE(caller_id_in_from::text, 'NULL') FROM v_gateways
+            WHERE gateway = '{{ fusionpbx_bulkvs_gateway }}' LIMIT 1;
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      register: fusionpbx_gw_cid_in_from
+      changed_when: false
+      no_log: true
+
+    - name: FusionPBX | force BulkVS gateway to put caller-ID in the From header
+      # BulkVS reads the outbound caller-ID from the From header; without this the ANI is
+      # the FreeSWITCH default ("FreeSwitch", no callback number). Skips cleanly if the
+      # gateway isn't present yet (empty read).
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            UPDATE v_gateways SET caller_id_in_from = 'true'
+            WHERE gateway = '{{ fusionpbx_bulkvs_gateway }}';
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      when: (fusionpbx_gw_cid_in_from.stdout | trim) not in ['true', '']
+      no_log: true
+      notify: Rescan FreeSWITCH external gateways
+
   handlers:
     # FusionPBX caches the generated sofia config under /var/cache/fusionpbx with the
     # resolved ext-*-ip baked in, so a bare reloadxml re-serves the STALE cached IP.
@@ -252,3 +298,11 @@
         fs_cli -x 'reloadacl' ;
         fs_cli -x 'reloadxml' ;
         fs_cli -x 'sofia profile internal restart'
+
+    # Gateway-only change: rescan re-reads gateway config without restarting the profile,
+    # so the trunk doesn't drop.
+    - name: Rescan FreeSWITCH external gateways
+      ansible.builtin.shell: >-
+        rm -f /var/cache/fusionpbx/* ;
+        fs_cli -x 'reloadxml' ;
+        fs_cli -x 'sofia profile external rescan'

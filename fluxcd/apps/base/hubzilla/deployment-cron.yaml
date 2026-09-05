@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hubzilla-cron
+  labels:
+    app: hubzilla-cron
+spec:
+  revisionHistoryLimit: 5
+  # Exactly one: Hubzilla's poller is what delivers and fetches federated activity, and
+  # running it twice means duplicate delivery rather than twice the throughput.
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: hubzilla-cron
+  template:
+    metadata:
+      labels:
+        app: hubzilla-cron
+        policy.prplanit.com/cap.mariadb: "true"
+        policy.prplanit.com/access-scope-mariadb: PLACEHOLDER_DB_SCOPE
+    spec:
+      serviceAccountName: hubzilla
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: webroot
+          image: PLACEHOLDER_HUBZILLA_IMAGE
+          command: ["sh", "-c", "cp -a /var/www/html/. /webroot/ && chown -R root:root /webroot"]
+          securityContext:
+            runAsUser: 0
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+          volumeMounts:
+            - name: webroot
+              mountPath: /webroot
+      containers:
+        # A loop rather than a CronJob: the poller wants to run every minute, and a
+        # per-minute CronJob is 1440 pods a day for a process that takes seconds.
+        - name: cron
+          image: PLACEHOLDER_HUBZILLA_IMAGE
+          workingDir: /var/www/html
+          command:
+            - sh
+            - -c
+            - |
+              while true; do
+                php Zotlabs/Daemon/Master.php Cron || echo "cron run failed"
+                sleep 60
+              done
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 33
+            runAsGroup: 33
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: webroot
+              mountPath: /var/www/html
+            - name: store
+              mountPath: /var/www/html/store
+            - name: smarty
+              mountPath: /var/www/html/view/tpl/smarty3
+            - name: htconfig
+              mountPath: /var/www/html/.htconfig.php
+              subPath: .htconfig.php
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "256Mi"
+            limits:
+              memory: "1Gi"
+      volumes:
+        - name: webroot
+          emptyDir: {}
+        - name: smarty
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+        - name: htconfig
+          secret:
+            secretName: hubzilla-htconfig
+        - name: store
+          persistentVolumeClaim:
+            claimName: hubzilla-store

@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hubzilla-nginx
+data:
+  default.conf: |
+    server {
+      listen 8080;
+      server_name _;
+      root /var/www/html;
+      index index.php;
+
+      client_max_body_size 100m;
+
+      # store/ holds uploads. Hubzilla reads it server-side and serves media through its
+      # own controllers, so nothing under it should ever be reachable — and it must never
+      # reach the PHP handler, which is how an uploaded file becomes code execution.
+      location ^~ /store/ {
+        deny all;
+        return 404;
+      }
+
+      # The configuration file is PHP and contains the database credentials.
+      location ~ ^/\.htconfig\.php {
+        deny all;
+        return 404;
+      }
+
+      location ~ /\. {
+        deny all;
+        return 404;
+      }
+
+      location / {
+        try_files $uri $uri/ /index.php?$query_string;
+      }
+
+      location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_read_timeout 120;
+      }
+    }

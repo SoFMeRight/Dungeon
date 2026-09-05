@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hubzilla
+spec:
+  selector:
+    app: hubzilla
+  ports:
+    - port: 8080
+      targetPort: http
+      name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hubzilla-mariadb
+spec:
+  selector:
+    app: hubzilla-mariadb
+  ports:
+    - port: 3306
+      targetPort: mysql
+      name: mysql

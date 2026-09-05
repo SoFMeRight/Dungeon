@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hubzilla-cron
+spec:
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/access-scope-mariadb: temple-of-time.hubzilla.mariadb
+    spec:
+      initContainers:
+        - name: webroot
+          image: docker.io/hlhd/hubzilla:dev-7da3d79
+      containers:
+        - name: cron
+          image: docker.io/hlhd/hubzilla:dev-7da3d79

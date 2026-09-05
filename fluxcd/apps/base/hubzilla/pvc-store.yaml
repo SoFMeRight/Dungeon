@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hubzilla-store
+spec:
+  accessModes:
+    # The web pods and the cron worker all read and write uploads at the same time.
+    - ReadWriteMany
+  storageClassName: PLACEHOLDER_STORE_STORAGE_CLASS
+  resources:
+    requests:
+      storage: PLACEHOLDER_STORE_STORAGE_SIZE

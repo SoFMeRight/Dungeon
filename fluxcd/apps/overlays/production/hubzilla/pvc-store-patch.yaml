@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hubzilla-store
+spec:
+  storageClassName: cephfs-hdd
+  resources:
+    requests:
+      storage: 50Gi

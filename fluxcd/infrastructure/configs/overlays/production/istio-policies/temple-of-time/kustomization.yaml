@@ -9,6 +9,7 @@ resources:
   - allow-nextcloud-to-nextcloud-collabora.yaml
   - allow-nextcloud-collabora-to-nextcloud.yaml
   - allow-open-webui-to-open-webui-postgres.yaml
+  - allow-hubzilla-to-hubzilla-mariadb.yaml
   - allow-open-webui-to-open-webui-redis.yaml
   - allow-penpot-to-penpot-postgres.yaml
   - allow-penpot-to-penpot-redis.yaml

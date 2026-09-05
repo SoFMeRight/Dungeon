@@ -12,6 +12,25 @@ spec:
   hostnames:
     - "etherealclique.com"
   rules:
+    # The apex is the identity half of a fediverse account (@user@etherealclique.com)
+    # while the server answers on social.; these lookups are how a remote instance
+    # discovers that. A longer path prefix outranks the site's "/" below, so the site is
+    # unaffected. Matrix delegation would join here under /.well-known/matrix/.
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /.well-known/webfinger
+        - path:
+            type: PathPrefix
+            value: /.well-known/host-meta
+        - path:
+            type: PathPrefix
+            value: /.well-known/nodeinfo
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            hostname: social.etherealclique.com
+            statusCode: 301
     - matches:
         - path:
             type: PathPrefix
