@@ -4,22 +4,25 @@ metadata:
   name: cloudflare-ddns-config
 data:
   DOMAINS: >-
-    arbitorium.com,cm.arbitorium.com,pm.arbitorium.com,astralfocus.com,
-    operationtimecapsule.com,mc.operationtimecapsule.com,optcp.com,pcfae.com,
-    kb.precisionplanit.com,prplanit.com,blog.sofmeright.com,ls.sofmeright.com,
-    status.sofmeright.com,uni2.cc,meals.yesimvegan.com,mc.yesimvegan.com,
-    wiki.yesimvegan.com,ipleek.com,meshc.prplanit.com,netbird.prplanit.com,
-    pbx.prplanit.com,trmm.prplanit.com,turn.prplanit.com,m.ntfy.prplanit.com
-  # Proxy (orange) the web hosts; leave everything else DNS-only (grey) because
-  # Cloudflare can't proxy them: SIP (pbx), STUN/TURN (turn), VPN (netbird),
-  # RMM agent NATS (trmm), MeshCentral (meshc), SMTP (m.ntfy), Minecraft (mc.*),
-  # and echoip (ipleek, needs the real client IP).
+    arbitorium.com,cm.arbitorium.com,pm.arbitorium.com,
+    astralfocus.com,
+    ipleek.com,
+    operationtimecapsule.com,
+    mc.operationtimecapsule.com,
+    optcp.com,
+    pcfae.com,
+    kb.precisionplanit.com,
+    prplanit.com,m.ntfy.prplanit.com,
+    meshc.prplanit.com,netbird.prplanit.com,pbx.prplanit.com,trmm.prplanit.com,turn.prplanit.com,
+    blog.sofmeright.com,ls.sofmeright.com,status.sofmeright.com,
+    uni2.cc,
+    meals.yesimvegan.com,wiki.yesimvegan.com,
+    mc.yesimvegan.com
+  # (DNS-only) — proxy everything EXCEPT these.
   PROXIED: >-
-    is(arbitorium.com) || is(cm.arbitorium.com) || is(pm.arbitorium.com) ||
-    is(astralfocus.com) || is(operationtimecapsule.com) || is(optcp.com) ||
-    is(pcfae.com) || is(kb.precisionplanit.com) || is(prplanit.com) ||
-    is(blog.sofmeright.com) || is(ls.sofmeright.com) || is(status.sofmeright.com) ||
-    is(uni2.cc) || is(meals.yesimvegan.com) || is(wiki.yesimvegan.com)
+    !is(pbx.prplanit.com,turn.prplanit.com,ipleek.com,
+        netbird.prplanit.com,trmm.prplanit.com,
+        mc.operationtimecapsule.com,mc.yesimvegan.com)
   IP4_PROVIDER: "cloudflare.trace"
   IP6_PROVIDER: "none"
   UPDATE_CRON: "@every 5m"
