@@ -8,11 +8,12 @@ spec:
       app.kubernetes.io/name: ntfy
   action: ALLOW
   rules:
-    # Grafana alert notifications to ntfy over the internal service (80/TCP).
+    # Grafana alert notifications to ntfy. ntfy runs non-root on container port 8080
+    # (Service 80->8080); istio ambient enforces on the workload port, so this is 8080.
     - from:
         - source:
             principals:
               - cluster.local/ns/gossip-stone/sa/grafana
       to:
         - operation:
-            ports: ["80"]
+            ports: ["8080"]

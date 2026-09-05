@@ -8,7 +8,9 @@ spec:
       app.kubernetes.io/name: ntfy
   action: ALLOW
   rules:
-    # Receives email from internet MTAs — source IPs are unpredictable
+    # Receives email from internet MTAs — source IPs are unpredictable. ntfy's SMTP
+    # listener is container port 2525 (Service 25->2525); istio ambient enforces on the
+    # workload port, so this is 2525.
     - to:
         - operation:
-            ports: ["25"]
+            ports: ["2525"]

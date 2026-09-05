@@ -8,9 +8,11 @@ spec:
       app: ark-sa-tmc-admin-list-server
   action: ALLOW
   rules:
+    # list-server runs on container port 8080 (Service 28019->8080); istio ambient
+    # enforces on the workload port, so this is 8080, not the LB service port.
     - to:
         - operation:
-            ports: ["28019"]
+            ports: ["8080"]
 ---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
