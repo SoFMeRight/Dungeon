@@ -15,4 +15,7 @@ spec:
               - cluster.local/ns/hyrule-castle/sa/opnform-client
       to:
         - operation:
-            ports: ["80"]
+            # opnform-ingress nginx runs non-root on container port 8080 (Service 80->8080).
+            # istio ambient enforces AuthorizationPolicy on the workload/target port, so this
+            # must be 8080 — the SSR client->ingress hop (public form render) resets otherwise.
+            ports: ["8080"]
