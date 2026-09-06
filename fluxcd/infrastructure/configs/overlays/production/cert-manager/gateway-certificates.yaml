@@ -191,3 +191,16 @@ spec:
   dnsNames:
     - "*.etherealclique.com"
     - "etherealclique.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: outspokekin-com-tls
+spec:
+  secretName: outspokekin-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.outspokekin.com"
+    - "outspokekin.com"

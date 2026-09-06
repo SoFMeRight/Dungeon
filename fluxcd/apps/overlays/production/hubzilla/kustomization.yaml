@@ -6,6 +6,7 @@ namespace: temple-of-time
 resources:
   - ../../../base/hubzilla
   - httproute.yaml
+  - httproute-apex.yaml
 
 patches:
   - path: externalsecret-patch.yaml

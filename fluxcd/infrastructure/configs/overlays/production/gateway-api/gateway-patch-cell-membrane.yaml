@@ -261,3 +261,27 @@ spec:
         certificateRefs:
           - kind: Secret
             name: etherealclique-com-tls
+    - name: https-outspokekin
+      protocol: HTTPS
+      port: 443
+      hostname: "*.outspokekin.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: outspokekin-com-tls
+    - name: https-outspokekin-bare
+      protocol: HTTPS
+      port: 443
+      hostname: "outspokekin.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: outspokekin-com-tls
