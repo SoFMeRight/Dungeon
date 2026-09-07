@@ -158,11 +158,13 @@
       - {name: "Kai Jobs", ext: "4101", vm: "7100", prefix: "JOB:", timeout: 30, members: ["217"]}
       - {name: "Kai Medical", ext: "4102", vm: "7104", prefix: "MED:", timeout: 30, members: ["217"]}
       - {name: "Kai Emergency", ext: "4103", vm: "217", prefix: "EMERGENCY:", timeout: 45, members: ["217", "${personal_cell}"]}
-    # Personal special dialplans: play a clip then deposit into a box with the box
-    # greeting suppressed (the clip already speaks for it).
+    # Personal special dialplans: optional awkward preamble (the long rambling ring
+    # notice, used as a deterrent for scammer/debt) then the clip, then deposit into a
+    # box with the box greeting suppressed (the clip already speaks for it). Normal ring
+    # groups use the SHORT kai-ring-notice.wav; only these specials use the long one.
     fusionpbx_personal_specials:
-      - {name: "Kai Debt Notice", ext: "5105", prompt: "kai-debt-notice.wav", vm: "7101"}
-      - {name: "Kai Scammer", ext: "5109", prompt: "kai-scammer-funny.wav", vm: "7103"}
+      - {name: "Kai Debt Notice", ext: "5105", prompt: "kai-debt-notice.wav", vm: "7101", preamble: "kai-ring-notice-long.wav"}
+      - {name: "Kai Scammer", ext: "5109", prompt: "kai-scammer-funny.wav", vm: "7103", preamble: "kai-ring-notice-long.wav"}
     # Personal IVR menus. Day = kai-day-main (no disclaimer preamble); after-hours =
     # the same options behind the kai-afterhours "we're closed" clip.
     fusionpbx_personal_ivr_menus:
@@ -875,6 +877,7 @@
               <condition field="destination_number" expression="^{{ item.ext }}$">
               <action application="answer" data=""/>
               <action application="sleep" data="500"/>
+              {% if item.preamble %}<action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_personal_domain }}/{{ item.preamble }}"/>{% endif %}
               <action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_personal_domain }}/{{ item.prompt }}"/>
               <action application="set" data="skip_greeting=true"/>
               <action application="transfer" data="*99{{ item.vm }} XML {{ fusionpbx_personal_domain }}"/>
