@@ -62,6 +62,7 @@ resources:
   - romm
   # Media
   - calibre-web
+  - hubzilla
   - immich
   - jellyfin
   - photoprism
