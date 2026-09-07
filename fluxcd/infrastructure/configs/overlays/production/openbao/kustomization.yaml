@@ -13,6 +13,7 @@ resources:
   - clustersecretstore-pedestal-of-time.yaml  # External Secrets for pedestal-of-time (plex-ms-x and related apps)
   - clustersecretstore-precisionplanit.yaml  # External Secrets for PrecisionPlanIt secrets
   - clustersecretstore-zeldas-letter.yaml  # External Secrets for the Hyrule family (system/core apps)
+  - clustersecretstore-outspokekin.yaml  # External Secrets for the fediverse hub (temple-of-time)
   - clustersecretstore-great-sea.yaml  # External Secrets for great-sea (VPN-routed media automation apps in swift-sail)
 
 patches:
