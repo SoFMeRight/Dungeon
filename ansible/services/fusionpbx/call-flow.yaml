@@ -133,6 +133,69 @@
       - {menu: "5004", d: "4", p: "transfer *997003 XML pbx.prplanit.com", ord: "40", desc: "Promo VM"}
       - {menu: "5004", d: "0", p: "transfer *997000 XML pbx.prplanit.com", ord: "50", desc: "General VM"}
 
+    # =========================================================================
+    # Personal (Kai) flow — pbx.arbitorium.com. Mirrors the business structure
+    # with personal specifics: options ring 217 (CID-prefixed), an emergency group
+    # that also rings the cell, debt/scammer special dialplans, hours 8AM-10PM daily
+    # (no holidays), and no recording disclaimer (217 isn't recorded). The personal
+    # DID cut-over is intentionally deferred until the 217 handset migrates here.
+    # =========================================================================
+    fusionpbx_personal_agent_ext: "217"
+    # Private numbers are deliberately NOT in this repo — Kai's cell, his personal DID,
+    # and the recognized-caller list live ONLY as FreeSWITCH global vars in the DB
+    # (personal_cell, personal_did, personal_family_numbers). Ring group members and the
+    # recognition dialplan expand them at call time via ${...}; the outbound-caller-ID
+    # task reads personal_did straight from v_vars. Set these once on the box (they are
+    # user data); this repo holds only the routing logic.
+    fusionpbx_personal_bail_ext: "5199"
+    fusionpbx_personal_bail_prompt: "kai-no-response.wav"
+    fusionpbx_personal_failover_prompt: "kai-vm-failover.wav"
+    fusionpbx_personal_ring_notice: "kai-ring-notice.wav"
+    # Personal ring-group departments. members is a list (emergency rings 217 AND the
+    # cell simultaneously); every group fails over via *98<vm> (apology -> box).
+    fusionpbx_personal_departments:
+      - {name: "Kai Personal", ext: "4100", vm: "217", prefix: "", timeout: 30, members: ["217"]}
+      - {name: "Kai Jobs", ext: "4101", vm: "7100", prefix: "JOB:", timeout: 30, members: ["217"]}
+      - {name: "Kai Medical", ext: "4102", vm: "7104", prefix: "MED:", timeout: 30, members: ["217"]}
+      - {name: "Kai Emergency", ext: "4103", vm: "217", prefix: "EMERGENCY:", timeout: 45, members: ["217", "${personal_cell}"]}
+    # Personal special dialplans: play a clip then deposit into a box with the box
+    # greeting suppressed (the clip already speaks for it).
+    fusionpbx_personal_specials:
+      - {name: "Kai Debt Notice", ext: "5105", prompt: "kai-debt-notice.wav", vm: "7101"}
+      - {name: "Kai Scammer", ext: "5109", prompt: "kai-scammer-funny.wav", vm: "7103"}
+    # Personal IVR menus. Day = kai-day-main (no disclaimer preamble); after-hours =
+    # the same options behind the kai-afterhours "we're closed" clip.
+    fusionpbx_personal_ivr_menus:
+      - {name: "Kai Day Menu", ext: "5100", greet: "kai-day-main.wav", preamble: "", loops: "3"}
+      - {name: "Kai After-Hours Menu", ext: "5102", greet: "kai-day-main.wav", preamble: "kai-afterhours.wav", loops: "3"}
+    # Personal IVR options. Day: rings + specials. After-hours: rings -> VM.
+    fusionpbx_personal_ivr_options:
+      - {menu: "5100", d: "1", p: "transfer 4100 XML pbx.arbitorium.com", ord: "10", desc: "Friend/family -> ring 217"}
+      - {menu: "5100", d: "2", p: "transfer 4101 XML pbx.arbitorium.com", ord: "20", desc: "Recruiter -> ring JOB"}
+      - {menu: "5100", d: "3", p: "transfer 4102 XML pbx.arbitorium.com", ord: "30", desc: "Medical -> ring MED"}
+      - {menu: "5100", d: "4", p: "transfer 4103 XML pbx.arbitorium.com", ord: "40", desc: "Emergency -> 217 + cell"}
+      - {menu: "5100", d: "5", p: "transfer 5105 XML pbx.arbitorium.com", ord: "50", desc: "Debt -> notice -> VM"}
+      - {menu: "5100", d: "6", p: "transfer *997102 XML pbx.arbitorium.com", ord: "60", desc: "Solicitation -> VM"}
+      - {menu: "5100", d: "9", p: "transfer 5109 XML pbx.arbitorium.com", ord: "70", desc: "Scammer -> funny -> VM"}
+      - {menu: "5100", d: "0", p: "transfer *99217 XML pbx.arbitorium.com", ord: "80", desc: "Unsure -> VM 217"}
+      - {menu: "5100", d: "*", p: "transfer 5100 XML pbx.arbitorium.com", ord: "90", desc: "Repeat"}
+      - {menu: "5102", d: "1", p: "transfer *99217 XML pbx.arbitorium.com", ord: "10", desc: "Friend/family -> VM 217"}
+      - {menu: "5102", d: "2", p: "transfer *997100 XML pbx.arbitorium.com", ord: "20", desc: "Recruiter -> VM jobs"}
+      - {menu: "5102", d: "3", p: "transfer *997104 XML pbx.arbitorium.com", ord: "30", desc: "Medical -> VM medical"}
+      - {menu: "5102", d: "4", p: "transfer *99217 XML pbx.arbitorium.com", ord: "40", desc: "Emergency -> VM 217"}
+      - {menu: "5102", d: "5", p: "transfer 5105 XML pbx.arbitorium.com", ord: "50", desc: "Debt -> notice -> VM"}
+      - {menu: "5102", d: "6", p: "transfer *997102 XML pbx.arbitorium.com", ord: "60", desc: "Solicitation -> VM"}
+      - {menu: "5102", d: "9", p: "transfer 5109 XML pbx.arbitorium.com", ord: "70", desc: "Scammer -> funny -> VM"}
+      - {menu: "5102", d: "0", p: "transfer *99217 XML pbx.arbitorium.com", ord: "80", desc: "Unsure -> VM 217"}
+      - {menu: "5102", d: "*", p: "transfer 5102 XML pbx.arbitorium.com", ord: "90", desc: "Repeat"}
+    # Personal hours: 8AM-10PM (hour 8-21) any day -> day menu; else -> after-hours.
+    fusionpbx_personal_time_condition:
+      ext: "5110"
+      name: "Kai Hours"
+      open: "5100"
+      closed: "5102"
+      hour: "8-21"
+
   tasks:
 
     - name: FusionPBX | read DB connection settings from config.conf
@@ -520,10 +583,8 @@
               <action application="answer" data=""/>
               <action application="sleep" data="1000"/>
               <action application="set" data="hangup_after_bridge=true"/>
-              {% if item.preamble %
-              }<action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_business_domain }}/{{ item.preamble }}"/>
-              {% endif %
-              }<action application="set" data="ivr_menu_uuid=' || ins.ivr_menu_uuid || '"/>
+              {% if item.preamble %}<action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_business_domain }}/{{ item.preamble }}"/>{% endif %}
+              <action application="set" data="ivr_menu_uuid=' || ins.ivr_menu_uuid || '"/>
               <action application="lua" data="ivr_menu.lua"/>
               <action application="transfer" data="{{ fusionpbx_business_bail_ext }} XML {{ fusionpbx_business_domain }}"/>
               </condition>
@@ -596,8 +657,7 @@
               '{{ fusionpbx_business_domain }}', 'false',
               '<extension name="{{ fusionpbx_business_time_condition.name }}" continue="false" uuid="' || gen_random_uuid() || '">
               <condition field="destination_number" expression="^{{ fusionpbx_business_time_condition.ext }}$" break="on-false"/>
-              {% for h in fusionpbx_federal_holidays %
-              }<condition {{ h }} break="on-true">
+              {% for h in fusionpbx_federal_holidays %}<condition {{ h }} break="on-true">
               <action application="transfer" data="{{ fusionpbx_holiday_handler_ext }} XML {{ fusionpbx_business_domain }}"/>
               </condition>{% endfor %}<condition wday="{{ fusionpbx_business_time_condition.wday }}" hour="{{ fusionpbx_business_time_condition.hour }}">
               <action application="transfer" data="{{ fusionpbx_business_time_condition.open }} XML {{ fusionpbx_business_domain }}"/>
@@ -609,6 +669,383 @@
             WHERE d.domain_name = '{{ fusionpbx_business_domain }}'
               AND NOT EXISTS (SELECT 1 FROM v_dialplans dp
                               WHERE dp.domain_uuid = d.domain_uuid AND dp.dialplan_number = '{{ fusionpbx_business_time_condition.ext }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    # =========================================================================
+    # Personal (Kai) flow tasks — pbx.arbitorium.com. The personal domain, its
+    # voicemail boxes, device-less extensions, and greetings are already built by
+    # the shared tasks above (fusionpbx_voicemail_boxes spans both domains). These
+    # add the personal routing: outbound trunk access, the failover-apology + bail
+    # handlers, debt/scammer specials, ring groups, menus, options, and hours. The
+    # personal DID cut-over is deliberately NOT here — it waits on the 217 handset
+    # migrating to this domain (mirror the business go-live task below when ready).
+    # =========================================================================
+    # Private-number scaffolding — box-managed user data, same principle as the
+    # recorded prompts: the play creates the empty global-var slots (visible in the
+    # FusionPBX Variables UI) and the operator fills the real numbers on the box; the
+    # numbers never enter this repo. Referenced as ${personal_cell} (emergency ring
+    # leg) and ${personal_family_numbers} (recognized-caller list); personal_did feeds
+    # 217's outbound caller ID; personal_family_recognition toggles recognition.
+    # Idempotent — an operator-filled value is never overwritten.
+    - name: FusionPBX | scaffold personal private-number global vars (values set on the box)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_vars (var_uuid, var_category, var_name, var_value, var_command, var_enabled, var_order, var_description)
+            SELECT gen_random_uuid(), 'Defaults', v.name, v.val, 'set', 'true', '990', v.descr
+            FROM (VALUES
+              ('personal_cell', '', 'Kai cell for the emergency ring leg (call-flow)'),
+              ('personal_did', '', 'Kai personal DID / 217 outbound caller ID (call-flow)'),
+              ('personal_family_numbers', '', 'Recognized family callers, pipe-separated (call-flow)'),
+              ('personal_family_recognition', 'true', 'Family caller recognition toggle (call-flow)')
+            ) AS v(name, val, descr)
+            WHERE NOT EXISTS (SELECT 1 FROM v_vars x WHERE x.var_name = v.name);
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 0' not in stdout"
+      no_log: true
+
+    - name: FusionPBX | clone the BulkVS outbound route into the personal domain
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_dialplans (dialplan_uuid, app_uuid, domain_uuid, dialplan_context, dialplan_name,
+              dialplan_number, dialplan_order, dialplan_enabled, dialplan_continue, dialplan_xml, dialplan_description)
+            SELECT gen_random_uuid(), src.app_uuid, d.domain_uuid, '{{ fusionpbx_personal_domain }}', src.dialplan_name,
+              src.dialplan_number, src.dialplan_order, 'true', src.dialplan_continue, src.dialplan_xml,
+              'Outbound BulkVS (call-flow)'
+            FROM v_domains d,
+              (SELECT app_uuid, dialplan_name, dialplan_number, dialplan_order, dialplan_continue, dialplan_xml
+               FROM v_dialplans WHERE dialplan_context = '{{ fusionpbx_business_domain }}'
+                 AND dialplan_name = 'sip.bulkvs.com.10-11-NANP' LIMIT 1) src
+            WHERE d.domain_name = '{{ fusionpbx_personal_domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_dialplans x
+                              WHERE x.dialplan_context = '{{ fusionpbx_personal_domain }}'
+                                AND x.dialplan_name = 'sip.bulkvs.com.10-11-NANP');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    - name: FusionPBX | set the personal agent's outbound caller ID (owned DID for the cell leg)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            UPDATE v_extensions SET
+              outbound_caller_id_number = (SELECT var_value FROM v_vars WHERE var_name = 'personal_did'),
+              emergency_caller_id_number = (SELECT var_value FROM v_vars WHERE var_name = 'personal_did')
+            WHERE extension = '{{ fusionpbx_personal_agent_ext }}'
+              AND domain_uuid = (SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ fusionpbx_personal_domain }}')
+              AND outbound_caller_id_number IS DISTINCT FROM (SELECT var_value FROM v_vars WHERE var_name = 'personal_did');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'UPDATE 1' in stdout"
+      no_log: true
+
+    - name: FusionPBX | ensure personal ring-group failover apology dialplan
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_dialplans (dialplan_uuid, app_uuid, domain_uuid, dialplan_context, dialplan_name,
+              dialplan_number, dialplan_order, dialplan_enabled, dialplan_continue, dialplan_xml, dialplan_description)
+            SELECT gen_random_uuid(), '{{ fusionpbx_ivr_app_uuid }}', d.domain_uuid, '{{ fusionpbx_personal_domain }}',
+              'Kai VM Failover Apology', '*98[ext]', '200', 'true', 'false',
+              '<extension name="Kai VM Failover Apology" continue="false" uuid="' || gen_random_uuid() || '">
+              <condition field="destination_number" expression="^\*98(\d{2,10})$">
+              <action application="answer" data=""/>
+              <action application="sleep" data="500"/>
+              <action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_personal_domain }}/{{ fusionpbx_personal_failover_prompt }}"/>
+              <action application="set" data="skip_greeting=true"/>
+              <action application="transfer" data="*99$1 XML {{ fusionpbx_personal_domain }}"/>
+              </condition>
+              </extension>',
+              'VM failover apology (call-flow)'
+            FROM v_domains d WHERE d.domain_name = '{{ fusionpbx_personal_domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_dialplans x
+                              WHERE x.domain_uuid = d.domain_uuid AND x.dialplan_number = '*98[ext]');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    - name: FusionPBX | ensure personal no-response bail dialplan
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_dialplans (dialplan_uuid, app_uuid, domain_uuid, dialplan_context, dialplan_name,
+              dialplan_number, dialplan_order, dialplan_enabled, dialplan_continue, dialplan_xml, dialplan_description)
+            SELECT gen_random_uuid(), '{{ fusionpbx_ivr_app_uuid }}', d.domain_uuid, '{{ fusionpbx_personal_domain }}',
+              'Kai No-Response Bail', '{{ fusionpbx_personal_bail_ext }}', '200', 'true', 'false',
+              '<extension name="Kai No-Response Bail" continue="false" uuid="' || gen_random_uuid() || '">
+              <condition field="destination_number" expression="^{{ fusionpbx_personal_bail_ext }}$">
+              <action application="answer" data=""/>
+              <action application="sleep" data="500"/>
+              <action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_personal_domain }}/{{ fusionpbx_personal_bail_prompt }}"/>
+              <action application="hangup" data="NORMAL_CLEARING"/>
+              </condition>
+              </extension>',
+              'No-response bail (call-flow)'
+            FROM v_domains d WHERE d.domain_name = '{{ fusionpbx_personal_domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_dialplans x
+                              WHERE x.domain_uuid = d.domain_uuid AND x.dialplan_number = '{{ fusionpbx_personal_bail_ext }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    - name: FusionPBX | ensure personal special dialplans (debt notice, scammer)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_dialplans (dialplan_uuid, app_uuid, domain_uuid, dialplan_context, dialplan_name,
+              dialplan_number, dialplan_order, dialplan_enabled, dialplan_continue, dialplan_xml, dialplan_description)
+            SELECT gen_random_uuid(), '{{ fusionpbx_ivr_app_uuid }}', d.domain_uuid, '{{ fusionpbx_personal_domain }}',
+              '{{ item.name }}', '{{ item.ext }}', '200', 'true', 'false',
+              '<extension name="{{ item.name }}" continue="false" uuid="' || gen_random_uuid() || '">
+              <condition field="destination_number" expression="^{{ item.ext }}$">
+              <action application="answer" data=""/>
+              <action application="sleep" data="500"/>
+              <action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_personal_domain }}/{{ item.prompt }}"/>
+              <action application="set" data="skip_greeting=true"/>
+              <action application="transfer" data="*99{{ item.vm }} XML {{ fusionpbx_personal_domain }}"/>
+              </condition>
+              </extension>',
+              '{{ item.name }} (call-flow)'
+            FROM v_domains d WHERE d.domain_name = '{{ fusionpbx_personal_domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_dialplans x
+                              WHERE x.domain_uuid = d.domain_uuid AND x.dialplan_number = '{{ item.ext }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      loop: "{{ fusionpbx_personal_specials }}"
+      loop_control:
+        label: "{{ item.name }} ({{ item.ext }})"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    - name: FusionPBX | ensure personal ring-group departments (+ generated dialplan)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            WITH d AS (SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ fusionpbx_personal_domain }}'),
+            ins_rg AS (
+              INSERT INTO v_ring_groups (ring_group_uuid, domain_uuid, ring_group_name, ring_group_extension,
+                ring_group_context, ring_group_call_timeout, ring_group_strategy, ring_group_timeout_app,
+                ring_group_timeout_data, ring_group_exit_key, ring_group_cid_name_prefix, ring_group_ringback,
+                ring_group_greeting, ring_group_enabled, ring_group_description, dialplan_uuid)
+              SELECT gen_random_uuid(), d.domain_uuid, '{{ item.name }}', '{{ item.ext }}',
+                '{{ fusionpbx_personal_domain }}', '{{ item.timeout }}', 'enterprise', 'transfer',
+                '*98{{ item.vm }} XML {{ fusionpbx_personal_domain }}', '*', '{{ item.prefix }}', '${us-ring}',
+                '{{ fusionpbx_personal_ring_notice }}', 'true', '{{ item.name }} (call-flow)', gen_random_uuid()
+              FROM d
+              WHERE NOT EXISTS (SELECT 1 FROM v_ring_groups r
+                               WHERE r.domain_uuid = d.domain_uuid AND r.ring_group_extension = '{{ item.ext }}')
+              RETURNING ring_group_uuid, dialplan_uuid, domain_uuid),
+            ins_dest AS (
+              INSERT INTO v_ring_group_destinations (ring_group_destination_uuid, domain_uuid, ring_group_uuid,
+                destination_number, destination_delay, destination_timeout, destination_enabled)
+              SELECT gen_random_uuid(), ins_rg.domain_uuid, ins_rg.ring_group_uuid, m.num, '0',
+                '{{ item.timeout }}', 'true'
+              FROM ins_rg, (VALUES {% for mem in item.members %}('{{ mem }}'){% if not loop.last %}, {% endif %}{% endfor %}) AS m(num))
+            INSERT INTO v_dialplans (dialplan_uuid, domain_uuid, app_uuid, dialplan_name, dialplan_number,
+              dialplan_context, dialplan_continue, dialplan_xml, dialplan_order, dialplan_enabled, dialplan_description)
+            SELECT ins_rg.dialplan_uuid, ins_rg.domain_uuid, '{{ fusionpbx_ring_groups_app_uuid }}', '{{ item.name }}',
+              '{{ item.ext }}', '{{ fusionpbx_personal_domain }}', 'false',
+              '<extension name="{{ item.name }}" continue="" uuid="' || ins_rg.dialplan_uuid || '">
+              <condition field="destination_number" expression="^{{ item.ext }}$">
+              <action application="ring_ready" data=""/>
+              <action application="set" data="ring_group_uuid=' || ins_rg.ring_group_uuid || '"/>
+              <action application="set" data="record_stereo=true"/>
+              <action application="lua" data="app.lua ring_groups"/>
+              </condition>
+              </extension>',
+              '101', 'true', '{{ item.name }} (call-flow)'
+            FROM ins_rg;
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      loop: "{{ fusionpbx_personal_departments }}"
+      loop_control:
+        label: "{{ item.name }} ({{ item.ext }})"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    - name: FusionPBX | ensure personal IVR menus (+ generated dialplan)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            WITH d AS (SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ fusionpbx_personal_domain }}'),
+            ins AS (
+              INSERT INTO v_ivr_menus (ivr_menu_uuid, domain_uuid, dialplan_uuid, ivr_menu_name, ivr_menu_extension,
+                ivr_menu_parent_uuid, ivr_menu_language, ivr_menu_dialect, ivr_menu_voice, ivr_menu_greet_long,
+                ivr_menu_timeout, ivr_menu_inter_digit_timeout, ivr_menu_max_failures, ivr_menu_max_timeouts,
+                ivr_menu_digit_len, ivr_menu_direct_dial, ivr_menu_exit_app, ivr_menu_exit_data,
+                ivr_menu_context, ivr_menu_enabled, ivr_menu_description)
+              SELECT gen_random_uuid(), d.domain_uuid, gen_random_uuid(), '{{ item.name }}', '{{ item.ext }}',
+                NULL,
+                'en', 'us', 'callie', '{{ item.greet }}', '5000', '2000', '{{ item.loops }}', '1', '5', 'false',
+                'transfer', '{{ fusionpbx_personal_bail_ext }} XML {{ fusionpbx_personal_domain }}', '{{ fusionpbx_personal_domain }}',
+                'true', '{{ item.name }} (call-flow)'
+              FROM d
+              WHERE NOT EXISTS (SELECT 1 FROM v_ivr_menus m WHERE m.domain_uuid = d.domain_uuid AND m.ivr_menu_extension = '{{ item.ext }}')
+              RETURNING ivr_menu_uuid, dialplan_uuid, domain_uuid)
+            INSERT INTO v_dialplans (dialplan_uuid, domain_uuid, app_uuid, dialplan_name, dialplan_number,
+              dialplan_context, dialplan_continue, dialplan_xml, dialplan_order, dialplan_enabled, dialplan_description)
+            SELECT ins.dialplan_uuid, ins.domain_uuid, '{{ fusionpbx_ivr_app_uuid }}', '{{ item.name }}', '{{ item.ext }}',
+              '{{ fusionpbx_personal_domain }}', 'false',
+              '<extension name="{{ item.name }}" continue="false" uuid="' || ins.dialplan_uuid || '">
+              <condition field="destination_number" expression="^{{ item.ext }}$">
+              <action application="ring_ready" data=""/>
+              <action application="answer" data=""/>
+              <action application="sleep" data="1000"/>
+              <action application="set" data="hangup_after_bridge=true"/>
+              {% if item.preamble %}<action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_personal_domain }}/{{ item.preamble }}"/>{% endif %}
+              <action application="set" data="ivr_menu_uuid=' || ins.ivr_menu_uuid || '"/>
+              <action application="lua" data="ivr_menu.lua"/>
+              <action application="transfer" data="{{ fusionpbx_personal_bail_ext }} XML {{ fusionpbx_personal_domain }}"/>
+              </condition>
+              </extension>',
+              '100', 'true', '{{ item.name }} (call-flow)'
+            FROM ins;
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      loop: "{{ fusionpbx_personal_ivr_menus }}"
+      loop_control:
+        label: "{{ item.name }} ({{ item.ext }})"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    - name: FusionPBX | ensure personal IVR menu options
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_ivr_menu_options (ivr_menu_option_uuid, ivr_menu_uuid, domain_uuid,
+              ivr_menu_option_digits, ivr_menu_option_action, ivr_menu_option_param,
+              ivr_menu_option_order, ivr_menu_option_enabled, ivr_menu_option_description)
+            SELECT gen_random_uuid(), m.ivr_menu_uuid, m.domain_uuid, '{{ item.d }}', 'menu-exec-app',
+              '{{ item.p }}', '{{ item.ord }}', 'true', '{{ item.desc }}'
+            FROM v_ivr_menus m
+            WHERE m.domain_uuid = (SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ fusionpbx_personal_domain }}')
+              AND m.ivr_menu_extension = '{{ item.menu }}'
+              AND NOT EXISTS (SELECT 1 FROM v_ivr_menu_options o
+                              WHERE o.ivr_menu_uuid = m.ivr_menu_uuid AND o.ivr_menu_option_digits = '{{ item.d }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      loop: "{{ fusionpbx_personal_ivr_options }}"
+      loop_control:
+        label: "{{ item.menu }} / {{ item.d }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    - name: FusionPBX | ensure personal hours time condition
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_dialplans (dialplan_uuid, domain_uuid, app_uuid, dialplan_name, dialplan_number,
+              dialplan_context, dialplan_continue, dialplan_xml, dialplan_order, dialplan_enabled, dialplan_description)
+            SELECT gen_random_uuid(), d.domain_uuid, '{{ fusionpbx_time_conditions_app_uuid }}',
+              '{{ fusionpbx_personal_time_condition.name }}', '{{ fusionpbx_personal_time_condition.ext }}',
+              '{{ fusionpbx_personal_domain }}', 'false',
+              '<extension name="{{ fusionpbx_personal_time_condition.name }}" continue="false" uuid="' || gen_random_uuid() || '">
+              <condition field="destination_number" expression="^{{ fusionpbx_personal_time_condition.ext }}$" break="on-false"/>
+              <condition hour="{{ fusionpbx_personal_time_condition.hour }}">
+              <action application="transfer" data="{{ fusionpbx_personal_time_condition.open }} XML {{ fusionpbx_personal_domain }}"/>
+              <anti-action application="transfer" data="{{ fusionpbx_personal_time_condition.closed }} XML {{ fusionpbx_personal_domain }}"/>
+              </condition>
+              </extension>',
+              '90', 'true', 'Kai hours time condition (call-flow)'
+            FROM v_domains d WHERE d.domain_name = '{{ fusionpbx_personal_domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_dialplans dp
+                              WHERE dp.domain_uuid = d.domain_uuid AND dp.dialplan_number = '{{ fusionpbx_personal_time_condition.ext }}');
       environment:
         PGPASSWORD: "{{ fusionpbx_db.password }}"
       changed_when: "'INSERT 0 1' in stdout"
