@@ -112,6 +112,26 @@ spec:
                 php Zotlabs/Daemon/Master.php Cron || echo "cron run failed"
                 sleep 60
               done
+          env:
+            - name: SMTP_HOST
+              value: "smtp.gmail.com"
+            - name: SMTP_PORT
+              value: "587"
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: hubzilla-secrets
+                  key: SMTP_USER
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hubzilla-secrets
+                  key: SMTP_PASSWORD
+            - name: SMTP_FROM
+              valueFrom:
+                secretKeyRef:
+                  name: hubzilla-secrets
+                  key: SMTP_FROM
           securityContext:
             runAsNonRoot: true
             runAsUser: 33
