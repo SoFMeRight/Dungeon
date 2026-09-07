@@ -11,4 +11,4 @@ spec:
     spec:
       containers:
         - name: web
-          image: docker.io/hlhd/hubzilla:dev-e6d31b0
+          image: docker.io/hlhd/hubzilla:dev-dd48c8e
