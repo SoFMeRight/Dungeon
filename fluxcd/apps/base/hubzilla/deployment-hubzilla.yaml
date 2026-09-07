@@ -16,6 +16,9 @@ spec:
         app: hubzilla
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.mariadb: "true"
+        # Token exchange and userinfo run server-side, and sso.prplanit.com resolves to the
+        # gateway VIP from inside the cluster, so the pod needs the gateway to accept it.
+        policy.prplanit.com/cap.oidc: "true"
         policy.prplanit.com/access-scope-mariadb: PLACEHOLDER_DB_SCOPE
     spec:
       serviceAccountName: hubzilla
