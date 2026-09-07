@@ -163,12 +163,12 @@
       - {name: "Kai Jobs", ext: "4101", vm: "7100", prefix: "JOB:", timeout: 30, members: ["217"]}
       - {name: "Kai Medical", ext: "4102", vm: "7104", prefix: "MED:", timeout: 30, members: ["217"]}
       - {name: "Kai Emergency", ext: "4103", vm: "217", prefix: "EMERGENCY:", timeout: 45, members: ["217", "${personal_cell}"]}
-    # Personal special dialplans: optional awkward preamble (the long rambling ring
-    # notice, used as a deterrent for scammer/debt) then the clip, then deposit into a
-    # box with the box greeting suppressed (the clip already speaks for it). Normal ring
-    # groups use the SHORT kai-ring-notice.wav; only these specials use the long one.
+    # Personal special dialplans: preamble then prompt then deposit — the box greeting
+    # then plays (no skip), same as every VM path. Debt = short ring-notice + vm-failover
+    # (a timed-decision feel) -> debt-vm box greeting. Scammer = the long awkward ramble
+    # (its only home) + the funny clip -> scam-vm box greeting.
     fusionpbx_personal_specials:
-      - {name: "Kai Debt Notice", ext: "5105", prompt: "kai-debt-notice.wav", vm: "7101", preamble: "kai-ring-notice-long.wav"}
+      - {name: "Kai Debt Notice", ext: "5105", prompt: "kai-vm-failover.wav", vm: "7101", preamble: "kai-ring-notice.wav"}
       - {name: "Kai Scammer", ext: "5109", prompt: "kai-scammer-funny.wav", vm: "7103", preamble: "kai-ring-notice-long.wav"}
     # Personal IVR menus. Day = kai-day-main (no disclaimer preamble); after-hours =
     # the same options behind the kai-afterhours "we're closed" clip.
@@ -182,18 +182,18 @@
       - {menu: "5100", d: "3", p: "transfer 4102 XML pbx.arbitorium.com", ord: "30", desc: "Medical -> ring MED"}
       - {menu: "5100", d: "4", p: "transfer 4103 XML pbx.arbitorium.com", ord: "40", desc: "Emergency -> 217 + cell"}
       - {menu: "5100", d: "5", p: "transfer 5105 XML pbx.arbitorium.com", ord: "50", desc: "Debt -> notice -> VM"}
-      - {menu: "5100", d: "6", p: "transfer *997102 XML pbx.arbitorium.com", ord: "60", desc: "Solicitation -> VM"}
+      - {menu: "5100", d: "6", p: "transfer *987102 XML pbx.arbitorium.com", ord: "60", desc: "Solicitation -> VM"}
       - {menu: "5100", d: "9", p: "transfer 5109 XML pbx.arbitorium.com", ord: "70", desc: "Scammer -> funny -> VM"}
-      - {menu: "5100", d: "0", p: "transfer *99217 XML pbx.arbitorium.com", ord: "80", desc: "Unsure -> VM 217"}
+      - {menu: "5100", d: "0", p: "transfer *98217 XML pbx.arbitorium.com", ord: "80", desc: "Unsure -> VM 217"}
       - {menu: "5100", d: "*", p: "transfer 5100 XML pbx.arbitorium.com", ord: "90", desc: "Repeat"}
-      - {menu: "5102", d: "1", p: "transfer *99217 XML pbx.arbitorium.com", ord: "10", desc: "Friend/family -> VM 217"}
-      - {menu: "5102", d: "2", p: "transfer *997100 XML pbx.arbitorium.com", ord: "20", desc: "Recruiter -> VM jobs"}
-      - {menu: "5102", d: "3", p: "transfer *997104 XML pbx.arbitorium.com", ord: "30", desc: "Medical -> VM medical"}
-      - {menu: "5102", d: "4", p: "transfer *99217 XML pbx.arbitorium.com", ord: "40", desc: "Emergency -> VM 217"}
+      - {menu: "5102", d: "1", p: "transfer *98217 XML pbx.arbitorium.com", ord: "10", desc: "Friend/family -> VM 217"}
+      - {menu: "5102", d: "2", p: "transfer *987100 XML pbx.arbitorium.com", ord: "20", desc: "Recruiter -> VM jobs"}
+      - {menu: "5102", d: "3", p: "transfer *987104 XML pbx.arbitorium.com", ord: "30", desc: "Medical -> VM medical"}
+      - {menu: "5102", d: "4", p: "transfer *98217 XML pbx.arbitorium.com", ord: "40", desc: "Emergency -> VM 217"}
       - {menu: "5102", d: "5", p: "transfer 5105 XML pbx.arbitorium.com", ord: "50", desc: "Debt -> notice -> VM"}
-      - {menu: "5102", d: "6", p: "transfer *997102 XML pbx.arbitorium.com", ord: "60", desc: "Solicitation -> VM"}
+      - {menu: "5102", d: "6", p: "transfer *987102 XML pbx.arbitorium.com", ord: "60", desc: "Solicitation -> VM"}
       - {menu: "5102", d: "9", p: "transfer 5109 XML pbx.arbitorium.com", ord: "70", desc: "Scammer -> funny -> VM"}
-      - {menu: "5102", d: "0", p: "transfer *99217 XML pbx.arbitorium.com", ord: "80", desc: "Unsure -> VM 217"}
+      - {menu: "5102", d: "0", p: "transfer *98217 XML pbx.arbitorium.com", ord: "80", desc: "Unsure -> VM 217"}
       - {menu: "5102", d: "*", p: "transfer 5102 XML pbx.arbitorium.com", ord: "90", desc: "Repeat"}
     # Personal hours: 8AM-10PM (hour 8-21) any day -> day menu; else -> after-hours.
     fusionpbx_personal_time_condition:
@@ -813,7 +813,6 @@
               <action application="answer" data=""/>
               <action application="sleep" data="500"/>
               <action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_personal_domain }}/{{ fusionpbx_personal_failover_prompt }}"/>
-              <action application="set" data="skip_greeting=true"/>
               <action application="transfer" data="*99$1 XML {{ fusionpbx_personal_domain }}"/>
               </condition>
               </extension>',
@@ -917,7 +916,6 @@
               <action application="sleep" data="500"/>
               {% if item.preamble %}<action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_personal_domain }}/{{ item.preamble }}"/>{% endif %}
               <action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_personal_domain }}/{{ item.prompt }}"/>
-              <action application="set" data="skip_greeting=true"/>
               <action application="transfer" data="*99{{ item.vm }} XML {{ fusionpbx_personal_domain }}"/>
               </condition>
               </extension>',
@@ -1135,7 +1133,7 @@
               SELECT gen_random_uuid(), d.domain_uuid, '{{ fusionpbx_personal_family_group.name }}',
                 '{{ fusionpbx_personal_family_group.ext }}', '{{ fusionpbx_personal_domain }}',
                 '{{ fusionpbx_personal_family_group.timeout }}', 'enterprise', 'transfer',
-                '*99{{ fusionpbx_personal_family_group.vm }} XML {{ fusionpbx_personal_domain }}', '*',
+                '*98{{ fusionpbx_personal_family_group.vm }} XML {{ fusionpbx_personal_domain }}', '*',
                 '{{ fusionpbx_personal_family_group.prefix }}', '${us-ring}', '{{ fusionpbx_personal_ring_notice }}',
                 'true', '{{ fusionpbx_personal_family_group.name }} (call-flow)', gen_random_uuid()
               FROM d
