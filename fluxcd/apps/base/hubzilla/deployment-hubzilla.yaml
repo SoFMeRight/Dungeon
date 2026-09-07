@@ -33,6 +33,16 @@ spec:
               value: "smtp.gmail.com"
             - name: SMTP_PORT
               value: "587"
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: hubzilla-secrets
+                  key: OIDC_CLIENT_ID
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: hubzilla-secrets
+                  key: OIDC_CLIENT_SECRET
             - name: SMTP_USER
               valueFrom:
                 secretKeyRef:
