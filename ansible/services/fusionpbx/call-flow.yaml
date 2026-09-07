@@ -195,6 +195,21 @@
       open: "5100"
       closed: "5102"
       hour: "8-21"
+    # Recognized-caller (family) feature. Recognized numbers (personal_family_numbers,
+    # box-managed) bypass the menu and ring the family group directly, failing over to
+    # VM 217. The recognition dialplan runs before the hours check, gated on the
+    # ${personal_family_recognition} toggle (default on) so it can be flipped for a demo
+    # (*540 on / *541 off). No numbers here — the dialplan expands the vars at call time.
+    fusionpbx_personal_family_group:
+      name: "Kai Family"
+      ext: "4104"
+      prefix: "FAMILY:"
+      timeout: 60
+      vm: "217"
+    fusionpbx_personal_family_recognition_number: "5111"
+    fusionpbx_personal_family_toggles:
+      - {num: "*540", val: "true", tone: "%(200,100,440);%(350,100,880)", name: "Family Recognition On"}
+      - {num: "*541", val: "false", tone: "%(200,100,880);%(350,100,440)", name: "Family Recognition Off"}
 
   tasks:
 
@@ -1048,6 +1063,134 @@
                               WHERE dp.domain_uuid = d.domain_uuid AND dp.dialplan_number = '{{ fusionpbx_personal_time_condition.ext }}');
       environment:
         PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    # -------------------------------------------------------------------------
+    # Recognized-caller (family) feature. Family ring group (217, FAMILY: tag) ->
+    # VM 217; a recognition dialplan that runs before the hours check and routes
+    # recognized callers straight to it; and *540/*541 toggle feature codes. The
+    # caller list + toggle are the box-managed global vars scaffolded above.
+    # -------------------------------------------------------------------------
+    - name: FusionPBX | ensure personal family ring group (recognized callers)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            WITH d AS (SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ fusionpbx_personal_domain }}'),
+            ins_rg AS (
+              INSERT INTO v_ring_groups (ring_group_uuid, domain_uuid, ring_group_name, ring_group_extension,
+                ring_group_context, ring_group_call_timeout, ring_group_strategy, ring_group_timeout_app,
+                ring_group_timeout_data, ring_group_exit_key, ring_group_cid_name_prefix, ring_group_ringback,
+                ring_group_greeting, ring_group_enabled, ring_group_description, dialplan_uuid)
+              SELECT gen_random_uuid(), d.domain_uuid, '{{ fusionpbx_personal_family_group.name }}',
+                '{{ fusionpbx_personal_family_group.ext }}', '{{ fusionpbx_personal_domain }}',
+                '{{ fusionpbx_personal_family_group.timeout }}', 'enterprise', 'transfer',
+                '*99{{ fusionpbx_personal_family_group.vm }} XML {{ fusionpbx_personal_domain }}', '*',
+                '{{ fusionpbx_personal_family_group.prefix }}', '${us-ring}', '{{ fusionpbx_personal_ring_notice }}',
+                'true', '{{ fusionpbx_personal_family_group.name }} (call-flow)', gen_random_uuid()
+              FROM d
+              WHERE NOT EXISTS (SELECT 1 FROM v_ring_groups r
+                               WHERE r.domain_uuid = d.domain_uuid AND r.ring_group_extension = '{{ fusionpbx_personal_family_group.ext }}')
+              RETURNING ring_group_uuid, dialplan_uuid, domain_uuid),
+            ins_dest AS (
+              INSERT INTO v_ring_group_destinations (ring_group_destination_uuid, domain_uuid, ring_group_uuid,
+                destination_number, destination_delay, destination_timeout, destination_enabled)
+              SELECT gen_random_uuid(), ins_rg.domain_uuid, ins_rg.ring_group_uuid, '{{ fusionpbx_personal_agent_ext }}',
+                '0', '{{ fusionpbx_personal_family_group.timeout }}', 'true' FROM ins_rg)
+            INSERT INTO v_dialplans (dialplan_uuid, domain_uuid, app_uuid, dialplan_name, dialplan_number,
+              dialplan_context, dialplan_continue, dialplan_xml, dialplan_order, dialplan_enabled, dialplan_description)
+            SELECT ins_rg.dialplan_uuid, ins_rg.domain_uuid, '{{ fusionpbx_ring_groups_app_uuid }}',
+              '{{ fusionpbx_personal_family_group.name }}', '{{ fusionpbx_personal_family_group.ext }}',
+              '{{ fusionpbx_personal_domain }}', 'false',
+              '<extension name="{{ fusionpbx_personal_family_group.name }}" continue="" uuid="' || ins_rg.dialplan_uuid || '">
+              <condition field="destination_number" expression="^{{ fusionpbx_personal_family_group.ext }}$">
+              <action application="ring_ready" data=""/>
+              <action application="set" data="ring_group_uuid=' || ins_rg.ring_group_uuid || '"/>
+              <action application="set" data="record_stereo=true"/>
+              <action application="lua" data="app.lua ring_groups"/>
+              </condition>
+              </extension>',
+              '101', 'true', '{{ fusionpbx_personal_family_group.name }} (call-flow)'
+            FROM ins_rg;
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    - name: FusionPBX | ensure personal family-recognition dialplan (before the hours check)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_dialplans (dialplan_uuid, app_uuid, domain_uuid, dialplan_context, dialplan_name,
+              dialplan_number, dialplan_order, dialplan_enabled, dialplan_continue, dialplan_xml, dialplan_description)
+            SELECT gen_random_uuid(), '{{ fusionpbx_ivr_app_uuid }}', d.domain_uuid, '{{ fusionpbx_personal_domain }}',
+              'Kai Family Recognition', '{{ fusionpbx_personal_family_recognition_number }}', '85', 'true', 'true',
+              '<extension name="Kai Family Recognition" continue="true" uuid="' || gen_random_uuid() || '">
+              <condition field="destination_number" expression="^{{ fusionpbx_personal_time_condition.ext }}$"/>
+              <condition field="${personal_family_recognition}" expression="^true$"/>
+              <condition field="caller_id_number" expression="^(\+?1)?(${personal_family_numbers})$">
+              <action application="transfer" data="{{ fusionpbx_personal_family_group.ext }} XML {{ fusionpbx_personal_domain }}"/>
+              </condition>
+              </extension>',
+              'Family recognition (call-flow)'
+            FROM v_domains d WHERE d.domain_name = '{{ fusionpbx_personal_domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_dialplans x WHERE x.domain_uuid = d.domain_uuid AND x.dialplan_name = 'Kai Family Recognition');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    - name: FusionPBX | ensure personal family-recognition toggle feature codes
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_dialplans (dialplan_uuid, app_uuid, domain_uuid, dialplan_context, dialplan_name,
+              dialplan_number, dialplan_order, dialplan_enabled, dialplan_continue, dialplan_xml, dialplan_description)
+            SELECT gen_random_uuid(), '{{ fusionpbx_ivr_app_uuid }}', d.domain_uuid, '{{ fusionpbx_personal_domain }}',
+              '{{ item.name }}', '{{ item.num }}', '200', 'true', 'false',
+              '<extension name="{{ item.name }}" continue="false" uuid="' || gen_random_uuid() || '">
+              <condition field="destination_number" expression="^\{{ item.num }}$">
+              <action application="answer" data=""/>
+              <action application="set" data="ignored=${global_setvar(personal_family_recognition={{ item.val }})}"/>
+              <action application="playback" data="tone_stream://{{ item.tone }}"/>
+              <action application="hangup" data=""/>
+              </condition>
+              </extension>',
+              'Family recognition toggle (call-flow)'
+            FROM v_domains d WHERE d.domain_name = '{{ fusionpbx_personal_domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_dialplans x WHERE x.domain_uuid = d.domain_uuid AND x.dialplan_number = '{{ item.num }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      loop: "{{ fusionpbx_personal_family_toggles }}"
+      loop_control:
+        label: "{{ item.name }} ({{ item.num }})"
       changed_when: "'INSERT 0 1' in stdout"
       notify: Reload FusionPBX dialplan
       no_log: true
