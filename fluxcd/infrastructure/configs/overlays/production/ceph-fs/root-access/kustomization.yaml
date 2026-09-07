@@ -7,6 +7,7 @@ resources:
   - cephfs-init-ark-sa.yaml
   - cephfs-init-byparr.yaml
   - cephfs-init-frappe-suite.yaml
+  - cephfs-init-hubzilla.yaml
   - cephfs-init-grafana.yaml
   - cephfs-init-harbor.yaml
   - cephfs-init-homarr.yaml

@@ -138,4 +138,4 @@ spec:
             secretName: hubzilla-htconfig
         - name: store
           persistentVolumeClaim:
-            claimName: hubzilla-store
+            claimName: temple-of-time-hubzilla-store

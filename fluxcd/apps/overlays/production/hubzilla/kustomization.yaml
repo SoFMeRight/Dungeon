@@ -7,10 +7,10 @@ resources:
   - ../../../base/hubzilla
   - httproute.yaml
   - httproute-apex.yaml
+  - cephfs-pvs.yaml
 
 patches:
   - path: externalsecret-patch.yaml
-  - path: pvc-store-patch.yaml
   - path: statefulset-mariadb-patch.yaml
   - path: deployment-hubzilla-patch.yaml
   - path: deployment-cron-patch.yaml

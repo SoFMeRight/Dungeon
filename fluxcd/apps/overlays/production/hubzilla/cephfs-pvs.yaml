@@ -1,0 +1,42 @@
+---
+# Hubzilla store CephFS PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: temple-of-time-hubzilla-store-pv
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: temple-of-time-hubzilla-store
+    namespace: temple-of-time
+  csi:
+    driver: gorons-bracelet.cephfs.csi.ceph.com
+    nodeStageSecretRef:
+      name: csi-cephfs-node
+      namespace: gorons-bracelet
+    volumeAttributes:
+      clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
+      fsName: Seed_Bank
+      staticVolume: "true"
+      rootPath: /dungeon/nvme/apps/hubzilla/store
+    volumeHandle: temple-of-time-hubzilla-store-static
+---
+# Hubzilla store CephFS PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: temple-of-time-hubzilla-store
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+  volumeName: temple-of-time-hubzilla-store-pv
+  storageClassName: ""
