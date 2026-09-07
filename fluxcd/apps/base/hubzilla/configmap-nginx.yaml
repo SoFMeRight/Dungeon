@@ -32,7 +32,7 @@ data:
       }
 
       location / {
-        try_files $uri $uri/ /index.php?$query_string;
+        try_files $uri $uri/ /index.php?q=$uri&$args;
       }
 
       location ~ \.php$ {
