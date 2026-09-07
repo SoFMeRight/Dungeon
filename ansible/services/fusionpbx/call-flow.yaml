@@ -33,6 +33,7 @@
       - {domain: "{{ fusionpbx_personal_domain }}", id: "7102", desc: "Kai Solicitations"}
       - {domain: "{{ fusionpbx_personal_domain }}", id: "7103", desc: "Kai Spam (funny bucket)"}
       - {domain: "{{ fusionpbx_personal_domain }}", id: "7104", desc: "Kai Medical / appointments"}
+      - {domain: "{{ fusionpbx_personal_domain }}", id: "7105", desc: "Kai Family Emergency (option 4)"}
 
     # Business ring-group departments. Members = extensions "set to receive" that
     # call type (218 today; add employees as you hire). Pressing the exit key (*)
@@ -63,13 +64,13 @@
     # a mailbox. Every menu's exit points here; pressing 0 stays the explicit path to a
     # person / general voicemail.
     fusionpbx_business_bail_ext: "5099"
-    fusionpbx_business_bail_prompt: "biz-no-response.wav"
+    fusionpbx_business_bail_prompt: "all-notices-menu_options-timeout.wav"
     # Ring-group failover apology: on a department ring-timeout (or the caller pressing
     # the exit key), the *98<box> handler plays this clip ("sorry, due to volume, please
     # leave a message") then deposits into the categorical box with skip_greeting=true, so
     # the box's own greeting doesn't double up the "leave a message". The direct-to-VM
     # path (after-hours menu -> *99<box>) still plays the box greeting normally.
-    fusionpbx_business_failover_prompt: "biz-vm-failover.wav"
+    fusionpbx_business_failover_prompt: "biz-notices-transfer_to_vm.wav"
     # Business-hours time condition: Mon-Fri (wday 2-6), 9:00-16:59 (hour 9-16) ->
     # day IVR; otherwise -> after-hours IVR.
     fusionpbx_time_conditions_app_uuid: "4b821450-926b-175a-af93-a03c441818b1"
@@ -84,7 +85,7 @@
     # holidays as FreeSWITCH date rules layered ahead of the hours check. mday ranges +
     # wday are year-independent (e.g. last Monday of May = a Monday on the 25th-31st).
     fusionpbx_holiday_handler_ext: "5004"
-    fusionpbx_holiday_greeting: "biz-holiday.wav"
+    fusionpbx_holiday_greeting: "biz-notices-holiday.wav"
     fusionpbx_federal_holidays:
       - 'mon="1" mday="1"'                # New Year's Day
       - 'mon="1" mday="15-21" wday="2"'   # MLK Day (3rd Mon Jan)
@@ -103,15 +104,15 @@
     fusionpbx_business_did: "+12536483247"
     fusionpbx_business_agent_ext: "218"
     fusionpbx_ivr_menus:
-      - {name: "PrPlanIT Day Menu", ext: "5000", greet: "biz-day-main.wav", parent: "", preamble: "biz-recording-disclaimer.wav", loops: "3"}
-      - {name: "PrPlanIT Customer Menu", ext: "5001", greet: "biz-customer-submenu.wav", parent: "5000", preamble: "", loops: "3"}
-      - {name: "PrPlanIT After-Hours Menu", ext: "5002", greet: "biz-day-main.wav", parent: "", preamble: "biz-afterhours.wav", loops: "3"}
-      - {name: "PrPlanIT After-Hours Customer", ext: "5003", greet: "biz-customer-submenu.wav", parent: "5002", preamble: "", loops: "3"}
-      - {name: "PrPlanIT Holiday Menu", ext: "5004", greet: "biz-day-main.wav", parent: "", preamble: "biz-holiday.wav", loops: "3"}
+      - {name: "PrPlanIT Day Menu", ext: "5000", greet: "biz-ivr_menu-main.wav", parent: "", preamble: "biz-notices-call_recording.wav", loops: "3"}
+      - {name: "PrPlanIT Customer Menu", ext: "5001", greet: "biz-ivr_submenu-customer.wav", parent: "5000", preamble: "", loops: "3"}
+      - {name: "PrPlanIT After-Hours Menu", ext: "5002", greet: "biz-ivr_menu-main.wav", parent: "", preamble: "biz-notices-afterhours.wav", loops: "3"}
+      - {name: "PrPlanIT After-Hours Customer", ext: "5003", greet: "biz-ivr_submenu-customer.wav", parent: "5002", preamble: "", loops: "3"}
+      - {name: "PrPlanIT Holiday Menu", ext: "5004", greet: "biz-ivr_menu-main.wav", parent: "", preamble: "biz-notices-holiday.wav", loops: "3"}
     fusionpbx_ivr_options:
       - {menu: "5000", d: "1", p: "transfer 5001 XML pbx.prplanit.com", ord: "10", desc: "Existing customer -> sub-menu"}
       - {menu: "5000", d: "2", p: "transfer 4003 XML pbx.prplanit.com", ord: "20", desc: "Services -> Sales"}
-      - {menu: "5000", d: "3", p: "playback /var/lib/freeswitch/recordings/pbx.prplanit.com/biz-hours.wav", ord: "30", desc: "Hours (play + return)"}
+      - {menu: "5000", d: "3", p: "playback /var/lib/freeswitch/recordings/pbx.prplanit.com/biz-ivr_submenu-hours.wav", ord: "30", desc: "Hours (play + return)"}
       - {menu: "5000", d: "4", p: "transfer *997003 XML pbx.prplanit.com", ord: "40", desc: "Promo -> VM"}
       - {menu: "5000", d: "0", p: "transfer 4000 XML pbx.prplanit.com", ord: "50", desc: "Operator"}
       - {menu: "5001", d: "1", p: "transfer 4001 XML pbx.prplanit.com", ord: "10", desc: "Technical -> Support"}
@@ -120,7 +121,7 @@
       # After-hours mirror: same options, every one -> its bucket VM (no ring).
       - {menu: "5002", d: "1", p: "transfer 5003 XML pbx.prplanit.com", ord: "10", desc: "Customer -> sub (VM)"}
       - {menu: "5002", d: "2", p: "transfer *997004 XML pbx.prplanit.com", ord: "20", desc: "Services -> Sales VM"}
-      - {menu: "5002", d: "3", p: "playback /var/lib/freeswitch/recordings/pbx.prplanit.com/biz-hours.wav", ord: "30", desc: "Hours"}
+      - {menu: "5002", d: "3", p: "playback /var/lib/freeswitch/recordings/pbx.prplanit.com/biz-ivr_submenu-hours.wav", ord: "30", desc: "Hours"}
       - {menu: "5002", d: "4", p: "transfer *997003 XML pbx.prplanit.com", ord: "40", desc: "Promo VM"}
       - {menu: "5002", d: "0", p: "transfer *997000 XML pbx.prplanit.com", ord: "50", desc: "General VM"}
       - {menu: "5003", d: "1", p: "transfer *997001 XML pbx.prplanit.com", ord: "10", desc: "Support VM"}
@@ -129,7 +130,7 @@
       # Holiday menu: same mirror as after-hours (only the greeting differs) so messages still sort.
       - {menu: "5004", d: "1", p: "transfer 5003 XML pbx.prplanit.com", ord: "10", desc: "Customer -> sub (VM)"}
       - {menu: "5004", d: "2", p: "transfer *997004 XML pbx.prplanit.com", ord: "20", desc: "Sales VM"}
-      - {menu: "5004", d: "3", p: "playback /var/lib/freeswitch/recordings/pbx.prplanit.com/biz-hours.wav", ord: "30", desc: "Hours"}
+      - {menu: "5004", d: "3", p: "playback /var/lib/freeswitch/recordings/pbx.prplanit.com/biz-ivr_submenu-hours.wav", ord: "30", desc: "Hours"}
       - {menu: "5004", d: "4", p: "transfer *997003 XML pbx.prplanit.com", ord: "40", desc: "Promo VM"}
       - {menu: "5004", d: "0", p: "transfer *997000 XML pbx.prplanit.com", ord: "50", desc: "General VM"}
 
@@ -148,33 +149,33 @@
     # task reads personal_did straight from v_vars. Set these once on the box (they are
     # user data); this repo holds only the routing logic.
     fusionpbx_personal_bail_ext: "5199"
-    fusionpbx_personal_bail_prompt: "kai-no-response.wav"
+    fusionpbx_personal_bail_prompt: "all-notices-menu_options-timeout.wav"
     # Entry dialplan: every inbound personal call answers here first and plays the
     # recording disclaimer (WA all-party consent — 217 records inbound) before the
     # family-recognition/menu split, so it covers the menu AND the family paths.
     fusionpbx_personal_entry_ext: "5112"
-    fusionpbx_personal_disclaimer: "kai-recording-disclaimer.wav"
-    fusionpbx_personal_failover_prompt: "kai-vm-failover.wav"
-    fusionpbx_personal_ring_notice: "kai-ring-notice.wav"
+    fusionpbx_personal_disclaimer: "kai-notices-call_recording.wav"
+    fusionpbx_personal_failover_prompt: "kai-notices-transfer_to_vm.wav"
+    fusionpbx_personal_ring_notice: "kai-notices-voicemail_shortcut.wav"
     # Personal ring-group departments. members is a list (emergency rings 217 AND the
     # cell simultaneously); every group fails over via *98<vm> (apology -> box).
     fusionpbx_personal_departments:
       - {name: "Kai Personal", ext: "4100", vm: "217", prefix: "", timeout: 30, members: ["217"]}
       - {name: "Kai Jobs", ext: "4101", vm: "7100", prefix: "JOB:", timeout: 30, members: ["217"]}
       - {name: "Kai Medical", ext: "4102", vm: "7104", prefix: "MED:", timeout: 30, members: ["217"]}
-      - {name: "Kai Emergency", ext: "4103", vm: "217", prefix: "EMERGENCY:", timeout: 45, members: ["217", "${personal_cell}"]}
+      - {name: "Kai Emergency", ext: "4103", vm: "7105", prefix: "EMERGENCY:", timeout: 45, members: ["217", "${personal_cell}"]}
     # Personal special dialplans: preamble then prompt then deposit — the box greeting
     # then plays (no skip), same as every VM path. Debt = short ring-notice + vm-failover
     # (a timed-decision feel) -> debt-vm box greeting. Scammer = the long awkward ramble
     # (its only home) + the funny clip -> scam-vm box greeting.
     fusionpbx_personal_specials:
-      - {name: "Kai Debt Notice", ext: "5105", prompt: "kai-vm-failover.wav", vm: "7101", preamble: "kai-ring-notice.wav"}
-      - {name: "Kai Scammer", ext: "5109", prompt: "kai-scammer-funny.wav", vm: "7103", preamble: "kai-ring-notice-long.wav"}
+      - {name: "Kai Debt Notice", ext: "5105", prompt: "kai-notices-transfer_to_vm.wav", vm: "7101", preamble: "kai-notices-voicemail_shortcut.wav"}
+      - {name: "Kai Scammer", ext: "5109", prompt: "kai-ivr_submenu-scammer.wav", vm: "7103", preamble: "kai-notices-voicemail_shortcut-long.wav"}
     # Personal IVR menus. Day = kai-day-main (no disclaimer preamble); after-hours =
     # the same options behind the kai-afterhours "we're closed" clip.
     fusionpbx_personal_ivr_menus:
-      - {name: "Kai Day Menu", ext: "5100", greet: "kai-day-main.wav", preamble: "", loops: "3"}
-      - {name: "Kai After-Hours Menu", ext: "5102", greet: "kai-day-main.wav", preamble: "kai-afterhours.wav", loops: "3"}
+      - {name: "Kai Day Menu", ext: "5100", greet: "kai-ivr_menu-main.wav", preamble: "", loops: "3"}
+      - {name: "Kai After-Hours Menu", ext: "5102", greet: "kai-ivr_menu-main.wav", preamble: "kai-notices-afterhours.wav", loops: "3"}
     # Personal IVR options. Day: rings + specials. After-hours: rings -> VM.
     fusionpbx_personal_ivr_options:
       - {menu: "5100", d: "1", p: "transfer 4100 XML pbx.arbitorium.com", ord: "10", desc: "Friend/family -> ring 217"}
@@ -451,7 +452,7 @@
               SELECT gen_random_uuid(), d.domain_uuid, '{{ item.name }}', '{{ item.ext }}',
                 '{{ fusionpbx_business_domain }}', '{{ item.timeout }}', 'enterprise', 'transfer',
                 '*98{{ item.vm }} XML {{ fusionpbx_business_domain }}', '*', '{{ item.prefix }}', '${us-ring}',
-                'biz-ring-notice.wav', 'true', '{{ item.name }} (call-flow)', gen_random_uuid()
+                'biz-notices-voicemail_shortcut.wav', 'true', '{{ item.name }} (call-flow)', gen_random_uuid()
               FROM d
               WHERE NOT EXISTS (SELECT 1 FROM v_ring_groups r
                                WHERE r.domain_uuid = d.domain_uuid AND r.ring_group_extension = '{{ item.ext }}')
@@ -486,7 +487,7 @@
 
     # -------------------------------------------------------------------------
     # No-response bail dialplan (the exit target for every IVR menu). Plays the recorded
-    # bail prompt (biz-no-response.wav) and hangs up. Idempotent.
+    # bail prompt (all-notices-menu_options-timeout.wav) and hangs up. Idempotent.
     # -------------------------------------------------------------------------
     - name: FusionPBX | ensure business no-response bail dialplan
       ansible.builtin.command:
