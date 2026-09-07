@@ -7,6 +7,7 @@ resources:
   - ../../../base/hubzilla
   - httproute.yaml
   - cephfs-pvs.yaml
+  - configmap-socialauth-button.yaml
 
 patches:
   - path: externalsecret-patch.yaml

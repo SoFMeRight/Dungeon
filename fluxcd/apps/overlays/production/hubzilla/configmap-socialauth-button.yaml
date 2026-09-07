@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hubzilla-socialauth-button
+data:
+  # socialauth renders a plain bulleted link unless it finds a button file named for the
+  # provider; the token socialauth_redirect is substituted for the real handler at render
+  # time. Bootstrap classes rather than the fixed white of the addon's own examples, so it
+  # follows the theme instead of fighting it.
+  button_prplanit.html: |
+    <style type="text/css">
+    .prplanit-signin {
+        display: block;
+        max-width: 400px;
+        margin: auto;
+        padding-top: 0.5em;
+    }
+    #prplanitBtn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        width: 100%;
+        font-weight: 600;
+    }
+    #prplanitBtn svg {
+        flex: 0 0 auto;
+    }
+    </style>
+    <div class="prplanit-signin">
+        <button type="button" id="prplanitBtn" class="btn btn-primary" onclick="socialauth_redirect">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 2.5 4.5 5.8v5.4c0 4.6 3.2 8.9 7.5 10.3 4.3-1.4 7.5-5.7 7.5-10.3V5.8Z"></path>
+                <path d="m8.8 11.9 2.2 2.3 4.2-4.5"></path>
+            </svg>
+            <span>Continue with PrPlanIT</span>
+        </button>
+    </div>

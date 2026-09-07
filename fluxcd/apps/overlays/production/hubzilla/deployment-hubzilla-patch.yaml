@@ -9,6 +9,17 @@ spec:
       labels:
         policy.prplanit.com/access-scope-mariadb: temple-of-time.hubzilla.mariadb
     spec:
+      volumes:
+        - name: socialauth-button
+          configMap:
+            name: hubzilla-socialauth-button
       containers:
         - name: web
           image: docker.io/hlhd/hubzilla:dev-dd48c8e
+          volumeMounts:
+            # addon/socialauth is a symlink, so the file is mounted at the real path it
+            # points into rather than through the link.
+            - name: socialauth-button
+              mountPath: /var/www/html/extend/addon/addons-official/socialauth/buttons/button_prplanit.html
+              subPath: button_prplanit.html
+              readOnly: true
