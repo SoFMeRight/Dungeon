@@ -9,8 +9,10 @@ spec:
     photoprism), arbitrary user URLs to archive/scrape/shorten (linkwarden,
     mealie, shlink), LLM/AI and web-RAG endpoints (open-webui, appflowy-cloud/
     worker), photo maps + ML models (immich), blog/wiki integrations + email
-    (ghost, wikijs-vegan, kimai), collab signaling (nextcloud-talk-hpb), and
-    external assets for PDF rendering (reactive-resume-chrome). That set cannot
+    (ghost, wikijs-vegan, kimai), collab signaling (nextcloud-talk-hpb),
+    external assets for PDF rendering (reactive-resume-chrome), and federation
+    delivery to any hub on the fediverse plus an SMTP relay (hubzilla, and the
+    poller that drains its delivery queue). That set cannot
     be allowlisted, so world+cluster is granted (cluster covers in-cluster deps
     beyond the mesh). DNS + intra-namespace mesh (app->db) ride the universal
     CCNP baseline. Inert until egress default-deny is enabled.
@@ -30,6 +32,8 @@ spec:
           - mealie
           - calibre-web
           - ghost
+          - hubzilla
+          - hubzilla-cron
           - photoprism
           - shlink-app
           - wikijs-vegan
