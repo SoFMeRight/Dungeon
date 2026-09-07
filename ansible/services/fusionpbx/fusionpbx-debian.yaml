@@ -22,6 +22,14 @@
     # Gateway name of the BulkVS trunk (v_gateways.gateway). caller-id-in-from is forced
     # on it because BulkVS reads the outbound caller-ID from the From header.
     fusionpbx_bulkvs_gateway: "sip.bulkvs.com"
+    # RTP media-timeout reaping on the external (trunk) profile. A leg whose media dies
+    # without a clean BYE (lost hangup / NAT) otherwise lingers forever in
+    # CS_EXCHANGE_MEDIA and pins a slot of the per-domain outbound concurrency limit;
+    # once the limit fills, every new outbound call is rejected with USER_BUSY. These
+    # native mod_sofia timers hang up a leg after N seconds of no RTP. hold-timeout is
+    # much higher so legitimately held calls (little/no RTP) are not clipped.
+    fusionpbx_rtp_timeout_sec: 300
+    fusionpbx_rtp_hold_timeout_sec: 1800
 
   tasks:
 
@@ -188,6 +196,72 @@
       no_log: true
       notify: Reload FreeSWITCH external profile
 
+    - name: FusionPBX | read external profile RTP media-timeout settings
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-tAc"
+          - >-
+            SELECT sip_profile_setting_name || '=' || sip_profile_setting_value || '/' || sip_profile_setting_enabled
+            FROM v_sip_profile_settings
+            WHERE sip_profile_setting_name IN ('rtp-timeout-sec', 'rtp-hold-timeout-sec')
+              AND sip_profile_uuid = (SELECT sip_profile_uuid FROM v_sip_profiles WHERE sip_profile_name = 'external');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      register: fusionpbx_ext_rtp_timeouts
+      changed_when: false
+      no_log: true
+
+    - name: FusionPBX | ensure external profile reaps dead-media legs (rtp-timeout-sec / rtp-hold-timeout-sec)
+      # Native mod_sofia timers. Without them a leg whose RTP dies with no clean BYE lingers
+      # in CS_EXCHANGE_MEDIA and pins a slot of the per-domain outbound limit, so once it
+      # fills every new outbound call is rejected USER_BUSY. Upsert (UPDATE, else INSERT) so
+      # it converges whether or not the setting row already exists, and force enabled=true.
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            WITH ext AS (SELECT sip_profile_uuid FROM v_sip_profiles WHERE sip_profile_name = 'external'),
+                 upd AS (
+                   UPDATE v_sip_profile_settings s
+                   SET sip_profile_setting_value = '{{ item.value }}', sip_profile_setting_enabled = 'true'
+                   FROM ext
+                   WHERE s.sip_profile_uuid = ext.sip_profile_uuid
+                     AND s.sip_profile_setting_name = '{{ item.name }}'
+                   RETURNING 1)
+            INSERT INTO v_sip_profile_settings
+              (sip_profile_setting_uuid, sip_profile_uuid, sip_profile_setting_name,
+               sip_profile_setting_value, sip_profile_setting_enabled, sip_profile_setting_description)
+            SELECT gen_random_uuid(), ext.sip_profile_uuid, '{{ item.name }}',
+                   '{{ item.value }}', 'true', '{{ item.desc }}'
+            FROM ext
+            WHERE NOT EXISTS (SELECT 1 FROM upd);
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      loop:
+        - name: rtp-timeout-sec
+          value: "{{ fusionpbx_rtp_timeout_sec }}"
+          desc: "Reap an answered leg after N seconds of no RTP (dead-media zombies leak the outbound limit)."
+        - name: rtp-hold-timeout-sec
+          value: "{{ fusionpbx_rtp_hold_timeout_sec }}"
+          desc: "Reap a held leg after N seconds of no RTP (set high so real holds are not clipped)."
+      when: (item.name ~ '=' ~ (item.value | string) ~ '/true') not in fusionpbx_ext_rtp_timeouts.stdout
+      no_log: true
+      notify: Reload FreeSWITCH external profile
+
     - name: FusionPBX | read internal profile local-network-acl
       ansible.builtin.command:
         argv:
@@ -234,6 +308,126 @@
       when: (fusionpbx_internal_acl.stdout | trim) != fusionpbx_internal_local_network_acl
       no_log: true
       notify: Reload FreeSWITCH internal profile
+
+    # -------------------------------------------------------------------------
+    # LAN / remote SIP profile split.
+    #
+    # A single profile with ext-sip-ip stamps the PUBLIC contact on EVERY
+    # registration (FreeSWITCH only selects the media IP per-peer, never the SIP
+    # Contact). So a LAN phone whose stack sends in-dialog requests to the dialog
+    # remote target (Yealink does) fires its ACK / hold re-INVITE / BYE at the
+    # public IP, which does not hairpin from the LAN and is lost -> 32s Timer-B
+    # call drops, no music-on-hold, and un-torn-down "zombie" calls.
+    #
+    # Fix: give LAN phones a profile WITHOUT ext-sip-ip so they get the local
+    # contact (in-dialog lands), while remote/NAT clients keep ext-sip-ip on
+    # 'internal'. LAN phones (UDP 5060) -> 'lan'; remote clients (TLS 5061) stay
+    # on 'internal', whose UDP bind vacates 5060 to 5062. Idempotent.
+    # -------------------------------------------------------------------------
+
+    - name: FusionPBX | check whether the lan SIP profile exists
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-tAc"
+          - "SELECT sip_profile_uuid FROM v_sip_profiles WHERE sip_profile_name = 'lan' LIMIT 1;"
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      register: fusionpbx_lan_profile
+      changed_when: false
+      no_log: true
+
+    - name: FusionPBX | create the lan SIP profile as a clone of internal (LAN phones get the local contact)
+      # Clone every internal setting, then disable ext-sip-ip / ext-rtp-ip / TLS on the clone and
+      # pin its UDP bind to 5060, so LAN phones registering to it advertise the local sip-ip.
+      # Multiple statements in one psql -c run in one transaction, so the UPDATEs see the clone.
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            WITH lan AS (
+              INSERT INTO v_sip_profiles
+                (sip_profile_uuid, sip_profile_name, sip_profile_hostname, sip_profile_enabled, sip_profile_description)
+              VALUES (gen_random_uuid(), 'lan', '', true,
+                'LAN-only SIP profile: ext-sip-ip disabled so local phones get the local contact
+                and their in-dialog ACK/BYE/re-INVITE reach the PBX. Split from internal so
+                remote/NAT clients keep ext-sip-ip on internal.')
+              RETURNING sip_profile_uuid AS u)
+            INSERT INTO v_sip_profile_settings
+              (sip_profile_setting_uuid, sip_profile_uuid, sip_profile_setting_name,
+               sip_profile_setting_value, sip_profile_setting_enabled, sip_profile_setting_description)
+            SELECT gen_random_uuid(), lan.u, s.sip_profile_setting_name, s.sip_profile_setting_value,
+                   s.sip_profile_setting_enabled, s.sip_profile_setting_description
+            FROM v_sip_profile_settings s JOIN v_sip_profiles p USING (sip_profile_uuid) CROSS JOIN lan
+            WHERE p.sip_profile_name = 'internal';
+            UPDATE v_sip_profile_settings SET sip_profile_setting_enabled = false
+            WHERE sip_profile_uuid = (SELECT sip_profile_uuid FROM v_sip_profiles WHERE sip_profile_name = 'lan')
+              AND sip_profile_setting_name IN ('ext-sip-ip', 'ext-rtp-ip', 'tls', 'tls-sip-port', 'tls-bind-params');
+            UPDATE v_sip_profile_settings SET sip_profile_setting_value = '5060', sip_profile_setting_enabled = true
+            WHERE sip_profile_uuid = (SELECT sip_profile_uuid FROM v_sip_profiles WHERE sip_profile_name = 'lan')
+              AND sip_profile_setting_name = 'sip-port';
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      when: (fusionpbx_lan_profile.stdout | trim) == ''
+      no_log: true
+      notify: Reload FreeSWITCH lan and internal profiles
+
+    - name: FusionPBX | read internal profile UDP sip-port
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-tAc"
+          - >-
+            SELECT sip_profile_setting_value FROM v_sip_profile_settings
+            WHERE sip_profile_setting_name = 'sip-port'
+              AND sip_profile_uuid = (SELECT sip_profile_uuid FROM v_sip_profiles WHERE sip_profile_name = 'internal') LIMIT 1;
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      register: fusionpbx_internal_sip_port
+      changed_when: false
+      no_log: true
+
+    - name: FusionPBX | move the internal profile off UDP 5060 (the lan profile owns 5060 for local phones)
+      # internal keeps TLS 5061 (+ ext-sip-ip) for remote/NAT clients; only its UDP bind vacates
+      # 5060 -> 5062 (an otherwise-unused local bind) so the lan profile can own 5060.
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            UPDATE v_sip_profile_settings SET sip_profile_setting_value = '5062'
+            WHERE sip_profile_setting_name = 'sip-port'
+              AND sip_profile_uuid = (SELECT sip_profile_uuid FROM v_sip_profiles WHERE sip_profile_name = 'internal');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      when: (fusionpbx_internal_sip_port.stdout | trim) != '5062'
+      no_log: true
+      notify: Reload FreeSWITCH lan and internal profiles
 
     - name: FusionPBX | read BulkVS gateway caller-id-in-from
       ansible.builtin.command:
@@ -298,6 +492,16 @@
         fs_cli -x 'reloadacl' ;
         fs_cli -x 'reloadxml' ;
         fs_cli -x 'sofia profile internal restart'
+
+    # LAN/internal split: restart internal (rebinds its UDP off 5060, keeps TLS 5061) and start
+    # the new lan profile (binds 5060 for local phones). Briefly flaps registrations; UDP phones
+    # re-register onto lan afterward (rebooting a phone speeds that up on the first apply).
+    - name: Reload FreeSWITCH lan and internal profiles
+      ansible.builtin.shell: >-
+        rm -f /var/cache/fusionpbx/* ;
+        fs_cli -x 'reloadxml' ;
+        fs_cli -x 'sofia profile internal restart' ;
+        fs_cli -x 'sofia profile lan start'
 
     # Gateway-only change: rescan re-reads gateway config without restarting the profile,
     # so the trunk doesn't drop.

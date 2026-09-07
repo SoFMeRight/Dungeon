@@ -1,0 +1,673 @@
+---
+- name: Ad Arbitorium 🔐 - GitOps - Services - FusionPBX Call Flow
+  hosts: "bluebell"
+  become: true
+
+  # Builds the two-domain call flow: personal (pbx.arbitorium.com) + business
+  # (pbx.prplanit.com) — domains, voicemail boxes, ring-group departments, time
+  # conditions, IVR menus, inbound routes, and the recorded prompts. Idempotent:
+  # every object is check-then-create, and FusionPBX's own generators populate
+  # the domain defaults. Nothing here mutates live call routing until the
+  # inbound-route (DID) tasks land at the very end.
+  #
+  # Companion host-provisioning play: fusionpbx-debian.yaml
+  # Design spec: dungeon-scratchpad/Fusionpbx-call_flow.md
+
+  vars:
+    # Personal domain (Kai) — isolated tenant so business staff can't see it.
+    fusionpbx_personal_domain: "pbx.arbitorium.com"
+    # Business domain (existing) — PrPlanIT.
+    fusionpbx_business_domain: "pbx.prplanit.com"
+
+    # Department + category voicemail boxes (virtual — not tied to an extension):
+    # ring-group failovers and per-category message buckets. PINs are random,
+    # generated once on the actual insert (idempotent — never regenerated).
+    fusionpbx_voicemail_boxes:
+      - {domain: "{{ fusionpbx_business_domain }}", id: "7000", desc: "PrPlanIT General (after-hours / operator-fail / unsure)"}
+      - {domain: "{{ fusionpbx_business_domain }}", id: "7001", desc: "PrPlanIT Support (dept fallback)"}
+      - {domain: "{{ fusionpbx_business_domain }}", id: "7002", desc: "PrPlanIT Billing (dept fallback)"}
+      - {domain: "{{ fusionpbx_business_domain }}", id: "7003", desc: "PrPlanIT Promo / outside-org"}
+      - {domain: "{{ fusionpbx_business_domain }}", id: "7004", desc: "PrPlanIT Sales (dept fallback)"}
+      - {domain: "{{ fusionpbx_personal_domain }}", id: "7100", desc: "Kai Jobs / recruiting"}
+      - {domain: "{{ fusionpbx_personal_domain }}", id: "7101", desc: "Kai Bills / debt"}
+      - {domain: "{{ fusionpbx_personal_domain }}", id: "7102", desc: "Kai Solicitations"}
+      - {domain: "{{ fusionpbx_personal_domain }}", id: "7103", desc: "Kai Spam (funny bucket)"}
+      - {domain: "{{ fusionpbx_personal_domain }}", id: "7104", desc: "Kai Medical / appointments"}
+
+    # Business ring-group departments. Members = extensions "set to receive" that
+    # call type (218 today; add employees as you hire). Pressing the exit key (*)
+    # or hitting the timeout both route the caller to the department's failover box.
+    fusionpbx_ring_groups_app_uuid: "1d61fb65-1eec-bc73-a6ee-a6203b4fe6f2"
+    fusionpbx_departments:
+      - {name: "PrPlanIT Operator", ext: "4000", vm: "7000", prefix: "Operator", timeout: 90, member: "218"}
+      - {name: "PrPlanIT Support", ext: "4001", vm: "7001", prefix: "Support", timeout: 40, member: "218"}
+      - {name: "PrPlanIT Billing", ext: "4002", vm: "7002", prefix: "Billing", timeout: 40, member: "218"}
+      - {name: "PrPlanIT Sales", ext: "4003", vm: "7004", prefix: "Sales", timeout: 40, member: "218"}
+
+    # Business IVR menus + options. greet = a registered recording filename;
+    # each option is digit -> menu-exec-app param (transfer/playback). A sub-menu's
+    # parent is resolved by the parent menu's extension (empty string -> top-level).
+    # preamble = a clip played once before the options (disclaimer / closed message).
+    # loops = how many times the options replay on no-input before the menu gives up.
+    # NOTE: FusionPBX's ivr_menu.lua ignores ivr_menu_exit_app/exit_data and counts
+    # via max_failures (max_timeouts is the inner attempts-per-loop, pinned to 1) — so
+    # max_failures = loops, and the bail is a `transfer <bail_ext>` appended after the
+    # ivr_menu.lua action (which the lua returns to), not exit_data.
+    fusionpbx_ivr_app_uuid: "a5788e9b-58bc-bd1b-df59-fff5d51253ab"
+    # (The recording disclaimer is the day menu's `preamble` above; after-hours &
+    # holiday menus use their closed-message clip as the preamble instead — they go
+    # to voicemail with no live recording, so no disclaimer is needed there.)
+    # No-response bail: when a menu exhausts its 3 option loops (no input or repeated
+    # invalid keys), the caller hears the bail prompt ("You must choose a valid option.
+    # Please call back to try again.") and is hung up, rather than dumping dead air into
+    # a mailbox. Every menu's exit points here; pressing 0 stays the explicit path to a
+    # person / general voicemail.
+    fusionpbx_business_bail_ext: "5099"
+    fusionpbx_business_bail_prompt: "biz-no-response.wav"
+    # Ring-group failover apology: on a department ring-timeout (or the caller pressing
+    # the exit key), the *98<box> handler plays this clip ("sorry, due to volume, please
+    # leave a message") then deposits into the categorical box with skip_greeting=true, so
+    # the box's own greeting doesn't double up the "leave a message". The direct-to-VM
+    # path (after-hours menu -> *99<box>) still plays the box greeting normally.
+    fusionpbx_business_failover_prompt: "biz-vm-failover.wav"
+    # Business-hours time condition: Mon-Fri (wday 2-6), 9:00-16:59 (hour 9-16) ->
+    # day IVR; otherwise -> after-hours IVR.
+    fusionpbx_time_conditions_app_uuid: "4b821450-926b-175a-af93-a03c441818b1"
+    fusionpbx_business_time_condition:
+      ext: "5010"
+      name: "PrPlanIT Business Hours"
+      open: "5000"
+      closed: "5002"
+      wday: "2-6"
+      hour: "9-16"
+    # Holiday handler (disclaimer -> holiday greeting -> general VM) and the federal
+    # holidays as FreeSWITCH date rules layered ahead of the hours check. mday ranges +
+    # wday are year-independent (e.g. last Monday of May = a Monday on the 25th-31st).
+    fusionpbx_holiday_handler_ext: "5004"
+    fusionpbx_holiday_greeting: "biz-holiday.wav"
+    fusionpbx_federal_holidays:
+      - 'mon="1" mday="1"'                # New Year's Day
+      - 'mon="1" mday="15-21" wday="2"'   # MLK Day (3rd Mon Jan)
+      - 'mon="2" mday="15-21" wday="2"'   # Presidents' Day (3rd Mon Feb)
+      - 'mon="5" mday="25-31" wday="2"'   # Memorial Day (last Mon May)
+      - 'mon="6" mday="19"'               # Juneteenth
+      - 'mon="7" mday="4"'                # Independence Day
+      - 'mon="9" mday="1-7" wday="2"'     # Labor Day (1st Mon Sep)
+      - 'mon="10" mday="8-14" wday="2"'   # Columbus / Indigenous Peoples' (2nd Mon Oct)
+      - 'mon="11" mday="11"'              # Veterans Day
+      - 'mon="11" mday="22-28" wday="5"'  # Thanksgiving (4th Thu Nov)
+      - 'mon="12" mday="25"'              # Christmas
+    # Go-live: repoint the business DID from the agent extension to the time
+    # condition, and record inbound calls on the agent (the disclaimer plays first
+    # at the IVR). The DID inbound route already exists (FusionPBX inbound route).
+    fusionpbx_business_did: "+12536483247"
+    fusionpbx_business_agent_ext: "218"
+    fusionpbx_ivr_menus:
+      - {name: "PrPlanIT Day Menu", ext: "5000", greet: "biz-day-main.wav", parent: "", preamble: "biz-recording-disclaimer.wav", loops: "3"}
+      - {name: "PrPlanIT Customer Menu", ext: "5001", greet: "biz-customer-submenu.wav", parent: "5000", preamble: "", loops: "3"}
+      - {name: "PrPlanIT After-Hours Menu", ext: "5002", greet: "biz-day-main.wav", parent: "", preamble: "biz-afterhours.wav", loops: "3"}
+      - {name: "PrPlanIT After-Hours Customer", ext: "5003", greet: "biz-customer-submenu.wav", parent: "5002", preamble: "", loops: "3"}
+      - {name: "PrPlanIT Holiday Menu", ext: "5004", greet: "biz-day-main.wav", parent: "", preamble: "biz-holiday.wav", loops: "3"}
+    fusionpbx_ivr_options:
+      - {menu: "5000", d: "1", p: "transfer 5001 XML pbx.prplanit.com", ord: "10", desc: "Existing customer -> sub-menu"}
+      - {menu: "5000", d: "2", p: "transfer 4003 XML pbx.prplanit.com", ord: "20", desc: "Services -> Sales"}
+      - {menu: "5000", d: "3", p: "playback /var/lib/freeswitch/recordings/pbx.prplanit.com/biz-hours.wav", ord: "30", desc: "Hours (play + return)"}
+      - {menu: "5000", d: "4", p: "transfer *997003 XML pbx.prplanit.com", ord: "40", desc: "Promo -> VM"}
+      - {menu: "5000", d: "0", p: "transfer 4000 XML pbx.prplanit.com", ord: "50", desc: "Operator"}
+      - {menu: "5001", d: "1", p: "transfer 4001 XML pbx.prplanit.com", ord: "10", desc: "Technical -> Support"}
+      - {menu: "5001", d: "2", p: "transfer 4002 XML pbx.prplanit.com", ord: "20", desc: "Billing"}
+      - {menu: "5001", d: "#", p: "transfer 5000 XML pbx.prplanit.com", ord: "30", desc: "Back to main"}
+      # After-hours mirror: same options, every one -> its bucket VM (no ring).
+      - {menu: "5002", d: "1", p: "transfer 5003 XML pbx.prplanit.com", ord: "10", desc: "Customer -> sub (VM)"}
+      - {menu: "5002", d: "2", p: "transfer *997004 XML pbx.prplanit.com", ord: "20", desc: "Services -> Sales VM"}
+      - {menu: "5002", d: "3", p: "playback /var/lib/freeswitch/recordings/pbx.prplanit.com/biz-hours.wav", ord: "30", desc: "Hours"}
+      - {menu: "5002", d: "4", p: "transfer *997003 XML pbx.prplanit.com", ord: "40", desc: "Promo VM"}
+      - {menu: "5002", d: "0", p: "transfer *997000 XML pbx.prplanit.com", ord: "50", desc: "General VM"}
+      - {menu: "5003", d: "1", p: "transfer *997001 XML pbx.prplanit.com", ord: "10", desc: "Support VM"}
+      - {menu: "5003", d: "2", p: "transfer *997002 XML pbx.prplanit.com", ord: "20", desc: "Billing VM"}
+      - {menu: "5003", d: "#", p: "transfer 5002 XML pbx.prplanit.com", ord: "30", desc: "Back"}
+      # Holiday menu: same mirror as after-hours (only the greeting differs) so messages still sort.
+      - {menu: "5004", d: "1", p: "transfer 5003 XML pbx.prplanit.com", ord: "10", desc: "Customer -> sub (VM)"}
+      - {menu: "5004", d: "2", p: "transfer *997004 XML pbx.prplanit.com", ord: "20", desc: "Sales VM"}
+      - {menu: "5004", d: "3", p: "playback /var/lib/freeswitch/recordings/pbx.prplanit.com/biz-hours.wav", ord: "30", desc: "Hours"}
+      - {menu: "5004", d: "4", p: "transfer *997003 XML pbx.prplanit.com", ord: "40", desc: "Promo VM"}
+      - {menu: "5004", d: "0", p: "transfer *997000 XML pbx.prplanit.com", ord: "50", desc: "General VM"}
+
+  tasks:
+
+    - name: FusionPBX | read DB connection settings from config.conf
+      ansible.builtin.slurp:
+        src: /etc/fusionpbx/config.conf
+      register: fusionpbx_config_raw
+      no_log: true
+
+    - name: FusionPBX | parse DB connection settings
+      ansible.builtin.set_fact:
+        fusionpbx_db:
+          name: "{{ _cfg | regex_search('database\\.0\\.name\\s*=\\s*(\\S+)', '\\1') | first }}"
+          user: "{{ _cfg | regex_search('database\\.0\\.username\\s*=\\s*(\\S+)', '\\1') | first }}"
+          host: "{{ _cfg | regex_search('database\\.0\\.host\\s*=\\s*(\\S+)', '\\1') | default(['127.0.0.1'], true) | first }}"
+          password: "{{ _cfg | regex_search('database\\.0\\.password\\s*=\\s*(\\S+)', '\\1') | first }}"
+      vars:
+        _cfg: "{{ fusionpbx_config_raw.content | b64decode }}"
+      no_log: true
+
+    # -------------------------------------------------------------------------
+    # Domains. The personal domain isolates Kai's line from the business tenant:
+    # employees with business admin can't see its extensions, voicemail, or CDRs.
+    # Creating a domain = insert the v_domains row, then run FusionPBX's own
+    # upgrade_domains.php, which executes every app_defaults.php (add-only) to
+    # populate the ~34 default dialplans + settings for any domain missing them.
+    # It re-affirms existing domains without rewriting them, so it is safe to run
+    # against the live business domain.
+    # -------------------------------------------------------------------------
+
+    - name: FusionPBX | check whether the personal domain exists
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-tAc"
+          - "SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ fusionpbx_personal_domain }}' LIMIT 1;"
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      register: fusionpbx_personal_domain_uuid
+      changed_when: false
+      no_log: true
+
+    - name: FusionPBX | create the personal domain
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_domains (domain_uuid, domain_name, domain_enabled, domain_description)
+            VALUES (gen_random_uuid(), '{{ fusionpbx_personal_domain }}', true, 'Kai personal domain (call-flow build)');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      when: (fusionpbx_personal_domain_uuid.stdout | trim) == ''
+      notify: Populate FusionPBX domain defaults
+
+    - name: FusionPBX | apply domain defaults before building domain objects
+      ansible.builtin.meta: flush_handlers
+
+    # -------------------------------------------------------------------------
+    # Voicemail boxes. Virtual (no extension) — department ring-group failovers
+    # and per-category buckets. INSERT ... WHERE NOT EXISTS is idempotent, and
+    # the random PIN is only evaluated when a row is actually inserted, so a
+    # re-run never disturbs an existing box's password. The domain is resolved
+    # by name inline so no UUID needs pre-fetching.
+    # -------------------------------------------------------------------------
+    - name: FusionPBX | ensure department + category voicemail boxes
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_voicemails (voicemail_uuid, domain_uuid, voicemail_id, voicemail_password,
+              voicemail_file, voicemail_local_after_email, voicemail_enabled,
+              voicemail_recording_instructions, voicemail_recording_options, voicemail_description)
+            SELECT gen_random_uuid(), d.domain_uuid, '{{ item.id }}',
+              lpad((floor(random()*900000)+100000)::int::text, 6, '0'),
+              'attach', true, true, true, true, '{{ item.desc }}'
+            FROM v_domains d
+            WHERE d.domain_name = '{{ item.domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_voicemails v
+                              WHERE v.domain_uuid = d.domain_uuid AND v.voicemail_id = '{{ item.id }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      loop: "{{ fusionpbx_voicemail_boxes }}"
+      loop_control:
+        label: "{{ item.domain }} / {{ item.id }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      no_log: true
+
+    # -------------------------------------------------------------------------
+    # Device-less extensions backing the voicemail boxes. FreeSWITCH resolves a
+    # mailbox via the DIRECTORY, which contains extensions only — a standalone
+    # voicemail box has no directory entry, so the voicemail app can't deposit
+    # into it ("voicemail not available"). A device-less, voicemail-enabled
+    # extension with the same number puts the box in the directory. No phone ever
+    # registers to these; the random SIP password is never used.
+    # -------------------------------------------------------------------------
+    - name: FusionPBX | ensure device-less extensions backing the voicemail boxes
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_extensions (extension_uuid, domain_uuid, extension, password, user_context,
+              effective_caller_id_name, effective_caller_id_number, call_timeout, enabled,
+              directory_visible, directory_exten_visible, description)
+            SELECT gen_random_uuid(), d.domain_uuid, '{{ item.id }}', replace(gen_random_uuid()::text, '-', ''),
+              '{{ item.domain }}', '{{ item.id }}', '{{ item.id }}', '15', 'true', 'false', 'false',
+              'call-flow VM sink (device-less)'
+            FROM v_domains d
+            WHERE d.domain_name = '{{ item.domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_extensions e
+                              WHERE e.domain_uuid = d.domain_uuid AND e.extension = '{{ item.id }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      loop: "{{ fusionpbx_voicemail_boxes }}"
+      loop_control:
+        label: "{{ item.domain }} / ext {{ item.id }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    # -------------------------------------------------------------------------
+    # Voicemail-box greetings. Each box's greeting is deployed by hand as
+    # greeting_1.wav under its storage dir (same manual-audio convention as the IVR
+    # prompts). This wires the DB to it — a v_voicemail_greetings row plus
+    # v_voicemails.greeting_id = 1 — so the box plays its branded greeting instead of
+    # the stock "the person at <box> is not available". Gated on the file actually
+    # existing, so a box whose greeting hasn't been recorded/deployed yet stays on the
+    # default rather than pointing greeting_id at a missing file. Storage is filesystem
+    # (voicemail storage_type=base64 is disabled), so the on-disk file plays directly.
+    # -------------------------------------------------------------------------
+    - name: FusionPBX | detect recorded voicemail-box greetings on disk
+      ansible.builtin.stat:
+        path: "/var/lib/freeswitch/storage/voicemail/default/{{ item.domain }}/{{ item.id }}/greeting_1.wav"
+      loop: "{{ fusionpbx_voicemail_boxes }}"
+      loop_control:
+        label: "{{ item.domain }} / {{ item.id }}"
+      register: fusionpbx_vm_greetings
+
+    - name: FusionPBX | wire voicemail-box greetings where a greeting file exists
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_voicemail_greetings (voicemail_greeting_uuid, domain_uuid, voicemail_id,
+              greeting_id, greeting_name, greeting_filename, greeting_base64, greeting_voice)
+            SELECT gen_random_uuid(), d.domain_uuid, '{{ item.item.id }}', 1, 'Greeting 1',
+              'greeting_1.wav', '', 'callie'
+            FROM v_domains d
+            WHERE d.domain_name = '{{ item.item.domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_voicemail_greetings g
+                              WHERE g.domain_uuid = d.domain_uuid AND g.voicemail_id = '{{ item.item.id }}'
+                                AND g.greeting_id = 1);
+            UPDATE v_voicemails SET greeting_id = '1'
+            WHERE domain_uuid = (SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ item.item.domain }}')
+              AND voicemail_id = '{{ item.item.id }}' AND greeting_id::text IS DISTINCT FROM '1';
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      when: item.stat.exists
+      loop: "{{ fusionpbx_vm_greetings.results }}"
+      loop_control:
+        label: "{{ item.item.domain }} / {{ item.item.id }}"
+      changed_when: "'INSERT 0 1' in stdout or 'UPDATE 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    # -------------------------------------------------------------------------
+    # Business ring-group departments (+ their generated dialplan). One CTE per
+    # department: insert the ring group (only if the extension is free), its
+    # single member destination, and the dialplan whose XML embeds the returned
+    # ring_group_uuid/dialplan_uuid — verbatim the template FusionPBX's own UI
+    # generates. Idempotent: if the ring group exists, the guarded INSERT returns
+    # zero rows and the dependent CTEs insert nothing.
+    #
+    # Timeout + exit-key (*) both route via `transfer` to `*98<box>` — the failover
+    # apology handler (below), which plays the apology, suppresses the box greeting, and
+    # deposits via `*99<box>` into FusionPBX's own voicemail app (app.lua voicemail),
+    # which reads the box straight from v_voicemails. Native mod_voicemail ('voicemail
+    # default ...') can't deposit into these boxes because it resolves mailboxes through
+    # the directory, which doesn't carry their credentials.
+    # -------------------------------------------------------------------------
+    - name: FusionPBX | ensure business ring-group departments (+ generated dialplan)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            WITH d AS (SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ fusionpbx_business_domain }}'),
+            ins_rg AS (
+              INSERT INTO v_ring_groups (ring_group_uuid, domain_uuid, ring_group_name, ring_group_extension,
+                ring_group_context, ring_group_call_timeout, ring_group_strategy, ring_group_timeout_app,
+                ring_group_timeout_data, ring_group_exit_key, ring_group_cid_name_prefix, ring_group_ringback,
+                ring_group_greeting, ring_group_enabled, ring_group_description, dialplan_uuid)
+              SELECT gen_random_uuid(), d.domain_uuid, '{{ item.name }}', '{{ item.ext }}',
+                '{{ fusionpbx_business_domain }}', '{{ item.timeout }}', 'enterprise', 'transfer',
+                '*98{{ item.vm }} XML {{ fusionpbx_business_domain }}', '*', '{{ item.prefix }}', '${us-ring}',
+                'biz-ring-notice.wav', 'true', '{{ item.name }} (call-flow)', gen_random_uuid()
+              FROM d
+              WHERE NOT EXISTS (SELECT 1 FROM v_ring_groups r
+                               WHERE r.domain_uuid = d.domain_uuid AND r.ring_group_extension = '{{ item.ext }}')
+              RETURNING ring_group_uuid, dialplan_uuid, domain_uuid),
+            ins_dest AS (
+              INSERT INTO v_ring_group_destinations (ring_group_destination_uuid, domain_uuid, ring_group_uuid,
+                destination_number, destination_delay, destination_timeout, destination_enabled)
+              SELECT gen_random_uuid(), ins_rg.domain_uuid, ins_rg.ring_group_uuid, '{{ item.member }}', '0',
+                '{{ item.timeout }}', 'true' FROM ins_rg)
+            INSERT INTO v_dialplans (dialplan_uuid, domain_uuid, app_uuid, dialplan_name, dialplan_number,
+              dialplan_context, dialplan_continue, dialplan_xml, dialplan_order, dialplan_enabled, dialplan_description)
+            SELECT ins_rg.dialplan_uuid, ins_rg.domain_uuid, '{{ fusionpbx_ring_groups_app_uuid }}', '{{ item.name }}',
+              '{{ item.ext }}', '{{ fusionpbx_business_domain }}', 'false',
+              '<extension name="{{ item.name }}" continue="" uuid="' || ins_rg.dialplan_uuid || '">
+              <condition field="destination_number" expression="^{{ item.ext }}$">
+              <action application="ring_ready" data=""/>
+              <action application="set" data="ring_group_uuid=' || ins_rg.ring_group_uuid || '"/>
+              <action application="set" data="record_stereo=true"/>
+              <action application="lua" data="app.lua ring_groups"/>
+              </condition>
+              </extension>',
+              '101', 'true', '{{ item.name }} (call-flow)'
+            FROM ins_rg;
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      loop: "{{ fusionpbx_departments }}"
+      loop_control:
+        label: "{{ item.name }} ({{ item.ext }})"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    # -------------------------------------------------------------------------
+    # No-response bail dialplan (the exit target for every IVR menu). Plays the recorded
+    # bail prompt (biz-no-response.wav) and hangs up. Idempotent.
+    # -------------------------------------------------------------------------
+    - name: FusionPBX | ensure business no-response bail dialplan
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_dialplans (dialplan_uuid, app_uuid, domain_uuid, dialplan_context, dialplan_name,
+              dialplan_number, dialplan_order, dialplan_enabled, dialplan_continue, dialplan_xml, dialplan_description)
+            SELECT gen_random_uuid(), '{{ fusionpbx_ivr_app_uuid }}', d.domain_uuid, '{{ fusionpbx_business_domain }}',
+              'PrPlanIT No-Response Bail', '{{ fusionpbx_business_bail_ext }}', '200', 'true', 'false',
+              '<extension name="PrPlanIT No-Response Bail" continue="false" uuid="' || gen_random_uuid() || '">
+              <condition field="destination_number" expression="^{{ fusionpbx_business_bail_ext }}$">
+              <action application="answer" data=""/>
+              <action application="sleep" data="500"/>
+              <action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_business_domain }}/{{ fusionpbx_business_bail_prompt }}"/>
+              <action application="hangup" data="NORMAL_CLEARING"/>
+              </condition>
+              </extension>',
+              'No-response bail (call-flow)'
+            FROM v_domains d
+            WHERE d.domain_name = '{{ fusionpbx_business_domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_dialplans x WHERE x.domain_uuid = d.domain_uuid AND x.dialplan_number = '{{ fusionpbx_business_bail_ext }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    # -------------------------------------------------------------------------
+    # Ring-group failover apology handler. Departments' timeout/exit-key route to
+    # *98<box>: it plays the apology, sets skip_greeting so the box greeting doesn't
+    # double up, then hands off to *99<box> for the actual deposit. Idempotent.
+    # -------------------------------------------------------------------------
+    - name: FusionPBX | ensure business ring-group failover apology dialplan
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_dialplans (dialplan_uuid, app_uuid, domain_uuid, dialplan_context, dialplan_name,
+              dialplan_number, dialplan_order, dialplan_enabled, dialplan_continue, dialplan_xml, dialplan_description)
+            SELECT gen_random_uuid(), '{{ fusionpbx_ivr_app_uuid }}', d.domain_uuid, '{{ fusionpbx_business_domain }}',
+              'PrPlanIT VM Failover Apology', '*98[ext]', '200', 'true', 'false',
+              '<extension name="PrPlanIT VM Failover Apology" continue="false" uuid="' || gen_random_uuid() || '">
+              <condition field="destination_number" expression="^\*98(\d{2,10})$">
+              <action application="answer" data=""/>
+              <action application="sleep" data="500"/>
+              <action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_business_domain }}/{{ fusionpbx_business_failover_prompt }}"/>
+              <action application="set" data="skip_greeting=true"/>
+              <action application="transfer" data="*99$1 XML {{ fusionpbx_business_domain }}"/>
+              </condition>
+              </extension>',
+              'VM failover apology (call-flow)'
+            FROM v_domains d
+            WHERE d.domain_name = '{{ fusionpbx_business_domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_dialplans x WHERE x.domain_uuid = d.domain_uuid AND x.dialplan_number = '*98[ext]');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    # -------------------------------------------------------------------------
+    # Business IVR menus (+ generated dialplan). One CTE per menu: insert the
+    # v_ivr_menus row (parent resolved by the parent menu's extension; empty ->
+    # NULL) and its dialplan whose XML calls ivr_menu.lua. Options are added by
+    # the following task. Idempotent via the guarded INSERT.
+    # -------------------------------------------------------------------------
+    - name: FusionPBX | ensure business IVR menus (+ generated dialplan)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            WITH d AS (SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ fusionpbx_business_domain }}'),
+            ins AS (
+              INSERT INTO v_ivr_menus (ivr_menu_uuid, domain_uuid, dialplan_uuid, ivr_menu_name, ivr_menu_extension,
+                ivr_menu_parent_uuid, ivr_menu_language, ivr_menu_dialect, ivr_menu_voice, ivr_menu_greet_long,
+                ivr_menu_timeout, ivr_menu_inter_digit_timeout, ivr_menu_max_failures, ivr_menu_max_timeouts,
+                ivr_menu_digit_len, ivr_menu_direct_dial, ivr_menu_exit_app, ivr_menu_exit_data,
+                ivr_menu_context, ivr_menu_enabled, ivr_menu_description)
+              SELECT gen_random_uuid(), d.domain_uuid, gen_random_uuid(), '{{ item.name }}', '{{ item.ext }}',
+                (SELECT ivr_menu_uuid FROM v_ivr_menus p WHERE p.domain_uuid = d.domain_uuid AND p.ivr_menu_extension = '{{ item.parent }}'),
+                'en', 'us', 'callie', '{{ item.greet }}', '5000', '2000', '{{ item.loops }}', '1', '5', 'false',
+                'transfer', '{{ fusionpbx_business_bail_ext }} XML {{ fusionpbx_business_domain }}', '{{ fusionpbx_business_domain }}',
+                'true', '{{ item.name }} (call-flow)'
+              FROM d
+              WHERE NOT EXISTS (SELECT 1 FROM v_ivr_menus m WHERE m.domain_uuid = d.domain_uuid AND m.ivr_menu_extension = '{{ item.ext }}')
+              RETURNING ivr_menu_uuid, dialplan_uuid, domain_uuid)
+            INSERT INTO v_dialplans (dialplan_uuid, domain_uuid, app_uuid, dialplan_name, dialplan_number,
+              dialplan_context, dialplan_continue, dialplan_xml, dialplan_order, dialplan_enabled, dialplan_description)
+            SELECT ins.dialplan_uuid, ins.domain_uuid, '{{ fusionpbx_ivr_app_uuid }}', '{{ item.name }}', '{{ item.ext }}',
+              '{{ fusionpbx_business_domain }}', 'false',
+              '<extension name="{{ item.name }}" continue="false" uuid="' || ins.dialplan_uuid || '">
+              <condition field="destination_number" expression="^{{ item.ext }}$">
+              <action application="ring_ready" data=""/>
+              <action application="answer" data=""/>
+              <action application="sleep" data="1000"/>
+              <action application="set" data="hangup_after_bridge=true"/>
+              {% if item.preamble %
+              }<action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_business_domain }}/{{ item.preamble }}"/>
+              {% endif %
+              }<action application="set" data="ivr_menu_uuid=' || ins.ivr_menu_uuid || '"/>
+              <action application="lua" data="ivr_menu.lua"/>
+              <action application="transfer" data="{{ fusionpbx_business_bail_ext }} XML {{ fusionpbx_business_domain }}"/>
+              </condition>
+              </extension>',
+              '100', 'true', '{{ item.name }} (call-flow)'
+            FROM ins;
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      loop: "{{ fusionpbx_ivr_menus }}"
+      loop_control:
+        label: "{{ item.name }} ({{ item.ext }})"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    # IVR menu options: digit -> menu-exec-app param. Resolves the menu by its
+    # extension; idempotent per (menu, digit).
+    - name: FusionPBX | ensure business IVR menu options
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_ivr_menu_options (ivr_menu_option_uuid, ivr_menu_uuid, domain_uuid,
+              ivr_menu_option_digits, ivr_menu_option_action, ivr_menu_option_param,
+              ivr_menu_option_order, ivr_menu_option_enabled, ivr_menu_option_description)
+            SELECT gen_random_uuid(), m.ivr_menu_uuid, m.domain_uuid, '{{ item.d }}', 'menu-exec-app',
+              '{{ item.p }}', '{{ item.ord }}', 'true', '{{ item.desc }}'
+            FROM v_ivr_menus m
+            WHERE m.domain_uuid = (SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ fusionpbx_business_domain }}')
+              AND m.ivr_menu_extension = '{{ item.menu }}'
+              AND NOT EXISTS (SELECT 1 FROM v_ivr_menu_options o
+                              WHERE o.ivr_menu_uuid = m.ivr_menu_uuid AND o.ivr_menu_option_digits = '{{ item.d }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      loop: "{{ fusionpbx_ivr_options }}"
+      loop_control:
+        label: "{{ item.menu }} / {{ item.d }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    # -------------------------------------------------------------------------
+    # Business-hours time condition. Federal holidays (looped ahead) transfer to the
+    # holiday menu (5004, an IVR built above); otherwise Mon-Fri 9-16 -> day IVR,
+    # else -> after-hours IVR.
+    # -------------------------------------------------------------------------
+    - name: FusionPBX | ensure business-hours time condition
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_dialplans (dialplan_uuid, domain_uuid, app_uuid, dialplan_name, dialplan_number,
+              dialplan_context, dialplan_continue, dialplan_xml, dialplan_order, dialplan_enabled, dialplan_description)
+            SELECT gen_random_uuid(), d.domain_uuid, '{{ fusionpbx_time_conditions_app_uuid }}',
+              '{{ fusionpbx_business_time_condition.name }}', '{{ fusionpbx_business_time_condition.ext }}',
+              '{{ fusionpbx_business_domain }}', 'false',
+              '<extension name="{{ fusionpbx_business_time_condition.name }}" continue="false" uuid="' || gen_random_uuid() || '">
+              <condition field="destination_number" expression="^{{ fusionpbx_business_time_condition.ext }}$" break="on-false"/>
+              {% for h in fusionpbx_federal_holidays %
+              }<condition {{ h }} break="on-true">
+              <action application="transfer" data="{{ fusionpbx_holiday_handler_ext }} XML {{ fusionpbx_business_domain }}"/>
+              </condition>{% endfor %}<condition wday="{{ fusionpbx_business_time_condition.wday }}" hour="{{ fusionpbx_business_time_condition.hour }}">
+              <action application="transfer" data="{{ fusionpbx_business_time_condition.open }} XML {{ fusionpbx_business_domain }}"/>
+              <anti-action application="transfer" data="{{ fusionpbx_business_time_condition.closed }} XML {{ fusionpbx_business_domain }}"/>
+              </condition>
+              </extension>',
+              '90', 'true', 'Business-hours time condition (call-flow)'
+            FROM v_domains d
+            WHERE d.domain_name = '{{ fusionpbx_business_domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_dialplans dp
+                              WHERE dp.domain_uuid = d.domain_uuid AND dp.dialplan_number = '{{ fusionpbx_business_time_condition.ext }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    # -------------------------------------------------------------------------
+    # Go-live cutover: repoint the business DID's inbound route from the agent
+    # extension to the time condition, and turn on inbound recording for the agent
+    # (the disclaimer plays first at the IVR). Both UPDATEs are idempotent — the
+    # replace only matches while the route still points at the agent extension.
+    # NOTE: for two-way trunk audio the inbound trunk must land on the *external*
+    # SIP profile (pfSense must forward the trunk's SIP + its Contact/ACK path to
+    # 10.30.1.69:5080) — that is firewall config, not codifiable here.
+    # -------------------------------------------------------------------------
+    - name: FusionPBX | go-live — cut the business DID to the flow + record inbound on the agent
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            UPDATE v_dialplans SET dialplan_xml = replace(dialplan_xml,
+              '"{{ fusionpbx_business_agent_ext }} XML {{ fusionpbx_business_domain }}"',
+              '"{{ fusionpbx_business_time_condition.ext }} XML {{ fusionpbx_business_domain }}"')
+            WHERE dialplan_number = '{{ fusionpbx_business_did }}' AND dialplan_context = 'public';
+            UPDATE v_extensions SET user_record = 'inbound'
+            WHERE extension = '{{ fusionpbx_business_agent_ext }}'
+              AND domain_uuid = (SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ fusionpbx_business_domain }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: false
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+  handlers:
+
+    # FusionPBX's own generator: runs every app_defaults.php across all domains
+    # (add-only), creating the default dialplans/settings for a newly-inserted
+    # domain. Flush the file cache THEN reloadxml — reloadxml alone re-reads
+    # FreeSWITCH's in-memory XML but does NOT rebuild FusionPBX's /var/cache
+    # files, so stale cached dialplans/config keep being served.
+    - name: Populate FusionPBX domain defaults
+      ansible.builtin.shell: >-
+        cd /var/www/fusionpbx &&
+        sudo -u www-data php core/upgrade/upgrade_domains.php >/dev/null 2>&1 ;
+        rm -f /var/cache/fusionpbx/* ;
+        fs_cli -x 'reloadxml' >/dev/null 2>&1
+
+    # Refresh dialplan + directory so new ring groups / extensions are served.
+    # MUST flush /var/cache/fusionpbx first — reloadxml does not rebuild it, and a
+    # stale cached dialplan.<domain> will hide newly-created ring-group extensions.
+    - name: Reload FusionPBX dialplan
+      ansible.builtin.shell: >-
+        rm -f /var/cache/fusionpbx/* ;
+        fs_cli -x 'reloadxml' >/dev/null 2>&1
+      changed_when: false
