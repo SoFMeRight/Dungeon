@@ -22,32 +22,29 @@ spec:
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-      initContainers:
-        # nginx serves the static assets and php-fpm executes the code, so both need the
-        # webroot — which only exists inside the application image. Copying it out as
-        # root keeps it owned by root: the PHP process runs as www-data and so cannot
-        # write to the application it is serving, which is the property that makes an
-        # uploaded webshell useless.
-        - name: webroot
-          image: PLACEHOLDER_HUBZILLA_IMAGE
-          command: ["sh", "-c", "cp -a /var/www/html/. /webroot/ && chown -R root:root /webroot"]
-          securityContext:
-            runAsUser: 0
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-              add:
-                - CHOWN
-                - DAC_OVERRIDE
-                - FOWNER
-          volumeMounts:
-            - name: webroot
-              mountPath: /webroot
       containers:
-        - name: php
+        - name: web
           image: PLACEHOLDER_HUBZILLA_IMAGE
+          env:
+            - name: SMTP_HOST
+              value: "smtp.gmail.com"
+            - name: SMTP_PORT
+              value: "587"
+            - name: SMTP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: hubzilla-secrets
+                  key: SMTP_USER
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hubzilla-secrets
+                  key: SMTP_PASSWORD
+            - name: SMTP_FROM
+              valueFrom:
+                secretKeyRef:
+                  name: hubzilla-secrets
+                  key: SMTP_FROM
           securityContext:
             runAsNonRoot: true
             runAsUser: 33
@@ -58,11 +55,15 @@ spec:
               drop:
                 - ALL
           ports:
-            - containerPort: 9000
-              name: fpm
+            - containerPort: 8080
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /siteinfo.json
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
           volumeMounts:
-            - name: webroot
-              mountPath: /var/www/html
             - name: store
               mountPath: /var/www/html/store
             # Smarty compiles templates into PHP here at runtime, so this is writable
@@ -78,61 +79,15 @@ spec:
               mountPath: /tmp
           resources:
             requests:
-              cpu: "50m"
-              memory: "256Mi"
+              cpu: "60m"
+              memory: "320Mi"
             limits:
               memory: "1Gi"
-        - name: nginx
-          image: PLACEHOLDER_NGINX_IMAGE
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: 101
-            runAsGroup: 101
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-          ports:
-            - containerPort: 8080
-              name: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 10
-            periodSeconds: 10
-          volumeMounts:
-            - name: webroot
-              mountPath: /var/www/html
-              readOnly: true
-            - name: nginx-config
-              mountPath: /etc/nginx/conf.d
-              readOnly: true
-            - name: nginx-cache
-              mountPath: /var/cache/nginx
-            - name: nginx-run
-              mountPath: /var/run
-          resources:
-            requests:
-              cpu: "10m"
-              memory: "64Mi"
-            limits:
-              memory: "256Mi"
       volumes:
-        - name: webroot
-          emptyDir: {}
         - name: smarty
           emptyDir: {}
         - name: tmp
           emptyDir: {}
-        - name: nginx-cache
-          emptyDir: {}
-        - name: nginx-run
-          emptyDir: {}
-        - name: nginx-config
-          configMap:
-            name: hubzilla-nginx
         - name: htconfig
           secret:
             secretName: hubzilla-htconfig

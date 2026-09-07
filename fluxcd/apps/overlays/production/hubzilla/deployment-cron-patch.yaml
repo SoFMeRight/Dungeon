@@ -10,9 +10,9 @@ spec:
     spec:
       initContainers:
         - name: webroot
-          image: docker.io/hlhd/hubzilla:dev-7da3d79
+          image: docker.io/hlhd/hubzilla:dev-50b3a1c
         - name: schema
           image: docker.io/mariadb:11.8
       containers:
         - name: cron
-          image: docker.io/hlhd/hubzilla:dev-7da3d79
+          image: docker.io/hlhd/hubzilla:dev-50b3a1c

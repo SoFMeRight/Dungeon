@@ -4,7 +4,6 @@ kind: Kustomization
 resources:
   - serviceaccounts.yaml
   - externalsecret.yaml
-  - configmap-nginx.yaml
   - statefulset-mariadb.yaml
   - deployment-hubzilla.yaml
   - deployment-cron.yaml
