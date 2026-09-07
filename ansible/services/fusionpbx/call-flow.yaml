@@ -149,6 +149,11 @@
     # user data); this repo holds only the routing logic.
     fusionpbx_personal_bail_ext: "5199"
     fusionpbx_personal_bail_prompt: "kai-no-response.wav"
+    # Entry dialplan: every inbound personal call answers here first and plays the
+    # recording disclaimer (WA all-party consent — 217 records inbound) before the
+    # family-recognition/menu split, so it covers the menu AND the family paths.
+    fusionpbx_personal_entry_ext: "5112"
+    fusionpbx_personal_disclaimer: "kai-recording-disclaimer.wav"
     fusionpbx_personal_failover_prompt: "kai-vm-failover.wav"
     fusionpbx_personal_ring_notice: "kai-ring-notice.wav"
     # Personal ring-group departments. members is a list (emergency rings 217 AND the
@@ -697,9 +702,8 @@
     # voicemail boxes, device-less extensions, and greetings are already built by
     # the shared tasks above (fusionpbx_voicemail_boxes spans both domains). These
     # add the personal routing: outbound trunk access, the failover-apology + bail
-    # handlers, debt/scammer specials, ring groups, menus, options, and hours. The
-    # personal DID cut-over is deliberately NOT here — it waits on the 217 handset
-    # migrating to this domain (mirror the business go-live task below when ready).
+    # handlers, debt/scammer specials, ring groups, menus, options, hours, the entry
+    # disclaimer, and the go-live cut-over (the 217 handset has migrated to this domain).
     # =========================================================================
     # Private-number scaffolding — box-managed user data, same principle as the
     # recorded prompts: the play creates the empty global-var slots (visible in the
@@ -851,6 +855,40 @@
             FROM v_domains d WHERE d.domain_name = '{{ fusionpbx_personal_domain }}'
               AND NOT EXISTS (SELECT 1 FROM v_dialplans x
                               WHERE x.domain_uuid = d.domain_uuid AND x.dialplan_number = '{{ fusionpbx_personal_bail_ext }}');
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    - name: FusionPBX | ensure personal entry dialplan (recording disclaimer -> flow)
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            INSERT INTO v_dialplans (dialplan_uuid, app_uuid, domain_uuid, dialplan_context, dialplan_name,
+              dialplan_number, dialplan_order, dialplan_enabled, dialplan_continue, dialplan_xml, dialplan_description)
+            SELECT gen_random_uuid(), '{{ fusionpbx_ivr_app_uuid }}', d.domain_uuid, '{{ fusionpbx_personal_domain }}',
+              'Kai Entry', '{{ fusionpbx_personal_entry_ext }}', '80', 'true', 'false',
+              '<extension name="Kai Entry" continue="false" uuid="' || gen_random_uuid() || '">
+              <condition field="destination_number" expression="^{{ fusionpbx_personal_entry_ext }}$">
+              <action application="answer" data=""/>
+              <action application="sleep" data="500"/>
+              <action application="playback" data="/var/lib/freeswitch/recordings/{{ fusionpbx_personal_domain }}/{{ fusionpbx_personal_disclaimer }}"/>
+              <action application="transfer" data="{{ fusionpbx_personal_time_condition.ext }} XML {{ fusionpbx_personal_domain }}"/>
+              </condition>
+              </extension>',
+              'Kai entry / recording disclaimer (call-flow)'
+            FROM v_domains d WHERE d.domain_name = '{{ fusionpbx_personal_domain }}'
+              AND NOT EXISTS (SELECT 1 FROM v_dialplans x
+                              WHERE x.domain_uuid = d.domain_uuid AND x.dialplan_number = '{{ fusionpbx_personal_entry_ext }}');
       environment:
         PGPASSWORD: "{{ fusionpbx_db.password }}"
       changed_when: "'INSERT 0 1' in stdout"
@@ -1195,6 +1233,43 @@
       loop_control:
         label: "{{ item.name }} ({{ item.num }})"
       changed_when: "'INSERT 0 1' in stdout"
+      notify: Reload FusionPBX dialplan
+      no_log: true
+
+    # -------------------------------------------------------------------------
+    # Personal go-live: cut the personal DID's inbound route to the entry/disclaimer
+    # dialplan (which flows to recognition + hours) and record 217 inbound. The DID
+    # number is private — read from the personal_did global var, never the repo.
+    # Idempotent: the replace only matches while the route still points at 217@prplanit.
+    # -------------------------------------------------------------------------
+    - name: FusionPBX | go-live — cut the personal DID to the flow + record inbound on 217
+      ansible.builtin.command:
+        argv:
+          - psql
+          - "-h"
+          - "{{ fusionpbx_db.host }}"
+          - "-U"
+          - "{{ fusionpbx_db.user }}"
+          - "-d"
+          - "{{ fusionpbx_db.name }}"
+          - "-c"
+          - >-
+            UPDATE v_dialplans SET dialplan_xml = replace(replace(replace(dialplan_xml,
+              (SELECT domain_uuid::text FROM v_domains WHERE domain_name = '{{ fusionpbx_business_domain }}'),
+              (SELECT domain_uuid::text FROM v_domains WHERE domain_name = '{{ fusionpbx_personal_domain }}')),
+              'domain_name={{ fusionpbx_business_domain }}', 'domain_name={{ fusionpbx_personal_domain }}'),
+              '{{ fusionpbx_personal_agent_ext }} XML {{ fusionpbx_business_domain }}',
+              '{{ fusionpbx_personal_entry_ext }} XML {{ fusionpbx_personal_domain }}')
+            WHERE dialplan_context = 'public'
+              AND dialplan_number = '+' || (SELECT var_value FROM v_vars WHERE var_name = 'personal_did')
+              AND dialplan_xml LIKE '%{{ fusionpbx_personal_agent_ext }} XML {{ fusionpbx_business_domain }}%';
+            UPDATE v_extensions SET user_record = 'inbound'
+            WHERE extension = '{{ fusionpbx_personal_agent_ext }}'
+              AND domain_uuid = (SELECT domain_uuid FROM v_domains WHERE domain_name = '{{ fusionpbx_personal_domain }}')
+              AND user_record IS DISTINCT FROM 'inbound';
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: false
       notify: Reload FusionPBX dialplan
       no_log: true
 
