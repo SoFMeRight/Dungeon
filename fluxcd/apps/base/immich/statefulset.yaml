@@ -61,7 +61,7 @@ spec:
               mountPath: /cache
       containers:
         - name: immich-server
-          image: ghcr.io/immich-app/immich-server:v2.5.6
+          image: ghcr.io/immich-app/immich-server:v2.7.5
           # Node app, uid 1000 owns the library (init-chowned). GPU (video transcode) is runtime/
           # cgroup-based, unaffected by dropping caps. :2283 unprivileged.
           securityContext:
@@ -112,7 +112,7 @@ spec:
             - name: library
               mountPath: /usr/src/app/upload
         - name: immich-machine-learning
-          image: ghcr.io/immich-app/immich-machine-learning:v2.5.0-cuda
+          image: ghcr.io/immich-app/immich-machine-learning:v2.7.5-cuda
           # Python ML, uid 1000 writes the model-cache (init-chowned). GPU access is runtime/cgroup-
           # based, unaffected by dropping caps.
           securityContext:
