@@ -1,0 +1,29 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-appflowy-gotrue-egress
+spec:
+  description: >-
+    appflowy-gotrue (the auth service) sends magic-link / recovery / invite
+    emails through an external SMTP submission relay (smtp.gmail.com:587). All
+    OAuth providers (Google/GitHub/Discord) are disabled, so SMTP is its only
+    world egress; its postgres DB is in-namespace and rides the mesh via the
+    universal CCNP baseline. The egress default-deny rollout allowlisted
+    appflowy-cloud/worker (app labels) but missed gotrue (app=appflowy), so the
+    magic-link mailer could not reach Gmail — every email-login POST hit gotrue's
+    10s deadline and returned 504. Allow egress to SMTP submission only; DNS
+    rides the baseline. Additive (enableDefaultDeny false) so nothing else changes.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: appflowy
+      component: gotrue
+  egress:
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "587"
+              protocol: TCP
