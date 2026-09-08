@@ -124,6 +124,11 @@ spec:
               drop:
                 - ALL
           env:
+            # readOnlyRootFilesystem: the ML control server + matplotlib write ~/.config; with HOME
+            # unset (~ resolves to /) that hits the read-only root ([Errno 30] Read-only file system:
+            # '/.config'). Point HOME at the already-mounted writable /tmp emptyDir.
+            - name: HOME
+              value: /tmp
             - name: DB_HOSTNAME
               value: localhost
             - name: DB_USERNAME
