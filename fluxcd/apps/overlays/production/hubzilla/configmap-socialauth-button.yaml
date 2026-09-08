@@ -9,9 +9,10 @@ data:
   # follows the theme instead of fighting it.
   button_prplanit.html: |
     <style type="text/css">
-    /* The addon prints a "Sign in with:" heading above the buttons, which only repeats
-       what the button says. */
-    .socialauthlabel {
+    /* The addon prints a "Sign in with:" heading that only repeats what the button says.
+       Its class is on the DIV WRAPPING the buttons, so only the heading span is hidden —
+       hiding the class itself takes the button with it. */
+    .socialauthlabel > span {
         display: none;
     }
     .prplanit-signin {
