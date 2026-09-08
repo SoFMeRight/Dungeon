@@ -22,6 +22,10 @@ data:
           - names: [client, federation]
             compress: false
 
+    # Fixed by the image's mount layout, not by the deployment. Without it Synapse falls
+    # back to a relative path and tries to create it in the read-only root.
+    media_store_path: /media
+
     # Accounts are created through MAS, never here.
     enable_registration: false
     password_config:
