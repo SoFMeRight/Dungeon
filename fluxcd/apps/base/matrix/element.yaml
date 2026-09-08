@@ -70,6 +70,11 @@ spec:
               mountPath: /app/config.json
               subPath: config.json
               readOnly: true
+            # The image's entrypoint renders its nginx config from a template at startup,
+            # so this one directory has to be writable for the root filesystem to stay
+            # read-only everywhere else.
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d
             - name: cache
               mountPath: /var/cache/nginx
             - name: run
@@ -86,6 +91,8 @@ spec:
         - name: config
           configMap:
             name: matrix-element-config
+        - name: nginx-conf
+          emptyDir: {}
         - name: cache
           emptyDir: {}
         - name: run
