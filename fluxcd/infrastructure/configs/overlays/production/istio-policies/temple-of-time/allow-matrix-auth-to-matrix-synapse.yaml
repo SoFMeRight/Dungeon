@@ -1,0 +1,20 @@
+# MAS provisions and queries accounts through Synapse's admin API, and Synapse calls back
+# to MAS to validate tokens. The reverse direction needs no policy: Synapse reaches MAS
+# through the gateway, not the mesh.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-matrix-auth-to-matrix-synapse
+spec:
+  selector:
+    matchLabels:
+      app: matrix-synapse
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/temple-of-time/sa/matrix-auth
+      to:
+        - operation:
+            ports: ["8008"]

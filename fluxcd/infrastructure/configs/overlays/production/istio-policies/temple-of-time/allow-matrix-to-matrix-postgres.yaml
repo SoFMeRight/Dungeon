@@ -1,0 +1,24 @@
+# istio is the enforcer for database access in this namespace — Cilium stays permissive
+# intra-namespace. Without this the connection opens and is immediately reset by ztunnel,
+# which surfaces as "server closed the connection unexpectedly" rather than a refusal.
+#
+# Synapse and MAS have separate service accounts and separate databases in one cluster, so
+# they are named separately here rather than sharing a principal.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-matrix-to-matrix-postgres
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: matrix-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/temple-of-time/sa/matrix-synapse
+              - cluster.local/ns/temple-of-time/sa/matrix-auth
+      to:
+        - operation:
+            ports: ["5432"]
