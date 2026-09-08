@@ -38,7 +38,6 @@ spec:
       host: ncloud.optcp.com
       trustedDomains:
         - ncloud.optcp.com
-        - ncloud.pcfae.com
         # In-cluster host Collabora's WOPI callback connects to (wopi_callback_url below);
         # only resolvable/reachable in-mesh, so nextcloud must trust it as a valid domain.
         - nextcloud.temple-of-time.svc.cluster.local
