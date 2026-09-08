@@ -221,6 +221,15 @@ data:
           answer: 10.40.9.104
         - domain: vw.prplanit.com
           answer: 172.22.30.71
+        # Split horizon for the Matrix hosts: from the LAN these must reach the gateway VIP
+        # directly. Resolving them to the public address sends traffic out to the WAN and
+        # back, which this network does not hairpin — the request just times out.
+        - domain: matrix.outspokekin.com
+          answer: 172.22.30.71
+        - domain: chat.outspokekin.com
+          answer: 172.22.30.71
+        - domain: matrix-auth.outspokekin.com
+          answer: 172.22.30.71
         - domain: hass.arbitorium.com
           answer: 10.4.20.69
         - domain: lwd.optcp.com
