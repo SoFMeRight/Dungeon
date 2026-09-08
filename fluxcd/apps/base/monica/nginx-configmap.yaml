@@ -5,7 +5,7 @@ metadata:
 data:
   default.conf: |
     server {
-        listen 80;
+        listen 8080;
         server_name _;
         root /var/www/html/public;
         index index.php;
