@@ -4,7 +4,5 @@ namespace: gorons-bracelet
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-ceph-rgw.yaml
-  - cnp-ceph-mon-egress.yaml
-  - cnp-ceph-osd-egress.yaml
-  - cnp-ceph-csi-egress.yaml
+  - cnp-ceph-egress.yaml
   - cnp-operators.yaml

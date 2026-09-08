@@ -1,0 +1,33 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-ceph-egress
+spec:
+  description: >-
+    gorons-bracelet is the storage namespace; its pod-managed Ceph clients —
+    radosgw (RGW), the rbd/cephfs CSI provisioners, the rbd-toolbox, and the
+    rook-ceph operator — all speak RADOS to the external Proxmox Ceph cluster.
+    Grant every pod in the namespace egress to the Ceph cluster subnet on the MON
+    (6789/3300) and OSD/MDS/MGR messenger range (6800-7568) TCP. Non-Ceph pods
+    here (CNPG/MariaDB/Redis operators) simply never open those connections, so a
+    namespace-wide grant is the honest scope for a storage namespace and avoids
+    per-client label churn on operator-managed pods. RADOS is a non-HTTP protocol
+    ztunnel cannot carry, so this is un-meshed L3/L4. CSI node plugins are
+    hostNetwork (node-kernel mount) and unmanaged by pod policy. DNS +
+    kube-apiserver ride the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector: {}
+  egress:
+    - toCIDRSet:
+        - cidr: "fc00:f1:ada:104e:1ace::/64"
+      toPorts:
+        - ports:
+            - port: "6789"
+              protocol: TCP
+            - port: "3300"
+              protocol: TCP
+            - port: "6800"
+              endPort: 7568
+              protocol: TCP
