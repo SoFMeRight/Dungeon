@@ -16,7 +16,7 @@ spec:
               value: "sabnzbd.pcfae.com"
       containers:
         - name: sabnzbd
-          image: docker.io/linuxserver/sabnzbd:5.1.1
+          image: docker.io/linuxserver/sabnzbd:5.1.3
           env:
             - name: TZ
               value: "America/Los_Angeles"
