@@ -29,7 +29,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: ollama
-          image: docker.io/ollama/ollama:0.32.15
+          image: docker.io/ollama/ollama:0.33.3
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
