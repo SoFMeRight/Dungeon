@@ -4,14 +4,21 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for arylls-lookout namespace.
-    Gateway pods get LAN-only CIDR ingress via cnp-xylem-gateway.
+    Default-deny ingress AND egress for arylls-lookout namespace.
+    Gateway pods get LAN-only CIDR ingress via cnp-xylem-gateway. Egress is
+    granted by the cnp-egress-* policies: the xylem gateway (whole-cluster +
+    world backends) and pve-cluster-proxy (Proxmox API subnet on 8006). DNS,
+    kube-apiserver and mesh (HBONE) ride the universal CCNP baseline.
     CCNPs provide: kubelet-probes, istio-ambient, prometheus-scrape.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor

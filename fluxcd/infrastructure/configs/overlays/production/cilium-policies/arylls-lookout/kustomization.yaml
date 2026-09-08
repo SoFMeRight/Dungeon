@@ -5,3 +5,5 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-xylem-gateway.yaml
   - cnp-renovate-gateway.yaml
+  - cnp-egress-xylem-gateway.yaml
+  - cnp-egress-pve-cluster-proxy.yaml

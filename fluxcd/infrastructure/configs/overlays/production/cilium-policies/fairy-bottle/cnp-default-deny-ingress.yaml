@@ -4,17 +4,24 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for fairy-bottle namespace.
+    Default-deny ingress AND egress for fairy-bottle namespace.
     Velero, node-agent, snapshot-controller, and kopia jobs are
-    primarily egress consumers (kube-apiserver, S3). Ingress allows
-    from CCNPs: kubelet-probes, istio-ambient, prometheus-scrape.
-    The fromEndpoints selector matches no real pods — it exists only
-    to satisfy the Cilium CRD schema requirement for an ingress field.
+    primarily egress consumers (kube-apiserver, S3). Their one object-store
+    target is granted by cnp-egress-backup-repo (the velero BSL at
+    172.22.150.101:9002); DNS, kube-apiserver and mesh (HBONE) ride the
+    universal CCNP baseline. Ingress allows from CCNPs: kubelet-probes,
+    istio-ambient, prometheus-scrape. The reserved-label anchors match no real
+    pods — they exist only to satisfy the Cilium CRD schema and trigger
+    enforcement in each direction.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor

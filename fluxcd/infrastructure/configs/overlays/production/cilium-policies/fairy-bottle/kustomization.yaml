@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: fairy-bottle
 resources:
   - cnp-default-deny-ingress.yaml
+  - cnp-egress-backup-repo.yaml
