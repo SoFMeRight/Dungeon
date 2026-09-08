@@ -41,14 +41,13 @@ metadata:
 data:
   # Every value here names this deployment, so the whole file lives in the overlay rather
   # than being a base file full of placeholders.
+  #
+  # default_server_name rather than default_server_config: the config form supplies the
+  # homeserver verbatim and skips .well-known discovery, so Element never sees the
+  # delegated-auth metadata and reports that the server offers no usable login flows.
   config.json: |
     {
-      "default_server_config": {
-        "m.homeserver": {
-          "base_url": "https://matrix.outspokekin.com",
-          "server_name": "outspokekin.com"
-        }
-      },
+      "default_server_name": "outspokekin.com",
       "brand": "Outspoke Kin",
       "disable_custom_urls": true,
       "disable_guests": true,
