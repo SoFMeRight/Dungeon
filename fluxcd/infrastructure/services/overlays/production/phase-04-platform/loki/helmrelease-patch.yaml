@@ -38,7 +38,7 @@ spec:
     sidecar:
       image:
         repository: docker.io/kiwigrid/k8s-sidecar
-        tag: 2.10.1
+        tag: 2.11.2
     chunksCache:
       enabled: false
     resultsCache:
