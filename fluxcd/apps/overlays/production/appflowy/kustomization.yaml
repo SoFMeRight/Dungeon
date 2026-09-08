@@ -4,7 +4,6 @@ namespace: temple-of-time
 resources:
   - ../../../base/appflowy
   - httproute.yaml
-  - httproute-xylem.yaml
   - externalsecret-s3.yaml
   - secret-postgres-init.yaml
 patches:

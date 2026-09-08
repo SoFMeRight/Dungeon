@@ -36,7 +36,7 @@ spec:
             - name: GOTRUE_URI_ALLOW_LIST
               value: "**"
             - name: GOTRUE_DISABLE_SIGNUP
-              value: "false"
+              value: "true"
             - name: GOTRUE_JWT_EXP
               value: "7200"
             - name: GOTRUE_MAILER_AUTOCONFIRM
