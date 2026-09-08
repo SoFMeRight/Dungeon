@@ -20,7 +20,7 @@ spec:
               memory: 64Mi
       containers:
         - name: zigbee2mqtt
-          image: ghcr.io/koenkk/zigbee2mqtt:2.13.0
+          image: ghcr.io/koenkk/zigbee2mqtt:2.14.1
           securityContext:
             readOnlyRootFilesystem: true
           # z2m has no built-in health endpoint (gh#1310) and the
