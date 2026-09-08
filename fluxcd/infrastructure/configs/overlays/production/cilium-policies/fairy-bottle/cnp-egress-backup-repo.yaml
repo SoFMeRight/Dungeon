@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-backup-repo-egress
+spec:
+  description: >-
+    fairy-bottle is a dedicated backup namespace — velero, the node-agent
+    (Kopia) DaemonSet, the per-namespace kopia-maintenance jobs, and the
+    snapshot-controller. Every data-moving workload here targets exactly one
+    object-store repository, the velero BackupStorageLocation at
+    172.22.150.101:9002 (S3, path-style, plaintext on the storage LAN), so a
+    namespace-wide egress grant to that single endpoint on 9002/TCP covers the
+    whole namespace. CSI volume snapshots are orchestrated through the
+    kube-apiserver (baseline), not direct storage traffic from here. DNS +
+    kube-apiserver + mesh (HBONE) ride the universal CCNP baseline. Inert until
+    egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector: {}
+  egress:
+    - toCIDR:
+        - 172.22.150.101/32
+      toPorts:
+        - ports:
+            - port: "9002"
+              protocol: TCP

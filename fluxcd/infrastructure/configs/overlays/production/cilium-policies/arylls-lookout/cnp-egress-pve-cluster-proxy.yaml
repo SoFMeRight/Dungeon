@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-pve-cluster-proxy-egress
+spec:
+  description: >-
+    pve-cluster-proxy is an nginx reverse proxy whose only job is to fan out to
+    the Proxmox cluster's web/API endpoints (172.22.22.0/24, the Proxmox
+    management subnet, on 8006). It talks to nothing else, so egress is scoped to
+    that subnet on 8006/TCP only. DNS rides the universal CCNP baseline. Inert
+    until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: pve-cluster-proxy
+  egress:
+    - toCIDR:
+        - 172.22.22.0/24
+      toPorts:
+        - ports:
+            - port: "8006"
+              protocol: TCP

@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-egress
+spec:
+  description: >-
+    Default-deny egress for training-dummy (disposable DB-disaster sim lab).
+    The CNPG postgres cluster here has no external dependencies — no backup /
+    barmanObjectStore, no plugins, no external clusters — so DNS, kube-apiserver
+    and intra-namespace mesh replication all ride the universal CCNP baseline
+    and nothing else needs to egress. Egress-only: ingress is left open for the
+    lab's :8000 metrics scrape (the ingress/east-west side is tracked
+    separately). A reserved-label anchor triggers egress enforcement.
+  enableDefaultDeny:
+    ingress: false
+    egress: true
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor

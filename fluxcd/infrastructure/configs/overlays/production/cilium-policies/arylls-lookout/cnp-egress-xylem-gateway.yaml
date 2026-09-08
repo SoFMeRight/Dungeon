@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-xylem-gateway-egress
+spec:
+  description: >-
+    The xylem gateway (Envoy) terminates internal TLS (*.pcfae.com) and proxies
+    to backend workloads spread across every namespace, and performs ext_authz
+    (the sso-* CUSTOM AuthorizationPolicies) against an OIDC authorizer reached
+    by URL. Its backend set is effectively the whole cluster and its authz/
+    issuer may resolve to an in-cluster LoadBalancer or a public URL, so
+    world+cluster is granted — the same documented broad grant the cell-membrane
+    gateway carries. Mesh (HBONE) rides the universal CCNP baseline. Inert until
+    egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: xylem-gateway
+  egress:
+    - toEntities:
+        - world
+        - cluster
