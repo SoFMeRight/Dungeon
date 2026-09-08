@@ -31,13 +31,6 @@ data:
     password_config:
       enabled: false
 
-    # Delegated authentication: MAS owns login, sessions and account management, and
-    # Element X will not talk to a homeserver without it. Synapse needs only where MAS
-    # is and the secret they share; MAS advertises the rest through .well-known.
-    matrix_authentication_service:
-      enabled: true
-      endpoint: http://matrix-auth:8080/
-
     trusted_key_servers:
       - server_name: "matrix.org"
 
