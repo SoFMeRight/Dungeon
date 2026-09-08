@@ -6,6 +6,7 @@ namespace: temple-of-time
 resources:
   - ../../../base/matrix
   - configmap-site.yaml
+  - wellknown.yaml
   - httproute.yaml
 
 patches:
