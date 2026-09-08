@@ -88,6 +88,12 @@ spec:
           path "great-sea/metadata/*" {
             capabilities = ["read", "list"]
           }
+          path "outspokekin/data/*" {
+            capabilities = ["read", "list"]
+          }
+          path "outspokekin/metadata/*" {
+            capabilities = ["read", "list"]
+          }
           path "pedestal-of-time/data/*" {
             capabilities = ["read", "list"]
           }
@@ -162,6 +168,11 @@ spec:
       - path: great-sea
         type: kv
         description: VPN-routed media automation secrets
+        options:
+          version: 2
+      - path: outspokekin
+        type: kv
+        description: Outspoke Kin fediverse identity — hub, homeserver and auth secrets
         options:
           version: 2
       - path: pedestal-of-time
