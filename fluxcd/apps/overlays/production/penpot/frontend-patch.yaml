@@ -16,7 +16,7 @@ spec:
         - name: docker-io-pull-secret
       containers:
         - name: frontend
-          image: docker.io/penpotapp/frontend:2.17.1
+          image: docker.io/penpotapp/frontend:2.17.2
           # readOnlyRootFilesystem is deliberately NOT set (RO-root exception):
           # the frontend entrypoint generates /etc/nginx/nginx.conf from
           # /tmp/nginx.conf.template and rewrites config.js + /etc/nginx/overrides
