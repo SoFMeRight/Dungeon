@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: matrix-auth-config
+data:
+  # MAS merges every --config it is given, so the parts that are not secret live here and
+  # the rest is rendered from vault into a second file.
+  config.yaml: |
+    http:
+      public_base: PLACEHOLDER_MAS_ISSUER
+      issuer: PLACEHOLDER_MAS_ISSUER
+      listeners:
+        - name: web
+          resources:
+            - name: discovery
+            - name: human
+            - name: oauth
+            - name: compat
+            - name: assets
+          binds:
+            - host: 0.0.0.0
+              port: 8080
+          proxy_protocol: false
+        - name: internal
+          resources:
+            - name: health
+          binds:
+            - host: 0.0.0.0
+              port: 8081
+          proxy_protocol: false
+
+    matrix:
+      homeserver: PLACEHOLDER_SERVER_NAME
+      endpoint: http://matrix-synapse:8008/
+
+    passwords:
+      # Accounts come from the identity provider. A local password would be a second way
+      # in that nothing else knows how to revoke.
+      enabled: false
+
+    account:
+      # A curated hub decides who joins out of band; self-service registration here would
+      # route around that.
+      password_registration_enabled: false
+      email_change_allowed: false
+      displayname_change_allowed: true
+
+    telemetry:
+      tracing:
+        exporter: none
+      metrics:
+        exporter: none

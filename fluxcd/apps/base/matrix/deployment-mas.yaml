@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-auth
+  labels:
+    app: matrix-auth
+spec:
+  replicas: PLACEHOLDER_MAS_REPLICAS
+  selector:
+    matchLabels:
+      app: matrix-auth
+  template:
+    metadata:
+      labels:
+        app: matrix-auth
+        policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/cap.postgres: "true"
+        policy.prplanit.com/access-scope-postgres: PLACEHOLDER_DB_SCOPE
+        # Token exchange with Zitadel is server-side, and sso.prplanit.com resolves to the
+        # gateway VIP from inside the cluster.
+        policy.prplanit.com/cap.oidc: "true"
+    spec:
+      serviceAccountName: matrix-auth
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        # The schema is applied before any replica serves, so two starting together cannot
+        # race the migration.
+        - name: migrate
+          image: PLACEHOLDER_MAS_IMAGE
+          args: ["database", "migrate", "--config", "/config/config.yaml", "--config", "/secrets/secrets.yaml"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: secrets
+              mountPath: /secrets
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      containers:
+        - name: mas
+          image: PLACEHOLDER_MAS_IMAGE
+          args: ["server", "--config", "/config/config.yaml", "--config", "/secrets/secrets.yaml"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 8081
+              name: internal
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: internal
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: internal
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: secrets
+              mountPath: /secrets
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              memory: "512Mi"
+      volumes:
+        - name: config
+          configMap:
+            name: matrix-auth-config
+        - name: secrets
+          secret:
+            secretName: matrix-auth-secrets
+        - name: tmp
+          emptyDir: {}

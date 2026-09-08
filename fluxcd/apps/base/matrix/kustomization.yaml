@@ -8,4 +8,7 @@ resources:
   - postgres-databases.yaml
   - configmap-synapse.yaml
   - statefulset-synapse.yaml
+  - configmap-mas.yaml
+  - deployment-mas.yaml
+  - element.yaml
   - service.yaml
