@@ -6,7 +6,7 @@ provisioner: gorons-bracelet.cephfs.csi.ceph.com
 parameters:
   clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
   fsName: Seed_Bank
-  pool: dungeon-fs-hdd
+  pool: Seed_Bank_data
   subvolumePath: /dungeon/hdd/csi-volumes
   mounter: kernel
   csi.storage.k8s.io/provisioner-secret-name: csi-cephfs-provisioner
