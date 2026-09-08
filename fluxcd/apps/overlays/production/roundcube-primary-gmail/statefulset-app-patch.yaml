@@ -15,7 +15,7 @@ spec:
         fsGroup: 82
       containers:
         - name: roundcube
-          image: docker.io/roundcube/roundcubemail:1.7.3-fpm-alpine-nonroot
+          image: docker.io/roundcube/roundcubemail:1.7.4-fpm-alpine-nonroot
           securityContext:
             readOnlyRootFilesystem: true
           env:
