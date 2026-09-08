@@ -12,11 +12,6 @@ data:
     public_baseurl: https://matrix.outspokekin.com/
 
     max_upload_size: 100M
-
-    experimental_features:
-      msc3861:
-        issuer: https://matrix-auth.outspokekin.com/
-        account_management_url: https://matrix-auth.outspokekin.com/account
 ---
 apiVersion: v1
 kind: ConfigMap
