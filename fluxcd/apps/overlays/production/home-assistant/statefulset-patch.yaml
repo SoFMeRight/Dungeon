@@ -75,7 +75,7 @@ spec:
               memory: 128Mi
       containers:
         - name: home-assistant
-          image: ghcr.io/home-assistant/home-assistant:2026.8.3
+          image: ghcr.io/home-assistant/home-assistant:2026.9.1
           env:
             - name: TZ
               value: America/Los_Angeles
