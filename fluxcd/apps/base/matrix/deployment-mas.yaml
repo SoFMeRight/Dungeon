@@ -32,7 +32,7 @@ spec:
         # race the migration.
         - name: migrate
           image: PLACEHOLDER_MAS_IMAGE
-          args: ["database", "migrate", "--config", "/config/config.yaml", "--config", "/secrets/secrets.yaml"]
+          args: ["database", "migrate", "--config", "/config/config.yaml", "--config", "/site/site.yaml", "--config", "/secrets/secrets.yaml"]
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -43,6 +43,9 @@ spec:
             - name: config
               mountPath: /config
               readOnly: true
+            - name: site
+              mountPath: /site
+              readOnly: true
             - name: secrets
               mountPath: /secrets
               readOnly: true
@@ -51,7 +54,7 @@ spec:
       containers:
         - name: mas
           image: PLACEHOLDER_MAS_IMAGE
-          args: ["server", "--config", "/config/config.yaml", "--config", "/secrets/secrets.yaml"]
+          args: ["server", "--config", "/config/config.yaml", "--config", "/site/site.yaml", "--config", "/secrets/secrets.yaml"]
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -79,6 +82,9 @@ spec:
             - name: config
               mountPath: /config
               readOnly: true
+            - name: site
+              mountPath: /site
+              readOnly: true
             - name: secrets
               mountPath: /secrets
               readOnly: true
@@ -94,6 +100,9 @@ spec:
         - name: config
           configMap:
             name: matrix-auth-config
+        - name: site
+          configMap:
+            name: matrix-auth-site
         - name: secrets
           secret:
             secretName: matrix-auth-secrets

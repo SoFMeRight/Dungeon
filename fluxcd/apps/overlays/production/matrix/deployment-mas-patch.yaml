@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-auth
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/access-scope-postgres: temple-of-time.matrix.postgres
+    spec:
+      initContainers:
+        - name: migrate
+          image: ghcr.io/element-hq/matrix-authentication-service:0.20.0
+      containers:
+        - name: mas
+          image: ghcr.io/element-hq/matrix-authentication-service:0.20.0

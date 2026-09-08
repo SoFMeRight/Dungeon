@@ -7,8 +7,6 @@ data:
   # the rest is rendered from vault into a second file.
   config.yaml: |
     http:
-      public_base: PLACEHOLDER_MAS_ISSUER
-      issuer: PLACEHOLDER_MAS_ISSUER
       listeners:
         - name: web
           resources:
@@ -30,7 +28,6 @@ data:
           proxy_protocol: false
 
     matrix:
-      homeserver: PLACEHOLDER_SERVER_NAME
       endpoint: http://matrix-synapse:8008/
 
     passwords:

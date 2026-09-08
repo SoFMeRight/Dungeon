@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: matrix-synapse
+spec:
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/access-scope-postgres: temple-of-time.matrix.postgres
+    spec:
+      containers:
+        - name: synapse
+          image: docker.io/hlhd/synapse:latest-dev
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-rbd
+        resources:
+          requests:
+            # Only the signing key, config state and the pid file. It is separate from
+            # media so unbounded media growth cannot fill the volume holding this
+            # server's federation identity.
+            storage: 5Gi
+    - metadata:
+        name: media
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-rbd
+        resources:
+          requests:
+            storage: 50Gi

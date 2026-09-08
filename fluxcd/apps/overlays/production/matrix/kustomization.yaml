@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: temple-of-time
+
+resources:
+  - ../../../base/matrix
+  - configmap-site.yaml
+  - httproute.yaml
+
+patches:
+  - path: externalsecret-patch.yaml
+  - path: postgres-cluster-patch.yaml
+  - path: statefulset-synapse-patch.yaml
+  - path: deployment-mas-patch.yaml
+  - path: deployment-element-patch.yaml

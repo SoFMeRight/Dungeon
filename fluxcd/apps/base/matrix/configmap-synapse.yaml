@@ -3,12 +3,10 @@ kind: ConfigMap
 metadata:
   name: matrix-synapse-config
 data:
+  # Values that differ per deployment — server name, public URL, MAS endpoints, media
+  # backend — are NOT here. Synapse merges every file in the conf.d directory it is
+  # given, so those live in their own file and this one stays deployment-agnostic.
   homeserver.yaml: |
-    # The server name is the identity half of every user ID and is baked into every room
-    # and event once federated. It is the apex, while the software answers on a subdomain
-    # the apex delegates to via /.well-known/matrix/server.
-    server_name: PLACEHOLDER_SERVER_NAME
-    public_baseurl: PLACEHOLDER_PUBLIC_BASEURL
     pid_file: /data/homeserver.pid
     signing_key_path: /data/signing.key
     report_stats: false
@@ -24,9 +22,6 @@ data:
           - names: [client, federation]
             compress: false
 
-    media_store_path: /media
-    max_upload_size: PLACEHOLDER_MAX_UPLOAD_SIZE
-
     # Accounts are created through MAS, never here.
     enable_registration: false
     password_config:
@@ -37,10 +32,8 @@ data:
     experimental_features:
       msc3861:
         enabled: true
-        issuer: PLACEHOLDER_MAS_ISSUER
         client_id: 0000000000000000000SYNAPSE
         client_auth_method: client_secret_basic
-        account_management_url: PLACEHOLDER_MAS_ACCOUNT_URL
 
     trusted_key_servers:
       - server_name: "matrix.org"

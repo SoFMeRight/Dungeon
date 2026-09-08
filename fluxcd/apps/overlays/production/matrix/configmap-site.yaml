@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: matrix-synapse-site
+data:
+  site.yaml: |
+    # The server name is the identity half of every user ID and is written into every room
+    # and event once this server federates. It is the apex; the software answers on a
+    # subdomain the apex delegates to via /.well-known/matrix/server. Changing it later
+    # orphans every remote connection, so it is not a value to revisit.
+    server_name: outspokekin.com
+    public_baseurl: https://matrix.outspokekin.com/
+
+    max_upload_size: 100M
+
+    experimental_features:
+      msc3861:
+        issuer: https://matrix-auth.outspokekin.com/
+        account_management_url: https://matrix-auth.outspokekin.com/account
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: matrix-auth-site
+data:
+  site.yaml: |
+    http:
+      public_base: https://matrix-auth.outspokekin.com/
+      issuer: https://matrix-auth.outspokekin.com/
+    matrix:
+      homeserver: outspokekin.com

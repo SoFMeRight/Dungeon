@@ -1,0 +1,11 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-element
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+        - name: element
+          image: ghcr.io/element-hq/element-web:v1.11.109

@@ -92,9 +92,15 @@ spec:
         - name: config
           configMap:
             name: matrix-synapse-config
+        # conf.d is a merge point: the vault-rendered secrets and the deployment's own
+        # site config are different objects that have to land in one directory.
         - name: secrets
-          secret:
-            secretName: matrix-synapse-secrets
+          projected:
+            sources:
+              - secret:
+                  name: matrix-synapse-secrets
+              - configMap:
+                  name: matrix-synapse-site
         - name: tmp
           emptyDir: {}
   volumeClaimTemplates:
