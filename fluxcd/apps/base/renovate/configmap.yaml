@@ -20,21 +20,21 @@ data:
       },
 
       "flux": {
-        "fileMatch": ["fluxcd/.+\\.yaml$"]
+        "managerFilePatterns": ["/fluxcd/.+\\.yaml$/"]
       },
 
       "kubernetes": {
-        "fileMatch": ["fluxcd/.+\\.yaml$"]
+        "managerFilePatterns": ["/fluxcd/.+\\.yaml$/"]
       },
 
       "helm-values": {
-        "fileMatch": ["fluxcd/.+\\.yaml$"]
+        "managerFilePatterns": ["/fluxcd/.+\\.yaml$/"]
       },
 
       "customManagers": [
         {
           "customType": "regex",
-          "fileMatch": ["fluxcd/.+\\.yaml$"],
+          "managerFilePatterns": ["/fluxcd/.+\\.yaml$/"],
           "matchStrings": [
             "image:\\s+repository:\\s+\"?(?<depName>.*?)\"?\\s+tag:\\s+\"?(?<currentValue>.*?)\"?"
           ],
@@ -42,7 +42,7 @@ data:
         },
         {
           "customType": "regex",
-          "fileMatch": ["fluxcd/apps/overlays/production/home-assistant/statefulset-patch\\.yaml$"],
+          "managerFilePatterns": ["/fluxcd/apps/overlays/production/home-assistant/statefulset-patch\\.yaml$/"],
           "matchStrings": [
             "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\n\\s+- name: COMP_\\d+_VERSION\\n\\s+value: \"?(?<currentValue>[^\"\\n]+)\"?"
           ],
@@ -50,7 +50,7 @@ data:
         },
         {
           "customType": "regex",
-          "fileMatch": ["fluxcd/.+\\.yaml$"],
+          "managerFilePatterns": ["/fluxcd/.+\\.yaml$/"],
           "matchStrings": [
             "image:\\s+(?<depName>ghcr\\.io/mariadb-operator/mariadb-operator):(?<currentValue>\\S+)"
           ],
@@ -59,7 +59,7 @@ data:
         },
         {
           "customType": "regex",
-          "fileMatch": ["ansible/group_vars/.+\\.ya?ml$"],
+          "managerFilePatterns": ["/ansible/group_vars/.+\\.ya?ml$/"],
           "matchStrings": [
             "crio_version:\\s+\"?(?<currentValue>[^\"\\s]+)\"?"
           ],
@@ -70,7 +70,7 @@ data:
         },
         {
           "customType": "regex",
-          "fileMatch": ["ansible/group_vars/.+\\.ya?ml$"],
+          "managerFilePatterns": ["/ansible/group_vars/.+\\.ya?ml$/"],
           "matchStrings": [
             "kubernetes_version:\\s+\"?(?<currentValue>[^\"\\s]+)\"?"
           ],
@@ -94,7 +94,7 @@ data:
           //   version: "1.1.0"
           // registryUrl is optional — OCI charts carry the registry inside depName.
           "customType": "regex",
-          "fileMatch": ["fluxcd/.+\\.yaml$"],
+          "managerFilePatterns": ["/fluxcd/.+\\.yaml$/"],
           "matchStrings": [
             "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: registryUrl=(?<registryUrl>\\S+))?\\s+tag:\\s+\"?(?<currentValue>[^\"\\s]+)\"?",
             "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: registryUrl=(?<registryUrl>\\S+))?\\s+version:\\s+\"?(?<currentValue>[^\"\\s]+)\"?"
@@ -107,7 +107,7 @@ data:
           // the kustomize manager ever sees them and Renovate never opened a single MR.
           // Match the value lines directly — depName + tag both come from the ref.
           "customType": "regex",
-          "fileMatch": ["fluxcd/infrastructure/services/overlays/production/phase-04-platform/netbird/kustomization\\.yaml$"],
+          "managerFilePatterns": ["/fluxcd/infrastructure/services/overlays/production/phase-04-platform/netbird/kustomization\\.yaml$/"],
           "matchStrings": [
             "value:\\s+(?<depName>docker\\.io/netbirdio/[^:\\s]+):(?<currentValue>[^\"\\s]+)"
           ],
