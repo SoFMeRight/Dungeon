@@ -26,7 +26,7 @@ spec:
         - name: wait-for-postgres
           image: docker.io/library/postgres:18-alpine
         - name: wait-for-meilisearch
-          image: docker.io/curlimages/curl:8.21.0
+          image: docker.io/curlimages/curl:8.22.0
       containers:
         - name: linkwarden
           image: ghcr.io/linkwarden/linkwarden:v2.16.1
