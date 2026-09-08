@@ -1,0 +1,61 @@
+# TURN for Matrix calls. Every byte of call media crosses this gateway: LiveKit is not
+# reachable from the internet and advertises no address of its own, so STUNner is the only
+# path to the SFU rather than a fallback for awkward networks.
+#
+# Port 3479 rather than the customary 3478 because NetBird's TURN gateway already holds
+# udp/3478 on the WAN; the listener uses the public number so nothing has to translate.
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: matrix-turn
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: matrix-turn
+spec:
+  controllerName: "stunner.l7mp.io/gateway-operator"
+  parametersRef:
+    group: "stunner.l7mp.io"
+    kind: GatewayConfig
+    name: matrix-turn
+    namespace: temple-of-time
+  description: "STUNner TURN gateway for Matrix calls (LiveKit SFU)"
+---
+apiVersion: stunner.l7mp.io/v1
+kind: GatewayConfig
+metadata:
+  name: matrix-turn
+spec:
+  realm: outspokekin.com
+  # Static rather than ephemeral, unlike NetBird's: LiveKit is what advertises TURN to
+  # clients and it can only pass on a fixed credential. What contains that is the UDPRoute
+  # below — an allocation made with this credential reaches the SFU and nothing else, so a
+  # leaked pair buys an attacker no relay to anywhere they could not already reach.
+  authRef:
+    name: matrix-turn-auth
+    namespace: temple-of-time
+  dataplane: stunner-hardened
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: matrix-turn
+spec:
+  gatewayClassName: matrix-turn
+  listeners:
+    - name: turn-udp
+      port: 3479
+      protocol: TURN-UDP
+---
+apiVersion: stunner.l7mp.io/v1
+kind: UDPRoute
+metadata:
+  name: matrix-turn
+spec:
+  parentRefs:
+    - name: matrix-turn
+  rules:
+    - backendRefs:
+        - name: matrix-livekit

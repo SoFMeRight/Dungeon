@@ -119,3 +119,68 @@ spec:
       backendRefs:
         - name: matrix-wellknown
           port: 8080
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: matrix-rtc
+  annotations:
+    gatus.home-operations.com/endpoint: |
+      group: "Social (Temple of Time⏳)"
+spec:
+  parentRefs:
+    - name: cell-membrane-gateway
+      namespace: hyrule-castle
+  hostnames:
+    - "livekit.outspokekin.com"
+  rules:
+    # Both services answer at the root of their own container; the path here only exists to
+    # keep them on one hostname, so the prefix is stripped before it reaches them.
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /livekit/jwt
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: matrix-lk-jwt
+          port: 8080
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /livekit/sfu
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: matrix-livekit
+          port: 7880
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: matrix-element-call
+  annotations:
+    gatus.home-operations.com/endpoint: |
+      group: "Social (Temple of Time⏳)"
+spec:
+  parentRefs:
+    - name: cell-membrane-gateway
+      namespace: hyrule-castle
+  hostnames:
+    - "matrix-call.outspokekin.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: matrix-element-call
+          port: 8080

@@ -1,0 +1,45 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-matrix-turn
+spec:
+  description: >-
+    Public TURN ingress to the Matrix STUNner dataplane (matrix-turn gateway,
+    172.22.30.87:3479/UDP). Callers arrive from anywhere on the internet, so world+cluster
+    — the restriction is by port and by the TURN credential LiveKit hands out, not by
+    source IP. NetBird's TURN keeps udp/3478, which is why this listener is on 3479.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: stunner
+      stunner.l7mp.io/related-gateway-name: matrix-turn
+  ingress:
+    - fromEntities:
+        - world
+        - cluster
+      toPorts:
+        - ports:
+            - port: "3479"
+              protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-matrix-turn-egress
+spec:
+  description: >-
+    This dataplane relays only to the LiveKit SFU in-cluster and talks to the STUNner
+    control plane in king-of-red-lions, so cluster alone is enough — unlike NetBird's TURN,
+    which must reach peers out on the internet. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: stunner
+      stunner.l7mp.io/related-gateway-name: matrix-turn
+  egress:
+    - toEntities:
+        - cluster

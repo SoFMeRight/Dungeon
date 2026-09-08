@@ -1,0 +1,72 @@
+# The Element Call SPA. Element Web ships its own copy for calls started inside the app;
+# this deployment is what serves guest links and direct browser use, and it is the reason
+# the call stack owes nothing to element.io at runtime.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-element-call
+  labels:
+    app: matrix-element-call
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: matrix-element-call
+  template:
+    metadata:
+      labels:
+        app: matrix-element-call
+        policy.prplanit.com/ingress: "true"
+    spec:
+      serviceAccountName: matrix-element-call
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: element-call
+          image: PLACEHOLDER_ELEMENT_CALL_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 8080
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /config.json
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.json
+              subPath: config.json
+              readOnly: true
+            - name: cache
+              mountPath: /var/cache/nginx
+            - name: run
+              mountPath: /var/run
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "32Mi"
+            limits:
+              memory: "128Mi"
+      volumes:
+        - name: config
+          configMap:
+            name: matrix-element-call-config
+        - name: cache
+          emptyDir: {}
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}

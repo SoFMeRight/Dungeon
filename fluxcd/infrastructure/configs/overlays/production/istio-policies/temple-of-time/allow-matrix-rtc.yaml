@@ -1,0 +1,62 @@
+# The call stack's internal edges. Ambient enforces these, so each one is required for the
+# hop to work at all — a missing allow here reads as the SFU being up but calls never
+# connecting.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-matrix-lk-jwt-to-matrix-synapse
+spec:
+  selector:
+    matchLabels:
+      app: matrix-synapse
+  action: ALLOW
+  rules:
+    # The authorization service resolves the caller's OpenID token against the homeserver
+    # before it will mint a LiveKit token.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/temple-of-time/sa/matrix-lk-jwt
+      to:
+        - operation:
+            ports: ["8008"]
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-matrix-lk-jwt-to-matrix-livekit
+spec:
+  selector:
+    matchLabels:
+      app: matrix-livekit
+  action: ALLOW
+  rules:
+    # Rooms are created through the SFU's API by the authorization service; the SFU itself
+    # will not create one on a caller's behalf.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/temple-of-time/sa/matrix-lk-jwt
+      to:
+        - operation:
+            ports: ["7880"]
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-matrix-livekit-to-matrix-lk-jwt
+spec:
+  selector:
+    matchLabels:
+      app: matrix-lk-jwt
+  action: ALLOW
+  rules:
+    # Participant-lifecycle webhooks. Without them a caller who drops off the network is
+    # never seen to leave and lingers in the call.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/temple-of-time/sa/matrix-livekit
+      to:
+        - operation:
+            ports: ["8080"]

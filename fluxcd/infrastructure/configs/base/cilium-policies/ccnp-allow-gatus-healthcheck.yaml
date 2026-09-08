@@ -117,6 +117,10 @@ spec:
               protocol: TCP
             - port: "7878"
               protocol: TCP
+            - port: "7880"
+              protocol: TCP
+            - port: "7881"
+              protocol: TCP
             - port: "8000"
               protocol: TCP
             - port: "8001"
@@ -181,11 +185,11 @@ spec:
               protocol: TCP
             - port: "8888"
               protocol: TCP
+        - ports:
             - port: "8920"
               protocol: TCP
             - port: "8971"
               protocol: TCP
-        - ports:
             - port: "8989"
               protocol: TCP
             - port: "9000"

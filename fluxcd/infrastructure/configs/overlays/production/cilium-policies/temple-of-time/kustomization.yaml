@@ -12,3 +12,4 @@ resources:
   - cnp-media-servers.yaml
   - cnp-overseerr-to-plex.yaml
   - cnp-galera-replication.yaml
+  - cnp-matrix-turn.yaml

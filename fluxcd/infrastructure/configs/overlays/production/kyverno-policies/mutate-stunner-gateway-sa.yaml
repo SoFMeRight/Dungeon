@@ -10,7 +10,7 @@ spec:
         any:
           - resources:
               kinds: [Deployment]
-              namespaces: ["swift-sail", "zeldas-lullaby"]
+              namespaces: ["swift-sail", "zeldas-lullaby", "temple-of-time"]
               selector:
                 matchLabels:
                   stunner.l7mp.io/owned-by: stunner
@@ -55,3 +55,18 @@ spec:
               lbipam.cilium.io/ips: "172.22.30.86"
               lbipam.cilium.io/sharing-key: "zeldas-lullaby"
               lbipam.cilium.io/sharing-cross-namespace: "*"
+    # Matrix's TURN gateway takes its own address rather than sharing NetBird's: both
+    # want a TURN listener, and two listeners cannot hold the same port on one IP.
+    - name: set-matrix-turn-lb-ip-on-service
+      match:
+        any:
+          - resources:
+              kinds: [Service]
+              namespaces: ["temple-of-time"]
+              annotations:
+                stunner.l7mp.io/related-gateway-name: "temple-of-time/matrix-turn"
+      mutate:
+        patchStrategicMerge:
+          metadata:
+            annotations:
+              lbipam.cilium.io/ips: "172.22.30.87"

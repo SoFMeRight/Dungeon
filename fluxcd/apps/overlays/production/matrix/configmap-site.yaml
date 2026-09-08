@@ -21,6 +21,38 @@ data:
       org.matrix.msc2965.authentication:
         issuer: https://matrix-auth.outspokekin.com/
         account: https://matrix-auth.outspokekin.com/account/
+      # Clients that already know the homeserver read discovery from here rather than
+      # from the apex, so the call backend has to be advertised in both places.
+      org.matrix.msc4143.rtc_foci:
+        - type: livekit
+          livekit_service_url: https://livekit.outspokekin.com/livekit/jwt
+
+    # Element Call needs all three: room summaries for knocking, the MatrixRTC transports
+    # endpoint, and sync v2 state_after so a client tracks who is actually in the call.
+    experimental_features:
+      msc3266_enabled: true
+      msc4143_enabled: true
+      msc4222_enabled: true
+
+    # A client schedules its own departure event when it joins, then keeps postponing it.
+    # If it drops off the network the delay expires and the call stops showing a ghost.
+    max_event_delay_duration: 24h
+
+    rc_message:
+      # Encryption key sharing arrives in bursts; the stock limit throttles it and members
+      # of a call end up unable to decrypt each other.
+      per_second: 0.5
+      burst_count: 30
+
+    rc_delayed_event_mgmt:
+      # The heartbeat that keeps the departure event postponed runs every five seconds.
+      per_second: 1
+      burst_count: 20
+
+    matrix_rtc:
+      transports:
+        - type: livekit
+          livekit_service_url: https://livekit.outspokekin.com/livekit/jwt
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -55,5 +87,26 @@ data:
       "show_labs_settings": false,
       "room_directory": {
         "servers": ["outspokekin.com"]
+      },
+      "element_call": {
+        "brand": "Outspoke Kin Calls",
+        "guest_spa_url": "https://matrix-call.outspokekin.com"
+      }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: matrix-element-call-config
+data:
+  # The SFU is deliberately absent: upstream treats a livekit block here as a debugging
+  # aid, and the supported path is the rtc_foci the homeserver publishes.
+  config.json: |
+    {
+      "default_server_config": {
+        "m.homeserver": {
+          "base_url": "https://matrix.outspokekin.com",
+          "server_name": "outspokekin.com"
+        }
       }
     }

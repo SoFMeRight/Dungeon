@@ -8,6 +8,8 @@ resources:
   - configmap-site.yaml
   - wellknown.yaml
   - httproute.yaml
+  - externalsecret-rtc.yaml
+  - stunner-gateway.yaml
 
 patches:
   - path: externalsecret-patch.yaml
@@ -15,3 +17,4 @@ patches:
   - path: statefulset-synapse-patch.yaml
   - path: deployment-mas-patch.yaml
   - path: deployment-element-patch.yaml
+  - path: deployment-rtc-patch.yaml

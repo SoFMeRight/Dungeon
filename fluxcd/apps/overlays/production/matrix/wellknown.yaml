@@ -14,7 +14,13 @@ data:
       "org.matrix.msc2965.authentication": {
         "issuer": "https://matrix-auth.outspokekin.com/",
         "account": "https://matrix-auth.outspokekin.com/account/"
-      }
+      },
+      "org.matrix.msc4143.rtc_foci": [
+        {
+          "type": "livekit",
+          "livekit_service_url": "https://livekit.outspokekin.com/livekit/jwt"
+        }
+      ]
     }
   default.conf: |
     server {

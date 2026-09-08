@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-livekit
+spec:
+  template:
+    spec:
+      containers:
+        - name: livekit
+          image: docker.io/livekit/livekit-server:v1.13.6
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-lk-jwt
+spec:
+  template:
+    spec:
+      containers:
+        - name: lk-jwt
+          image: ghcr.io/element-hq/lk-jwt-service:0.6.0
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-element-call
+spec:
+  template:
+    spec:
+      containers:
+        - name: element-call
+          image: ghcr.io/element-hq/element-call:v0.25.0

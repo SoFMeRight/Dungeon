@@ -11,4 +11,7 @@ resources:
   - configmap-mas.yaml
   - deployment-mas.yaml
   - element.yaml
+  - element-call.yaml
+  - livekit.yaml
+  - lk-jwt.yaml
   - service.yaml

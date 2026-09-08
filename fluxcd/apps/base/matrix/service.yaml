@@ -39,3 +39,47 @@ spec:
     - port: 8080
       targetPort: http
       name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matrix-livekit
+  labels:
+    app: matrix-livekit
+spec:
+  selector:
+    app: matrix-livekit
+  ports:
+    - port: 7880
+      targetPort: http
+      name: http
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matrix-lk-jwt
+  labels:
+    app: matrix-lk-jwt
+spec:
+  selector:
+    app: matrix-lk-jwt
+  ports:
+    - port: 8080
+      targetPort: http
+      name: http
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: matrix-element-call
+  labels:
+    app: matrix-element-call
+spec:
+  selector:
+    app: matrix-element-call
+  ports:
+    - port: 8080
+      targetPort: http
+      name: http

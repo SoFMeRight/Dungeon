@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matrix-livekit
+  labels:
+    app: matrix-livekit
+spec:
+  # Single instance: multi-node LiveKit coordinates through Redis, which buys nothing
+  # for a hub this size and adds a dependency that can take calls down on its own.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matrix-livekit
+  template:
+    metadata:
+      labels:
+        app: matrix-livekit
+        policy.prplanit.com/ingress: "true"
+    spec:
+      serviceAccountName: matrix-livekit
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: livekit
+          image: PLACEHOLDER_LIVEKIT_IMAGE
+          args: ["--config", "/etc/livekit/config.yaml"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 7880
+              name: http
+            - containerPort: 7881
+              name: rtc-tcp
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            # The config carries the API keys and the TURN credentials handed to clients,
+            # so it is rendered from Vault rather than held in a ConfigMap.
+            - name: config
+              mountPath: /etc/livekit
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              memory: "2Gi"
+      volumes:
+        - name: config
+          secret:
+            secretName: matrix-livekit-config
+        - name: tmp
+          emptyDir: {}
