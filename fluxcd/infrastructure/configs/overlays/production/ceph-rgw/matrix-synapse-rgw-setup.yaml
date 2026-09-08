@@ -1,0 +1,76 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: matrix-synapse-rgw-setup
+spec:
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/cap.ceph: "true"
+        policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
+    spec:
+      serviceAccountName: rgw-admin
+      restartPolicy: OnFailure
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: setup
+          image: quay.io/ceph/ceph:v19
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HOME
+              value: /tmp
+            - name: ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: matrix-synapse-rgw-credentials
+                  key: S3_ACCESS_KEY
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: matrix-synapse-rgw-credentials
+                  key: S3_SECRET_KEY
+          command:
+            - /bin/bash
+            - /scripts/setup.sh
+            - --user=matrix-synapse-user
+            - --display-name="Matrix media"
+            - --buckets=matrix-synapse-media
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: setup-script
+              mountPath: /scripts
+              readOnly: true
+            - name: ceph-config
+              mountPath: /etc/ceph/ceph.conf
+              subPath: ceph.conf
+              readOnly: true
+            - name: ceph-keyring
+              mountPath: /etc/ceph/ceph.client.dungeon-rgw.keyring
+              subPath: keyring
+              readOnly: true
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: setup-script
+          configMap:
+            name: ceph-rgw-setup-script
+            defaultMode: 0755
+        - name: ceph-config
+          configMap:
+            name: ceph-config
+        - name: ceph-keyring
+          secret:
+            secretName: ceph-rgw-keyring
