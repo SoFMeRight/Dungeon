@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-ceph-osd-egress
+spec:
+  description: >-
+    Allow cap.ceph pods (scoped to gorons-bracelet.rgw) to reach the external
+    Ceph OSD/MDS/MGR messenger port range (6800-7568 TCP) on the Ceph cluster
+    subnet. RADOS clients (radosgw) fetch the cluster map from the MONs
+    (allow-ceph-mon-egress) and then connect DIRECTLY to OSDs for object I/O —
+    live RGW traffic uses 3300 plus 6800.. — so MON access alone is insufficient
+    once egress default-deny is enforced. Un-meshed: RADOS is a non-HTTP protocol
+    ztunnel cannot carry.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      policy.prplanit.com/cap.ceph: "true"
+      policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
+  egress:
+    - toCIDRSet:
+        - cidr: "fc00:f1:ada:104e:1ace::/64"
+      toPorts:
+        - ports:
+            - port: "6800"
+              endPort: 7568
+              protocol: TCP
