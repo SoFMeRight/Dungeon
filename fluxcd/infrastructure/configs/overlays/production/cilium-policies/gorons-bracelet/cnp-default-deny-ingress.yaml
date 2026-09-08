@@ -4,17 +4,27 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress for gorons-bracelet namespace.
+    Default-deny ingress AND egress for gorons-bracelet namespace.
     Storage infrastructure: ceph-rgw S3, operators (CNPG, MariaDB, Redis),
-    CSI provisioners. Many DaemonSets are hostNetwork (Cilium-unmanaged).
+    CSI provisioners. Many DaemonSets (incl. the CSI node plugins) are
+    hostNetwork and thus Cilium-unmanaged — pod egress-deny does not apply to
+    them. Egress for the pod-managed ceph clients is granted by the
+    cnp-ceph-*-egress policies: RGW + admin jobs (cap.ceph) reach MON
+    (6789/3300) and OSD/MDS/MGR (6800-7568) on the Ceph subnet; the CSI
+    ctrlplugins reach the same for volume provisioning. DNS, kube-apiserver and
+    mesh (HBONE) ride the universal CCNP baseline.
     CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape,
     cnpg-operator, mariadb-operator, redis-operator, and ingress-gateway
     traffic for labeled pods.
   enableDefaultDeny:
     ingress: true
-    egress: false
+    egress: true
   endpointSelector: {}
   ingress:
     - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
         - matchLabels:
             policy.prplanit.com/reserved: default-deny-anchor
