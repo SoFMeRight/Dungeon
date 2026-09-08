@@ -24,7 +24,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: render-config
-          image: docker.io/alpine/k8s:1.36.2
+          image: docker.io/alpine/k8s:1.37.0
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
