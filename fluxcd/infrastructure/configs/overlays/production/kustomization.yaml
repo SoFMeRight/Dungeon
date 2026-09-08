@@ -4,6 +4,7 @@ resources:
   - storage  # Production storage classes (Ceph RBD + CephFS)
   - cilium
   - cilium-policies  # CiliumClusterwideNetworkPolicies for L3/L4 defense-in-depth
+  - stunner  # Shared hardened STUNner dataplane, referenced by every TURN gateway
   # - metallb  # Disabled - replaced by Cilium LoadBalancer IPAM
   - weave-gitops
   - ceph-rbd  # Ceph RBD connection config and secrets

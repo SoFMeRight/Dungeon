@@ -1,0 +1,37 @@
+# One hardened dataplane for every STUNner gateway in the cluster. Dataplane is
+# cluster-scoped and is a template, not a runtime: each GatewayConfig referencing it still
+# gets its own stunnerd deployment, its own realm and its own credentials. Sharing the
+# spec removes the duplication; it does not couple the gateways.
+#
+# This replaces the operator's default dataplane, which ships no securityContext.
+apiVersion: stunner.l7mp.io/v1
+kind: Dataplane
+metadata:
+  name: stunner-hardened
+spec:
+  image: docker.io/l7mp/stunnerd:1.2.1
+  imagePullPolicy: IfNotPresent
+  command: ["stunnerd"]
+  args: ["-w", "--udp-thread-num=16", "--log-format=text"]
+  dataplaneResource: Deployment
+  replicas: 1
+  # Long grace: relayed sessions drain onto the outgoing pod rather than being cut, which
+  # is what makes a dataplane rollout survivable for live calls and VPN peers.
+  terminationGracePeriodSeconds: 3600
+  securityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  containerSecurityContext:
+    # stunnerd must stay root to bind the privileged :3478 — this cluster's CRI-O ignores
+    # ip_unprivileged_port_start and NET_BIND_SERVICE is inert for a non-root process.
+    # Everything else is locked down: it logs to stdout and pulls config from the control
+    # plane over the network, so it writes nothing to disk.
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop:
+        - ALL
+      add:
+        - NET_BIND_SERVICE
