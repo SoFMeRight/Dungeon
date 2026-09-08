@@ -16,7 +16,7 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: shlink-app
-          image: docker.io/shlinkio/shlink:5.1.5
+          image: docker.io/shlinkio/shlink:5.1.6
           securityContext:
             readOnlyRootFilesystem: true
           env:
