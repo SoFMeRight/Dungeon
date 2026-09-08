@@ -79,7 +79,7 @@ spec:
   serviceAccount: openbao
 
   # Fix statsd exporter image with full registry path
-  statsdImage: docker.io/prom/statsd-exporter:v0.29.0
+  statsdImage: docker.io/prom/statsd-exporter:v0.31.0
 
   # Make sure it runs on worker nodes with pod anti-affinity for HA
   affinity:
