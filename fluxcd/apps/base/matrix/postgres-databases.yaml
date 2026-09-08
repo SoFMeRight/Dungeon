@@ -10,5 +10,5 @@ spec:
   name: mas
   owner: synapse
   encoding: UTF8
-  locale_c_type: C
-  locale_collate: C
+  localeCType: C
+  localeCollate: C
