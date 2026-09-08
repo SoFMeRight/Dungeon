@@ -66,11 +66,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: nginx
-          # Plain nginx, not hlhd/nginx-extras: that image is built for edge duty and
-          # generates /etc/nginx/cf/ips.conf from Cloudflare's ranges at startup, which a
-          # read-only root filesystem forbids and which this pod — internal, behind the
-          # gateway, serving two static files — has no use for.
-          image: docker.io/nginx:1.27-alpine
+          image: docker.io/nginx:1.31.4-alpine
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
