@@ -28,6 +28,9 @@ data:
           proxy_protocol: false
 
     matrix:
+      # Required — MAS supports more than one homeserver implementation and will not
+      # assume Synapse.
+      kind: synapse
       endpoint: http://matrix-synapse:8008/
 
     passwords:
