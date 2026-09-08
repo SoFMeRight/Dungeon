@@ -52,7 +52,7 @@ spec:
               value: frigate
             # renovate: datasource=github-releases depName=blakeblackshear/frigate-hass-integration
             - name: COMP_4_VERSION
-              value: "5.15.4"
+              value: "5.15.6"
             - name: COMP_4_URL
               value: "https://github.com/blakeblackshear/frigate-hass-integration/archive/refs/tags/v5.15.4.zip"
             - name: COMP_4_SUBDIR
