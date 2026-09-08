@@ -1,0 +1,14 @@
+# MAS keeps its own schema. A second database in the same cluster rather than a second
+# cluster: one thing to back up and restore, and the two are always failed over together.
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: matrix-auth-db
+spec:
+  cluster:
+    name: matrix-postgres
+  name: mas
+  owner: synapse
+  encoding: UTF8
+  locale_c_type: C
+  locale_collate: C

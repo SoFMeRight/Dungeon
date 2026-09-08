@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: matrix-synapse
+  labels:
+    app: matrix-synapse
+spec:
+  serviceName: matrix-synapse
+  replicas: 1
+  selector:
+    matchLabels:
+      app: matrix-synapse
+  template:
+    metadata:
+      labels:
+        app: matrix-synapse
+        policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/cap.postgres: "true"
+        policy.prplanit.com/access-scope-postgres: PLACEHOLDER_DB_SCOPE
+    spec:
+      serviceAccountName: matrix-synapse
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 991
+        runAsGroup: 991
+        fsGroup: 991
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: synapse
+          image: PLACEHOLDER_SYNAPSE_IMAGE
+          # The image's entrypoint generates a config when none exists. Ours is supplied,
+          # so synapse is invoked directly: the second path is a directory, which is how
+          # the vault-rendered secrets join the config without being in a ConfigMap.
+          command:
+            - python
+            - -m
+            - synapse.app.homeserver
+            - --config-path
+            - /config/homeserver.yaml
+            - --config-path
+            - /config/conf.d/
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 8008
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          volumeMounts:
+            - name: config
+              mountPath: /config/homeserver.yaml
+              subPath: homeserver.yaml
+              readOnly: true
+            - name: config
+              mountPath: /config/log.yaml
+              subPath: log.yaml
+              readOnly: true
+            - name: secrets
+              mountPath: /config/conf.d
+              readOnly: true
+            # The signing key is this server's identity to the rest of the federation.
+            # Losing it is not recoverable: remote servers reject events signed by a
+            # replacement, so it lives on a Retain volume.
+            - name: data
+              mountPath: /data
+            - name: media
+              mountPath: /media
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "512Mi"
+            limits:
+              memory: "2Gi"
+      volumes:
+        - name: config
+          configMap:
+            name: matrix-synapse-config
+        - name: secrets
+          secret:
+            secretName: matrix-synapse-secrets
+        - name: tmp
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: PLACEHOLDER_DATA_SIZE
+    - metadata:
+        name: media
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: PLACEHOLDER_MEDIA_SIZE

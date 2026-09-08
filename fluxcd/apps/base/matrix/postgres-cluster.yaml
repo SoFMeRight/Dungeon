@@ -1,0 +1,37 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: matrix-postgres
+  labels:
+    app: matrix-postgres
+    policy.prplanit.com/access-class: postgres
+spec:
+  instances: PLACEHOLDER_INSTANCES
+
+  affinity:
+    podAntiAffinityType: required
+
+  postgresql:
+    parameters:
+      shared_buffers: "PLACEHOLDER_SHARED_BUFFERS"
+      max_connections: "PLACEHOLDER_MAX_CONNECTIONS"
+      max_slot_wal_keep_size: "800MB"
+
+  bootstrap:
+    initdb:
+      # Synapse refuses to start unless its database was created with C collation and
+      # UTF8 encoding; it checks at boot and the fix afterwards is a dump and restore.
+      database: synapse
+      owner: synapse
+      encoding: UTF8
+      localeCType: C
+      localeCollate: C
+      # Own the credentials rather than letting CNPG generate them: Synapse has no
+      # environment-variable config, so the same password has to be rendered into its
+      # YAML, and both sides can only agree if vault is the source.
+      secret:
+        name: matrix-postgres-credentials
+
+  storage:
+    storageClass: PLACEHOLDER_STORAGE_CLASS
+    size: PLACEHOLDER_STORAGE_SIZE
