@@ -123,6 +123,8 @@ spec:
               protocol: TCP
             - port: "8006"
               protocol: TCP
+            - port: "8008"
+              protocol: TCP
             - port: "8075"
               protocol: TCP
             - port: "8080"
@@ -183,9 +185,9 @@ spec:
               protocol: TCP
             - port: "8971"
               protocol: TCP
+        - ports:
             - port: "8989"
               protocol: TCP
-        - ports:
             - port: "9000"
               protocol: TCP
             - port: "9001"
