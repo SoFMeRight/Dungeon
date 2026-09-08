@@ -15,7 +15,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: netalertx
-          image: ghcr.io/jokob-sk/netalertx:26.8.5
+          image: ghcr.io/jokob-sk/netalertx:26.9.0
           ports:
             - containerPort: 20211
               name: http
