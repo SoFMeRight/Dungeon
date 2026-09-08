@@ -66,7 +66,7 @@ spec:
               memory: 512Mi
               cpu: 500m
         - name: nginx
-          image: docker.io/nginxinc/nginx-unprivileged:alpine
+          image: docker.io/nginxinc/nginx-unprivileged:1.31-alpine
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

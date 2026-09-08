@@ -77,9 +77,21 @@ spec:
         policy.prplanit.com/ingress: "true"
     spec:
       serviceAccountName: pve-cluster-proxy
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: nginx
-          image: docker.io/library/nginx:1-alpine
+          image: docker.io/nginx:1.31.5-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8006
               name: http
@@ -91,6 +103,8 @@ spec:
               readOnly: true
             - name: tmp
               mountPath: /tmp
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
           resources:
             requests:
               cpu: 10m
@@ -115,6 +129,8 @@ spec:
         - name: tmp
           emptyDir:
             medium: Memory
+        - name: nginx-cache
+          emptyDir: {}
 ---
 apiVersion: v1
 kind: ServiceAccount

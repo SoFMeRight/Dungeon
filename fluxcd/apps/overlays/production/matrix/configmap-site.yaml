@@ -12,6 +12,15 @@ data:
     public_baseurl: https://matrix.outspokekin.com/
 
     max_upload_size: 100M
+
+    # Synapse serves its own /.well-known/matrix/client from public_baseurl, and a client
+    # pointed at the homeserver reads THAT one rather than the apex's. Without the auth
+    # block there it finds no delegated-auth metadata, falls back to the legacy login
+    # flows — which MAS disables — and reports that the server offers no usable login.
+    extra_well_known_client_content:
+      org.matrix.msc2965.authentication:
+        issuer: https://matrix-auth.outspokekin.com/
+        account: https://matrix-auth.outspokekin.com/account/
 ---
 apiVersion: v1
 kind: ConfigMap
