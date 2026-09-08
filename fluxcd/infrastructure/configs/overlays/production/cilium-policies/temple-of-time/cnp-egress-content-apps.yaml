@@ -12,7 +12,10 @@ spec:
     (ghost, wikijs-vegan, kimai), collab signaling (nextcloud-talk-hpb),
     external assets for PDF rendering (reactive-resume-chrome), and federation
     delivery to any hub on the fediverse plus an SMTP relay (hubzilla, and the
-    poller that drains its delivery queue). That set cannot
+    poller that drains its delivery queue), and Matrix federation plus the identity
+    provider hairpin (matrix-synapse, matrix-auth — sso.prplanit.com resolves to the
+    gateway VIP from inside, so this is a cluster destination, not a world one). That
+    set cannot
     be allowlisted, so world+cluster is granted (cluster covers in-cluster deps
     beyond the mesh). DNS + intra-namespace mesh (app->db) ride the universal
     CCNP baseline. Inert until egress default-deny is enabled.
@@ -34,6 +37,8 @@ spec:
           - ghost
           - hubzilla
           - hubzilla-cron
+          - matrix-synapse
+          - matrix-auth
           - photoprism
           - shlink-app
           - wikijs-vegan
