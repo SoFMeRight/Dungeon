@@ -14,11 +14,13 @@ spec:
     delivery to any hub on the fediverse plus an SMTP relay (hubzilla, and the
     poller that drains its delivery queue), and Matrix federation plus the identity
     provider hairpin (matrix-synapse, matrix-auth — sso.prplanit.com resolves to the
-    gateway VIP from inside, so this is a cluster destination, not a world one). That
-    set cannot
+    gateway VIP from inside, so this is a cluster destination, not a world one).
+    matrix-lk-jwt joins them because authorising a caller means verifying their
+    OpenID token against the homeserver that issued it — ours via the gateway VIP
+    for a local user, an arbitrary host for a federated one. That set cannot
     be allowlisted, so world+cluster is granted (cluster covers in-cluster deps
     beyond the mesh). DNS + intra-namespace mesh (app->db) ride the universal
-    CCNP baseline. Inert until egress default-deny is enabled.
+    CCNP baseline.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -39,6 +41,7 @@ spec:
           - hubzilla-cron
           - matrix-synapse
           - matrix-auth
+          - matrix-lk-jwt
           - photoprism
           - shlink-app
           - wikijs-vegan
