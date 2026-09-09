@@ -99,6 +99,9 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Social (Temple of Time⏳)"
+      url: https://outspokekin.com/.well-known/matrix/client
+      conditions:
+        - "[STATUS] == 200"
 spec:
   # The apex carries the delegation only. An exact hostname outranks the wildcard
   # catch-all, so anything else on outspokekin.com is answered by whatever serves the
@@ -127,6 +130,9 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Social (Temple of Time⏳)"
+      url: https://livekit.outspokekin.com/livekit/jwt/healthz
+      conditions:
+        - "[STATUS] == 200"
 spec:
   parentRefs:
     - name: cell-membrane-gateway

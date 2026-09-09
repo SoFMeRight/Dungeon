@@ -9,6 +9,9 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Security & IoT (Lens of Truth🔍)"
+      url: https://crowdsec-lapi.pcfae.com/health
+      conditions:
+        - "[STATUS] == 200"
 spec:
   parentRefs:
     - name: xylem-gateway
