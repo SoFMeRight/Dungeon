@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: crowdsec-postgres
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: crowdsec-postgres
+spec:
+  type: ClusterIP
+  selector:
+    app: crowdsec-postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      name: postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: crowdsec-postgres
+spec:
+  revisionHistoryLimit: 5
+  serviceName: crowdsec-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crowdsec-postgres
+  template:
+    metadata:
+      labels:
+        app: crowdsec-postgres
+        # Policy Contract Standard: server identity. The cluster-wide contract-postgres
+        # CCNP admits cap.postgres clients (crowdsec) to any access-class=postgres server
+        # on 5432; instance binding is enforced by the per-service istio authz.
+        policy.prplanit.com/access-class: postgres
+        policy.prplanit.com/service-scope: lens-of-truth.crowdsec.postgres
+    spec:
+      serviceAccountName: crowdsec-postgres
+      securityContext:
+        runAsUser: 70
+        runAsGroup: 70
+        fsGroup: 70
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: postgres
+          image: docker.io/postgres:18.6-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 5432
+              name: postgres
+              protocol: TCP
+          env:
+            - name: PGDATA
+              value: "/var/lib/postgresql/data/pgdata"
+            - name: POSTGRES_DB
+              value: "crowdsec"
+            - name: POSTGRES_USER
+              value: "crowdsec"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: CROWDSEC_DB_PASSWORD
+          volumeMounts:
+            - name: lens-of-truth-crowdsec-postgres
+              mountPath: /var/lib/postgresql/data
+            # readOnlyRootFilesystem: postgres needs its socket dir + scratch writable.
+            - name: postgres-run
+              mountPath: /var/run/postgresql
+            - name: postgres-tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 100m
+            limits:
+              memory: 1Gi
+              cpu: 500m
+      volumes:
+        - name: postgres-run
+          emptyDir: {}
+        - name: postgres-tmp
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: lens-of-truth-crowdsec-postgres
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        # retain: DB data survives PVC deletion (matches the paperless-db pattern).
+        storageClassName: ceph-rbd-retain
+        resources:
+          requests:
+            storage: 10Gi

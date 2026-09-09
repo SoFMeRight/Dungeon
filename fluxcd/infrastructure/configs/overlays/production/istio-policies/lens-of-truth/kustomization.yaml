@@ -10,5 +10,7 @@ resources:
   - allow-home-assistant-to-frigate.yaml
   - allow-wazuh-manager-loadbalancer.yaml
   - allow-crowdsec-bouncer-to-crowdsec.yaml
+  - allow-crowdsec-to-crowdsec-postgres.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
+  - allow-wazuh-dashboard-to-wazuh-indexer.yaml

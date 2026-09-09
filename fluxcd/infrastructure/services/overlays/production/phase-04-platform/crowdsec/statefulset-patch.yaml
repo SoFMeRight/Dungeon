@@ -5,6 +5,11 @@ metadata:
 spec:
   replicas: 1
   template:
+    metadata:
+      labels:
+        # Policy Contract Standard: client capability + instance scope for its postgres.
+        policy.prplanit.com/cap.postgres: "true"
+        policy.prplanit.com/access-scope-postgres: lens-of-truth.crowdsec.postgres
     spec:
       containers:
         - name: crowdsec
@@ -20,6 +25,32 @@ spec:
               value: "Dungeon"
             - name: ENROLL_TAGS
               value: "k8s linux production"
+            # Postgres backend (replaces SQLite). CrowdSec's entrypoint writes these into
+            # db_config on each start. sslmode=disable — the hop is mTLS-encrypted in-mesh.
+            - name: DB_TYPE
+              value: "postgresql"
+            - name: DB_HOST
+              value: "crowdsec-postgres"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "crowdsec"
+            - name: DB_NAME
+              value: "crowdsec"
+            - name: DB_SSLMODE
+              value: "disable"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: CROWDSEC_DB_PASSWORD
+            # Re-register the cloudflare-bouncer on the fresh DB with its existing LAPI key
+            # (Vault-backed; reference only, no secret in git).
+            - name: BOUNCER_KEY_cloudflare
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: CROWDSEC_LAPI_KEY
           volumeMounts:
             - name: lens-of-truth-crowdsec-data
               mountPath: /var/lib/crowdsec/data

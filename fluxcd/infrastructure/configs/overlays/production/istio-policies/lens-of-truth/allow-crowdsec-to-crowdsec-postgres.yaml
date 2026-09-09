@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-crowdsec-to-crowdsec-postgres
+spec:
+  # East-west is default-deny in lens-of-truth. Instance-level authorization for the
+  # postgres contract: only the crowdsec agent SA may reach its own DB on 5432.
+  selector:
+    matchLabels:
+      app: crowdsec-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/lens-of-truth/sa/crowdsec
+      to:
+        - operation:
+            ports: ["5432"]

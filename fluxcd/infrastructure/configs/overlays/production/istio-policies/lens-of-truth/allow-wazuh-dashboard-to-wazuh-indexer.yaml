@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-wazuh-dashboard-to-wazuh-indexer
+spec:
+  selector:
+    matchLabels:
+      app: wazuh-indexer
+  action: ALLOW
+  rules:
+    # The dashboard reads every view it renders from the indexer's OpenSearch API, so
+    # without this it starts, answers nothing and the gateway reports it unavailable.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/lens-of-truth/sa/wazuh-dashboard
+      to:
+        - operation:
+            ports: ["9200"]
