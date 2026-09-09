@@ -6,6 +6,8 @@ resources:
   - httproute.yaml
   - externalsecret-s3.yaml
   - secret-postgres-init.yaml
+  - configmap-sso-init.yaml
+  - job-sso-init.yaml
 patches:
   - path: postgres-cluster-patch.yaml
   - path: statefulset-redis-patch.yaml
