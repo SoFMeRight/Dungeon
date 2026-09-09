@@ -17,6 +17,7 @@ spec:
     # operationtimecapsule.com
     - "operationtimecapsule.com"
     - "*.operationtimecapsule.com"
+    - "optcp.com"
     - "*.optcp.com"
     # optcp.com subdomains
     - "books.optcp.com"

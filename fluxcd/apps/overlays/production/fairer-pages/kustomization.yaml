@@ -5,8 +5,6 @@ namespace: tingle-tuner
 
 resources:
   - ../../../base/fairer-pages
-  - httproute-apex-fallback-cell-membrane.yaml
-  - httproute-apex-fallback-xylem.yaml
   - httproute-cell-membrane-0.yaml
   - httproute-cell-membrane-1.yaml
   - httproute-cell-membrane-2.yaml
@@ -15,6 +13,7 @@ resources:
   - httproute-cell-membrane-5.yaml
   - httproute-cell-membrane-6.yaml
   - httproute-cell-membrane-7.yaml
+  - httproute-cell-membrane-8.yaml
   - httproute-xylem-0.yaml
   - httproute-xylem-service.yaml
   - httproute-xylem-1.yaml
