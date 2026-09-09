@@ -39,8 +39,8 @@ spec:
                     return
                   end
 
-                  -- Only intercept safe/idempotent methods (GET, HEAD)
-                  if method ~= "GET" and method ~= "HEAD" then
+                  -- GET only: the rewrite below writes a body, which HEAD must not carry.
+                  if method ~= "GET" then
                     return
                   end
 
@@ -108,7 +108,9 @@ spec:
                     response_handle:headers():add("cache-control", "no-cache, no-store, must-revalidate")
                     response_handle:headers():add("x-original-status", status)
 
-                    local body = response_handle:body()
+                    -- Force a buffer: a local reply carries no body to wrap, and the
+                    -- content-length replaced above has to describe one that is sent.
+                    local body = response_handle:body(true)
                     if body then
                       body:setBytes(html)
                     end
