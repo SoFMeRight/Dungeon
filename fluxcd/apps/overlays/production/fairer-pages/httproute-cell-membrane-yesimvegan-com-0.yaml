@@ -20,6 +20,22 @@ spec:
     - "meals.yesimvegan.com"
     - "wiki.yesimvegan.com"
   rules:
+    # Which playlist this domain's error pages draw from. The filter injects a fixed
+    # playlist segment; rewriting it here keeps the choice with the domain. Drop this
+    # rule and the domain falls back to whatever the filter asked for.
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /fairer-pages/playlist/default/
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /fairer-pages/playlist/chill/
+      backendRefs:
+        - name: fairer-pages
+          port: 8023
     - matches:
         - path:
             type: PathPrefix
