@@ -16,6 +16,10 @@ spec:
       labels:
         app: matrix-lk-jwt
         policy.prplanit.com/ingress: "true"
+        # Verifying a caller's OpenID token means resolving our own server name and calling
+        # the homeserver's federation API, which split-horizon DNS sends back through the
+        # gateway. Without the capability that hairpin is dropped and the lookup times out.
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: matrix-lk-jwt
       securityContext:
