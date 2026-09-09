@@ -10,7 +10,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.prplanit.com"
-    - "prplanit.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -23,7 +22,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.precisionplanit.com"
-    - "precisionplanit.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -49,7 +47,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.ipleek.com"
-    - "ipleek.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -101,7 +98,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.sofmeright.com"
-    - "sofmeright.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -114,7 +110,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.arbitorium.com"
-    - "arbitorium.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -127,7 +122,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.yesimvegan.com"
-    - "yesimvegan.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -140,7 +134,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.homelabhelpdesk.com"
-    - "homelabhelpdesk.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -153,7 +146,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.operationtimecapsule.com"
-    - "operationtimecapsule.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -190,7 +182,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.etherealclique.com"
-    - "etherealclique.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate

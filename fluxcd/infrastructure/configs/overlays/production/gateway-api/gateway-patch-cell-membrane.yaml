@@ -79,7 +79,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: ipleek-com-tls
+            name: ipleek-com-apex-tls
     - name: https-uni2
       protocol: HTTPS
       port: 443
@@ -115,7 +115,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: homelabhelpdesk-com-tls
+            name: homelabhelpdesk-com-apex-tls
     - name: https-operationtimecapsule
       protocol: HTTPS
       port: 443
@@ -139,7 +139,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: operationtimecapsule-com-tls
+            name: operationtimecapsule-com-apex-tls
     # ── Personal & public site domains ──
     - name: https-sofmeright
       protocol: HTTPS
@@ -200,7 +200,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: sofmeright-com-tls
+            name: sofmeright-com-apex-tls
     - name: https-arbitorium-bare
       protocol: HTTPS
       port: 443
@@ -212,7 +212,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: arbitorium-com-tls
+            name: arbitorium-com-apex-tls
     - name: https-yesimvegan-bare
       protocol: HTTPS
       port: 443
@@ -224,7 +224,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: yesimvegan-com-tls
+            name: yesimvegan-com-apex-tls
     - name: https-astralfocal
       protocol: HTTPS
       port: 443
@@ -260,7 +260,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: etherealclique-com-tls
+            name: etherealclique-com-apex-tls
     - name: https-outspokekin
       protocol: HTTPS
       port: 443
@@ -285,3 +285,29 @@ spec:
         certificateRefs:
           - kind: Secret
             name: outspokekin-com-apex-tls
+
+    - name: https-prplanit-apex
+      protocol: HTTPS
+      port: 443
+      hostname: "prplanit.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: prplanit-com-apex-tls
+
+    - name: https-precisionplanit-apex
+      protocol: HTTPS
+      port: 443
+      hostname: "precisionplanit.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: precisionplanit-com-apex-tls
