@@ -6,6 +6,9 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Administration (Zelda's Lullaby🎵)"
+      url: https://netbird.prplanit.com/
+      conditions:
+        - "[STATUS] == 200"
 spec:
   parentRefs:
     - name: cell-membrane-gateway
