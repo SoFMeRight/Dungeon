@@ -1,0 +1,30 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-matrix-turn-to-matrix-livekit
+spec:
+  description: >-
+    Relayed call media, TURN dataplane to SFU. This is the one hop in the call path that
+    the mesh never sees: ztunnel captures TCP, so the UDP a relay forwards arrives at the
+    SFU as plain pod-to-pod traffic and the namespace's default-deny drops it. The derived
+    ingress contract only covers the gateway's TCP ports (7880 signalling, 7881 TCP
+    fallback), which is why signalling succeeds and the call then fails to connect.
+    Scoped to this gateway's dataplane and to the SFU's configured ICE range.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: matrix-livekit
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: stunner
+            stunner.l7mp.io/related-gateway-name: matrix-turn
+      toPorts:
+        - ports:
+            - port: "50000"
+              endPort: 50100
+              protocol: UDP
+            - port: "7881"
+              protocol: TCP
