@@ -23,6 +23,17 @@ spec:
         - ports:
             - port: "3479"
               protocol: UDP
+    # A caller only ever talks to 3479, but the relay STUNner hands back for them lives on
+    # an ephemeral port, and the SFU has to reach THAT to complete its ICE checks. Without
+    # this the call authorises, signals and then never connects.
+    - fromEndpoints:
+        - matchLabels:
+            app: matrix-livekit
+      toPorts:
+        - ports:
+            - port: "32768"
+              endPort: 65535
+              protocol: UDP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
