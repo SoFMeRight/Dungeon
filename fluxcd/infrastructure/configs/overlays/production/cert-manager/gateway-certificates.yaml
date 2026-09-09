@@ -23,6 +23,9 @@ spec:
   dnsNames:
     - "*.precisionplanit.com"
 ---
+# Wildcard only: nothing serves these apexes at the origin, and one certificate
+# covering both names is what lets a browser coalesce an apex request onto a
+# subdomain's connection.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -34,7 +37,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.optcp.com"
-    - "optcp.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -59,7 +61,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.uni2.cc"
-    - "uni2.cc"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -84,7 +85,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.cr.pcfae.com"
-    - "cr.pcfae.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -335,3 +335,28 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "pcfae.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: optcp-com-apex-tls
+spec:
+  secretName: optcp-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "optcp.com"
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: uni2-cc-apex-tls
+spec:
+  secretName: uni2-cc-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "uni2.cc"

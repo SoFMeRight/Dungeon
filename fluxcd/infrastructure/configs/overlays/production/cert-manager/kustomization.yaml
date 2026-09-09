@@ -119,6 +119,13 @@ patches:
         value: hyrule-castle
     target:
       kind: Certificate
+      name: optcp-com-apex-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
       name: ipleek-com-tls
   - patch: |-
       - op: add
@@ -134,6 +141,13 @@ patches:
     target:
       kind: Certificate
       name: uni2-cc-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
+      name: uni2-cc-apex-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
