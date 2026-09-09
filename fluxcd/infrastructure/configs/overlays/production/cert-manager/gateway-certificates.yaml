@@ -72,7 +72,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.pcfae.com"
-    - "pcfae.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate

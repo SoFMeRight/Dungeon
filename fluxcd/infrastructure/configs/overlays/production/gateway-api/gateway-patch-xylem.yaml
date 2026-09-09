@@ -43,7 +43,7 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: pcfae-com-tls
+            name: pcfae-com-apex-tls
     - name: https-cr-pcfae
       protocol: HTTPS
       port: 443
