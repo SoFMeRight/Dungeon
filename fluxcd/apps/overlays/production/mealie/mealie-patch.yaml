@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: mealie
-          image: ghcr.io/mealie-recipes/mealie:nightly
+          image: ghcr.io/mealie-recipes/mealie:v3.25.1
           securityContext:
             readOnlyRootFilesystem: true
           env:
