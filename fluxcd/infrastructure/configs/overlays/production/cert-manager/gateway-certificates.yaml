@@ -204,3 +204,21 @@ spec:
   dnsNames:
     - "*.outspokekin.com"
     - "outspokekin.com"
+---
+# The apex gets its own certificate rather than sharing the wildcard's. A single cert
+# covering both names lets a browser reuse its HTTP/2 connection to a subdomain for an
+# apex request: the connection landed on the wildcard listener, whose route table has no
+# apex entry, so Envoy answers 404 route_not_found. Separate certs make the names
+# uncoalescable, which is what keeps /.well-known reachable from a client that already
+# holds a connection to matrix.outspokekin.com.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: outspokekin-com-apex-tls
+spec:
+  secretName: outspokekin-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "outspokekin.com"
