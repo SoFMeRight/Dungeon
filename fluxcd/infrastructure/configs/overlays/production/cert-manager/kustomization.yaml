@@ -127,3 +127,10 @@ patches:
     target:
       kind: Certificate
       name: outspokekin-com-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
+      name: outspokekin-com-apex-tls
