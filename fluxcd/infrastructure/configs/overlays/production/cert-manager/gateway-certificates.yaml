@@ -221,3 +221,115 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "outspokekin.com"
+---
+# The remaining apexes get their own certificates for the same reason as outspokekin's
+# above. Each is paired with a wildcard on one IP, so a shared certificate is all a
+# browser needs to reuse a subdomain's connection for an apex request — which then
+# arrives on the wildcard listener and is answered 404 route_not_found.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: arbitorium-com-apex-tls
+spec:
+  secretName: arbitorium-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "arbitorium.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: etherealclique-com-apex-tls
+spec:
+  secretName: etherealclique-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "etherealclique.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: homelabhelpdesk-com-apex-tls
+spec:
+  secretName: homelabhelpdesk-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "homelabhelpdesk.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ipleek-com-apex-tls
+spec:
+  secretName: ipleek-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "ipleek.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: operationtimecapsule-com-apex-tls
+spec:
+  secretName: operationtimecapsule-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "operationtimecapsule.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: precisionplanit-com-apex-tls
+spec:
+  secretName: precisionplanit-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "precisionplanit.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: prplanit-com-apex-tls
+spec:
+  secretName: prplanit-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "prplanit.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: sofmeright-com-apex-tls
+spec:
+  secretName: sofmeright-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "sofmeright.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: yesimvegan-com-apex-tls
+spec:
+  secretName: yesimvegan-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "yesimvegan.com"

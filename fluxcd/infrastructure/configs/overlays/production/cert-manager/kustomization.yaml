@@ -42,7 +42,21 @@ patches:
         value: hyrule-castle
     target:
       kind: Certificate
+      name: sofmeright-com-apex-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
       name: arbitorium-com-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
+      name: arbitorium-com-apex-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
@@ -56,6 +70,13 @@ patches:
         value: hyrule-castle
     target:
       kind: Certificate
+      name: yesimvegan-com-apex-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
       name: prplanit-com-tls
   - patch: |-
       - op: add
@@ -63,7 +84,21 @@ patches:
         value: hyrule-castle
     target:
       kind: Certificate
+      name: prplanit-com-apex-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
       name: precisionplanit-com-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
+      name: precisionplanit-com-apex-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
@@ -84,6 +119,13 @@ patches:
         value: hyrule-castle
     target:
       kind: Certificate
+      name: ipleek-com-apex-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
       name: uni2-cc-tls
   - patch: |-
       - op: add
@@ -98,7 +140,21 @@ patches:
         value: hyrule-castle
     target:
       kind: Certificate
+      name: operationtimecapsule-com-apex-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
       name: homelabhelpdesk-com-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
+      name: homelabhelpdesk-com-apex-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
@@ -120,6 +176,13 @@ patches:
     target:
       kind: Certificate
       name: etherealclique-com-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: hyrule-castle
+    target:
+      kind: Certificate
+      name: etherealclique-com-apex-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
