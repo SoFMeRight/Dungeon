@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: fairer-pages-cell-membrane-5
+  name: fairer-pages-cell-membrane-outspokekin-com-0
   namespace: tingle-tuner
   annotations:
     gatus.home-operations.com/endpoint: |
@@ -14,18 +14,15 @@ spec:
   hostnames:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 
-    # operationtimecapsule.com
-    - "operationtimecapsule.com"
-    - "*.operationtimecapsule.com"
-    - "optcp.com"
-    - "*.optcp.com"
-    # optcp.com subdomains
-    - "books.optcp.com"
-    - "flix.optcp.com"
-    - "jseer.optcp.com"
-    - "lwd.optcp.com"
-    - "ncloud.optcp.com"
-    - "plex.optcp.com"
+    # outspokekin.com
+    - "outspokekin.com"
+    - "*.outspokekin.com"
+    - "chat.outspokekin.com"
+    - "livekit.outspokekin.com"
+    - "matrix-auth.outspokekin.com"
+    - "matrix-call.outspokekin.com"
+    - "matrix.outspokekin.com"
+    - "social.outspokekin.com"
   rules:
     - matches:
         - path:

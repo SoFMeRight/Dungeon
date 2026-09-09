@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: fairer-pages-xylem-0
+  name: fairer-pages-cell-membrane-optcp-com-0
   namespace: tingle-tuner
   annotations:
     gatus.home-operations.com/endpoint: |
@@ -9,29 +9,20 @@ metadata:
     gatus.home-operations.com/enabled: "false"
 spec:
   parentRefs:
-    - name: xylem-gateway
-      namespace: arylls-lookout
+    - name: cell-membrane-gateway
+      namespace: hyrule-castle
   hostnames:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 
-    # pcfae.com
-    - "*.pcfae.com"
-    - "pcfae.com"
-    # pcfae.com subdomains
-    - "2fa.pcfae.com"
-    - "ai.pcfae.com"
-    - "anime.pcfae.com"
-    - "anubis.pcfae.com"
-    - "apps.pcfae.com"
-    - "apptray.pcfae.com"
-    - "apt.pcfae.com"
-    - "bazarr.pcfae.com"
-    - "beszel.pcfae.com"
-    - "bitwarden.pcfae.com"
-    - "blog.pcfae.com"
-    - "bookmarks.pcfae.com"
-    - "books.pcfae.com"
-    - "budget.pcfae.com"
+    # optcp.com
+    - "optcp.com"
+    - "*.optcp.com"
+    - "books.optcp.com"
+    - "flix.optcp.com"
+    - "jseer.optcp.com"
+    - "lwd.optcp.com"
+    - "ncloud.optcp.com"
+    - "plex.optcp.com"
   rules:
     - matches:
         - path:

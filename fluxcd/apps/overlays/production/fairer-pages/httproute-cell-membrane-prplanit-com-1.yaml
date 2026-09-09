@@ -1,0 +1,30 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: fairer-pages-cell-membrane-prplanit-com-1
+  namespace: tingle-tuner
+  annotations:
+    gatus.home-operations.com/endpoint: |
+      group: "Tools & Utilities (Tingle Tuner🔧)"
+    gatus.home-operations.com/enabled: "false"
+spec:
+  parentRefs:
+    - name: cell-membrane-gateway
+      namespace: hyrule-castle
+  hostnames:
+    # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
+
+    # prplanit.com
+    - "quay.prplanit.com"
+    - "sso.prplanit.com"
+    - "support.prplanit.com"
+    - "trmm.prplanit.com"
+    - "vw.prplanit.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /fairer-pages/
+      backendRefs:
+        - name: fairer-pages
+          port: 8023

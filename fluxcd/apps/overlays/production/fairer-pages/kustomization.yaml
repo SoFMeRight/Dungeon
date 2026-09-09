@@ -5,23 +5,28 @@ namespace: tingle-tuner
 
 resources:
   - ../../../base/fairer-pages
-  - httproute-cell-membrane-0.yaml
-  - httproute-cell-membrane-1.yaml
-  - httproute-cell-membrane-2.yaml
-  - httproute-cell-membrane-3.yaml
-  - httproute-cell-membrane-4.yaml
-  - httproute-cell-membrane-5.yaml
-  - httproute-cell-membrane-6.yaml
-  - httproute-cell-membrane-7.yaml
-  - httproute-cell-membrane-8.yaml
+  - httproute-cell-membrane-arbitorium-com-0.yaml
+  - httproute-cell-membrane-astralfocal-com-0.yaml
+  - httproute-cell-membrane-homelabhelpdesk-com-0.yaml
+  - httproute-cell-membrane-ipleek-com-0.yaml
+  - httproute-cell-membrane-kai-hamilton-com-0.yaml
+  - httproute-cell-membrane-operationtimecapsule-com-0.yaml
+  - httproute-cell-membrane-optcp-com-0.yaml
+  - httproute-cell-membrane-outspokekin-com-0.yaml
+  - httproute-cell-membrane-precisionplanit-com-0.yaml
+  - httproute-cell-membrane-prplanit-com-0.yaml
+  - httproute-cell-membrane-prplanit-com-1.yaml
+  - httproute-cell-membrane-sofmeright-com-0.yaml
+  - httproute-cell-membrane-uni2-cc-0.yaml
+  - httproute-cell-membrane-yesimvegan-com-0.yaml
+  - httproute-xylem-pcfae-com-0.yaml
+  - httproute-xylem-pcfae-com-1.yaml
+  - httproute-xylem-pcfae-com-2.yaml
+  - httproute-xylem-pcfae-com-3.yaml
+  - httproute-xylem-pcfae-com-4.yaml
+  - httproute-xylem-pcfae-com-5.yaml
   - httproute-cell-membrane-service.yaml
-  - httproute-xylem-0.yaml
   - httproute-xylem-service.yaml
-  - httproute-xylem-1.yaml
-  - httproute-xylem-2.yaml
-  - httproute-xylem-3.yaml
-  - httproute-xylem-4.yaml
-  - httproute-xylem-5.yaml
 
 patches:
   - path: service-patch.yaml

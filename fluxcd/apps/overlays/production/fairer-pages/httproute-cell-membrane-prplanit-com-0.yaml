@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: fairer-pages-cell-membrane-3
+  name: fairer-pages-cell-membrane-prplanit-com-0
   namespace: tingle-tuner
   annotations:
     gatus.home-operations.com/endpoint: |
@@ -17,7 +17,6 @@ spec:
     # prplanit.com
     - "prplanit.com"
     - "*.prplanit.com"
-    # prplanit.com subdomains
     - "analytics.prplanit.com"
     - "apps.prplanit.com"
     - "cal.prplanit.com"

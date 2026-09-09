@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: fairer-pages-cell-membrane-7
+  name: fairer-pages-cell-membrane-sofmeright-com-0
   namespace: tingle-tuner
   annotations:
     gatus.home-operations.com/endpoint: |
@@ -14,17 +14,6 @@ spec:
   hostnames:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 
-    # arbitorium.com
-    - "arbitorium.com"
-    - "*.arbitorium.com"
-    - "hass.arbitorium.com"
-
-    # astralfocal.com
-    - "astralfocal.com"
-
-    # kai-hamilton.com
-    - "kai-hamilton.com"
-
     # sofmeright.com
     - "sofmeright.com"
     - "*.sofmeright.com"
@@ -32,12 +21,6 @@ spec:
     - "ls.sofmeright.com"
     - "resume.sofmeright.com"
     - "uptime.sofmeright.com"
-
-    # yesimvegan.com
-    - "yesimvegan.com"
-    - "*.yesimvegan.com"
-    - "meals.yesimvegan.com"
-    - "wiki.yesimvegan.com"
   rules:
     - matches:
         - path:

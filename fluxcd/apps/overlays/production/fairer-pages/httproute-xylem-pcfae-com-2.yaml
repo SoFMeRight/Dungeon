@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: fairer-pages-xylem-1
+  name: fairer-pages-xylem-pcfae-com-2
   namespace: tingle-tuner
   annotations:
     gatus.home-operations.com/endpoint: |
@@ -14,22 +14,23 @@ spec:
   hostnames:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 
-    - "code.pcfae.com"
-    - "convertx.pcfae.com"
-    - "cr.pcfae.com"
-    - "crowdsec.pcfae.com"
-    - "design.pcfae.com"
-    - "dl.pcfae.com"
-    - "dns.pcfae.com"
-    - "dns2.pcfae.com"
-    - "draw.pcfae.com"
-    - "emulatorjs.pcfae.com"
-    - "flowy.pcfae.com"
-    - "flux.pcfae.com"
-    - "fotos.pcfae.com"
-    - "grafana.pcfae.com"
+    # pcfae.com
     - "guacamole.pcfae.com"
     - "gwfonts.pcfae.com"
+    - "hass.pcfae.com"
+    - "hosts.pcfae.com"
+    - "hrconvert2.pcfae.com"
+    - "hubble.pcfae.com"
+    - "images.pcfae.com"
+    - "inventory.pcfae.com"
+    - "invoice.pcfae.com"
+    - "isptest.pcfae.com"
+    - "ittools.pcfae.com"
+    - "jcr.pcfae.com"
+    - "joplin.pcfae.com"
+    - "kimai.pcfae.com"
+    - "kms.pcfae.com"
+    - "lidarr.pcfae.com"
   rules:
     - matches:
         - path:
