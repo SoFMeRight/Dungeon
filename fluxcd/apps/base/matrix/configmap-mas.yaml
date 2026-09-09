@@ -13,6 +13,9 @@ data:
             - name: discovery
             - name: human
             - name: oauth
+            # The account UI SPA queries /graphql; without this resource it 404s and the
+            # account page renders "Something went wrong!". Required for /account/ to work.
+            - name: graphql
             - name: compat
             - name: assets
           binds:
