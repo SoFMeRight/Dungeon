@@ -5,6 +5,7 @@ namespace: tingle-tuner
 
 resources:
   - ../../../base/fairer-pages
+  - httproute-apex-placeholder.yaml
   - httproute-cell-membrane-0.yaml
   - httproute-cell-membrane-1.yaml
   - httproute-cell-membrane-2.yaml

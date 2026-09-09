@@ -286,6 +286,32 @@ spec:
           - kind: Secret
             name: outspokekin-com-apex-tls
 
+    - name: https-optcp-apex
+      protocol: HTTPS
+      port: 443
+      hostname: "optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: optcp-com-apex-tls
+
+    - name: https-uni2-apex
+      protocol: HTTPS
+      port: 443
+      hostname: "uni2.cc"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: uni2-cc-apex-tls
+
     - name: https-prplanit-apex
       protocol: HTTPS
       port: 443
