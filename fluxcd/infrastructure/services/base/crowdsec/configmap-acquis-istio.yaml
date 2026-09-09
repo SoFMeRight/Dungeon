@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-istio
+data:
+  # Public-edge detection: the cell-membrane istio gateway (172.22.30.71) fronts all public
+  # traffic. Pull its Envoy access logs from Loki (filtered to request lines) and tag them
+  # type=istio-gw so prplanit/istio-gateway-logs parses them.
+  30-istio-loki.yaml: |
+    source: loki
+    url: http://loki.gossip-stone.svc.cluster.local:3100
+    limit: 1000
+    query: |
+      {namespace="hyrule-castle", pod=~"cell-membrane-gateway-istio-.*"} |= "HTTP/"
+    labels:
+      type: istio-gw
+    wait_for_ready: 10s

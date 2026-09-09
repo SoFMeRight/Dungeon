@@ -8,7 +8,7 @@ data:
     url: http://loki.gossip-stone.svc.cluster.local:3100
     limit: 1000
     query: |
-      {ap_mon_jobsname="docker", ap_mon_srvcname="nginx-extras"} |= "GET"
+      {service_name="nginx-extras"} |= "GET"
     labels:
       type: nginx
     wait_for_ready: 10s

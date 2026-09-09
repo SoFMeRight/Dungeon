@@ -10,6 +10,8 @@ resources:
   - service.yaml
   - configmap-acquis-nginx.yaml
   - configmap-acquis-bitwarden.yaml
+  - configmap-acquis-istio.yaml
+  - configmap-istio-parser.yaml
   - configmap-whitelist.yaml
   - configmap-bitwarden-parser.yaml
   - configmap-bitwarden-scenario.yaml

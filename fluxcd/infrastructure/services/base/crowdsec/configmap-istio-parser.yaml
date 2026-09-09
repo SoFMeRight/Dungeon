@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-istio-parser
+data:
+  # s01 parser for cell-membrane istio/Envoy gateway access logs. Emits the same
+  # evt.Parsed.* names as crowdsecurity/nginx-logs (+ log_type=http_access-log), so the
+  # stock s02 crowdsecurity/http-logs parser normalizes it and base-http-scenarios + http-cve
+  # fire. source_ip = leftmost X-Forwarded-For (real client; CF puts the client IP there and
+  # Envoy appends the edge hop). The grok skips the middle Envoy fields with GREEDYDATA and
+  # anchors the tail on the request-id UUID. Verified end-to-end via `cscli explain`.
+  istio-gateway.yaml: |
+    onsuccess: next_stage
+    filter: "evt.Line.Labels.type == 'istio-gw'"
+    name: prplanit/istio-gateway-logs
+    description: "Parse cell-membrane istio/Envoy gateway access logs into the http_access-log schema"
+    grok:
+      pattern: '\[%{NOTSPACE:t}\] "%{DATA:verb} %{DATA:request} HTTP/%{NOTSPACE}" %{NUMBER:status} %{GREEDYDATA} "%{DATA:x}" "%{DATA:http_user_agent}" "%{UUID}" "%{DATA:a}"'
+      apply_on: message
+    statics:
+      - meta: log_type
+        value: http_access-log
+      - meta: service
+        value: http
+      - parsed: remote_addr
+        expression: "Split(evt.Parsed.x, ',')[0]"
+      - parsed: target_fqdn
+        expression: evt.Parsed.a
+      - meta: source_ip
+        expression: "Split(evt.Parsed.x, ',')[0]"
+      - target: evt.StrTime
+        expression: evt.Parsed.t

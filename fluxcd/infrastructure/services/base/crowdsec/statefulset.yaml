@@ -99,6 +99,12 @@ spec:
             - name: bitwarden-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/bitwarden-bf.yaml
               subPath: bitwarden-bf.yaml
+            - name: acquis-istio
+              mountPath: /etc/crowdsec/acquis.d/30-istio-loki.yaml
+              subPath: 30-istio-loki.yaml
+            - name: istio-parser
+              mountPath: /etc/crowdsec/parsers/s01-parse/prplanit/istio-gateway.yaml
+              subPath: istio-gateway.yaml
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -122,6 +128,12 @@ spec:
         - name: bitwarden-scenario
           configMap:
             name: crowdsec-bitwarden-scenario
+        - name: acquis-istio
+          configMap:
+            name: crowdsec-acquis-istio
+        - name: istio-parser
+          configMap:
+            name: crowdsec-istio-parser
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-crowdsec-config
