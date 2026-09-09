@@ -91,6 +91,9 @@ data:
       "element_call": {
         "brand": "Outspoke Kin Calls",
         "guest_spa_url": "https://matrix-call.outspokekin.com"
+      },
+      "setting_defaults": {
+        "UIFeature.identityServer": false
       }
     }
 ---
