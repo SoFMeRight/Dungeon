@@ -14,6 +14,7 @@ resources:
   - httproute-cell-membrane-6.yaml
   - httproute-cell-membrane-7.yaml
   - httproute-cell-membrane-8.yaml
+  - httproute-cell-membrane-service.yaml
   - httproute-xylem-0.yaml
   - httproute-xylem-service.yaml
   - httproute-xylem-1.yaml

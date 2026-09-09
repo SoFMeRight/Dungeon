@@ -3,6 +3,9 @@ kind: Deployment
 metadata:
   name: fairer-pages
 spec:
+  # Every 404 on both gateways renders from here, so a single replica would blank the
+  # error page for the whole estate while it restarts.
+  replicas: 3
   template:
     metadata:
       labels:
