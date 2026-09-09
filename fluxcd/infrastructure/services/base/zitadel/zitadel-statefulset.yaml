@@ -14,6 +14,10 @@ spec:
         app: zitadel
     spec:
       serviceAccountName: zitadel
+      # Graceful rotation: preStop sleep (below) delays shutdown so the pod is pulled from
+      # the gateway's endpoints before it stops serving — no user hits a dying pod mid-login.
+      # 45s = 15s drain-delay + headroom for in-flight requests to finish.
+      terminationGracePeriodSeconds: 45
       # zitadel image already runs as the non-root 'zitadel' user (uid 1000); formalize it.
       securityContext:
         runAsNonRoot: true
@@ -138,6 +142,12 @@ spec:
               port: 8080
             initialDelaySeconds: 10
             periodSeconds: 5
+          # Native sleep handler (zitadel is distroless — no shell). Holds SIGTERM->stop long
+          # enough for endpoint removal to propagate to the gateway, so rotations are seamless.
+          lifecycle:
+            preStop:
+              sleep:
+                seconds: 15
       volumes:
         - name: zitadel-config
           configMap:

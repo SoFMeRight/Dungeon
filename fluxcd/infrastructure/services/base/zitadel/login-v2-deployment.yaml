@@ -15,6 +15,9 @@ spec:
         app: zitadel-login-v2
     spec:
       serviceAccountName: zitadel
+      # Graceful rotation: preStop sleep (below) + grace so a rotating login pod drains from
+      # the gateway's endpoints before it stops serving (matches the zitadel StatefulSet).
+      terminationGracePeriodSeconds: 45
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -54,3 +57,9 @@ spec:
             limits:
               cpu: 50m
               memory: 128Mi
+          # Native sleep handler: hold SIGTERM->stop so endpoint removal reaches the gateway
+          # before the pod stops serving — seamless rollouts.
+          lifecycle:
+            preStop:
+              sleep:
+                seconds: 15
