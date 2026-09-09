@@ -4,15 +4,18 @@ metadata:
   name: allow-appflowy-gotrue-egress
 spec:
   description: >-
-    appflowy-gotrue (the auth service) sends magic-link / recovery / invite
-    emails through an external SMTP submission relay (smtp.gmail.com:587). All
-    OAuth providers (Google/GitHub/Discord) are disabled, so SMTP is its only
-    world egress; its postgres DB is in-namespace and rides the mesh via the
-    universal CCNP baseline. The egress default-deny rollout allowlisted
-    appflowy-cloud/worker (app labels) but missed gotrue (app=appflowy), so the
-    magic-link mailer could not reach Gmail — every email-login POST hit gotrue's
-    10s deadline and returned 504. Allow egress to SMTP submission only; DNS
-    rides the baseline. Additive (enableDefaultDeny false) so nothing else changes.
+    appflowy-gotrue (the auth service) has two egress needs beyond the mesh.
+    (1) SMTP: magic-link / recovery / invite emails go through an external SMTP
+    submission relay (smtp.gmail.com:587) — its only world egress (OAuth
+    providers are disabled). (2) SAML SSO: gotrue fetches the Zitadel IdP
+    metadata from sso.prplanit.com, which resolves to the cell-membrane gateway
+    VIP via split-horizon DNS (a cluster destination, per the matrix-auth
+    precedent), so metadata discovery is cluster egress on 443. The gateway's
+    own ingress contract still requires the pod to carry cap.oidc=true. The
+    egress default-deny rollout allowlisted appflowy-cloud/worker (app labels)
+    but missed gotrue (app=appflowy). Its postgres DB is in-namespace and rides
+    the mesh via the universal CCNP baseline; DNS rides the baseline too.
+    Additive (enableDefaultDeny false) so nothing else changes.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -21,9 +24,19 @@ spec:
       app: appflowy
       component: gotrue
   egress:
+    # SMTP submission relay (magic-link / recovery mail) — external.
     - toEntities:
         - world
       toPorts:
         - ports:
             - port: "587"
+              protocol: TCP
+    # Zitadel SAML IdP metadata fetch via the cell-membrane gateway hairpin
+    # (sso.prplanit.com -> gateway VIP, a cluster identity). Pairs with the
+    # cap.oidc=true label the gateway's ingress contract requires.
+    - toEntities:
+        - cluster
+      toPorts:
+        - ports:
+            - port: "443"
               protocol: TCP

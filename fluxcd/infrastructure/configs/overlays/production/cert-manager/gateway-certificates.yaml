@@ -324,3 +324,15 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "yesimvegan.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pcfae-com-apex-tls
+spec:
+  secretName: pcfae-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "pcfae.com"

@@ -21,6 +21,7 @@ resources:
   - allow-appflowy-nginx-to-appflowy-gotrue.yaml
   - allow-appflowy-nginx-to-appflowy-cloud.yaml
   - allow-appflowy-nginx-to-appflowy-web.yaml
+  - allow-appflowy-sso-init-to-appflowy-gotrue.yaml
   - allow-matrix-auth-to-matrix-synapse.yaml
   - allow-matrix-to-matrix-postgres.yaml
   - allow-mealie-to-mealie-postgres.yaml

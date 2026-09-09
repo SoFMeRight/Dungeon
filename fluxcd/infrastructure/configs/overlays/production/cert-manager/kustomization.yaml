@@ -28,6 +28,13 @@ patches:
         value: arylls-lookout
     target:
       kind: Certificate
+      name: pcfae-com-apex-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: arylls-lookout
+    target:
+      kind: Certificate
       name: cr-pcfae-com-tls
   - patch: |-
       - op: add
