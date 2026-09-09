@@ -5,6 +5,9 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Private Apps (Pedestal of Time⚔️)"
+      url: https://shiplog.pcfae.com/
+      conditions:
+        - "[STATUS] == 200"
 spec:
   parentRefs:
     - name: xylem-gateway
