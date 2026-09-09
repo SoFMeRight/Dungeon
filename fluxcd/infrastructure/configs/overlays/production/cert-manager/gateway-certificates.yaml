@@ -203,7 +203,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.outspokekin.com"
-    - "outspokekin.com"
 ---
 # The apex gets its own certificate rather than sharing the wildcard's. A single cert
 # covering both names lets a browser reuse its HTTP/2 connection to a subdomain for an

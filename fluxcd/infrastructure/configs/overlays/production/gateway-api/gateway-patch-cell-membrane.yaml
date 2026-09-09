@@ -284,4 +284,4 @@ spec:
         mode: Terminate
         certificateRefs:
           - kind: Secret
-            name: outspokekin-com-tls
+            name: outspokekin-com-apex-tls
