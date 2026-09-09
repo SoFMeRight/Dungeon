@@ -32,12 +32,34 @@ data:
       location = /.well-known/matrix/server {
         default_type application/json;
         add_header Access-Control-Allow-Origin * always;
+        add_header Access-Control-Allow-Methods "GET, HEAD, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization" always;
+        # Native clients run from an opaque origin, so their discovery fetch is preflighted.
+        # Answering OPTIONS with 405 fails the preflight and the whole lookup with it.
+        if ($request_method = OPTIONS) {
+          add_header Access-Control-Allow-Origin * always;
+          add_header Access-Control-Allow-Methods "GET, HEAD, OPTIONS" always;
+          add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization" always;
+          add_header Content-Length 0;
+          return 204;
+        }
         alias /srv/wellknown/server.json;
       }
 
       location = /.well-known/matrix/client {
         default_type application/json;
         add_header Access-Control-Allow-Origin * always;
+        add_header Access-Control-Allow-Methods "GET, HEAD, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization" always;
+        # Native clients run from an opaque origin, so their discovery fetch is preflighted.
+        # Answering OPTIONS with 405 fails the preflight and the whole lookup with it.
+        if ($request_method = OPTIONS) {
+          add_header Access-Control-Allow-Origin * always;
+          add_header Access-Control-Allow-Methods "GET, HEAD, OPTIONS" always;
+          add_header Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization" always;
+          add_header Content-Length 0;
+          return 204;
+        }
         alias /srv/wellknown/client.json;
       }
 
