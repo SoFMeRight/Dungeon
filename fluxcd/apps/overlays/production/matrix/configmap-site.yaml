@@ -99,8 +99,9 @@ kind: ConfigMap
 metadata:
   name: matrix-element-call-config
 data:
-  # The SFU is deliberately absent: upstream treats a livekit block here as a debugging
-  # aid, and the supported path is the rtc_foci the homeserver publishes.
+  # The SFU is named here as a fallback, not as the primary source: the app asks the
+  # homeserver for its transports first and only reads this when that lookup returns
+  # nothing, which is the difference between a call failing outright and it connecting.
   config.json: |
     {
       "default_server_config": {
@@ -108,5 +109,8 @@ data:
           "base_url": "https://matrix.outspokekin.com",
           "server_name": "outspokekin.com"
         }
+      },
+      "livekit": {
+        "livekit_service_url": "https://livekit.outspokekin.com/livekit/jwt"
       }
     }
