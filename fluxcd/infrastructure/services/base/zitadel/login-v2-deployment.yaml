@@ -57,6 +57,17 @@ spec:
             limits:
               cpu: 50m
               memory: 128Mi
+          # Gates traffic until the login app is actually serving, so a fresh pod isn't added to
+          # the gateway's endpoints before Next.js is listening (startup side of graceful rollout).
+          # App is served under /ui/v2/login; /healthy there is its health endpoint (verified).
+          readinessProbe:
+            httpGet:
+              path: /ui/v2/login/healthy
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
           # Native sleep handler: hold SIGTERM->stop so endpoint removal reaches the gateway
           # before the pod stops serving — seamless rollouts.
           lifecycle:
