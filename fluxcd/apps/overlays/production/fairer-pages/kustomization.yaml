@@ -5,6 +5,8 @@ namespace: tingle-tuner
 
 resources:
   - ../../../base/fairer-pages
+  - httproute-_cell-membrane-fairer-pages-prplanit-com.yaml
+  - httproute-_xylem-fairer-pages-pcfae-com.yaml
   - httproute-cell-membrane-arbitorium-com-0.yaml
   - httproute-cell-membrane-astralfocal-com-0.yaml
   - httproute-cell-membrane-homelabhelpdesk-com-0.yaml
@@ -25,8 +27,6 @@ resources:
   - httproute-xylem-pcfae-com-3.yaml
   - httproute-xylem-pcfae-com-4.yaml
   - httproute-xylem-pcfae-com-5.yaml
-  - httproute-cell-membrane-service.yaml
-  - httproute-xylem-service.yaml
 
 patches:
   - path: service-patch.yaml
