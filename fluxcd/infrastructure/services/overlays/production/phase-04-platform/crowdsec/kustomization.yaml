@@ -6,6 +6,7 @@ namespace: lens-of-truth
 resources:
   - ../../../../base/crowdsec
   - statefulset-postgres.yaml
+  - externalsecret-config-local.yaml
 
 patches:
   # StatefulSet patches

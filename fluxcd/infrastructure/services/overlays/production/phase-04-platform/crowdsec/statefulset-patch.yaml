@@ -25,25 +25,6 @@ spec:
               value: "Dungeon"
             - name: ENROLL_TAGS
               value: "k8s linux production"
-            # Postgres backend (replaces SQLite). CrowdSec's entrypoint writes these into
-            # db_config on each start. sslmode=disable — the hop is mTLS-encrypted in-mesh.
-            - name: DB_TYPE
-              value: "postgresql"
-            - name: DB_HOST
-              value: "crowdsec-postgres"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_USER
-              value: "crowdsec"
-            - name: DB_NAME
-              value: "crowdsec"
-            - name: DB_SSLMODE
-              value: "disable"
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: crowdsec-secrets
-                  key: CROWDSEC_DB_PASSWORD
             # Re-register the cloudflare-bouncer on the fresh DB with its existing LAPI key
             # (Vault-backed; reference only, no secret in git).
             - name: BOUNCER_KEY_cloudflare
@@ -56,6 +37,13 @@ spec:
               mountPath: /var/lib/crowdsec/data
             - name: lens-of-truth-crowdsec-config
               mountPath: /etc/crowdsec
+            # config.yaml.local (db_config -> postgres) deep-merges over the persisted
+            # config.yaml. crowdsec v1.8.1 ignores DB_* env against an existing config.yaml,
+            # so this override is what actually points it at crowdsec-postgres.
+            - name: config-local
+              mountPath: /etc/crowdsec/config.yaml.local
+              subPath: config.yaml.local
+              readOnly: true
           resources:
             requests:
               cpu: "250m"
@@ -63,6 +51,10 @@ spec:
             limits:
               cpu: "1000m"
               memory: "2Gi"
+      volumes:
+        - name: config-local
+          secret:
+            secretName: crowdsec-config-local
   volumeClaimTemplates:
     # volumeClaimTemplates has no strategic-merge key, so this list REPLACES the base's
     # -- the config claim must be restated here or it is silently dropped.
