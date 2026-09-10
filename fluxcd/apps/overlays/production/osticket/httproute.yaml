@@ -20,4 +20,5 @@ spec:
             value: /
       backendRefs:
         - name: osticket-app
-          port: 80
+          # The Service publishes 8184; the xylem route already names it.
+          port: 8184

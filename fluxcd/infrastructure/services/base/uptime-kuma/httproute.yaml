@@ -11,4 +11,6 @@ spec:
   rules:
     - backendRefs:
         - name: uptime-kuma
-          port: 80
+          # The production overlay serves this on the container's own port; the xylem
+          # route already names it.
+          port: 3001

@@ -101,8 +101,6 @@ spec:
               protocol: TCP
             - port: "8080"
               protocol: TCP
-            - port: "8081"
-              protocol: TCP
             - port: "8083"
               protocol: TCP
             - port: "8090"
@@ -115,16 +113,14 @@ spec:
               protocol: TCP
             - port: "8200"
               protocol: TCP
-        - ports:
             - port: "8227"
               protocol: TCP
+        - ports:
             - port: "8443"
               protocol: TCP
             - port: "8480"
               protocol: TCP
             - port: "8686"
-              protocol: TCP
-            - port: "8754"
               protocol: TCP
             - port: "8787"
               protocol: TCP

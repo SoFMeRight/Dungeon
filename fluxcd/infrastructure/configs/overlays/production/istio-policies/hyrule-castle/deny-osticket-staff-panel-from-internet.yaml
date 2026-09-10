@@ -1,0 +1,21 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-osticket-staff-panel-from-internet
+spec:
+  selector:
+    matchLabels:
+      app: osticket-app
+  action: DENY
+  rules:
+    # /scp is the staff control panel. The client portal is meant to be public, the
+    # admin login is not: support.prplanit.com is internet-facing with no auth in front
+    # of it. Reaching the panel means coming through the internal gateway instead, which
+    # is not port-forwarded.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/hyrule-castle/sa/cell-membrane-gateway-istio
+      to:
+        - operation:
+            paths: ["/scp", "/scp/*"]
