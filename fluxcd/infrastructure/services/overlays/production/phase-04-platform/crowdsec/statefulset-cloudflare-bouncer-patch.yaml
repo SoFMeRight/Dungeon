@@ -35,7 +35,7 @@ spec:
               mountPath: /config
       containers:
         - name: cloudflare-bouncer
-          image: docker.io/crowdsecurity/cloudflare-worker-bouncer:v0.0.18
+          image: ghcr.io/crowdsecurity/cloudflare-worker-bouncer:v0.0.18
           volumeMounts:
             - name: bouncer-config-rendered
               mountPath: /etc/crowdsec/bouncers
