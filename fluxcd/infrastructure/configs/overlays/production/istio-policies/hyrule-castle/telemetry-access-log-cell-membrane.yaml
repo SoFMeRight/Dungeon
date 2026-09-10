@@ -1,0 +1,16 @@
+# Enables Envoy access logging (stdout, default format) for the public cell-membrane
+# gateway so its request logs flow through alloy to Loki, where CrowdSec parses them
+# for attack detection. istio emits no access logs by default (meshConfig sets no
+# accessLogFile); this Telemetry scopes logging to the gateway workload only, so
+# east-west sidecar traffic stays unlogged and Loki cardinality stays bounded.
+apiVersion: telemetry.istio.io/v1
+kind: Telemetry
+metadata:
+  name: cell-membrane-access-log
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  accessLogging:
+    - providers:
+        - name: envoy

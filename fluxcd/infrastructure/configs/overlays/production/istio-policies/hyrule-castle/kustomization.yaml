@@ -47,4 +47,5 @@ resources:
   - allow-harbor-proxy-cache-to-harbor.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
+  - telemetry-access-log-cell-membrane.yaml
   - deny-osticket-staff-panel-from-internet.yaml

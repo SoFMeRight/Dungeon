@@ -872,12 +872,19 @@ data:
       }
     }
 
-    // Extract log level
+    // Extract log level for the `level` stream label. Match only genuine log-level
+    // positions: a structured level/severity field (logfmt or JSON) or a level token
+    // at the very start of the line. Anchoring keeps incidental level-words in message
+    // bodies — a request to /debug or an "error" string in an access-log URL — from
+    // setting a bogus level and splitting one logical stream into several.
     loki.process "add_labels" {
       forward_to = [loki.write.default.receiver]
 
       stage.regex {
-        expression = "(?i)(?P<level>debug|info|warn|warning|error|fatal|critical)"
+        expression = "(?i)(?:level|lvl|severity)\"?\\s*[=:]\\s*\"?(?P<level>debug|info|warn|warning|error|fatal|critical)"
+      }
+      stage.regex {
+        expression = "(?i)^\\[?(?P<level>debug|info|warn|warning|error|fatal|critical)\\b"
       }
 
       stage.labels {
