@@ -35,7 +35,7 @@ metadata:
   description:
     - GitOps state for the dungeon Kubernetes cluster and its Docker hosts.
     - 'The cluster''s source of truth: Flux manifests, Ansible automation and compose stacks for every service running on the estate.'
-  license: MIT
+  license: GPL-3.0-only
   org: SoFMeRight
   title: Dungeon
   topics:
