@@ -25,42 +25,54 @@ spec:
               value: "Dungeon"
             - name: ENROLL_TAGS
               value: "k8s linux production"
-            # Re-register the cloudflare-bouncer on the fresh DB with its existing LAPI key
-            # (Vault-backed; reference only, no secret in git).
-            - name: BOUNCER_KEY_cloudflare
+            # Bouncer + machine identities/credentials — all Vault-backed, consumed by the
+            # postStart hook below. crowdsec has no native env to register a named bouncer or a
+            # remote machine from values, so name/key/pass are passed through and registered there.
+            - name: BOUNCER_CLOUDFLARE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: BOUNCER_CLOUDFLARE_NAME
+            - name: BOUNCER_CLOUDFLARE_LAPI_KEY
               valueFrom:
                 secretKeyRef:
                   name: crowdsec-secrets
                   key: BOUNCER_CLOUDFLARE_LAPI_KEY
-            # pfSense HA firewall bouncers (one per box). The entrypoint derives the bouncer
-            # name from the env suffix after BOUNCER_KEY_, so these register as
-            # shield_generator / shield_regenerator. Idempotent by name; keys are Vault-backed.
-            - name: BOUNCER_KEY_shield_generator
+            - name: BOUNCER_SHIELD_GENERATOR_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: BOUNCER_SHIELD_GENERATOR_NAME
+            - name: BOUNCER_SHIELD_GENERATOR_LAPI_KEY
               valueFrom:
                 secretKeyRef:
                   name: crowdsec-secrets
                   key: BOUNCER_SHIELD_GENERATOR_LAPI_KEY
-            - name: BOUNCER_KEY_shield_regenerator
+            - name: BOUNCER_SHIELD_REGENERATOR_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: BOUNCER_SHIELD_REGENERATOR_NAME
+            - name: BOUNCER_SHIELD_REGENERATOR_LAPI_KEY
               valueFrom:
                 secretKeyRef:
                   name: crowdsec-secrets
                   key: BOUNCER_SHIELD_REGENERATOR_LAPI_KEY
-            # pfSense HA log-processor machine credentials, consumed by the postStart hook.
-            - name: MACHINE_SHIELD_GENERATOR_USER
+            - name: MACHINE_SHIELD_GENERATOR_NAME
               valueFrom:
                 secretKeyRef:
                   name: crowdsec-secrets
-                  key: MACHINE_SHIELD_GENERATOR_USER
+                  key: MACHINE_SHIELD_GENERATOR_NAME
             - name: MACHINE_SHIELD_GENERATOR_PASS
               valueFrom:
                 secretKeyRef:
                   name: crowdsec-secrets
                   key: MACHINE_SHIELD_GENERATOR_PASS
-            - name: MACHINE_SHIELD_REGENERATOR_USER
+            - name: MACHINE_SHIELD_REGENERATOR_NAME
               valueFrom:
                 secretKeyRef:
                   name: crowdsec-secrets
-                  key: MACHINE_SHIELD_REGENERATOR_USER
+                  key: MACHINE_SHIELD_REGENERATOR_NAME
             - name: MACHINE_SHIELD_REGENERATOR_PASS
               valueFrom:
                 secretKeyRef:
@@ -85,13 +97,20 @@ spec:
                   - sh
                   - -c
                   - |
-                    # Register the pfSense HA log-processor machines from Vault-backed env.
-                    # cscli writes straight to the DB (no LAPI needed); -f /dev/null keeps the
-                    # local agent creds untouched. Best-effort + idempotent (--force) so a
-                    # transient failure never blocks crowdsec from starting.
-                    for i in $(seq 1 60); do cscli machines list >/dev/null 2>&1 && break; sleep 2; done
-                    cscli machines add "$MACHINE_SHIELD_GENERATOR_USER" --password "$MACHINE_SHIELD_GENERATOR_PASS" -f /dev/null --force || true
-                    cscli machines add "$MACHINE_SHIELD_REGENERATOR_USER" --password "$MACHINE_SHIELD_REGENERATOR_PASS" -f /dev/null --force || true
+                    # Register all bouncers + log-processor machines from Vault-backed env.
+                    # cscli writes straight to the DB (no LAPI needed). Bouncers have no --force
+                    # so delete-then-add (also self-heals a rotated/typo'd key); machines use
+                    # --force. -f /dev/null keeps the local agent creds untouched. Best-effort so
+                    # a transient failure never blocks crowdsec from starting.
+                    for i in $(seq 1 60); do cscli bouncers list >/dev/null 2>&1 && break; sleep 2; done
+                    cscli bouncers delete "$BOUNCER_CLOUDFLARE_NAME" >/dev/null 2>&1 || true
+                    cscli bouncers add "$BOUNCER_CLOUDFLARE_NAME" -k "$BOUNCER_CLOUDFLARE_LAPI_KEY" >/dev/null 2>&1 || true
+                    cscli bouncers delete "$BOUNCER_SHIELD_GENERATOR_NAME" >/dev/null 2>&1 || true
+                    cscli bouncers add "$BOUNCER_SHIELD_GENERATOR_NAME" -k "$BOUNCER_SHIELD_GENERATOR_LAPI_KEY" >/dev/null 2>&1 || true
+                    cscli bouncers delete "$BOUNCER_SHIELD_REGENERATOR_NAME" >/dev/null 2>&1 || true
+                    cscli bouncers add "$BOUNCER_SHIELD_REGENERATOR_NAME" -k "$BOUNCER_SHIELD_REGENERATOR_LAPI_KEY" >/dev/null 2>&1 || true
+                    cscli machines add "$MACHINE_SHIELD_GENERATOR_NAME" --password "$MACHINE_SHIELD_GENERATOR_PASS" -f /dev/null --force || true
+                    cscli machines add "$MACHINE_SHIELD_REGENERATOR_NAME" --password "$MACHINE_SHIELD_REGENERATOR_PASS" -f /dev/null --force || true
           resources:
             requests:
               cpu: "250m"
