@@ -88,6 +88,24 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        # Element holds a logged-in session and offers destructive one-click actions
+        # (device verification, room leave, key export), so no one may frame it. It is
+        # only ever a top-level app; it embeds widgets rather than being embedded.
+        # frame-ancestors is the enforced rule, X-Frame-Options the pre-CSP2 fallback.
+        # No COOP: the MAS login return is a cross-origin navigation, and an opener
+        # policy makes the browser swap browsing-context groups and replay it.
+        - type: ResponseHeaderModifier
+          responseHeaderModifier:
+            set:
+              - name: Content-Security-Policy
+                value: frame-ancestors 'self'
+              - name: X-Frame-Options
+                value: SAMEORIGIN
+              - name: X-Content-Type-Options
+                value: nosniff
+              - name: Referrer-Policy
+                value: strict-origin-when-cross-origin
       backendRefs:
         - name: matrix-element
           port: 8080
