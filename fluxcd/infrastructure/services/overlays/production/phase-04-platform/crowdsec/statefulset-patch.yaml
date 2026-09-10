@@ -11,23 +11,30 @@ spec:
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: lens-of-truth.crowdsec.postgres
     spec:
-      containers:
-        - name: crowdsec
+      initContainers:
+        # Seed the crowdsec Postgres DB with the Vault-declared bouncers + log-processor
+        # machines BEFORE crowdsec starts. cscli writes straight to the DB (needs only Postgres,
+        # not the LAPI), via a standalone db_config, so it never depends on the main container's
+        # generated config or on crowdsec being up. Waits out transient startup DNS; best-effort
+        # (exit 0) so it can never block or crashloop crowdsec. Re-runs on every pod start, which
+        # is when fresh Vault values arrive — so it re-converges to the declared state.
+        - name: pfsense-registrar
           image: ghcr.io/crowdsecurity/crowdsec:v1.8.1
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /tmp/registrar-data
+              C="cscli -c /registrar-config/config.yaml"
+              for i in $(seq 1 40); do $C bouncers list >/dev/null 2>&1 && break; sleep 3; done
+              reg() { $C bouncers delete "$1" >/dev/null 2>&1 || true; $C bouncers add "$1" -k "$2" >/dev/null 2>&1 || true; }
+              reg "$BOUNCER_CLOUDFLARE_NAME" "$BOUNCER_CLOUDFLARE_LAPI_KEY"
+              reg "$BOUNCER_SHIELD_GENERATOR_NAME" "$BOUNCER_SHIELD_GENERATOR_LAPI_KEY"
+              reg "$BOUNCER_SHIELD_REGENERATOR_NAME" "$BOUNCER_SHIELD_REGENERATOR_LAPI_KEY"
+              $C machines add "$MACHINE_SHIELD_GENERATOR_NAME" --password "$MACHINE_SHIELD_GENERATOR_PASS" -f /dev/null --force >/dev/null 2>&1 || true
+              $C machines add "$MACHINE_SHIELD_REGENERATOR_NAME" --password "$MACHINE_SHIELD_REGENERATOR_PASS" -f /dev/null --force >/dev/null 2>&1 || true
+              exit 0
           env:
-            - name: CUSTOM_HOSTNAME
-              value: "dungeon-k8s"
-            - name: CROWDSEC_API_PORT
-              value: "3403"
-            - name: ENROLL_KEY
-              value: "cm9ntuqmc000jjx08n5r84rtt"
-            - name: ENROLL_INSTANCE_NAME
-              value: "Dungeon"
-            - name: ENROLL_TAGS
-              value: "k8s linux production"
-            # Bouncer + machine identities/credentials — all Vault-backed, consumed by the
-            # postStart hook below. crowdsec has no native env to register a named bouncer or a
-            # remote machine from values, so name/key/pass are passed through and registered there.
             - name: BOUNCER_CLOUDFLARE_NAME
               valueFrom:
                 secretKeyRef:
@@ -79,6 +86,36 @@ spec:
                   name: crowdsec-secrets
                   key: MACHINE_SHIELD_REGENERATOR_PASS
           volumeMounts:
+            - name: registrar-config
+              mountPath: /registrar-config
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "32Mi"
+            limits:
+              cpu: "100m"
+              memory: "128Mi"
+      containers:
+        - name: crowdsec
+          image: ghcr.io/crowdsecurity/crowdsec:v1.8.1
+          env:
+            - name: CUSTOM_HOSTNAME
+              value: "dungeon-k8s"
+            - name: CROWDSEC_API_PORT
+              value: "3403"
+            - name: ENROLL_KEY
+              value: "cm9ntuqmc000jjx08n5r84rtt"
+            - name: ENROLL_INSTANCE_NAME
+              value: "Dungeon"
+            - name: ENROLL_TAGS
+              value: "k8s linux production"
+          volumeMounts:
             - name: lens-of-truth-crowdsec-data
               mountPath: /var/lib/crowdsec/data
             - name: lens-of-truth-crowdsec-config
@@ -90,27 +127,6 @@ spec:
               mountPath: /etc/crowdsec/config.yaml.local
               subPath: config.yaml.local
               readOnly: true
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - sh
-                  - -c
-                  - |
-                    # Register all bouncers + log-processor machines from Vault-backed env.
-                    # cscli writes straight to the DB (no LAPI needed). Bouncers have no --force
-                    # so delete-then-add (also self-heals a rotated/typo'd key); machines use
-                    # --force. -f /dev/null keeps the local agent creds untouched. Best-effort so
-                    # a transient failure never blocks crowdsec from starting.
-                    for i in $(seq 1 60); do cscli bouncers list >/dev/null 2>&1 && break; sleep 2; done
-                    cscli bouncers delete "$BOUNCER_CLOUDFLARE_NAME" >/dev/null 2>&1 || true
-                    cscli bouncers add "$BOUNCER_CLOUDFLARE_NAME" -k "$BOUNCER_CLOUDFLARE_LAPI_KEY" >/dev/null 2>&1 || true
-                    cscli bouncers delete "$BOUNCER_SHIELD_GENERATOR_NAME" >/dev/null 2>&1 || true
-                    cscli bouncers add "$BOUNCER_SHIELD_GENERATOR_NAME" -k "$BOUNCER_SHIELD_GENERATOR_LAPI_KEY" >/dev/null 2>&1 || true
-                    cscli bouncers delete "$BOUNCER_SHIELD_REGENERATOR_NAME" >/dev/null 2>&1 || true
-                    cscli bouncers add "$BOUNCER_SHIELD_REGENERATOR_NAME" -k "$BOUNCER_SHIELD_REGENERATOR_LAPI_KEY" >/dev/null 2>&1 || true
-                    cscli machines add "$MACHINE_SHIELD_GENERATOR_NAME" --password "$MACHINE_SHIELD_GENERATOR_PASS" -f /dev/null --force || true
-                    cscli machines add "$MACHINE_SHIELD_REGENERATOR_NAME" --password "$MACHINE_SHIELD_REGENERATOR_PASS" -f /dev/null --force || true
           resources:
             requests:
               cpu: "250m"
@@ -122,6 +138,9 @@ spec:
         - name: config-local
           secret:
             secretName: crowdsec-config-local
+        - name: registrar-config
+          secret:
+            secretName: crowdsec-registrar-config
   volumeClaimTemplates:
     # volumeClaimTemplates has no strategic-merge key, so this list REPLACES the base's
     # -- the config claim must be restated here or it is silently dropped.
