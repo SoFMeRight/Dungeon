@@ -70,7 +70,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: crowdsec-secrets
-                  key: CROWDSEC_DB_PASSWORD
+                  key: POSTGRES_PASSWORD
           volumeMounts:
             - name: lens-of-truth-crowdsec-postgres
               mountPath: /var/lib/postgresql/data

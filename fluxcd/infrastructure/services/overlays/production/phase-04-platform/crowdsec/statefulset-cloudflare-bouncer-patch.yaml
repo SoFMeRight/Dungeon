@@ -18,11 +18,11 @@ spec:
             - |
               envsubst < /config-template/crowdsec-cloudflare-bouncer.yaml > /config/crowdsec-cloudflare-bouncer.yaml
           env:
-            - name: CROWDSEC_LAPI_KEY
+            - name: BOUNCER_CLOUDFLARE_LAPI_KEY
               valueFrom:
                 secretKeyRef:
                   name: crowdsec-secrets
-                  key: CROWDSEC_LAPI_KEY
+                  key: BOUNCER_CLOUDFLARE_LAPI_KEY
             - name: CLOUDFLARE_TOKEN
               valueFrom:
                 secretKeyRef:

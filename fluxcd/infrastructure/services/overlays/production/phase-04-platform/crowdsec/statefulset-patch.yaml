@@ -31,7 +31,20 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: crowdsec-secrets
-                  key: CROWDSEC_LAPI_KEY
+                  key: BOUNCER_CLOUDFLARE_LAPI_KEY
+            # pfSense HA firewall bouncers (one per box). The entrypoint derives the bouncer
+            # name from the env suffix after BOUNCER_KEY_, so these register as
+            # shield_generator / shield_regenerator. Idempotent by name; keys are Vault-backed.
+            - name: BOUNCER_KEY_shield_generator
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: BOUNCER_SHIELD_GENERATOR_LAPI_KEY
+            - name: BOUNCER_KEY_shield_regenerator
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: BOUNCER_SHIELD_REGENERATOR_LAPI_KEY
           volumeMounts:
             - name: lens-of-truth-crowdsec-data
               mountPath: /var/lib/crowdsec/data

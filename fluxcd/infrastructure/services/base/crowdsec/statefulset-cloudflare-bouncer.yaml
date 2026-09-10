@@ -48,11 +48,11 @@ spec:
           env:
             - name: CROWDSEC_LAPI_URL
               value: "http://crowdsec:8080/"
-            - name: CROWDSEC_LAPI_KEY
+            - name: BOUNCER_CLOUDFLARE_LAPI_KEY
               valueFrom:
                 secretKeyRef:
                   name: crowdsec-secrets
-                  key: CROWDSEC_LAPI_KEY
+                  key: BOUNCER_CLOUDFLARE_LAPI_KEY
             - name: CLOUDFLARE_TOKEN
               valueFrom:
                 secretKeyRef:
