@@ -3,30 +3,54 @@ kind: ConfigMap
 metadata:
   name: crowdsec-istio-parser
 data:
-  # s01 parser for cell-membrane istio/Envoy gateway access logs. Emits the same
-  # evt.Parsed.* names as crowdsecurity/nginx-logs (+ log_type=http_access-log), so the
-  # stock s02 crowdsecurity/http-logs parser normalizes it and base-http-scenarios + http-cve
-  # fire. source_ip = leftmost X-Forwarded-For (real client; CF puts the client IP there and
-  # Envoy appends the edge hop). The grok skips the middle Envoy fields with GREEDYDATA and
-  # anchors the tail on the request-id UUID. Verified end-to-end via `cscli explain`.
+  # s01 parser for cell-membrane istio/Envoy JSON access logs (cell-membrane-access-log
+  # provider). Emits the same evt.Parsed.* names as crowdsecurity/nginx-logs
+  # (+ log_type=http_access-log) so the stock s02 crowdsecurity/http-logs parser
+  # normalizes it and base-http-scenarios + http-cve fire.
+  #
+  # Real client IP (the whole point): direct_remote_ip is the PHYSICAL L3 peer, which
+  # Cilium DSR preserves and a client cannot forge. Trust cf_connecting_ip (Cloudflare's
+  # authoritative client IP) ONLY when that peer is a Cloudflare edge; for any other peer
+  # (grey-cloud direct, internal) the peer itself IS the client. X-Forwarded-For is logged
+  # but NEVER trusted for identity — it is client-spoofable. An attacker bypassing CF to
+  # hit the origin directly therefore appears as their real (non-CF) peer and cannot frame
+  # another IP via a forged CF-Connecting-IP/XFF. Cloudflare ranges: cloudflare.com/ips.
+  # Validated end-to-end via `cscli explain` (CF and direct cases).
   istio-gateway.yaml: |
     onsuccess: next_stage
     filter: "evt.Line.Labels.type == 'istio-gw'"
     name: prplanit/istio-gateway-logs
-    description: "Parse cell-membrane istio/Envoy gateway access logs into the http_access-log schema"
-    grok:
-      pattern: '\[%{NOTSPACE:t}\] "%{DATA:verb} %{DATA:request} HTTP/%{NOTSPACE}" %{NUMBER:status} %{GREEDYDATA} "%{DATA:x}" "%{DATA:http_user_agent}" "%{UUID}" "%{DATA:a}"'
-      apply_on: message
+    description: "Parse cell-membrane istio/Envoy JSON access logs and derive the real, unspoofable client IP"
     statics:
       - meta: log_type
         value: http_access-log
       - meta: service
         value: http
-      - parsed: remote_addr
-        expression: "Split(evt.Parsed.x, ',')[0]"
+      - parsed: verb
+        expression: JsonExtract(evt.Line.Raw, "method")
+      - parsed: request
+        expression: JsonExtract(evt.Line.Raw, "path")
+      - parsed: status
+        expression: JsonExtract(evt.Line.Raw, "response_code")
+      - parsed: http_user_agent
+        expression: JsonExtract(evt.Line.Raw, "user_agent")
       - parsed: target_fqdn
-        expression: evt.Parsed.a
-      - meta: source_ip
-        expression: "Split(evt.Parsed.x, ',')[0]"
+        expression: JsonExtract(evt.Line.Raw, "authority")
       - target: evt.StrTime
-        expression: evt.Parsed.t
+        expression: JsonExtract(evt.Line.Raw, "start_time")
+      - parsed: real_ip
+        expression: >-
+          (JsonExtract(evt.Line.Raw, "cf_connecting_ip") != "-" && any([
+          "173.245.48.0/20", "103.21.244.0/22", "103.22.200.0/22", "103.31.4.0/22",
+          "141.101.64.0/18", "108.162.192.0/18", "190.93.240.0/20", "188.114.96.0/20",
+          "197.234.240.0/22", "198.41.128.0/17", "162.158.0.0/15", "104.16.0.0/13",
+          "104.24.0.0/14", "172.64.0.0/13", "131.0.72.0/22", "2400:cb00::/32",
+          "2606:4700::/32", "2803:f800::/32", "2405:b500::/32", "2405:8100::/32",
+          "2a06:98c0::/29", "2c0f:f248::/32"],
+          {IpInRange(JsonExtract(evt.Line.Raw, "direct_remote_ip"), #)}))
+          ? JsonExtract(evt.Line.Raw, "cf_connecting_ip")
+          : JsonExtract(evt.Line.Raw, "direct_remote_ip")
+      - parsed: remote_addr
+        expression: evt.Parsed.real_ip
+      - meta: source_ip
+        expression: evt.Parsed.real_ip

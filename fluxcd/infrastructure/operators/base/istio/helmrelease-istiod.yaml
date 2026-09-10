@@ -83,6 +83,34 @@ spec:
               - "set-cookie"
               - "location"
               - "www-authenticate"
+        # JSON access-log provider for the cell-membrane gateway (referenced by the
+        # cell-membrane-access-log Telemetry in hyrule-castle). Emits the fields CrowdSec
+        # needs to derive the real client IP: direct_remote_ip is the physical L3 peer
+        # (Cilium DSR preserves it, unspoofable) used to decide whether the request came
+        # through Cloudflare; cf_connecting_ip is Cloudflare's authoritative client IP,
+        # trusted only when the peer is a CF edge. xff is logged for reference but never
+        # trusted for identity. JSON keeps each field addressable and avoids a >200-char
+        # text format line.
+        - name: cell-membrane-access-log
+          envoyFileAccessLog:
+            path: /dev/stdout
+            logFormat:
+              labels:
+                start_time: "%START_TIME%"
+                method: "%REQ(:METHOD)%"
+                path: "%REQ(X-ENVOY-ORIGINAL-PATH?:PATH)%"
+                protocol: "%PROTOCOL%"
+                response_code: "%RESPONSE_CODE%"
+                response_flags: "%RESPONSE_FLAGS%"
+                authority: "%REQ(:AUTHORITY)%"
+                user_agent: "%REQ(USER-AGENT)%"
+                request_id: "%REQ(X-REQUEST-ID)%"
+                direct_remote_ip: "%DOWNSTREAM_DIRECT_REMOTE_ADDRESS_WITHOUT_PORT%"
+                cf_connecting_ip: "%REQ(CF-CONNECTING-IP)%"
+                xff: "%REQ(X-FORWARDED-FOR)%"
+                bytes_sent: "%BYTES_SENT%"
+                duration: "%DURATION%"
+                upstream_host: "%UPSTREAM_HOST%"
 
     # Resources for istiod
     resources:
