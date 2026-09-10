@@ -3,19 +3,19 @@ kind: AuthorizationPolicy
 metadata:
   name: deny-osticket-staff-panel-from-internet
 spec:
+  # Selected on the gateway, not the workload: this namespace is ambient with no waypoint,
+  # so ztunnel enforces L4 only and a path rule on the pod would never be consulted. The
+  # gateway is a full proxy and is the first place a path can be matched.
   selector:
     matchLabels:
-      app: osticket-app
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
   action: DENY
   rules:
-    # /scp is the staff control panel. The client portal is meant to be public, the
-    # admin login is not: support.prplanit.com is internet-facing with no auth in front
-    # of it. Reaching the panel means coming through the internal gateway instead, which
-    # is not port-forwarded.
-    - from:
-        - source:
-            principals:
-              - cluster.local/ns/hyrule-castle/sa/cell-membrane-gateway-istio
-      to:
+    # /scp is the staff control panel. The client portal is meant to be public; the admin
+    # login is not, and this host is internet-facing with no auth in front of it. Staff
+    # reach the panel through the internal gateway, which carries no port forward.
+    # Scoped by host so nothing else on this gateway is affected.
+    - to:
         - operation:
+            hosts: ["support.prplanit.com", "support.prplanit.com:443"]
             paths: ["/scp", "/scp/*"]
