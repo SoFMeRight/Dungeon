@@ -45,6 +45,27 @@ spec:
                 secretKeyRef:
                   name: crowdsec-secrets
                   key: BOUNCER_SHIELD_REGENERATOR_LAPI_KEY
+            # pfSense HA log-processor machine credentials, consumed by the postStart hook.
+            - name: MACHINE_SHIELD_GENERATOR_USER
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: MACHINE_SHIELD_GENERATOR_USER
+            - name: MACHINE_SHIELD_GENERATOR_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: MACHINE_SHIELD_GENERATOR_PASS
+            - name: MACHINE_SHIELD_REGENERATOR_USER
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: MACHINE_SHIELD_REGENERATOR_USER
+            - name: MACHINE_SHIELD_REGENERATOR_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: crowdsec-secrets
+                  key: MACHINE_SHIELD_REGENERATOR_PASS
           volumeMounts:
             - name: lens-of-truth-crowdsec-data
               mountPath: /var/lib/crowdsec/data
@@ -57,6 +78,20 @@ spec:
               mountPath: /etc/crowdsec/config.yaml.local
               subPath: config.yaml.local
               readOnly: true
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - |
+                    # Register the pfSense HA log-processor machines from Vault-backed env.
+                    # cscli writes straight to the DB (no LAPI needed); -f /dev/null keeps the
+                    # local agent creds untouched. Best-effort + idempotent (--force) so a
+                    # transient failure never blocks crowdsec from starting.
+                    for i in $(seq 1 60); do cscli machines list >/dev/null 2>&1 && break; sleep 2; done
+                    cscli machines add "$MACHINE_SHIELD_GENERATOR_USER" --password "$MACHINE_SHIELD_GENERATOR_PASS" -f /dev/null --force || true
+                    cscli machines add "$MACHINE_SHIELD_REGENERATOR_USER" --password "$MACHINE_SHIELD_REGENERATOR_PASS" -f /dev/null --force || true
           resources:
             requests:
               cpu: "250m"
