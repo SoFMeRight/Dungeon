@@ -3,70 +3,184 @@ kind: ConfigMap
 metadata:
   name: crowdsec-cloudflare-bouncer
 data:
-  crowdsec-cloudflare-bouncer.yaml: |
-    crowdsec_lapi_url: http://crowdsec:8080/
-    crowdsec_lapi_key: ${BOUNCER_CLOUDFLARE_LAPI_KEY}
-    crowdsec_insecure_skip_verify: false
-    crowdsec_update_frequency: 10s
-    include_scenarios_containing: []
-    exclude_scenarios_containing: []
-    only_include_decisions_from: ["cscli", "crowdsec"]
+  # cs-cloudflare-worker-bouncer config. Free-tier: local decisions only (no CAPI
+  # blocklist), default_action ban, Turnstile disabled, one wildcard route per zone.
+  # ${...} rendered by the config-substitution initContainer from Vault-backed env.
+  crowdsec-cloudflare-worker-bouncer.yaml: |
+    crowdsec_config:
+      lapi_url: http://crowdsec:8080/
+      lapi_key: ${BOUNCER_CLOUDFLARE_LAPI_KEY}
+      update_frequency: 10s
+      include_scenarios_containing: []
+      exclude_scenarios_containing: []
+      # Local decisions only — CAPI community blocklist (10k+ IPs) would blow the
+      # free Workers-KV write quota. This is the free-tier lever.
+      only_include_decisions_from: ["cscli", "crowdsec"]
     cloudflare_config:
       accounts:
         - id: 2e7f5ce244fda519fd6c25bd13b58148
-          zones:
-            - zone_id: 29785be48310fd9a7f53331cb9cc350e  # arbitorium.com
-              actions: [managed_challenge]
-            - zone_id: 91bc8ef52ef90553b7392fc1b8ff6be3  # astralfocal.com
-              actions: [managed_challenge]
-            - zone_id: a21abb43bf871f04bd1c36265c8919d1  # astralfocus.com
-              actions: [managed_challenge]
-            - zone_id: 6eea5004c698a02c081f0ab8e13304a9  # enteryour.info
-              actions: [managed_challenge]
-            - zone_id: d33a25c0c2672e2d64fd525261421cf0  # etherealclique.com
-              actions: [managed_challenge]
-            - zone_id: 2f896254a78d2d42059876066fc29d68  # faunasophy.com
-              actions: [managed_challenge]
-            - zone_id: 4c8ed2b9da774be67afc51b49fc605cc  # ipleek.com
-              actions: [managed_challenge]
-            - zone_id: b890b212bde329dc540a9fb9d3124972  # kai-hamilton.com
-              actions: [managed_challenge]
-            - zone_id: 47e60acbeb22b568164a594e6cda0c4f  # operationtimecapsule.com
-              actions: [managed_challenge]
-            - zone_id: 18668c060edf4ec1f1b710fe90ab8194  # optcp.com
-              actions: [managed_challenge]
-            - zone_id: cc36ec39cb77f3f7e86002a08f7afea5  # pcfae.com
-              actions: [managed_challenge]
-            - zone_id: e487a72fb15d7db9bb91539d49294993  # playingintraffic.me
-              actions: [managed_challenge]
-            - zone_id: 846827355495def43ffdad9dfc3d602b  # precisionplanit.com
-              actions: [managed_challenge]
-            - zone_id: d97e9f7a21f223a4f3840cbcee45d777  # prplanit.com
-              actions: [managed_challenge]
-            - zone_id: 636872d1b49fb7d626a9624c8890b757  # saveganimals.com
-              actions: [managed_challenge]
-            - zone_id: 370c3656ce81a99ad9bec16fb775aae8  # sh00k.cc
-              actions: [managed_challenge]
-            - zone_id: e7d9f2e3adaa3db20fdd8b4470f4cf62  # sh00k.me
-              actions: [managed_challenge]
-            - zone_id: 02da54caa598f1f3997126825abff43f  # smokeshush.com
-              actions: [managed_challenge]
-            - zone_id: 22a0076cf53d3ac3568dd458e7e8b177  # sofmeright.com
-              actions: [managed_challenge]
-            - zone_id: 840b179e7765ae58aa7951a22aa94df9  # thesewer.space
-              actions: [managed_challenge]
-            - zone_id: 8198368eeb59af3bc92146b8d40e36da  # uni2.cc
-              actions: [managed_challenge]
-            - zone_id: d9eefdb16077c04971fade22872b5bc8  # yesimvegan.com
-              actions: [managed_challenge]
+          account_name: pcfae
           token: ${CLOUDFLARE_TOKEN}
           ip_list_prefix: crowdsec
-          default_action: managed_challenge
-          total_ip_list_capacity: 9900
-      update_frequency: 10s
-    daemon: false
-    log_level: info
+          default_action: ban
+          total_ip_list_capacity: 5000
+          zones:
+            - zone_id: 29785be48310fd9a7f53331cb9cc350e  # arbitorium.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*arbitorium.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: 91bc8ef52ef90553b7392fc1b8ff6be3  # astralfocal.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*astralfocal.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: a21abb43bf871f04bd1c36265c8919d1  # astralfocus.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*astralfocus.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: 6eea5004c698a02c081f0ab8e13304a9  # enteryour.info
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*enteryour.info/*"
+              turnstile:
+                enabled: false
+            - zone_id: d33a25c0c2672e2d64fd525261421cf0  # etherealclique.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*etherealclique.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: 2f896254a78d2d42059876066fc29d68  # faunasophy.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*faunasophy.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: 4c8ed2b9da774be67afc51b49fc605cc  # ipleek.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*ipleek.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: b890b212bde329dc540a9fb9d3124972  # kai-hamilton.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*kai-hamilton.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: 47e60acbeb22b568164a594e6cda0c4f  # operationtimecapsule.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*operationtimecapsule.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: 18668c060edf4ec1f1b710fe90ab8194  # optcp.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*optcp.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: cc36ec39cb77f3f7e86002a08f7afea5  # pcfae.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*pcfae.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: e487a72fb15d7db9bb91539d49294993  # playingintraffic.me
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*playingintraffic.me/*"
+              turnstile:
+                enabled: false
+            - zone_id: 846827355495def43ffdad9dfc3d602b  # precisionplanit.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*precisionplanit.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: d97e9f7a21f223a4f3840cbcee45d777  # prplanit.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*prplanit.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: 636872d1b49fb7d626a9624c8890b757  # saveganimals.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*saveganimals.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: 370c3656ce81a99ad9bec16fb775aae8  # sh00k.cc
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*sh00k.cc/*"
+              turnstile:
+                enabled: false
+            - zone_id: e7d9f2e3adaa3db20fdd8b4470f4cf62  # sh00k.me
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*sh00k.me/*"
+              turnstile:
+                enabled: false
+            - zone_id: 02da54caa598f1f3997126825abff43f  # smokeshush.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*smokeshush.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: 22a0076cf53d3ac3568dd458e7e8b177  # sofmeright.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*sofmeright.com/*"
+              turnstile:
+                enabled: false
+            - zone_id: 840b179e7765ae58aa7951a22aa94df9  # thesewer.space
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*thesewer.space/*"
+              turnstile:
+                enabled: false
+            - zone_id: 8198368eeb59af3bc92146b8d40e36da  # uni2.cc
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*uni2.cc/*"
+              turnstile:
+                enabled: false
+            - zone_id: d9eefdb16077c04971fade22872b5bc8  # yesimvegan.com
+              actions: [ban]
+              default_action: ban
+              routes_to_protect:
+                - "*yesimvegan.com/*"
+              turnstile:
+                enabled: false
     log_mode: stdout
+    log_level: info
     prometheus:
       enabled: true
       listen_addr: 127.0.0.1

@@ -3,29 +3,28 @@ kind: ConfigMap
 metadata:
   name: crowdsec-cloudflare-bouncer
 data:
-  crowdsec-cloudflare-bouncer.yaml: |
-    crowdsec_lapi_url: http://crowdsec:8080/
-    crowdsec_update_frequency: 10s
-    include_scenarios_containing: []
-    exclude_scenarios_containing: []
-    only_include_decisions_from: ["cscli", "crowdsec"]
+  # cs-cloudflare-worker-bouncer config template. ${...} are rendered from env by the
+  # config-substitution initContainer; account/zones are patched in the overlay.
+  crowdsec-cloudflare-worker-bouncer.yaml: |
+    crowdsec_config:
+      lapi_url: http://crowdsec:8080/
+      lapi_key: ${BOUNCER_CLOUDFLARE_LAPI_KEY}
+      update_frequency: 10s
+      include_scenarios_containing: []
+      exclude_scenarios_containing: []
+      only_include_decisions_from: ["cscli", "crowdsec"]
     cloudflare_config:
       accounts:
         - id: PLACEHOLDER_CLOUDFLARE_ACCOUNT_ID
-          zones: PLACEHOLDER_CLOUDFLARE_ZONES
-          token: ""  # Will be overridden by env var from secret
+          account_name: PLACEHOLDER_CLOUDFLARE_ACCOUNT_NAME
+          token: ${CLOUDFLARE_TOKEN}
           ip_list_prefix: crowdsec
-          default_action: managed_challenge
-          total_ip_list_capacity: 9900
-      update_frequency: 10s
-    daemon: false
-    log_level: info
+          default_action: ban
+          total_ip_list_capacity: 5000
+          zones: PLACEHOLDER_CLOUDFLARE_ZONES
     log_mode: stdout
-    log_dir: /var/log/
+    log_level: info
     prometheus:
       enabled: true
       listen_addr: 127.0.0.1
       listen_port: "2112"
-    key_path: ""
-    cert_path: ""
-    ca_cert_path: ""

@@ -16,7 +16,7 @@ spec:
             - sh
             - -c
             - |
-              envsubst < /config-template/crowdsec-cloudflare-bouncer.yaml > /config/crowdsec-cloudflare-bouncer.yaml
+              envsubst < /config-template/crowdsec-cloudflare-worker-bouncer.yaml > /config/crowdsec-cloudflare-worker-bouncer.yaml
           env:
             - name: BOUNCER_CLOUDFLARE_LAPI_KEY
               valueFrom:
@@ -35,7 +35,7 @@ spec:
               mountPath: /config
       containers:
         - name: cloudflare-bouncer
-          image: ghcr.io/crowdsecurity/cloudflare-bouncer:v0.3.0
+          image: docker.io/crowdsecurity/cloudflare-worker-bouncer:v0.0.18
           volumeMounts:
             - name: bouncer-config-rendered
               mountPath: /etc/crowdsec/bouncers
