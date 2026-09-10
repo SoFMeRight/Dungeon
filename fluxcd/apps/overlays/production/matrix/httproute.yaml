@@ -205,6 +205,20 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      filters:
+        # Element Call is meant to be framed, so it gets an allowlist rather than a
+        # refusal: our own client embeds it as the call widget, and 'self' covers the
+        # guest link opened on its own. No X-Frame-Options — it cannot express an
+        # allowlist, and SAMEORIGIN would refuse the client that needs to embed it.
+        - type: ResponseHeaderModifier
+          responseHeaderModifier:
+            set:
+              - name: Content-Security-Policy
+                value: frame-ancestors 'self' https://chat.outspokekin.com
+              - name: X-Content-Type-Options
+                value: nosniff
+              - name: Referrer-Policy
+                value: strict-origin-when-cross-origin
       backendRefs:
         - name: matrix-element-call
           port: 8080
