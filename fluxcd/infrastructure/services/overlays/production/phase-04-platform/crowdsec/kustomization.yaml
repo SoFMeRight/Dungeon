@@ -28,6 +28,7 @@ patches:
   - path: configmap-acquis-bitwarden-patch.yaml
   - path: configmap-acquis-home-assistant-patch.yaml
   - path: configmap-acquis-nextcloud-patch.yaml
+  - path: configmap-acquis-mealie-patch.yaml
   - path: configmap-cloudflare-bouncer-patch.yaml
   # ExternalSecret patch
   - path: externalsecret-patch.yaml

@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-mealie-parser
+data:
+  # Vendored from crowdsec hub Jgigantino31/mealie-logs, reviewed 2026-09-11 (declarative
+  # grok only, no code execution). Renamed to prplanit/ namespace; only the log-file grok
+  # variant was dropped (we ingest Mealie's stdout format). Matches Mealie's failure line
+  # "ERROR <ts> - Incorrect username or password from <IP>" where <IP> is the real client IP
+  # (Mealie reads the forwarded IP). program is set from the acquisition `type: mealie` label
+  # by crowdsec's built-in non-syslog parser (same native path as home-assistant).
+  mealie.yaml: |
+    onsuccess: next_stage
+    name: prplanit/mealie-logs
+    description: "Mealie auth-failure parser (vendored from Jgigantino31/mealie-logs)"
+    filter: "evt.Parsed.program == 'mealie'"
+    pattern_syntax:
+      MEALIE_CUSTOMDATE: "%{YEAR}-%{MONTHNUM}-%{MONTHDAY}T%{HOUR}:%{MINUTE}:%{SECOND}"
+    nodes:
+      - grok:
+          pattern: 'ERROR%{SPACE}%{MEALIE_CUSTOMDATE:timestamp} - Incorrect username or password from %{IP:source_ip}'
+          apply_on: message
+          statics:
+            - meta: log_type
+              value: mealie_failed_auth
+    statics:
+      - meta: service
+        value: mealie
+      - meta: source_ip
+        expression: "evt.Parsed.source_ip"
+      - target: evt.StrTime
+        expression: evt.Parsed.timestamp

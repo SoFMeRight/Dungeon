@@ -121,6 +121,17 @@ spec:
             - name: acquis-nextcloud
               mountPath: /etc/crowdsec/acquis.d/50-nextcloud-loki.yaml
               subPath: 50-nextcloud-loki.yaml
+            # Mealie: real app-log auth-failure parsing (vendored Jgigantino31/mealie).
+            # Mealie logs "Incorrect username or password from <real client IP>" to stdout.
+            - name: acquis-mealie
+              mountPath: /etc/crowdsec/acquis.d/60-mealie-loki.yaml
+              subPath: 60-mealie-loki.yaml
+            - name: mealie-parser
+              mountPath: /etc/crowdsec/parsers/s01-parse/prplanit/mealie.yaml
+              subPath: mealie.yaml
+            - name: mealie-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/mealie-bf.yaml
+              subPath: mealie-bf.yaml
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -156,6 +167,15 @@ spec:
         - name: acquis-nextcloud
           configMap:
             name: crowdsec-acquis-nextcloud
+        - name: acquis-mealie
+          configMap:
+            name: crowdsec-acquis-mealie
+        - name: mealie-parser
+          configMap:
+            name: crowdsec-mealie-parser
+        - name: mealie-scenario
+          configMap:
+            name: crowdsec-mealie-scenario
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-crowdsec-config

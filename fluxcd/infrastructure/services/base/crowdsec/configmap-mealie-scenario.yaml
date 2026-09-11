@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-mealie-scenario
+data:
+  # Vendored from crowdsec hub Jgigantino31/mealie-bf, reviewed 2026-09-11. Standard leaky
+  # bucket over prplanit/mealie-logs failures, grouped by the real client source_ip.
+  # Renamed to prplanit/ namespace; logic unchanged.
+  mealie-bf.yaml: |
+    type: leaky
+    name: prplanit/mealie-bf
+    description: "Mealie login brute-force (vendored from Jgigantino31/mealie-bf)"
+    filter: "evt.Meta.log_type == 'mealie_failed_auth'"
+    groupby: evt.Meta.source_ip
+    leakspeed: 10s
+    capacity: 10
+    blackhole: 1m
+    labels:
+      service: mealie
+      behavior: "http:bruteforce"
+      spoofable: 0
+      confidence: 3
+      classification:
+        - attack.T1110
+      label: "Mealie Bruteforce"
+      remediation: true

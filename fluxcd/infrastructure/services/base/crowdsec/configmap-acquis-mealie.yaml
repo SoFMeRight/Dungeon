@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-mealie
+data:
+  # Mealie auth-failure acquisition. Loki-filtered to the failure line to keep volume low;
+  # the `type: mealie` label -> evt.Parsed.program (built-in non-syslog) so prplanit/mealie-logs
+  # matches and prplanit/mealie-bf fires. url is patched to the real Loki endpoint in the overlay.
+  60-mealie-loki.yaml: |
+    source: loki
+    url: PLACEHOLDER_LOKI_URL
+    limit: 1000
+    query: |
+      {service_name="mealie"} |= "Incorrect username or password"
+    labels:
+      type: mealie
+    wait_for_ready: 10s
