@@ -54,6 +54,12 @@ spec:
               value: https://cal.prplanit.com/api/v2
             - name: NEXTAUTH_URL
               value: https://cal.prplanit.com
+            # Browser-facing URLs stay public (above); next-auth's server-side
+            # render calls (e.g. GET /api/auth/csrf while rendering /auth/login)
+            # use this instead, looping back in-pod rather than hair-pinning out
+            # to the public gateway VIP (which stalls ~10s from this namespace).
+            - name: NEXTAUTH_URL_INTERNAL
+              value: http://localhost:3000
           volumeMounts:
             - name: yarn-dir
               mountPath: /calcom/.yarn
