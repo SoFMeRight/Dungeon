@@ -35,6 +35,37 @@ data:
         'social_core.pipeline.user.user_details',
     )
     # END OIDC (gitops-managed)
+  logging.py: |
+    # BEGIN CROWDSEC-LOGGING (gitops-managed)
+    # Surface NetBox's built-in failed-login logger (netbox.auth.login) to stdout so CrowdSec
+    # can parse brute-force attempts. NetBox already logs "Failed login attempt for username: <u>
+    # from <client_ip>" with the real client IP (HTTP_CLIENT_IP_HEADERS includes X-Forwarded-For);
+    # it is silent only because LOGGING is unset. disable_existing_loggers=False keeps Django's and
+    # NetBox's own loggers intact; this only adds the auth-login route.
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'crowdsec_auth': {
+                'format': '[{asctime}] {name} {levelname} {message}',
+                'style': '{',
+            },
+        },
+        'handlers': {
+            'crowdsec_auth_console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'crowdsec_auth',
+            },
+        },
+        'loggers': {
+            'netbox.auth.login': {
+                'handlers': ['crowdsec_auth_console'],
+                'level': 'INFO',
+                'propagate': False,
+            },
+        },
+    }
+    # END CROWDSEC-LOGGING (gitops-managed)
   bootstrap-superuser.py: |
     # Idempotent: create the configured superuser only when the DB has no
     # superuser yet (fresh install). No-op on an existing install. Username,

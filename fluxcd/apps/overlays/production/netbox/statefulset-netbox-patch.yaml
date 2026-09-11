@@ -28,6 +28,8 @@ spec:
               [ -f "$CFG" ] || exit 0
               sed -i '/# BEGIN OIDC (gitops-managed)/,/# END OIDC (gitops-managed)/d' "$CFG"
               cat /auth-config/oidc.py >> "$CFG"
+              sed -i '/# BEGIN CROWDSEC-LOGGING (gitops-managed)/,/# END CROWDSEC-LOGGING (gitops-managed)/d' "$CFG"
+              cat /auth-config/logging.py >> "$CFG"
           volumeMounts:
             - name: zeldas-lullaby-netbox-config-data
               mountPath: /config
