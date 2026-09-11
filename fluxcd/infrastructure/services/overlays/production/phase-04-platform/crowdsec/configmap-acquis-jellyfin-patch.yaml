@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-jellyfin
+data:
+  70-jellyfin-loki.yaml: |
+    source: loki
+    url: http://loki.gossip-stone.svc.cluster.local:3100
+    limit: 1000
+    query: |
+      {service_name="jellyfin"} |= "has been denied"
+    labels:
+      type: jellyfin
+    wait_for_ready: 10s

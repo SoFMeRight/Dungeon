@@ -1,0 +1,57 @@
+# yamllint disable rule:line-length
+# The vendored vaultwarden grok patterns are single-line regexes (module path + full message)
+# that exceed 200 chars and cannot be wrapped without breaking the pattern.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-vaultwarden-parser
+data:
+  # Vendored from crowdsec hub Dominic-Wagner/vaultwarden-logs, reviewed 2026-09-11 (declarative
+  # grok only). Renamed to prplanit/. Matches vaultwarden's stdout failure lines (password,
+  # admin token, 2FA TOTP, 2FA email) where <ip> is the real client IP (IP_HEADER=X-Forwarded-For
+  # set so vaultwarden reads the gateway XFF). program is set from the acquisition `type:
+  # vaultwarden` label via built-in non-syslog. This is separate from the official Bitwarden
+  # (bitwarden-identity) coverage in prplanit/bitwarden.
+  vaultwarden.yaml: |
+    onsuccess: next_stage
+    name: prplanit/vaultwarden-logs
+    description: "Vaultwarden auth-failure parser (vendored from Dominic-Wagner/vaultwarden-logs)"
+    filter: "Upper(evt.Parsed.program) == 'VAULTWARDEN'"
+    pattern_syntax:
+      DATE_YMD: "%{YEAR:year}-%{MONTHNUM:month}-%{MONTHDAY:day}"
+    nodes:
+      - grok:
+          pattern: '^\[%{TIMESTAMP_ISO8601:datetimestamp}\]\[vaultwarden::api::identity\]\[ERROR\] Username or password is incorrect\. Try again\. IP: %{IP:source_ip}\. Username: %{EMAILADDRESS:username}\.$'
+          apply_on: message
+          statics:
+            - meta: log_type
+              value: vaultwarden_failed_auth
+            - meta: username
+              expression: evt.Parsed.username
+      - grok:
+          pattern: '^\[%{TIMESTAMP_ISO8601:datetimestamp}\]\[vaultwarden::api::admin\]\[ERROR\] Invalid admin token. IP: %{IP:source_ip}'
+          apply_on: message
+          statics:
+            - meta: log_type
+              value: vaultwarden_failed_admin_auth
+      - grok:
+          pattern: '^\[%{TIMESTAMP_ISO8601:datetimestamp}\]\[vaultwarden::api::core::two_factor::authenticator\]\[ERROR\] Invalid TOTP code! Server time: %{DATE_YMD:server_date} %{TIME:server_time} %{TZ:server_tz} IP: %{IP:source_ip}'
+          apply_on: message
+          statics:
+            - meta: log_type
+              value: vaultwarden_failed_2fa_totp
+      - grok:
+          pattern: '^\[%{TIMESTAMP_ISO8601:datetimestamp}\]\[vaultwarden::api::core::two_factor::email\]\[ERROR\] Token is invalid! IP: %{IP:source_ip}'
+          apply_on: message
+          statics:
+            - meta: log_type
+              value: vaultwarden_failed_2fa_email
+    statics:
+      - meta: service
+        value: vaultwarden
+      - meta: source_ip
+        expression: "evt.Parsed.source_ip"
+      - target: evt.StrTimeFormat
+        value: "2006-01-02 15:04:05.000-0700"
+      - target: evt.StrTime
+        expression: evt.Parsed.datetimestamp

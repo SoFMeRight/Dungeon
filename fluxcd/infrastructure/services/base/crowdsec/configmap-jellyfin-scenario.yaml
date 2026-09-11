@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-jellyfin-scenario
+data:
+  # Vendored from crowdsec hub LePresidente/jellyfin-bf, reviewed 2026-09-11. Renamed to
+  # prplanit/. Brute-force + user-enumeration leaky buckets over prplanit/jellyfin-logs,
+  # grouped by the real client source_ip.
+  jellyfin-bf.yaml: |
+    type: leaky
+    name: prplanit/jellyfin-bf
+    description: "Jellyfin login brute-force (vendored from LePresidente/jellyfin-bf)"
+    filter: "evt.Meta.log_type == 'jellyfin_failed_auth'"
+    groupby: evt.Meta.source_ip
+    leakspeed: 20s
+    capacity: 5
+    blackhole: 1m
+    labels:
+      service: jellyfin
+      behavior: "http:bruteforce"
+      classification:
+        - attack.T1110
+      spoofable: 0
+      confidence: 3
+      label: "Jellyfin Bruteforce"
+      remediation: true
+    ---
+    type: leaky
+    name: prplanit/jellyfin-bf_user-enum
+    description: "Jellyfin user-enumeration brute-force (vendored from LePresidente/jellyfin-bf_user-enum)"
+    filter: "evt.Meta.log_type == 'jellyfin_failed_auth'"
+    groupby: evt.Meta.source_ip
+    distinct: evt.Meta.user
+    leakspeed: 1m
+    capacity: 5
+    blackhole: 1m
+    labels:
+      service: jellyfin
+      behavior: "http:bruteforce"
+      spoofable: 0
+      confidence: 3
+      classification:
+        - attack.T1589
+        - attack.T1110
+      label: "Jellyfin User Enumeration"
+      remediation: true

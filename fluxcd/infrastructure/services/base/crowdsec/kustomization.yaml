@@ -16,6 +16,12 @@ resources:
   - configmap-acquis-mealie.yaml
   - configmap-mealie-parser.yaml
   - configmap-mealie-scenario.yaml
+  - configmap-acquis-jellyfin.yaml
+  - configmap-jellyfin-parser.yaml
+  - configmap-jellyfin-scenario.yaml
+  - configmap-acquis-vaultwarden.yaml
+  - configmap-vaultwarden-parser.yaml
+  - configmap-vaultwarden-scenario.yaml
   - configmap-istio-parser.yaml
   - configmap-whitelist.yaml
   - configmap-bitwarden-parser.yaml

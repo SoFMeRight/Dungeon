@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-jellyfin-parser
+data:
+  # Vendored from crowdsec hub LePresidente/jellyfin-logs, reviewed 2026-09-11 (declarative
+  # grok only). Renamed to prplanit/. Matches Jellyfin's stdout line
+  # "Authentication request for <user> has been denied (IP: <ip>)" where <ip> is the real
+  # client IP (Jellyfin KnownProxies set to the pod CIDR so it trusts the gateway XFF).
+  # The optional leading-date group harmlessly no-matches Jellyfin's time-only "[HH:MM:SS]".
+  # program is set from the acquisition `type: jellyfin` label via built-in non-syslog.
+  jellyfin.yaml: |
+    onsuccess: next_stage
+    name: prplanit/jellyfin-logs
+    description: "Jellyfin auth-failure parser (vendored from LePresidente/jellyfin-logs)"
+    filter: "evt.Parsed.program == 'jellyfin'"
+    pattern_syntax:
+      JELLYFIN_CUSTOMUSER: "(%{EMAILADDRESS}|%{USERNAME})"
+      JELLYFIN_CUSTOMDATE: "%{YEAR}-%{MONTHNUM}-%{MONTHDAY} %{HOUR}:%{MINUTE}:%{SECOND}"
+    nodes:
+      - grok:
+          pattern: '(\[%{JELLYFIN_CUSTOMDATE:timestamp}.*\])?.*Authentication request for "?%{JELLYFIN_CUSTOMUSER:username}"? has been denied \(IP: "?%{IP:source_ip}"?\).*'
+          apply_on: message
+          statics:
+            - meta: log_type
+              value: jellyfin_failed_auth
+    statics:
+      - meta: service
+        value: jellyfin
+      - meta: user
+        expression: "evt.Parsed.username"
+      - meta: source_ip
+        expression: "evt.Parsed.source_ip"
+      - target: evt.StrTime
+        expression: evt.Parsed.timestamp

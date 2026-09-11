@@ -132,6 +132,28 @@ spec:
             - name: mealie-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/mealie-bf.yaml
               subPath: mealie-bf.yaml
+            # Jellyfin: real app-log auth-failure parsing (vendored LePresidente/jellyfin).
+            # KnownProxies set on jellyfin so it logs the real client IP.
+            - name: acquis-jellyfin
+              mountPath: /etc/crowdsec/acquis.d/70-jellyfin-loki.yaml
+              subPath: 70-jellyfin-loki.yaml
+            - name: jellyfin-parser
+              mountPath: /etc/crowdsec/parsers/s01-parse/prplanit/jellyfin.yaml
+              subPath: jellyfin.yaml
+            - name: jellyfin-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/jellyfin-bf.yaml
+              subPath: jellyfin-bf.yaml
+            # Vaultwarden: real app-log auth-failure parsing (vendored Dominic-Wagner/vaultwarden).
+            # IP_HEADER=X-Forwarded-For set so it logs the real client IP.
+            - name: acquis-vaultwarden
+              mountPath: /etc/crowdsec/acquis.d/80-vaultwarden-loki.yaml
+              subPath: 80-vaultwarden-loki.yaml
+            - name: vaultwarden-parser
+              mountPath: /etc/crowdsec/parsers/s01-parse/prplanit/vaultwarden.yaml
+              subPath: vaultwarden.yaml
+            - name: vaultwarden-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/vaultwarden-bf.yaml
+              subPath: vaultwarden-bf.yaml
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -176,6 +198,24 @@ spec:
         - name: mealie-scenario
           configMap:
             name: crowdsec-mealie-scenario
+        - name: acquis-jellyfin
+          configMap:
+            name: crowdsec-acquis-jellyfin
+        - name: jellyfin-parser
+          configMap:
+            name: crowdsec-jellyfin-parser
+        - name: jellyfin-scenario
+          configMap:
+            name: crowdsec-jellyfin-scenario
+        - name: acquis-vaultwarden
+          configMap:
+            name: crowdsec-acquis-vaultwarden
+        - name: vaultwarden-parser
+          configMap:
+            name: crowdsec-vaultwarden-parser
+        - name: vaultwarden-scenario
+          configMap:
+            name: crowdsec-vaultwarden-scenario
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-crowdsec-config

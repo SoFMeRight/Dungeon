@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-vaultwarden
+data:
+  # Vaultwarden auth-failure acquisition. Filtered to ERROR lines (the failure types the parser
+  # matches) to keep volume low; type: vaultwarden -> evt.Parsed.program (built-in non-syslog)
+  # so prplanit/vaultwarden-logs matches. url patched to the real Loki endpoint in the overlay.
+  80-vaultwarden-loki.yaml: |
+    source: loki
+    url: PLACEHOLDER_LOKI_URL
+    limit: 1000
+    query: |
+      {service_name="vaultwarden"} |= "[ERROR]"
+    labels:
+      type: vaultwarden
+    wait_for_ready: 10s

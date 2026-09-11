@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-vaultwarden-scenario
+data:
+  # Vendored from crowdsec hub Dominic-Wagner/vaultwarden-bf, reviewed 2026-09-11. Renamed to
+  # prplanit/. Brute-force (password/admin/2FA) + user-enumeration leaky buckets over
+  # prplanit/vaultwarden-logs, grouped by the real client source_ip.
+  vaultwarden-bf.yaml: |
+    type: leaky
+    name: prplanit/vaultwarden-bf
+    description: "Vaultwarden brute-force (vendored from Dominic-Wagner/vaultwarden-bf)"
+    filter: "evt.Meta.log_type in ['vaultwarden_failed_auth', 'vaultwarden_failed_admin_auth', 'vaultwarden_failed_2fa_totp', 'vaultwarden_failed_2fa_email']"
+    leakspeed: 1m
+    capacity: 5
+    groupby: evt.Meta.source_ip
+    blackhole: 5m
+    reprocess: true
+    labels:
+      service: vaultwarden
+      behavior: "generic:bruteforce"
+      classification:
+        - attack.T1110
+      label: "Vaultwarden Bruteforce"
+      spoofable: 0
+      confidence: 3
+      remediation: true
+    ---
+    type: leaky
+    name: prplanit/vaultwarden-bf_user-enum
+    description: "Vaultwarden user-enumeration brute-force (vendored from Dominic-Wagner/vaultwarden-bf_user-enum)"
+    filter: "evt.Meta.log_type == 'vaultwarden_failed_auth'"
+    groupby: evt.Meta.source_ip
+    distinct: evt.Meta.username
+    leakspeed: 1m
+    capacity: 5
+    blackhole: 5m
+    reprocess: true
+    labels:
+      service: vaultwarden
+      behavior: "generic:bruteforce"
+      classification:
+        - attack.T1589
+        - attack.T1110
+      label: "Vaultwarden User Enumeration"
+      spoofable: 0
+      confidence: 3
+      remediation: true
