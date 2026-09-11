@@ -33,7 +33,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: import
-              image: docker.io/alpine/k8s:1.34.0
+              image: docker.io/alpine/k8s:1.37.0
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: true
