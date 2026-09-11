@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-gitlab-scenario
+data:
+  # Vendored from crowdsec hub timokoessler/gitlab-bf, reviewed 2026-09-11. Renamed to prplanit/.
+  # Brute-force + user-enumeration leaky buckets over prplanit/gitlab-logs, grouped by the real
+  # client source_ip.
+  gitlab-bf.yaml: |
+    type: leaky
+    name: prplanit/gitlab-bf
+    description: "GitLab login brute-force (vendored from timokoessler/gitlab-bf)"
+    filter: "evt.Meta.log_type in ['gitlab_failed_password', 'gitlab_failed_totp']"
+    leakspeed: "20s"
+    capacity: 5
+    groupby: evt.Meta.source_ip
+    blackhole: 1m
+    reprocess: true
+    labels:
+      service: gitlab
+      behavior: "vcs:bruteforce"
+      classification:
+        - attack.T1110
+      spoofable: 0
+      confidence: 3
+      label: "Gitlab Bruteforce"
+      remediation: true
+    ---
+    type: leaky
+    name: prplanit/gitlab-bf_user-enum
+    description: "GitLab user-enumeration brute-force (vendored from timokoessler/gitlab-bf_user-enum)"
+    filter: "evt.Meta.log_type == 'gitlab_failed_password'"
+    leakspeed: "40s"
+    capacity: 5
+    groupby: evt.Meta.source_ip
+    distinct: evt.Meta.username
+    blackhole: 1m
+    reprocess: true
+    labels:
+      service: gitlab
+      behavior: "vcs:bruteforce"
+      classification:
+        - attack.T1589
+        - attack.T1110
+      spoofable: 0
+      confidence: 3
+      label: "Gitlab User Enumeration"
+      remediation: true

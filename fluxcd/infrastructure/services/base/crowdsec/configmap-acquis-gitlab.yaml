@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-gitlab
+data:
+  # GitLab auth-failure acquisition. Reads the webservice (Rails production_json.log) stream,
+  # filtered to sign-in/LDAP-callback requests to keep volume low; type: gitlab ->
+  # evt.Parsed.program (built-in non-syslog) so prplanit/gitlab-logs matches. service_name=gitlab
+  # is shared by all GitLab components, so select the webservice container specifically. url
+  # patched to the real Loki endpoint in the overlay.
+  90-gitlab-loki.yaml: |
+    source: loki
+    url: PLACEHOLDER_LOKI_URL
+    limit: 1000
+    query: |
+      {namespace="hyrule-castle", container="webservice"} |~ "/users/sign_in|ldapmain/callback"
+    labels:
+      type: gitlab
+    wait_for_ready: 10s

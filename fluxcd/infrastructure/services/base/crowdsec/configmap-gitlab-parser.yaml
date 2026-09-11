@@ -1,0 +1,56 @@
+# yamllint disable rule:line-length
+# The vendored GitLab expr filters (params extraction) run long and cannot wrap without
+# breaking the expression.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-gitlab-parser
+data:
+  # Vendored from crowdsec hub timokoessler/gitlab-logs, reviewed 2026-09-11 (declarative
+  # expr/grok only). Renamed to prplanit/. Parses GitLab's production_json.log request entries;
+  # a failed web login is POST /users/sign_in with status=0 (or action=failure). remote_ip is
+  # the real client IP (GitLab derives it from X-Forwarded-For out of the box here). program is
+  # set from the acquisition `type: gitlab` label via built-in non-syslog.
+  gitlab.yaml: |
+    onsuccess: next_stage
+    filter: "Upper(evt.Parsed.program) == 'GITLAB' && UnmarshalJSON(evt.Parsed.message, evt.Unmarshaled, 'gitlab') in ['', nil]"
+    name: prplanit/gitlab-logs
+    description: "GitLab auth-failure parser (vendored from timokoessler/gitlab-logs)"
+    nodes:
+      - filter: |
+          evt.Unmarshaled.gitlab.method == 'POST' &&
+          evt.Unmarshaled.gitlab.path in ['/users/sign_in', '/users/auth/ldapmain/callback'] &&
+          any(evt.Unmarshaled.gitlab.params, {.key == 'user' && .value.login != ''}) &&
+          (evt.Unmarshaled.gitlab.status == 0 || evt.Unmarshaled.gitlab.action == 'failure')
+        statics:
+          - meta: log_type
+            value: "gitlab_failed_password"
+          - meta: username
+            expression: filter(evt.Unmarshaled.gitlab.params, {.key == 'user' && .value.login != ''})[0]['value']['login']
+      - filter: |
+          evt.Unmarshaled.gitlab.method == 'POST' &&
+          evt.Unmarshaled.gitlab.path in ['/users/sign_in', '/users/auth/ldapmain/callback'] &&
+          any(evt.Unmarshaled.gitlab.params, {.key == 'username' && .value != ''}) &&
+          (evt.Unmarshaled.gitlab.status == 0 || evt.Unmarshaled.gitlab.action == 'failure')
+        statics:
+          - meta: log_type
+            value: "gitlab_failed_password"
+          - meta: username
+            expression: filter(evt.Unmarshaled.gitlab.params, {.key == 'username' && .value != ''})[0]['value']
+      - filter: |
+          evt.Unmarshaled.gitlab.method == 'POST' &&
+          evt.Unmarshaled.gitlab.path == '/users/sign_in' &&
+          any(evt.Unmarshaled.gitlab.params, {.key == 'user' && .value.otp_attempt != nil}) &&
+          evt.Unmarshaled.gitlab.status != 302
+        statics:
+          - meta: log_type
+            value: "gitlab_failed_totp"
+    statics:
+      - meta: service
+        value: gitlab
+      - meta: source_ip
+        expression: evt.Unmarshaled.gitlab.remote_ip
+      - parsed: timestamp
+        expression: evt.Unmarshaled.gitlab.time
+      - target: evt.StrTime
+        expression: "evt.Parsed.timestamp"

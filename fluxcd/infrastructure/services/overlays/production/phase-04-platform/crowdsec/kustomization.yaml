@@ -31,6 +31,7 @@ patches:
   - path: configmap-acquis-mealie-patch.yaml
   - path: configmap-acquis-jellyfin-patch.yaml
   - path: configmap-acquis-vaultwarden-patch.yaml
+  - path: configmap-acquis-gitlab-patch.yaml
   - path: configmap-cloudflare-bouncer-patch.yaml
   # ExternalSecret patch
   - path: externalsecret-patch.yaml

@@ -22,6 +22,9 @@ resources:
   - configmap-acquis-vaultwarden.yaml
   - configmap-vaultwarden-parser.yaml
   - configmap-vaultwarden-scenario.yaml
+  - configmap-acquis-gitlab.yaml
+  - configmap-gitlab-parser.yaml
+  - configmap-gitlab-scenario.yaml
   - configmap-istio-parser.yaml
   - configmap-whitelist.yaml
   - configmap-bitwarden-parser.yaml

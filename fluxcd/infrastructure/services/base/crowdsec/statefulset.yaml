@@ -154,6 +154,17 @@ spec:
             - name: vaultwarden-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/vaultwarden-bf.yaml
               subPath: vaultwarden-bf.yaml
+            # GitLab: real app-log auth-failure parsing (vendored timokoessler/gitlab) off the
+            # webservice production_json.log. GitLab logs the real client IP (XFF) natively.
+            - name: acquis-gitlab
+              mountPath: /etc/crowdsec/acquis.d/90-gitlab-loki.yaml
+              subPath: 90-gitlab-loki.yaml
+            - name: gitlab-parser
+              mountPath: /etc/crowdsec/parsers/s01-parse/prplanit/gitlab.yaml
+              subPath: gitlab.yaml
+            - name: gitlab-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/gitlab-bf.yaml
+              subPath: gitlab-bf.yaml
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -216,6 +227,15 @@ spec:
         - name: vaultwarden-scenario
           configMap:
             name: crowdsec-vaultwarden-scenario
+        - name: acquis-gitlab
+          configMap:
+            name: crowdsec-acquis-gitlab
+        - name: gitlab-parser
+          configMap:
+            name: crowdsec-gitlab-parser
+        - name: gitlab-scenario
+          configMap:
+            name: crowdsec-gitlab-scenario
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-crowdsec-config
