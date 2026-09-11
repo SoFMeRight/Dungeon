@@ -55,7 +55,7 @@ spec:
                 crowdsecurity/traefik crowdsecurity/http-cve
                 crowdsecurity/whitelist-good-actors crowdsecurity/iptables
                 crowdsecurity/linux crowdsecurity/nginx crowdsecurity/sshd
-                crowdsecurity/home-assistant
+                crowdsecurity/home-assistant crowdsecurity/nextcloud
             - name: GID
               value: "1000"
             - name: CUSTOM_HOSTNAME
@@ -115,6 +115,12 @@ spec:
             - name: acquis-home-assistant
               mountPath: /etc/crowdsec/acquis.d/40-home-assistant-loki.yaml
               subPath: 40-home-assistant-loki.yaml
+            # Nextcloud app auth logs. Nextcloud emits clean nextcloud.log JSON to stderr
+            # (log_type=errorlog + apache ErrorLogFormat "%M"), so the official
+            # crowdsecurity/nextcloud-logs parser (JsonExtract on the message) fires natively.
+            - name: acquis-nextcloud
+              mountPath: /etc/crowdsec/acquis.d/50-nextcloud-loki.yaml
+              subPath: 50-nextcloud-loki.yaml
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -147,6 +153,9 @@ spec:
         - name: acquis-home-assistant
           configMap:
             name: crowdsec-acquis-home-assistant
+        - name: acquis-nextcloud
+          configMap:
+            name: crowdsec-acquis-nextcloud
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-crowdsec-config

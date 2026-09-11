@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-nextcloud
+data:
+  50-nextcloud-loki.yaml: |
+    source: loki
+    url: http://loki.gossip-stone.svc.cluster.local:3100
+    limit: 1000
+    query: |
+      {service_name="nextcloud"} |~ "Login failed|Bruteforce attempt|Trusted domain error"
+    labels:
+      type: nextcloud
+    wait_for_ready: 10s

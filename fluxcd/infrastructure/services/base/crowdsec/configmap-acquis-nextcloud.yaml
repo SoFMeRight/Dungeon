@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-nextcloud
+data:
+  # Nextcloud auth-event acquisition. Loki-filtered to the three messages the official
+  # nextcloud parser matches (login brute-force, bruteforce lockout, trusted-domain probe)
+  # to keep volume low; the `type: nextcloud` label is mapped to evt.Parsed.program by
+  # crowdsec's built-in non-syslog parser, so crowdsecurity/nextcloud-logs + nextcloud-bf fire.
+  # url is patched to the real Loki endpoint in the overlay.
+  50-nextcloud-loki.yaml: |
+    source: loki
+    url: PLACEHOLDER_LOKI_URL
+    limit: 1000
+    query: |
+      {service_name="nextcloud"} |~ "Login failed|Bruteforce attempt|Trusted domain error"
+    labels:
+      type: nextcloud
+    wait_for_ready: 10s

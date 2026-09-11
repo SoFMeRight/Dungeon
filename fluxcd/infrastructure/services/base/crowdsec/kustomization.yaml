@@ -12,6 +12,7 @@ resources:
   - configmap-acquis-bitwarden.yaml
   - configmap-acquis-istio.yaml
   - configmap-acquis-home-assistant.yaml
+  - configmap-acquis-nextcloud.yaml
   - configmap-istio-parser.yaml
   - configmap-whitelist.yaml
   - configmap-bitwarden-parser.yaml
