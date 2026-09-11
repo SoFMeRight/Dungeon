@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-home-assistant
+data:
+  40-home-assistant-loki.yaml: |
+    source: loki
+    url: http://loki.gossip-stone.svc.cluster.local:3100
+    limit: 1000
+    query: |
+      {service_name="home-assistant"} |= "homeassistant.components.http.ban"
+    labels:
+      type: home-assistant
+    wait_for_ready: 10s

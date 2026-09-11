@@ -51,7 +51,11 @@ spec:
               protocol: TCP
           env:
             - name: COLLECTIONS
-              value: "crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors crowdsecurity/iptables crowdsecurity/linux crowdsecurity/nginx crowdsecurity/sshd"
+              value: >-
+                crowdsecurity/traefik crowdsecurity/http-cve
+                crowdsecurity/whitelist-good-actors crowdsecurity/iptables
+                crowdsecurity/linux crowdsecurity/nginx crowdsecurity/sshd
+                crowdsecurity/home-assistant
             - name: GID
               value: "1000"
             - name: CUSTOM_HOSTNAME
@@ -105,6 +109,12 @@ spec:
             - name: istio-parser
               mountPath: /etc/crowdsec/parsers/s01-parse/prplanit/istio-gateway.yaml
               subPath: istio-gateway.yaml
+            # Home Assistant auth-failure logs. No custom parser/shim: the built-in
+            # non-syslog parser sets program from the `type` label, so the official
+            # crowdsecurity/home-assistant-logs parser (gates on program) fires natively.
+            - name: acquis-home-assistant
+              mountPath: /etc/crowdsec/acquis.d/40-home-assistant-loki.yaml
+              subPath: 40-home-assistant-loki.yaml
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -134,6 +144,9 @@ spec:
         - name: istio-parser
           configMap:
             name: crowdsec-istio-parser
+        - name: acquis-home-assistant
+          configMap:
+            name: crowdsec-acquis-home-assistant
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-crowdsec-config
