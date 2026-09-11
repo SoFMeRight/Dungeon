@@ -87,14 +87,14 @@ spec:
                   grep -vE '^#|^[[:space:]]*$' /config/feeds.tsv > /tmp/feeds
                   while read -r slug url; do
                     echo ">>> $slug ($url)"
-                    data=$(curl -sfL --max-time 180 "$url" 2>/dev/null) || { echo "  fetch FAILED"; continue; }
+                    data=$(curl -sfL --max-time 180 --retry 4 --retry-delay 5 --retry-all-errors "$url" 2>/dev/null) || { echo "  fetch FAILED (after retries)"; continue; }
                     process "$slug" "$data"
                   done < /tmp/feeds
                   if [ -n "${OTX_KEY:-}" ] && [ -n "${OTX_PULSE_ID:-}" ]; then
                     echo ">>> otx-web-scanners (pulse $OTX_PULSE_ID)"
                     page=1; : > /tmp/otx
                     while [ "$page" -le 50 ]; do
-                      r=$(curl -sf --max-time 120 -H "X-OTX-API-KEY: $OTX_KEY" "https://otx.alienvault.com/api/v1/pulses/$OTX_PULSE_ID/indicators?limit=1000&page=$page" 2>/dev/null) || break
+                      r=$(curl -sf --max-time 120 --retry 4 --retry-delay 5 --retry-all-errors -H "X-OTX-API-KEY: $OTX_KEY" "https://otx.alienvault.com/api/v1/pulses/$OTX_PULSE_ID/indicators?limit=1000&page=$page" 2>/dev/null) || break
                       printf '%s' "$r" | jq -r '.results[]? | select(.type=="IPv4") | .indicator' >> /tmp/otx 2>/dev/null || true
                       nx=$(printf '%s' "$r" | jq -r '.next // empty' 2>/dev/null)
                       [ -z "$nx" ] && break
