@@ -97,9 +97,9 @@ spec:
         deny:
           conditions:
             any:
-              - key: "{{ request.object.spec.template.spec.serviceAccountName || '' }}"
+              - key: "{{ request.object.spec.jobTemplate.spec.template.spec.serviceAccountName || request.object.spec.template.spec.serviceAccountName || '' }}"
                 operator: Equals
                 value: ""
-              - key: "{{ request.object.spec.template.spec.serviceAccountName || '' }}"
+              - key: "{{ request.object.spec.jobTemplate.spec.template.spec.serviceAccountName || request.object.spec.template.spec.serviceAccountName || '' }}"
                 operator: Equals
                 value: "default"
