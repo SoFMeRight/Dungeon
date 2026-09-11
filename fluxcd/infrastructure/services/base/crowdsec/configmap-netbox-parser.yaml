@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-netbox-parser
+data:
+  # Custom parser (no crowdsec hub collection for NetBox). Matches NetBox's built-in
+  # user_login_failed signal log (logger netbox.auth.login), surfaced to stdout by the
+  # netbox LOGGING config: "[<ts>] netbox.auth.login INFO Failed login attempt for
+  # username: <user> from <client_ip>". client_ip is the real client (NetBox
+  # HTTP_CLIENT_IP_HEADERS includes X-Forwarded-For). program is set from the acquisition
+  # `type: netbox` label via crowdsec's built-in non-syslog parser.
+  netbox.yaml: |
+    onsuccess: next_stage
+    name: prplanit/netbox-logs
+    description: "NetBox auth-failure parser (custom; netbox.auth.login signal)"
+    filter: "evt.Parsed.program == 'netbox'"
+    nodes:
+      - grok:
+          pattern: 'Failed login attempt for username: %{DATA:username} from %{IP:source_ip}'
+          apply_on: message
+          statics:
+            - meta: log_type
+              value: netbox_failed_auth
+    statics:
+      - meta: service
+        value: netbox
+      - meta: username
+        expression: evt.Parsed.username
+      - meta: source_ip
+        expression: evt.Parsed.source_ip

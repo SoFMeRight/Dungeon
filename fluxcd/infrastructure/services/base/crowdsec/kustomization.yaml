@@ -25,6 +25,9 @@ resources:
   - configmap-acquis-gitlab.yaml
   - configmap-gitlab-parser.yaml
   - configmap-gitlab-scenario.yaml
+  - configmap-acquis-netbox.yaml
+  - configmap-netbox-parser.yaml
+  - configmap-netbox-scenario.yaml
   - configmap-istio-parser.yaml
   - configmap-whitelist.yaml
   - configmap-bitwarden-parser.yaml

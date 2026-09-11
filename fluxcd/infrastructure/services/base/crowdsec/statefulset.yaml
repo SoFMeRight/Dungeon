@@ -165,6 +165,17 @@ spec:
             - name: gitlab-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/gitlab-bf.yaml
               subPath: gitlab-bf.yaml
+            # NetBox: real app-log auth-failure parsing (custom parser; netbox.auth.login signal).
+            # NetBox logs the real client IP (HTTP_CLIENT_IP_HEADERS incl. X-Forwarded-For).
+            - name: acquis-netbox
+              mountPath: /etc/crowdsec/acquis.d/95-netbox-loki.yaml
+              subPath: 95-netbox-loki.yaml
+            - name: netbox-parser
+              mountPath: /etc/crowdsec/parsers/s01-parse/prplanit/netbox.yaml
+              subPath: netbox.yaml
+            - name: netbox-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/netbox-bf.yaml
+              subPath: netbox-bf.yaml
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -236,6 +247,15 @@ spec:
         - name: gitlab-scenario
           configMap:
             name: crowdsec-gitlab-scenario
+        - name: acquis-netbox
+          configMap:
+            name: crowdsec-acquis-netbox
+        - name: netbox-parser
+          configMap:
+            name: crowdsec-netbox-parser
+        - name: netbox-scenario
+          configMap:
+            name: crowdsec-netbox-scenario
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-crowdsec-config
