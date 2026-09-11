@@ -65,17 +65,24 @@ spec:
                 - |
                   set -u
                   NS=lens-of-truth; POD=crowdsec-0; CTR=crowdsec; DUR=26h; BATCH=2000
+                  # cscli decisions import BYPASSES CrowdSec's whitelist pipeline, so pre-filter every
+                  # feed against the whitelist ranges (WAN + RFC1918 + loopback) or we can self-ban.
+                  # Fail closed if the whitelist is missing/empty -- never import unfiltered.
+                  grep -oE '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(/[0-9]+)?' /whitelist/whitelists.yaml > /tmp/wl.txt 2>/dev/null || true
+                  if [ ! -s /tmp/wl.txt ]; then echo "FATAL: whitelist empty/unreadable; refusing to import (self-block risk)"; exit 1; fi
+                  echo "whitelist exclusion ranges: $(tr '\n' ' ' < /tmp/wl.txt)"
                   # cscli decisions import needs the LAPI (not DB-direct) -> run it inside crowdsec-0.
                   imp() { kubectl -n "$NS" exec -i "$POD" -c "$CTR" -- cscli decisions import -i - --format values --scope "$2" --duration "$DUR" --batch "$BATCH" --reason "$1" >/dev/null 2>&1; }
                   del() { kubectl -n "$NS" exec "$POD" -c "$CTR" -- cscli decisions delete --origin cscli-import --scenario "$1" >/dev/null 2>&1 || true; }
                   process() {
-                    clean=$(printf '%s\n' "$2" | sed 's/[#;].*//' | awk '{print $1}' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
-                    if [ -z "$clean" ]; then echo "  $1: no valid IPs, skip"; return; fi
+                    raw=$(printf '%s\n' "$2" | sed 's/[#;].*//' | awk '{print $1}' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+                    clean=$(printf '%s\n' "$raw" | python3 /config/wlfilter.py /tmp/wl.txt)
+                    if [ -z "$clean" ]; then echo "  $1: nothing to import after whitelist filter"; return; fi
                     del "$1"
                     ips=$(printf '%s\n' "$clean" | grep -v '/'); ranges=$(printf '%s\n' "$clean" | grep '/')
                     [ -n "$ips" ] && printf '%s\n' "$ips" | imp "$1" ip
                     [ -n "$ranges" ] && printf '%s\n' "$ranges" | imp "$1" range
-                    echo "  $1: imported $(printf '%s' "$ips" | grep -c .) ips + $(printf '%s' "$ranges" | grep -c .) ranges"
+                    echo "  $1: imported $(printf '%s' "$ips" | grep -c .) ips + $(printf '%s' "$ranges" | grep -c .) ranges (filtered $(( $(printf '%s' "$raw" | grep -c .) - $(printf '%s' "$clean" | grep -c .) )) whitelisted)"
                   }
                   grep -vE '^#|^[[:space:]]*$' /config/feeds.tsv > /tmp/feeds
                   while read -r slug url; do
@@ -100,6 +107,8 @@ spec:
               volumeMounts:
                 - name: feeds
                   mountPath: /config
+                - name: whitelist
+                  mountPath: /whitelist
                 - name: tmp
                   mountPath: /tmp
               resources:
@@ -113,5 +122,8 @@ spec:
             - name: feeds
               configMap:
                 name: crowdsec-blocklists
+            - name: whitelist
+              configMap:
+                name: crowdsec-whitelist
             - name: tmp
               emptyDir: {}

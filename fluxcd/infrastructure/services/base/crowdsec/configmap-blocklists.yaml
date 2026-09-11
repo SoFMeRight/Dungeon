@@ -11,32 +11,47 @@ data:
   # only_include_decisions_from (["cscli","crowdsec"]) -> so they enforce via pfSense ONLY
   # (unlimited pf table), never flooding the free-tier Cloudflare Workers-KV.
   #
+  # High-confidence tier only: feeds that list genuine malicious INFRASTRUCTURE or ATTACKERS,
+  # never legit residential/proxy/Tor users -- so we don't silently block innocent visitors to
+  # public services. Scanner/proxy/Tor/VoIP feeds (greensnow, sslproxies, botscout, cruzit,
+  # voipbl, tor-exits) were deliberately dropped for that false-positive risk.
   # Feed descriptions:
-  #   greensnow       - GreenSnow SSH/brute-force/scanner attackers (FireHOL mirror)
-  #   sslproxies      - malicious SSL / open proxies, 7-day window (FireHOL)
-  #   botscout        - bot / spam-registration IPs, 7-day window (FireHOL / BotScout)
-  #   cybercrime      - cybercrime-tracker C2 / malware hosts (FireHOL)
-  #   cruzit          - CruzIT web-attack IPs (FireHOL / iblocklist)
-  #   voipbl          - VoIP/SIP abuse (voipbl.org original; FireHOL dropped its mirror)
-  #   tor-exits       - Tor exit nodes (FireHOL)
-  #   firehol-level1  - FireHOL Level 1: highest-confidence baseline, near-zero false positives
-  #   spamhaus-drop   - Spamhaus DROP: hijacked / criminal-controlled netblocks
+  #   spamhaus-drop   - Spamhaus DROP: hijacked / criminal-controlled netblocks (never legit)
   #   feodo-c2        - abuse.ch Feodo Tracker: active botnet C2 (high precision, low volume)
+  #   cybercrime      - cybercrime-tracker C2 / malware hosts (FireHOL mirror)
+  #   firehol-level2  - FireHOL Level 2: recent attack sources (no bogons, unlike Level 1 which
+  #                     bundles RFC1918 and would self-ban the LAN via the pfSense bouncer)
   #   blocklist-de    - blocklist.de: SSH / mail / web brute-forcers (fail2ban aggregate)
-  # OTX (AlienVault/LevelBlue) is pulled separately by the CronJob from your SUBSCRIBED pulses
-  # using OTX_KEY (curate which pulses in the OTX UI, e.g. "Web Scanners").
   feeds.tsv: |
-    greensnow https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/greensnow.ipset
-    sslproxies https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/sslproxies_7d.ipset
-    botscout https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/botscout_7d.ipset
-    cybercrime https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/cybercrime.ipset
-    cruzit https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/iblocklist_cruzit_web_attacks.netset
-    voipbl https://www.voipbl.org/update/
-    tor-exits https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/tor_exits.ipset
-    firehol-level1 https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level1.netset
     spamhaus-drop https://www.spamhaus.org/drop/drop.txt
     feodo-c2 https://feodotracker.abuse.ch/downloads/ipblocklist.txt
+    cybercrime https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/cybercrime.ipset
+    firehol-level2 https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level2.netset
     blocklist-de https://lists.blocklist.de/lists/all.txt
   # OTX "Web Scanners" pulse ID — the source of CrowdSec's "OTX Web Scanners List".
   # From otx.alienvault.com/pulse/<id> (the ~2590-IP web-scanners pulse). Empty = OTX skipped.
   otx_pulse_id: ""
+  # Whitelist filter: drops any feed IP/CIDR that overlaps a CrowdSec-whitelisted range
+  # (WAN + RFC1918 + loopback). cscli decisions import bypasses CrowdSec's whitelist pipeline,
+  # so this pre-filter is the ONLY thing preventing a self-ban. args: <whitelist-cidrs-file>;
+  # feed entries on stdin; kept entries on stdout.
+  wlfilter.py: |
+    import sys
+    import ipaddress
+    wl = []
+    for x in open(sys.argv[1]).read().split():
+        try:
+            wl.append(ipaddress.ip_network(x, strict=False))
+        except ValueError:
+            pass
+    for line in sys.stdin:
+        e = line.strip()
+        if not e:
+            continue
+        try:
+            n = ipaddress.ip_network(e, strict=False)
+        except ValueError:
+            continue
+        if any(n.overlaps(w) for w in wl):
+            continue
+        print(e)
