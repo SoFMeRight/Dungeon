@@ -24,6 +24,11 @@ spec:
           env:
             - name: DOMAIN
               value: "https://vw.prplanit.com"
+            # Log the real client IP (the cell-membrane gateway sets X-Forwarded-For; default
+            # IP_HEADER is X-Real-IP, which istio does not send). Not spoofable: vaultwarden only
+            # receives connections from the in-mesh gateway. Enables CrowdSec to ban the true IP.
+            - name: IP_HEADER
+              value: "X-Forwarded-For"
             - name: SIGNUPS_ALLOWED
               value: "false"
             - name: INVITATIONS_ALLOWED
