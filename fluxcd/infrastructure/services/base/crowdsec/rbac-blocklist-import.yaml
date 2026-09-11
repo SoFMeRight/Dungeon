@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: crowdsec-blocklist-import
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: crowdsec-blocklist-import
+rules:
+  # The import job runs `cscli decisions import` inside crowdsec-0 (reuses its running LAPI +
+  # local creds -- cscli decisions import needs the LAPI, it is not DB-direct). Scoped to the
+  # single crowdsec-0 pod.
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+    resourceNames: ["crowdsec-0"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: crowdsec-blocklist-import
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: crowdsec-blocklist-import
+subjects:
+  - kind: ServiceAccount
+    name: crowdsec-blocklist-import

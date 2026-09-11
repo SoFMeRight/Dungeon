@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-blocklists
+data:
+  # Third-party IP blocklists imported locally by the crowdsec-blocklist-import CronJob.
+  # Format: "<slug> <url>" per line (comments start with #). <slug> becomes the decision
+  # reason/scenario so each feed is independently refreshed + attributable.
+  #
+  # These import with origin `cscli-import`, which is NOT in the Cloudflare worker-bouncer's
+  # only_include_decisions_from (["cscli","crowdsec"]) -> so they enforce via pfSense ONLY
+  # (unlimited pf table), never flooding the free-tier Cloudflare Workers-KV.
+  #
+  # Feed descriptions:
+  #   greensnow       - GreenSnow SSH/brute-force/scanner attackers (FireHOL mirror)
+  #   sslproxies      - malicious SSL / open proxies, 7-day window (FireHOL)
+  #   botscout        - bot / spam-registration IPs, 7-day window (FireHOL / BotScout)
+  #   cybercrime      - cybercrime-tracker C2 / malware hosts (FireHOL)
+  #   cruzit          - CruzIT web-attack IPs (FireHOL / iblocklist)
+  #   voipbl          - VoIP/SIP abuse (voipbl.org original; FireHOL dropped its mirror)
+  #   tor-exits       - Tor exit nodes (FireHOL)
+  #   firehol-level1  - FireHOL Level 1: highest-confidence baseline, near-zero false positives
+  #   spamhaus-drop   - Spamhaus DROP: hijacked / criminal-controlled netblocks
+  #   feodo-c2        - abuse.ch Feodo Tracker: active botnet C2 (high precision, low volume)
+  #   blocklist-de    - blocklist.de: SSH / mail / web brute-forcers (fail2ban aggregate)
+  # OTX (AlienVault/LevelBlue) is pulled separately by the CronJob from your SUBSCRIBED pulses
+  # using OTX_KEY (curate which pulses in the OTX UI, e.g. "Web Scanners").
+  feeds.tsv: |
+    greensnow https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/greensnow.ipset
+    sslproxies https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/sslproxies_7d.ipset
+    botscout https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/botscout_7d.ipset
+    cybercrime https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/cybercrime.ipset
+    cruzit https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/iblocklist_cruzit_web_attacks.netset
+    voipbl https://www.voipbl.org/update/
+    tor-exits https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/tor_exits.ipset
+    firehol-level1 https://raw.githubusercontent.com/firehol/blocklist-ipsets/master/firehol_level1.netset
+    spamhaus-drop https://www.spamhaus.org/drop/drop.txt
+    feodo-c2 https://feodotracker.abuse.ch/downloads/ipblocklist.txt
+    blocklist-de https://lists.blocklist.de/lists/all.txt
+  # OTX "Web Scanners" pulse ID — the source of CrowdSec's "OTX Web Scanners List".
+  # From otx.alienvault.com/pulse/<id> (the ~2590-IP web-scanners pulse). Empty = OTX skipped.
+  otx_pulse_id: ""

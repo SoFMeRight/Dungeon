@@ -28,6 +28,9 @@ resources:
   - configmap-acquis-netbox.yaml
   - configmap-netbox-parser.yaml
   - configmap-netbox-scenario.yaml
+  - configmap-blocklists.yaml
+  - rbac-blocklist-import.yaml
+  - cronjob-blocklist-import.yaml
   - configmap-istio-parser.yaml
   - configmap-whitelist.yaml
   - configmap-bitwarden-parser.yaml

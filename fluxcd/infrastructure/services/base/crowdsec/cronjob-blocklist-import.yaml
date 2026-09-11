@@ -1,0 +1,117 @@
+# yamllint disable rule:line-length
+# Embedded import script has command/URL lines longer than 200 chars.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: crowdsec-blocklist-import
+  labels:
+    app: crowdsec
+    component: blocklist-import
+spec:
+  schedule: "17 */12 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  startingDeadlineSeconds: 600
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 1800
+      template:
+        metadata:
+          labels:
+            app: crowdsec
+            component: blocklist-import
+        spec:
+          serviceAccountName: crowdsec-blocklist-import
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: import
+              image: docker.io/alpine/k8s:1.34.0
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+              env:
+                - name: HOME
+                  value: /tmp
+                # Optional: only used if the secret provides it. Pulls IPv4 indicators from
+                # your SUBSCRIBED OTX pulses (curate them in the OTX UI, e.g. "Web Scanners").
+                - name: OTX_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: crowdsec-blocklist-secrets
+                      key: OTX_KEY
+                      optional: true
+                # Pinned OTX "Web Scanners" pulse ID (CrowdSec's OTX Web Scanners List source).
+                # Empty -> OTX step is skipped. Set in the crowdsec-blocklists ConfigMap.
+                - name: OTX_PULSE_ID
+                  valueFrom:
+                    configMapKeyRef:
+                      name: crowdsec-blocklists
+                      key: otx_pulse_id
+                      optional: true
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -u
+                  NS=lens-of-truth; POD=crowdsec-0; CTR=crowdsec; DUR=26h; BATCH=2000
+                  # cscli decisions import needs the LAPI (not DB-direct) -> run it inside crowdsec-0.
+                  imp() { kubectl -n "$NS" exec -i "$POD" -c "$CTR" -- cscli decisions import -i - --format values --scope "$2" --duration "$DUR" --batch "$BATCH" --reason "$1" >/dev/null 2>&1; }
+                  del() { kubectl -n "$NS" exec "$POD" -c "$CTR" -- cscli decisions delete --origin cscli-import --scenario "$1" >/dev/null 2>&1 || true; }
+                  process() {
+                    clean=$(printf '%s\n' "$2" | sed 's/[#;].*//' | awk '{print $1}' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+')
+                    if [ -z "$clean" ]; then echo "  $1: no valid IPs, skip"; return; fi
+                    del "$1"
+                    ips=$(printf '%s\n' "$clean" | grep -v '/'); ranges=$(printf '%s\n' "$clean" | grep '/')
+                    [ -n "$ips" ] && printf '%s\n' "$ips" | imp "$1" ip
+                    [ -n "$ranges" ] && printf '%s\n' "$ranges" | imp "$1" range
+                    echo "  $1: imported $(printf '%s' "$ips" | grep -c .) ips + $(printf '%s' "$ranges" | grep -c .) ranges"
+                  }
+                  grep -vE '^#|^[[:space:]]*$' /config/feeds.tsv > /tmp/feeds
+                  while read -r slug url; do
+                    echo ">>> $slug ($url)"
+                    data=$(curl -sfL --max-time 180 "$url" 2>/dev/null) || { echo "  fetch FAILED"; continue; }
+                    process "$slug" "$data"
+                  done < /tmp/feeds
+                  if [ -n "${OTX_KEY:-}" ] && [ -n "${OTX_PULSE_ID:-}" ]; then
+                    echo ">>> otx-web-scanners (pulse $OTX_PULSE_ID)"
+                    page=1; : > /tmp/otx
+                    while [ "$page" -le 50 ]; do
+                      r=$(curl -sf --max-time 120 -H "X-OTX-API-KEY: $OTX_KEY" "https://otx.alienvault.com/api/v1/pulses/$OTX_PULSE_ID/indicators?limit=1000&page=$page" 2>/dev/null) || break
+                      printf '%s' "$r" | jq -r '.results[]? | select(.type=="IPv4") | .indicator' >> /tmp/otx 2>/dev/null || true
+                      nx=$(printf '%s' "$r" | jq -r '.next // empty' 2>/dev/null)
+                      [ -z "$nx" ] && break
+                      page=$((page + 1))
+                    done
+                    otx=$(sort -u /tmp/otx)
+                    if [ -n "$otx" ]; then process otx-web-scanners "$otx"; else echo "  pulse $OTX_PULSE_ID returned no IPv4 indicators"; fi
+                  fi
+                  echo "=== blocklist import done ==="
+              volumeMounts:
+                - name: feeds
+                  mountPath: /config
+                - name: tmp
+                  mountPath: /tmp
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  cpu: "1"
+                  memory: 512Mi
+          volumes:
+            - name: feeds
+              configMap:
+                name: crowdsec-blocklists
+            - name: tmp
+              emptyDir: {}

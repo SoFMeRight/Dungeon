@@ -8,6 +8,7 @@ resources:
   - statefulset-postgres.yaml
   - externalsecret-config-local.yaml
   - externalsecret-registrar-config.yaml
+  - externalsecret-blocklist.yaml
 
 patches:
   # StatefulSet patches
