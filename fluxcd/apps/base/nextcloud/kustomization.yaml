@@ -6,6 +6,7 @@ resources:
   - repository.yaml
   - helmrelease.yaml
   - aux-configmap.yaml
+  - apache-errorlog-configmap.yaml
   - externalsecret.yaml
   # Database
   - postgres-cluster.yaml

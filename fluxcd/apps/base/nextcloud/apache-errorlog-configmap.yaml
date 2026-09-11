@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nextcloud-apache-errorlog
+data:
+  # Nextcloud's app logger (log_type=errorlog) writes through apache, the only path to the
+  # container's stderr since www-data cannot reopen /dev/stdout. Default apache prefixes each
+  # line ([time][php:level][pid][client]…), which breaks crowdsec's nextcloud parser
+  # (JsonExtract on the raw message). ErrorLogFormat "%M" emits only the message — the raw
+  # nextcloud.log JSON — so the events reach Loki clean and parse natively. zzz- so it loads
+  # last in conf-enabled and wins over any earlier ErrorLogFormat.
+  zzz-crowdsec-errorlog.conf: |
+    ErrorLogFormat "%M"

@@ -69,6 +69,17 @@ spec:
         - name: PHP_UPLOAD_LIMIT
           value: "16G"
 
+      # Mount the ErrorLogFormat "%M" snippet into apache's conf-enabled so Nextcloud's
+      # errorlog output (above) is unprefixed nextcloud.log JSON that crowdsec parses directly.
+      extraVolumes:
+        - name: apache-errorlog
+          configMap:
+            name: nextcloud-apache-errorlog
+      extraVolumeMounts:
+        - name: apache-errorlog
+          mountPath: /etc/apache2/conf-enabled/zzz-crowdsec-errorlog.conf
+          subPath: zzz-crowdsec-errorlog.conf
+
       defaultConfigs:
         imaginary.config.php: true
 
@@ -88,6 +99,16 @@ spec:
               . '?auth=' . getenv('REDIS_HOST_PASSWORD')
             );
           }
+        # Emit app logs (incl. auth failures) to stderr as raw nextcloud.log JSON so they reach
+        # Loki for CrowdSec. errorlog routes through apache (www-data can't write /dev/stdout);
+        # the apache-errorlog configMap sets ErrorLogFormat "%M" so lines carry no apache prefix.
+        # Per-pod stderr (not the shared cephfs nextcloud.log), so no cross-replica duplication.
+        logging.config.php: |-
+          <?php
+          $CONFIG = array(
+            'log_type' => 'errorlog',
+            'loglevel' => 2,
+          );
 
       # Pin Collabora's WOPI CheckFileInfo callback to the in-cluster nextcloud service, so
       # coolwsd reaches nextcloud east-west instead of the public LB (a meshed pod can't
