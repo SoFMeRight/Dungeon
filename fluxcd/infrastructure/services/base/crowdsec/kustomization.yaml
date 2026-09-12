@@ -31,6 +31,9 @@ resources:
   - configmap-acquis-joplin.yaml
   - configmap-joplin-parser.yaml
   - configmap-joplin-scenario.yaml
+  - configmap-acquis-osticket.yaml
+  - configmap-osticket-parser.yaml
+  - configmap-osticket-scenario.yaml
   - configmap-blocklists.yaml
   - rbac-blocklist-import.yaml
   - cronjob-blocklist-import.yaml

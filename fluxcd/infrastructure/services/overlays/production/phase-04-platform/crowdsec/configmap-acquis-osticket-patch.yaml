@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-osticket
+data:
+  97-osticket-loki.yaml: |
+    source: loki
+    url: http://loki.gossip-stone.svc.cluster.local:3100
+    limit: 1000
+    query: |
+      {service_name="osticket-app"} |= "osticket_auth" |= "login_failed"
+    labels:
+      type: osticket
+    wait_for_ready: 10s

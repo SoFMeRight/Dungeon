@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-osticket
+data:
+  # osTicket auth-failure acquisition. The homelabhd fork emits one JSON line per failed
+  # login to stderr: {"log":"osticket_auth","event":"login_failed","ip":...,"user":...}.
+  # Filtered to those lines (both substrings) to keep volume low; type: osticket ->
+  # evt.Parsed.program (built-in non-syslog) so prplanit/osticket-logs matches. Real client
+  # IP reaches osTicket via X-Real-Ip (envoyfilter-osticket-realip-* + TRUSTED_PROXIES).
+  # url patched to the real Loki endpoint in the overlay.
+  97-osticket-loki.yaml: |
+    source: loki
+    url: PLACEHOLDER_LOKI_URL
+    limit: 1000
+    query: |
+      {service_name="osticket-app"} |= "osticket_auth" |= "login_failed"
+    labels:
+      type: osticket
+    wait_for_ready: 10s

@@ -187,6 +187,17 @@ spec:
             - name: joplin-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/joplin-bf.yaml
               subPath: joplin-bf.yaml
+            # osTicket: real app-log auth-failure parsing (custom parser; JSON login_failed line).
+            # Real client IP via X-Real-Ip (envoyfilter-osticket-realip-* + TRUSTED_PROXIES env).
+            - name: acquis-osticket
+              mountPath: /etc/crowdsec/acquis.d/97-osticket-loki.yaml
+              subPath: 97-osticket-loki.yaml
+            - name: osticket-parser
+              mountPath: /etc/crowdsec/parsers/s01-parse/prplanit/osticket.yaml
+              subPath: osticket.yaml
+            - name: osticket-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/osticket-bf.yaml
+              subPath: osticket-bf.yaml
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -276,6 +287,15 @@ spec:
         - name: joplin-scenario
           configMap:
             name: crowdsec-joplin-scenario
+        - name: acquis-osticket
+          configMap:
+            name: crowdsec-acquis-osticket
+        - name: osticket-parser
+          configMap:
+            name: crowdsec-osticket-parser
+        - name: osticket-scenario
+          configMap:
+            name: crowdsec-osticket-scenario
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-crowdsec-config

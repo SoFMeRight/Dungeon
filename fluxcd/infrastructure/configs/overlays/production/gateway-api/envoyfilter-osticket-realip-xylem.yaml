@@ -1,0 +1,45 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: osticket-realip-xylem
+  namespace: arylls-lookout
+spec:
+  # osTicket (homelabhd fork) records the request IP from X-Real-Ip (nginx real_ip,
+  # gated by the TRUSTED_PROXIES env on the deployment). Without the header it sees
+  # the mesh peer (ztunnel pod), which would make CrowdSec ban the gateway instead
+  # of the attacker. The xylem gateway forwards neither X-Real-Ip nor X-Forwarded-For,
+  # so inject X-Real-Ip from the gateway's downstream client address on request.
+  # `replace` (not add) so a client-supplied header cannot spoof the ban source.
+  # Scoped to support.pcfae.com (the internal route) so no other xylem backend is affected.
+  workloadSelector:
+    labels:
+      gateway.networking.k8s.io/gateway-name: xylem-gateway
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: GATEWAY
+        listener:
+          portNumber: 443
+          filterChain:
+            filter:
+              name: envoy.filters.network.http_connection_manager
+              subFilter:
+                name: envoy.filters.http.router
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: osticket-realip-lua
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+            defaultSourceCode:
+              inlineString: |
+                function envoy_on_request(request_handle)
+                  local host = request_handle:headers():get(":authority")
+                  if host and string.find(host, "support.pcfae.com", 1, true) then
+                    local addr = request_handle:streamInfo():downstreamDirectRemoteAddress()
+                    if addr then
+                      local ip = addr:gsub(":%d+$", ""):gsub("^%[", ""):gsub("%]$", "")
+                      request_handle:headers():replace("x-real-ip", ip)
+                    end
+                  end
+                end

@@ -10,6 +10,8 @@ resources:
   - envoyfilter-hsts-xylem.yaml
   - envoyfilter-anubis-realip-xylem.yaml
   - envoyfilter-joplin-realip-xylem.yaml
+  - envoyfilter-osticket-realip-cell-membrane.yaml
+  - envoyfilter-osticket-realip-xylem.yaml
   # ── EnvoyFilters: http→https Location rewrite ──────────────
   - envoyfilter-https-location-cell-membrane.yaml
   - envoyfilter-https-location-xylem.yaml
