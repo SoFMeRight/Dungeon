@@ -13,4 +13,4 @@ spec:
           image: docker.io/alpine/k8s:1.37.0
       containers:
         - name: signaling
-          image: docker.io/strukturag/nextcloud-spreed-signaling:e78e914
+          image: docker.io/strukturag/nextcloud-spreed-signaling:e78e914@sha256:c3f38a9a145d9f9d9275eb208b7a63cb5eb3558907f9076d1b1e0f0909e57aa1

@@ -20,7 +20,7 @@ spec:
         fsGroup: 7777
       containers:
         - name: theisland
-          image: docker.io/acekorneya/asa_server:2_1_latest
+          image: docker.io/acekorneya/asa_server:2_1_latest@sha256:9b6c750133dc0e812a346fe3b8bb21122ac4e7dad2243cbc60afb72bb3b29764
           ports:
             - containerPort: 8777
               protocol: UDP

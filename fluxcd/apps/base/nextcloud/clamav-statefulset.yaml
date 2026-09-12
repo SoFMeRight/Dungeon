@@ -18,7 +18,7 @@ spec:
       serviceAccountName: nextcloud-clamav
       containers:
         - name: clamav
-          image: docker.io/clamav/clamav:stable
+          image: docker.io/clamav/clamav:stable@sha256:1fdfd24c6f0a0fb60788481487459a6d4eda8a9b448641594e04db8410d34422
           # clamd starts root then drops to the clamav user (SETUID/SETGID) and manages /var/lib/clamav
           # (CHOWN). Root-required. Partial hardening: drop ALL + those caps + seccomp.
           securityContext:
