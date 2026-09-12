@@ -30,6 +30,15 @@ spec:
               value: "https://joplin.pcfae.com"
             - name: PM2_HOME
               value: /tmp/pm2
+            # Disable joplin-server's boot-time NTP self-check. In Kubernetes the
+            # container clock is the node clock, which chrony already disciplines,
+            # so the pod time is correct; the check only adds an external NTP
+            # dependency this pod cannot satisfy (UDP/123 egress is blocked and
+            # the internal chrony sits behind a LoadBalancer VIP that in-cluster
+            # traffic cannot hair-pin), and its hard-exit on failure crash-loops
+            # the app. 0 = check disabled (default 2000ms).
+            - name: MAX_TIME_DRIFT
+              value: "0"
           volumeMounts:
             - name: tmp
               mountPath: /tmp
