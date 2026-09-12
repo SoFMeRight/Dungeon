@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-ntfy-scenario
+data:
+  # ntfy self-reports failed logins only at DEBUG, and its own visitor_ip (BEHIND_PROXY,
+  # last-XFF-entry) is NOT Cloudflare-aware, so it cannot reliably name the real client in
+  # our edge topology without brittle proxy-trusted-hosts tuning. Detect at the cell-membrane
+  # gateway instead: the Envoy access log (already ingested by the istio-gw acquisition and
+  # parsed by prplanit/istio-gateway-logs) carries the real, unspoofable client IP
+  # (direct_remote_ip, CF-aware) + method + path + status. No ntfy changes, no new
+  # acquisition/parser.
+  #
+  # FP-safe by endpoint scoping: POST /v1/account/token is the web/CLI login token-mint and
+  # is login-ONLY (success = 200). Verified empirically that a 401 there is EXCLUSIVELY an
+  # auth failure — wrong password, unknown user, and missing/invalid auth header all return
+  # 401; wrong method returns 404, never 401. There is no benign 401 on this endpoint, and
+  # nothing in-cluster hits it (ntfy has no HTTP probe on it; clients authenticate to topics,
+  # not here). The leaky bucket (5 / 20s) tolerates a human fumbling a password; trusted
+  # sources (LAN/WAN) are already whitelisted. source_ip is the gateway-derived real client
+  # (spoofable: 0).
+  ntfy-bf.yaml: |
+    type: leaky
+    name: prplanit/ntfy-bf
+    description: "ntfy login brute-force (cell-membrane gateway access log)"
+    filter: "evt.Parsed.verb == 'POST' && evt.Parsed.target_fqdn == 'ntfy.prplanit.com' && evt.Parsed.request matches '^/v1/account/token/?$' && evt.Parsed.status == '401'"
+    groupby: evt.Meta.source_ip
+    capacity: 5
+    leakspeed: 20s
+    blackhole: 1m
+    labels:
+      service: ntfy
+      behavior: "http:bruteforce"
+      classification:
+        - attack.T1110
+      spoofable: 0
+      confidence: 3
+      label: "ntfy Login Bruteforce"
+      remediation: true

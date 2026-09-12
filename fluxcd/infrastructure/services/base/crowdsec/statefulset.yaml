@@ -203,6 +203,12 @@ spec:
             - name: ghost-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/ghost-bf.yaml
               subPath: ghost-bf.yaml
+            # ntfy: gateway-log brute-force detection (scenario only; reuses the istio-gw
+            # acquisition + prplanit/istio-gateway-logs parser — ntfy's own visitor_ip is not
+            # CF-aware, so the gateway is the authority on the real client).
+            - name: ntfy-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/ntfy-bf.yaml
+              subPath: ntfy-bf.yaml
             # Uptime-Kuma: real app-log auth-failure parsing (Trust Proxy → real client IP).
             - name: acquis-uptime-kuma
               mountPath: /etc/crowdsec/acquis.d/98-uptime-kuma-loki.yaml
@@ -314,6 +320,9 @@ spec:
         - name: ghost-scenario
           configMap:
             name: crowdsec-ghost-scenario
+        - name: ntfy-scenario
+          configMap:
+            name: crowdsec-ntfy-scenario
         - name: acquis-uptime-kuma
           configMap:
             name: crowdsec-acquis-uptime-kuma
