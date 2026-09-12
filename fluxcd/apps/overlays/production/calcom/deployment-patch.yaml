@@ -8,6 +8,10 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
+        # next-auth fetches the public host server-side while rendering, and split-horizon
+        # DNS sends that back through the gateway, which refuses in-cluster callers. Without
+        # this the auth pages wait out the timeout before they render.
+        policy.prplanit.com/cap.oidc: "true"
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: hyrule-castle.calcom.postgres
     spec:
