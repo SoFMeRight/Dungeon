@@ -76,20 +76,6 @@ spec:
                 secretKeyRef:
                   name: calcom-secrets
                   key: DATABASE_URL
-            # Setting both of these is what turns SSO on; the IdP connection itself is then
-            # registered through the app by an account listed in SAML_ADMINS, and stored in
-            # the cal-saml database. Both carry environment identity, so both come from the
-            # vault bundle rather than being written here.
-            - name: SAML_DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: calcom-secrets
-                  key: SAML_DATABASE_URL
-            - name: SAML_ADMINS
-              valueFrom:
-                secretKeyRef:
-                  name: calcom-secrets
-                  key: SAML_ADMINS
             - name: CALCOM_TELEMETRY_DISABLED
               value: "1"
             - name: EMAIL_FROM_NAME
