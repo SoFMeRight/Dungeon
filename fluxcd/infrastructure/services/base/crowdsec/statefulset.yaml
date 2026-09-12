@@ -209,6 +209,11 @@ spec:
             - name: ntfy-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/ntfy-bf.yaml
               subPath: ntfy-bf.yaml
+            # Umami: gateway-log brute-force detection (scenario only; reuses the istio-gw
+            # acquisition + prplanit/istio-gateway-logs parser — umami emits no auth log).
+            - name: umami-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/umami-bf.yaml
+              subPath: umami-bf.yaml
             # Uptime-Kuma: real app-log auth-failure parsing (Trust Proxy → real client IP).
             - name: acquis-uptime-kuma
               mountPath: /etc/crowdsec/acquis.d/98-uptime-kuma-loki.yaml
@@ -323,6 +328,9 @@ spec:
         - name: ntfy-scenario
           configMap:
             name: crowdsec-ntfy-scenario
+        - name: umami-scenario
+          configMap:
+            name: crowdsec-umami-scenario
         - name: acquis-uptime-kuma
           configMap:
             name: crowdsec-acquis-uptime-kuma

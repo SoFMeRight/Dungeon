@@ -36,6 +36,7 @@ resources:
   - configmap-osticket-scenario.yaml
   - configmap-ghost-scenario.yaml
   - configmap-ntfy-scenario.yaml
+  - configmap-umami-scenario.yaml
   - configmap-acquis-uptime-kuma.yaml
   - configmap-uptime-kuma-parser.yaml
   - configmap-uptime-kuma-scenario.yaml
