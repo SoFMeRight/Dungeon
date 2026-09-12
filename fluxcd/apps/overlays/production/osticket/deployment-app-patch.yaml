@@ -18,7 +18,11 @@ spec:
           image: docker.io/busybox:1.38
       containers:
         - name: osticket
-          image: ghcr.io/homelabhd/osticket:v1.18.4
+          # Digest-pinned to the v1.18.4 rebuild carrying the CrowdSec auth JSON emit +
+          # nginx real_ip + entrypoint TRUSTED_PROXIES. Tag kept for readability/Renovate;
+          # the digest forces the rollout to adopt this exact build (the tag alone wouldn't
+          # re-pull a cached image). Renovate tracks digest updates as the tag is rebuilt.
+          image: ghcr.io/homelabhd/osticket:v1.18.4@sha256:d115c1a73cafb790ca730e8805178c92484974ceab4f6109dd2a6c71b55e68f4
           env:
             # Trust the in-cluster mesh/gateway so nginx real_ip takes the client
             # from X-Real-Ip (injected by envoyfilter-osticket-realip-*) — makes
