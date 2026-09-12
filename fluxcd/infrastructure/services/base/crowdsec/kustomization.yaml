@@ -34,6 +34,7 @@ resources:
   - configmap-acquis-osticket.yaml
   - configmap-osticket-parser.yaml
   - configmap-osticket-scenario.yaml
+  - configmap-ghost-scenario.yaml
   - configmap-blocklists.yaml
   - rbac-blocklist-import.yaml
   - cronjob-blocklist-import.yaml

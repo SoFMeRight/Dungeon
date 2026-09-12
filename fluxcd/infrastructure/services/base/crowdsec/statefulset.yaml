@@ -198,6 +198,11 @@ spec:
             - name: osticket-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/osticket-bf.yaml
               subPath: osticket-bf.yaml
+            # Ghost: gateway-log brute-force detection (scenario only; reuses the istio-gw
+            # acquisition + prplanit/istio-gateway-logs parser — Ghost can't self-report auth).
+            - name: ghost-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/ghost-bf.yaml
+              subPath: ghost-bf.yaml
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -296,6 +301,9 @@ spec:
         - name: osticket-scenario
           configMap:
             name: crowdsec-osticket-scenario
+        - name: ghost-scenario
+          configMap:
+            name: crowdsec-ghost-scenario
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-crowdsec-config
