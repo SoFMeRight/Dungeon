@@ -46,6 +46,37 @@ spec:
           volumeMounts:
             - name: yarn-dir
               mountPath: /yarn-writable
+        # Seeds the served build output into writable volumes so the startup rewrite can
+        # edit it in place. An empty mount here would hide the build entirely, so the
+        # contents have to be copied in first, exactly as the yarn cache above is.
+        - name: seed-writable-build
+          image: docker.io/calcom/cal.com:v6.2.0
+          securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+          command:
+            - sh
+            - -c
+            - |
+              cp -a /calcom/apps/web/.next/server/. /seed-server/
+              cp -a /calcom/apps/web/.next/static/. /seed-static/
+              cp -a /calcom/apps/web/public/embed/. /seed-embed/
+              chown -R 1001:1001 /seed-server/ /seed-static/ /seed-embed/
+          volumeMounts:
+            - name: next-server
+              mountPath: /seed-server
+            - name: next-static
+              mountPath: /seed-static
+            - name: public-embed
+              mountPath: /seed-embed
       containers:
         - name: calcom
           image: docker.io/calcom/cal.com:v6.2.0
@@ -63,6 +94,12 @@ spec:
               mountPath: /calcom/.yarn
             - name: turbo-dir
               mountPath: /calcom/.turbo
+            - name: next-server
+              mountPath: /calcom/apps/web/.next/server
+            - name: next-static
+              mountPath: /calcom/apps/web/.next/static
+            - name: public-embed
+              mountPath: /calcom/apps/web/public/embed
             - name: tmp
               mountPath: /tmp
       volumes:
@@ -70,6 +107,17 @@ spec:
           emptyDir: {}
         - name: turbo-dir
           emptyDir: {}
-        # readOnlyRootFilesystem: DB-backed; yarn/turbo on emptyDirs + /tmp scratch.
+        # readOnlyRootFilesystem stays on; these carry the only paths the entrypoint has to
+        # rewrite. The public URL is baked into the bundle at build time and replaced in
+        # place at startup — denied that write, the client keeps the build host and sign-in
+        # redirects off-site. `next start` serves .next/server and .next/static, so only
+        # those (plus the embed snippets) need to be writable; .next/standalone is 550M the
+        # entrypoint also rewrites but nothing serves.
+        - name: next-server
+          emptyDir: {}
+        - name: next-static
+          emptyDir: {}
+        - name: public-embed
+          emptyDir: {}
         - name: tmp
           emptyDir: {}
