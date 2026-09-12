@@ -4,6 +4,7 @@ resources:
   - serviceaccount.yaml
   - deployment.yaml
   - cluster-postgres.yaml
+  - postgres-databases.yaml
   - service.yaml
   - service-db.yaml
   - externalsecret.yaml
