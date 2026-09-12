@@ -8,10 +8,11 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
-        # next-auth fetches the public host server-side while rendering, and split-horizon
-        # DNS sends that back through the gateway, which refuses in-cluster callers. Without
-        # this the auth pages wait out the timeout before they render.
-        policy.prplanit.com/cap.oidc: "true"
+        # next-auth fetches this app's own public host server-side while rendering, and
+        # split-horizon DNS sends that back through the gateway, which refuses in-cluster
+        # callers. Without this the auth pages wait out the timeout before they render.
+        # Not cap.oidc: calcom has no IdP of its own to reach — SSO is a paid feature here.
+        policy.prplanit.com/cap.self-origin: "true"
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: hyrule-castle.calcom.postgres
     spec:

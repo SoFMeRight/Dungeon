@@ -5,6 +5,7 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-cell-membrane-gateway.yaml
   - cnp-cell-membrane-oidc-consumers.yaml
+  - cnp-cell-membrane-self-origin-consumers.yaml
   - cnp-cell-membrane-monitoring.yaml
   - cnp-apt-cacher-ng.yaml
   - cnp-egress-apt-cacher-ng.yaml

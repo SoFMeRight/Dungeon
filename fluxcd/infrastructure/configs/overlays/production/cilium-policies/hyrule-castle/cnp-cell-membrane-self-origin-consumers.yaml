@@ -1,0 +1,30 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-self-origin-consumers-to-cell-membrane
+spec:
+  description: >-
+    Allow in-cluster apps that call their OWN public hostname to reach the
+    cell-membrane gateway on 443. Split-horizon DNS resolves that hostname to the
+    gateway VIP, so a request the app makes to itself leaves the pod and comes
+    back through the edge; without this it is dropped and the caller waits out its
+    own timeout. Distinct from cap.oidc, which covers reaching the IdP: the grant
+    is identical but the reason is not, and a consumer here has no OIDC to remove.
+    Capability-gated exactly as the oidc policy is — each fromEndpoints entry
+    requires BOTH the namespace AND policy.prplanit.com/cap.self-origin=true
+    (logical AND), so only labeled pods match, never whole namespaces.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            policy.prplanit.com/cap.self-origin: "true"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
