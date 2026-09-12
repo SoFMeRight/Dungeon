@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-joplin-parser
+data:
+  # Custom parser (no crowdsec hub collection for Joplin). Matches joplin-server's
+  # request log line for a failed login, e.g.:
+  #   "App: <ip>: 52 B: Invalid email or password: POST /api/sessions (403) (11ms)"
+  #   "App: <ip>: 42 B: POST /login (403) (11ms)"
+  # source_ip is the real client: joplin's userIp() returns the X-Real-Ip header,
+  # which the xylem gateway sets from the downstream address (envoyfilter-joplin-realip-xylem).
+  # Joplin does not log the attempted username on the failure line, so no user-enum scenario.
+  # program is set from the acquisition `type: joplin` label via crowdsec's built-in non-syslog parser.
+  joplin.yaml: |
+    onsuccess: next_stage
+    name: prplanit/joplin-logs
+    description: "Joplin auth-failure parser (custom; login / api-session 403)"
+    filter: "evt.Parsed.program == 'joplin'"
+    nodes:
+      - grok:
+          pattern: 'App: %{IP:source_ip}:%{DATA}POST /%{NOTSPACE:endpoint} \(403\)'
+          apply_on: message
+          statics:
+            - meta: log_type
+              value: joplin_failed_auth
+    statics:
+      - meta: service
+        value: joplin
+      - meta: source_ip
+        expression: evt.Parsed.source_ip

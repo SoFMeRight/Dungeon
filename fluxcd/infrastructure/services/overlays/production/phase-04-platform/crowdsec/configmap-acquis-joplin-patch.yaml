@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-joplin
+data:
+  96-joplin-loki.yaml: |
+    source: loki
+    url: http://loki.gossip-stone.svc.cluster.local:3100
+    limit: 1000
+    query: |
+      {service_name="joplin"} |~ `POST /(api/sessions|login) \(403\)`
+    labels:
+      type: joplin
+    wait_for_ready: 10s

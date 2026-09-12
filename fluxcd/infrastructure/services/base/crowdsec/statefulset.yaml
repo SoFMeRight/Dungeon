@@ -176,6 +176,17 @@ spec:
             - name: netbox-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/netbox-bf.yaml
               subPath: netbox-bf.yaml
+            # Joplin: real app-log auth-failure parsing (custom parser; login/api-session 403).
+            # Real client IP via X-Real-Ip injected at the xylem gateway (envoyfilter-joplin-realip-xylem).
+            - name: acquis-joplin
+              mountPath: /etc/crowdsec/acquis.d/96-joplin-loki.yaml
+              subPath: 96-joplin-loki.yaml
+            - name: joplin-parser
+              mountPath: /etc/crowdsec/parsers/s01-parse/prplanit/joplin.yaml
+              subPath: joplin.yaml
+            - name: joplin-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/joplin-bf.yaml
+              subPath: joplin-bf.yaml
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -256,6 +267,15 @@ spec:
         - name: netbox-scenario
           configMap:
             name: crowdsec-netbox-scenario
+        - name: acquis-joplin
+          configMap:
+            name: crowdsec-acquis-joplin
+        - name: joplin-parser
+          configMap:
+            name: crowdsec-joplin-parser
+        - name: joplin-scenario
+          configMap:
+            name: crowdsec-joplin-scenario
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-crowdsec-config

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-joplin
+data:
+  # Joplin auth-failure acquisition. Filtered to the failed-login lines (POST to
+  # /api/sessions or /login returning 403) to keep volume low; type: joplin ->
+  # evt.Parsed.program (built-in non-syslog) so prplanit/joplin-logs matches.
+  # Real client IP reaches joplin via X-Real-Ip injected at the xylem gateway
+  # (envoyfilter-joplin-realip-xylem); joplin's userIp() trusts that header.
+  # url patched to the real Loki endpoint in the overlay.
+  96-joplin-loki.yaml: |
+    source: loki
+    url: PLACEHOLDER_LOKI_URL
+    limit: 1000
+    query: |
+      {service_name="joplin"} |~ `POST /(api/sessions|login) \(403\)`
+    labels:
+      type: joplin
+    wait_for_ready: 10s

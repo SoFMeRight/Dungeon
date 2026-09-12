@@ -28,6 +28,9 @@ resources:
   - configmap-acquis-netbox.yaml
   - configmap-netbox-parser.yaml
   - configmap-netbox-scenario.yaml
+  - configmap-acquis-joplin.yaml
+  - configmap-joplin-parser.yaml
+  - configmap-joplin-scenario.yaml
   - configmap-blocklists.yaml
   - rbac-blocklist-import.yaml
   - cronjob-blocklist-import.yaml

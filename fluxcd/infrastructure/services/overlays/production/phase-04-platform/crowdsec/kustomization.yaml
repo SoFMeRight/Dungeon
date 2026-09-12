@@ -34,6 +34,7 @@ patches:
   - path: configmap-acquis-vaultwarden-patch.yaml
   - path: configmap-acquis-gitlab-patch.yaml
   - path: configmap-acquis-netbox-patch.yaml
+  - path: configmap-acquis-joplin-patch.yaml
   - path: configmap-cloudflare-bouncer-patch.yaml
   # ExternalSecret patch
   - path: externalsecret-patch.yaml

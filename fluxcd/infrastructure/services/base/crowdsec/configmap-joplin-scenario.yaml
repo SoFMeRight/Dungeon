@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-joplin-scenario
+data:
+  # Custom scenario (no hub collection). Brute-force leaky bucket over prplanit/joplin-logs,
+  # grouped by the real client source_ip. spoofable: 0 because X-Real-Ip is gateway-set
+  # (envoyfilter-joplin-realip-xylem replaces it from the downstream address), not client-supplied.
+  joplin-bf.yaml: |
+    type: leaky
+    name: prplanit/joplin-bf
+    description: "Joplin login brute-force"
+    filter: "evt.Meta.log_type == 'joplin_failed_auth'"
+    groupby: evt.Meta.source_ip
+    capacity: 5
+    leakspeed: 20s
+    blackhole: 1m
+    labels:
+      service: joplin
+      behavior: "http:bruteforce"
+      classification:
+        - attack.T1110
+      spoofable: 0
+      confidence: 3
+      label: "Joplin Bruteforce"
+      remediation: true
