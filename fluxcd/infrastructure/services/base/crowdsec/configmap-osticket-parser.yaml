@@ -3,30 +3,25 @@ kind: ConfigMap
 metadata:
   name: crowdsec-osticket-parser
 data:
-  # Custom parser (no crowdsec hub collection for osTicket). The homelabhd fork emits a
-  # single JSON line per failed login on stderr:
+  # Custom parser (no crowdsec hub collection for osTicket). The homelabhd fork emits one
+  # clean JSON line per failed login on stderr (php-fpm decorate_workers_output=no, verified
+  # live — no prefix):
   #   {"log":"osticket_auth","event":"login_failed","ip":"<client>","user":"<attempted>"}
-  # A grok first isolates the JSON object (robust to any php-fpm/log prefix), then JsonExtract
-  # pulls the fields. source_ip is the real client (osTicket's userIp via X-Real-Ip, set by
-  # envoyfilter-osticket-realip-* and trusted through TRUSTED_PROXIES). program is set from the
-  # acquisition `type: osticket` label via crowdsec's built-in non-syslog parser. The username
-  # is JSON-escaped at the source, so it cannot forge fields.
+  # so JsonExtract reads evt.Parsed.message directly (no grok). source_ip is the real client
+  # (osTicket's userIp via X-Real-Ip, set by envoyfilter-osticket-realip-* and trusted through
+  # TRUSTED_PROXIES). program is set from the acquisition `type: osticket` label via crowdsec's
+  # built-in non-syslog parser. The username is JSON-escaped at the source, so it cannot forge fields.
   osticket.yaml: |
     onsuccess: next_stage
     name: prplanit/osticket-logs
-    description: "osTicket auth-failure parser (custom; JSON login_failed line)"
-    filter: "evt.Parsed.program == 'osticket' && evt.Parsed.message contains 'osticket_auth'"
-    nodes:
-      - grok:
-          pattern: '(?P<osticket_json>\{.*\})'
-          apply_on: message
-          statics:
-            - meta: log_type
-              value: osticket_failed_auth
-            - meta: source_ip
-              expression: JsonExtract(evt.Parsed.osticket_json, "ip")
-            - meta: username
-              expression: JsonExtract(evt.Parsed.osticket_json, "user")
+    description: "osTicket auth-failure parser (custom; clean JSON login_failed line)"
+    filter: "evt.Parsed.program == 'osticket' && JsonExtract(evt.Parsed.message, 'event') == 'login_failed'"
     statics:
+      - meta: log_type
+        value: osticket_failed_auth
       - meta: service
         value: osticket
+      - meta: source_ip
+        expression: JsonExtract(evt.Parsed.message, 'ip')
+      - meta: username
+        expression: JsonExtract(evt.Parsed.message, 'user')
