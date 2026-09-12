@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-uptime-kuma
+data:
+  # Uptime-Kuma auth-failure acquisition. It logs failed logins as
+  #   [AUTH] WARN: Incorrect username or password for user <user>. IP=<client>
+  # with the REAL client IP (Trust Proxy = Yes in Settings → it reads X-Forwarded-For,
+  # which the cell-membrane gateway forwards — verified live). Filtered to that line to keep
+  # volume low; type: uptime-kuma -> evt.Parsed.program (built-in non-syslog) so
+  # prplanit/uptime-kuma-logs matches. url patched to the real Loki endpoint in the overlay.
+  98-uptime-kuma-loki.yaml: |
+    source: loki
+    url: PLACEHOLDER_LOKI_URL
+    limit: 1000
+    query: |
+      {service_name="uptime-kuma"} |= "Incorrect username or password"
+    labels:
+      type: uptime-kuma
+    wait_for_ready: 10s

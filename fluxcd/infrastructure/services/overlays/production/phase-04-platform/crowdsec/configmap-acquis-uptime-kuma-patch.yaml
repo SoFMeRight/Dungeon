@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-uptime-kuma
+data:
+  98-uptime-kuma-loki.yaml: |
+    source: loki
+    url: http://loki.gossip-stone.svc.cluster.local:3100
+    limit: 1000
+    query: |
+      {service_name="uptime-kuma"} |= "Incorrect username or password"
+    labels:
+      type: uptime-kuma
+    wait_for_ready: 10s

@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-uptime-kuma-parser
+data:
+  # Custom parser (no crowdsec hub collection for Uptime-Kuma). Matches its Socket.io auth
+  # failure line (ANSI-colored prefix, plain tail):
+  #   ... [AUTH] WARN: Incorrect username or password for user <user>. IP=<client>
+  # source_ip is the REAL client (Uptime-Kuma Trust Proxy reads X-Forwarded-For; the gateway
+  # forwards it — verified live). The IP is ANCHORED to end-of-line ($) because Uptime-Kuma
+  # always appends the real IP last: a hostile username like "x. IP=8.8.8.8" therefore cannot
+  # forge source_ip (the trailing, real IP wins). program is set from the acquisition
+  # `type: uptime-kuma` label via crowdsec's built-in non-syslog parser.
+  uptime-kuma.yaml: |
+    onsuccess: next_stage
+    name: prplanit/uptime-kuma-logs
+    description: "Uptime-Kuma auth-failure parser (custom; Incorrect username or password)"
+    filter: "evt.Parsed.program == 'uptime-kuma'"
+    nodes:
+      - grok:
+          pattern: 'Incorrect username or password for user %{DATA:username}\. IP=%{IP:source_ip}$'
+          apply_on: message
+          statics:
+            - meta: log_type
+              value: uptimekuma_failed_auth
+    statics:
+      - meta: service
+        value: uptime-kuma
+      - meta: source_ip
+        expression: evt.Parsed.source_ip
+      - meta: username
+        expression: evt.Parsed.username

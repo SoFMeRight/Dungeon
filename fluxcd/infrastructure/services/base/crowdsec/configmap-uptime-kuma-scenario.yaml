@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-uptime-kuma-scenario
+data:
+  # Custom scenarios (no hub collection). Brute-force + user-enumeration leaky buckets over
+  # prplanit/uptime-kuma-logs, grouped by the real client source_ip. spoofable: 0 — the IP is
+  # gateway-attested (X-Forwarded-For via the mesh gateway) and grok-anchored to end-of-line.
+  uptime-kuma-bf.yaml: |
+    type: leaky
+    name: prplanit/uptime-kuma-bf
+    description: "Uptime-Kuma login brute-force"
+    filter: "evt.Meta.log_type == 'uptimekuma_failed_auth'"
+    groupby: evt.Meta.source_ip
+    capacity: 5
+    leakspeed: 20s
+    blackhole: 1m
+    labels:
+      service: uptime-kuma
+      behavior: "http:bruteforce"
+      classification:
+        - attack.T1110
+      spoofable: 0
+      confidence: 3
+      label: "Uptime-Kuma Bruteforce"
+      remediation: true
+    ---
+    type: leaky
+    name: prplanit/uptime-kuma-bf_user-enum
+    description: "Uptime-Kuma user-enumeration brute-force"
+    filter: "evt.Meta.log_type == 'uptimekuma_failed_auth'"
+    groupby: evt.Meta.source_ip
+    distinct: evt.Meta.username
+    capacity: 5
+    leakspeed: 1m
+    blackhole: 1m
+    labels:
+      service: uptime-kuma
+      behavior: "http:bruteforce"
+      classification:
+        - attack.T1589
+        - attack.T1110
+      spoofable: 0
+      confidence: 3
+      label: "Uptime-Kuma User Enumeration"
+      remediation: true
