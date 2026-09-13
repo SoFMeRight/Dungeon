@@ -5,13 +5,14 @@ metadata:
 spec:
   # Requests lift this out of BestEffort so the kubelet does not reclaim the database
   # first under node pressure. Sized from observed use (~85Mi resident): memory is what
-  # drives eviction, so the request carries the headroom.
+  # drives eviction, so the request carries the headroom. The floor is shared_buffers
+  # (256MB) — postgres reserves it up front and CNPG rejects a request below it.
   resources:
     requests:
-      memory: "192Mi"
+      memory: "384Mi"
       cpu: "100m"
     limits:
-      memory: "512Mi"
+      memory: "1Gi"
       cpu: "500m"
 
   inheritedMetadata:
