@@ -1,4 +1,4 @@
-# calibre-web  ·  SSO required  ·  tier: owner-only  (admits: owner)
+# calibre-web  ·  SSO required  ·  tier: operator-only  (admits: operator)
 #
 # Self-contained: this file IS the complete access rule for books.pcfae.com.
 # One file per gated host — find an app's rule by its filename, no cross-referencing.
@@ -9,8 +9,6 @@
 #   HTTPRoute (books.pcfae.com/oauth2/* → oauth2-proxy).
 # Widen access by adding roles to notValues (operator is the floor):
 #   operator-only : [operator]   admin: [operator,admin]   trusted: [operator,admin,trusted]   guest: [operator,admin,trusted,guest]
-# NOTE: `owner` is carried alongside `operator` during the owner→operator role rename
-#   (zero-downtime). Drop `owner` once the Zitadel role is renamed and sessions have cycled.
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -50,4 +48,3 @@ spec:
         - key: request.headers[x-auth-request-groups]
           notValues:
             - operator     # admits: operator
-            - owner        # transitional: owner→operator rename (drop after cutover)

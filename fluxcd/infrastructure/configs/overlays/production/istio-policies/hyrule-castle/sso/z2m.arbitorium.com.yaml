@@ -9,8 +9,6 @@
 #   (served by the oauth2-proxy-signin-cell-membrane HTTPRoute: z2m.arbitorium.com/oauth2/*).
 # Tiers (widen by adding roles to notValues; operator is the floor):
 #   operator-only : [operator]   admin: [operator,admin]   trusted: [operator,admin,trusted]
-# NOTE: `owner` is carried alongside `operator` during the owner→operator role rename
-#   (zero-downtime). Drop `owner` once the Zitadel role is renamed and sessions have cycled.
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -50,4 +48,3 @@ spec:
         - key: request.headers[x-auth-request-groups]
           notValues:
             - operator     # admits: operator
-            - owner        # transitional: owner→operator rename (drop after cutover)
