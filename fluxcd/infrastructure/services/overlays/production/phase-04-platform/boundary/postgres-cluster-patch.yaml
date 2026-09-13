@@ -39,12 +39,15 @@ spec:
   # Requests lift this out of BestEffort. It is the config store every brokered session
   # authenticates and authorizes against, so it must not be the first thing the kubelet
   # reclaims under node pressure — a shutdown here takes the primary with it.
+  # Sized from observed use: ~45Mi resident (memory is what drives eviction, so the
+  # request carries the headroom) against 150-350m CPU, which is higher than the 1Gi of
+  # data suggests and is why the CPU request is not scaled down to match the storage.
   resources:
     requests:
-      memory: "512Mi"
+      memory: "128Mi"
       cpu: "250m"
     limits:
-      memory: "1Gi"
+      memory: "512Mi"
       cpu: "1000m"
 
   storage:
