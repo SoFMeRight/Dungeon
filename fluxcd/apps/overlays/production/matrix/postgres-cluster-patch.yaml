@@ -14,6 +14,16 @@ spec:
       memory: "1536Mi"
       cpu: "1000m"
 
+  # Labels on the Cluster object stay on the Cluster; only inheritedMetadata reaches the
+  # pods, which is what the network policies actually select. Without this the operator
+  # cannot reach its own instances to read their status, so it reports a communication
+  # issue and declines to manage the cluster — including creating the second instance.
+  inheritedMetadata:
+    labels:
+      policy.prplanit.com/cnpg: "managed"
+      policy.prplanit.com/access-class: postgres
+      policy.prplanit.com/service-scope: temple-of-time.matrix.postgres
+
   instances: 2
   postgresql:
     parameters:
