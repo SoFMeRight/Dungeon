@@ -10,5 +10,6 @@ resources:
   - allow-harbor-to-rgw.yaml
   - allow-reactive-resume-to-rgw.yaml
   - allow-loki-to-rgw.yaml
+  - allow-matrix-synapse-to-rgw.yaml
   - allow-rgw-admin-jobs.yaml
   - allow-gateway-ingress-xylem.yaml
