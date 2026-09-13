@@ -3,6 +3,17 @@ kind: Cluster
 metadata:
   name: open-webui-postgres
 spec:
+  # Requests lift this out of BestEffort so the kubelet does not reclaim the database
+  # first under node pressure. Sized from observed use (~85Mi resident): memory is what
+  # drives eviction, so the request carries the headroom.
+  resources:
+    requests:
+      memory: "192Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
   inheritedMetadata:
     labels:
       policy.prplanit.com/cnpg: "managed"

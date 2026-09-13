@@ -3,6 +3,17 @@ kind: Cluster
 metadata:
   name: appflowy-postgres
 spec:
+  # Requests lift this out of BestEffort so the kubelet does not reclaim the database
+  # first under node pressure. Sized from observed use (~228Mi resident): memory is what
+  # drives eviction, so the request carries the headroom.
+  resources:
+    requests:
+      memory: "384Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+
   inheritedMetadata:
     labels:
       policy.prplanit.com/cnpg: "managed"

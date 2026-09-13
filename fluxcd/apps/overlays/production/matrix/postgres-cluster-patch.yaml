@@ -3,6 +3,17 @@ kind: Cluster
 metadata:
   name: matrix-postgres
 spec:
+  # Requests lift this out of BestEffort so the kubelet does not reclaim the database
+  # first under node pressure. Sized from observed use (~537Mi resident): memory is what
+  # drives eviction, so the request carries the headroom.
+  resources:
+    requests:
+      memory: "768Mi"
+      cpu: "100m"
+    limits:
+      memory: "1536Mi"
+      cpu: "1000m"
+
   instances: 2
   postgresql:
     parameters:
