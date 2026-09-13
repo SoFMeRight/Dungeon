@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - gateway-xylem.yaml
   - gateway-cell-membrane.yaml
+  - gateway-phloem.yaml

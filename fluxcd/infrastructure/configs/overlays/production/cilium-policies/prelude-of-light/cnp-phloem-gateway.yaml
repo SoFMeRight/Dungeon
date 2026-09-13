@@ -1,0 +1,52 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-phloem-gateway-lan
+spec:
+  description: >-
+    VPN-internal ingress to phloem-gateway (172.22.30.70). No WAN port forward —
+    pfSense forwards .70 to the VPN subnets only (cell-membrane is the sole public
+    gateway; xylem stays LAN/operator-VPN). RFC1918 allowed minus pod CIDR to
+    prevent identity bypass via LB IP. pfSense owns which RFC1918 segment (VPN vs
+    LAN) can actually reach this IP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: phloem-gateway
+  ingress:
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.144.0/20"
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+    # Cross-namespace monitoring probes
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gossip-stone
+            app.kubernetes.io/name: gatus
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gossip-stone
+            app.kubernetes.io/name: uptime-kuma
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # Node health checks and DSR return path
+    - fromEntities:
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP

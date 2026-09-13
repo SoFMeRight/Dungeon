@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: prelude-of-light
+resources:
+  - cnp-default-deny-ingress.yaml
+  - cnp-phloem-gateway.yaml
+  - cnp-egress-phloem-gateway.yaml

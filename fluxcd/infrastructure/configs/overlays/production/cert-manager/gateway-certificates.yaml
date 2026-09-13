@@ -360,3 +360,30 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "uni2.cc"
+---
+# phloem-gateway (prelude-of-light) serves the same *.pcfae.com identity as xylem
+# on its own IP. cert-manager Certificate names must be unique per namespace, so
+# these carry a -phloem suffix but issue the SAME secretNames the gateway references.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pcfae-com-phloem-tls
+spec:
+  secretName: pcfae-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.pcfae.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pcfae-com-apex-phloem-tls
+spec:
+  secretName: pcfae-com-apex-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "pcfae.com"

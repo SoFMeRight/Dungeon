@@ -1,0 +1,51 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: phloem-gateway
+  annotations:
+    lbipam.cilium.io/ips: "172.22.30.70"
+    lbipam.cilium.io/sharing-key: "prelude-of-light"
+    lbipam.cilium.io/sharing-cross-namespace: "*"
+    service.cilium.io/loadbalancer-mode: "dsr"
+spec:
+  infrastructure:
+    labels:
+      policy.prplanit.com/metrics: "true"
+      policy.prplanit.com/client-class: ingress-gateway
+      policy.prplanit.com/ingress-instance: phloem
+  # VPN-internal warp gateway. Same *.pcfae.com identity as xylem, on its own IP so
+  # pfSense can port-forward it to the VPN subnets only (xylem stays LAN/operator-VPN,
+  # cell-membrane is the sole WAN gateway). Apps are curated onto phloem one at a time
+  # by pointing a per-host DNS record at .70 and setting the HTTPRoute parentRef here;
+  # the wildcard *.pcfae.com DNS record stays on xylem (fail-closed default).
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same
+    - name: https-pcfae
+      protocol: HTTPS
+      port: 443
+      hostname: "*.pcfae.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: pcfae-com-tls
+    - name: https-pcfae-apex
+      protocol: HTTPS
+      port: 443
+      hostname: "pcfae.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: pcfae-com-apex-tls

@@ -1,0 +1,24 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-phloem-gateway-loadbalancer
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: phloem-gateway
+  action: ALLOW
+  rules:
+    # All RFC1918 clients — Cilium CNP owns anti-hairpin (pod CIDR exclusion).
+    # Istio does not duplicate it here because pod→LB traffic arrives without
+    # SPIFFE identity (ztunnel passthrough, not HBONE), making principal-based
+    # rules ineffective and notIpBlocks the only lever — which conflicts with
+    # legitimate in-cluster monitoring. pfSense limits .70 to the VPN subnets.
+    - from:
+        - source:
+            ipBlocks:
+              - "10.0.0.0/8"
+              - "172.16.0.0/12"
+              - "192.168.0.0/16"
+      to:
+        - operation:
+            ports: ["80", "443"]

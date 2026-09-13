@@ -13,6 +13,7 @@ resources:
   - training-dummy
   # Batch 2 — Simple
   - arylls-lookout
+  - prelude-of-light
   - kokiri-forest
   - delivery-bag
   - compass

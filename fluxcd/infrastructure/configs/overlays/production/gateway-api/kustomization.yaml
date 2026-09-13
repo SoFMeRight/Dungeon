@@ -5,9 +5,11 @@ resources:
   # ── EnvoyFilters: fairer-pages (default error pages) ───────
   - envoyfilter-fairer-pages-cell-membrane.yaml
   - envoyfilter-fairer-pages-xylem.yaml
+  - envoyfilter-fairer-pages-phloem.yaml
   # ── EnvoyFilters: HSTS headers ─────────────────────────────
   - envoyfilter-hsts-cell-membrane.yaml
   - envoyfilter-hsts-xylem.yaml
+  - envoyfilter-hsts-phloem.yaml
   - envoyfilter-anubis-realip-xylem.yaml
   - envoyfilter-joplin-realip-xylem.yaml
   - envoyfilter-osticket-realip-cell-membrane.yaml
@@ -15,6 +17,7 @@ resources:
   # ── EnvoyFilters: http→https Location rewrite ──────────────
   - envoyfilter-https-location-cell-membrane.yaml
   - envoyfilter-https-location-xylem.yaml
+  - envoyfilter-https-location-phloem.yaml
   # ── EnvoyFilters: app-specific ─────────────────────────────
   - envoyfilter-ceph-dashboard-health-xylem.yaml
   - envoyfilter-home-assistant-websocket-cell-membrane.yaml
@@ -26,6 +29,7 @@ resources:
   # ── HTTPRoutes ─────────────────────────────────────────────
   - httproute-http-redirect-cell-membrane.yaml
   - httproute-http-redirect-xylem.yaml
+  - httproute-http-redirect-phloem.yaml
 patches:
   - path: gateway-patch-xylem.yaml
     target:
@@ -35,6 +39,10 @@ patches:
     target:
       kind: Gateway
       name: cell-membrane-gateway
+  - path: gateway-patch-phloem.yaml
+    target:
+      kind: Gateway
+      name: phloem-gateway
   # Set namespace for xylem-gateway to arylls-lookout
   - patch: |-
       - op: add
@@ -51,3 +59,11 @@ patches:
     target:
       kind: Gateway
       name: cell-membrane-gateway
+  # Set namespace for phloem-gateway to prelude-of-light
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: prelude-of-light
+    target:
+      kind: Gateway
+      name: phloem-gateway

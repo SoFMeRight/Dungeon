@@ -1,0 +1,13 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-intra-breakglass
+spec:
+  selector:
+    matchLabels:
+      zt.breakglass/pod: "true"
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            namespaces: ["prelude-of-light"]
