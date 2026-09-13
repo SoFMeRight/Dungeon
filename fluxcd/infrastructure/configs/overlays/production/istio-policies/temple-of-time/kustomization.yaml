@@ -22,6 +22,7 @@ resources:
   - allow-appflowy-nginx-to-appflowy-cloud.yaml
   - allow-appflowy-nginx-to-appflowy-web.yaml
   - allow-matrix-auth-to-matrix-synapse.yaml
+  - allow-matrix-postgres-replication.yaml
   - allow-matrix-to-matrix-postgres.yaml
   - allow-mealie-to-mealie-postgres.yaml
   - allow-photoprism-to-photoprism-mariadb.yaml

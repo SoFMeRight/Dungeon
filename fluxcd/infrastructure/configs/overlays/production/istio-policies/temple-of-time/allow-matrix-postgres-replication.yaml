@@ -1,0 +1,20 @@
+# A replica joins by connecting to the primary on 5432 like any other client, so without
+# this the cluster can hold instances: 2 and never build the second one — the join pod
+# retries "DB not available" indefinitely while the mesh refuses it.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-matrix-postgres-replication
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: matrix-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/temple-of-time/sa/matrix-postgres
+      to:
+        - operation:
+            ports: ["5432"]
