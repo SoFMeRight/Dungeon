@@ -49,3 +49,4 @@ resources:
   - allow-gateway-ingress-cell-membrane.yaml
   - telemetry-access-log-cell-membrane.yaml
   - deny-osticket-staff-panel-from-internet.yaml
+  - sso

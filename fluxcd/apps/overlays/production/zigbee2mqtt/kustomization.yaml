@@ -4,6 +4,7 @@ namespace: lens-of-truth
 resources:
   - ../../../base/zigbee2mqtt
   - httproute-xylem.yaml
+  - httproute-cell-membrane.yaml
 patches:
   - path: statefulset-patch.yaml
     target:

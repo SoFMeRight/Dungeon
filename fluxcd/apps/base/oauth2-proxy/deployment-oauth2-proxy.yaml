@@ -37,8 +37,8 @@ spec:
             - --http-address
             - 0.0.0.0:4180
             - --cookie-domain
-            - prplanit.com,pcfae.com
-            - --whitelist-domain=*.prplanit.com,*.pcfae.com,*.uni2.cc
+            - prplanit.com,pcfae.com,arbitorium.com
+            - --whitelist-domain=*.prplanit.com,*.pcfae.com,*.uni2.cc,*.arbitorium.com
           env:
             - name: OAUTH2_PROXY_COOKIE_SECRET
               valueFrom:
