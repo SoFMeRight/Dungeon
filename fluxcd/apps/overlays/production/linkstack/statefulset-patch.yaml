@@ -152,6 +152,10 @@ spec:
                 secretKeyRef:
                   name: linkstack-secrets
                   key: OIDC_CLIENT_SECRET
+            # Signing out here ends the Zitadel session too, so the sign-out is estate-wide
+            # rather than local to this instance. Off upstream; deliberate here.
+            - name: OIDC_IDP_LOGOUT
+              value: "true"
             # Every apex this instance answers on. The OIDC callback is derived from the
             # incoming host, so an unlisted host is refused rather than trusted — which is
             # why all three belong here, not just the canonical one.
