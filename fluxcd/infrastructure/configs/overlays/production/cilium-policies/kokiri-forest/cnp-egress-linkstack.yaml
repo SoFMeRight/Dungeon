@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-linkstack-egress
+spec:
+  description: >-
+    linkstack's database is in-cluster and rides the mesh (HBONE). Its only
+    non-mesh egress is the OIDC hairpin to sso.prplanit.com, which split-horizon
+    DNS resolves to the cell-membrane gateway — and those gateway pods are not
+    meshed, so `toEntities: cluster` does not cover them and an explicit
+    toEndpoints allow is required. Paired with cap.oidc, which is what the
+    gateway's own ingress policy matches on.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: linkstack
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
