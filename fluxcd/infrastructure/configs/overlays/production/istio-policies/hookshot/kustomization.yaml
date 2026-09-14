@@ -22,4 +22,5 @@ resources:
   - allow-boundary-worker-loadbalancer.yaml
   - allow-boundary-admin-to-controller.yaml
   - allow-gateway-ingress-xylem.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml

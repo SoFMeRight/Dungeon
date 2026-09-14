@@ -49,3 +49,15 @@ spec:
         certificateRefs:
           - kind: Secret
             name: pcfae-com-apex-tls
+    - name: https-cr-pcfae
+      protocol: HTTPS
+      port: 443
+      hostname: "*.cr.pcfae.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: cr-pcfae-com-tls

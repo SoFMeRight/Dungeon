@@ -40,6 +40,8 @@ spec:
   parentRefs:
     - name: xylem-gateway
       namespace: arylls-lookout
+    - name: phloem-gateway
+      namespace: prelude-of-light
   hostnames:
     - "sh.pcfae.com"
   rules:
@@ -63,6 +65,8 @@ spec:
   parentRefs:
     - name: xylem-gateway
       namespace: arylls-lookout
+    - name: phloem-gateway
+      namespace: prelude-of-light
   hostnames:
     - "shlink.pcfae.com"
   rules:

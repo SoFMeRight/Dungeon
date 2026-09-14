@@ -1,6 +1,6 @@
 # DERIVED: pod targetPorts from HTTPRoute backendRefs targeting this namespace.
 # Inputs: HTTPRoutes → Services (targetPort resolution) → EndpointSlices (named port resolution)
-# Key: (gateway parentRef -> {xylem|phloem|cell-membrane}) + resolved targetPort
+# Key: (gateway parentRef -> discovered ingress-gateway class) + resolved targetPort
 # Regenerate; do not hand-edit.
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy

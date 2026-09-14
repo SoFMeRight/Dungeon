@@ -9,6 +9,8 @@ spec:
   parentRefs:
     - name: xylem-gateway
       namespace: king-of-red-lions
+    - name: phloem-gateway
+      namespace: king-of-red-lions
   hostnames:
     - dd-ui.pcfae.com
   rules:

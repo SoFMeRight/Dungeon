@@ -13,3 +13,4 @@ resources:
   - allow-matrix-synapse-to-rgw.yaml
   - allow-rgw-admin-jobs.yaml
   - allow-gateway-ingress-xylem.yaml
+  - allow-gateway-ingress-phloem.yaml

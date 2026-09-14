@@ -4,4 +4,5 @@ namespace: lakitu
 resources:
   - ../../../../base/istio-policies
   - allow-gateway-ingress-xylem.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-intra-breakglass.yaml

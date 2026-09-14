@@ -9,10 +9,9 @@ metadata:
 spec:
   description: >-
     Contract: ingress gateway pods may reach backend application pods.
-    Source is restricted to the 3 gateway namespaces (arylls-lookout,
-    kokiri-forest, hyrule-castle) AND must carry the ingress-gateway
-    client-class label. Destination pods must carry
-    policy.prplanit.com/ingress: "true".
+    Source is restricted to the discovered ingress-gateway namespaces AND
+    must carry the ingress-gateway client-class label. Destination pods must
+    carry policy.prplanit.com/ingress: "true".
   enableDefaultDeny:
     egress: false
     ingress: false
@@ -21,17 +20,17 @@ spec:
       policy.prplanit.com/ingress: "true"
   ingress:
     - fromEndpoints:
-        # xylem-gateway (internal *.pcfae.com)
+        # xylem-gateway
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: arylls-lookout
             policy.prplanit.com/client-class: ingress-gateway
-        # phloem-gateway (personal *.sofmeright.com, *.arbitorium.com, etc.)
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: kokiri-forest
-            policy.prplanit.com/client-class: ingress-gateway
-        # cell-membrane-gateway (business *.prplanit.com, *.precisionplanit.com, etc.)
+        # cell-membrane-gateway
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: hyrule-castle
+            policy.prplanit.com/client-class: ingress-gateway
+        # phloem-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: prelude-of-light
             policy.prplanit.com/client-class: ingress-gateway
       toPorts:
         - ports:

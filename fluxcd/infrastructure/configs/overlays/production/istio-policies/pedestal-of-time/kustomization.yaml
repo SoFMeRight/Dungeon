@@ -11,3 +11,4 @@ resources:
   - allow-photoprism-x-to-photoprism-x-mariadb.yaml
   - allow-plex-ms-x-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
+  - allow-gateway-ingress-phloem.yaml

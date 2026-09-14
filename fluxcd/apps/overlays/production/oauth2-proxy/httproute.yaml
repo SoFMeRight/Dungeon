@@ -15,6 +15,9 @@ spec:
     - name: xylem-gateway
       namespace: arylls-lookout
       sectionName: https-pcfae
+    - name: phloem-gateway
+      namespace: prelude-of-light
+      sectionName: https-pcfae
   hostnames:
     - "oa2p.pcfae.com"
   rules:
@@ -39,6 +42,9 @@ spec:
   parentRefs:
     - name: xylem-gateway
       namespace: arylls-lookout
+      sectionName: https-pcfae
+    - name: phloem-gateway
+      namespace: prelude-of-light
       sectionName: https-pcfae
   hostnames:
     - "books.pcfae.com"

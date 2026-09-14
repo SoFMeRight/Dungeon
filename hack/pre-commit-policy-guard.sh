@@ -14,7 +14,7 @@ if [ "${SKIP_GENERATED_POLICY_GUARD:-}" = "1" ]; then
   exit 0
 fi
 
-IMAGE="docker.io/prplanit/polysieve:v0.0.2"
+IMAGE="docker.io/prplanit/polysieve:v0.0.3"
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "policy guard: docker unavailable — skipping (install docker to enable the PolySieve check)"

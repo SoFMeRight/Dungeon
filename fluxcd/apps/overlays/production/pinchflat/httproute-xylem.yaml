@@ -12,6 +12,8 @@ spec:
   parentRefs:
     - name: xylem-gateway
       namespace: arylls-lookout
+    - name: phloem-gateway
+      namespace: prelude-of-light
   hostnames:
     - "pinchflat.pcfae.com"
   rules:

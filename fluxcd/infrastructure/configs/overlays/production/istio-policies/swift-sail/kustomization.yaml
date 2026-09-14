@@ -9,4 +9,5 @@ resources:
   - allow-neko-gateway-to-neko-vpn.yaml
   - allow-py-kms-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml

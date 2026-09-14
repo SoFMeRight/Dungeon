@@ -25,4 +25,5 @@ resources:
   - allow-unifi-app-to-unifi-db.yaml
   - allow-unifi-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml

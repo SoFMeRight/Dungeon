@@ -54,6 +54,13 @@ patches:
   - patch: |-
       - op: add
         path: /metadata/namespace
+        value: prelude-of-light
+    target:
+      kind: Certificate
+      name: cr-pcfae-com-phloem-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
         value: hyrule-castle
     target:
       kind: Certificate

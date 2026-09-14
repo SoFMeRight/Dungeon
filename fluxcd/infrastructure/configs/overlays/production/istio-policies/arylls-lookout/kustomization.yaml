@@ -4,6 +4,7 @@ namespace: arylls-lookout
 resources:
   - ../../../../base/istio-policies
   - allow-gateway-ingress-xylem.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-intra-breakglass.yaml
   - allow-xylem-gateway-loadbalancer.yaml
   - sso

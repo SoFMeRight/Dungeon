@@ -47,6 +47,7 @@ resources:
   - allow-jellyfin-loadbalancer.yaml
   - allow-plex-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
   - allow-matrix-turn-loadbalancer.yaml
   - allow-matrix-rtc.yaml

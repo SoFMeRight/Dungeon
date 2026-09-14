@@ -15,6 +15,9 @@ spec:
     - name: xylem-gateway
       namespace: arylls-lookout
       sectionName: https-pcfae
+    - name: phloem-gateway
+      namespace: prelude-of-light
+      sectionName: https-pcfae
   hostnames:
     - "guacamole.pcfae.com"
   rules:
