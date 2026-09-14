@@ -214,6 +214,16 @@ spec:
             - name: umami-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/umami-bf.yaml
               subPath: umami-bf.yaml
+            # Invoice Ninja: gateway-log detection (Laravel is silent on auth; login is a REST
+            # endpoint — istio-gw acquisition + prplanit/istio-gateway-logs parser).
+            - name: invoiceninja-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/invoiceninja-bf.yaml
+              subPath: invoiceninja-bf.yaml
+            # Jellyseerr: gateway-log detection (native app-log IP is XFF-spoofable — verified —
+            # so use the gateway's direct_remote_ip; login is a clean 403-only endpoint).
+            - name: jellyseerr-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/jellyseerr-bf.yaml
+              subPath: jellyseerr-bf.yaml
             # Uptime-Kuma: real app-log auth-failure parsing (Trust Proxy → real client IP).
             - name: acquis-uptime-kuma
               mountPath: /etc/crowdsec/acquis.d/98-uptime-kuma-loki.yaml
@@ -331,6 +341,12 @@ spec:
         - name: umami-scenario
           configMap:
             name: crowdsec-umami-scenario
+        - name: invoiceninja-scenario
+          configMap:
+            name: crowdsec-invoiceninja-scenario
+        - name: jellyseerr-scenario
+          configMap:
+            name: crowdsec-jellyseerr-scenario
         - name: acquis-uptime-kuma
           configMap:
             name: crowdsec-acquis-uptime-kuma

@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-invoiceninja-scenario
+data:
+  # Invoice Ninja (Laravel) does NOT self-report auth failures — its laravel.log carries no
+  # failed-login line and no client IP — and login is a REST endpoint, so detect at the
+  # cell-membrane gateway: the Envoy access log (already ingested by the istio-gw acquisition
+  # and parsed by prplanit/istio-gateway-logs) carries the real, unspoofable client IP
+  # (direct_remote_ip, CF-aware) + method + path + status. No app changes, no new parser.
+  #
+  # FP-safe by endpoint scoping: POST /api/v1/login is login-ONLY (success = 200). Verified
+  # empirically that a 400 there is EXCLUSIVELY an auth failure — bad credentials return
+  # 400 {"message":"These credentials do not match our records"}, while a malformed/missing
+  # body returns 422 (validation) and success returns 200. There is no benign 400 on this
+  # endpoint. Bad user and bad password yield the identical 400 message (no user-enumeration
+  # leak, so no separate _user-enum scenario). The leaky bucket (5 / 20s) tolerates a human
+  # fumbling a password; trusted sources (LAN/WAN) are already whitelisted. source_ip is the
+  # gateway-derived real client (spoofable: 0).
+  invoiceninja-bf.yaml: |
+    type: leaky
+    name: prplanit/invoiceninja-bf
+    description: "Invoice Ninja login brute-force (cell-membrane gateway access log)"
+    filter: "evt.Parsed.verb == 'POST' && evt.Parsed.target_fqdn == 'invoiceninja.prplanit.com' && evt.Parsed.request matches '^/api/v1/login/?$' && evt.Parsed.status == '400'"
+    groupby: evt.Meta.source_ip
+    capacity: 5
+    leakspeed: 20s
+    blackhole: 1m
+    labels:
+      service: invoiceninja
+      behavior: "http:bruteforce"
+      classification:
+        - attack.T1110
+      spoofable: 0
+      confidence: 3
+      label: "Invoice Ninja Login Bruteforce"
+      remediation: true
