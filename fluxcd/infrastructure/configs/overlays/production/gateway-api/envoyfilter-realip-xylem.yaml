@@ -1,0 +1,41 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: realip-xylem
+  namespace: arylls-lookout
+spec:
+  # Gateway-wide real-client-IP normalization — REPLACE X-Forwarded-For and X-Real-Ip with the
+  # gateway's downstream direct remote address (the real TCP client) so no client-supplied header
+  # can spoof the IP an app logs (and thus the IP CrowdSec bans). See envoyfilter-realip-phloem
+  # for the full rationale; same downstreamDirectRemoteAddress() the per-app realip filters trust,
+  # applied to every host on this gateway.
+  workloadSelector:
+    labels:
+      gateway.networking.k8s.io/gateway-name: xylem-gateway
+  configPatches:
+    - applyTo: HTTP_FILTER
+      match:
+        context: GATEWAY
+        listener:
+          portNumber: 443
+          filterChain:
+            filter:
+              name: envoy.filters.network.http_connection_manager
+              subFilter:
+                name: envoy.filters.http.router
+      patch:
+        operation: INSERT_BEFORE
+        value:
+          name: realip-normalize-lua
+          typed_config:
+            "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua
+            defaultSourceCode:
+              inlineString: |
+                function envoy_on_request(request_handle)
+                  local addr = request_handle:streamInfo():downstreamDirectRemoteAddress()
+                  if addr then
+                    local ip = addr:gsub(":%d+$", ""):gsub("^%[", ""):gsub("%]$", "")
+                    request_handle:headers():replace("x-forwarded-for", ip)
+                    request_handle:headers():replace("x-real-ip", ip)
+                  end
+                end
