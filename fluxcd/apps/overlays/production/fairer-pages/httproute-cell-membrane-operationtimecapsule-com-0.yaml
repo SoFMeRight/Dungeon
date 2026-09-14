@@ -30,7 +30,7 @@ spec:
           urlRewrite:
             path:
               type: ReplacePrefixMatch
-              replacePrefixMatch: /fairer-pages/playlist/default/
+              replacePrefixMatch: /fairer-pages/playlist/pretty-shiny/
       backendRefs:
         - name: fairer-pages
           port: 8023
