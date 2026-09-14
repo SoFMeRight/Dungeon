@@ -21,14 +21,18 @@ if ! command -v docker >/dev/null 2>&1; then
   exit 0
 fi
 
-# Mount the kubeconfig for best-effort cluster augmentation when it exists.
-kube_dir="$(dirname "${KUBECONFIG:-$HOME/.kube/config}")"
+# Run as the invoking user so any files the container writes are owned by the caller,
+# not root (HOME=/tmp keeps kubectl/kustomize caches writable under a non-root uid).
+user_args=(--user "$(id -u):$(id -g)" -e HOME=/tmp)
+
+# Mount the kubeconfig (as a file, outside HOME) for best-effort cluster augmentation.
+kube_conf="${KUBECONFIG:-$HOME/.kube/config}"
 kube_args=()
-if [ -d "$kube_dir" ]; then
-  kube_args=(--network host -v "${kube_dir}:/root/.kube:ro")
+if [ -f "$kube_conf" ]; then
+  kube_args=(--network host -v "${kube_conf}:/tmp/kubeconfig:ro" -e KUBECONFIG=/tmp/kubeconfig)
 fi
 
-if docker run --rm "${kube_args[@]}" -v "$PWD:/repo" -w /repo "$IMAGE" \
+if docker run --rm "${user_args[@]}" "${kube_args[@]}" -v "$PWD:/repo" -w /repo "$IMAGE" \
     check --profile dungeon --cluster; then
   exit 0
 fi
@@ -37,8 +41,11 @@ cat <<EOF
 
 Generated network/security policy is stale.
 
-Regenerate it, review the diff, stage the intended changes, and commit again:
-  docker run --rm --network host -v "\$HOME/.kube:/root/.kube:ro" \\
+Regenerate it, review the diff, stage the intended changes, and commit again
+(runs as your uid so regenerated files are yours, not root):
+  docker run --rm --network host \\
+    --user "\$(id -u):\$(id -g)" -e HOME=/tmp \\
+    -v "\$HOME/.kube/config:/tmp/kubeconfig:ro" -e KUBECONFIG=/tmp/kubeconfig \\
     -v "\$PWD:/repo" -w /repo $IMAGE generate --profile dungeon --cluster
 
 Override:
