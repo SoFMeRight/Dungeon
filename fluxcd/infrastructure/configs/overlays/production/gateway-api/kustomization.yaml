@@ -10,15 +10,13 @@ resources:
   - envoyfilter-hsts-cell-membrane.yaml
   - envoyfilter-hsts-xylem.yaml
   - envoyfilter-hsts-phloem.yaml
-  # Gateway-wide real-client-IP normalization (replaces client-spoofable XFF/X-Real-Ip with the
-  # gateway's downstream direct remote address). Supersedes the per-app realip filters below.
+  # Gateway-wide real-client-IP normalization: replaces client-spoofable XFF/X-Real-Ip with the
+  # gateway's downstream direct remote address, on every host. Replaced the former per-app
+  # (anubis/joplin/osticket) realip filters, which were redundant here and stale after the
+  # route swap moved their hosts to phloem.
   - envoyfilter-realip-xylem.yaml
   - envoyfilter-realip-phloem.yaml
   - envoyfilter-realip-cell-membrane.yaml
-  - envoyfilter-anubis-realip-xylem.yaml
-  - envoyfilter-joplin-realip-xylem.yaml
-  - envoyfilter-osticket-realip-cell-membrane.yaml
-  - envoyfilter-osticket-realip-xylem.yaml
   # ── EnvoyFilters: http→https Location rewrite ──────────────
   - envoyfilter-https-location-cell-membrane.yaml
   - envoyfilter-https-location-xylem.yaml
