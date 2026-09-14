@@ -60,6 +60,14 @@ spec:
                   rm -rf "/mnt/htdocs/$d"
                   cp -a "/htdocs/$d" /mnt/htdocs/
                 done
+                # assets/ mixes third-party libraries with user uploads, so only the vendor
+                # subtree is replaced and assets/img is left alone. Livewire publishes its
+                # javascript here — without it the admin tables load forever.
+                if [ -d /htdocs/assets/vendor ]; then
+                  rm -rf /mnt/htdocs/assets/vendor
+                  mkdir -p /mnt/htdocs/assets
+                  cp -a /htdocs/assets/vendor /mnt/htdocs/assets/
+                fi
                 for d in migrations seeders factories; do
                   [ -d "/htdocs/database/$d" ] || continue
                   rm -rf "/mnt/htdocs/database/$d"
