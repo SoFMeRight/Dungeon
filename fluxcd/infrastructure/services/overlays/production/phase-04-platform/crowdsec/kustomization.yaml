@@ -37,6 +37,7 @@ patches:
   - path: configmap-acquis-joplin-patch.yaml
   - path: configmap-acquis-osticket-patch.yaml
   - path: configmap-acquis-uptime-kuma-patch.yaml
+  - path: configmap-acquis-hubzilla-patch.yaml
   - path: configmap-cloudflare-bouncer-patch.yaml
   # ExternalSecret patch
   - path: externalsecret-patch.yaml

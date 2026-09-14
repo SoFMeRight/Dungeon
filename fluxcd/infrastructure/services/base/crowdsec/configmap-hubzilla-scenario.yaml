@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-hubzilla-scenario
+data:
+  # Custom scenario (no hub collection). Brute-force leaky bucket over prplanit/hubzilla-logs,
+  # grouped by the real client source_ip. spoofable: 0 because the IP is REMOTE_ADDR resolved by
+  # the fork's nginx real_ip from the gateway-set XFF (downstreamDirectRemoteAddress), not client-
+  # supplied. Hubzilla self-defends with a delay-on-failure only; this adds fleet-wide banning.
+  hubzilla-bf.yaml: |
+    type: leaky
+    name: prplanit/hubzilla-bf
+    description: "Hubzilla login brute-force (native authlog via Loki)"
+    filter: "evt.Meta.log_type == 'hubzilla_failed_auth'"
+    groupby: evt.Meta.source_ip
+    capacity: 5
+    leakspeed: 20s
+    blackhole: 1m
+    labels:
+      service: hubzilla
+      behavior: "http:bruteforce"
+      classification:
+        - attack.T1110
+      spoofable: 0
+      confidence: 3
+      label: "Hubzilla Login Bruteforce"
+      remediation: true

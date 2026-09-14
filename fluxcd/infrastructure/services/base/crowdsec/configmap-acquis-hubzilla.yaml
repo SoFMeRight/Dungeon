@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-acquis-hubzilla
+data:
+  # Hubzilla auth-failure acquisition. Filtered to the failed-login lines Hubzilla writes to
+  # system.authlog (set to /dev/stderr in .htconfig -> container stderr -> Loki) to keep volume
+  # low; type: hubzilla -> evt.Parsed.program (built-in non-syslog) so prplanit/hubzilla-logs
+  # matches. The logged IP is the unspoofable real client: the fork's nginx real_ip
+  # (set_real_ip_from RFC1918/CGNAT, real_ip_header X-Forwarded-For, recursive) sets REMOTE_ADDR
+  # from the XFF the gateway realip filter fills with downstreamDirectRemoteAddress().
+  # url patched to the real Loki endpoint in the overlay.
+  99-hubzilla-loki.yaml: |
+    source: loki
+    url: PLACEHOLDER_LOKI_URL
+    limit: 1000
+    query: |
+      {service_name="hubzilla"} |~ `authenticate: failed login attempt:`
+    labels:
+      type: hubzilla
+    wait_for_ready: 10s

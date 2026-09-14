@@ -43,6 +43,9 @@ resources:
   - configmap-acquis-uptime-kuma.yaml
   - configmap-uptime-kuma-parser.yaml
   - configmap-uptime-kuma-scenario.yaml
+  - configmap-acquis-hubzilla.yaml
+  - configmap-hubzilla-parser.yaml
+  - configmap-hubzilla-scenario.yaml
   - configmap-blocklists.yaml
   - rbac-blocklist-import.yaml
   - cronjob-blocklist-import.yaml

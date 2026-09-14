@@ -238,6 +238,16 @@ spec:
             - name: uptime-kuma-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/uptime-kuma-bf.yaml
               subPath: uptime-kuma-bf.yaml
+            # Native authlog (system.authlog=/dev/stderr) via Loki; real IP from nginx real_ip + gateway realip filter.
+            - name: acquis-hubzilla
+              mountPath: /etc/crowdsec/acquis.d/99-hubzilla-loki.yaml
+              subPath: 99-hubzilla-loki.yaml
+            - name: hubzilla-parser
+              mountPath: /etc/crowdsec/parsers/s01-parse/prplanit/hubzilla.yaml
+              subPath: hubzilla.yaml
+            - name: hubzilla-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/hubzilla-bf.yaml
+              subPath: hubzilla-bf.yaml
           resources:
             requests:
               cpu: PLACEHOLDER_CPU_REQUEST
@@ -363,6 +373,15 @@ spec:
         - name: uptime-kuma-scenario
           configMap:
             name: crowdsec-uptime-kuma-scenario
+        - name: acquis-hubzilla
+          configMap:
+            name: crowdsec-acquis-hubzilla
+        - name: hubzilla-parser
+          configMap:
+            name: crowdsec-hubzilla-parser
+        - name: hubzilla-scenario
+          configMap:
+            name: crowdsec-hubzilla-scenario
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-crowdsec-config

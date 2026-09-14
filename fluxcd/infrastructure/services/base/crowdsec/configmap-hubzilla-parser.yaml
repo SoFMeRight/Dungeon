@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-hubzilla-parser
+data:
+  # Custom parser (no crowdsec hub collection for Hubzilla). Matches the failed-login line
+  # Hubzilla appends to system.authlog on every bad login (include/auth.php log_failed_login), e.g.:
+  #   "2026-09-14 12:34:56:<sessionid> authenticate: failed login attempt: <user> from IP <ip>"
+  # source_ip is END-ANCHORED to the trailing IP so a hostile username containing a literal
+  # " from IP x.x.x.x" cannot forge the banned address (REMOTE_ADDR is always written last).
+  # That IP is the real client: the fork's nginx real_ip sets REMOTE_ADDR from the XFF the
+  # gateway realip filter fills with downstreamDirectRemoteAddress() (spoofable: 0). The same
+  # line fires for unknown-account and wrong-password, so there is no user-enumeration signal.
+  # program is set from the acquisition `type: hubzilla` label via crowdsec's built-in non-syslog parser.
+  hubzilla.yaml: |
+    onsuccess: next_stage
+    name: prplanit/hubzilla-logs
+    description: "Hubzilla auth-failure parser (custom; failed login attempt)"
+    filter: "evt.Parsed.program == 'hubzilla'"
+    nodes:
+      - grok:
+          pattern: 'authenticate: failed login attempt: %{DATA:user} from IP %{IP:source_ip}$'
+          apply_on: message
+          statics:
+            - meta: log_type
+              value: hubzilla_failed_auth
+    statics:
+      - meta: service
+        value: hubzilla
+      - meta: source_ip
+        expression: evt.Parsed.source_ip
