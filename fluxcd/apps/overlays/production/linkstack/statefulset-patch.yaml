@@ -28,12 +28,12 @@ spec:
           # TEMPORARY: a dev tag pinned for OIDC testing only. Cut a stable release and
           # repin once single sign-on is confirmed working — a dev-<sha> tag is not a
           # version anyone can reason about later.
-          image: docker.io/hlhd/linkstack:dev-43efe45
+          image: docker.io/hlhd/linkstack:dev-5211ba6
           env:
             # Bump with the image. Compared against a marker on the volume, so application
             # code is refreshed exactly once per image rather than on every start.
             - name: IMAGE_VERSION
-              value: "dev-43efe45"
+              value: "dev-5211ba6"
           command:
             - /bin/sh
             - -c
@@ -91,7 +91,7 @@ spec:
           # TEMPORARY: a dev tag pinned for OIDC testing only. Cut a stable release and
           # repin once single sign-on is confirmed working — a dev-<sha> tag is not a
           # version anyone can reason about later.
-          image: docker.io/hlhd/linkstack:dev-43efe45
+          image: docker.io/hlhd/linkstack:dev-5211ba6
           ports:
             - containerPort: 8080
               name: http
