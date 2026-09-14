@@ -33,7 +33,7 @@ spec:
             # Bump with the image. Compared against a marker on the volume, so application
             # code is refreshed exactly once per image rather than on every start.
             - name: IMAGE_VERSION
-              value: "dev-4de4d88"
+              value: "dev-4de4d88-r2"
           command:
             - /bin/sh
             - -c
