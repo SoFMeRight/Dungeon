@@ -9,8 +9,8 @@ metadata:
     gatus.home-operations.com/enabled: "false"
 spec:
   parentRefs:
-    - name: xylem-gateway
-      namespace: arylls-lookout
+    - name: phloem-gateway
+      namespace: prelude-of-light
   hostnames:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 

@@ -33,3 +33,37 @@ spec:
       name: web
   selector:
     app: adguard
+---
+# Per-pod web services: the AdGuard admin UI keeps its login session on the pod that
+# served the login (each replica has its own sessions.db), and adguardhome-sync needs a
+# stable origin vs replica. These pin one hostname to one pod (adguard-0 = primary/origin,
+# adguard-1 = replica) instead of round-robining the shared adguard-web service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard-web-0
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 80
+      protocol: TCP
+      name: web
+  selector:
+    app: adguard
+    statefulset.kubernetes.io/pod-name: adguard-0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard-web-1
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 80
+      protocol: TCP
+      name: web
+  selector:
+    app: adguard
+    statefulset.kubernetes.io/pod-name: adguard-1

@@ -7,8 +7,6 @@ metadata:
       group: "Administration (Zelda's Lullaby🎵)"
 spec:
   parentRefs:
-    - name: xylem-gateway
-      namespace: arylls-lookout
     - name: phloem-gateway
       namespace: prelude-of-light
   hostnames:

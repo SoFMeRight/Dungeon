@@ -8,12 +8,8 @@ metadata:
       group: "Administration (Zelda's Lullaby🎵)"
 spec:
   parentRefs:
-    - name: xylem-gateway
-      namespace: arylls-lookout
-      sectionName: https-pcfae
     - name: phloem-gateway
       namespace: prelude-of-light
-      sectionName: https-pcfae
   hostnames:
     - "netbox.pcfae.com"
   rules:

@@ -7,10 +7,8 @@ metadata:
       group: "Remote Access (Hookshot🪝)"
 spec:
   parentRefs:
-    - name: xylem-gateway
-      namespace: king-of-red-lions
     - name: phloem-gateway
-      namespace: king-of-red-lions
+      namespace: prelude-of-light
   hostnames:
     - dd-ui.pcfae.com
   rules:

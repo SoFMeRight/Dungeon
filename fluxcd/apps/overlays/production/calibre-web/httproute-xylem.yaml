@@ -7,8 +7,8 @@ metadata:
       group: "Content & Media (Temple of Time🏛️)"
 spec:
   parentRefs:
-    - name: xylem-gateway
-      namespace: arylls-lookout
+    - name: phloem-gateway
+      namespace: prelude-of-light
   hostnames:
     - "books.pcfae.com"
   rules:

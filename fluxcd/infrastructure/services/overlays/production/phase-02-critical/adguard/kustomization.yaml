@@ -7,6 +7,7 @@ resources:
   - ../../../../base/adguard
   - cilium-network-policy.yaml
   - httproute-xylem.yaml
+  - httproute-replica.yaml
 
 patches:
   - path: configmap-patch.yaml

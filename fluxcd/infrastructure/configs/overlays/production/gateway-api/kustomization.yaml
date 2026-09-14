@@ -20,6 +20,7 @@ resources:
   - envoyfilter-https-location-phloem.yaml
   # ── EnvoyFilters: app-specific ─────────────────────────────
   - envoyfilter-ceph-dashboard-health-xylem.yaml
+  - envoyfilter-ceph-dashboard-health-phloem.yaml
   - envoyfilter-home-assistant-websocket-cell-membrane.yaml
   - envoyfilter-meshcentral-websocket-cell-membrane.yaml
   - envoyfilter-netbird-websocket-cell-membrane.yaml

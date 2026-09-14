@@ -12,12 +12,8 @@ metadata:
         - "[RESPONSE_TIME] < 5000"
 spec:
   parentRefs:
-    - name: xylem-gateway
-      namespace: arylls-lookout
-      sectionName: https-pcfae
     - name: phloem-gateway
       namespace: prelude-of-light
-      sectionName: https-pcfae
   hostnames:
     - "oa2p.pcfae.com"
   rules:
@@ -40,12 +36,8 @@ metadata:
   namespace: zeldas-lullaby
 spec:
   parentRefs:
-    - name: xylem-gateway
-      namespace: arylls-lookout
-      sectionName: https-pcfae
     - name: phloem-gateway
       namespace: prelude-of-light
-      sectionName: https-pcfae
   hostnames:
     - "books.pcfae.com"
   rules:

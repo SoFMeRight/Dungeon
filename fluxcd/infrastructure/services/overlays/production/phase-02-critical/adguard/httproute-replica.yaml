@@ -1,21 +1,22 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: sideporch-camera
+  name: adguard-replica
   annotations:
     gatus.home-operations.com/endpoint: |
-      group: "Security & IoT (Lens of Truth🔍)"
+      group: "DNS & Network (Compass🧭)"
 spec:
   parentRefs:
     - name: phloem-gateway
       namespace: prelude-of-light
+  # adguardhome-sync replica → pinned to adguard-1 (stable login session).
   hostnames:
-    - "sideporch.pcfae.com"
+    - "dns2.pcfae.com"
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: sideporch-camera
-          port: 443
+        - name: adguard-web-1
+          port: 8080

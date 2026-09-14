@@ -10,13 +10,7 @@ spec:
   hostnames:
     - qbitt.pcfae.com
   parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: xylem-gateway
-      namespace: arylls-lookout
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: phloem-gateway
+    - name: phloem-gateway
       namespace: prelude-of-light
   rules:
     - backendRefs:
@@ -38,13 +32,7 @@ spec:
   hostnames:
     - radarr.pcfae.com
   parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: xylem-gateway
-      namespace: arylls-lookout
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: phloem-gateway
+    - name: phloem-gateway
       namespace: prelude-of-light
   rules:
     - backendRefs:
@@ -66,13 +54,7 @@ spec:
   hostnames:
     - sonarr.pcfae.com
   parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: xylem-gateway
-      namespace: arylls-lookout
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: phloem-gateway
+    - name: phloem-gateway
       namespace: prelude-of-light
   rules:
     - backendRefs:
@@ -94,13 +76,7 @@ spec:
   hostnames:
     - lidarr.pcfae.com
   parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: xylem-gateway
-      namespace: arylls-lookout
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: phloem-gateway
+    - name: phloem-gateway
       namespace: prelude-of-light
   rules:
     - backendRefs:
@@ -122,13 +98,7 @@ spec:
   hostnames:
     - readarr.pcfae.com
   parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: xylem-gateway
-      namespace: arylls-lookout
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: phloem-gateway
+    - name: phloem-gateway
       namespace: prelude-of-light
   rules:
     - backendRefs:

@@ -11,8 +11,6 @@ spec:
   # cell-membrane terminates the domains that are published to the internet. The site
   # is reached over the LAN and nothing resolves it from outside.
   parentRefs:
-    - name: xylem-gateway
-      namespace: arylls-lookout
     - name: phloem-gateway
       namespace: prelude-of-light
   hostnames:

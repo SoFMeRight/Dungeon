@@ -9,8 +9,6 @@ spec:
   parentRefs:
     - name: xylem-gateway
       namespace: arylls-lookout
-    - name: phloem-gateway
-      namespace: prelude-of-light
   hostnames:
     - "z2m.pcfae.com"
   rules:

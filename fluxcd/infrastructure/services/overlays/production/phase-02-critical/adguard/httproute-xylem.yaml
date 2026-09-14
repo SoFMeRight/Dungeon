@@ -7,18 +7,16 @@ metadata:
       group: "DNS & Network (Compass🧭)"
 spec:
   parentRefs:
-    - name: xylem-gateway
-      namespace: arylls-lookout
     - name: phloem-gateway
       namespace: prelude-of-light
+  # Primary / adguardhome-sync origin → pinned to adguard-0 (stable login session).
   hostnames:
     - "dns.pcfae.com"
-    - "dns2.pcfae.com"
   rules:
     - matches:
         - path:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: adguard-web
+        - name: adguard-web-0
           port: 8080
