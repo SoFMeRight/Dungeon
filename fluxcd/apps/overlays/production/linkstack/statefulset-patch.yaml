@@ -115,6 +115,11 @@ spec:
             # OIDC_REDIRECT_URL is deliberately unset — leaving it unset is what lets one
             # instance serve every apex and return each visitor to the domain they arrived
             # on. Pinning it would collapse that to a single domain.
+            # The login view gates the whole social block on this, compared against the
+            # literal string "true" — the OIDC settings below are inert without it, which
+            # is why the page showed only the email/password form.
+            - name: ENABLE_SOCIAL_LOGIN
+              value: "true"
             - name: OIDC_ISSUER
               value: "https://sso.prplanit.com"
             - name: OIDC_CLIENT_ID
