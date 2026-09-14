@@ -28,12 +28,12 @@ spec:
           # TEMPORARY: a dev tag pinned for OIDC testing only. Cut a stable release and
           # repin once single sign-on is confirmed working — a dev-<sha> tag is not a
           # version anyone can reason about later.
-          image: docker.io/hlhd/linkstack:dev-2caee1c
+          image: docker.io/hlhd/linkstack:dev-414a770
           env:
             # Bump with the image. Compared against a marker on the volume, so application
             # code is refreshed exactly once per image rather than on every start.
             - name: IMAGE_VERSION
-              value: "dev-2caee1c"
+              value: "dev-414a770"
           command:
             - /bin/sh
             - -c
@@ -91,7 +91,7 @@ spec:
           # TEMPORARY: a dev tag pinned for OIDC testing only. Cut a stable release and
           # repin once single sign-on is confirmed working — a dev-<sha> tag is not a
           # version anyone can reason about later.
-          image: docker.io/hlhd/linkstack:dev-2caee1c
+          image: docker.io/hlhd/linkstack:dev-414a770
           ports:
             - containerPort: 8080
               name: http
@@ -135,6 +135,14 @@ spec:
             # is why the page showed only the email/password form.
             - name: ENABLE_SOCIAL_LOGIN
               value: "true"
+            # Presentation of the sign-in button. A label promotes it from an icon in the
+            # provider row to the conventional full-width button.
+            - name: OIDC_NAME
+              value: "PrPlanIT SSO"
+            - name: OIDC_LABEL
+              value: "Sign in with PrPlanIT SSO"
+            - name: OIDC_ICON
+              value: "bi-shield-lock"
             - name: OIDC_ISSUER
               value: "https://sso.prplanit.com"
             - name: OIDC_CLIENT_ID
