@@ -39,6 +39,7 @@ resources:
   - configmap-umami-scenario.yaml
   - configmap-invoiceninja-scenario.yaml
   - configmap-jellyseerr-scenario.yaml
+  - configmap-tacticalrmm-scenario.yaml
   - configmap-acquis-uptime-kuma.yaml
   - configmap-uptime-kuma-parser.yaml
   - configmap-uptime-kuma-scenario.yaml
