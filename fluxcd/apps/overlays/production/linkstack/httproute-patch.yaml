@@ -5,12 +5,21 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Personal Sites (Kokiri Forest🌿)"
+      conditions:
+        - "[STATUS] == any(200, 302)"
+        - "[BODY] != pat(*Fairer Pages*)"
+        - "[RESPONSE_TIME] < 5000"
 spec:
   parentRefs:
     - name: cell-membrane-gateway
       namespace: hyrule-castle
+  # One instance, three apexes. Each must also appear in ALLOWED_HOSTS on the workload —
+  # the OIDC callback is derived from the incoming host, so a host routed here but absent
+  # there is refused with a 400 rather than served.
   hostnames:
-    - ls.sofmeright.com
+    - bio.outspokekin.com
+    - bio.sofmeright.com
+    - bio.uni2.cc
   rules:
     - matches:
         - path:

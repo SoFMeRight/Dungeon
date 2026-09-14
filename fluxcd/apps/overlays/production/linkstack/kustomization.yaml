@@ -8,7 +8,6 @@ configMapGenerator:
       - ssl.conf
 resources:
   - ../../../base/linkstack
-  - httproute-xylem.yaml
 patches:
   - path: statefulset-patch.yaml
     target:

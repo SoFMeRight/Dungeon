@@ -8,6 +8,9 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
+        # Fetches OIDC discovery from sso.prplanit.com server-side, and split-horizon DNS
+        # sends that back through the gateway, which refuses in-cluster callers without it.
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
@@ -22,26 +25,65 @@ spec:
             name: linkstack-apache-config
       initContainers:
         - name: init-htdocs
-          image: docker.io/linkstackorg/linkstack@sha256:1c8b05399ee459ac601bac3eede7fbe765d1b6b7be725663b57f3220610958bf
+          # TEMPORARY: a dev tag pinned for OIDC testing only. Cut a stable release and
+          # repin once single sign-on is confirmed working — a dev-<sha> tag is not a
+          # version anyone can reason about later.
+          image: docker.io/hlhd/linkstack:dev-ba5cfa3
+          env:
+            # Bump with the image. Compared against a marker on the volume, so application
+            # code is refreshed exactly once per image rather than on every start.
+            - name: IMAGE_VERSION
+              value: "dev-ba5cfa3"
           command:
             - /bin/sh
             - -c
             - |
-              # Copy app files from image to PVC if empty (mimics Docker volume behavior)
+              set -eu
+              MARKER=/mnt/htdocs/.image-version
+
+              # First run: volume is empty, seed the whole application.
               if [ ! -f /mnt/htdocs/index.php ]; then
-                echo "Initializing htdocs from container image..."
+                echo "Seeding htdocs from image ($IMAGE_VERSION)..."
                 cp -a /htdocs/. /mnt/htdocs/
+                printf '%s' "$IMAGE_VERSION" > "$MARKER"
                 chown -R 100:101 /mnt/htdocs
-                echo "Done - copied $(find /mnt/htdocs -type f | wc -l) files"
+                echo "Seeded $(find /mnt/htdocs -type f | wc -l) files"
+
+              # Image changed: refresh code, leave what the instance owns alone. Code and
+              # user data share this volume, so a blind re-copy would take the uploads and
+              # configuration with it. Only the paths below are replaced — .env, storage,
+              # themes, img, assets/img and backups are never touched.
+              elif [ "$(cat "$MARKER" 2>/dev/null || echo none)" != "$IMAGE_VERSION" ]; then
+                echo "Refreshing application code -> $IMAGE_VERSION"
+                for d in app bootstrap config public resources routes vendor; do
+                  [ -d "/htdocs/$d" ] || continue
+                  rm -rf "/mnt/htdocs/$d"
+                  cp -a "/htdocs/$d" /mnt/htdocs/
+                done
+                for d in migrations seeders factories; do
+                  [ -d "/htdocs/database/$d" ] || continue
+                  rm -rf "/mnt/htdocs/database/$d"
+                  cp -a "/htdocs/database/$d" /mnt/htdocs/database/
+                done
+                for f in artisan composer.json composer.lock; do
+                  [ -f "/htdocs/$f" ] && cp -a "/htdocs/$f" /mnt/htdocs/ || true
+                done
+                printf '%s' "$IMAGE_VERSION" > "$MARKER"
+                chown -R 100:101 /mnt/htdocs
+                echo "Refreshed"
+
               else
-                echo "htdocs already initialized (index.php exists), skipping copy"
+                echo "htdocs already at $IMAGE_VERSION, nothing to do"
               fi
           volumeMounts:
             - name: kokiri-forest-linkstack-htdocs
               mountPath: /mnt/htdocs
       containers:
         - name: linkstack
-          image: docker.io/linkstackorg/linkstack@sha256:1c8b05399ee459ac601bac3eede7fbe765d1b6b7be725663b57f3220610958bf
+          # TEMPORARY: a dev tag pinned for OIDC testing only. Cut a stable release and
+          # repin once single sign-on is confirmed working — a dev-<sha> tag is not a
+          # version anyone can reason about later.
+          image: docker.io/hlhd/linkstack:dev-ba5cfa3
           ports:
             - containerPort: 8080
               name: http
@@ -52,8 +94,10 @@ spec:
               value: "1000"
             - name: TZ
               value: "Etc/UTC"
+            # Apache's canonical name only. A single vhost answers every apex; what makes
+            # the other domains work is the per-request redirect derivation below.
             - name: HTTP_SERVER_NAME
-              value: "ls.sofmeright.com"
+              value: "bio.outspokekin.com"
             - name: LOG_LEVEL
               value: "info"
             - name: PHP_MEMORY_LIMIT
@@ -61,9 +105,43 @@ spec:
             - name: UPLOAD_MAX_FILESIZE
               value: "16M"
             # Laravel/LinkStack settings - override .env for infrastructure config
+            # Fallback only: the OIDC redirect is derived per request, so APP_URL is what
+            # non-request-scoped URL generation falls back to.
             - name: APP_URL
-              value: "https://ls.sofmeright.com"
+              value: "https://bio.outspokekin.com"
             - name: FORCE_HTTPS
+              value: "true"
+            # Single sign-on. Discovery-based, so only the issuer and client are declared;
+            # OIDC_REDIRECT_URL is deliberately unset — leaving it unset is what lets one
+            # instance serve every apex and return each visitor to the domain they arrived
+            # on. Pinning it would collapse that to a single domain.
+            - name: OIDC_ISSUER
+              value: "https://sso.prplanit.com"
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: linkstack-secrets
+                  key: OIDC_CLIENT_ID
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: linkstack-secrets
+                  key: OIDC_CLIENT_SECRET
+            # Every apex this instance answers on. The OIDC callback is derived from the
+            # incoming host, so an unlisted host is refused rather than trusted — which is
+            # why all three belong here, not just the canonical one.
+            - name: ALLOWED_HOSTS
+              value: "bio.outspokekin.com,bio.sofmeright.com,bio.uni2.cc"
+            # Organizr embeds this page, from the public apex and the internal one. Named
+            # origins are what the browser checks against frame-ancestors; 'self' is kept
+            # automatically. Embedding across sites also needs the session cookie to survive
+            # a third-party context, which is SameSite=none — and a browser silently DROPS a
+            # SameSite=none cookie that is not also Secure, so the two belong together.
+            - name: ALLOWED_FRAME_ORIGINS
+              value: "https://apps.prplanit.com,https://apps.pcfae.com"
+            - name: SESSION_SAME_SITE
+              value: "none"
+            - name: SESSION_SECURE_COOKIE
               value: "true"
           resources:
             requests:
