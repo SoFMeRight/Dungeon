@@ -28,12 +28,12 @@ spec:
           # TEMPORARY: a dev tag pinned for OIDC testing only. Cut a stable release and
           # repin once single sign-on is confirmed working — a dev-<sha> tag is not a
           # version anyone can reason about later.
-          image: docker.io/hlhd/linkstack:dev-4de4d88
+          image: docker.io/hlhd/linkstack:dev-2caee1c
           env:
             # Bump with the image. Compared against a marker on the volume, so application
             # code is refreshed exactly once per image rather than on every start.
             - name: IMAGE_VERSION
-              value: "dev-4de4d88-r2"
+              value: "dev-2caee1c"
           command:
             - /bin/sh
             - -c
@@ -91,7 +91,7 @@ spec:
           # TEMPORARY: a dev tag pinned for OIDC testing only. Cut a stable release and
           # repin once single sign-on is confirmed working — a dev-<sha> tag is not a
           # version anyone can reason about later.
-          image: docker.io/hlhd/linkstack:dev-4de4d88
+          image: docker.io/hlhd/linkstack:dev-2caee1c
           ports:
             - containerPort: 8080
               name: http
@@ -108,6 +108,13 @@ spec:
               value: "bio.outspokekin.com"
             - name: LOG_LEVEL
               value: "info"
+            # Log to stderr, not to a file on the volume. Alloy ships container output to
+            # Loki, so a file channel is invisible there and accumulates on the PVC instead
+            # — this instance had grown a 559MB laravel.log nothing was reading. Note the
+            # image reuses LOG_LEVEL for Apache and Laravel reads the same variable, so the
+            # two verbosities cannot be set independently without patching the entrypoint.
+            - name: LOG_CHANNEL
+              value: "stderr"
             - name: PHP_MEMORY_LIMIT
               value: "512M"
             - name: UPLOAD_MAX_FILESIZE
