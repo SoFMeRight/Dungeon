@@ -5,3 +5,8 @@ metadata:
 spec:
   type: ExternalName
   externalName: sideporch.prplanit.internal
+  ports:
+    - port: 443
+      targetPort: 443
+      protocol: TCP
+      name: https

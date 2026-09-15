@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1
+kind: ServiceEntry
+metadata:
+  name: sideporch-camera
+spec:
+  # Exported cluster-wide so the phloem-gateway (prelude-of-light) can program this
+  # external cluster — the gateway lives in a different namespace than this overlay.
+  exportTo:
+    - "*"
+  hosts:
+    - sideporch.prplanit.internal
+  location: MESH_EXTERNAL
+  resolution: STATIC
+  ports:
+    - number: 443
+      name: http
+      protocol: HTTP
+  endpoints:
+    - address: 10.9.11.129

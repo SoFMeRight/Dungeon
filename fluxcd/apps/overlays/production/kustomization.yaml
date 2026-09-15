@@ -110,6 +110,8 @@ resources:
   - fusionpbx-external
   - mailcow-external
   - pve-cluster-external
+  - truenas-webui
+  - sideporch-camera
   - nextcloud
   # Static Sites
   - fairer-pages

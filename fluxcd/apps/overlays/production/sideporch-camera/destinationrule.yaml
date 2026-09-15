@@ -3,11 +3,14 @@ kind: DestinationRule
 metadata:
   name: sideporch-camera
 spec:
-  host: sideporch-camera.lens-of-truth.svc.cluster.local
+  # Exported cluster-wide so the cross-namespace phloem-gateway applies TLS origination.
+  exportTo:
+    - "*"
+  host: sideporch.prplanit.internal
   trafficPolicy:
-    portLevelSettings:
-      - port:
-          number: 443
-        tls:
-          mode: SIMPLE
-          insecureSkipVerify: true
+    tls:
+      # Originate TLS to the sideporch camera (terminates HTTPS on :443). It serves a
+      # self-signed cert, so verification is skipped — the segment from the gateway to
+      # the camera is on the trusted internal network.
+      mode: SIMPLE
+      insecureSkipVerify: true

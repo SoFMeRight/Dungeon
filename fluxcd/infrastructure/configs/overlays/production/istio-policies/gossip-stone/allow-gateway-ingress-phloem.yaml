@@ -18,4 +18,4 @@ spec:
               - cluster.local/ns/prelude-of-light/sa/phloem-gateway-istio
       to:
         - operation:
-            ports: ["3000", "3001", "5050", "8080", "8090", "8480", "9001"]
+            ports: ["443", "3000", "3001", "5050", "8080", "8090", "8480", "9001"]
