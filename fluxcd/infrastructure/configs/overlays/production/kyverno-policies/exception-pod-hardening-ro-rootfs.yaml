@@ -112,10 +112,15 @@ spec:
           names:
             - "bank-vaults-operator-*"
             - "netbird-dashboard-*"
-            - "netbird-router-*"
             - "netbox-server-*"
             - "openbao-*"
             - "semaphore-*"
             - "twofauth-*"
             - "unifi-*"
             - "zitadel-*"
+      # farores-wind — netbird-router (WireGuard subnet router needs a writable rootfs for the agent).
+      - resources:
+          kinds: [Pod]
+          namespaces: [farores-wind]
+          names:
+            - "netbird-router-*"

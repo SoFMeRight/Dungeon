@@ -100,4 +100,9 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [zeldas-lullaby]
-          names: ["bank-vaults-operator-*", "netbird-dashboard-*", "netbird-router-*", "netbird-turn-*", "netbox-server-*", "openbao-*", "unifi-app-*"]
+          names: ["bank-vaults-operator-*", "netbird-dashboard-*", "netbird-turn-*", "netbox-server-*", "openbao-*", "unifi-app-*"]
+      # farores-wind — netbird-router (WireGuard subnet router: NET_ADMIN/MKNOD, runs as root).
+      - resources:
+          kinds: [Pod]
+          namespaces: [farores-wind]
+          names: ["netbird-router-*"]

@@ -11,6 +11,7 @@ resources:
   - ./loki
   - ./victoria-metrics
   - ./netbird
+  - ./netbird-router
   - ./ntfy
   - ./nutify
   - ./prometheus-exporter-eaton-ups
