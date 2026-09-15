@@ -64,6 +64,29 @@ patches:
       name: netbird-relay
   - patch: |-
       - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: docker.io/netbirdio/netbird:0.78.1
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: https://netbird.prplanit.com
+      - op: replace
+        path: /spec/volumeClaimTemplates/0/spec/storageClassName
+        value: ceph-rbd
+    target:
+      kind: StatefulSet
+      name: netbird-router
+  - patch: |-
+      - op: replace
+        path: /spec/secretStoreRef/name
+        value: openbao-zeldas-letter
+      - op: replace
+        path: /spec/data/0/remoteRef/key
+        value: apps/netbird
+    target:
+      kind: ExternalSecret
+      name: netbird-router
+  - patch: |-
+      - op: replace
         path: /spec/secretStoreRef/name
         value: openbao-zeldas-letter
       - op: replace

@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: netbird-router
+spec:
+  revisionHistoryLimit: 5
+  serviceName: netbird-router
+  # HA subnet-router: three DISTINCT NetBird peers (netbird-router-0/1/2), each with its
+  # own identity, WireGuard key and PVC. A StatefulSet (not a Deployment) is required so
+  # each replica is a stable, separate peer — a shared identity would collide. All three
+  # register via the same reusable setup key; add them to the route group in the NetBird
+  # dashboard for HA (NetBird load-balances / fails over across the peers). The pod hostname
+  # (= pod name) becomes the peer name automatically.
+  replicas: 3
+  selector:
+    matchLabels:
+      app: netbird
+      component: router
+  template:
+    metadata:
+      labels:
+        # app: netbird reuses the allow-apps-egress CCNP (world + cluster egress); the peer
+        # only forwards the routes it is assigned (LAN/LB CIDRs, never pod/service CIDRs), so
+        # "anything that isn't k8s pods" is enforced by the route set + NetBird ACL, not here.
+        app: netbird
+        component: router
+        # Opt out of the istio ambient mesh: ztunnel would capture and mangle the WireGuard
+        # tunnel and the LAN/subnet traffic this peer forwards. It reaches management via the
+        # public gateway URL, not in-mesh pod-to-pod. Cilium egress still applies.
+        istio.io/dataplane-mode: none
+    spec:
+      serviceAccountName: netbird-router
+      containers:
+        - name: netbird
+          image: PLACEHOLDER_IMAGE
+          # Subnet-routing peer: NET_ADMIN drives the WireGuard interface, in-kernel routes,
+          # ip_forward and masquerade; MKNOD lets the agent create /dev/net/tun itself (no
+          # hostPath, matching the gluetun VPN pattern). Runs as the image's root; the non-root
+          # and ro-rootfs hardening policies are waived for netbird-router-* via kyverno
+          # exceptions (it needs a writable rootfs for the agent's runtime config).
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              add:
+                - NET_ADMIN
+                - MKNOD
+              drop:
+                - ALL
+          env:
+            # Unified management/signal/relay endpoint (path-split at the gateway).
+            - name: NB_MANAGEMENT_URL
+              value: PLACEHOLDER_MANAGEMENT_URL
+            # Reusable, non-ephemeral routing-peer setup key (minted in the dashboard,
+            # stored in OpenBao apps/netbird). Each replica registers itself with it.
+            - name: NB_SETUP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: netbird-router
+                  key: NB_SETUP_KEY
+          volumeMounts:
+            - name: router-data
+              mountPath: /var/lib/netbird
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "25m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+  volumeClaimTemplates:
+    - metadata:
+        name: router-data
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: 1Gi

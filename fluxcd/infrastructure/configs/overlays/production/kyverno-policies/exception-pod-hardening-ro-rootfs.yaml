@@ -112,6 +112,7 @@ spec:
           names:
             - "bank-vaults-operator-*"
             - "netbird-dashboard-*"
+            - "netbird-router-*"
             - "netbox-server-*"
             - "openbao-*"
             - "semaphore-*"

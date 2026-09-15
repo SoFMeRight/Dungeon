@@ -7,6 +7,7 @@ resources:
   - configmap-dashboard-nginx.yaml
   - statefulset-management.yaml
   - statefulset-signal.yaml
+  - statefulset-router.yaml
   - deployment-dashboard.yaml
   - deployment-relay.yaml
   - service-postgres.yaml
@@ -14,4 +15,6 @@ resources:
   - service-signal.yaml
   - service-dashboard.yaml
   - service-relay.yaml
+  - service-router.yaml
   - externalsecret.yaml
+  - externalsecret-router.yaml
