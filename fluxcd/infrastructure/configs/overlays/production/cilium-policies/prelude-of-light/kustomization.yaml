@@ -4,4 +4,5 @@ namespace: prelude-of-light
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-phloem-gateway.yaml
+  - cnp-phloem-gateway-from-dungeon-router.yaml
   - cnp-egress-phloem-gateway.yaml

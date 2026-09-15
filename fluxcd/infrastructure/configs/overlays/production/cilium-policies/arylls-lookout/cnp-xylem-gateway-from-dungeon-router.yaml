@@ -1,0 +1,29 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-xylem-gateway-from-dungeon-router
+spec:
+  description: >-
+    Allow the in-cluster NetBird subnet router (farores-wind) to reach xylem-gateway
+    on :80/:443. The gateway's LAN rule admits RFC1918 but excepts the pod CIDR to
+    prevent identity bypass via the LB IP; the router forwards VPN traffic from a pod
+    IP, so it needs this explicit identity-based allow. This is the sanctioned VPN
+    ingress path to *.pcfae.com internal services served by xylem.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: xylem-gateway
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: farores-wind
+            app: netbird
+            component: router
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
