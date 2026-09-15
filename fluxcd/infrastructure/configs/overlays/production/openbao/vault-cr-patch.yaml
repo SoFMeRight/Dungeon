@@ -113,6 +113,11 @@ spec:
           path "*" {
             capabilities = ["create", "read", "update", "delete", "list", "sudo"]
           }
+      - name: boundary-ssh
+        rules: |
+          path "ssh-client-signer/sign/dungeon-pedestal" {
+            capabilities = ["create", "update"]
+          }
     auth:
       - type: kubernetes
         config:
@@ -180,3 +185,27 @@ spec:
         description: Personal productivity and management apps
         options:
           version: 2
+      # SSH client-cert signer — Boundary brokers short-lived certs for access to
+      # dungeon-pedestal (the GitOps runner). The CA private key is generated once
+      # inside OpenBao and never leaves; bank-vaults will not regenerate it on
+      # subsequent reconciles. The CA public key is served unauthenticated at
+      # /v1/ssh-client-signer/public_key for pedestal's sshd to trust.
+      - path: ssh-client-signer
+        type: ssh
+        description: SSH client-cert signer for Boundary-brokered access
+        configuration:
+          config:
+            - name: ca
+              generate_signing_key: "true"
+          roles:
+            - name: dungeon-pedestal
+              key_type: "ca"
+              algorithm_signer: "rsa-sha2-256"
+              allow_user_certificates: "true"
+              allowed_users: "kai"
+              default_user: "kai"
+              allowed_extensions: "permit-pty,permit-user-rc"
+              default_extensions:
+                permit-pty: ""
+              ttl: "5m0s"
+              max_ttl: "30m0s"
