@@ -66,9 +66,8 @@ spec:
               echo "=== Done ==="
               echo "OIDC auth method '$OIDC_AM_ID' is now primary for global scope."
               echo "Password auth method 'ampw_wRAPAtb3aw' is still available as fallback."
-          env:
-            - name: ADMIN_PASSWORD
-              value: "NA1ZRvx2dHw33OGKIhKq"
+          # ADMIN_PASSWORD is provided by the boundary-oidc ExternalSecret
+          # (OpenBao apps/boundary), never hardcoded.
           envFrom:
             - secretRef:
                 name: boundary-oidc
