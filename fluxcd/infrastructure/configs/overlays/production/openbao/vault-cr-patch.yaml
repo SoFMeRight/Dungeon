@@ -156,6 +156,13 @@ spec:
             bound_service_account_namespaces: ["zeldas-lullaby"]
             policies: ["zitadel-provisioner"]
             ttl: 1h
+          # Boundary controller obtains a periodic, renewable, orphan token via its SA
+          # (no hand-minted token) for its vault credential store -> ssh-client-signer.
+          - name: boundary
+            bound_service_account_names: ["boundary-controller"]
+            bound_service_account_namespaces: ["hookshot"]
+            policies: ["boundary-controller", "boundary-ssh"]
+            token_period: "24h"
       - type: oidc
         config:
           oidc_discovery_url: https://sso.prplanit.com
