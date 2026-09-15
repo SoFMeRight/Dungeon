@@ -7,10 +7,11 @@ spec:
     Default-deny ingress AND egress for kokiri-forest namespace.
     Ingress: gateway pods via cnp-phloem-gateway; linkstack via
     ingress-backend CCNP; linkstack-db from linkstack via cnp-linkstack-db.
-    Egress: both apps are DNS + mesh-only (linkstack->linkstack-db rides
-    HBONE, no external deps), so the universal DNS/HBONE CCNPs cover them
-    and no per-app cnp-egress-* is needed. Both directions use a
-    reserved-label anchor to trigger enforcement.
+    Egress: linkstack->linkstack-db rides HBONE, so the universal DNS/HBONE
+    CCNPs cover the in-cluster path, but linkstack does leave the mesh — the
+    OIDC hairpin and the theme updater's GitHub reads — which
+    cnp-egress-linkstack allows. Both directions use a reserved-label
+    anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
     egress: true

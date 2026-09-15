@@ -4,12 +4,17 @@ metadata:
   name: allow-linkstack-egress
 spec:
   description: >-
-    linkstack's database is in-cluster and rides the mesh (HBONE). Its only
-    non-mesh egress is the OIDC hairpin to sso.prplanit.com, which split-horizon
-    DNS resolves to the cell-membrane gateway — and those gateway pods are not
-    meshed, so `toEntities: cluster` does not cover them and an explicit
-    toEndpoints allow is required. Paired with cap.oidc, which is what the
-    gateway's own ingress policy matches on.
+    linkstack's database is in-cluster and rides the mesh (HBONE). Two things
+    leave the mesh. The OIDC hairpin to sso.prplanit.com resolves via
+    split-horizon DNS to the cell-membrane gateway, and those gateway pods are
+    not meshed, so `toEntities: cluster` does not cover them and an explicit
+    toEndpoints allow is required — paired with cap.oidc, which is what the
+    gateway's own ingress policy matches on. The theme updater reads each
+    installed theme's upstream version from GitHub, one request per theme, so
+    without this it blocks until PHP's socket timeout on every one of them and
+    the page never finishes loading. L7 DNS is required for the FQDN rules to
+    match at all: the universal DNS CCNP has no dns rules, so Cilium never sees
+    the lookups and toFQDNs would silently resolve to nothing.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -21,6 +26,29 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: hyrule-castle
             gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    # Theme metadata is read from raw.githubusercontent.com; a theme downloaded
+    # from github.com is served from objects.githubusercontent.com.
+    - toFQDNs:
+        - matchName: "github.com"
+        - matchName: "raw.githubusercontent.com"
+        - matchName: "objects.githubusercontent.com"
       toPorts:
         - ports:
             - port: "443"
