@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: netbird-router
+  name: dungeon-router
 spec:
   # Headless service backing the StatefulSet's stable peer identities. Nothing in-cluster
   # connects TO the router (it initiates outbound to management + WireGuard peers), so this

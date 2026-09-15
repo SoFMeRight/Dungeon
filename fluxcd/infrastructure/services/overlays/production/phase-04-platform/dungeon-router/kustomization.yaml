@@ -6,7 +6,7 @@ kind: Kustomization
 # beside Vault/Zitadel. farores-wind is privileged PSA and isolates the pivot's blast radius.
 namespace: farores-wind
 resources:
-  - ../../../../base/netbird-router
+  - ../../../../base/dungeon-router
 patches:
   - patch: |-
       - op: replace
@@ -30,7 +30,7 @@ patches:
               - "netbird.prplanit.com"
     target:
       kind: StatefulSet
-      name: netbird-router
+      name: dungeon-router
   - patch: |-
       - op: replace
         path: /spec/secretStoreRef/name
@@ -40,4 +40,4 @@ patches:
         value: apps/netbird
     target:
       kind: ExternalSecret
-      name: netbird-router
+      name: dungeon-router

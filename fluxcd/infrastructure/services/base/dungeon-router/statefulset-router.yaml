@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: netbird-router
+  name: dungeon-router
 spec:
   revisionHistoryLimit: 5
-  serviceName: netbird-router
-  # HA subnet-router: three DISTINCT NetBird peers (netbird-router-0/1/2), each with its
+  serviceName: dungeon-router
+  # HA subnet-router: three DISTINCT NetBird peers (dungeon-router-0/1/2), each with its
   # own identity, WireGuard key and PVC. A StatefulSet (not a Deployment) is required so
   # each replica is a stable, separate peer — a shared identity would collide. All three
   # register via the same reusable setup key; add them to the route group in the NetBird
@@ -29,7 +29,7 @@ spec:
         # public gateway URL, not in-mesh pod-to-pod. Cilium egress still applies.
         istio.io/dataplane-mode: none
     spec:
-      serviceAccountName: netbird-router
+      serviceAccountName: dungeon-router
       containers:
         - name: netbird
           image: PLACEHOLDER_IMAGE
@@ -37,7 +37,7 @@ spec:
           # MKNOD (agent creates /dev/net/tun itself — no hostPath, gluetun pattern), NET_RAW (the
           # agent opens an IPv4 raw socket to bring wg0 up). ip_forward is already 1 (inherited from
           # the node), so no sysctl is set — net.ipv4.ip_forward isn't kubelet-allowlisted anyway.
-          # Runs as the image's root; non-root + ro-rootfs hardening are waived for netbird-router-*
+          # Runs as the image's root; non-root + ro-rootfs hardening are waived for dungeon-router-*
           # via kyverno exceptions (the agent needs a writable rootfs for its runtime config).
           securityContext:
             allowPrivilegeEscalation: false
@@ -57,7 +57,7 @@ spec:
             - name: NB_SETUP_KEY
               valueFrom:
                 secretKeyRef:
-                  name: netbird-router
+                  name: dungeon-router
                   key: NB_SETUP_KEY
           volumeMounts:
             - name: router-data

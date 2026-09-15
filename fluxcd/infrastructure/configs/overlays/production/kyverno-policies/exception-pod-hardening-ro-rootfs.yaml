@@ -118,9 +118,9 @@ spec:
             - "twofauth-*"
             - "unifi-*"
             - "zitadel-*"
-      # farores-wind — netbird-router (WireGuard subnet router needs a writable rootfs for the agent).
+      # farores-wind — dungeon-router (WireGuard subnet router needs a writable rootfs for the agent).
       - resources:
           kinds: [Pod]
           namespaces: [farores-wind]
           names:
-            - "netbird-router-*"
+            - "dungeon-router-*"

@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-cell-membrane-gateway-from-netbird-router
+  name: allow-cell-membrane-gateway-from-dungeon-router
 spec:
   description: >-
     Allow the in-cluster NetBird subnet router (farores-wind) to reach the cell-membrane
