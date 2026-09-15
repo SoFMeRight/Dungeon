@@ -118,6 +118,28 @@ spec:
           path "ssh-client-signer/sign/dungeon-pedestal" {
             capabilities = ["create", "update"]
           }
+      # Token self-management for Boundary's Vault credential store (periodic,
+      # renewable, orphan token). Paired with boundary-ssh on the token.
+      - name: boundary-controller
+        rules: |
+          path "auth/token/lookup-self" {
+            capabilities = ["read"]
+          }
+          path "auth/token/renew-self" {
+            capabilities = ["update"]
+          }
+          path "auth/token/revoke-self" {
+            capabilities = ["update"]
+          }
+          path "sys/leases/renew" {
+            capabilities = ["update"]
+          }
+          path "sys/leases/revoke" {
+            capabilities = ["update"]
+          }
+          path "sys/capabilities-self" {
+            capabilities = ["update"]
+          }
     auth:
       - type: kubernetes
         config:
