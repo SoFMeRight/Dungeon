@@ -11,6 +11,7 @@ resources:
   - allow-netbox-server-to-netbox-postgres.yaml
   - allow-netbox-server-to-netbox-redis.yaml
   - allow-external-secrets-to-vault.yaml
+  - allow-boundary-to-vault.yaml
   - allow-bank-vaults-operator-to-vault.yaml
   - allow-vault-to-vault.yaml
   - allow-zitadel-to-vault.yaml

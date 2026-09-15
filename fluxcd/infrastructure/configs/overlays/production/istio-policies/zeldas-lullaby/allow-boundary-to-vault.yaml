@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-boundary-to-vault
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vault
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/hookshot/sa/boundary-controller
+      to:
+        - operation:
+            ports: ["8200"]

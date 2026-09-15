@@ -29,6 +29,16 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
+    # Boundary controller (hookshot) validates its vault credential store token and
+    # signs SSH certs against ssh-client-signer for brokered dungeon-pedestal access.
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hookshot
+            app.kubernetes.io/name: boundary
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
     - fromEntities:
         - host
         - remote-node
