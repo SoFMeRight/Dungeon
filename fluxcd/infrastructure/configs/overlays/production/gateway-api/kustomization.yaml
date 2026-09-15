@@ -30,6 +30,7 @@ resources:
   - envoyfilter-tacticalrmm-websocket-cell-membrane.yaml
   - envoyfilter-ntfy-timeout-cell-membrane.yaml
   - envoyfilter-ntfy-timeout-xylem.yaml
+  - envoyfilter-sideporch-camera-phloem.yaml
   # ── HTTPRoutes ─────────────────────────────────────────────
   - httproute-http-redirect-cell-membrane.yaml
   - httproute-http-redirect-xylem.yaml
