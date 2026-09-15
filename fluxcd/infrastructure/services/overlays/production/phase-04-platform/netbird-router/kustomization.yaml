@@ -18,6 +18,16 @@ patches:
       - op: replace
         path: /spec/volumeClaimTemplates/0/spec/storageClassName
         value: ceph-rbd
+      # Route netbird.prplanit.com to the cell-membrane gateway's ClusterIP instead of its
+      # LoadBalancer IP: an in-cluster pod cannot hairpin to the cluster's own LB (172.22.30.71),
+      # so the public URL times out. The gateway path-splits management/signal/relay for this host.
+      # (ClusterIP of svc cell-membrane-gateway-istio in hyrule-castle — update if that svc is recreated.)
+      - op: add
+        path: /spec/template/spec/hostAliases
+        value:
+          - ip: "10.159.20.57"
+            hostnames:
+              - "netbird.prplanit.com"
     target:
       kind: StatefulSet
       name: netbird-router

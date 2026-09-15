@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-cell-membrane-gateway-from-netbird-router
+spec:
+  description: >-
+    Allow the in-cluster NetBird subnet router (farores-wind) to reach the cell-membrane
+    gateway on :443. The gateway's own ingress rule only admits `world`, and an in-cluster
+    pod cannot hairpin to the LB IP, so the router reaches netbird.prplanit.com via the
+    gateway's ClusterIP (hostAlias) — which needs this explicit ingress allow past
+    hyrule-castle's default-deny-ingress. The gateway then proxies to netbird
+    management/signal/relay as it does for any client.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: farores-wind
+            app: netbird
+            component: router
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

@@ -33,17 +33,19 @@ spec:
       containers:
         - name: netbird
           image: PLACEHOLDER_IMAGE
-          # Subnet-routing peer: NET_ADMIN drives the WireGuard interface, in-kernel routes,
-          # ip_forward and masquerade; MKNOD lets the agent create /dev/net/tun itself (no
-          # hostPath, matching the gluetun VPN pattern). Runs as the image's root; the non-root
-          # and ro-rootfs hardening policies are waived for netbird-router-* via kyverno
-          # exceptions (it needs a writable rootfs for the agent's runtime config).
+          # Subnet-routing peer capabilities: NET_ADMIN (WireGuard interface, routes, masquerade),
+          # MKNOD (agent creates /dev/net/tun itself — no hostPath, gluetun pattern), NET_RAW (the
+          # agent opens an IPv4 raw socket to bring wg0 up). ip_forward is already 1 (inherited from
+          # the node), so no sysctl is set — net.ipv4.ip_forward isn't kubelet-allowlisted anyway.
+          # Runs as the image's root; non-root + ro-rootfs hardening are waived for netbird-router-*
+          # via kyverno exceptions (the agent needs a writable rootfs for its runtime config).
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               add:
                 - NET_ADMIN
                 - MKNOD
+                - NET_RAW
               drop:
                 - ALL
           env:
