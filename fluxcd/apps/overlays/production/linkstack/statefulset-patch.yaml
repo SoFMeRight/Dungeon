@@ -25,15 +25,12 @@ spec:
             name: linkstack-apache-config
       initContainers:
         - name: init-htdocs
-          # TEMPORARY: a dev tag pinned for OIDC testing only. Cut a stable release and
-          # repin once single sign-on is confirmed working — a dev-<sha> tag is not a
-          # version anyone can reason about later.
-          image: docker.io/hlhd/linkstack:dev-e40e8a1
+          image: docker.io/hlhd/linkstack:v4.8.4-hlhd.1
           env:
             # Bump with the image. Compared against a marker on the volume, so application
             # code is refreshed exactly once per image rather than on every start.
             - name: IMAGE_VERSION
-              value: "dev-e40e8a1"
+              value: "v4.8.4-hlhd.1"
           command:
             - /bin/sh
             - -c
@@ -88,10 +85,7 @@ spec:
               mountPath: /mnt/htdocs
       containers:
         - name: linkstack
-          # TEMPORARY: a dev tag pinned for OIDC testing only. Cut a stable release and
-          # repin once single sign-on is confirmed working — a dev-<sha> tag is not a
-          # version anyone can reason about later.
-          image: docker.io/hlhd/linkstack:dev-e40e8a1
+          image: docker.io/hlhd/linkstack:v4.8.4-hlhd.1
           ports:
             - containerPort: 8080
               name: http
