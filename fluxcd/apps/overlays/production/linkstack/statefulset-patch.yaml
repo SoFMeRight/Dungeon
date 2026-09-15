@@ -25,12 +25,12 @@ spec:
             name: linkstack-apache-config
       initContainers:
         - name: init-htdocs
-          image: docker.io/hlhd/linkstack:v4.8.4-hlhd.1
+          image: docker.io/hlhd/linkstack:v4.8.7-rc
           env:
             # Bump with the image. Compared against a marker on the volume, so application
             # code is refreshed exactly once per image rather than on every start.
             - name: IMAGE_VERSION
-              value: "v4.8.4-hlhd.1"
+              value: "v4.8.7-rc"
           command:
             - /bin/sh
             - -c
@@ -85,7 +85,7 @@ spec:
               mountPath: /mnt/htdocs
       containers:
         - name: linkstack
-          image: docker.io/hlhd/linkstack:v4.8.4-hlhd.1
+          image: docker.io/hlhd/linkstack:v4.8.7-rc
           ports:
             - containerPort: 8080
               name: http
