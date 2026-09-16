@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: whisparr
-          image: ghcr.io/hotio/whisparr:v2-v2.1.0
+          image: ghcr.io/hotio/whisparr:v2-v2.1.0@sha256:8d87b217aa5ef2480695b3c5039b10cd0a45df743de065885d0a0a49f99169ac
           env:
             - name: TZ
               value: "America/Los_Angeles"
