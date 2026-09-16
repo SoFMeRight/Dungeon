@@ -143,7 +143,7 @@ spec:
       # Read-only for the one KV path holding the dungeon-pedestal brokered SSH key.
       - name: boundary-ssh-read
         rules: |
-          path "zeldas-letter/data/apps/boundary-pedestal-ssh" {
+          path "zeldas-letter/data/apps/boundary-dungeon-pedestal" {
             capabilities = ["read"]
           }
     auth:
