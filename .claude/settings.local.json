@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(export KUBECONFIG=$HOME/.kube/config)",
+      "Bash(kubectl get *)"
+    ]
+  }
+}
