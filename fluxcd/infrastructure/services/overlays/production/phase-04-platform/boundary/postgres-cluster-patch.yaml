@@ -39,15 +39,16 @@ spec:
   # Requests lift this out of BestEffort. It is the config store every brokered session
   # authenticates and authorizes against, so it must not be the first thing the kubelet
   # reclaims under node pressure — a shutdown here takes the primary with it.
-  # Sized from observed use: ~45Mi resident (memory is what drives eviction, so the
-  # request carries the headroom) against 150-350m CPU, which is higher than the 1Gi of
-  # data suggests and is why the CPU request is not scaled down to match the storage.
+  # Sized for the primary + CNPG instance manager under Boundary's session load, with
+  # headroom above the ~45Mi steady-state resident so memory pressure doesn't trip the
+  # instance-manager liveness probe (a 500 there restarts the primary and drops in-flight
+  # sessions). The 512Mi ceiling did exactly that under load, hence the raised limit.
   resources:
     requests:
-      memory: "128Mi"
+      memory: "256Mi"
       cpu: "250m"
     limits:
-      memory: "512Mi"
+      memory: "1Gi"
       cpu: "1000m"
 
   storage:
