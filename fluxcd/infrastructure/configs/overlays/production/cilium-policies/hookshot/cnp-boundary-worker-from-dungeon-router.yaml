@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-boundary-worker-from-dungeon-router
+spec:
+  description: >-
+    Allow the in-cluster NetBird subnet router (farores-wind) to reach the Boundary
+    worker on :9202 so VPN clients can run brokered SSH sessions. The worker's LAN
+    rule admits RFC1918 but excepts the pod CIDR to prevent identity bypass via the
+    LB IP; the router forwards VPN traffic from a pod IP, so it needs this explicit
+    identity-based allow (same pattern as the gateway from-dungeon-router policies).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: boundary-worker
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: farores-wind
+            app: netbird
+            component: router
+      toPorts:
+        - ports:
+            - port: "9202"
+              protocol: TCP
