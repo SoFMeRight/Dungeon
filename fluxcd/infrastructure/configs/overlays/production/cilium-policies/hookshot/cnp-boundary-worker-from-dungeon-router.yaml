@@ -14,7 +14,8 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      app: boundary-worker
+      app.kubernetes.io/name: boundary
+      app.kubernetes.io/component: worker
   ingress:
     - fromEndpoints:
         - matchLabels:
