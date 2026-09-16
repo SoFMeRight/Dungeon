@@ -140,6 +140,12 @@ spec:
           path "sys/capabilities-self" {
             capabilities = ["update"]
           }
+      # Read-only for the one KV path holding the dungeon-pedestal brokered SSH key.
+      - name: boundary-ssh-read
+        rules: |
+          path "zeldas-letter/data/apps/boundary-pedestal-ssh" {
+            capabilities = ["read"]
+          }
     auth:
       - type: kubernetes
         config:
@@ -161,7 +167,7 @@ spec:
           - name: boundary
             bound_service_account_names: ["boundary-controller"]
             bound_service_account_namespaces: ["hookshot"]
-            policies: ["boundary-controller", "boundary-ssh"]
+            policies: ["boundary-controller", "boundary-ssh-read"]
             token_period: "24h"
       - type: oidc
         config:
