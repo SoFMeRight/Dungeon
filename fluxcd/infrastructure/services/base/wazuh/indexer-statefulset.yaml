@@ -51,13 +51,13 @@ spec:
             - name: wazuh-indexer-data
               mountPath: /var/lib/wazuh-indexer
             - name: indexer-config
-              mountPath: /usr/share/wazuh-indexer/opensearch.yml
+              mountPath: /usr/share/wazuh-indexer/config/opensearch.yml
               subPath: wazuh.indexer.yml
             - name: indexer-config
-              mountPath: /usr/share/wazuh-indexer/opensearch-security/internal_users.yml
+              mountPath: /usr/share/wazuh-indexer/config/opensearch-security/internal_users.yml
               subPath: internal_users.yml
             - name: indexer-security-config
-              mountPath: /etc/wazuh-indexer/opensearch-security/config.yml
+              mountPath: /usr/share/wazuh-indexer/config/opensearch-security/config.yml
               subPath: config.yml
             - name: ssl-certs
               mountPath: /usr/share/wazuh-indexer/certs/root-ca.pem
