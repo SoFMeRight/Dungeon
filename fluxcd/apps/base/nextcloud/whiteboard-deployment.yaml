@@ -24,7 +24,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: whiteboard
-          image: ghcr.io/nextcloud-releases/whiteboard:latest
+          image: ghcr.io/nextcloud-releases/whiteboard:latest@sha256:059596633333d009890c64858f89f133ccd973a2e0823ad960a0cc05cf8657f1
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
