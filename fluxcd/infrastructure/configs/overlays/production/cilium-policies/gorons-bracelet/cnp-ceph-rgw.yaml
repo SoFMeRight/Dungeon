@@ -29,7 +29,7 @@ metadata:
   name: allow-ceph-rgw-cluster
 spec:
   description: >-
-    Allow xylem-gateway (TLS termination for s3.pcfae.com) and cap.ceph
+    Allow phloem-gateway (TLS termination for s3.pcfae.com) and cap.ceph
     admin jobs to reach raw RGW on port 8080.
   enableDefaultDeny:
     ingress: false
@@ -40,8 +40,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: arylls-lookout
-            gateway.networking.k8s.io/gateway-name: xylem-gateway
+            k8s:io.kubernetes.pod.namespace: prelude-of-light
+            gateway.networking.k8s.io/gateway-name: phloem-gateway
         - matchLabels:
             policy.prplanit.com/cap.ceph: "true"
             policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"

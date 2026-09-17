@@ -5,7 +5,7 @@ metadata:
 spec:
   description: >-
     The nextcloud-postgres CNPG cluster archives WAL segments + base backups to
-    the Ceph RGW at s3.pcfae.com (the xylem gateway VIP 172.22.30.69). The egress
+    the Ceph RGW at s3.pcfae.com (the phloem gateway VIP 172.22.30.70). The egress
     default-deny rollout allowlisted the nextcloud app/collabora/clamav but missed
     the DB, so barman-cloud-wal-archive failed (exit 4, TLS handshake dropped),
     WAL could not be recycled, and it filled the primary's PVC until CNPG shut it
@@ -22,4 +22,4 @@ spec:
     - toEntities:
         - cluster
     - toCIDR:
-        - 172.22.30.69/32
+        - 172.22.30.70/32

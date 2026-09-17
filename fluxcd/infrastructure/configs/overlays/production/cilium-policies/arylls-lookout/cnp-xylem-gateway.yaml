@@ -26,25 +26,6 @@ spec:
               protocol: TCP
             - port: "443"
               protocol: TCP
-    # S3 consumer pods reaching s3.pcfae.com via xylem-gateway
-    # CNP fromEndpoints requires explicit namespace for cross-namespace match
-    - fromEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: hyrule-castle
-            policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: temple-of-time
-            policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: gossip-stone
-            policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
-      toPorts:
-        - ports:
-            - port: "443"
-              protocol: TCP
     # Cross-namespace monitoring probes
     - fromEndpoints:
         - matchLabels:
