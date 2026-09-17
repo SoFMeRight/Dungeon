@@ -8,5 +8,6 @@ resources:
   - cnp-egress-frigate.yaml
   - cnp-egress-home-assistant.yaml
   - cnp-egress-wazuh-manager.yaml
+  - cnp-egress-wazuh.yaml
   - cnp-loadbalancers.yaml
   - cnp-iot-mesh.yaml

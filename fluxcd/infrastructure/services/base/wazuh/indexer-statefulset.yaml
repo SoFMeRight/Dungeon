@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: wazuh-indexer
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: wazuh-indexer
       hostname: wazuh-indexer

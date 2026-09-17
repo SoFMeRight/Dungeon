@@ -12,6 +12,7 @@ spec:
     metadata:
       labels:
         app: wazuh-dashboard
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       serviceAccountName: wazuh-dashboard
       hostname: wazuh-dashboard

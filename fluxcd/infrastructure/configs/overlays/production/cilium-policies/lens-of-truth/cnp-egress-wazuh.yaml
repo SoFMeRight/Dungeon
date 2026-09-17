@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-wazuh-oidc-egress
+spec:
+  description: >-
+    wazuh indexer (OIDC discovery/JWKS validation) and dashboard (auth-code
+    token exchange) reach Zitadel at sso.prplanit.com, which hairpins to the
+    non-meshed cell-membrane gateway pods on 443. Paired with cap.oidc on the
+    pods, which the gateway's OIDC-consumer contract admits.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values: ["wazuh-indexer", "wazuh-dashboard"]
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
