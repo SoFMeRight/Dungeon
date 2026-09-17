@@ -18,3 +18,64 @@ control_plane_group: k8s_master        # its FIRST host is the kubectl delegate
 # load, so they live as inline defaults in that play and are overridden per-run
 # with Semaphore extra-vars / -e (e.g. -e os_patch_k8s_group=my_nodes). See the
 # play header for the three names.
+
+# ── Kubelet configuration pins ───────────────────────────────────────────────
+# Every KubeletConfiguration value the fleet pins, in one place. Applied by
+# k8s/tuning/kubelet-config.yaml, which writes them to kube-system/kubelet-config
+# first (the source of truth kubeadm regenerates each node file from) and then to
+# each running node for immediate effect.
+#
+# Add a setting by adding a line here. Override for one run with
+#   -e '{"kubelet_settings": {"maxPods": 300}}'
+# noting that an override REPLACES the whole map rather than merging into it.
+
+kubelet_settings:
+  # Headroom for N+2 failover plus velero data-mover pods. The kubeadm default
+  # is 110, which this fleet exceeds on several workers.
+  maxPods: 250
+
+  # Renovate churns images faster than the 85%/80% defaults reclaim them, so
+  # nodes filled up. Lower thresholds collect earlier and more often.
+  imageGCHighThresholdPercent: 60
+  imageGCLowThresholdPercent: 50
+  imageMaximumGCAge: "168h0m0s"
+
+  # Graceful Node Shutdown. At 0s the feature is OFF: kubelet registers no
+  # systemd inhibitor and pods are killed rather than sent SIGTERM, so Postgres
+  # never checkpoints and Galera never writes safe_to_bootstrap — every recovery
+  # is a recovery from an unclean stop.
+  #
+  # The total is the budget for stopping every pod on the node. Critical pods are
+  # stopped last and get the portion named below; ORDINARY PODS GET THE
+  # DIFFERENCE — 150 - 30 = 120s here, and that 120s is the number that has to be
+  # large enough, not the 150.
+  #
+  # 120s is where it sits because Harbor's core, registry and jobservice ask for
+  # exactly that, and the registry can be mid-upload. Everything above it on this
+  # fleet - gitlab-kas at 300s, the TURN relays and backup agents at 3600s - is
+  # unreachable on a 7m41s battery at any setting, and is built to be interrupted.
+  #
+  # The ordinary budget must cover the slowest thing that has to finish writing,
+  # which on this fleet is CNPG: a Postgres instance is SIGKILLed at its
+  # `stopDelay`, and it only reaches the checkpoint after `smartShutdownTimeout`
+  # elapses waiting for clients. So the chain that must hold is
+  #
+  #     smartShutdownTimeout <= stopDelay <= (shutdownGracePeriod - critical)
+  #
+  # and the whole per-host guest sequence must still fit the UPS battery. A pod
+  # whose terminationGracePeriodSeconds exceeds the ordinary budget is killed at
+  # the budget, not at its own value.
+  shutdownGracePeriod: "150s"
+  shutdownGracePeriodCriticalPods: "30s"
+
+# systemd caps how long ANY delay inhibitor may hold a shutdown, and defaults to
+# 5 seconds. Left at the default, shutdownGracePeriod above is decorative — it
+# looks configured and gives you five seconds. Must be >= shutdownGracePeriod;
+# the playbook refuses to run if it is not.
+inhibit_delay_max: 180
+
+# How long a node may take to come back Ready after its kubelet is restarted,
+# and how patiently to wait for the unit itself.
+kubelet_ready_timeout: 300s
+kubelet_active_retries: 6
+kubelet_active_delay: 10
