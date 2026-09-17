@@ -60,17 +60,8 @@ spec:
               mountPath: /wazuh-config-mount/etc/ossec.conf
               subPath: ossec.conf
               readOnly: true
-            - name: ssl-certs
-              mountPath: /etc/ssl/root-ca.pem
-              subPath: root-ca-manager.pem
-              readOnly: true
-            - name: ssl-certs
-              mountPath: /etc/ssl/filebeat.pem
-              subPath: wazuh.manager.pem
-              readOnly: true
-            - name: ssl-certs
-              mountPath: /etc/ssl/filebeat.key
-              subPath: wazuh.manager-key.pem
+            - name: manager-certs
+              mountPath: /etc/ssl/wazuh
               readOnly: true
             - name: wazuh-manager-data
               mountPath: /var/ossec/api/configuration
@@ -113,9 +104,9 @@ spec:
         - name: wazuh-manager-conf
           configMap:
             name: PLACEHOLDER_MANAGER_CONFIG
-        - name: ssl-certs
+        - name: manager-certs
           secret:
-            secretName: PLACEHOLDER_SSL_SECRET
+            secretName: wazuh-manager-tls
   volumeClaimTemplates:
     - metadata:
         name: wazuh-manager-data

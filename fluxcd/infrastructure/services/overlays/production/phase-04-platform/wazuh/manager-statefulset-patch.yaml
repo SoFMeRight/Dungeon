@@ -24,9 +24,6 @@ spec:
         - name: wazuh-manager-conf
           configMap:
             name: wazuh-manager-config
-        - name: ssl-certs
-          secret:
-            secretName: wazuh-ssl-certs
   volumeClaimTemplates:
     - metadata:
         name: wazuh-manager-data

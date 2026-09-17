@@ -60,21 +60,12 @@ spec:
             - name: indexer-security-config
               mountPath: /usr/share/wazuh-indexer/config/opensearch-security/config.yml
               subPath: config.yml
-            - name: ssl-certs
-              mountPath: /usr/share/wazuh-indexer/config/certs/root-ca.pem
-              subPath: root-ca.pem
-            - name: ssl-certs
-              mountPath: /usr/share/wazuh-indexer/config/certs/wazuh.indexer.key
-              subPath: wazuh.indexer-key.pem
-            - name: ssl-certs
-              mountPath: /usr/share/wazuh-indexer/config/certs/wazuh.indexer.pem
-              subPath: wazuh.indexer.pem
-            - name: ssl-certs
-              mountPath: /usr/share/wazuh-indexer/config/certs/admin.pem
-              subPath: admin.pem
-            - name: ssl-certs
-              mountPath: /usr/share/wazuh-indexer/config/certs/admin-key.pem
-              subPath: admin-key.pem
+            - name: indexer-certs
+              mountPath: /usr/share/wazuh-indexer/config/certs/node
+              readOnly: true
+            - name: admin-certs
+              mountPath: /usr/share/wazuh-indexer/config/certs/admin
+              readOnly: true
       volumes:
         - name: indexer-config
           configMap:
@@ -82,9 +73,12 @@ spec:
         - name: indexer-security-config
           configMap:
             name: PLACEHOLDER_INDEXER_SECURITY_CONFIG
-        - name: ssl-certs
+        - name: indexer-certs
           secret:
-            secretName: PLACEHOLDER_SSL_SECRET
+            secretName: wazuh-indexer-tls
+        - name: admin-certs
+          secret:
+            secretName: wazuh-admin-tls
   volumeClaimTemplates:
     - metadata:
         name: wazuh-indexer-data
