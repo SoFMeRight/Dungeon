@@ -7,6 +7,9 @@ spec:
     spec:
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
+      initContainers:
+        - name: fix-cert-perms
+          image: docker.io/wazuh/wazuh-indexer:4.14.7
       containers:
         - name: wazuh-indexer
           image: docker.io/wazuh/wazuh-indexer:4.14.7
