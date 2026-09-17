@@ -12,6 +12,11 @@ spec:
     metadata:
       labels:
         app: wazuh-manager
+      annotations:
+        # remoted's raw agent listener (1514/1515/514) can't bind under ambient
+        # inbound capture (ENOTCONN); exclude the agent ports so remoted binds while
+        # the API (55000) and indexer path stay in the mesh.
+        traffic.sidecar.istio.io/excludeInboundPorts: "1514,1515,514"
     spec:
       serviceAccountName: wazuh-manager
       hostname: wazuh-manager
