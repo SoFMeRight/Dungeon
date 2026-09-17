@@ -15,3 +15,4 @@ resources:
   - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
   - allow-wazuh-dashboard-to-wazuh-indexer.yaml
+  - allow-wazuh-manager-to-wazuh-indexer.yaml

@@ -1,0 +1,20 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-wazuh-manager-to-wazuh-indexer
+spec:
+  selector:
+    matchLabels:
+      app: wazuh-indexer
+  action: ALLOW
+  rules:
+    # The manager's filebeat ships events to the indexer's OpenSearch API. The
+    # dashboard AP makes the indexer default-deny in the mesh, so the manager
+    # needs its own explicit allow or filebeat's connection is reset.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/lens-of-truth/sa/wazuh-manager
+      to:
+        - operation:
+            ports: ["9200"]
