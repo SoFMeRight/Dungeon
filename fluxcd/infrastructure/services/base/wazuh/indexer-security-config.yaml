@@ -146,14 +146,9 @@ data:
               type: openid
               challenge: false
               config:
-                # The username presented to OpenSearch. Zitadel emits the account's
-                # username here, so a mapped user shows up as e.g. "kai".
                 subject_key: preferred_username
-                # roles_key is intentionally omitted: Zitadel's project-roles claim is a
-                # nested object, not the flat string array OpenSearch expects. Access is
-                # granted by mapping the OIDC subject in roles_mapping (all_access -> kai),
-                # not by a role claim. To scale to a team, add a Zitadel Action that
-                # flattens roles into a custom array claim, then set roles_key here.
+                # No roles_key: Zitadel's roles claim is a nested object, not the flat
+                # array OpenSearch requires; authorization is by roles_mapping.
                 openid_connect_url: https://sso.prplanit.com/.well-known/openid-configuration
             authentication_backend:
               type: noop
