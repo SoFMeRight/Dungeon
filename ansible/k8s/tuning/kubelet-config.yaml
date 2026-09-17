@@ -1,0 +1,206 @@
+---
+# kubelet-config.yaml
+# Applies every KubeletConfiguration value the fleet pins.
+#
+# NOTHING IS TUNED HERE. The values live in group_vars/all.yml under
+# `kubelet_settings`, documented one by one, alongside `inhibit_delay_max` and
+# the wait budgets. Adding a setting is a line there, not an edit here.
+#
+# Replaces kubelet-maxpods.yaml and kubelet-image-gc.yaml, which each carried
+# their own copy of the same convergence dance.
+#
+# WHY THE CONFIGMAP IS THE SOURCE OF TRUTH:
+# /var/lib/kubelet/config.yaml is a DERIVED file. kubeadm regenerates it from
+# kube-system/kubelet-config on every `kubeadm upgrade node` / `upgrade apply`,
+# so a value written only to the node file reverts at the next upgrade, silently.
+# Play 1 sets the ConfigMap; play 2 applies the same values to each running node
+# for immediate effect.
+#
+# kubelet-image-gc.yaml never wrote the ConfigMap, and targeted `k8s_control_plane`
+# — a group absent from the inventory, so ansible warned and skipped all five
+# control-plane nodes. The fleet is consistent today; both defects would have
+# surfaced at the next upgrade or the next edit.
+#
+# Run via Semaphore or:
+#   ansible-playbook -i inventory k8s/tuning/kubelet-config.yaml
+
+- name: Converge the kubelet ConfigMap (source of truth)
+  # A play's hosts: resolves BEFORE group_vars load, so the target is an inline
+  # default here rather than a group_vars value — overridden per-run with
+  # Semaphore extra-vars / -e, the same convention as maintenance/update-hosts.yml.
+  hosts: "{{ kubelet_cp_group | default('k8s_master') }}"
+  # run_once rather than a [0] index pattern: the ConfigMap is cluster-wide, so it
+  # is written once from whichever control-plane host ansible reaches first.
+  run_once: true
+  become: true
+  gather_facts: false
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  tasks:
+    # A grace period longer than the systemd ceiling is not a smaller grace
+    # period — it is a configuration that reads as ninety seconds and behaves as
+    # five. Refuse it here rather than discover it during an outage.
+    - name: Refuse a grace period the systemd ceiling cannot honour
+      ansible.builtin.assert:
+        that:
+          - kubelet_settings.shutdownGracePeriod is match('[0-9]+s$')
+          - (kubelet_settings.shutdownGracePeriod | regex_replace('s$', '') | int) <= (inhibit_delay_max | int)
+        fail_msg: >-
+          shutdownGracePeriod={{ kubelet_settings.shutdownGracePeriod }} exceeds
+          inhibit_delay_max={{ inhibit_delay_max }}s, or is not written in whole
+          seconds. systemd would cut the inhibitor short and the setting would be
+          decorative. Raise inhibit_delay_max in group_vars/all.yml.
+      when: kubelet_settings.shutdownGracePeriod | default('0s') != '0s'
+
+    - name: Stage the pinned settings
+      ansible.builtin.copy:
+        content: "{{ kubelet_settings | to_nice_json }}"
+        dest: /tmp/kubelet-settings.json
+        mode: "0600"
+      changed_when: false
+
+    # Line-oriented on purpose. Parsing and re-emitting the whole document would
+    # reformat every key kubeadm wrote, producing a diff nobody asked for and
+    # burying the one that matters.
+    - name: Ensure every pinned setting is present in kube-system/kubelet-config
+      ansible.builtin.shell:
+        cmd: |
+          set -eo pipefail
+          kubectl -n kube-system get cm kubelet-config -o jsonpath='{.data.kubelet}' > /tmp/kc.in
+          python3 - <<'PY'
+          import json
+          want = json.load(open("/tmp/kubelet-settings.json"))
+          seen, out = set(), []
+          for ln in open("/tmp/kc.in").read().splitlines():
+              key = ln.split(":", 1)[0] if ":" in ln else None
+              if key in want:
+                  out.append(f"{key}: {want[key]}")
+                  seen.add(key)
+              else:
+                  out.append(ln)
+          out += [f"{k}: {v}" for k, v in want.items() if k not in seen]
+          open("/tmp/kc.out", "w").write("\n".join(out) + "\n")
+          PY
+          if diff -q /tmp/kc.in /tmp/kc.out >/dev/null; then echo unchanged; exit 0; fi
+          diff -u /tmp/kc.in /tmp/kc.out || true
+          kubectl -n kube-system patch cm kubelet-config --type merge \
+            -p "$(python3 -c 'import json,sys; print(json.dumps({"data": {"kubelet": sys.stdin.read()}}))' < /tmp/kc.out)"
+          echo patched
+        # ansible's shell module runs /bin/sh, which is dash on Ubuntu and has no
+        # pipefail. The inherited `set -eo pipefail` silently failed every run.
+        executable: /bin/bash
+      register: cm_patch
+      changed_when: "'patched' in cm_patch.stdout"
+
+    - name: Report what the ConfigMap now pins
+      ansible.builtin.debug:
+        var: kubelet_settings
+
+- name: Apply the pinned settings to each node
+  hosts: "{{ kubelet_node_group | default('k8s_master:k8s_worker') }}"
+  serial: 1
+  become: true
+  tasks:
+    # The systemd ceiling first, and only when a grace period is pinned.
+    #
+    # kubelet implements graceful shutdown with a delay inhibitor, and
+    # InhibitDelayMaxSec caps how long any inhibitor may hold the transition.
+    # kubelet writes its OWN drop-in (99-kubelet.conf) asking for the grace period
+    # it wants — but Ubuntu ships
+    # /usr/lib/systemd/logind.conf.d/unattended-upgrades-logind-maxdelay.conf
+    # setting 30s, and drop-ins apply in lexicographic filename order across every
+    # directory. "unattended-upgrades-..." sorts after "99-kubelet", so it wins and
+    # kubelet is refused: "timed out ... waiting for logind InhibitDelayMaxSec to
+    # update ... current value is 30s".
+    #
+    # Editing /etc/systemd/logind.conf does not help — every drop-in overrides it.
+    # The name below starts with zz- so it sorts last and wins regardless of what
+    # else a package drops in later.
+    # kubelet creates this directory itself when it writes its own drop-in, but
+    # only once graceful shutdown is enabled — so on a node where it is still off
+    # the directory does not exist yet.
+    - name: Ensure the logind drop-in directory exists
+      ansible.builtin.file:
+        path: /etc/systemd/logind.conf.d
+        state: directory
+        mode: "0755"
+      when: kubelet_settings.shutdownGracePeriod | default('0s') != '0s'
+
+    - name: Raise the systemd inhibitor ceiling above every other drop-in
+      ansible.builtin.copy:
+        dest: /etc/systemd/logind.conf.d/zz-kubelet-graceful-shutdown.conf
+        mode: "0644"
+        content: |
+          # Managed by ansible: k8s/tuning/kubelet-config.yaml
+          # Sorts last so it outranks unattended-upgrades' 30s cap, which would
+          # otherwise refuse kubelet's shutdown inhibitor.
+          [Login]
+          InhibitDelayMaxSec={{ inhibit_delay_max }}
+      register: logind_config
+      when: kubelet_settings.shutdownGracePeriod | default('0s') != '0s'
+
+    # Sessions are tracked through cgroups and survive this; what restarts is the
+    # daemon that reads the ceiling. Without it the value applies only after the
+    # next boot — the event this exists to make safe.
+    - name: Restart systemd-logind so the ceiling takes effect
+      ansible.builtin.systemd:
+        name: systemd-logind
+        state: restarted
+      when: logind_config.changed
+
+    - name: Apply each pinned setting to the on-disk kubelet config
+      ansible.builtin.lineinfile:
+        path: /var/lib/kubelet/config.yaml
+        regexp: '^{{ item.key }}:'
+        line: "{{ item.key }}: {{ item.value }}"
+        insertafter: '^kind: KubeletConfiguration'
+      loop: "{{ kubelet_settings | dict2items }}"
+      register: kubelet_config
+
+    # Whether the feature is actually ON, which the files cannot tell us.
+    #
+    # kubelet registers its inhibitor once, at startup, and never retries a
+    # refusal. So a node can have every file correct and still be running a
+    # kubelet whose shutdown manager failed — converging on file contents alone
+    # would leave it that way and report success.
+    - name: Check whether kubelet currently holds a shutdown inhibitor
+      ansible.builtin.command: systemd-inhibit --list --no-pager
+      register: inhibitor_pre
+      changed_when: false
+      failed_when: false
+
+    - name: Restart kubelet
+      ansible.builtin.systemd:
+        name: kubelet
+        state: restarted
+      register: kubelet_restarted
+      when: >-
+        kubelet_config.changed or logind_config.changed
+        or (kubelet_settings.shutdownGracePeriod | default('0s') != '0s'
+            and 'kubelet' not in inhibitor_pre.stdout)
+
+    - name: Wait for kubelet to be active
+      ansible.builtin.systemd:
+        name: kubelet
+      register: kubelet_status
+      until: kubelet_status.status.ActiveState == "active"
+      retries: "{{ kubelet_active_retries }}"
+      delay: "{{ kubelet_active_delay }}"
+      when: kubelet_restarted.changed
+
+    - name: Wait for the node to report Ready again
+      ansible.builtin.command: >-
+        {{ kubectl_admin }} wait --for=condition=Ready
+        node/{{ ansible_facts['hostname'] }} --timeout={{ kubelet_ready_timeout }}
+      delegate_to: "{{ groups[control_plane_group] | first }}"
+      changed_when: false
+      when: kubelet_restarted.changed
+
+    # The post-condition. A grace period is only real if kubelet holds the lock,
+    # and the fleet roll stops here rather than carrying a broken setting onward.
+    - name: Confirm kubelet holds a shutdown inhibitor
+      ansible.builtin.command: systemd-inhibit --list --no-pager
+      register: inhibitors
+      changed_when: false
+      failed_when: "'kubelet' not in inhibitors.stdout"
+      when: kubelet_settings.shutdownGracePeriod | default('0s') != '0s'
