@@ -67,12 +67,12 @@ data:
     http.port: 9200-9299
     transport.tcp.port: 9300-9399
     compatibility.override_main_response_version: true
-    plugins.security.ssl.http.pemcert_filepath: /usr/share/wazuh-indexer/config/certs/wazuh.indexer.pem
-    plugins.security.ssl.http.pemkey_filepath: /usr/share/wazuh-indexer/config/certs/wazuh.indexer.key
-    plugins.security.ssl.http.pemtrustedcas_filepath: /usr/share/wazuh-indexer/config/certs/root-ca.pem
-    plugins.security.ssl.transport.pemcert_filepath: /usr/share/wazuh-indexer/config/certs/wazuh.indexer.pem
-    plugins.security.ssl.transport.pemkey_filepath: /usr/share/wazuh-indexer/config/certs/wazuh.indexer.key
-    plugins.security.ssl.transport.pemtrustedcas_filepath: /usr/share/wazuh-indexer/config/certs/root-ca.pem
+    plugins.security.ssl.http.pemcert_filepath: /usr/share/wazuh-indexer/config/certs/node/tls.crt
+    plugins.security.ssl.http.pemkey_filepath: /usr/share/wazuh-indexer/config/certs/node/tls.key
+    plugins.security.ssl.http.pemtrustedcas_filepath: /usr/share/wazuh-indexer/config/certs/node/ca.crt
+    plugins.security.ssl.transport.pemcert_filepath: /usr/share/wazuh-indexer/config/certs/node/tls.crt
+    plugins.security.ssl.transport.pemkey_filepath: /usr/share/wazuh-indexer/config/certs/node/tls.key
+    plugins.security.ssl.transport.pemtrustedcas_filepath: /usr/share/wazuh-indexer/config/certs/node/ca.crt
     plugins.security.ssl.http.enabled: true
     plugins.security.ssl.http.enabled_ciphers:
       - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"

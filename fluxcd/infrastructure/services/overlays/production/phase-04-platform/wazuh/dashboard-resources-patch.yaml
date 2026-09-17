@@ -6,25 +6,22 @@ spec:
   template:
     spec:
       containers:
-      - name: wazuh-dashboard
-        image: docker.io/wazuh/wazuh-dashboard:4.14.7
-        resources:
-          requests:
-            cpu: 250m
-            memory: 512Mi
-          limits:
-            cpu: 1000m
-            memory: 1Gi
-        envFrom:
-        - secretRef:
-            name: wazuh-dashboard-secrets
+        - name: wazuh-dashboard
+          image: docker.io/wazuh/wazuh-dashboard:4.14.7
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+          envFrom:
+            - secretRef:
+                name: wazuh-dashboard-secrets
       volumes:
-      - name: dashboard-config
-        configMap:
-          name: wazuh-dashboard-config
-      - name: dashboard-secrets
-        secret:
-          secretName: wazuh-dashboard-secrets
-      - name: ssl-certs
-        secret:
-          secretName: wazuh-ssl-certs
+        - name: dashboard-config
+          configMap:
+            name: wazuh-dashboard-config
+        - name: dashboard-secrets
+          secret:
+            secretName: wazuh-dashboard-secrets

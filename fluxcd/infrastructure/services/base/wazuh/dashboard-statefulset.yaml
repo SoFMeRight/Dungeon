@@ -72,22 +72,16 @@ spec:
               subPath: wazuh.yml
             - name: dashboard-data
               mountPath: /usr/share/wazuh-dashboard/data
-            - name: ssl-certs
-              mountPath: /usr/share/wazuh-dashboard/certs/wazuh-dashboard.pem
-              subPath: wazuh.dashboard.pem
-            - name: ssl-certs
-              mountPath: /usr/share/wazuh-dashboard/certs/wazuh-dashboard-key.pem
-              subPath: wazuh.dashboard-key.pem
-            - name: ssl-certs
-              mountPath: /usr/share/wazuh-dashboard/certs/root-ca.pem
-              subPath: root-ca.pem
+            - name: dashboard-certs
+              mountPath: /usr/share/wazuh-dashboard/certs
+              readOnly: true
       volumes:
         - name: dashboard-secrets
           secret:
             secretName: PLACEHOLDER_DASHBOARD_SECRETS
-        - name: ssl-certs
+        - name: dashboard-certs
           secret:
-            secretName: PLACEHOLDER_SSL_SECRET
+            secretName: wazuh-dashboard-tls
   volumeClaimTemplates:
     - metadata:
         name: dashboard-data
