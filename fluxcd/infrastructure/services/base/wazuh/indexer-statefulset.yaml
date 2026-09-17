@@ -17,34 +17,43 @@ spec:
       serviceAccountName: wazuh-indexer
       hostname: wazuh-indexer
       securityContext:
-        runAsNonRoot: true
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       initContainers:
-        # cert-manager mounts certs world-readable and root-owned; the security
-        # plugin wants owner-only certs. Copy them into an emptyDir owned by the
-        # indexer user at 0700/0600.
-        - name: fix-cert-perms
+        # The security plugin requires owner-only certs and configs, but k8s mounts
+        # them root-owned and world-readable with 0777 mount dirs the indexer user
+        # cannot chmod. This init (root, then the app runs non-root) stages certs and
+        # configs into emptyDirs owned by the indexer user at 0700 dirs / 0600 files.
+        - name: stage-secure-config
           image: PLACEHOLDER_IMAGE
           command:
             - sh
             - -c
             - |
               set -e
-              mkdir -p /certs/node /certs/admin
+              mkdir -p /certs/node /certs/admin /cfg
               cp -L /src/node/ca.crt /src/node/tls.crt /src/node/tls.key /certs/node/
               cp -L /src/admin/tls.crt /src/admin/tls.key /certs/admin/
-              chmod 700 /certs/node /certs/admin
-              chmod 600 /certs/node/* /certs/admin/*
+              cp -L /src-cfg/wazuh.indexer.yml /cfg/opensearch.yml
+              cp -L /src-cfg/internal_users.yml /cfg/internal_users.yml
+              cp -L /src-seccfg/config.yml /cfg/config.yml
+              chown -R 1000:1000 /certs /cfg
+              chmod 700 /certs /certs/node /certs/admin /cfg
+              chmod 600 /certs/node/* /certs/admin/* /cfg/*
           securityContext:
+            runAsUser: 0
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             capabilities:
               drop:
                 - ALL
+              add:
+                - CHOWN
+                - FOWNER
+                - DAC_OVERRIDE
           volumeMounts:
             - name: indexer-certs
               mountPath: /src/node
@@ -52,8 +61,16 @@ spec:
             - name: admin-certs
               mountPath: /src/admin
               readOnly: true
+            - name: indexer-config
+              mountPath: /src-cfg
+              readOnly: true
+            - name: indexer-security-config
+              mountPath: /src-seccfg
+              readOnly: true
             - name: indexer-certs-secure
               mountPath: /certs
+            - name: indexer-config-secure
+              mountPath: /cfg
       containers:
         - name: wazuh-indexer
           image: PLACEHOLDER_IMAGE
@@ -65,6 +82,8 @@ spec:
             - secretRef:
                 name: PLACEHOLDER_ENV_SECRET
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
             allowPrivilegeEscalation: false
             capabilities:
               drop:
@@ -82,15 +101,18 @@ spec:
           volumeMounts:
             - name: wazuh-indexer-data
               mountPath: /var/lib/wazuh-indexer
-            - name: indexer-config
+            - name: indexer-config-secure
               mountPath: /usr/share/wazuh-indexer/config/opensearch.yml
-              subPath: wazuh.indexer.yml
-            - name: indexer-config
+              subPath: opensearch.yml
+              readOnly: true
+            - name: indexer-config-secure
               mountPath: /usr/share/wazuh-indexer/config/opensearch-security/internal_users.yml
               subPath: internal_users.yml
-            - name: indexer-security-config
+              readOnly: true
+            - name: indexer-config-secure
               mountPath: /usr/share/wazuh-indexer/config/opensearch-security/config.yml
               subPath: config.yml
+              readOnly: true
             - name: indexer-certs-secure
               mountPath: /usr/share/wazuh-indexer/config/certs
               readOnly: true
@@ -108,6 +130,8 @@ spec:
           secret:
             secretName: wazuh-admin-tls
         - name: indexer-certs-secure
+          emptyDir: {}
+        - name: indexer-config-secure
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
