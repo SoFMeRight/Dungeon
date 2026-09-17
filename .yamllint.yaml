@@ -42,3 +42,5 @@ ignore: |
   **/templates/
   **/*.enc.yaml
   **/zz-graveyard/
+  # Embeds vendor ossec.conf whose default commands exceed the line limit.
+  fluxcd/infrastructure/services/base/wazuh/manager-config.yaml

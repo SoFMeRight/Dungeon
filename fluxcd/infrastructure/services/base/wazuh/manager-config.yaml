@@ -15,6 +15,9 @@ data:
         <email_log_source>alerts.log</email_log_source>
         <agents_disconnection_time>10m</agents_disconnection_time>
         <agents_disconnection_alert_time>0</agents_disconnection_alert_time>
+        <!-- apid's startup CTI check has no egress route in this locked-down
+             cluster; disabled so the manager boots without reaching the internet. -->
+        <update_check>no</update_check>
       </global>
 
       <alerts>
