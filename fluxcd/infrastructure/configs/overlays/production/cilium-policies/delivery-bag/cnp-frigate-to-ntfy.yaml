@@ -1,0 +1,25 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-frigate-to-ntfy
+spec:
+  description: >-
+    Allow Frigate's frigate-notify sidecar (lens-of-truth) to reach ntfy on
+    80/TCP for camera alert notifications via the internal service — avoids
+    hairpinning to the public cell-membrane gateway VIP (which drops in-cluster
+    pods).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: ntfy
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: lens-of-truth
+            app: frigate
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP

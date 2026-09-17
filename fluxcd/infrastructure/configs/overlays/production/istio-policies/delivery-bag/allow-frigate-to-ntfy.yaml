@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-frigate-to-ntfy
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ntfy
+  action: ALLOW
+  rules:
+    # frigate-notify camera alerts to ntfy. ntfy runs non-root on container port
+    # 8080 (Service 80->8080); istio ambient enforces on the workload port.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/lens-of-truth/sa/frigate
+      to:
+        - operation:
+            ports: ["8080"]

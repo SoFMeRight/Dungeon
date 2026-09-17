@@ -14,7 +14,9 @@ data:
     alerts:
       ntfy:
         enabled: true
-        server: https://ntfy.prplanit.com
+        # Internal service, not the public VIP — in-cluster pods can't hairpin to
+        # the cell-membrane gateway. Mirrors how Grafana reaches ntfy.
+        server: http://ntfy.delivery-bag.svc.cluster.local
         topic: Ad_Arbitorium-Security
         headers:
           Authorization: 'Bearer {{ env "FN_NTFY_TOKEN" }}'

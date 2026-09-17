@@ -6,6 +6,7 @@ resources:
   - allow-intra-breakglass.yaml
   - allow-ntfy-smtp-loadbalancer.yaml
   - allow-grafana-to-ntfy.yaml
+  - allow-frigate-to-ntfy.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
