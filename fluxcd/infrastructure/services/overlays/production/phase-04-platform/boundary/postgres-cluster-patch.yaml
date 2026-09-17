@@ -18,7 +18,13 @@ spec:
   # Fast failover optimizations
   switchoverDelay: 30
   startDelay: 10
-  stopDelay: 10
+  # Shutdown has to fit the node's grace budget: 150s total, 30s reserved for
+  # critical pods, so 120s for ordinary ones. Postgres does not checkpoint until
+  # the smart phase stops waiting for clients to disconnect, so a long smart
+  # timeout means the SIGKILL lands before anything is flushed. Short smart, then
+  # fast shutdown does the checkpoint well inside the remaining budget.
+  smartShutdownTimeout: 10
+  stopDelay: 60
   livenessProbeTimeout: 5
 
   postgresql:

@@ -92,6 +92,53 @@
       register: cm_patch
       changed_when: "'patched' in cm_patch.stdout"
 
+    # Nothing enforces the other end of the chain, so check it.
+    #
+    # A node's ordinary budget is (shutdownGracePeriod - critical). A CNPG
+    # instance is SIGKILLed at its stopDelay, and only reaches the checkpoint
+    # once smartShutdownTimeout stops waiting for clients to disconnect — so a
+    # cluster whose stopDelay exceeds the budget, or whose smart phase outlasts
+    # its own stopDelay, cannot flush before it dies.
+    #
+    # Those values live per-cluster in flux, where each is visible in the file it
+    # governs. This is what stops a newly added cluster from silently keeping
+    # CNPG's 1800s default and promising something the battery cannot honour.
+    - name: Refuse a CNPG cluster that cannot checkpoint inside the node budget
+      vars:
+        ordinary_budget: >-
+          {{ (kubelet_settings.shutdownGracePeriod | regex_replace('s$','') | int)
+             - (kubelet_settings.shutdownGracePeriodCriticalPods | regex_replace('s$','') | int) }}
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: |
+          set -eo pipefail
+          # No CNPG CRD on this cluster is not a failure — there is nothing to check.
+          {{ kubectl_admin }} get crd clusters.postgresql.cnpg.io >/dev/null 2>&1 || exit 0
+          {{ kubectl_admin }} get clusters.postgresql.cnpg.io -A -o json | python3 -c '
+          import json, sys
+          budget = int("{{ ordinary_budget | trim }}")
+          bad = []
+          for c in json.load(sys.stdin)["items"]:
+              spec, meta = c["spec"], c["metadata"]
+              smart = int(spec.get("smartShutdownTimeout", 180))
+              stop  = int(spec.get("stopDelay", 1800))
+              why = []
+              if stop > budget: why.append(f"stopDelay {stop}s exceeds the {budget}s budget")
+              if smart > stop:  why.append(f"smartShutdownTimeout {smart}s outlasts stopDelay {stop}s")
+              if why: bad.append(meta["namespace"] + "/" + meta["name"] + ": " + "; ".join(why))
+          for b in bad: print(b)
+          print(f"{len(bad)} cluster(s) cannot checkpoint inside {budget}s" if bad
+                else f"all clusters fit the {budget}s ordinary budget")
+          sys.exit(1 if bad else 0)
+          '
+      register: cnpg_budget
+      changed_when: false
+      failed_when: cnpg_budget.rc != 0
+
+    - name: Report the CNPG budget check
+      ansible.builtin.debug:
+        msg: "{{ cnpg_budget.stdout_lines }}"
+
     - name: Report what the ConfigMap now pins
       ansible.builtin.debug:
         var: kubelet_settings

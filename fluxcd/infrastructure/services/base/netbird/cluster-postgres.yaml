@@ -3,6 +3,13 @@ kind: Cluster
 metadata:
   name: netbird-postgres
 spec:
+  # Shutdown has to fit the node's grace budget: 150s total, 30s reserved for
+  # critical pods, so 120s for ordinary ones. Postgres does not checkpoint until
+  # the smart phase stops waiting for clients to disconnect, so a long smart
+  # timeout means the SIGKILL lands before anything is flushed. Short smart, then
+  # fast shutdown does the checkpoint well inside the remaining budget.
+  smartShutdownTimeout: 10
+  stopDelay: 60
   # Requests lift this out of BestEffort so the kubelet does not reclaim the database
   # first under node pressure. Sized from observed use (~126Mi resident): memory is what
   # drives eviction, so the request carries the headroom.
