@@ -14,3 +14,4 @@ resources:
   - dashboard-service.yaml
   - dashboard-externalsecret.yaml
   - ssl-externalsecret.yaml
+  - certificates.yaml

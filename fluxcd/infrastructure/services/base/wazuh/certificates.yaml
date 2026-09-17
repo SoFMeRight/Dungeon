@@ -1,0 +1,129 @@
+# cert-manager PKI for the wazuh cluster: one self-signed root CA signs the
+# indexer node cert, the manager/filebeat node cert, the dashboard cert, and the
+# securityadmin admin cert. Subjects reproduce the DNs OpenSearch matches in
+# nodes_dn / admin_dn. Every leaf carries digitalSignature so ECDHE works.
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: wazuh-selfsigned
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wazuh-root-ca
+spec:
+  isCA: true
+  commonName: wazuh-root-ca
+  secretName: wazuh-root-ca-tls
+  duration: 87600h # 10y
+  renewBefore: 8760h # 1y
+  privateKey:
+    algorithm: RSA
+    size: 4096
+  issuerRef:
+    name: wazuh-selfsigned
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: wazuh-ca
+spec:
+  ca:
+    secretName: wazuh-root-ca-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wazuh-admin
+spec:
+  secretName: wazuh-admin-tls
+  duration: 8760h # 1y
+  renewBefore: 720h # 30d
+  commonName: admin
+  subject:
+    organizationalUnits: ["Wazuh"]
+    organizations: ["Wazuh"]
+    localities: ["California"]
+    countries: ["US"]
+  usages: ["client auth", "digital signature", "key encipherment"]
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: wazuh-ca
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wazuh-indexer
+spec:
+  secretName: wazuh-indexer-tls
+  duration: 8760h # 1y
+  renewBefore: 720h # 30d
+  commonName: wazuh-indexer
+  subject:
+    organizationalUnits: ["Wazuh"]
+    organizations: ["Wazuh"]
+    localities: ["California"]
+    countries: ["US"]
+  dnsNames: ["wazuh-indexer", "localhost"]
+  ipAddresses: ["127.0.0.1"]
+  usages: ["server auth", "client auth", "digital signature", "key encipherment"]
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: wazuh-ca
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wazuh-manager
+spec:
+  secretName: wazuh-manager-tls
+  duration: 8760h # 1y
+  renewBefore: 720h # 30d
+  commonName: wazuh-manager
+  subject:
+    organizationalUnits: ["Wazuh"]
+    organizations: ["Wazuh"]
+    localities: ["California"]
+    countries: ["US"]
+  dnsNames: ["wazuh-manager", "localhost"]
+  ipAddresses: ["127.0.0.1"]
+  usages: ["server auth", "client auth", "digital signature", "key encipherment"]
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: wazuh-ca
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wazuh-dashboard
+spec:
+  secretName: wazuh-dashboard-tls
+  duration: 8760h # 1y
+  renewBefore: 720h # 30d
+  commonName: wazuh-dashboard
+  subject:
+    organizationalUnits: ["Wazuh"]
+    organizations: ["Wazuh"]
+    localities: ["California"]
+    countries: ["US"]
+  dnsNames: ["wazuh-dashboard", "localhost"]
+  ipAddresses: ["127.0.0.1"]
+  usages: ["server auth", "client auth", "digital signature", "key encipherment"]
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: wazuh-ca
+    kind: Issuer
