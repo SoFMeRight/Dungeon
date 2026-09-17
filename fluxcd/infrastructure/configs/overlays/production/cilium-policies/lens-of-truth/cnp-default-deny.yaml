@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: default-deny-ingress
+  name: default-deny
 spec:
   description: >-
     Default-deny ingress AND egress for lens-of-truth namespace.
@@ -10,9 +10,10 @@ spec:
     Egress: DNS + intra-namespace mesh (MQTT, wazuh-indexer) + kube-apiserver
     ride the universal CCNP baseline; per-app cnp-egress-* grant crowdsec (CTI/
     CAPI), the Cloudflare bouncer, frigate (LAN cameras + Frigate+), wazuh-manager
-    (feeds), and home-assistant (unbounded integrations); zigbee2mqtt keeps its
-    coordinator/MQTT allow (cnp-iot-mesh). mosquitto, wazuh-indexer/dashboard,
-    and crowdsec-dashboard are internal and need nothing external.
+    (feeds), home-assistant (unbounded integrations), and wazuh indexer/dashboard
+    (OIDC discovery/JWKS/token exchange to Zitadel); zigbee2mqtt keeps its
+    coordinator/MQTT allow (cnp-iot-mesh). mosquitto and crowdsec-dashboard are
+    internal and need nothing external.
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
