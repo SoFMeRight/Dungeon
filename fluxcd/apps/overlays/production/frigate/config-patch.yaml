@@ -24,7 +24,7 @@ data:
       height: 640
       input_tensor: nchw
       input_pixel_format: rgb
-      input_dtype: float
+      input_dtype: float_denorm
       path: /config/model_cache/yolox_s.onnx
       labelmap_path: /labelmap.txt
 
