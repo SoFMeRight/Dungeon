@@ -74,11 +74,10 @@ data:
     plugins.security.ssl.transport.pemkey_filepath: /usr/share/wazuh-indexer/config/certs/wazuh.indexer.key
     plugins.security.ssl.transport.pemtrustedcas_filepath: /usr/share/wazuh-indexer/config/certs/root-ca.pem
     plugins.security.ssl.http.enabled: true
-    plugins.security.ssl.http.enabled_ciphers:
-      - "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
-      - "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
-      - "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256"
-      - "TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384"
+    # No enabled_ciphers restriction: the indexer cert's KeyUsage is keyEncipherment
+    # only (no digitalSignature), so it cannot serve ECDHE suites. Restricting to ECDHE
+    # breaks strict TLS clients (securityadmin). Default suites include RSA key-exchange,
+    # which this cert supports. TLSv1.2 floor retained.
     plugins.security.ssl.http.enabled_protocols:
       - "TLSv1.2"
     plugins.security.ssl.transport.enforce_hostname_verification: false
