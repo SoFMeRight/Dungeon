@@ -1,0 +1,29 @@
+apiVersion: cilium.io/v2
+kind: CiliumClusterwideNetworkPolicy
+metadata:
+  name: cap-s3-nas
+spec:
+  description: >-
+    Egress to the NAS object store on gringotts for any pod that declares
+    cap.s3-nas.
+
+    Distinct from cap.s3, which grants the in-cluster Ceph RGW. The two name
+    different storage backends and are not interchangeable; a workload that
+    needs the NAS must declare this one.
+
+    Clusterwide because the consumers span namespaces. Additive: inert until
+    egress default-deny is enabled in the consumer's namespace.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      policy.prplanit.com/cap.s3-nas: "true"
+      policy.prplanit.com/access-scope-s3-nas: "gringotts.seaweedfs"
+  egress:
+    - toCIDR:
+        - 172.22.150.101/32
+      toPorts:
+        - ports:
+            - port: "9002"
+              protocol: TCP

@@ -15,8 +15,8 @@ spec:
       policy.prplanit.com/cnpg: "managed"
       policy.prplanit.com/access-class: postgres
       policy.prplanit.com/service-scope: hyrule-castle.gitlab.postgres
-      policy.prplanit.com/cap.s3: "true"
-      policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
+      policy.prplanit.com/cap.s3-nas: "true"
+      policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 
   storage:
     storageClass: ceph-rbd-retain
@@ -29,4 +29,5 @@ spec:
       max_slot_wal_keep_size: "1600MB"
   backup:
     barmanObjectStore:
-      endpointURL: https://s3.pcfae.com
+      destinationPath: s3://cnpg-backups/gitlab-postgresql
+      endpointURL: http://172.22.150.101:9002

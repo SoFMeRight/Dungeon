@@ -20,3 +20,5 @@ resources:
   - ccnp-contract-redis.yaml
   - ccnp-contract-ingress-backend.yaml
   - ccnp-contract-replication-cnpg.yaml
+  # Capability CCNPs — a workload opts in by labelling itself
+  - ccnp-cap-s3-nas.yaml

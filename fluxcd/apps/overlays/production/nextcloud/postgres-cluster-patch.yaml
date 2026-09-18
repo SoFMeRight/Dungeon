@@ -27,8 +27,8 @@ spec:
       policy.prplanit.com/cnpg: "managed"
       policy.prplanit.com/access-class: postgres
       policy.prplanit.com/service-scope: temple-of-time.nextcloud.postgres
-      policy.prplanit.com/cap.s3: "true"
-      policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
+      policy.prplanit.com/cap.s3-nas: "true"
+      policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 
   instances: 3
 
@@ -50,5 +50,5 @@ spec:
 
   backup:
     barmanObjectStore:
-      destinationPath: s3://nextcloud-backups/postgresql
-      endpointURL: https://s3.pcfae.com
+      destinationPath: s3://cnpg-backups/nextcloud-postgres
+      endpointURL: http://172.22.150.101:9002
