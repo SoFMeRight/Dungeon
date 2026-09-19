@@ -10,6 +10,7 @@ resources:
   - ceph-rbd  # Ceph RBD connection config and secrets
   - ceph-fs  # CephFS root access + static volumes
   - ceph-rgw  # Ceph RGW keyring for S3 object storage
+  - nas-s3  # NAS object store buckets, object lock and lifecycle (gringotts)
   - ceph-rook-ceph  # Rook external Ceph cluster connection secrets
   # RBD VolumeSnapshotClass now ships with the RBD StorageClasses in storage/../storage-rook (Rook driver)
   - openbao  # Bank-Vaults (openbao) with SOPS-encrypted keys

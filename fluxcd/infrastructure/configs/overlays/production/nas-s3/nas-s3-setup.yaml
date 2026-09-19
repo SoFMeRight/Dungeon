@@ -1,0 +1,69 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nas-s3-setup
+spec:
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/cap.s3-nas: "true"
+        policy.prplanit.com/access-scope-s3-nas: "gringotts.seaweedfs"
+    spec:
+      restartPolicy: OnFailure
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: setup
+          image: amazon/aws-cli:2.32.9
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HOME
+              value: /tmp
+            - name: S3_ENDPOINT
+              value: http://172.22.150.101:8333
+            - name: ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: nas-s3-provisioner-credentials
+                  key: S3_ACCESS_KEY
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: nas-s3-provisioner-credentials
+                  key: S3_SECRET_KEY
+          command:
+            - /bin/bash
+            - /scripts/setup.sh
+            # Retention is 29d against a 30d pruning window -- velero's ttl is
+            # 720h and both CNPG clusters are retentionPolicy 30d. The lock must
+            # expire BEFORE the application prunes, or pruning fails forever.
+            # Days is the finest granularity Object Lock accepts, so 29 is as
+            # close to the window as the API allows.
+            - --buckets=prplanit,optcp
+            - --retention-days=29
+            - --noncurrent-days=7
+            - --abort-mpu-days=7
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: setup-script
+              mountPath: /scripts
+              readOnly: true
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: setup-script
+          configMap:
+            name: nas-s3-setup-script
+            defaultMode: 0755

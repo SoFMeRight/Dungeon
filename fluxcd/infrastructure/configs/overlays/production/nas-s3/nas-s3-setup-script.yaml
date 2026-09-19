@@ -1,0 +1,126 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nas-s3-setup-script
+data:
+  setup.sh: |
+    #!/bin/bash
+    set -e
+
+    # Converges bucket state on the NAS object store (SeaweedFS, gringotts).
+    #
+    # Idempotent: every step is safe to re-run, so flux can reconcile this the
+    # same as any other resource. Nothing here deletes.
+    #
+    # SeaweedFS only accepts Object Lock at bucket creation -- on an existing
+    # unlocked bucket PutObjectLockConfiguration returns InvalidBucketState. So
+    # creation has to belong to this job, or the lock can never be declared.
+    #
+    # A bucket found unlocked is therefore recreated, but ONLY when it holds no
+    # objects and no versions. That converges a bucket someone made by hand
+    # without costing anything. An unlocked bucket WITH contents is never
+    # touched: the job reports it and exits non-zero, so the reconcile fails
+    # visibly rather than either destroying data or quietly tolerating drift.
+
+    usage() {
+      echo "Usage: $0 --buckets <b1,b2,...> --retention-days <n> [--noncurrent-days <n>] [--abort-mpu-days <n>]"
+      echo ""
+      echo "  --buckets          Comma-separated buckets to converge (required)"
+      echo "  --retention-days   Object Lock default retention, COMPLIANCE (required)"
+      echo "  --noncurrent-days  Expire noncurrent versions after N days (default 7)"
+      echo "  --abort-mpu-days   Abort incomplete multipart uploads after N days (default 7)"
+      echo ""
+      echo "Environment: ACCESS_KEY, SECRET_KEY, S3_ENDPOINT"
+      exit 1
+    }
+
+    # Parsed by hand rather than with getopt: the aws-cli image has no getopt,
+    # only the ceph image used by the rgw jobs does. Accepts --key=value, which
+    # is the form the Job passes.
+    BUCKETS_CSV=""
+    RETENTION_DAYS=""
+    NONCURRENT_DAYS="7"
+    ABORT_MPU_DAYS="7"
+
+    for ARG in "$@"; do
+      case "$ARG" in
+        --buckets=*)         BUCKETS_CSV="${ARG#*=}" ;;
+        --retention-days=*)  RETENTION_DAYS="${ARG#*=}" ;;
+        --noncurrent-days=*) NONCURRENT_DAYS="${ARG#*=}" ;;
+        --abort-mpu-days=*)  ABORT_MPU_DAYS="${ARG#*=}" ;;
+        -h|--help)           usage ;;
+        *)                   echo "unknown argument: $ARG"; usage ;;
+      esac
+    done
+
+    [ -z "$BUCKETS_CSV" ] && usage
+    [ -z "$RETENTION_DAYS" ] && usage
+    : "${ACCESS_KEY:?ACCESS_KEY not set}"
+    : "${SECRET_KEY:?SECRET_KEY not set}"
+    : "${S3_ENDPOINT:?S3_ENDPOINT not set}"
+
+    export AWS_ACCESS_KEY_ID="$ACCESS_KEY"
+    export AWS_SECRET_ACCESS_KEY="$SECRET_KEY"
+    export AWS_DEFAULT_REGION="us-east-1"
+    A="aws --endpoint-url $S3_ENDPOINT"
+
+    FAILED=""
+
+    for B in $(echo "$BUCKETS_CSV" | tr ',' ' '); do
+      echo "=== $B ==="
+
+      if $A s3api head-bucket --bucket "$B" >/dev/null 2>&1; then
+        if $A s3api get-object-lock-configuration --bucket "$B" >/dev/null 2>&1; then
+          echo "  exists, Object Lock present"
+        else
+          # Unlocked. Recreate it if and only if nothing would be lost.
+          OBJS=$($A s3api list-objects-v2 --bucket "$B" --max-items 1 \
+                   --query 'length(Contents || `[]`)' --output text 2>/dev/null || echo 1)
+          VERS=$($A s3api list-object-versions --bucket "$B" --max-items 1 \
+                   --query 'length(Versions || `[]`)' --output text 2>/dev/null || echo 0)
+          if [ "$OBJS" = "0" ] && [ "$VERS" = "0" ]; then
+            echo "  exists without Object Lock and is empty -- recreating with it"
+            $A s3api delete-bucket --bucket "$B" >/dev/null
+            $A s3api create-bucket --bucket "$B" --object-lock-enabled-for-bucket >/dev/null
+            echo "  recreated with Object Lock"
+          else
+            echo "  ERROR: exists without Object Lock and is NOT empty"
+            echo "         refusing to recreate; nothing here will delete your data."
+            echo "         enable it in place, then re-run:"
+            echo "           weed shell -c \"s3.bucket.lock -name $B -enable\""
+            FAILED="$FAILED $B"
+            continue
+          fi
+        fi
+      else
+        # Created WITH lock: the only moment SeaweedFS will accept it.
+        $A s3api create-bucket --bucket "$B" --object-lock-enabled-for-bucket >/dev/null
+        echo "  created with Object Lock"
+      fi
+
+      $A s3api put-object-lock-configuration --bucket "$B" \
+        --object-lock-configuration "{\"ObjectLockEnabled\":\"Enabled\",\"Rule\":{\"DefaultRetention\":{\"Mode\":\"COMPLIANCE\",\"Days\":${RETENTION_DAYS}}}}" >/dev/null
+      echo "  retention: COMPLIANCE ${RETENTION_DAYS}d"
+
+      # Noncurrent versions and abandoned uploads only. Deliberately no expiration
+      # rule on current versions: if backups ever stop, such a rule would delete
+      # the last good one. Expiring live backups is the application's job --
+      # velero honours its own TTL, CNPG its retentionPolicy -- and they only
+      # prune in the course of taking new backups.
+      RULE_NC="{\"ID\":\"expire-noncurrent-versions\",\"Status\":\"Enabled\""
+      RULE_NC="$RULE_NC,\"Filter\":{\"Prefix\":\"\"}"
+      RULE_NC="$RULE_NC,\"NoncurrentVersionExpiration\":{\"NoncurrentDays\":${NONCURRENT_DAYS}}}"
+      RULE_MPU="{\"ID\":\"abort-incomplete-multipart\",\"Status\":\"Enabled\""
+      RULE_MPU="$RULE_MPU,\"Filter\":{\"Prefix\":\"\"}"
+      RULE_MPU="$RULE_MPU,\"AbortIncompleteMultipartUpload\":{\"DaysAfterInitiation\":${ABORT_MPU_DAYS}}}"
+      $A s3api put-bucket-lifecycle-configuration --bucket "$B" \
+        --lifecycle-configuration "{\"Rules\":[$RULE_NC,$RULE_MPU]}" >/dev/null
+      echo "  lifecycle: noncurrent ${NONCURRENT_DAYS}d, abort-mpu ${ABORT_MPU_DAYS}d"
+    done
+
+    if [ -n "$FAILED" ]; then
+      echo
+      echo "COULD NOT CONVERGE:$FAILED"
+      exit 1
+    fi
+    echo "done"
