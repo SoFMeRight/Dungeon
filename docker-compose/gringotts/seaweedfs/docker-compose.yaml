@@ -1,0 +1,133 @@
+services:
+  seaweedfs:
+    container_name: seaweedfs
+    # Every component runs in this one container today, but each is configured as
+    # though it were on its own host: it binds all interfaces and advertises
+    # ADVERTISE_IP rather than the container's own name. A container-internal
+    # address is unreachable from anywhere else, so a second node added later
+    # would be told to fetch from an address it cannot resolve.
+    #
+    # Ports default to the SeaweedFS defaults and are overridable in .env. Each
+    # is passed to the server as well as published, so an override actually moves
+    # the listener rather than mapping a host port onto an unchanged one.
+    #
+    # gRPC ports are set explicitly rather than left to SeaweedFS's HTTP+10000
+    # derivation, so an overridden HTTP port cannot silently desync from the gRPC
+    # port published beside it.
+    command: >
+      server -dir=/data -s3
+      -ip=$ADVERTISE_IP
+      -ip.bind=0.0.0.0
+      -master.port=${MASTER_PORT:-9333}
+      -master.port.grpc=${MASTER_GRPC_PORT:-19333}
+      -master.peers=$ADVERTISE_IP:${MASTER_PORT:-9333}
+      -volume.port=${VOLUME_PORT:-8080}
+      -volume.port.grpc=${VOLUME_GRPC_PORT:-18080}
+      -volume.publicUrl=$ADVERTISE_IP:${VOLUME_PORT:-8080}
+      -volume.max=${VOLUME_MAX:-0}
+      -filer.port=${FILER_PORT:-8888}
+      -filer.port.grpc=${FILER_GRPC_PORT:-18888}
+      -s3.port=${S3_PORT:-8333}
+      -s3.config=/etc/seaweedfs/s3.json
+      -master.volumeSizeLimitMB=${VOLUME_SIZE_LIMIT_MB:-30000}
+    configs:
+      - source: s3_identities
+        target: /etc/seaweedfs/s3.json
+        mode: 0444
+    image: chrislusf/seaweedfs:4.47        # pin a version; :latest works but pin it
+    ports:
+      - ${S3_PORT:-8333}:${S3_PORT:-8333}                 # S3 API — the only port an S3 client needs
+      - ${MASTER_PORT:-9333}:${MASTER_PORT:-9333}         # master HTTP + admin API
+      - ${MASTER_GRPC_PORT:-19333}:${MASTER_GRPC_PORT:-19333}   # master gRPC — volume servers, weed shell
+      - ${VOLUME_PORT:-8080}:${VOLUME_PORT:-8080}         # volume HTTP — clients fetch object data here
+      - ${VOLUME_GRPC_PORT:-18080}:${VOLUME_GRPC_PORT:-18080}
+      - ${FILER_PORT:-8888}:${FILER_PORT:-8888}           # filer HTTP — S3 buckets live under /buckets
+      - ${FILER_GRPC_PORT:-18888}:${FILER_GRPC_PORT:-18888}
+    restart: always
+    volumes:
+      - $DATA_DIR:/data
+
+# The identities live in the stack rather than as a bind-mount off a second
+# dataset, so this is one artifact: nothing to place by hand before `up`, and no
+# way for the compose file and the identity file it depends on to drift apart.
+#
+# LAYOUT — <tenant>/<cluster>/<purpose>[/<app>]. The first segment is the bucket,
+# the rest is prefix:
+#
+#   prplanit/dungeon/velero                 velero
+#   prplanit/dungeon/cnpg/gitlab            gitlab CNPG archive
+#   optcp/dungeon/cnpg/nextcloud            nextcloud CNPG archive
+#
+# One identity per consumer, each scoped to its own prefix and nothing else.
+# None is Admin. Live data is a separate concern entirely — nextcloud and gitlab
+# store objects on the in-cluster Ceph RGW, not here.
+#
+# Keys are interpolated, never written here. Note that `${...}` resolves from the
+# stack environment (the Portainer stack's variables), NOT from env_file — that
+# file only reaches the container's own environment.
+#
+# Requires Docker Compose v2.23+ for `configs.content`.
+configs:
+  s3_identities:
+    content: |
+      {
+        "identities": [
+          {
+            "_comment": "Bucket provisioner for the nas-s3 flux Job. Admin is what creating a bucket with Object Lock requires. Never handed to an application.",
+            "name": "nas-s3-provisioner",
+            "credentials": [
+              { "accessKey": "${NAS_S3_PROVISIONER_ACCESS_KEY}", "secretKey": "${NAS_S3_PROVISIONER_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Admin"
+            ]
+          },
+          {
+            "name": "prplanit-dungeon-velero",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_VELERO_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_VELERO_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit/dungeon/velero",
+              "Write:prplanit/dungeon/velero",
+              "List:prplanit/dungeon/velero",
+              "Tagging:prplanit/dungeon/velero"
+            ]
+          },
+          {
+            "_comment": "Pre-rename velero bucket, restores only. Read and List only, so the ReadOnly BSL cannot alter it. Remove once its contents age out.",
+            "name": "velero-backups-legacy",
+            "credentials": [
+              { "accessKey": "${VELERO_BACKUPS_ACCESS_KEY}", "secretKey": "${VELERO_BACKUPS_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:velero-backups",
+              "List:velero-backups"
+            ]
+          },
+          {
+            "name": "prplanit-dungeon-cnpg-gitlab",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GITLAB_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GITLAB_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit/dungeon/cnpg/gitlab",
+              "Write:prplanit/dungeon/cnpg/gitlab",
+              "List:prplanit/dungeon/cnpg/gitlab",
+              "Tagging:prplanit/dungeon/cnpg/gitlab"
+            ]
+          },
+          {
+            "name": "optcp-dungeon-cnpg-nextcloud",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp/dungeon/cnpg/nextcloud",
+              "Write:optcp/dungeon/cnpg/nextcloud",
+              "List:optcp/dungeon/cnpg/nextcloud",
+              "Tagging:optcp/dungeon/cnpg/nextcloud"
+            ]
+          }
+        ]
+      }
