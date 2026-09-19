@@ -52,7 +52,10 @@ services:
 # way for the compose file and the identity file it depends on to drift apart.
 #
 # LAYOUT — <tenant>/<cluster>/<purpose>[/<app>]. The first segment is the bucket,
-# the rest is prefix:
+# the rest is prefix. Each grant ends in /* : SeaweedFS matches the action against
+# the full object path, and a prefix without the wildcard matches nothing at all —
+# an identity scoped that way is denied even its own objects. The /* form is used
+# rather than a bare * so that <app> cannot also match <app>-something:
 #
 #   prplanit/dungeon/velero                 velero
 #   prplanit/dungeon/cnpg/gitlab            gitlab CNPG archive
@@ -88,10 +91,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_VELERO_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_VELERO_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/velero",
-              "Write:prplanit/dungeon/velero",
-              "List:prplanit/dungeon/velero",
-              "Tagging:prplanit/dungeon/velero"
+              "Read:prplanit/dungeon/velero/*",
+              "Write:prplanit/dungeon/velero/*",
+              "List:prplanit/dungeon/velero/*",
+              "Tagging:prplanit/dungeon/velero/*"
             ]
           },
           {
@@ -111,10 +114,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GITLAB_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GITLAB_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/cnpg/gitlab",
-              "Write:prplanit/dungeon/cnpg/gitlab",
-              "List:prplanit/dungeon/cnpg/gitlab",
-              "Tagging:prplanit/dungeon/cnpg/gitlab"
+              "Read:prplanit/dungeon/cnpg/gitlab/*",
+              "Write:prplanit/dungeon/cnpg/gitlab/*",
+              "List:prplanit/dungeon/cnpg/gitlab/*",
+              "Tagging:prplanit/dungeon/cnpg/gitlab/*"
             ]
           },
           {
@@ -123,10 +126,10 @@ configs:
               { "accessKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:optcp/dungeon/cnpg/nextcloud",
-              "Write:optcp/dungeon/cnpg/nextcloud",
-              "List:optcp/dungeon/cnpg/nextcloud",
-              "Tagging:optcp/dungeon/cnpg/nextcloud"
+              "Read:optcp/dungeon/cnpg/nextcloud/*",
+              "Write:optcp/dungeon/cnpg/nextcloud/*",
+              "List:optcp/dungeon/cnpg/nextcloud/*",
+              "Tagging:optcp/dungeon/cnpg/nextcloud/*"
             ]
           }
         ]
