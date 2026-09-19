@@ -24,11 +24,37 @@ spec:
       backupStorageLocation:
         - name: default
           provider: aws
-          bucket: velero-backups
+          bucket: prplanit
+          prefix: dungeon/velero
+          default: true
+          accessMode: ReadWrite
           config:
             region: us-east-1
             s3ForcePathStyle: "true"
-            s3Url: http://172.22.150.101:9002
+            s3Url: http://172.22.150.101:8333
+            insecureSkipTLSVerify: "true"
+
+        # The pre-rename bucket. Its contents were never copied: 273k objects and
+        # ~4.9TiB, and a cross-bucket copy duplicates on disk rather than moving
+        # metadata, so relocating it would have cost that much headroom to change
+        # a name. Mounted ReadOnly instead, which keeps every existing restore
+        # point restorable while new backups land in the scheme above.
+        #
+        # Its credential is scoped to Read and List only, so velero cannot alter
+        # or expire anything here even if this entry were mistakenly made default.
+        # Delete this location, its secret, its identity and the bucket once the
+        # newest object in it has aged past the retention you care about.
+        - name: legacy-velero-backups
+          provider: aws
+          bucket: velero-backups
+          accessMode: ReadOnly
+          credential:
+            name: velero-legacy-credentials
+            key: cloud
+          config:
+            region: us-east-1
+            s3ForcePathStyle: "true"
+            s3Url: http://172.22.150.101:8333
             insecureSkipTLSVerify: "true"
 
       volumeSnapshotLocation:

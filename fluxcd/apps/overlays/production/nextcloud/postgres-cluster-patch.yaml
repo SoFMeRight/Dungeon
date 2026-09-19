@@ -50,5 +50,5 @@ spec:
 
   backup:
     barmanObjectStore:
-      destinationPath: s3://cnpg-backups/nextcloud-postgres
-      endpointURL: http://172.22.150.101:9002
+      destinationPath: s3://optcp/dungeon/cnpg/nextcloud
+      endpointURL: http://172.22.150.101:8333

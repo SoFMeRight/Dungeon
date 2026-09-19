@@ -25,5 +25,5 @@ spec:
         - 172.22.150.101/32
       toPorts:
         - ports:
-            - port: "9002"
+            - port: "8333"
               protocol: TCP

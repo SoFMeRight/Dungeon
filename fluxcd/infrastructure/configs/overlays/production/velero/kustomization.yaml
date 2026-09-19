@@ -6,3 +6,4 @@ namespace: fairy-bottle
 resources:
   - ../../../base/velero
   - velero-secret.enc.yaml
+  - velero-legacy-secret.enc.yaml

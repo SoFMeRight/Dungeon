@@ -51,7 +51,7 @@ spec:
 
   backup:
     barmanObjectStore:
-      destinationPath: s3://gitlab-backups/postgresql
+      destinationPath: s3://prplanit/dungeon/cnpg/gitlab
       endpointURL: PLACEHOLDER_S3_ENDPOINT
       s3Credentials:
         accessKeyId:

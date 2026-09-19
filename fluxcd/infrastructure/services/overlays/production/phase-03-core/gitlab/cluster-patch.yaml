@@ -29,5 +29,4 @@ spec:
       max_slot_wal_keep_size: "1600MB"
   backup:
     barmanObjectStore:
-      destinationPath: s3://cnpg-backups/gitlab-postgresql
-      endpointURL: http://172.22.150.101:9002
+      endpointURL: http://172.22.150.101:8333
