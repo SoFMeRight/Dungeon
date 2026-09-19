@@ -25,6 +25,11 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: byparr-cache-pvc
+  labels:
+    # Static CephFS PVC with an empty storageClassName. The velero CSI plugin
+    # looks the class up unconditionally and fails with "resource name may not be
+    # empty"; excludedResources does not stop it, this does.
+    velero.io/exclude-from-backup: "true"
 spec:
   accessModes:
     - ReadWriteMany

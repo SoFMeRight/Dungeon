@@ -65,6 +65,16 @@ spec:
       existingSecret: velero-minio-credentials
 
     nodeAgent:
+      # The agent has to exist on every node velero might back a pod up from.
+      # Without the control-plane toleration it ran on the five workers only, and
+      # every DaemonSet pod on a control-plane node failed the backup with
+      # "daemonset pod not found in running state" -- 7 of the 12 errors that kept
+      # every run PartiallyFailed. Nothing on those nodes holds real data today;
+      # this is so a future workload there is covered rather than silently skipped.
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
       podVolumePath: /var/lib/kubelet/pods
       privileged: false
       keepLatestMaintenanceJobs: 3
