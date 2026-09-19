@@ -212,6 +212,25 @@ spec:
             - persistentvolumeclaims/cephfs-root-temp-pvc
             - persistentvolumeclaims/gorons-bracelet-cephfs-root
             - persistentvolumeclaims/gossip-stone-grafana-plugins
+            # Download and scratch volumes. Transient by definition and
+            # re-acquirable; the app CONFIG beside them is kept.
+            - persistentvolumeclaims/swift-sail-qbittorrent-downloads
+            - persistentvolumeclaims/downloads-sabnzbd-0
+            - persistentvolumeclaims/incomplete-sabnzbd-0
+            - persistentvolumeclaims/downloads-readarr-0
+            # Metrics and log stores. These already ship to their own object
+            # storage, and what belongs in a PVC here is local WAL and cache.
+            # A copy in a backup bucket is not queryable, so it is not worth the
+            # nightly churn -- keep this data retrievable in its own system.
+            - persistentvolumeclaims/storage-vmstorage-0
+            - persistentvolumeclaims/storage-vmstorage-1
+            - persistentvolumeclaims/storage-vmstorage-2
+            - persistentvolumeclaims/storage-loki-0
+            - persistentvolumeclaims/storage-loki-1
+            - persistentvolumeclaims/storage-loki-2
+            - persistentvolumeclaims/data-thanos-receive-0
+            - persistentvolumeclaims/data-thanos-receive-1
+            - persistentvolumeclaims/data-thanos-receive-2
           storageLocation: default
           volumeSnapshotLocations:
             - default
