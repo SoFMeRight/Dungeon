@@ -8,6 +8,8 @@ spec:
       policy.prplanit.com/cnpg: "managed"
       policy.prplanit.com/access-class: postgres
       policy.prplanit.com/service-scope: gossip-stone.gatus.postgres
+      policy.prplanit.com/cap.s3-nas: "true"
+      policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 
   # 2 instances while chest-001 is out of the pool: the remaining workers
   # can only host two gatus-postgres pods, and a declared-but-unschedulable
@@ -72,3 +74,8 @@ spec:
   storage:
     storageClass: ceph-rbd-retain
     size: 2Gi
+
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://prplanit/dungeon/cnpg/gatus
+      endpointURL: http://172.22.150.101:8333

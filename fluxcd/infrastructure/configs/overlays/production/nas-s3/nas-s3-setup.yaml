@@ -50,7 +50,7 @@ spec:
             # expire BEFORE the application prunes, or pruning fails forever.
             # Days is the finest granularity Object Lock accepts, so 29 is as
             # close to the window as the API allows.
-            - --buckets=prplanit,optcp
+            - --buckets=prplanit,optcp,outspokekin
             - --retention-days=29
             - --noncurrent-days=7
             - --abort-mpu-days=7

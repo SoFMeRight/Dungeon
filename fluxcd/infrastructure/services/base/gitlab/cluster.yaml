@@ -48,11 +48,11 @@ spec:
     limits:
       memory: "2Gi"
       cpu: "2000m"
-
+  # Archive to the NAS object store. destinationPath and endpointURL are supplied
+  # by the environment overlay: the path carries the cluster name and the endpoint
+  # is that environment's store. Everything else is the same wherever this runs.
   backup:
     barmanObjectStore:
-      destinationPath: s3://prplanit/dungeon/cnpg/gitlab
-      endpointURL: PLACEHOLDER_S3_ENDPOINT
       s3Credentials:
         accessKeyId:
           name: gitlab-s3-credentials

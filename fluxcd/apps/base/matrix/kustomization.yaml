@@ -15,3 +15,4 @@ resources:
   - livekit.yaml
   - lk-jwt.yaml
   - service.yaml
+  - scheduledbackup-postgres.yaml

@@ -6,6 +6,7 @@ namespace: temple-of-time
 resources:
   - ../../../base/open-webui
   - httproute.yaml
+  - externalsecret-postgres-backup.yaml
 
 patches:
   - path: statefulset-patch.yaml

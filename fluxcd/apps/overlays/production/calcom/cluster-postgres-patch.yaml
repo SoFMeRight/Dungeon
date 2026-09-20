@@ -15,7 +15,14 @@ spec:
       policy.prplanit.com/cnpg: "managed"
       policy.prplanit.com/access-class: postgres
       policy.prplanit.com/service-scope: hyrule-castle.calcom.postgres
+      policy.prplanit.com/cap.s3-nas: "true"
+      policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 
   storage:
     storageClass: ceph-rbd
     size: 10Gi
+
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://prplanit/dungeon/cnpg/calcom
+      endpointURL: http://172.22.150.101:8333

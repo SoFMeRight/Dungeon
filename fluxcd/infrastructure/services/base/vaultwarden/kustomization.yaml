@@ -8,3 +8,4 @@ resources:
   - service.yaml
   - service-db.yaml
   - externalsecret.yaml
+  - scheduledbackup-postgres.yaml

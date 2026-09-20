@@ -11,3 +11,4 @@ resources:
   - worker-service.yaml
   - serviceaccount.yaml
   - pdb.yaml
+  - scheduledbackup-postgres.yaml

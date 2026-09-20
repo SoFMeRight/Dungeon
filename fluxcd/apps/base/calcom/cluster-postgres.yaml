@@ -46,3 +46,20 @@ spec:
     limits:
       memory: "1Gi"
       cpu: "1000m"
+  # Archive to the NAS object store. destinationPath and endpointURL are supplied
+  # by the environment overlay: the path carries the cluster name and the endpoint
+  # is that environment's store. Everything else is the same wherever this runs.
+  backup:
+    barmanObjectStore:
+      s3Credentials:
+        accessKeyId:
+          name: calcom-postgres-backup-s3
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: calcom-postgres-backup-s3
+          key: SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
+      data:
+        compression: gzip
+    retentionPolicy: "30d"

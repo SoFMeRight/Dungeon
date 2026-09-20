@@ -15,6 +15,7 @@ resources:
   - postgres-credentials-externalsecret.yaml
   - cephfs-pvs.yaml
   - oidc-config-job.yaml
+  - externalsecret-postgres-backup.yaml
 
 patches:
   - path: postgres-cluster-patch.yaml

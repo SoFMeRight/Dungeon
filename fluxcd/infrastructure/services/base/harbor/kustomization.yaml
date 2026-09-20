@@ -6,3 +6,4 @@ resources:
   - postgres-cluster.yaml
   - redis-statefulset.yaml
   - helmrelease.yaml
+  - scheduledbackup-postgres.yaml

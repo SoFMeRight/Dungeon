@@ -62,3 +62,17 @@ spec:
 
   monitoring:
     enablePodMonitor: true
+  backup:
+    barmanObjectStore:
+      s3Credentials:
+        accessKeyId:
+          name: netbird-postgres-backup-s3
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: netbird-postgres-backup-s3
+          key: SECRET_ACCESS_KEY
+      wal:
+        compression: gzip
+      data:
+        compression: gzip
+    retentionPolicy: "30d"

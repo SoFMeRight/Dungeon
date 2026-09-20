@@ -6,6 +6,7 @@ resources:
   - httproute.yaml
   - httproute-xylem.yaml
   - cephfs-data-pv.yaml
+  - externalsecret-postgres-backup.yaml
 patches:
   - path: deployment-patch.yaml
     target:

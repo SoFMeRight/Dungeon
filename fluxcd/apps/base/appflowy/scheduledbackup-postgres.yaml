@@ -1,0 +1,22 @@
+# Base backups. WAL archiving alone cannot restore anything -- it is a diff with
+# no starting point -- so this is what makes appflowy-postgres actually recoverable.
+# The cluster's retentionPolicy prunes both base backups and the WAL between them.
+#
+# schedule is SIX fields: seconds first (robfig/cron), not the Kubernetes five.
+# Runs at 23:30, staggered ten minutes from its neighbours and clear of the
+# velero window, which occupies roughly 02:00-05:00.
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: appflowy-postgres-daily
+spec:
+  cluster:
+    name: appflowy-postgres
+  schedule: "0 30 23 * * *"
+  method: barmanObjectStore
+  # Take one on creation: recoverability should start now, not tomorrow night.
+  immediate: true
+  # Read from a replica where there is one, so the primary is not loaded.
+  # Falls back to the primary on single-instance clusters.
+  target: prefer-standby
+  backupOwnerReference: self

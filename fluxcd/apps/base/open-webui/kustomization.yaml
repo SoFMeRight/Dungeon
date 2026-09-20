@@ -13,3 +13,4 @@ resources:
   - redis-sentinel-configmap.yaml
   - redis-sentinel-statefulset.yaml
   - externalsecret-redis.yaml
+  - scheduledbackup-postgres.yaml

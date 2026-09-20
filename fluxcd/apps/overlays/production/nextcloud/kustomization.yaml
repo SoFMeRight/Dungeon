@@ -7,6 +7,7 @@ resources:
   - ../../../base/nextcloud
   - httproute.yaml
   - cephfs-html-pv.yaml
+  - externalsecret-postgres-backup.yaml
 
 patches:
   - path: helmrelease-patch.yaml
@@ -24,7 +25,6 @@ patches:
   - path: talk-hpb-configmap-patch.yaml
   - path: talk-hpb-patch.yaml
   - path: whiteboard-patch.yaml
-  - path: externalsecret-postgres-backup-patch.yaml
   - path: service-nextcloud-ingress-patch.yaml
     target:
       kind: Service

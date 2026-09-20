@@ -10,6 +10,7 @@ resources:
   - httproute.yaml
   - externalsecret-rtc.yaml
   - stunner-gateway.yaml
+  - externalsecret-postgres-backup.yaml
 
 patches:
   - path: externalsecret-patch.yaml

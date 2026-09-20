@@ -10,3 +10,4 @@ resources:
   - httproute.yaml
   - postgres-cluster.yaml
   - externalsecret-postgres.yaml
+  - scheduledbackup-postgres.yaml

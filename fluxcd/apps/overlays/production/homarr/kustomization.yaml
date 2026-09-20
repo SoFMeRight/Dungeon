@@ -10,6 +10,7 @@ resources:
   - httproute-xylem.yaml
   - destinationrule.yaml
   - configmap-group-seed.yaml
+  - externalsecret-postgres-backup.yaml
 
 patches:
   - path: statefulset-patch.yaml

@@ -4,6 +4,7 @@ namespace: gossip-stone
 resources:
   - ../../../../base/gatus
   - httproute-xylem.yaml
+  - externalsecret-postgres-backup.yaml
 patches:
   - path: deployment-patch.yaml
   - path: httproute-patch.yaml

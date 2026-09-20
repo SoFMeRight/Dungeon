@@ -5,8 +5,8 @@ resources:
   - ../../../../base/gitlab
   - externalsecret-root.yaml
   - externalsecret-s3.yaml
-  - externalsecret-s3-creds.yaml
   - httproute.yaml
+  - externalsecret-s3-creds.yaml
 patches:
   - path: helmrelease-patch.yaml
     target:

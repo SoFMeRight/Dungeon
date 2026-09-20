@@ -6,6 +6,7 @@ namespace: hyrule-castle
 resources:
   - ../../../base/calcom
   - httproute.yaml
+  - externalsecret-postgres-backup.yaml
 
 patches:
   - path: deployment-patch.yaml

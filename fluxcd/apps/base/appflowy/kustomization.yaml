@@ -29,3 +29,4 @@ resources:
   - externalsecret-worker.yaml
   - externalsecret-ai.yaml
   - externalsecret-postgres-init.yaml
+  - scheduledbackup-postgres.yaml
