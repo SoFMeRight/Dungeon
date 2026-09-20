@@ -34,16 +34,12 @@ spec:
             s3Url: http://172.22.150.101:8333
             insecureSkipTLSVerify: "true"
 
-        # The pre-rename bucket. Its contents were never copied: 273k objects and
-        # ~4.9TiB, and a cross-bucket copy duplicates on disk rather than moving
-        # metadata, so relocating it would have cost that much headroom to change
-        # a name. Mounted ReadOnly instead, which keeps every existing restore
-        # point restorable while new backups land in the scheme above.
-        #
-        # Its credential is scoped to Read and List only, so velero cannot alter
-        # or expire anything here even if this entry were mistakenly made default.
-        # Delete this location, its secret, its identity and the bucket once the
-        # newest object in it has aged past the retention you care about.
+        # The pre-rename bucket, kept ReadOnly so its restore points stay usable
+        # while new backups land in the location above. A cross-bucket copy
+        # duplicates on disk, so the objects stay where they are. Its credential
+        # grants Read and List only. Delete this location, its secret, its
+        # identity and the bucket once its newest object is older than the
+        # retention you keep.
         - name: legacy-velero-backups
           provider: aws
           bucket: velero-backups
@@ -65,12 +61,9 @@ spec:
       existingSecret: velero-minio-credentials
 
     nodeAgent:
-      # The agent has to exist on every node velero might back a pod up from.
-      # Without the control-plane toleration it ran on the five workers only, and
-      # every DaemonSet pod on a control-plane node failed the backup with
-      # "daemonset pod not found in running state" -- 7 of the 12 errors that kept
-      # every run PartiallyFailed. Nothing on those nodes holds real data today;
-      # this is so a future workload there is covered rather than silently skipped.
+      # The agent has to exist on every node velero might back a pod up from,
+      # so it tolerates the control-plane taint. A pod on a node with no agent
+      # is an error, not a skip.
       tolerations:
         - key: node-role.kubernetes.io/control-plane
           operator: Exists
@@ -91,9 +84,9 @@ spec:
         memory: 128Mi
         cpu: 100m
       limits:
-        # server was OOMKilled (exitCode 137) at 512Mi mid-backup on this large cluster
-        # (300+ RBD volumes, 700+ snapshots), orphaning in-progress backups on restart.
-        # Limit-only bump for headroom; request unchanged.
+        # 1Gi: a backup of this cluster walks 300+ RBD volumes and 700+
+        # snapshots, which needs more than 512Mi. The request stays low
+        # because the server is idle between runs.
         memory: 1Gi
         cpu: 500m
 
@@ -103,8 +96,8 @@ spec:
         schedule: "0 2 * * *"
         template:
           ttl: "720h0m0s"
-          # CRITICAL: Enable file-level backups to MinIO instead of relying on CSI snapshots
-          # This ensures backups are independent of the Ceph storage backend
+          # File-level backups, so volume contents are captured independently
+          # of Ceph and its snapshots.
           defaultVolumesToFsBackup: true
           # Only Ceph (rbd/cephfs) volumes are backed up; NAS CIFS/SMB
           # (smb.csi.k8s.io) is skipped robustly by driver — see the

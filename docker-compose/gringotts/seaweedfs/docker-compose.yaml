@@ -11,13 +11,10 @@ services:
     # is passed to the server as well as published, so an override actually moves
     # the listener rather than mapping a host port onto an unchanged one.
     #
-    # VOLUME_MAX is a COUNT of volumes, not a size, and 0 does not mean unlimited:
-    # it means "derive from free space at startup". On this host that derived 651,
-    # every slot was allocated to the velero-backups collection, and the first
-    # write to any NEW bucket failed -- a new collection needs a new volume and
-    # there was no slot left, while 12.4TB sat free. Set it explicitly so the
-    # ceiling is a decision rather than a side effect of whatever the disk looked
-    # like at boot. 1000 x 30GB is within the pool.
+    # VOLUME_MAX is a count of volumes, not a size. Each bucket is its own
+    # collection with its own volumes, so the ceiling has to cover every
+    # collection, not just the stored bytes. Set it explicitly; left unset it is
+    # derived from free space at startup. 1000 x 30GB is within the pool.
     # gRPC ports are set explicitly rather than left to SeaweedFS's HTTP+10000
     # derivation, so an overridden HTTP port cannot silently desync from the gRPC
     # port published beside it.
@@ -95,7 +92,7 @@ configs:
           {
             "name": "prplanit-dungeon-velero",
             "credentials": [
-              { "accessKey": "${PRPLANIT_DUNGEON_VELERO_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_VELERO_SECRET_KEY}" }
+              { "accessKey": "${PRPLANIT_DUNGEON_VELERO_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_VELERO_S3_SECRET_KEY}" }
             ],
             "actions": [
               "Read:prplanit/dungeon/velero/*",
@@ -108,7 +105,7 @@ configs:
             "_comment": "Pre-rename velero bucket, restores only. Read and List only, so the ReadOnly BSL cannot alter it. Remove once its contents age out.",
             "name": "velero-backups-legacy",
             "credentials": [
-              { "accessKey": "${VELERO_BACKUPS_ACCESS_KEY}", "secretKey": "${VELERO_BACKUPS_SECRET_KEY}" }
+              { "accessKey": "${VELERO_BACKUPS_S3_ACCESS_KEY}", "secretKey": "${VELERO_BACKUPS_S3_SECRET_KEY}" }
             ],
             "actions": [
               "Read:velero-backups",
@@ -118,7 +115,7 @@ configs:
           {
             "name": "prplanit-dungeon-cnpg-gitlab",
             "credentials": [
-              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GITLAB_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GITLAB_SECRET_KEY}" }
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GITLAB_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GITLAB_S3_SECRET_KEY}" }
             ],
             "actions": [
               "Read:prplanit/dungeon/cnpg/gitlab/*",
@@ -128,9 +125,153 @@ configs:
             ]
           },
           {
+            "name": "prplanit-dungeon-cnpg-zitadel",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_ZITADEL_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_ZITADEL_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit/dungeon/cnpg/zitadel/*",
+              "Write:prplanit/dungeon/cnpg/zitadel/*",
+              "List:prplanit/dungeon/cnpg/zitadel/*",
+              "Tagging:prplanit/dungeon/cnpg/zitadel/*"
+            ]
+          },
+          {
+            "name": "prplanit-dungeon-cnpg-netbird",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_NETBIRD_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_NETBIRD_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit/dungeon/cnpg/netbird/*",
+              "Write:prplanit/dungeon/cnpg/netbird/*",
+              "List:prplanit/dungeon/cnpg/netbird/*",
+              "Tagging:prplanit/dungeon/cnpg/netbird/*"
+            ]
+          },
+          {
+            "name": "prplanit-dungeon-cnpg-vaultwarden",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_VAULTWARDEN_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_VAULTWARDEN_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit/dungeon/cnpg/vaultwarden/*",
+              "Write:prplanit/dungeon/cnpg/vaultwarden/*",
+              "List:prplanit/dungeon/cnpg/vaultwarden/*",
+              "Tagging:prplanit/dungeon/cnpg/vaultwarden/*"
+            ]
+          },
+          {
+            "name": "prplanit-dungeon-cnpg-harbor",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_HARBOR_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_HARBOR_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit/dungeon/cnpg/harbor/*",
+              "Write:prplanit/dungeon/cnpg/harbor/*",
+              "List:prplanit/dungeon/cnpg/harbor/*",
+              "Tagging:prplanit/dungeon/cnpg/harbor/*"
+            ]
+          },
+          {
+            "name": "prplanit-dungeon-cnpg-calcom",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_CALCOM_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_CALCOM_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit/dungeon/cnpg/calcom/*",
+              "Write:prplanit/dungeon/cnpg/calcom/*",
+              "List:prplanit/dungeon/cnpg/calcom/*",
+              "Tagging:prplanit/dungeon/cnpg/calcom/*"
+            ]
+          },
+          {
+            "name": "prplanit-dungeon-cnpg-boundary",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_BOUNDARY_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_BOUNDARY_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit/dungeon/cnpg/boundary/*",
+              "Write:prplanit/dungeon/cnpg/boundary/*",
+              "List:prplanit/dungeon/cnpg/boundary/*",
+              "Tagging:prplanit/dungeon/cnpg/boundary/*"
+            ]
+          },
+          {
+            "name": "prplanit-dungeon-cnpg-grafana",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GRAFANA_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GRAFANA_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit/dungeon/cnpg/grafana/*",
+              "Write:prplanit/dungeon/cnpg/grafana/*",
+              "List:prplanit/dungeon/cnpg/grafana/*",
+              "Tagging:prplanit/dungeon/cnpg/grafana/*"
+            ]
+          },
+          {
+            "name": "prplanit-dungeon-cnpg-gatus",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GATUS_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GATUS_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit/dungeon/cnpg/gatus/*",
+              "Write:prplanit/dungeon/cnpg/gatus/*",
+              "List:prplanit/dungeon/cnpg/gatus/*",
+              "Tagging:prplanit/dungeon/cnpg/gatus/*"
+            ]
+          },
+          {
+            "name": "optcp-dungeon-cnpg-homarr",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_HOMARR_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_HOMARR_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp/dungeon/cnpg/homarr/*",
+              "Write:optcp/dungeon/cnpg/homarr/*",
+              "List:optcp/dungeon/cnpg/homarr/*",
+              "Tagging:optcp/dungeon/cnpg/homarr/*"
+            ]
+          },
+          {
+            "name": "optcp-dungeon-cnpg-appflowy",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_APPFLOWY_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_APPFLOWY_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp/dungeon/cnpg/appflowy/*",
+              "Write:optcp/dungeon/cnpg/appflowy/*",
+              "List:optcp/dungeon/cnpg/appflowy/*",
+              "Tagging:optcp/dungeon/cnpg/appflowy/*"
+            ]
+          },
+          {
+            "name": "optcp-dungeon-cnpg-open-webui",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_OPEN_WEBUI_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_OPEN_WEBUI_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp/dungeon/cnpg/open-webui/*",
+              "Write:optcp/dungeon/cnpg/open-webui/*",
+              "List:optcp/dungeon/cnpg/open-webui/*",
+              "Tagging:optcp/dungeon/cnpg/open-webui/*"
+            ]
+          },
+          {
+            "name": "outspokekin-dungeon-cnpg-matrix",
+            "credentials": [
+              { "accessKey": "${OUTSPOKEKIN_DUNGEON_CNPG_MATRIX_S3_ACCESS_KEY}", "secretKey": "${OUTSPOKEKIN_DUNGEON_CNPG_MATRIX_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:outspokekin/dungeon/cnpg/matrix/*",
+              "Write:outspokekin/dungeon/cnpg/matrix/*",
+              "List:outspokekin/dungeon/cnpg/matrix/*",
+              "Tagging:outspokekin/dungeon/cnpg/matrix/*"
+            ]
+          },
+          {
             "name": "optcp-dungeon-cnpg-nextcloud",
             "credentials": [
-              { "accessKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_SECRET_KEY}" }
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_S3_SECRET_KEY}" }
             ],
             "actions": [
               "Read:optcp/dungeon/cnpg/nextcloud/*",
