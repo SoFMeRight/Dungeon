@@ -17,7 +17,7 @@ data:
         # reset_unmatched_scores (in this template) wipes the mangled manual scores
         # (x265=30000 band-inversion) back to TRaSH's intended values.
         include:
-          - template: radarr/templates/uhd-bluray-web.yml
+          - template: uhd-bluray-web
         quality_profiles:
           - trash_id: 64fb5f9858489bdac2af690e27c8f42f  # UHD Bluray + WEB
             min_format_score: 0
@@ -30,7 +30,7 @@ data:
         base_url: http://downloadarrs.swift-sail.svc.cluster.local:8989
         api_key: !env_var SONARR_API_KEY
         include:
-          - template: sonarr/templates/web-1080p.yml
+          - template: web-1080p
 
       # Dedicated anime profile; Jellyseerr auto-routes anime requests here once its
       # Anime Quality Profile is pointed at [Anime] Remux-1080p (Anime Series Type = Anime).
@@ -38,7 +38,7 @@ data:
         base_url: http://downloadarrs.swift-sail.svc.cluster.local:8989
         api_key: !env_var SONARR_API_KEY
         include:
-          - template: sonarr/templates/anime-remux-1080p.yml
+          - template: sonarr-anime-remux-1080p
         custom_formats:
           # Bump Anime Dual Audio so dub + original(+subs) wins for shared watching.
           # Positive score = preference, never a reject (sub-only still grabs as fallback).
