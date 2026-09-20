@@ -34,12 +34,15 @@ spec:
               args: ["sync"]
               securityContext:
                 allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
                 capabilities:
                   drop:
                     - ALL
               env:
                 # Writable app-data (recyclarr clones the TRaSH metadata repo here each run).
                 - name: RECYCLARR_APP_DATA
+                  value: /config
+                - name: HOME
                   value: /config
                 - name: RADARR_API_KEY
                   valueFrom:
@@ -52,6 +55,8 @@ spec:
                       name: recyclarr-secrets
                       key: SONARR_API_KEY
               volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
                 - name: appdata
                   mountPath: /config
                 - name: config
@@ -66,6 +71,8 @@ spec:
                   cpu: PLACEHOLDER_CPU_LIMIT
                   memory: PLACEHOLDER_MEMORY_LIMIT
           volumes:
+            - name: tmp
+              emptyDir: {}
             - name: appdata
               emptyDir: {}
             - name: config
