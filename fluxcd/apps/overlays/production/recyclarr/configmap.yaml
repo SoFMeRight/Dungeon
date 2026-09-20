@@ -5,40 +5,59 @@ metadata:
 data:
   recyclarr.yml: |
     # yaml-language-server: $schema=https://schemas.recyclarr.dev/v8/config-schema.json
-    # Restores the intended TRaSH discipline (undoes manual over-scoring via
-    # reset_unmatched_scores), gives custom formats their real names back, and layers
-    # only Kai's calibrated tuning. API keys come from env (ESO -> recyclarr-secrets).
+    # Inlined TRaSH composite templates (Recyclarr v8 removed official include-templates),
+    # plus Kai's tuning. reset_unmatched_scores restores disciplined TRaSH scores (undoes the
+    # old x265=30000 manual over-scoring) and gives custom formats their real names back.
+    # Keys via ESO (RADARR_API_KEY / SONARR_API_KEY).
     # Rationale + calibration: dungeon-scratchpad/servarr/servarr-media-download-prefences.md
 
     radarr:
+      # TRaSH "UHD Bluray + WEB"
       movies:
         base_url: http://downloadarrs.swift-sail.svc.cluster.local:7878
         api_key: !env_var RADARR_API_KEY
-        # reset_unmatched_scores (in this template) wipes the mangled manual scores
-        # (x265=30000 band-inversion) back to TRaSH's intended values.
-        include:
-          - template: uhd-bluray-web
+        quality_definition:
+          type: movie
         quality_profiles:
           - trash_id: 64fb5f9858489bdac2af690e27c8f42f  # UHD Bluray + WEB
-            min_format_score: 0
+            reset_unmatched_scores:
+              enabled: true
+        custom_format_groups:
+          add:
+            - trash_id: ff204bbcecdd487d1cefcefdbf0c278d  # [Optional] Golden Rule UHD
+            - trash_id: a3ac6af01d78e4f21fcb75f601ac96df  # [Unwanted] Unwanted Formats
         # NOTE (bitrate cap): after first sync, set Bluray/WEBDL/Remux-2160p Max to
         # ~225 MB/min (~30 Mbps) in Radarr > Quality (TRaSH movie def doesn't hard-cap this).
 
     sonarr:
-      # General TV (~75% of the TV library is 1080p).
+      # General TV (~75% of the TV library is 1080p) — TRaSH "WEB-1080p"
       tv:
         base_url: http://downloadarrs.swift-sail.svc.cluster.local:8989
         api_key: !env_var SONARR_API_KEY
-        include:
-          - template: web-1080p
+        quality_definition:
+          type: series
+        quality_profiles:
+          - trash_id: 72dae194fc92bf828f32cde7744e51a1  # WEB-1080p
+            reset_unmatched_scores:
+              enabled: true
+        custom_format_groups:
+          add:
+            - trash_id: 158188097a58d7687dee647e04af0da3  # [Optional] Golden Rule HD
+            - trash_id: 74aff4168620ed49dcc67e92b2c2a5b4  # [Optional] Language Profiles
+            - trash_id: 85fae4a2294965b75710ef2989c850eb  # [Streaming Services] HD/UHD boost
+            - trash_id: 59c3af66780d08332fdc64e68297098f  # [Unwanted] Unwanted Formats
 
-      # Dedicated anime profile; Jellyseerr auto-routes anime requests here once its
-      # Anime Quality Profile is pointed at [Anime] Remux-1080p (Anime Series Type = Anime).
+      # Dedicated anime profile ("[Anime] Remux-1080p"). Jellyseerr auto-routes anime requests
+      # here once its Anime Quality Profile is set to [Anime] Remux-1080p (Anime Series Type = Anime).
       tv-anime:
         base_url: http://downloadarrs.swift-sail.svc.cluster.local:8989
         api_key: !env_var SONARR_API_KEY
-        include:
-          - template: sonarr-anime-remux-1080p
+        quality_definition:
+          type: anime
+        quality_profiles:
+          - trash_id: 20e0fc959f1f1704bed501f23bdae76f  # [Anime] Remux-1080p
+            reset_unmatched_scores:
+              enabled: true
         custom_formats:
           # Bump Anime Dual Audio so dub + original(+subs) wins for shared watching.
           # Positive score = preference, never a reject (sub-only still grabs as fallback).
