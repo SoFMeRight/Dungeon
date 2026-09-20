@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: recyclarr-config
+data:
+  recyclarr.yml: |
+    # yaml-language-server: $schema=https://schemas.recyclarr.dev/v8/config-schema.json
+    # Restores the intended TRaSH discipline (undoes manual over-scoring via
+    # reset_unmatched_scores), gives custom formats their real names back, and layers
+    # only Kai's calibrated tuning. API keys come from env (ESO -> recyclarr-secrets).
+    # Rationale + calibration: dungeon-scratchpad/servarr/servarr-media-download-prefences.md
+
+    radarr:
+      movies:
+        base_url: http://downloadarrs.swift-sail.svc.cluster.local:7878
+        api_key: !env_var RADARR_API_KEY
+        # reset_unmatched_scores (in this template) wipes the mangled manual scores
+        # (x265=30000 band-inversion) back to TRaSH's intended values.
+        include:
+          - template: radarr/templates/uhd-bluray-web.yml
+        quality_profiles:
+          - trash_id: 64fb5f9858489bdac2af690e27c8f42f  # UHD Bluray + WEB
+            min_format_score: 0
+        # NOTE (bitrate cap): after first sync, set Bluray/WEBDL/Remux-2160p Max to
+        # ~225 MB/min (~30 Mbps) in Radarr > Quality (TRaSH movie def doesn't hard-cap this).
+
+    sonarr:
+      # General TV (~75% of the TV library is 1080p).
+      tv:
+        base_url: http://downloadarrs.swift-sail.svc.cluster.local:8989
+        api_key: !env_var SONARR_API_KEY
+        include:
+          - template: sonarr/templates/web-1080p.yml
+
+      # Dedicated anime profile; Jellyseerr auto-routes anime requests here once its
+      # Anime Quality Profile is pointed at [Anime] Remux-1080p (Anime Series Type = Anime).
+      tv-anime:
+        base_url: http://downloadarrs.swift-sail.svc.cluster.local:8989
+        api_key: !env_var SONARR_API_KEY
+        include:
+          - template: sonarr/templates/anime-remux-1080p.yml
+        custom_formats:
+          # Bump Anime Dual Audio so dub + original(+subs) wins for shared watching.
+          # Positive score = preference, never a reject (sub-only still grabs as fallback).
+          - trash_ids:
+              - 418f50b10f1907201b6cfdf881f467b7  # Anime Dual Audio
+            assign_scores_to:
+              - name: "[Anime] Remux-1080p"
+                score: 800

@@ -1,0 +1,73 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: recyclarr
+spec:
+  schedule: "PLACEHOLDER_SCHEDULE"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: recyclarr
+            app.kubernetes.io/name: recyclarr
+            # arr-mesh allows ingress:true -> ingress:true on 7878/8989, so this lets
+            # recyclarr reach radarr/sonarr on the downloadarrs pod. World egress (GitHub
+            # TRaSH metadata) is granted by cnp-egress-recyclarr.
+            policy.prplanit.com/ingress: "true"
+        spec:
+          restartPolicy: Never
+          serviceAccountName: recyclarr
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: recyclarr
+              image: PLACEHOLDER_IMAGE
+              args: ["sync"]
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              env:
+                # Writable app-data (recyclarr clones the TRaSH metadata repo here each run).
+                - name: RECYCLARR_APP_DATA
+                  value: /config
+                - name: RADARR_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: recyclarr-secrets
+                      key: RADARR_API_KEY
+                - name: SONARR_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: recyclarr-secrets
+                      key: SONARR_API_KEY
+              volumeMounts:
+                - name: appdata
+                  mountPath: /config
+                - name: config
+                  mountPath: /config/recyclarr.yml
+                  subPath: recyclarr.yml
+                  readOnly: true
+              resources:
+                requests:
+                  cpu: PLACEHOLDER_CPU_REQUEST
+                  memory: PLACEHOLDER_MEMORY_REQUEST
+                limits:
+                  cpu: PLACEHOLDER_CPU_LIMIT
+                  memory: PLACEHOLDER_MEMORY_LIMIT
+          volumes:
+            - name: appdata
+              emptyDir: {}
+            - name: config
+              configMap:
+                name: recyclarr-config

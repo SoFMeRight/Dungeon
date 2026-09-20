@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: swift-sail
+resources:
+  - ../../../base/recyclarr
+  - configmap.yaml
+patches:
+  - path: cronjob-patch.yaml
+    target:
+      kind: CronJob
+      name: recyclarr
+  - path: externalsecret-patch.yaml
+    target:
+      kind: ExternalSecret
+      name: recyclarr-secrets

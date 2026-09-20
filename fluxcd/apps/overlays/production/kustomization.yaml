@@ -71,6 +71,7 @@ resources:
   - plex
   # Media Stack - Combined downloadarrs pod
   - downloadarrs  # qbittorrent + radarr + sonarr + lidarr + readarr
+  - recyclarr  # scheduled TRaSH-Guides custom-format/quality-profile sync for radarr+sonarr
   - neko-vpn
   - anirra
   - bazarr
