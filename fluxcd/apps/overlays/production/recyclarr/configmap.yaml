@@ -30,14 +30,22 @@ data:
         # ~225 MB/min (~30 Mbps) in Radarr > Quality (TRaSH movie def doesn't hard-cap this).
 
     sonarr:
-      # General TV — TRaSH "WEB-2160p" (prefer 4K; tighter bitrate than movies via quality def)
+      # One Sonarr server (downloadarrs) => one instance with BOTH profiles. Recyclarr skips
+      # multiple instances that share a base_url, so general TV + anime live in one instance.
       tv:
         base_url: http://downloadarrs.swift-sail.svc.cluster.local:8989
         api_key: !env_var SONARR_API_KEY
         quality_definition:
           type: series
         quality_profiles:
+          # General TV — prefer 4K (tighter bitrate than movies via the series quality def +
+          # a post-sync 2160p cap in Sonarr > Quality).
           - trash_id: d1498e7d189fbe6c7110ceaabb7473e6  # WEB-2160p
+            reset_unmatched_scores:
+              enabled: true
+          # Anime — Jellyseerr auto-routes anime requests here once its Anime Quality Profile
+          # is set to [Anime] Remux-1080p (Anime Series Type = Anime).
+          - trash_id: 20e0fc959f1f1704bed501f23bdae76f  # [Anime] Remux-1080p
             reset_unmatched_scores:
               enabled: true
         custom_format_groups:
@@ -46,18 +54,6 @@ data:
             - trash_id: 74aff4168620ed49dcc67e92b2c2a5b4  # [Optional] Language Profiles
             - trash_id: 85fae4a2294965b75710ef2989c850eb  # [Streaming Services] HD/UHD boost
             - trash_id: 59c3af66780d08332fdc64e68297098f  # [Unwanted] Unwanted Formats
-
-      # Dedicated anime profile ("[Anime] Remux-1080p"). Jellyseerr auto-routes anime requests
-      # here once its Anime Quality Profile is set to [Anime] Remux-1080p (Anime Series Type = Anime).
-      tv-anime:
-        base_url: http://downloadarrs.swift-sail.svc.cluster.local:8989
-        api_key: !env_var SONARR_API_KEY
-        quality_definition:
-          type: anime
-        quality_profiles:
-          - trash_id: 20e0fc959f1f1704bed501f23bdae76f  # [Anime] Remux-1080p
-            reset_unmatched_scores:
-              enabled: true
         custom_formats:
           # Bump Anime Dual Audio so dub + original(+subs) wins for shared watching.
           # Positive score = preference, never a reject (sub-only still grabs as fallback).
