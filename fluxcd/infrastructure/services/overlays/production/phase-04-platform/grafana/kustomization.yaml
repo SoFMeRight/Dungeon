@@ -51,6 +51,20 @@ patches:
         path: /metadata/namespace
         value: gossip-stone
   - target:
+      kind: ExternalSecret
+      name: grafana-postgres-backup-s3
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: gossip-stone
+  - target:
+      kind: ScheduledBackup
+      name: grafana-postgres-daily
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: gossip-stone
+  - target:
       kind: PersistentVolumeClaim
       name: gossip-stone-grafana-plugins
     patch: |-
