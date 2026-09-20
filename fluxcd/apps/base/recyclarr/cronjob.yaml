@@ -39,8 +39,8 @@ spec:
                   drop:
                     - ALL
               env:
-                # Writable app-data (recyclarr clones the TRaSH metadata repo here each run).
-                - name: RECYCLARR_APP_DATA
+                # Writable config/data dir (recyclarr clones the TRaSH metadata repo here each run).
+                - name: RECYCLARR_CONFIG_DIR
                   value: /config
                 - name: HOME
                   value: /config
