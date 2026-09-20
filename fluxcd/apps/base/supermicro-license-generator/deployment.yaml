@@ -4,7 +4,7 @@ metadata:
   name: supermicro-license-generator
 spec:
   revisionHistoryLimit: 5
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: supermicro-license-generator

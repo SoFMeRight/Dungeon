@@ -177,7 +177,7 @@ spec:
               protocol: TCP
           env:
             - name: TZ
-              value: PLACEHOLDER_TZ
+              value: "Etc/UTC"
           volumeMounts:
             - name: config
               mountPath: /config

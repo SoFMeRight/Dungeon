@@ -5,7 +5,7 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: plex
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: plex

@@ -5,7 +5,7 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: ferdium
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: ferdium
@@ -29,7 +29,7 @@ spec:
             - name: PGID
               value: "PLACEHOLDER_PGID"
             - name: TZ
-              value: "PLACEHOLDER_TZ"
+              value: "Etc/UTC"
           volumeMounts:
             - name: PLACEHOLDER_NAMESPACE-ferdium-config
               mountPath: /config

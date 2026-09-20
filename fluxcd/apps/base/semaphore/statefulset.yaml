@@ -5,7 +5,7 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: semaphore
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: semaphore
@@ -116,7 +116,7 @@ spec:
                   name: semaphore-secrets
                   key: access_key_encryption
             - name: TZ
-              value: PLACEHOLDER_TZ
+              value: "Etc/UTC"
           ports:
             - containerPort: 3000
               name: http

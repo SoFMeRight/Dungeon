@@ -4,7 +4,7 @@ metadata:
   name: mealie-postgres
 spec:
   serviceName: mealie-postgres
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: mealie-postgres

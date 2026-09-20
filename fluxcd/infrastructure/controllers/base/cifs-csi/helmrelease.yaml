@@ -24,7 +24,7 @@ spec:
   values:
     fullnameOverride: "csi-smb"
     controller:
-      replicas: PLACEHOLDER_REPLICAS
+      replicas: 1
       tolerations:
         - key: "node-role.kubernetes.io/control-plane"
           operator: "Exists"

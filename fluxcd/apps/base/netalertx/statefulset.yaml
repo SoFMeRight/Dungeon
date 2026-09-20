@@ -7,7 +7,7 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: netalertx
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: netalertx
@@ -34,7 +34,7 @@ spec:
             - name: PORT
               value: "PLACEHOLDER_PORT"
             - name: TZ
-              value: "PLACEHOLDER_TZ"
+              value: "Etc/UTC"
           volumeMounts:
             - name: lakitu-netalertx-config
               mountPath: /app/config

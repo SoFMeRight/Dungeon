@@ -4,7 +4,7 @@ metadata:
   name: vaultwarden
 spec:
   revisionHistoryLimit: 5
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: vaultwarden

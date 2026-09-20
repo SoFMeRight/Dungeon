@@ -8,7 +8,7 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: crowdsec
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: crowdsec

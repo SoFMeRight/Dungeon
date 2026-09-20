@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: umami-postgres
 spec:
   serviceName: umami-postgres
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: umami-postgres

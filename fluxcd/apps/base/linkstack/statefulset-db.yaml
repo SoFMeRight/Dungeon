@@ -5,7 +5,7 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: linkstack-db
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: linkstack-db
@@ -20,7 +20,7 @@ spec:
           image: PLACEHOLDER_IMAGE
           env:
             - name: TZ
-              value: PLACEHOLDER_TZ
+              value: "Etc/UTC"
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:

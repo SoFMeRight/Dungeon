@@ -6,7 +6,7 @@ metadata:
     app: open-webui-redis
 spec:
   serviceName: open-webui-redis-headless
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: open-webui-redis

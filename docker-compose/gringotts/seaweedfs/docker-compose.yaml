@@ -11,6 +11,13 @@ services:
     # is passed to the server as well as published, so an override actually moves
     # the listener rather than mapping a host port onto an unchanged one.
     #
+    # VOLUME_MAX is a COUNT of volumes, not a size, and 0 does not mean unlimited:
+    # it means "derive from free space at startup". On this host that derived 651,
+    # every slot was allocated to the velero-backups collection, and the first
+    # write to any NEW bucket failed -- a new collection needs a new volume and
+    # there was no slot left, while 12.4TB sat free. Set it explicitly so the
+    # ceiling is a decision rather than a side effect of whatever the disk looked
+    # like at boot. 1000 x 30GB is within the pool.
     # gRPC ports are set explicitly rather than left to SeaweedFS's HTTP+10000
     # derivation, so an overridden HTTP port cannot silently desync from the gRPC
     # port published beside it.
@@ -24,7 +31,7 @@ services:
       -volume.port=${VOLUME_PORT:-8080}
       -volume.port.grpc=${VOLUME_GRPC_PORT:-18080}
       -volume.publicUrl=$ADVERTISE_IP:${VOLUME_PORT:-8080}
-      -volume.max=${VOLUME_MAX:-0}
+      -volume.max=${VOLUME_MAX:-1000}
       -filer.port=${FILER_PORT:-8888}
       -filer.port.grpc=${FILER_GRPC_PORT:-18888}
       -s3.port=${S3_PORT:-8333}

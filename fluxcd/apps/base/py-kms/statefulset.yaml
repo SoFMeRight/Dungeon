@@ -5,7 +5,7 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: py-kms
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: py-kms
@@ -45,7 +45,7 @@ spec:
             - name: LOGLEVEL
               value: "INFO"
             - name: TZ
-              value: PLACEHOLDER_TZ
+              value: "Etc/UTC"
           volumeMounts:
             - name: swift-sail-py-kms-db
               mountPath: /home/py-kms/db

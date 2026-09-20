@@ -5,7 +5,7 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: neko-vpn
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: neko-vpn
@@ -53,7 +53,7 @@ spec:
             - name: HEALTH_VPN_DURATION_INITIAL
               value: "60s"
             - name: TZ
-              value: PLACEHOLDER_TZ
+              value: "Etc/UTC"
             - name: OPENVPN_USER
               valueFrom:
                 secretKeyRef:

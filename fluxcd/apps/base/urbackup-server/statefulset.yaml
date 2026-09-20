@@ -5,7 +5,7 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: urbackup-server
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: urbackup-server
@@ -47,7 +47,7 @@ spec:
             - name: PGID
               value: "1000"
             - name: TZ
-              value: PLACEHOLDER_TZ
+              value: "Etc/UTC"
           volumeMounts:
             - name: fairy-bottle-urbackup-data
               mountPath: /var/urbackup

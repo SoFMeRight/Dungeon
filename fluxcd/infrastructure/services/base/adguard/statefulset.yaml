@@ -4,7 +4,7 @@ metadata:
   name: adguard
 spec:
   revisionHistoryLimit: 5
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   serviceName: adguard
   selector:
     matchLabels:

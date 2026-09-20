@@ -4,7 +4,7 @@ metadata:
   name: snapshot-controller
 spec:
   revisionHistoryLimit: 5
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: snapshot-controller

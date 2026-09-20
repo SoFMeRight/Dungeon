@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: zitadel
 spec:
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   serviceName: zitadel
   selector:
     matchLabels:

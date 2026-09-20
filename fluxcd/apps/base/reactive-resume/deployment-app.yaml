@@ -4,7 +4,7 @@ metadata:
   name: reactive-resume-app
 spec:
   revisionHistoryLimit: 5
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: reactive-resume-app

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: searxng-redis
 spec:
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: searxng-redis

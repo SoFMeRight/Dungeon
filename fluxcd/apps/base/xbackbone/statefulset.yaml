@@ -5,7 +5,7 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: xbackbone
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: xbackbone
@@ -44,7 +44,7 @@ spec:
               protocol: TCP
           env:
             - name: TZ
-              value: PLACEHOLDER_TZ
+              value: "Etc/UTC"
             - name: PUID
               value: "1000"
             - name: PGID

@@ -4,7 +4,7 @@ metadata:
   name: harbor-redis
 spec:
   serviceName: harbor-redis
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: harbor-redis

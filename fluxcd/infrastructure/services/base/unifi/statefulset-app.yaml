@@ -5,7 +5,7 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: unifi-app
-  replicas: PLACEHOLDER_REPLICAS
+  replicas: 1
   selector:
     matchLabels:
       app: unifi-app
@@ -58,7 +58,7 @@ spec:
             - name: PGID
               value: "1000"
             - name: TZ
-              value: PLACEHOLDER_TZ
+              value: "Etc/UTC"
             - name: MONGO_USER
               valueFrom:
                 secretKeyRef:

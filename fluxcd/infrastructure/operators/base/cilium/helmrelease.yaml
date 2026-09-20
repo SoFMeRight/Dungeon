@@ -19,7 +19,7 @@ spec:
         namespace: flux-system
   values:
     operator:
-      replicas: PLACEHOLDER_REPLICAS
+      replicas: 1
       resources:
         requests:
           cpu: 50m
