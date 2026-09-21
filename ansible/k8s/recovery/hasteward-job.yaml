@@ -139,10 +139,24 @@ spec:
               value: temple-of-time
             - name: HASTEWARD_BACKUPS_PATH
               value: /backups
+            - name: RESTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hasteward-restic
+                  key: password
           volumeMounts:
             - name: backups
               mountPath: /backups
+            # restic writes a temp pack per blob and keeps a cache. Until the image
+            # carried its own /tmp, a run without this died on
+            #   Fatal: failed to save blob: open /tmp/restic-temp-pack-N: no such file
+            # It stays because helper pods run with readOnlyRootFilesystem, where a
+            # directory baked into the image is not writable either.
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - name: backups
           persistentVolumeClaim:
             claimName: hasteward-backups
+        - name: tmp
+          emptyDir: {}
