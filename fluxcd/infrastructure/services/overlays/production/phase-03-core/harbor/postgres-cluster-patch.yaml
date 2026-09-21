@@ -31,6 +31,8 @@ spec:
 
   instances: 3
 
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.11
+
   bootstrap:
     initdb:
       database: registry
