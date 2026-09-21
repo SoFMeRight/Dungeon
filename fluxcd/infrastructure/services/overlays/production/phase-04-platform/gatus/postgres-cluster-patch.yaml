@@ -26,7 +26,10 @@ spec:
 
   # Fast failover (fleet pattern — see grafana-postgres)
   switchoverDelay: 30
-  startDelay: 10
+  # startDelay is the startup probe budget, not a failover control: the probe
+  # allows one attempt per 10s up to this ceiling, and a replica replaying WAL
+  # must finish inside it or kubelet kills it mid-replay.
+  startDelay: 3600
   # Shutdown has to fit the node's grace budget: 150s total, 30s reserved for
   # critical pods, so 120s for ordinary ones. Postgres does not checkpoint until
   # the smart phase stops waiting for clients to disconnect, so a long smart
