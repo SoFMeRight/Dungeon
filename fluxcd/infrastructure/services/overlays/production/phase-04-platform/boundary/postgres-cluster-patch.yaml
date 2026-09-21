@@ -39,7 +39,7 @@ spec:
       max_connections: "100"
       wal_receiver_timeout: "5s"
       wal_keep_size: "128MB"
-      max_slot_wal_keep_size: "200MB"
+      max_slot_wal_keep_size: "320MB"  # 8% of 4Gi PVC (fleet ratio)
 
   monitoring:
     enablePodMonitor: true
@@ -61,7 +61,7 @@ spec:
 
   storage:
     storageClass: ceph-rbd-retain
-    size: 1Gi
+    size: 4Gi
 
   backup:
     barmanObjectStore:

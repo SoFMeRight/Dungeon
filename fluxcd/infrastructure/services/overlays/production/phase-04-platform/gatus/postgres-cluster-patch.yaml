@@ -61,7 +61,7 @@ spec:
       wal_receiver_timeout: "5s"
       # WAL retention caps - a disconnected replica's slot must not fill the PVC
       wal_keep_size: "128MB"
-      max_slot_wal_keep_size: "160MB"  # 8% of 2Gi PVC (fleet ratio)
+      max_slot_wal_keep_size: "320MB"  # 8% of 4Gi PVC (fleet ratio)
 
   monitoring:
     enablePodMonitor: true
@@ -75,7 +75,7 @@ spec:
 
   storage:
     storageClass: ceph-rbd-retain
-    size: 2Gi
+    size: 4Gi
 
   backup:
     barmanObjectStore:
