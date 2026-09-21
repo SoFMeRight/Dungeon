@@ -126,7 +126,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: hasteward
-          image: docker.io/prplanit/hasteward:latest
+          image: docker.io/prplanit/hasteward:latest-dev
           # --- EDIT SUBCOMMAND: triage, repair, backup, restore ---
           args: ["repair"]
           # --- EDIT THESE ENV VARS PER RUN ---

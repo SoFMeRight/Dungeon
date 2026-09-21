@@ -8,7 +8,7 @@
 # derivation, fail-closed authority, WAL-stranded classification) and can
 # produce a WRONG assessment on a production DB. Use the binary instead, e.g.:
 #   docker run --rm --network host -e KUBECONFIG=/kube/config \
-#     -v "$HOME/.kube:/kube:ro" prplanit/hasteward:latest \
+#     -v "$HOME/.kube:/kube:ro" prplanit/hasteward:latest-dev \
 #     triage -e galera -c <cluster> -n <namespace>
 # See docs/k8s/cnpg-postgres-cluster-recovery-runbook.md (engine-general).
 # ============================================================================

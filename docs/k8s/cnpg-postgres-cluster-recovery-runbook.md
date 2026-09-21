@@ -50,7 +50,7 @@ HASteward runs as a one-shot container against the cluster via your kubeconfig:
 docker run --rm --network host \
   -e KUBECONFIG=/kube/config \
   -v "$HOME/.kube:/kube:ro" \
-  prplanit/hasteward:latest \
+  prplanit/hasteward:latest-dev \
   triage -e cnpg -c <cluster> -n <ns>          # add --output json for scripting
 ```
 
@@ -69,7 +69,7 @@ still read the primary's data and name it canonical. `safeToHeal: true` is the g
 for nc in <ns>/<cluster> <ns>/<cluster> ...; do
   ns="${nc%%/*}"; c="${nc##*/}"
   docker run --rm --network host -e KUBECONFIG=/kube/config -v "$HOME/.kube:/kube:ro" \
-    prplanit/hasteward:latest triage -e cnpg -c "$c" -n "$ns" --output json
+    prplanit/hasteward:latest-dev triage -e cnpg -c "$c" -n "$ns" --output json
 done
 ```
 
@@ -81,7 +81,7 @@ Only when **`safeToHeal: true`** and the **primary** is `mostAdvanced`:
 docker run --rm --network host \
   -e KUBECONFIG=/kube/config \
   -v "$HOME/.kube:/kube:ro" \
-  prplanit/hasteward:latest \
+  prplanit/hasteward:latest-dev \
   repair -e cnpg -c <cluster> -n <ns> --instance <N> [--force] [--no-escrow]
 ```
 
