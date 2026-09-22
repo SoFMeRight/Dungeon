@@ -11,4 +11,5 @@ patches:
   - path: clusterrolebinding-patch.yaml
   - path: configmap-patch.yaml
   - path: postgres-cluster-patch.yaml
+  - path: objectstore-postgres-patch.yaml
   - path: externalsecret-postgres-patch.yaml

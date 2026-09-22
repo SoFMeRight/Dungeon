@@ -24,15 +24,19 @@ patches:
             policy.prplanit.com/service-scope: zeldas-lullaby.netbird.postgres
             policy.prplanit.com/cap.s3-nas: "true"
             policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
-      - op: add
-        path: /spec/backup/barmanObjectStore/destinationPath
-        value: s3://prplanit/dungeon/cnpg/netbird
-      - op: add
-        path: /spec/backup/barmanObjectStore/endpointURL
-        value: http://172.22.150.101:8333
     target:
       kind: Cluster
       name: netbird-postgres
+  - patch: |-
+      - op: add
+        path: /spec/configuration/destinationPath
+        value: s3://prplanit/dungeon/cnpg/netbird
+      - op: add
+        path: /spec/configuration/endpointURL
+        value: http://172.22.150.101:8333
+    target:
+      kind: ObjectStore
+      name: netbird-postgres-store
   - patch: |-
       - op: replace
         path: /spec/template/spec/initContainers/0/image

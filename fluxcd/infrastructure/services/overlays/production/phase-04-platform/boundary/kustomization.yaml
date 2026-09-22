@@ -15,6 +15,7 @@ patches:
   - path: controller-deployment-patch.yaml
   - path: worker-deployment-patch.yaml
   - path: postgres-cluster-patch.yaml
+  - path: objectstore-postgres-patch.yaml
   - path: worker-service-patch.yaml
   - path: externalsecret-patch.yaml
   - path: controller-configmap-patch.yaml

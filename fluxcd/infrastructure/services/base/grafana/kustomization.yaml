@@ -4,6 +4,7 @@ resources:
   - repository.yaml
   - helmrelease.yaml
   - postgres-cluster.yaml
+  - objectstore-postgres.yaml
   - externalsecret-postgres.yaml
   - dashboards
   - scheduledbackup-postgres.yaml

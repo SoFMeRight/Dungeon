@@ -9,5 +9,6 @@ resources:
   - service.yaml
   - httproute.yaml
   - postgres-cluster.yaml
+  - objectstore-postgres.yaml
   - externalsecret-postgres.yaml
   - scheduledbackup-postgres.yaml

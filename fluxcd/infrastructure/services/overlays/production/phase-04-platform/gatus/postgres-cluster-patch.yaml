@@ -79,8 +79,3 @@ spec:
   storage:
     storageClass: ceph-rbd-retain
     size: 4Gi
-
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://prplanit/dungeon/cnpg/gatus
-      endpointURL: http://172.22.150.101:8333

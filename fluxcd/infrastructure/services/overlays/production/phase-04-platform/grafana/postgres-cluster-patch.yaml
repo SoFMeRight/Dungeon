@@ -75,8 +75,3 @@ spec:
   storage:
     storageClass: ceph-rbd
     size: 5Gi
-
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://prplanit/dungeon/cnpg/grafana
-      endpointURL: http://172.22.150.101:8333

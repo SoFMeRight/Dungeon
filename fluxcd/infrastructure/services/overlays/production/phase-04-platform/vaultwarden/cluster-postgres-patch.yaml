@@ -23,8 +23,3 @@ spec:
   storage:
     storageClass: ceph-rbd
     size: 10Gi
-
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://prplanit/dungeon/cnpg/vaultwarden
-      endpointURL: http://172.22.150.101:8333

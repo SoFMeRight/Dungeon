@@ -18,6 +18,10 @@ patches:
     target:
       kind: Cluster
       name: grafana-postgres
+  - path: objectstore-postgres-patch.yaml
+    target:
+      kind: ObjectStore
+      name: grafana-postgres-store
   - path: externalsecret-postgres-patch.yaml
     target:
       kind: ExternalSecret
@@ -60,6 +64,13 @@ patches:
   - target:
       kind: ScheduledBackup
       name: grafana-postgres-daily
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: gossip-stone
+  - target:
+      kind: ObjectStore
+      name: grafana-postgres-store
     patch: |-
       - op: add
         path: /metadata/namespace

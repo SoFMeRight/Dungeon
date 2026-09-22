@@ -62,17 +62,11 @@ spec:
 
   monitoring:
     enablePodMonitor: true
-  backup:
-    barmanObjectStore:
-      s3Credentials:
-        accessKeyId:
-          name: netbird-postgres-backup-s3
-          key: ACCESS_KEY_ID
-        secretAccessKey:
-          name: netbird-postgres-backup-s3
-          key: SECRET_ACCESS_KEY
-      wal:
-        compression: gzip
-      data:
-        compression: gzip
-    retentionPolicy: "30d"
+  # Archiving is done by the barman-cloud plugin, configured in the ObjectStore of
+  # the same name. isWALArchiver makes this plugin the one that ships WAL; exactly
+  # one plugin may claim it.
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: netbird-postgres-store

@@ -16,6 +16,10 @@ patches:
     target:
       kind: Cluster
       name: vaultwarden-postgres
+  - path: objectstore-postgres-patch.yaml
+    target:
+      kind: ObjectStore
+      name: vaultwarden-postgres-store
   - path: pvc-patch.yaml
     target:
       kind: PersistentVolumeClaim
