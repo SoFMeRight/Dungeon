@@ -13,7 +13,9 @@ spec:
   cluster:
     name: homarr-postgres
   schedule: "0 50 23 * * *"
-  method: barmanObjectStore
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
   # Take one on creation: recoverability should start now, not tomorrow night.
   immediate: true
   # Read from a replica where there is one, so the primary is not loaded.

@@ -25,6 +25,10 @@ patches:
     target:
       kind: Cluster
       name: homarr-postgres
+  - path: objectstore-postgres-patch.yaml
+    target:
+      kind: ObjectStore
+      name: homarr-postgres-store
   - path: externalsecret-postgres-patch.yaml
     target:
       kind: ExternalSecret

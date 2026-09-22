@@ -6,6 +6,7 @@ resources:
   - statefulset.yaml
   - service.yaml
   - postgres-cluster.yaml
+  - objectstore-postgres.yaml
   - externalsecret-postgres.yaml
   - redis-configmap.yaml
   - redis-replication.yaml
