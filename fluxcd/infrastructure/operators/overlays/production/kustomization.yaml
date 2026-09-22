@@ -8,6 +8,7 @@ resources:
   - ./gateway-api-crds
   - ./cilium
   - ./cloudnative-pg
+  - ./plugin-barman-cloud
   - ./external-secrets
   - ./gpu-operator
   - ./istio

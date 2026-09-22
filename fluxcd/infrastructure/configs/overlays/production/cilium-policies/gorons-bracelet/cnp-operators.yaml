@@ -82,3 +82,25 @@ spec:
         - ports:
             - port: "8000"
               protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-cnpg-to-barman-plugin
+spec:
+  description: >-
+    Allow the cloudnative-pg operator to reach the barman-cloud plugin on 9090/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: barman-cloud
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: cloudnative-pg
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP
