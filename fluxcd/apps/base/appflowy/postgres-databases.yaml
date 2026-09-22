@@ -17,3 +17,6 @@ spec:
     - name: vector
       ensure: present
       version: "0.8.6"
+    - name: pgcrypto
+      ensure: present
+      version: "1.4"
