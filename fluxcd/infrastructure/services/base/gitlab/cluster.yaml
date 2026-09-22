@@ -5,7 +5,7 @@ metadata:
 spec:
   instances: 3
 
-  imageName: ghcr.io/cloudnative-pg/postgresql:16.15
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.15-system-trixie
 
   affinity:
     podAntiAffinityType: required
