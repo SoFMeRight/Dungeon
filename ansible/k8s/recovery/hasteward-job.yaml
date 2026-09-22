@@ -134,21 +134,28 @@ spec:
           # was absent from the run, and the failure it fixed reappeared unchanged.
           imagePullPolicy: Always
           # --- EDIT SUBCOMMAND: triage, repair, backup, restore, prune-wal ---
-          # --dry-run stays an arg: it is the one flag without an env binding on
-          # released images, so HASTEWARD_DRY_RUN is silently ignored there.
-          args: ["prune-wal", "--deadlock-recover"]
+          # Rests on triage, which reads and never mutates. A template left holding a
+          # mutating verb is one an operator can run by accident after editing only the
+          # cluster name — and the flags below that override safety refusals do not
+          # announce themselves in a diff of that one line.
+          #
+          # --dry-run belongs in args, not the env: it is the one flag without an env
+          # binding on released images, so HASTEWARD_DRY_RUN is silently ignored there
+          # and the destructive run proceeds.
+          args: ["triage"]
           # --- EDIT THESE ENV VARS PER RUN ---
+          #
+          # HASTEWARD_FORCE overrides the split-brain refusal and DESTROYS a data
+          # directory. Set it only after triage has named the surviving lineage and the
+          # losing one is escrowed — never as a carried-over default. Same for
+          # HASTEWARD_NO_ESCROW, which removes the rollback entirely.
           env:
             - name: HASTEWARD_ENGINE
               value: cnpg
             - name: HASTEWARD_CLUSTER
-              value: gatus-postgres
+              value: CHANGE_ME
             - name: HASTEWARD_NAMESPACE
-              value: gossip-stone
-            - name: HASTEWARD_INSTANCE
-              value: "2"
-            - name: HASTEWARD_DEADLOCK_RECOVER
-              value: "true"
+              value: CHANGE_ME
             - name: HASTEWARD_BACKUPS_PATH
               value: /backups
             - name: RESTIC_PASSWORD
