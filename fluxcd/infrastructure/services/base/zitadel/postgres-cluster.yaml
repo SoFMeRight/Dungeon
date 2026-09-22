@@ -45,6 +45,15 @@ spec:
       min_wal_size: "512MB"
       max_wal_size: "2GB"
       max_slot_wal_keep_size: "800MB"
+      # A replica reports which row versions its running queries still need, so the
+      # primary does not vacuum them away mid-query. Without it a read on a replica
+      # that outlives max_standby_streaming_delay (30s) is cancelled with "User query
+      # might have needed to see row versions that must be removed" — which is what
+      # stops a pg_dump of eventstore.events2 from ever completing on a replica.
+      # The primary retains dead tuples only for the life of an actual replica query,
+      # and a disconnected replica sends no feedback, so the bloat exposure is the
+      # duration of the query rather than of the outage.
+      hot_standby_feedback: "on"
 
   resources:
     requests:
