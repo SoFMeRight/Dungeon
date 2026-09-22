@@ -32,7 +32,7 @@ spec:
 
   instances: 3
 
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.11
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.11-system-trixie
 
   postgresql:
     parameters:
