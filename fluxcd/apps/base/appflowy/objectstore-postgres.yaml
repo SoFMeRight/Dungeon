@@ -1,0 +1,36 @@
+# Where appflowy-postgres archives. This used to live inline under the cluster's
+# backup.barmanObjectStore; the plugin reads it from here instead and the cluster
+# refers to it by name. destinationPath and endpointURL are supplied by the
+# environment overlay, as they were before.
+#
+# serverName is left unset so it keeps defaulting to the cluster name, which is what
+# the existing archive is keyed on. Setting it would point the plugin at an empty
+# prefix and strand every backup taken so far.
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: appflowy-postgres-store
+spec:
+  retentionPolicy: "30d"
+  configuration:
+    s3Credentials:
+      accessKeyId:
+        name: appflowy-postgres-backup-s3
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: appflowy-postgres-backup-s3
+        key: SECRET_ACCESS_KEY
+    wal:
+      compression: gzip
+    data:
+      compression: gzip
+  # The plugin runs this sidecar in every instance pod. Unset it and the container
+  # lands in BestEffort inside an otherwise bounded pod.
+  instanceSidecarConfiguration:
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "50m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"

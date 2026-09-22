@@ -10,6 +10,7 @@ resources:
   - externalsecret.yaml
   # Database
   - postgres-cluster.yaml
+  - objectstore-postgres.yaml
   - postgres-credentials.yaml
   # Cache
   - redis-configmap.yaml

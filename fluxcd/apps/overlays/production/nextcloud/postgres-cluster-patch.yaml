@@ -49,8 +49,3 @@ spec:
   storage:
     storageClass: ceph-rbd
     size: 16Gi
-
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://optcp/dungeon/cnpg/nextcloud
-      endpointURL: http://172.22.150.101:8333

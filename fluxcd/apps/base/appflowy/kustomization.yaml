@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - serviceaccounts.yaml
   - postgres-cluster.yaml
+  - objectstore-postgres.yaml
   - postgres-databases.yaml
   - statefulset-redis.yaml
   - deployment-gotrue.yaml

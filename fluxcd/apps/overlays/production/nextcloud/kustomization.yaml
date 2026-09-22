@@ -17,6 +17,7 @@ patches:
   - path: aux-configmap-patch.yaml
   - path: externalsecret-patch.yaml
   - path: postgres-cluster-patch.yaml
+  - path: objectstore-postgres-patch.yaml
   - path: postgres-credentials-patch.yaml
   - path: redis-replication-patch.yaml
   - path: externalsecret-redis-patch.yaml

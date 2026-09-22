@@ -17,6 +17,10 @@ patches:
     target:
       kind: Cluster
       name: calcom-postgres
+  - path: objectstore-postgres-patch.yaml
+    target:
+      kind: ObjectStore
+      name: calcom-postgres-store
   - path: externalsecret-patch.yaml
     target:
       kind: ExternalSecret

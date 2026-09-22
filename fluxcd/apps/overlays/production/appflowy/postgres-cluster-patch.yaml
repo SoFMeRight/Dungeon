@@ -59,8 +59,3 @@ spec:
   storage:
     storageClass: ceph-rbd
     size: 20Gi
-
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://optcp/dungeon/cnpg/appflowy
-      endpointURL: http://172.22.150.101:8333

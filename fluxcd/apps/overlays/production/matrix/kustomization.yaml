@@ -15,6 +15,7 @@ resources:
 patches:
   - path: externalsecret-patch.yaml
   - path: postgres-cluster-patch.yaml
+  - path: objectstore-postgres-patch.yaml
   - path: statefulset-synapse-patch.yaml
   - path: deployment-mas-patch.yaml
   - path: deployment-element-patch.yaml

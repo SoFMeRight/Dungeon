@@ -5,6 +5,7 @@ resources:
   - serviceaccounts.yaml
   - externalsecret.yaml
   - postgres-cluster.yaml
+  - objectstore-postgres.yaml
   - postgres-databases.yaml
   - configmap-synapse.yaml
   - statefulset-synapse.yaml

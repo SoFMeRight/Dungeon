@@ -9,6 +9,7 @@ resources:
   - externalsecret-postgres-backup.yaml
 patches:
   - path: postgres-cluster-patch.yaml
+  - path: objectstore-postgres-patch.yaml
   - path: statefulset-redis-patch.yaml
   - path: deployment-gotrue-patch.yaml
   - path: deployment-appflowy-cloud-patch.yaml

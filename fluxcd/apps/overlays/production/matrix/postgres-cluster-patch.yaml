@@ -44,8 +44,3 @@ spec:
     # Retain, like every other class here except ceph-rbd-delete.
     storageClass: ceph-rbd
     size: 20Gi
-
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://outspokekin/dungeon/cnpg/matrix
-      endpointURL: http://172.22.150.101:8333
