@@ -5,49 +5,111 @@ metadata:
 data:
   recyclarr.yml: |
     # yaml-language-server: $schema=https://schemas.recyclarr.dev/v8/config-schema.json
-    # Inlined TRaSH composite templates (Recyclarr v8 removed official include-templates),
-    # plus Kai's tuning. reset_unmatched_scores restores disciplined TRaSH scores (undoes the
-    # old x265=30000 manual over-scoring) and gives custom formats their real names back.
+    # Kai's download policy. ONE profile per app, ONE set of preferences everywhere:
+    #   prefer Bluray -> fail over to WEB (source is a preference, NEVER a size lever),
+    #   HEVC, DV/HDR10, Atmos/TrueHD/DTS-X object audio, English + original language,
+    #   all resolutions allowed. Nothing is ever re-encoded — these just pick which existing
+    #   release to grab.
+    #
+    # SIZE is controlled ENTIRELY by the per-resolution Min/Preferred/Max in Radarr/Sonarr >
+    # Quality (the only place the tools enforce size — it is global per quality tier, not per
+    # profile). Same band for every source tier at a given resolution, so Bluray vs WEB never
+    # changes the size. Bands (MB/min ~ Mbps):
+    #   2160p  45 / 75 / 165   (floor 6 / compact-default 10 / premium ceiling 22)
+    #   1080p  30 / 45 / 90    (4 / 6 / 12)
+    #   720p   15 / 22 / 45    (2 / 3 / 6)
+    #   Min = degradation floor (reject below). Preferred = the compact everyday target the apps
+    #   aim for. Max = premium ceiling / headroom for a hand-grabbed treasure. Remux is capped to
+    #   the same band so a bloated remux is auto-rejected.
+    #
+    # Recyclarr's quality_definition is intentionally OMITTED so it never overwrites those caps.
     # Keys via ESO (RADARR_API_KEY / SONARR_API_KEY).
-    # Rationale + calibration: dungeon-scratchpad/servarr/servarr-media-download-prefences.md
 
     radarr:
-      # TRaSH "UHD Bluray + WEB"
       movies:
         base_url: http://downloadarrs.swift-sail.svc.cluster.local:7878
         api_key: !env_var RADARR_API_KEY
-        quality_definition:
-          type: movie
         quality_profiles:
-          - trash_id: 64fb5f9858489bdac2af690e27c8f42f  # UHD Bluray + WEB
+          # TRaSH "UHD Bluray + WEB" base (keeps all the UHD custom-format prefs: DV/HDR,
+          # TrueHD Atmos, DTS-X, HEVC). Its stock qualities are 2160p-only, so override to
+          # prefer Bluray -> WEB across 2160p/1080p/720p (4K preferred, 1080p fallback), no remux.
+          - trash_id: 64fb5f9858489bdac2af690e27c8f42f
+            name: "Standard Quality"
             reset_unmatched_scores:
               enabled: true
+            upgrade:
+              allowed: true
+              until_quality: "Bluray-2160p"
+              until_score: 10000
+            qualities:
+              - name: "Bluray-2160p"
+              - name: "WEB 2160p"
+                qualities: [WEBRip-2160p, WEBDL-2160p]
+              - name: "Bluray-1080p"
+              - name: "WEB 1080p"
+                qualities: [WEBRip-1080p, WEBDL-1080p]
+              - name: "Bluray-720p"
+              - name: "WEB 720p"
+                qualities: [WEBRip-720p, WEBDL-720p]
         custom_format_groups:
           add:
             - trash_id: ff204bbcecdd487d1cefcefdbf0c278d  # [Optional] Golden Rule UHD
             - trash_id: a3ac6af01d78e4f21fcb75f601ac96df  # [Unwanted] Unwanted Formats
-        # NOTE (bitrate cap): after first sync, set Bluray/WEBDL/Remux-2160p Max to
-        # ~225 MB/min (~30 Mbps) in Radarr > Quality (TRaSH movie def doesn't hard-cap this).
 
     sonarr:
-      # One Sonarr server (downloadarrs) => one instance with BOTH profiles. Recyclarr skips
-      # multiple instances that share a base_url, so general TV + anime live in one instance.
       tv:
         base_url: http://downloadarrs.swift-sail.svc.cluster.local:8989
         api_key: !env_var SONARR_API_KEY
-        quality_definition:
-          type: series
         quality_profiles:
-          # General TV — prefer 4K (tighter bitrate than movies via the series quality def +
-          # a post-sync 2160p cap in Sonarr > Quality).
-          - trash_id: d1498e7d189fbe6c7110ceaabb7473e6  # WEB-2160p
+          # General TV — WEB-2160p base (keeps CF-compatibility + HDR/audio/codec scoring),
+          # qualities overridden to prefer Bluray -> WEB across all resolutions, no remux.
+          - trash_id: d1498e7d189fbe6c7110ceaabb7473e6
+            name: "Standard Quality"
             reset_unmatched_scores:
               enabled: true
-          # Anime — Jellyseerr auto-routes anime requests here once its Anime Quality Profile
-          # is set to [Anime] Remux-1080p (Anime Series Type = Anime).
-          - trash_id: 20e0fc959f1f1704bed501f23bdae76f  # [Anime] Remux-1080p
+            upgrade:
+              allowed: true
+              until_quality: "Bluray-2160p"
+              until_score: 10000
+            qualities:
+              - name: "Bluray-2160p"
+              - name: "WEB 2160p"
+                qualities: [WEBRip-2160p, WEBDL-2160p]
+              - name: "HDTV-2160p"
+              - name: "Bluray-1080p"
+              - name: "WEB 1080p"
+                qualities: [WEBRip-1080p, WEBDL-1080p]
+              - name: "HDTV-1080p"
+              - name: "Bluray-720p"
+              - name: "WEB 720p"
+                qualities: [WEBRip-720p, WEBDL-720p]
+              - name: "HDTV-720p"
+          # Anime — same idea (prefer Bluray -> WEB, all res, no remux) but on the [Anime]
+          # base so it keeps the anime-sonarr scoring (BD/Web tier release-group rankings)
+          # + dual audio.
+          - trash_id: 20e0fc959f1f1704bed501f23bdae76f
+            name: "[Anime] Standard"
             reset_unmatched_scores:
               enabled: true
+            upgrade:
+              allowed: true
+              until_quality: "Bluray-2160p"
+              until_score: 10000
+            qualities:
+              - name: "Bluray-2160p"
+              - name: "WEB 2160p"
+                qualities: [WEBRip-2160p, WEBDL-2160p]
+              - name: "Bluray-1080p"
+              - name: "WEB 1080p"
+                qualities: [HDTV-1080p, WEBRip-1080p, WEBDL-1080p]
+              - name: "Bluray-720p"
+              - name: "WEB 720p"
+                qualities: [HDTV-720p, WEBRip-720p, WEBDL-720p]
+              - name: "Bluray-480p"
+              - name: "WEB 480p"
+                qualities: [WEBRip-480p, WEBDL-480p]
+              - name: "DVD"
+              - name: "SDTV"
         custom_format_groups:
           add:
             - trash_id: e3f37512790f00d0e89e54fe5e790d1c  # [Optional] Golden Rule UHD
@@ -55,10 +117,9 @@ data:
             - trash_id: 85fae4a2294965b75710ef2989c850eb  # [Streaming Services] HD/UHD boost
             - trash_id: 59c3af66780d08332fdc64e68297098f  # [Unwanted] Unwanted Formats
         custom_formats:
-          # Bump Anime Dual Audio so dub + original(+subs) wins for shared watching.
-          # Positive score = preference, never a reject (sub-only still grabs as fallback).
+          # Bump Anime Dual Audio so dub + original(+subs) wins (positive score, never a reject).
           - trash_ids:
               - 418f50b10f1907201b6cfdf881f467b7  # Anime Dual Audio
             assign_scores_to:
-              - name: "[Anime] Remux-1080p"
+              - name: "[Anime] Standard"
                 score: 800
