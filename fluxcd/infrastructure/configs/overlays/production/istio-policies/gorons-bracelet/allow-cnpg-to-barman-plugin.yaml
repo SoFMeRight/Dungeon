@@ -5,7 +5,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: barman-cloud
+      app.kubernetes.io/name: plugin-barman-cloud
   action: ALLOW
   rules:
     - from:

@@ -95,7 +95,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      app: barman-cloud
+      app.kubernetes.io/name: plugin-barman-cloud
   ingress:
     - fromEndpoints:
         - matchLabels:
