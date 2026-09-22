@@ -127,16 +127,22 @@ spec:
       containers:
         - name: hasteward
           image: docker.io/prplanit/hasteward:latest-dev
-          # --- EDIT SUBCOMMAND: triage, repair, backup, restore ---
-          args: ["repair"]
+          # --- EDIT SUBCOMMAND: triage, repair, backup, restore, prune-wal ---
+          # --dry-run stays an arg: it is the one flag without an env binding on
+          # released images, so HASTEWARD_DRY_RUN is silently ignored there.
+          args: ["prune-wal", "--deadlock-recover"]
           # --- EDIT THESE ENV VARS PER RUN ---
           env:
             - name: HASTEWARD_ENGINE
-              value: galera
+              value: cnpg
             - name: HASTEWARD_CLUSTER
-              value: kimai-mariadb
+              value: gatus-postgres
             - name: HASTEWARD_NAMESPACE
-              value: temple-of-time
+              value: gossip-stone
+            - name: HASTEWARD_INSTANCE
+              value: "2"
+            - name: HASTEWARD_DEADLOCK_RECOVER
+              value: "true"
             - name: HASTEWARD_BACKUPS_PATH
               value: /backups
             - name: RESTIC_PASSWORD
