@@ -17,7 +17,7 @@ spec:
   smartShutdownTimeout: 10
   stopDelay: 60
   instances: 3
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.11
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
   primaryUpdateStrategy: unsupervised
   # The cluster runs in a deny-default network regime (cilium + istio ambient). This
   # infrastructure-contract label is what lets the CNPG operator reach each instance's
