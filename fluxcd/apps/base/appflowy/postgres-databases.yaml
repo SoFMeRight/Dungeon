@@ -1,0 +1,19 @@
+# The database itself is created by initdb; this adopts it so the extension set is
+# declared rather than left at whatever the bootstrap SQL installed. initdb only runs
+# once, so without this an extension can never be moved off its bootstrap version.
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: appflowy-db
+spec:
+  cluster:
+    name: appflowy-postgres
+  name: appflowy
+  owner: appflowy
+  encoding: UTF8
+  localeCType: C
+  localeCollate: C
+  extensions:
+    - name: vector
+      ensure: present
+      version: "0.8.6"
