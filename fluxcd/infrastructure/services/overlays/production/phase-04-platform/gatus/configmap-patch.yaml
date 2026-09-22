@@ -11,3 +11,6 @@ data:
       title: PrecisionPlanIT Status
       header: Service Status
       logo: https://precisionplanit.com/img/favicon.png
+      # Opens on the grouped view. A browser that already chose a sort keeps its own —
+      # gatus applies this to visitors with no stored preference, it does not enforce it.
+      default-sort-by: group
