@@ -18,7 +18,7 @@ spec:
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 
-  imageName: ghcr.io/cloudnative-pg/postgresql:16.15-system-trixie
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
 
   storage:
     storageClass: ceph-rbd
