@@ -22,7 +22,7 @@ spec:
       cpu: "1000m"
 
   instances: 3
-  imageName: ghcr.io/cloudnative-pg/postgresql:16.15
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.15-system-trixie
 
   enableSuperuserAccess: false
   enablePDB: true

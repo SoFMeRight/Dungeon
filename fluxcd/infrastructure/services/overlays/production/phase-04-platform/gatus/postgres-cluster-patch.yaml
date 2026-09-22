@@ -18,7 +18,7 @@ spec:
   # converges and chest-001's capacity returns.
   instances: 2
 
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.11
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.11-system-trixie
 
   # Replicas must land on different nodes or a drain takes several at once.
   affinity:
