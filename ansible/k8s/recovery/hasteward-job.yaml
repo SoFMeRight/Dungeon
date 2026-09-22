@@ -127,6 +127,12 @@ spec:
       containers:
         - name: hasteward
           image: docker.io/prplanit/hasteward:latest-dev
+          # latest-dev MOVES. Kubernetes defaults imagePullPolicy to Always only for a
+          # tag literally named ":latest", so this would otherwise be IfNotPresent and
+          # each node would pin whatever it cached first — a recovery run silently
+          # executing an arbitrary old build. Observed: a fix published minutes earlier
+          # was absent from the run, and the failure it fixed reappeared unchanged.
+          imagePullPolicy: Always
           # --- EDIT SUBCOMMAND: triage, repair, backup, restore, prune-wal ---
           # --dry-run stays an arg: it is the one flag without an env binding on
           # released images, so HASTEWARD_DRY_RUN is silently ignored there.
