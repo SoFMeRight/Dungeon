@@ -1,0 +1,23 @@
+# Adopts the database initdb created, so its extension set is declared rather than
+# frozen at whatever the bootstrap SQL installed. initdb runs once at cluster creation,
+# so without this an extension can never be moved off its bootstrap version.
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: gitlab-db
+spec:
+  cluster:
+    name: gitlab-postgresql
+  name: gitlabhq_production
+  owner: gitlab
+  encoding: UTF8
+  localeCType: C
+  localeCollate: C
+  extensions:
+    - name: btree_gist
+      ensure: present
+      version: "1.8"
+    - name: pg_trgm
+      ensure: present
+      version: "1.6"

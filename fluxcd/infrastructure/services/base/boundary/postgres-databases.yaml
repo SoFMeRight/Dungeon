@@ -1,0 +1,26 @@
+# Adopts the database initdb created, so its extension set is declared rather than
+# frozen at whatever the bootstrap SQL installed. initdb runs once at cluster creation,
+# so without this an extension can never be moved off its bootstrap version.
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: boundary-db
+spec:
+  cluster:
+    name: boundary-postgres
+  name: boundary
+  owner: boundary
+  encoding: UTF8
+  localeCType: C
+  localeCollate: C
+  extensions:
+    - name: btree_gist
+      ensure: present
+      version: "1.8"
+    - name: citext
+      ensure: present
+      version: "1.8"
+    - name: pgcrypto
+      ensure: present
+      version: "1.4"

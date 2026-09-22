@@ -7,6 +7,7 @@ resources:
   - externalsecret-credentials.yaml
   - externalsecret-praefect.yaml
   - cluster.yaml
+  - postgres-databases.yaml
   - configmap-praefect-init-sql.yaml
   - serviceaccount-praefect-db-init.yaml
   - job-praefect-db-init.yaml
