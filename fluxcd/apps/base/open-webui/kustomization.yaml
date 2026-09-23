@@ -7,6 +7,7 @@ resources:
   - externalsecret.yaml
   - postgres-cluster.yaml
   - objectstore-postgres.yaml
+  - objectstore-postgres-prior.yaml
   - externalsecret-postgres.yaml
   - redis-configmap.yaml
   - redis-statefulset.yaml

@@ -36,7 +36,10 @@ spec:
       plugin:
         name: barman-cloud.cloudnative-pg.io
         parameters:
-          barmanObjectName: open-webui-postgres-store
+          # The archive as it stood before the split, read in place. Not the store
+          # this cluster archives to: barman rejects writing a lineage it restored
+          # from, so source and destination are deliberately different objects.
+          barmanObjectName: open-webui-postgres-prior
           serverName: open-webui-postgres
 
   storage:

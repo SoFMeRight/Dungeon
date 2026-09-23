@@ -3,9 +3,10 @@
 # refers to it by name. destinationPath and endpointURL are supplied by the
 # environment overlay, as they were before.
 #
-# serverName is left unset so it keeps defaulting to the cluster name, which is what
-# the existing archive is keyed on. Setting it would point the plugin at an empty
-# prefix and strand every backup taken so far.
+# serverName is left unset so it defaults to the cluster name. barman refuses to
+# archive into a server whose archive already holds WAL, so this bucket must be
+# empty when the cluster starts writing to it; a restore reads its source from the
+# externalCluster in the Cluster spec, which names the old location explicitly.
 apiVersion: barmancloud.cnpg.io/v1
 kind: ObjectStore
 metadata:
