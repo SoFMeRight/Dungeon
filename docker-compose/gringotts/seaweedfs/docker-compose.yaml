@@ -55,19 +55,31 @@ services:
 # dataset, so this is one artifact: nothing to place by hand before `up`, and no
 # way for the compose file and the identity file it depends on to drift apart.
 #
-# LAYOUT — <tenant>/<cluster>/<purpose>[/<app>]. The first segment is the bucket,
-# the rest is prefix. Each grant ends in /* : SeaweedFS matches the action against
-# the full object path, and a prefix without the wildcard matches nothing at all —
-# an identity scoped that way is denied even its own objects. The /* form is used
-# rather than a bare * so that <app> cannot also match <app>-something:
+# LAYOUT — a CNPG archive gets its own bucket, named for the consumer, and the
+# identity is scoped to that bucket rather than to a prefix inside a shared one:
 #
-#   prplanit/dungeon/velero                 velero
-#   prplanit/dungeon/cnpg/gitlab            gitlab CNPG archive
-#   optcp/dungeon/cnpg/nextcloud            nextcloud CNPG archive
+#   prplanit-dungeon-cnpg-gitlab            gitlab CNPG archive
+#   optcp-dungeon-cnpg-nextcloud            nextcloud CNPG archive
 #
-# One identity per consumer, each scoped to its own prefix and nothing else.
-# None is Admin. Live data is a separate concern entirely — nextcloud and gitlab
-# store objects on the in-cluster Ceph RGW, not here.
+# Prefix scoping cannot work for these. A grant written "Read:bucket/prefix/*"
+# matches only object paths under that prefix, and restore does not start with an
+# object: barman-cloud-check-wal-archive calls HeadBucket first, which SeaweedFS
+# authorises as Read against the bucket alone (s3api_server.go routes
+# HeadBucketHandler with ACTION_READ; CanDo matches a non-wildcard action only
+# against "<Action>:<bucket>"). A prefix grant can never match that, so every
+# prefix-scoped identity could archive perfectly and never restore — which is how
+# it stood until it was tried.
+#
+# Granting Read on a shared bucket to make HeadBucket pass would let each
+# consumer read every other consumer's archive, so the bucket is the boundary
+# instead. One bucket, one identity, no overlap to reason about.
+#
+# The remaining prefix grants below are for consumers whose tools do not take
+# this path, so they keep the tighter scope.
+#
+# One identity per consumer. None is Admin except the provisioner. Live data is a
+# separate concern entirely — nextcloud and gitlab store objects on the
+# in-cluster Ceph RGW, not here.
 #
 # Keys are interpolated, never written here. Note that `${...}` resolves from the
 # stack environment (the Portainer stack's variables), NOT from env_file — that
@@ -118,10 +130,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GITLAB_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GITLAB_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/cnpg/gitlab/*",
-              "Write:prplanit/dungeon/cnpg/gitlab/*",
-              "List:prplanit/dungeon/cnpg/gitlab/*",
-              "Tagging:prplanit/dungeon/cnpg/gitlab/*"
+              "Read:prplanit-dungeon-cnpg-gitlab",
+              "Write:prplanit-dungeon-cnpg-gitlab",
+              "List:prplanit-dungeon-cnpg-gitlab",
+              "Tagging:prplanit-dungeon-cnpg-gitlab"
             ]
           },
           {
@@ -130,10 +142,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_CNPG_ZITADEL_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_ZITADEL_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/cnpg/zitadel/*",
-              "Write:prplanit/dungeon/cnpg/zitadel/*",
-              "List:prplanit/dungeon/cnpg/zitadel/*",
-              "Tagging:prplanit/dungeon/cnpg/zitadel/*"
+              "Read:prplanit-dungeon-cnpg-zitadel",
+              "Write:prplanit-dungeon-cnpg-zitadel",
+              "List:prplanit-dungeon-cnpg-zitadel",
+              "Tagging:prplanit-dungeon-cnpg-zitadel"
             ]
           },
           {
@@ -142,10 +154,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_CNPG_NETBIRD_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_NETBIRD_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/cnpg/netbird/*",
-              "Write:prplanit/dungeon/cnpg/netbird/*",
-              "List:prplanit/dungeon/cnpg/netbird/*",
-              "Tagging:prplanit/dungeon/cnpg/netbird/*"
+              "Read:prplanit-dungeon-cnpg-netbird",
+              "Write:prplanit-dungeon-cnpg-netbird",
+              "List:prplanit-dungeon-cnpg-netbird",
+              "Tagging:prplanit-dungeon-cnpg-netbird"
             ]
           },
           {
@@ -154,10 +166,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_CNPG_VAULTWARDEN_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_VAULTWARDEN_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/cnpg/vaultwarden/*",
-              "Write:prplanit/dungeon/cnpg/vaultwarden/*",
-              "List:prplanit/dungeon/cnpg/vaultwarden/*",
-              "Tagging:prplanit/dungeon/cnpg/vaultwarden/*"
+              "Read:prplanit-dungeon-cnpg-vaultwarden",
+              "Write:prplanit-dungeon-cnpg-vaultwarden",
+              "List:prplanit-dungeon-cnpg-vaultwarden",
+              "Tagging:prplanit-dungeon-cnpg-vaultwarden"
             ]
           },
           {
@@ -166,10 +178,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_CNPG_HARBOR_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_HARBOR_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/cnpg/harbor/*",
-              "Write:prplanit/dungeon/cnpg/harbor/*",
-              "List:prplanit/dungeon/cnpg/harbor/*",
-              "Tagging:prplanit/dungeon/cnpg/harbor/*"
+              "Read:prplanit-dungeon-cnpg-harbor",
+              "Write:prplanit-dungeon-cnpg-harbor",
+              "List:prplanit-dungeon-cnpg-harbor",
+              "Tagging:prplanit-dungeon-cnpg-harbor"
             ]
           },
           {
@@ -178,10 +190,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_CNPG_CALCOM_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_CALCOM_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/cnpg/calcom/*",
-              "Write:prplanit/dungeon/cnpg/calcom/*",
-              "List:prplanit/dungeon/cnpg/calcom/*",
-              "Tagging:prplanit/dungeon/cnpg/calcom/*"
+              "Read:prplanit-dungeon-cnpg-calcom",
+              "Write:prplanit-dungeon-cnpg-calcom",
+              "List:prplanit-dungeon-cnpg-calcom",
+              "Tagging:prplanit-dungeon-cnpg-calcom"
             ]
           },
           {
@@ -190,10 +202,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_CNPG_BOUNDARY_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_BOUNDARY_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/cnpg/boundary/*",
-              "Write:prplanit/dungeon/cnpg/boundary/*",
-              "List:prplanit/dungeon/cnpg/boundary/*",
-              "Tagging:prplanit/dungeon/cnpg/boundary/*"
+              "Read:prplanit-dungeon-cnpg-boundary",
+              "Write:prplanit-dungeon-cnpg-boundary",
+              "List:prplanit-dungeon-cnpg-boundary",
+              "Tagging:prplanit-dungeon-cnpg-boundary"
             ]
           },
           {
@@ -202,10 +214,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GRAFANA_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GRAFANA_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/cnpg/grafana/*",
-              "Write:prplanit/dungeon/cnpg/grafana/*",
-              "List:prplanit/dungeon/cnpg/grafana/*",
-              "Tagging:prplanit/dungeon/cnpg/grafana/*"
+              "Read:prplanit-dungeon-cnpg-grafana",
+              "Write:prplanit-dungeon-cnpg-grafana",
+              "List:prplanit-dungeon-cnpg-grafana",
+              "Tagging:prplanit-dungeon-cnpg-grafana"
             ]
           },
           {
@@ -214,10 +226,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GATUS_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GATUS_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/cnpg/gatus/*",
-              "Write:prplanit/dungeon/cnpg/gatus/*",
-              "List:prplanit/dungeon/cnpg/gatus/*",
-              "Tagging:prplanit/dungeon/cnpg/gatus/*"
+              "Read:prplanit-dungeon-cnpg-gatus",
+              "Write:prplanit-dungeon-cnpg-gatus",
+              "List:prplanit-dungeon-cnpg-gatus",
+              "Tagging:prplanit-dungeon-cnpg-gatus"
             ]
           },
           {
@@ -226,10 +238,10 @@ configs:
               { "accessKey": "${OPTCP_DUNGEON_CNPG_HOMARR_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_HOMARR_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:optcp/dungeon/cnpg/homarr/*",
-              "Write:optcp/dungeon/cnpg/homarr/*",
-              "List:optcp/dungeon/cnpg/homarr/*",
-              "Tagging:optcp/dungeon/cnpg/homarr/*"
+              "Read:optcp-dungeon-cnpg-homarr",
+              "Write:optcp-dungeon-cnpg-homarr",
+              "List:optcp-dungeon-cnpg-homarr",
+              "Tagging:optcp-dungeon-cnpg-homarr"
             ]
           },
           {
@@ -238,10 +250,10 @@ configs:
               { "accessKey": "${OPTCP_DUNGEON_CNPG_APPFLOWY_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_APPFLOWY_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:optcp/dungeon/cnpg/appflowy/*",
-              "Write:optcp/dungeon/cnpg/appflowy/*",
-              "List:optcp/dungeon/cnpg/appflowy/*",
-              "Tagging:optcp/dungeon/cnpg/appflowy/*"
+              "Read:optcp-dungeon-cnpg-appflowy",
+              "Write:optcp-dungeon-cnpg-appflowy",
+              "List:optcp-dungeon-cnpg-appflowy",
+              "Tagging:optcp-dungeon-cnpg-appflowy"
             ]
           },
           {
@@ -250,10 +262,10 @@ configs:
               { "accessKey": "${OPTCP_DUNGEON_CNPG_OPEN_WEBUI_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_OPEN_WEBUI_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:optcp/dungeon/cnpg/open-webui/*",
-              "Write:optcp/dungeon/cnpg/open-webui/*",
-              "List:optcp/dungeon/cnpg/open-webui/*",
-              "Tagging:optcp/dungeon/cnpg/open-webui/*"
+              "Read:optcp-dungeon-cnpg-open-webui",
+              "Write:optcp-dungeon-cnpg-open-webui",
+              "List:optcp-dungeon-cnpg-open-webui",
+              "Tagging:optcp-dungeon-cnpg-open-webui"
             ]
           },
           {
@@ -262,10 +274,10 @@ configs:
               { "accessKey": "${OUTSPOKEKIN_DUNGEON_CNPG_MATRIX_S3_ACCESS_KEY}", "secretKey": "${OUTSPOKEKIN_DUNGEON_CNPG_MATRIX_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:outspokekin/dungeon/cnpg/matrix/*",
-              "Write:outspokekin/dungeon/cnpg/matrix/*",
-              "List:outspokekin/dungeon/cnpg/matrix/*",
-              "Tagging:outspokekin/dungeon/cnpg/matrix/*"
+              "Read:outspokekin-dungeon-cnpg-matrix",
+              "Write:outspokekin-dungeon-cnpg-matrix",
+              "List:outspokekin-dungeon-cnpg-matrix",
+              "Tagging:outspokekin-dungeon-cnpg-matrix"
             ]
           },
           {
@@ -274,10 +286,10 @@ configs:
               { "accessKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:optcp/dungeon/cnpg/nextcloud/*",
-              "Write:optcp/dungeon/cnpg/nextcloud/*",
-              "List:optcp/dungeon/cnpg/nextcloud/*",
-              "Tagging:optcp/dungeon/cnpg/nextcloud/*"
+              "Read:optcp-dungeon-cnpg-nextcloud",
+              "Write:optcp-dungeon-cnpg-nextcloud",
+              "List:optcp-dungeon-cnpg-nextcloud",
+              "Tagging:optcp-dungeon-cnpg-nextcloud"
             ]
           }
         ]
