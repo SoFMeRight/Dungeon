@@ -1,0 +1,161 @@
+# Copies one CNPG archive from its prefix in a shared bucket into the bucket of
+# its own, so the cluster's identity can be scoped to a bucket rather than a
+# prefix. Applied per run: edit SRC and DST, apply, read the log, delete.
+#
+# Why the move at all: restore begins with barman-cloud-check-wal-archive, which
+# calls HeadBucket, and SeaweedFS authorises that as Read against the bucket
+# alone. A grant of the form "Read:bucket/prefix/*" can never match it, so a
+# prefix-scoped identity archives perfectly and can never restore.
+#
+# The copy is server side -- both ends are the same endpoint, so objects are not
+# pulled through this pod. It uses sync rather than cp, so a re-run after a
+# partial copy resumes instead of starting again, and it never passes --delete:
+# the source is left exactly as found.
+#
+# DESTINATIONS ARE OBJECT LOCKED. Anything written here is immutable for the
+# bucket's retention window, so a wrong DST cannot be cleaned up, only waited
+# out. Run once with DRY_RUN=true and read the plan before running it for real.
+#
+#   kubectl apply -f cnpg-archive-migrate-job.yaml
+#   kubectl -n fairy-bottle logs -f job/cnpg-archive-migrate
+#   kubectl -n fairy-bottle delete job cnpg-archive-migrate
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: cnpg-archive-migrate
+  namespace: fairy-bottle
+  labels:
+    app.kubernetes.io/name: cnpg-archive-migrate
+    app.kubernetes.io/component: job
+spec:
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cnpg-archive-migrate
+        # The provisioner reaches SeaweedFS on the NAS, which the egress policy
+        # gates by capability rather than by pod name.
+        policy.prplanit.com/cap.s3-nas: "true"
+        policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
+    spec:
+      # Kyverno refuses the default ServiceAccount in an ambient-mesh namespace.
+      # This one already exists for the nas-s3 setup Job and needs no Kubernetes
+      # permissions of its own -- the S3 credentials come from the secret below.
+      serviceAccountName: nas-s3-setup
+      restartPolicy: Never
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: migrate
+          image: amazon/aws-cli:2.32.9
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            # --- EDIT THESE TWO PER RUN ---
+            #
+            # SRC is the prefix as it stands today, with its trailing slash: sync
+            # copies what is below SRC, so omitting the slash silently changes the
+            # destination layout. DST is the new bucket and nothing more -- the
+            # serverName directory beneath SRC becomes the first level inside it,
+            # which is what keeps the archive addressable under the same
+            # serverName and the recovery window continuous.
+            #
+            #   SRC s3://optcp/dungeon/cnpg/open-webui/
+            #   DST s3://optcp-dungeon-cnpg-open-webui
+            - name: SRC
+              value: "s3://CHANGE_ME/dungeon/cnpg/CHANGE_ME/"
+            - name: DST
+              value: "s3://CHANGE_ME"
+            # Leave true until the plan reads correctly. The destination is
+            # immutable, so this is the only chance to be wrong for free.
+            - name: DRY_RUN
+              value: "true"
+            - name: HOME
+              value: /tmp
+            - name: S3_ENDPOINT
+              value: http://172.22.150.101:8333
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: nas-s3-provisioner-credentials
+                  key: S3_ACCESS_KEY
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: nas-s3-provisioner-credentials
+                  key: S3_SECRET_KEY
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -euo pipefail
+              A="aws --endpoint-url $S3_ENDPOINT"
+
+              case "$SRC$DST" in
+                *CHANGE_ME*) echo "ERROR: SRC and DST are still placeholders"; exit 2 ;;
+              esac
+              case "$SRC" in
+                */) ;;
+                *) echo "ERROR: SRC must end in / or sync will nest the archive one level deeper"; exit 2 ;;
+              esac
+
+              # Measured before anything is written, so the comparison afterwards
+              # is against what was actually there rather than what was expected.
+              read -r SRC_N SRC_B < <($A s3 ls --summarize --recursive "$SRC" \
+                | awk '/Total Objects:/{n=$3} /Total Size:/{b=$3} END{print n+0, b+0}')
+              echo "source      $SRC"
+              echo "            $SRC_N objects, $SRC_B bytes"
+              echo "destination $DST"
+
+              if [ "$SRC_N" -eq 0 ]; then
+                echo "ERROR: source is empty -- check the prefix"; exit 2
+              fi
+
+              if [ "$DRY_RUN" = "true" ]; then
+                echo
+                echo "DRY RUN -- copying nothing. Objects that would be written:"
+                $A s3 sync "$SRC" "$DST" --dryrun | head -20
+                echo "..."
+                echo "$($A s3 sync "$SRC" "$DST" --dryrun | wc -l) objects would be copied."
+                echo "Set DRY_RUN=false to perform the copy."
+                exit 0
+              fi
+
+              echo
+              echo "copying (server side, source untouched, no --delete)"
+              $A s3 sync "$SRC" "$DST"
+
+              # An archive that is short even one WAL segment is not restorable,
+              # so the copy is only complete if the object count matches exactly.
+              read -r DST_N DST_B < <($A s3 ls --summarize --recursive "$DST/" \
+                | awk '/Total Objects:/{n=$3} /Total Size:/{b=$3} END{print n+0, b+0}')
+              echo
+              echo "source      $SRC_N objects, $SRC_B bytes"
+              echo "destination $DST_N objects, $DST_B bytes"
+
+              if [ "$DST_N" -lt "$SRC_N" ]; then
+                echo "FAILED: destination is short $(( SRC_N - DST_N )) objects"
+                exit 1
+              fi
+              if [ "$DST_B" -lt "$SRC_B" ]; then
+                echo "FAILED: destination is short $(( SRC_B - DST_B )) bytes"
+                exit 1
+              fi
+              echo "OK -- destination holds the whole archive"
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
