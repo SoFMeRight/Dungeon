@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: zitadel-login-v2
-          image: ghcr.io/zitadel/zitadel-login:v4.17.3
+          image: ghcr.io/zitadel/zitadel-login:v4.19.1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
