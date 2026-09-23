@@ -14,12 +14,25 @@ spec:
       max_connections: "PLACEHOLDER_MAX_CONNECTIONS"
       max_slot_wal_keep_size: "800MB"
 
+  # Restored from the object store rather than initialised empty. CNPG cannot shrink a
+  # PVC in place, so reducing the volume means recreating the cluster, and recreating it
+  # means bootstrapping from the archive. serverName names the lineage being read, which
+  # is the cluster's own: the restore continues the same recovery window rather than
+  # starting a new one.
+  #
+  # bootstrap.recovery does NOT enable archiving. The plugins stanza below is what keeps
+  # the restored cluster shipping WAL; without it the restore comes up unarchived.
   bootstrap:
-    initdb:
-      database: PLACEHOLDER_DB_NAME
-      owner: PLACEHOLDER_DB_USER
-      secret:
-        name: open-webui-postgres-credentials
+    recovery:
+      source: open-webui-archive
+
+  externalClusters:
+    - name: open-webui-archive
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: open-webui-postgres-store
+          serverName: open-webui-postgres
 
   storage:
     storageClass: PLACEHOLDER_STORAGE_CLASS

@@ -39,13 +39,8 @@ spec:
       shared_buffers: "256MB"
       max_connections: "100"
 
-  bootstrap:
-    initdb:
-      database: openwebui
-      owner: openwebui
-
   enableSuperuserAccess: true
 
   storage:
     storageClass: ceph-rbd
-    size: 10Gi
+    size: 4Gi
