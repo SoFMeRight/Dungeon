@@ -4,5 +4,5 @@ metadata:
   name: matrix-postgres-store
 spec:
   configuration:
-    destinationPath: s3://outspokekin/dungeon/cnpg/matrix
+    destinationPath: s3://outspokekin-dungeon-cnpg-matrix
     endpointURL: http://172.22.150.101:8333

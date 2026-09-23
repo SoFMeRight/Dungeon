@@ -4,5 +4,5 @@ metadata:
   name: homarr-postgres-store
 spec:
   configuration:
-    destinationPath: s3://optcp/dungeon/cnpg/homarr
+    destinationPath: s3://optcp-dungeon-cnpg-homarr
     endpointURL: http://172.22.150.101:8333

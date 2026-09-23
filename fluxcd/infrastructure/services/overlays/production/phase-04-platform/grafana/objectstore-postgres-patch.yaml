@@ -4,5 +4,5 @@ metadata:
   name: grafana-postgres-store
 spec:
   configuration:
-    destinationPath: s3://prplanit/dungeon/cnpg/grafana
+    destinationPath: s3://prplanit-dungeon-cnpg-grafana
     endpointURL: http://172.22.150.101:8333

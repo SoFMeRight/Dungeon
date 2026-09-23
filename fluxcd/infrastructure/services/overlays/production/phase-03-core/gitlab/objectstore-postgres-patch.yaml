@@ -4,5 +4,5 @@ metadata:
   name: gitlab-postgresql-store
 spec:
   configuration:
-    destinationPath: s3://prplanit/dungeon/cnpg/gitlab
+    destinationPath: s3://prplanit-dungeon-cnpg-gitlab
     endpointURL: http://172.22.150.101:8333

@@ -4,5 +4,5 @@ metadata:
   name: harbor-postgres-store
 spec:
   configuration:
-    destinationPath: s3://prplanit/dungeon/cnpg/harbor
+    destinationPath: s3://prplanit-dungeon-cnpg-harbor
     endpointURL: http://172.22.150.101:8333

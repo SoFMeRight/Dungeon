@@ -4,5 +4,5 @@ metadata:
   name: appflowy-postgres-store
 spec:
   configuration:
-    destinationPath: s3://optcp/dungeon/cnpg/appflowy
+    destinationPath: s3://optcp-dungeon-cnpg-appflowy
     endpointURL: http://172.22.150.101:8333

@@ -4,5 +4,5 @@ metadata:
   name: nextcloud-postgres-store
 spec:
   configuration:
-    destinationPath: s3://optcp/dungeon/cnpg/nextcloud
+    destinationPath: s3://optcp-dungeon-cnpg-nextcloud
     endpointURL: http://172.22.150.101:8333

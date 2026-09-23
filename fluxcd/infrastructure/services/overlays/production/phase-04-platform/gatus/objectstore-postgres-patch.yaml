@@ -4,5 +4,5 @@ metadata:
   name: gatus-postgres-store
 spec:
   configuration:
-    destinationPath: s3://prplanit/dungeon/cnpg/gatus
+    destinationPath: s3://prplanit-dungeon-cnpg-gatus
     endpointURL: http://172.22.150.101:8333

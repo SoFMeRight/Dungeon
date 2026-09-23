@@ -30,7 +30,7 @@ patches:
   - patch: |-
       - op: add
         path: /spec/configuration/destinationPath
-        value: s3://prplanit/dungeon/cnpg/netbird
+        value: s3://prplanit-dungeon-cnpg-netbird
       - op: add
         path: /spec/configuration/endpointURL
         value: http://172.22.150.101:8333
