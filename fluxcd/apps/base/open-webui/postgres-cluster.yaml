@@ -22,9 +22,14 @@ spec:
   #
   # bootstrap.recovery does NOT enable archiving. The plugins stanza below is what keeps
   # the restored cluster shipping WAL; without it the restore comes up unarchived.
+  # database and owner name what the restored cluster actually contains. Left unset
+  # they default to "app", and CNPG would then configure an application user against
+  # a database this archive has never held.
   bootstrap:
     recovery:
       source: open-webui-archive
+      database: PLACEHOLDER_DB_NAME
+      owner: PLACEHOLDER_DB_USER
 
   externalClusters:
     - name: open-webui-archive
