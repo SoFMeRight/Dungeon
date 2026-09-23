@@ -27,8 +27,3 @@ spec:
       # Consistent with other CNPG clusters (vaultwarden, calcom, zitadel)
       wal_keep_size: "512MB"
       max_slot_wal_keep_size: "1600MB"
-
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://prplanit/dungeon/cnpg/gitlab
-      endpointURL: http://172.22.150.101:8333

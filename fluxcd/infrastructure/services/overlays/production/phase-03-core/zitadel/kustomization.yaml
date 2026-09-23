@@ -20,6 +20,10 @@ patches:
     target:
       kind: Cluster
       name: zitadel-postgres
+  - path: objectstore-postgres-patch.yaml
+    target:
+      kind: ObjectStore
+      name: zitadel-postgres-store
   - path: service-patch.yaml
     target:
       kind: Service

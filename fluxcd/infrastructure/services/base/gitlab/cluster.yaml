@@ -51,17 +51,11 @@ spec:
   # Archive to the NAS object store. destinationPath and endpointURL are supplied
   # by the environment overlay: the path carries the cluster name and the endpoint
   # is that environment's store. Everything else is the same wherever this runs.
-  backup:
-    barmanObjectStore:
-      s3Credentials:
-        accessKeyId:
-          name: gitlab-s3-credentials
-          key: ACCESS_KEY_ID
-        secretAccessKey:
-          name: gitlab-s3-credentials
-          key: SECRET_ACCESS_KEY
-      wal:
-        compression: gzip
-      data:
-        compression: gzip
-    retentionPolicy: "30d"
+  # Archiving is done by the barman-cloud plugin, configured in the ObjectStore of
+  # the same name. isWALArchiver makes this plugin the one that ships WAL; exactly
+  # one plugin may claim it.
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: gitlab-postgresql-store

@@ -33,8 +33,3 @@ spec:
     parameters:
       min_wal_size: "256MB"
       max_wal_size: "1GB"
-
-  backup:
-    barmanObjectStore:
-      destinationPath: s3://prplanit/dungeon/cnpg/zitadel
-      endpointURL: http://172.22.150.101:8333

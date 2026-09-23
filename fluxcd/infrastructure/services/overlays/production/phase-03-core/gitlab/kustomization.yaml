@@ -16,6 +16,10 @@ patches:
     target:
       kind: Cluster
       name: gitlab-postgresql
+  - path: objectstore-postgres-patch.yaml
+    target:
+      kind: ObjectStore
+      name: gitlab-postgresql-store
   - path: externalsecret-credentials-patch.yaml
     target:
       kind: ExternalSecret
