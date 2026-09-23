@@ -4,5 +4,10 @@ metadata:
   name: open-webui-postgres-store
 spec:
   configuration:
-    destinationPath: s3://optcp/dungeon/cnpg/open-webui
+    # The archive has its own bucket so the identity can be scoped to a bucket
+    # rather than a prefix: restore calls HeadBucket before it reads anything, and
+    # a prefix grant can never satisfy that. serverName is unset and so still
+    # defaults to the cluster name, which is the directory the archive was copied
+    # into, so the recovery window continues rather than starting over.
+    destinationPath: s3://optcp-dungeon-cnpg-open-webui
     endpointURL: http://172.22.150.101:8333
