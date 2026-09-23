@@ -124,10 +124,19 @@ spec:
 
               if [ "$DRY_RUN" = "true" ]; then
                 echo
-                echo "DRY RUN -- copying nothing. Objects that would be written:"
-                $A s3 sync "$SRC" "$DST" --dryrun | head -20
-                echo "..."
-                echo "$($A s3 sync "$SRC" "$DST" --dryrun | wc -l) objects would be copied."
+                echo "DRY RUN -- copying nothing."
+                # Written to a file rather than piped: under pipefail a reader that
+                # closes early (head) surfaces the writer's SIGPIPE as a job
+                # failure, and the plan is also wanted whole for the count.
+                $A s3 sync "$SRC" "$DST" --dryrun > /tmp/plan.txt
+                PLAN_N=$(wc -l < /tmp/plan.txt)
+                head -20 /tmp/plan.txt
+                # An if, not "[ ] && echo": under errexit a false test ends the
+                # && list with status 1 and takes the script with it, so a plan
+                # of twenty objects or fewer would fail the job.
+                if [ "$PLAN_N" -gt 20 ]; then echo "  ... $(( PLAN_N - 20 )) more"; fi
+                echo
+                echo "$PLAN_N objects would be copied."
                 echo "Set DRY_RUN=false to perform the copy."
                 exit 0
               fi
