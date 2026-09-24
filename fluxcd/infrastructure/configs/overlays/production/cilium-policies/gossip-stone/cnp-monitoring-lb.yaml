@@ -29,7 +29,7 @@ metadata:
   name: allow-nutify-lan
 spec:
   description: >-
-    LAN-only ingress to nutify (172.22.30.137) on 3493,5050,443/TCP.
+    LAN-only ingress to the nutify web UI (172.22.30.137) on 5050,443/TCP.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -45,8 +45,8 @@ spec:
             - "192.168.144.0/20"
       toPorts:
         - ports:
-            - port: "3493"
-              protocol: TCP
+            # 3493 removed: see the matching istio policy. upsd hands FSD to any
+            # master-rights client and its only credential is published in git.
             - port: "5050"
               protocol: TCP
             - port: "443"

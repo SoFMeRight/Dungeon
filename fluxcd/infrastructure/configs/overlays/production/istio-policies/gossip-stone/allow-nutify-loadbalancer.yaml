@@ -16,4 +16,14 @@ spec:
               - "192.168.0.0/16"
       to:
         - operation:
-            ports: ["3493", "5050", "443"]
+            # 3493 is deliberately absent. upsd grants FSD -- forced shutdown --
+            # to any client with master rights, and the only account it has is a
+            # plaintext literal in this repository, so reachability from the LAN
+            # meant anyone on it could halt all five hypervisors and every guest
+            # with them. The upsmon that acts on FSD runs inside this pod and
+            # reaches upsd on localhost, so nothing legitimate crossed the network
+            # for it: the sole established connection was 127.0.0.1.
+            #
+            # Layer 1 of the UPS design puts upsmon on the Proxmox hosts. Add them
+            # here by address when that lands, not the whole of RFC1918.
+            ports: ["5050", "443"]
