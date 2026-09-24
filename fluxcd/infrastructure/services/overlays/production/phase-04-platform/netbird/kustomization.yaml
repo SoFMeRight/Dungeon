@@ -18,6 +18,12 @@ patches:
       - op: add
         path: /spec/inheritedMetadata
         value:
+          # Alloy finds scrape targets from these annotations on the pod, not from
+          # a PodMonitor, so without them nothing collects the metrics the instances
+          # already publish on 9187.
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "9187"
           labels:
             policy.prplanit.com/cnpg: "managed"
             policy.prplanit.com/access-class: postgres

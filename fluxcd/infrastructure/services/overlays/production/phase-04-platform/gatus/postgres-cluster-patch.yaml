@@ -4,6 +4,12 @@ metadata:
   name: gatus-postgres
 spec:
   inheritedMetadata:
+    # Alloy finds scrape targets from these annotations on the pod, not from a
+    # PodMonitor, so without them nothing collects the backup and WAL metrics the
+    # instances already publish on 9187. enablePodMonitor is inert on this estate.
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9187"
     labels:
       policy.prplanit.com/cnpg: "managed"
       policy.prplanit.com/access-class: postgres
