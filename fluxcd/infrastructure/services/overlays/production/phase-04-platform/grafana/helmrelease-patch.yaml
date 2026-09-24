@@ -22,6 +22,10 @@ spec:
     # HA configuration
     replicas: 3
 
+    # Gives the alerting replicas stable per-pod addresses to gossip over; without
+    # it ha_peers has nothing to resolve.
+    headlessService: true
+
     # Override liveness probe — alerting provisioning + plugin install can take minutes
     livenessProbe:
       httpGet:
@@ -48,6 +52,14 @@ spec:
         ssl_mode: disable
       unified_alerting:
         enabled: true
+        # Three replicas each evaluate every rule. Without a gossip ring they each
+        # notify as well, so one alert arrived three times -- the exact noise the
+        # tier scheme exists to avoid. These make the replicas agree on who sends.
+        # POD_IP is already in the pod env; the peers are resolved through the
+        # headless service enabled below.
+        ha_listen_address: "${POD_IP}:9094"
+        ha_advertise_address: "${POD_IP}:9094"
+        ha_peers: "grafana-headless.gossip-stone.svc.cluster.local:9094"
       # Zitadel SSO (generic OAuth). client_id/secret come from env
       # (GF_AUTH_GENERIC_OAUTH_CLIENT_ID/SECRET) so they stay out of values.
       auth.generic_oauth:
