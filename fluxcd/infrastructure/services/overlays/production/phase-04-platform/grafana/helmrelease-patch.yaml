@@ -253,8 +253,8 @@ spec:
                   # The braces are percent-encoded, so the chart's tpl pass never sees
                   # a template action here and nothing has to be escaped against it.
                   url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Warn?tpl=yes\
-                    &t=%7B%7Bif+eq+.status+%22resolved%22%7D%7DCleared%3A+%7B%7Bend%7D%7D%7B%7B.groupLabels.alertname%7D%7D\
-                    &m=%7B%7Brange+.alerts%7D%7D%7B%7B.annotations.summary%7D%7D%0A%7B%7Bend%7D%7D\
+                    &t=%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7B%28index+.alerts+0%29.annotations.resolved_title%7D%7D%7B%7Belse%7D%7D%7B%7B.groupLabels.alertname%7D%7D%7B%7Bend%7D%7D\
+                    &m=%7B%7Brange+.alerts%7D%7D%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7Bif+.annotations.resolved%7D%7D%7B%7B.annotations.resolved%7D%7D%7B%7Belse%7D%7DBack+to+normal.%7B%7Bend%7D%7D%7B%7Belse%7D%7D%7B%7B.annotations.summary%7D%7D%7B%7Bend%7D%7D%0A%7B%7Bend%7D%7D\
                     &p=4"
                   httpMethod: POST
                   authorization_scheme: Bearer
@@ -285,8 +285,8 @@ spec:
                   # The braces are percent-encoded, so the chart's tpl pass never sees
                   # a template action here and nothing has to be escaped against it.
                   url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Alert?tpl=yes\
-                    &t=%7B%7Bif+eq+.status+%22resolved%22%7D%7DCleared%3A+%7B%7Bend%7D%7D%7B%7B.groupLabels.alertname%7D%7D\
-                    &m=%7B%7Brange+.alerts%7D%7D%7B%7B.annotations.summary%7D%7D%0A%7B%7Bend%7D%7D\
+                    &t=%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7B%28index+.alerts+0%29.annotations.resolved_title%7D%7D%7B%7Belse%7D%7D%7B%7B.groupLabels.alertname%7D%7D%7B%7Bend%7D%7D\
+                    &m=%7B%7Brange+.alerts%7D%7D%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7Bif+.annotations.resolved%7D%7D%7B%7B.annotations.resolved%7D%7D%7B%7Belse%7D%7DBack+to+normal.%7B%7Bend%7D%7D%7B%7Belse%7D%7D%7B%7B.annotations.summary%7D%7D%7B%7Bend%7D%7D%0A%7B%7Bend%7D%7D\
                     &p=5"
                   httpMethod: POST
                   authorization_scheme: Bearer
@@ -392,7 +392,9 @@ spec:
                   # Only the braces are quoted, never the expression: toYaml rewraps
                   # long lines, and a newline landing inside a Go string literal is an
                   # unterminated quoted string. Two-character literals cannot be split.
-                  summary: '{{ "{{" }} $labels.cluster {{ "}}" }} in {{ "{{" }} $labels.namespace {{ "}}" }} has not been backed up in over 26 hours'
+                  summary: 'Postgres cluster {{ "{{" }} $labels.namespace {{ "}}" }}/{{ "{{" }} $labels.cluster {{ "}}" }} has no backup in over 26 hours'
+                  resolved: 'Postgres cluster {{ "{{" }} $labels.namespace {{ "}}" }}/{{ "{{" }} $labels.cluster {{ "}}" }} has a fresh backup again'
+                  resolved_title: Backup restored
           - orgId: 1
             name: Flux Health
             folder: Operations
@@ -460,14 +462,16 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: '{{ "{{" }} $labels.name {{ "}}" }} in {{ "{{" }} $labels.exported_namespace {{ "}}" }} has not finished deploying for 15 minutes'
+                  summary: '{{ "{{" }} $labels.customresource_kind {{ "}}" }} {{ "{{" }} $labels.exported_namespace {{ "}}" }}/{{ "{{" }} $labels.name {{ "}}" }} has been stuck for 15 minutes'
+                  resolved: '{{ "{{" }} $labels.customresource_kind {{ "}}" }} {{ "{{" }} $labels.exported_namespace {{ "}}" }}/{{ "{{" }} $labels.name {{ "}}" }} is healthy again'
+                  resolved_title: Deployment finished
           - orgId: 1
             name: Security Guardrails
             folder: Security
             interval: 1m
             rules:
               - uid: breakglass-cluster-gate
-                title: Emergency access is on
+                title: Cluster emergency access on
                 condition: B
                 data:
                   - refId: A
@@ -509,9 +513,11 @@ spec:
                 labels:
                   severity: critical
                 annotations:
-                  summary: "The cluster-wide security bypass is switched on"
+                  summary: "Cluster-wide security bypass is on - policy enforcement is suspended"
+                  resolved: "Bypass is off - policy enforcement is active again"
+                  resolved_title: Cluster emergency access off
               - uid: breakglass-namespace-gate
-                title: Emergency access is on for one app
+                title: App emergency access on
                 condition: B
                 data:
                   - refId: A
@@ -553,7 +559,9 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: '{{ "{{" }} $labels.exported_namespace {{ "}}" }} has its security bypass switched on'
+                  summary: 'Namespace {{ "{{" }} $labels.exported_namespace {{ "}}" }} has its bypass on - its policies are not enforced'
+                  resolved: 'Namespace {{ "{{" }} $labels.exported_namespace {{ "}}" }} is back under normal policy enforcement'
+                  resolved_title: App emergency access off
               - uid: kyverno-webhook-missing
                 title: Security enforcement is down
                 condition: B
@@ -602,6 +610,8 @@ spec:
                   severity: critical
                 annotations:
                   summary: "Nothing is checking what gets deployed to the cluster"
+                  resolved: "Deployments are being checked again"
+                  resolved_title: Security enforcement is back
               - uid: kyverno-policy-violations
                 title: Deployments are breaking the rules
                 condition: B
@@ -651,8 +661,10 @@ spec:
                   severity: warning
                 annotations:
                   summary: "Deployments are being rejected for breaking policy"
+                  resolved: "Nothing is being rejected"
+                  resolved_title: Deployments are passing again
               - uid: ztunnel-deny-spike
-                title: Network is blocking a lot of traffic
+                title: Network is blocking traffic
                 condition: B
                 data:
                   - refId: A
@@ -694,9 +706,11 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: "The mesh is blocking an unusual amount of traffic"
+                  summary: "The mesh is refusing an unusual amount of traffic"
+                  resolved: "The mesh has stopped refusing traffic"
+                  resolved_title: Network traffic is normal
               - uid: default-sa-enforcement-suspended
-                title: An app is running with security relaxed
+                title: App security relaxed
                 condition: B
                 data:
                   - refId: A
@@ -739,4 +753,6 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: '{{ "{{" }} $labels.exported_namespace {{ "}}" }} is running without service-account restrictions'
+                  summary: 'Namespace {{ "{{" }} $labels.exported_namespace {{ "}}" }} is running without service-account restrictions'
+                  resolved: 'Namespace {{ "{{" }} $labels.exported_namespace {{ "}}" }} is back under service-account restrictions'
+                  resolved_title: App security restored
