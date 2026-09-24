@@ -70,3 +70,17 @@ spec:
     # Validator
     validator:
       enabled: true
+      # Held behind the chart on purpose. dungeon-chest-004 runs a GTX 980 Ti --
+      # Maxwell, compute capability 5.2 -- and the validator image from v26.x is
+      # built against a CUDA that no longer supports it. Its vectorAdd segfaults
+      # there (exit 139) while the same binary from v25.10.1 passes on the same
+      # card and the same host driver, so the card is fine and the CUDA is not.
+      #
+      # This is load-bearing, not cosmetic: a failed cuda-validation never writes
+      # /run/nvidia/validations/cuda-ready or plugin-ready, so the node's GPU
+      # capacity is advertised by a device plugin the operator never confirmed.
+      #
+      # Only this image is held; the device plugin, toolkit, DCGM and NFD track
+      # the chart. It stops receiving CVE fixes for as long as it is pinned.
+      # Remove the pin when the 980 Ti is replaced -- nothing else lifts it.
+      version: v25.10.1
