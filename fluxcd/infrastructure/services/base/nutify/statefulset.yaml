@@ -54,10 +54,14 @@ spec:
               sed -e "s|\${NUT_SNMP_AUTH_PASSWORD}|$NUT_SNMP_AUTH_PASSWORD|g" \
                   -e "s|\${NUT_SNMP_PRIV_PASSWORD}|$NUT_SNMP_PRIV_PASSWORD|g" \
                   /etc/nut-templates/ups.conf > /etc/nut/ups.conf
-              cp /etc/nut-templates/upsmon.conf /etc/nut/upsmon.conf
+              sed -e "s|\${NUT_MON_USER}|$NUT_MON_USER|g" \
+                  -e "s|\${NUT_MON_PASSWORD}|$NUT_MON_PASSWORD|g" \
+                  /etc/nut-templates/upsmon.conf > /etc/nut/upsmon.conf
               cp /etc/nut-templates/nut.conf /etc/nut/nut.conf
               cp /etc/nut-templates/upsd.conf /etc/nut/upsd.conf
-              cp /etc/nut-templates/upsd.users /etc/nut/upsd.users
+              sed -e "s|\${NUT_MON_USER}|$NUT_MON_USER|g" \
+                  -e "s|\${NUT_MON_PASSWORD}|$NUT_MON_PASSWORD|g" \
+                  /etc/nut-templates/upsd.users > /etc/nut/upsd.users
               chmod 640 /etc/nut/*
               exec /usr/local/bin/generate-settings.sh /usr/local/bin/docker-entrypoint /usr/local/bin/start-services.sh
           volumeMounts:

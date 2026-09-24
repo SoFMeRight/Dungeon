@@ -18,7 +18,7 @@ data:
     desc = "Eaton 5PX-3000"
 
   upsmon.conf: |
-    MONITOR ups@localhost 1 monuser monpass master
+    MONITOR ups@localhost 1 ${NUT_MON_USER} ${NUT_MON_PASSWORD} master
     MINSUPPLIES 1
     SHUTDOWNCMD "/bin/bash /root/script/nutify-shutdown.sh"
     NOTIFYCMD /app/nutify/core/events/ups_notifier.py
@@ -50,6 +50,6 @@ data:
     MAXAGE 15
 
   upsd.users: |
-    [monuser]
-    password = monpass
+    [${NUT_MON_USER}]
+    password = ${NUT_MON_PASSWORD}
     upsmon master
