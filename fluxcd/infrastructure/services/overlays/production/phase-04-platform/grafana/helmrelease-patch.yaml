@@ -343,6 +343,74 @@ spec:
                   # Grafana then expands per alert instance.
                   summary: '{{ "{{ $labels.cluster }}" }} has no backup in over 26h - check the ObjectStore recoveryWindow and pg_stat_archiver'
           - orgId: 1
+            name: Flux Health
+            folder: Operations
+            interval: 5m
+            rules:
+              - uid: flux-resource-not-ready
+                title: Flux Resource Not Ready
+                condition: B
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 900
+                      to: 0
+                    datasourceUid: victoriametrics
+                    model:
+                      refId: A
+                      # gotk_resource_info comes from kube-state-metrics reading the
+                      # Flux CRs, not from the controllers: v2.7.5 publishes no
+                      # readiness metric of its own, which is why three releases could
+                      # fail for weeks unnoticed.
+                      #
+                      # ready="False" only. Unknown is the normal state mid-reconcile
+                      # and a slow chart can hold it past the for window, so including
+                      # it would trade a real signal for noise.
+                      #
+                      # suspended is absent rather than "false" when spec.suspend is
+                      # unset, so this excludes the truthy value instead of requiring
+                      # the falsy one. A deliberately paused resource is not an alert.
+                      #
+                      # One series per resource, so each failing release raises its own
+                      # instance rather than collapsing into a single count.
+                      expr: 'gotk_resource_info{ready="False", suspended!="true"}'
+                      instant: true
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                  - refId: B
+                    relativeTimeRange:
+                      from: 900
+                      to: 0
+                    datasourceUid: __expr__
+                    model:
+                      refId: B
+                      type: threshold
+                      expression: A
+                      conditions:
+                        - evaluator:
+                            type: gt
+                            params:
+                              - 0
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - B
+                          reducer:
+                            type: last
+                            params: []
+                # Long enough that an ordinary upgrade finishes inside it; short enough
+                # that a stalled release is caught the same morning.
+                for: 15m
+                # No data means kube-state-metrics stopped publishing, which hides every
+                # Flux failure at once. That is worth knowing, so it is not OK.
+                noDataState: Alerting
+                execErrState: Error
+                labels:
+                  severity: warning
+                annotations:
+                  summary: '{{ "{{ $labels.customresource_kind }} {{ $labels.exported_namespace }}/{{ $labels.name }}" }} has been not-Ready for 15m - check its status conditions and helm history'
+          - orgId: 1
             name: Security Guardrails
             folder: Security
             interval: 1m
