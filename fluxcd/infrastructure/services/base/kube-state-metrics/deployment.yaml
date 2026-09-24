@@ -26,6 +26,20 @@ spec:
         - name: kube-state-metrics
           image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.20.0
           args:
+            # kube_namespace_labels does not exist unless the labels are named here:
+            # kube-state-metrics collects namespace objects either way, but emits no
+            # label_* series without an allowlist. The Grafana security rules query
+            # label_zt_breakglass_active, label_zt_breakglass_namespace and
+            # label_policy_prplanit_com_restrict_default_sa, so all three were
+            # evaluating an empty series and could never fire -- breakglass included.
+            #
+            # Named individually rather than [*] so the series carries three labels
+            # instead of every label every namespace happens to hold. Adding a rule on
+            # a new namespace label means adding it here too.
+            #
+            # Keys are the Kubernetes ones; kube-state-metrics replaces . and / with _
+            # when it builds the metric label.
+            - --metric-labels-allowlist=namespaces=[zt.breakglass/active,zt.breakglass/namespace,policy.prplanit.com/restrict-default-sa]
             - --resources=certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,leases,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments
           ports:
             - name: http-metrics
