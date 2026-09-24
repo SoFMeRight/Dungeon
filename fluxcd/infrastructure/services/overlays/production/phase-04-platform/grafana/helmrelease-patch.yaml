@@ -339,9 +339,10 @@ spec:
                 annotations:
                   # The chart runs tpl over this whole block, so Helm evaluates any
                   # {{ }} before Grafana ever sees it and the release fails to render.
-                  # Quoting the braces makes tpl emit them literally, which is what
-                  # Grafana then expands per alert instance.
-                  summary: '{{ "{{ $labels.cluster }}" }} has no backup in over 26h - check the ObjectStore recoveryWindow and pg_stat_archiver'
+                  # Only the braces are quoted, never the expression: toYaml rewraps
+                  # long lines, and a newline landing inside a Go string literal is an
+                  # unterminated quoted string. Two-character literals cannot be split.
+                  summary: '{{ "{{" }} $labels.cluster {{ "}}" }} has no backup in over 26h - check the ObjectStore recoveryWindow and pg_stat_archiver'
           - orgId: 1
             name: Flux Health
             folder: Operations
@@ -409,7 +410,9 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: '{{ "{{ $labels.customresource_kind }} {{ $labels.exported_namespace }}/{{ $labels.name }}" }} has been not-Ready for 15m - check its status conditions and helm history'
+                  summary: '{{ "{{" }} $labels.customresource_kind {{ "}}" }}
+                    {{ "{{" }} $labels.exported_namespace {{ "}}" }}/{{ "{{" }} $labels.name {{ "}}" }}
+                    has been not-Ready for 15m - check its conditions and helm history'
           - orgId: 1
             name: Security Guardrails
             folder: Security
