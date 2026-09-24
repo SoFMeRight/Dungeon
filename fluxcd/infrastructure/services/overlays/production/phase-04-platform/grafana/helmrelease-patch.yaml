@@ -337,7 +337,11 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: "No backup for {{ $labels.cluster }} in over 26h - check the ObjectStore recoveryWindow and pg_stat_archiver"
+                  # The chart runs tpl over this whole block, so Helm evaluates any
+                  # {{ }} before Grafana ever sees it and the release fails to render.
+                  # Quoting the braces makes tpl emit them literally, which is what
+                  # Grafana then expands per alert instance.
+                  summary: '{{ "{{ $labels.cluster }}" }} has no backup in over 26h - check the ObjectStore recoveryWindow and pg_stat_archiver'
           - orgId: 1
             name: Security Guardrails
             folder: Security
