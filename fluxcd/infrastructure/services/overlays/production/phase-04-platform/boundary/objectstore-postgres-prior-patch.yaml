@@ -1,0 +1,8 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: boundary-postgres-prior
+spec:
+  configuration:
+    destinationPath: s3://prplanit/dungeon/cnpg/boundary
+    endpointURL: http://172.22.150.101:8333

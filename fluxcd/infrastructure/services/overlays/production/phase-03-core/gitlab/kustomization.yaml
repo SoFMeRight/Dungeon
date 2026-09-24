@@ -20,6 +20,10 @@ patches:
     target:
       kind: ObjectStore
       name: gitlab-postgresql-store
+  - path: objectstore-postgres-prior-patch.yaml
+    target:
+      kind: ObjectStore
+      name: gitlab-postgresql-prior
   - path: externalsecret-credentials-patch.yaml
     target:
       kind: ExternalSecret

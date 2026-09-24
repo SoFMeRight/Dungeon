@@ -11,6 +11,7 @@ resources:
   # Database
   - postgres-cluster.yaml
   - objectstore-postgres.yaml
+  - objectstore-postgres-prior.yaml
   - postgres-credentials.yaml
   # Cache
   - redis-configmap.yaml

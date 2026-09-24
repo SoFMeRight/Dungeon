@@ -44,6 +44,16 @@ patches:
       kind: ObjectStore
       name: netbird-postgres-store
   - patch: |-
+      - op: add
+        path: /spec/configuration/destinationPath
+        value: s3://prplanit/dungeon/cnpg/netbird
+      - op: add
+        path: /spec/configuration/endpointURL
+        value: http://172.22.150.101:8333
+    target:
+      kind: ObjectStore
+      name: netbird-postgres-prior
+  - patch: |-
       - op: replace
         path: /spec/template/spec/initContainers/0/image
         value: docker.io/library/busybox:1.37.0

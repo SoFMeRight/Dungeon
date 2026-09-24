@@ -5,6 +5,7 @@ resources:
   - serviceaccounts.yaml
   - cluster-postgres.yaml
   - objectstore-postgres.yaml
+  - objectstore-postgres-prior.yaml
   - configmap-dashboard-nginx.yaml
   - statefulset-management.yaml
   - statefulset-signal.yaml

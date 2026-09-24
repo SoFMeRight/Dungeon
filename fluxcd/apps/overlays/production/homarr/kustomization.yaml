@@ -29,6 +29,10 @@ patches:
     target:
       kind: ObjectStore
       name: homarr-postgres-store
+  - path: objectstore-postgres-prior-patch.yaml
+    target:
+      kind: ObjectStore
+      name: homarr-postgres-prior
   - path: externalsecret-postgres-patch.yaml
     target:
       kind: ExternalSecret

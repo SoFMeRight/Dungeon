@@ -21,6 +21,10 @@ patches:
     target:
       kind: ObjectStore
       name: calcom-postgres-store
+  - path: objectstore-postgres-prior-patch.yaml
+    target:
+      kind: ObjectStore
+      name: calcom-postgres-prior
   - path: externalsecret-patch.yaml
     target:
       kind: ExternalSecret

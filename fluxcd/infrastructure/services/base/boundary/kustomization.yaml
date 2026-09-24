@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - postgres-cluster.yaml
   - objectstore-postgres.yaml
+  - objectstore-postgres-prior.yaml
   - postgres-databases.yaml
   - externalsecret.yaml
   - controller-configmap.yaml

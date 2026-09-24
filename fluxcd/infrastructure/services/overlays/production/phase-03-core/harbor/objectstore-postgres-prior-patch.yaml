@@ -1,0 +1,8 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: harbor-postgres-prior
+spec:
+  configuration:
+    destinationPath: s3://prplanit/dungeon/cnpg/harbor
+    endpointURL: http://172.22.150.101:8333

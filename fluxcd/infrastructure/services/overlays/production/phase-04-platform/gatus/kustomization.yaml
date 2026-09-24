@@ -12,4 +12,5 @@ patches:
   - path: configmap-patch.yaml
   - path: postgres-cluster-patch.yaml
   - path: objectstore-postgres-patch.yaml
+  - path: objectstore-postgres-prior-patch.yaml
   - path: externalsecret-postgres-patch.yaml

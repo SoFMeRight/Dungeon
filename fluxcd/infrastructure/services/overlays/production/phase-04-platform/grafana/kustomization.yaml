@@ -22,6 +22,10 @@ patches:
     target:
       kind: ObjectStore
       name: grafana-postgres-store
+  - path: objectstore-postgres-prior-patch.yaml
+    target:
+      kind: ObjectStore
+      name: grafana-postgres-prior
   - path: externalsecret-postgres-patch.yaml
     target:
       kind: ExternalSecret
@@ -71,6 +75,13 @@ patches:
   - target:
       kind: ObjectStore
       name: grafana-postgres-store
+    patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: gossip-stone
+  - target:
+      kind: ObjectStore
+      name: grafana-postgres-prior
     patch: |-
       - op: add
         path: /metadata/namespace

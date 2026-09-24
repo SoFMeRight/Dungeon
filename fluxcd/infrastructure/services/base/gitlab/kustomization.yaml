@@ -8,6 +8,7 @@ resources:
   - externalsecret-praefect.yaml
   - cluster.yaml
   - objectstore-postgres.yaml
+  - objectstore-postgres-prior.yaml
   - postgres-databases.yaml
   - configmap-praefect-init-sql.yaml
   - serviceaccount-praefect-db-init.yaml

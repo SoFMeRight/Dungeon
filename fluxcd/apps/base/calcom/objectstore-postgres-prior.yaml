@@ -1,0 +1,28 @@
+# The archive as it stood before each cluster was given a bucket of its own. Read
+# from, never written to: calcom-postgres archives to calcom-postgres-store and would name
+# this one only on an externalCluster it recovers from.
+#
+# It exists so a restore from the pre-split archive needs nothing created under
+# pressure. A restored cluster may not continue writing the lineage it was
+# restored from -- barman rejects an archive that already holds WAL -- so source
+# and destination have to be two different objects.
+#
+# No retentionPolicy: pruning belongs to whatever writes, and nothing writes here.
+# Remove once the archive has aged past its object lock and no restore wants it.
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: calcom-postgres-prior
+spec:
+  configuration:
+    s3Credentials:
+      accessKeyId:
+        name: calcom-postgres-backup-s3
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: calcom-postgres-backup-s3
+        key: SECRET_ACCESS_KEY
+    wal:
+      compression: gzip
+    data:
+      compression: gzip

@@ -5,6 +5,7 @@ resources:
   - deployment.yaml
   - cluster-postgres.yaml
   - objectstore-postgres.yaml
+  - objectstore-postgres-prior.yaml
   - pvc.yaml
   - service.yaml
   - service-db.yaml

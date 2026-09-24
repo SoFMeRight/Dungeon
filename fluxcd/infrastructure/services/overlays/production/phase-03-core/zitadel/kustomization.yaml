@@ -24,6 +24,10 @@ patches:
     target:
       kind: ObjectStore
       name: zitadel-postgres-store
+  - path: objectstore-postgres-prior-patch.yaml
+    target:
+      kind: ObjectStore
+      name: zitadel-postgres-prior
   - path: service-patch.yaml
     target:
       kind: Service

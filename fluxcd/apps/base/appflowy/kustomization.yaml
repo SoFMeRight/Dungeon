@@ -4,6 +4,7 @@ resources:
   - serviceaccounts.yaml
   - postgres-cluster.yaml
   - objectstore-postgres.yaml
+  - objectstore-postgres-prior.yaml
   - postgres-databases.yaml
   - statefulset-redis.yaml
   - deployment-gotrue.yaml
