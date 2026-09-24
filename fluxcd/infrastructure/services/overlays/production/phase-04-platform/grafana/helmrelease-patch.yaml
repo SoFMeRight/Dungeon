@@ -240,7 +240,10 @@ spec:
                   #
                   # The braces are percent-encoded, so the chart's tpl pass never sees
                   # a template action here and nothing has to be escaped against it.
-                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Warn?tpl=yes&t=%7B%7B.title%7D%7D&m=%7B%7B.message%7D%7D&p=4"
+                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Warn?tpl=yes\
+                    &t=%7B%7Bif+eq+.status+%22resolved%22%7D%7DCleared%3A+%7B%7Bend%7D%7D%7B%7B.groupLabels.alertname%7D%7D\
+                    &m=%7B%7Brange+.alerts%7D%7D%7B%7B.annotations.summary%7D%7D%0A%7B%7Bend%7D%7D\
+                    &p=4"
                   httpMethod: POST
                   authorization_scheme: Bearer
                   authorization_credentials: ${NTFY_TOKEN}
@@ -269,7 +272,10 @@ spec:
                   #
                   # The braces are percent-encoded, so the chart's tpl pass never sees
                   # a template action here and nothing has to be escaped against it.
-                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Alert?tpl=yes&t=%7B%7B.title%7D%7D&m=%7B%7B.message%7D%7D&p=5"
+                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Alert?tpl=yes\
+                    &t=%7B%7Bif+eq+.status+%22resolved%22%7D%7DCleared%3A+%7B%7Bend%7D%7D%7B%7B.groupLabels.alertname%7D%7D\
+                    &m=%7B%7Brange+.alerts%7D%7D%7B%7B.annotations.summary%7D%7D%0A%7B%7Bend%7D%7D\
+                    &p=5"
                   httpMethod: POST
                   authorization_scheme: Bearer
                   authorization_credentials: ${NTFY_TOKEN}
@@ -307,7 +313,7 @@ spec:
             interval: 5m
             rules:
               - uid: cnpg-backup-stale
-                title: CNPG Backup Overdue
+                title: Backup missing
                 condition: B
                 data:
                   - refId: A
@@ -374,14 +380,14 @@ spec:
                   # Only the braces are quoted, never the expression: toYaml rewraps
                   # long lines, and a newline landing inside a Go string literal is an
                   # unterminated quoted string. Two-character literals cannot be split.
-                  summary: '{{ "{{" }} $labels.cluster {{ "}}" }} has no backup in over 26h - check the ObjectStore recoveryWindow and pg_stat_archiver'
+                  summary: '{{ "{{" }} $labels.cluster {{ "}}" }} has not been backed up in over 26 hours'
           - orgId: 1
             name: Flux Health
             folder: Operations
             interval: 5m
             rules:
               - uid: flux-resource-not-ready
-                title: Flux Resource Not Ready
+                title: Deployment stuck
                 condition: B
                 data:
                   - refId: A
@@ -442,16 +448,14 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: '{{ "{{" }} $labels.customresource_kind {{ "}}" }}
-                    {{ "{{" }} $labels.exported_namespace {{ "}}" }}/{{ "{{" }} $labels.name {{ "}}" }}
-                    has been not-Ready for 15m - check its conditions and helm history'
+                  summary: '{{ "{{" }} $labels.name {{ "}}" }} has not finished deploying for 15 minutes'
           - orgId: 1
             name: Security Guardrails
             folder: Security
             interval: 1m
             rules:
               - uid: breakglass-cluster-gate
-                title: Breakglass Cluster Gate Active
+                title: Emergency access is on
                 condition: B
                 data:
                   - refId: A
@@ -493,9 +497,9 @@ spec:
                 labels:
                   severity: critical
                 annotations:
-                  summary: "Breakglass cluster gate (kube-system zt.breakglass/active=true) is active — emergency mesh bypass enabled cluster-wide"
+                  summary: "The cluster-wide security bypass is switched on"
               - uid: breakglass-namespace-gate
-                title: Breakglass Namespace Gate Active
+                title: Emergency access is on for one app
                 condition: B
                 data:
                   - refId: A
@@ -537,9 +541,9 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: "Breakglass namespace gate active — a namespace has zt.breakglass/namespace=true for emergency mesh bypass"
+                  summary: '{{ "{{" }} $labels.exported_namespace {{ "}}" }} has its security bypass switched on'
               - uid: kyverno-webhook-missing
-                title: Kyverno Webhook Missing
+                title: Security enforcement is down
                 condition: B
                 data:
                   - refId: A
@@ -581,9 +585,9 @@ spec:
                 labels:
                   severity: critical
                 annotations:
-                  summary: "Kyverno validating webhook configuration is missing — admission enforcement is down"
+                  summary: "Nothing is checking what gets deployed to the cluster"
               - uid: kyverno-policy-violations
-                title: Kyverno Policy Violations
+                title: Deployments are breaking the rules
                 condition: B
                 data:
                   - refId: A
@@ -630,9 +634,9 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: "Kyverno is reporting policy violations — review with kubectl get policyreport -A"
+                  summary: "Deployments are being rejected for breaking policy"
               - uid: ztunnel-deny-spike
-                title: ztunnel Deny Spike
+                title: Network is blocking a lot of traffic
                 condition: B
                 data:
                   - refId: A
@@ -674,9 +678,9 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: "ztunnel is denying traffic at elevated rate (>10 denies in 5m, excluding RBAC handling) — check for policy drift"
+                  summary: "The mesh is blocking an unusual amount of traffic"
               - uid: default-sa-enforcement-suspended
-                title: Default SA Enforcement Suspended
+                title: An app is running with security relaxed
                 condition: B
                 data:
                   - refId: A
@@ -719,4 +723,4 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: "restrict-default-sa enforcement is suspended for one or more namespaces — burn down SA violations and remove the label"
+                  summary: '{{ "{{" }} $labels.exported_namespace {{ "}}" }} is running without service-account restrictions'
