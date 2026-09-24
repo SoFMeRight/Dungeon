@@ -18,3 +18,4 @@ resources:
   - cnp-egress-grafana.yaml
   - cnp-egress-weave-gitops.yaml
   - cnp-egress-gatus.yaml
+  - cnp-grafana-alerting-gossip.yaml

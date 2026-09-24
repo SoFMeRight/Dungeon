@@ -25,3 +25,4 @@ resources:
   - allow-gateway-ingress-phloem.yaml
   - allow-crowdsec-to-loki.yaml
   - allow-gateway-ingress-cell-membrane.yaml
+  - allow-grafana-alerting-gossip.yaml

@@ -1,0 +1,24 @@
+# Grafana runs three replicas with unified alerting. Without a gossip ring each
+# one evaluates every rule and notifies separately, so a single alert arrived
+# three times. The ring is pod-to-pod on 9094 between grafana pods only.
+#
+# Ambient carries TCP, so the mesh has to be told about this as well as Cilium;
+# the symptom of the missing allow was "connection reset by peer" on join, not a
+# timeout, because ztunnel rejected it rather than the packet being dropped.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-grafana-alerting-gossip
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: grafana
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/gossip-stone/sa/grafana
+      to:
+        - operation:
+            ports: ["9094"]
