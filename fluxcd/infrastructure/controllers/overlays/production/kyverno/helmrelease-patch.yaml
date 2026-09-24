@@ -13,7 +13,18 @@ spec:
       policyExceptions:
         enabled: true
         namespace: zeldas-lullaby
+    # Alloy discovers scrape targets from prometheus.io annotations on pods, not from
+    # PodMonitor objects, so kyverno_policy_results_total only reaches VictoriaMetrics
+    # if the pods carry these. Without them the Kyverno Policy Violations alert
+    # evaluates against a metric nobody collects and can never fire.
+    #
+    # Both controllers publish that metric and they publish different halves of it:
+    # the admission controller reports decisions made at admission, the reports
+    # controller reports background scans of resources already in the cluster.
     admissionController:
+      podAnnotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
       container:
         image:
           registry: ghcr.io
@@ -31,6 +42,9 @@ spec:
         registry: ghcr.io
         repository: kyverno/cleanup-controller
     reportsController:
+      podAnnotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
       image:
         registry: ghcr.io
         repository: kyverno/reports-controller
