@@ -211,29 +211,133 @@ spec:
       contactpoints.yaml:
         apiVersion: 1
         contactPoints:
+          # Topics are named <Estate>-<Domain>-<Class>, and the class is the
+          # interrupt tier. Naming the tier in the topic is what keeps the priority
+          # honest: a publisher cannot send routine traffic at 5 without the topic
+          # contradicting it, which is how the estate ended up with a channel that
+          # alerted on every flap and so was never read.
           - orgId: 1
-            name: ntfy-security
+            name: ntfy-prod-warn
             receivers:
-              - uid: ntfy-security
+              - uid: ntfy-prod-warn
                 type: webhook
                 settings:
-                  url: "http://ntfy.delivery-bag.svc.cluster.local/grafana-security-alerts"
+                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Warn"
                   httpMethod: POST
                   httpHeaderName1: "Authorization"
                   httpHeaderValue1: "Bearer ${NTFY_TOKEN}"
+                  httpHeaderName2: "X-Priority"
+                  httpHeaderValue2: "4"
+                disableResolveMessage: false
+          - orgId: 1
+            name: ntfy-prod-alert
+            receivers:
+              - uid: ntfy-prod-alert
+                type: webhook
+                settings:
+                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Alert"
+                  httpMethod: POST
+                  httpHeaderName1: "Authorization"
+                  httpHeaderValue1: "Bearer ${NTFY_TOKEN}"
+                  httpHeaderName2: "X-Priority"
+                  httpHeaderValue2: "5"
                 disableResolveMessage: false
       policies.yaml:
         apiVersion: 1
         policies:
           - orgId: 1
-            receiver: ntfy-security
+            receiver: ntfy-prod-warn
             group_by: ['grafana_folder', 'alertname']
             group_wait: 30s
             group_interval: 5m
             repeat_interval: 4h
+            # Warn is the default tier, so a rule that says nothing still lands
+            # somewhere read. Reaching the paging tier is opt-in, by severity.
+            routes:
+              - receiver: ntfy-prod-alert
+                # =~ rather than =: kustomize re-serialises the matcher into block
+                # style and drops the quotes, and a bare = on its own line is YAML's
+                # value tag rather than the string. Anchored regex, same meaning, and
+                # it survives the round trip. A matcher that fails to parse would
+                # leave a critical rule on the warn tier.
+                object_matchers:
+                  - ['severity', '=~', 'critical']
+                group_by: ['grafana_folder', 'alertname']
+                group_wait: 30s
+                group_interval: 5m
+                repeat_interval: 1h
       rules.yaml:
         apiVersion: 1
         groups:
+          - orgId: 1
+            name: Backup Health
+            folder: Operations
+            interval: 5m
+            rules:
+              - uid: cnpg-backup-stale
+                title: CNPG Backup Overdue
+                condition: B
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 900
+                      to: 0
+                    datasourceUid: victoriametrics
+                    model:
+                      refId: A
+                      # Hours since the last backup barman can actually see in the
+                      # object store, per cluster. Read from the archive rather than
+                      # from Backup objects: those have gone missing before while the
+                      # backups themselves were fine, so they are the wrong thing to
+                      # judge recoverability by.
+                      #
+                      # label_replace turns the pod name into a cluster name so three
+                      # instances raise one alert. max picks the freshest instance:
+                      # they all report the same archive, and a lagging replica should
+                      # not read as a missed backup. Alloy scrapes each pod once per
+                      # container, so the container label is aggregated away too.
+                      expr: '(time() - max by (cluster) (label_replace(barman_cloud_cloudnative_pg_io_last_available_backup_timestamp,
+                        "cluster", "$1", "pod", "(.+)-[0-9]+"))) / 3600'
+                      instant: true
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                  - refId: B
+                    relativeTimeRange:
+                      from: 900
+                      to: 0
+                    datasourceUid: "__expr__"
+                    model:
+                      refId: B
+                      type: threshold
+                      expression: A
+                      conditions:
+                        - evaluator:
+                            type: gt
+                            # Backups are nightly and staggered across 22:00-00:10, so
+                            # a healthy cluster peaks just under 24h immediately before
+                            # its own slot. 26 leaves two hours of grace for a slow run
+                            # without letting a genuinely missed night pass unreported.
+                            params:
+                              - 26
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - B
+                          reducer:
+                            type: last
+                            params: []
+                # An hour, not five minutes: a backup that is late is still late an
+                # hour later, and this must not fire on the gap while one is running.
+                for: 1h
+                # A cluster that stops reporting has a bigger problem than a stale
+                # backup and should be said out loud rather than resolved quietly.
+                noDataState: Alerting
+                execErrState: Error
+                labels:
+                  severity: warning
+                annotations:
+                  summary: "No backup for {{ $labels.cluster }} in over 26h - check the ObjectStore recoveryWindow and pg_stat_archiver"
           - orgId: 1
             name: Security Guardrails
             folder: Security
