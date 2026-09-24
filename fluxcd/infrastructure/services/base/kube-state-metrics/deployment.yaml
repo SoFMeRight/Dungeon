@@ -67,13 +67,18 @@ spec:
               port: telemetry
             initialDelaySeconds: 5
             timeoutSeconds: 5
+          # Watching the Flux CRs alongside the built-in resources does not fit in
+          # 256Mi: adding the custom-resource collection OOMKilled this 12 times in
+          # 45 minutes, and a kube-state-metrics that keeps dying takes every rule
+          # that queries it down with it -- absent() reads a failed scrape as a
+          # missing object, so the security rules fire on nothing at all.
           resources:
             requests:
-              cpu: 10m
-              memory: 64Mi
+              cpu: 50m
+              memory: 192Mi
             limits:
-              cpu: 200m
-              memory: 256Mi
+              cpu: 500m
+              memory: 768Mi
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
