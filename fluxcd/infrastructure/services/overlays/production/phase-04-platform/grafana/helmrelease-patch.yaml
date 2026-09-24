@@ -592,7 +592,11 @@ spec:
                             type: last
                             params: []
                 for: 2m
-                noDataState: Alerting
+                # OK, not Alerting. absent() returns an empty vector exactly when the
+                # webhook is present, and Grafana reads empty as no data -- so
+                # Alerting here fired whenever the cluster was healthy, and could
+                # never clear. The missing case is covered by absent() returning 1.
+                noDataState: OK
                 execErrState: Error
                 labels:
                   severity: critical
