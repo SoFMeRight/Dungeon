@@ -334,7 +334,7 @@ spec:
                       # they all report the same archive, and a lagging replica should
                       # not read as a missed backup. Alloy scrapes each pod once per
                       # container, so the container label is aggregated away too.
-                      expr: '(time() - max by (cluster) (label_replace(barman_cloud_cloudnative_pg_io_last_available_backup_timestamp,
+                      expr: '(time() - max by (cluster, namespace) (label_replace(barman_cloud_cloudnative_pg_io_last_available_backup_timestamp,
                         "cluster", "$1", "pod", "(.+)-[0-9]+"))) / 3600'
                       instant: true
                       intervalMs: 1000
@@ -380,7 +380,7 @@ spec:
                   # Only the braces are quoted, never the expression: toYaml rewraps
                   # long lines, and a newline landing inside a Go string literal is an
                   # unterminated quoted string. Two-character literals cannot be split.
-                  summary: '{{ "{{" }} $labels.cluster {{ "}}" }} has not been backed up in over 26 hours'
+                  summary: '{{ "{{" }} $labels.cluster {{ "}}" }} in {{ "{{" }} $labels.namespace {{ "}}" }} has not been backed up in over 26 hours'
           - orgId: 1
             name: Flux Health
             folder: Operations
@@ -448,7 +448,7 @@ spec:
                 labels:
                   severity: warning
                 annotations:
-                  summary: '{{ "{{" }} $labels.name {{ "}}" }} has not finished deploying for 15 minutes'
+                  summary: '{{ "{{" }} $labels.name {{ "}}" }} in {{ "{{" }} $labels.exported_namespace {{ "}}" }} has not finished deploying for 15 minutes'
           - orgId: 1
             name: Security Guardrails
             folder: Security
