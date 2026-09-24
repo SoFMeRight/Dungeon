@@ -222,12 +222,16 @@ spec:
               - uid: ntfy-prod-warn
                 type: webhook
                 settings:
-                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Warn"
+                  # Priority rides in the query string because the webhook integration
+                  # has no field for extra headers -- an X-Priority header is silently
+                  # dropped, as httpHeaderName1/2 were: those are datasource fields,
+                  # not contact-point ones, so Grafana ignored them and posted with no
+                  # Authorization at all. ntfy answers that with 403, which is why
+                  # nothing has ever arrived on a Grafana topic.
+                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Warn?priority=4"
                   httpMethod: POST
-                  httpHeaderName1: "Authorization"
-                  httpHeaderValue1: "Bearer ${NTFY_TOKEN}"
-                  httpHeaderName2: "X-Priority"
-                  httpHeaderValue2: "4"
+                  authorization_scheme: Bearer
+                  authorization_credentials: ${NTFY_TOKEN}
                 disableResolveMessage: false
           - orgId: 1
             name: ntfy-prod-alert
@@ -235,12 +239,16 @@ spec:
               - uid: ntfy-prod-alert
                 type: webhook
                 settings:
-                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Alert"
+                  # Priority rides in the query string because the webhook integration
+                  # has no field for extra headers -- an X-Priority header is silently
+                  # dropped, as httpHeaderName1/2 were: those are datasource fields,
+                  # not contact-point ones, so Grafana ignored them and posted with no
+                  # Authorization at all. ntfy answers that with 403, which is why
+                  # nothing has ever arrived on a Grafana topic.
+                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Alert?priority=5"
                   httpMethod: POST
-                  httpHeaderName1: "Authorization"
-                  httpHeaderValue1: "Bearer ${NTFY_TOKEN}"
-                  httpHeaderName2: "X-Priority"
-                  httpHeaderValue2: "5"
+                  authorization_scheme: Bearer
+                  authorization_credentials: ${NTFY_TOKEN}
                 disableResolveMessage: false
       policies.yaml:
         apiVersion: 1
