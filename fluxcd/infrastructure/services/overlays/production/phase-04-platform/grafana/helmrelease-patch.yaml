@@ -250,7 +250,7 @@ spec:
                     datasourceUid: victoriametrics
                     model:
                       refId: A
-                      expr: 'kube_namespace_labels{namespace="kube-system",label_zt_breakglass_active="true"}'
+                      expr: 'kube_namespace_labels{exported_namespace="kube-system",label_zt_breakglass_active="true"}'
                       instant: true
                       intervalMs: 1000
                       maxDataPoints: 43200
@@ -382,7 +382,7 @@ spec:
                     datasourceUid: victoriametrics
                     model:
                       refId: A
-                      expr: 'sum(rate(kyverno_policy_results_total{rule_result="fail"}[5m]))'
+                      expr: 'sum(rate(kyverno_policy_results_total{rule_result="fail",policy_validation_mode="enforce"}[5m]))'
                       instant: true
                       intervalMs: 1000
                       maxDataPoints: 43200
@@ -398,8 +398,13 @@ spec:
                       conditions:
                         - evaluator:
                             type: gt
+                            # enforce-mode failures sit at about 0.067/s steady, so a
+                            # threshold of zero alerts on the normal rate of blocked
+                            # admissions. 0.5/s is roughly 150 rejections in the five
+                            # minutes this must hold for, which is a rate no ordinary
+                            # deployment produces.
                             params:
-                              - 0
+                              - 0.5
                           operator:
                             type: and
                           query:
@@ -470,7 +475,8 @@ spec:
                     datasourceUid: victoriametrics
                     model:
                       refId: A
-                      expr: 'kube_namespace_labels{label_policy_prplanit_com_restrict_default_sa="suspended"}'
+                      expr: 'kube_namespace_labels{label_policy_prplanit_com_restrict_default_sa="suspended",
+                        exported_namespace!~"gorons-bracelet|hookshot|hyrule-castle|temple-of-time|tingle-tuner|training-dummy"}'
                       instant: true
                       intervalMs: 1000
                       maxDataPoints: 43200
