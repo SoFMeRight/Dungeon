@@ -11,12 +11,24 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: nextcloud
+  # Migrating the data took longer than the five-minute default on 34.0.3 ->
+  # 34.0.4, and the deadline it missed is what set the whole failure going.
+  timeout: 20m
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
-      retries: 3
+      # No rollback. Nextcloud writes its new version into the data on upgrade and
+      # then refuses to start on an older image -- "the version of the data is
+      # higher than the docker image version, and downgrading is not supported".
+      # So rolling back is an operation that cannot succeed, and after the timeout
+      # above Flux attempted one every fifteen minutes for nine days while two of
+      # three pods sat in CrashLoopBackOff.
+      #
+      # A failed upgrade now stays failed and visible, which is the honest state
+      # and the one the Deployment stuck alert reports.
+      retries: 0
   values:
     fullnameOverride: "nextcloud"
 
