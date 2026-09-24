@@ -228,7 +228,19 @@ spec:
                   # not contact-point ones, so Grafana ignored them and posted with no
                   # Authorization at all. ntfy answers that with 403, which is why
                   # nothing has ever arrived on a Grafana topic.
-                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Warn?priority=4"
+                  # Everything rides in the query string because the webhook
+                  # integration has no field for extra headers. Without tpl, ntfy
+                  # renders the raw Grafana JSON -- one tier arrived as an
+                  # "attachment.json" file, the other as a wall of JSON.
+                  #
+                  # tpl=yes takes the title and message Grafana already composes and
+                  # uses them as the notification, and p carries the tier priority; a
+                  # named template such as template=grafana formats well but drops
+                  # priority entirely, which is the one thing the tier must keep.
+                  #
+                  # The braces are percent-encoded, so the chart's tpl pass never sees
+                  # a template action here and nothing has to be escaped against it.
+                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Warn?tpl=yes&t=%7B%7B.title%7D%7D&m=%7B%7B.message%7D%7D&p=4"
                   httpMethod: POST
                   authorization_scheme: Bearer
                   authorization_credentials: ${NTFY_TOKEN}
@@ -245,7 +257,19 @@ spec:
                   # not contact-point ones, so Grafana ignored them and posted with no
                   # Authorization at all. ntfy answers that with 403, which is why
                   # nothing has ever arrived on a Grafana topic.
-                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Alert?priority=5"
+                  # Everything rides in the query string because the webhook
+                  # integration has no field for extra headers. Without tpl, ntfy
+                  # renders the raw Grafana JSON -- one tier arrived as an
+                  # "attachment.json" file, the other as a wall of JSON.
+                  #
+                  # tpl=yes takes the title and message Grafana already composes and
+                  # uses them as the notification, and p carries the tier priority; a
+                  # named template such as template=grafana formats well but drops
+                  # priority entirely, which is the one thing the tier must keep.
+                  #
+                  # The braces are percent-encoded, so the chart's tpl pass never sees
+                  # a template action here and nothing has to be escaped against it.
+                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Alert?tpl=yes&t=%7B%7B.title%7D%7D&m=%7B%7B.message%7D%7D&p=5"
                   httpMethod: POST
                   authorization_scheme: Bearer
                   authorization_credentials: ${NTFY_TOKEN}
