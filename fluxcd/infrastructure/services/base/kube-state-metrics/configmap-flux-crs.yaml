@@ -1,0 +1,107 @@
+# Flux's own controllers publish no readiness metric. v2.7.5 exports only
+# gotk_reconcile_duration_seconds and token-cache counters -- gotk_resource_info
+# and gotk_reconcile_condition are absent from all four controllers, so nothing
+# could observe a HelmRelease that stopped reconciling. The gpu-operator release
+# failed three times across three weeks while its Kustomization stayed green.
+#
+# kube-state-metrics reads the CRs directly instead, which is how Flux documents
+# doing this. Reading Kubernetes objects is also the right source: it reports what
+# the API server holds rather than what a controller chooses to say about itself.
+#
+# ready carries the Ready condition verbatim ("True"/"False"/"Unknown"), and
+# suspended comes from spec.suspend so a deliberately paused resource can be told
+# apart from a broken one -- a suspended release is not an alert.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-state-metrics-flux-crs
+data:
+  crs.yaml: |
+    kind: CustomResourceStateMetrics
+    spec:
+      resources:
+        - groupVersionKind:
+            group: helm.toolkit.fluxcd.io
+            kind: HelmRelease
+            version: v2
+          metricNamePrefix: gotk
+          labelsFromPath:
+            name: [metadata, name]
+            exported_namespace: [metadata, namespace]
+          metrics:
+            - name: resource_info
+              help: "Readiness of a Flux HelmRelease."
+              each:
+                type: Info
+                info:
+                  labelsFromPath:
+                    ready: [status, conditions, "[type=Ready]", status]
+                    suspended: [spec, suspend]
+        - groupVersionKind:
+            group: kustomize.toolkit.fluxcd.io
+            kind: Kustomization
+            version: v1
+          metricNamePrefix: gotk
+          labelsFromPath:
+            name: [metadata, name]
+            exported_namespace: [metadata, namespace]
+          metrics:
+            - name: resource_info
+              help: "Readiness of a Flux Kustomization."
+              each:
+                type: Info
+                info:
+                  labelsFromPath:
+                    ready: [status, conditions, "[type=Ready]", status]
+                    suspended: [spec, suspend]
+        - groupVersionKind:
+            group: source.toolkit.fluxcd.io
+            kind: GitRepository
+            version: v1
+          metricNamePrefix: gotk
+          labelsFromPath:
+            name: [metadata, name]
+            exported_namespace: [metadata, namespace]
+          metrics:
+            - name: resource_info
+              help: "Readiness of a Flux GitRepository."
+              each:
+                type: Info
+                info:
+                  labelsFromPath:
+                    ready: [status, conditions, "[type=Ready]", status]
+                    suspended: [spec, suspend]
+        - groupVersionKind:
+            group: source.toolkit.fluxcd.io
+            kind: HelmRepository
+            version: v1
+          metricNamePrefix: gotk
+          labelsFromPath:
+            name: [metadata, name]
+            exported_namespace: [metadata, namespace]
+          metrics:
+            - name: resource_info
+              help: "Readiness of a Flux HelmRepository."
+              each:
+                type: Info
+                info:
+                  labelsFromPath:
+                    ready: [status, conditions, "[type=Ready]", status]
+                    suspended: [spec, suspend]
+        - groupVersionKind:
+            group: source.toolkit.fluxcd.io
+            kind: OCIRepository
+            version: v1
+          metricNamePrefix: gotk
+          labelsFromPath:
+            name: [metadata, name]
+            exported_namespace: [metadata, namespace]
+          metrics:
+            - name: resource_info
+              help: "Readiness of a Flux OCIRepository."
+              each:
+                type: Info
+                info:
+                  labelsFromPath:
+                    ready: [status, conditions, "[type=Ready]", status]
+                    suspended: [spec, suspend]

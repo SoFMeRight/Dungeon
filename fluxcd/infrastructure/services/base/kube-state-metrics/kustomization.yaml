@@ -4,5 +4,6 @@ resources:
   - serviceaccount.yaml
   - clusterrole.yaml
   - clusterrolebinding.yaml
+  - configmap-flux-crs.yaml
   - deployment.yaml
   - service.yaml
