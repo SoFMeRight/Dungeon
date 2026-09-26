@@ -1,0 +1,80 @@
+---
+# How long does a Proxmox host take to stop once its guests are already down?
+#
+# This is the one unmeasured term inside the committed phase of the UPS shutdown
+# design. Everything before it is known: a graceful k8s guest took 185s on
+# 2026-09-24, and guests now stop in parallel. What follows them — stopping the
+# OSD, flushing, syncing, powering off — has only ever been guessed at 40s, and
+# OSD flush is exactly the kind of thing that is slower than a guess.
+#
+# CryoSheep cannot report it. `host.poweroff` returns the moment it issues the
+# request, so the interval being measured begins after the tool stops existing.
+# It has to be read afterwards, from the journal of the boot that ended.
+#
+# Run this after any deliberate reboot of a hypervisor. It reads history; it
+# changes nothing and needs no outage of its own.
+- name: Ad Arbitorium 🔐 - GitOps - Infrastructure - Measure Proxmox host halt duration
+  become: true
+  hosts: proxmox
+  gather_facts: false
+
+  tasks:
+    - name: Reading the previous boot's shutdown from the journal...
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: |
+          set -uo pipefail
+
+          if ! journalctl --list-boots >/dev/null 2>&1; then
+            echo "no persistent journal — nothing to measure"
+            exit 0
+          fi
+          if [ "$(journalctl --list-boots --no-pager 2>/dev/null | wc -l)" -lt 2 ]; then
+            echo "only one boot recorded — reboot once, then run this again"
+            exit 0
+          fi
+
+          # Epoch seconds for a marker's last occurrence in the previous boot.
+          at() {
+            journalctl -b -1 --no-pager -o short-unix 2>/dev/null \
+              | grep -iE "$1" | tail -1 | awk '{print int($1)}'
+          }
+
+          last_entry=$(journalctl -b -1 --no-pager -o short-unix 2>/dev/null | tail -1 | awk '{print int($1)}')
+          guests_done=$(at 'pve-guests.*(Deactivated successfully|Stopped)')
+          osd_done=$(at 'ceph-osd.*(Deactivated successfully|Stopped)')
+          unmounting=$(at 'Unmounting|systemd-shutdown.*Syncing')
+          poweroff=$(at 'Reached target.*(poweroff|Power-Off|halt)')
+
+          show() {
+            if [ -n "${2:-}" ] && [ -n "${last_entry:-}" ]; then
+              printf '  %-26s %s   (%ss before the journal stopped)\n' "$1" "$(date -u -d "@$2" '+%H:%M:%S')" "$((last_entry - $2))"
+            else
+              printf '  %-26s not found\n' "$1"
+            fi
+          }
+
+          echo "previous boot, shutdown markers:"
+          show "guests stopped"    "${guests_done:-}"
+          show "ceph-osd stopped"  "${osd_done:-}"
+          show "filesystems synced" "${unmounting:-}"
+          show "poweroff reached"  "${poweroff:-}"
+          [ -n "${last_entry:-}" ] && printf '  %-26s %s\n' "journal stopped" "$(date -u -d "@$last_entry" '+%H:%M:%S')"
+
+          # The number the design needs: guests gone -> machine gone.
+          if [ -n "${guests_done:-}" ] && [ -n "${last_entry:-}" ]; then
+            echo
+            echo "HOST HALT AFTER GUESTS: $((last_entry - guests_done))s"
+            echo "  (the design assumes 40s; N and the runtime.low threshold follow from this)"
+          else
+            echo
+            echo "could not bracket the interval — pve-guests markers absent."
+            echo "  a host that stops its guests via CryoSheep rather than pve-guests"
+            echo "  will show the cryosheep guest.shutdown steps instead; read those."
+          fi
+      register: halt
+      changed_when: false
+
+    - name: Reporting the halt duration...
+      ansible.builtin.debug:
+        msg: "{{ halt.stdout_lines }}"
