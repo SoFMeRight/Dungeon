@@ -1,13 +1,16 @@
 ---
-# Proxmox gives a guest a flat 90 seconds to stop before killing it. A graceful
-# Kubernetes guest on this estate measured 185s on 2026-09-24 — 3.7s of CryoSheep
-# pre-flight, then 163s of kubelet draining pods under the shutdown inhibitor,
-# then filesystem sync and poweroff. So the hypervisor currently kills every k8s
-# guest mid-drain, and every bit of care below it — the 150s kubelet grace, the
-# CSI unmount, the CNPG shutdown budgets — is defeated by one unset field.
+# A graceful Kubernetes guest on this estate measured 185s on 2026-09-24 — 3.7s
+# of CryoSheep pre-flight, then 163s of kubelet draining pods under the shutdown
+# inhibitor, then filesystem sync and poweroff. Proxmox's own default shutdown
+# timeout is 180s, so an undeclared guest is killed about five seconds short.
 #
-# This sets `startup: down=` per guest so the hypervisor waits longer than the
-# guest actually needs.
+# (An earlier version of this comment said Proxmox defaults to 90s. It does not;
+# 90s was CryoSheep's own fallback, since corrected to match the platform. The
+# hypervisor was never the culprit.)
+#
+# `startup: down=` is where a per-guest budget belongs, and it is the field
+# CryoSheep reads to size each guest's shutdown. Setting it declares what a guest
+# actually needs, and every path honours it: CryoSheep, pve-guests, the GUI.
 #
 # The trap: `startup` is one field holding order, up and down together, so
 # writing down= naively discards an order= the guest declared. Order is a
@@ -20,9 +23,9 @@
   gather_facts: false
 
   vars:
-    # Measured slowest guest plus margin. Raise it rather than the kubelet grace
-    # period: this is the outer bound, and an outer bound below the inner one is
-    # the bug being fixed.
+    # Measured slowest guest plus margin. Raise this rather than the kubelet
+    # grace period: this is the outer bound, and an outer bound below the inner
+    # one is the bug being fixed.
     guest_down_seconds: 240
     # Report only, change nothing. Run this way first.
     guest_down_check_only: false
