@@ -1,0 +1,83 @@
+---
+# Proxmox gives a guest a flat 90 seconds to stop before killing it. A graceful
+# Kubernetes guest on this estate measured 185s on 2026-09-24 — 3.7s of CryoSheep
+# pre-flight, then 163s of kubelet draining pods under the shutdown inhibitor,
+# then filesystem sync and poweroff. So the hypervisor currently kills every k8s
+# guest mid-drain, and every bit of care below it — the 150s kubelet grace, the
+# CSI unmount, the CNPG shutdown budgets — is defeated by one unset field.
+#
+# This sets `startup: down=` per guest so the hypervisor waits longer than the
+# guest actually needs.
+#
+# The trap: `startup` is one field holding order, up and down together, so
+# writing down= naively discards an order= the guest declared. Order is a
+# statement about what must stop before what; losing it silently would reorder a
+# shutdown nobody asked to reorder. Every guest is therefore read, merged and
+# written back.
+- name: Ad Arbitorium 🔐 - GitOps - Infrastructure - Proxmox guest shutdown budget (startup down=)
+  become: true
+  hosts: proxmox
+  gather_facts: false
+
+  vars:
+    # Measured slowest guest plus margin. Raise it rather than the kubelet grace
+    # period: this is the outer bound, and an outer bound below the inner one is
+    # the bug being fixed.
+    guest_down_seconds: 240
+    # Report only, change nothing. Run this way first.
+    guest_down_check_only: false
+
+  tasks:
+    - name: Merging the shutdown budget into each guest's startup setting...
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: |
+          set -euo pipefail
+
+          changed=0
+
+          # Both families: a container that is killed mid-write has the same
+          # dirty filesystem a VM does.
+          for kind in qemu lxc; do
+            case "$kind" in
+              qemu) lister="qm list";  getter="qm config";  setter="qm set"  ;;
+              lxc)  lister="pct list"; getter="pct config"; setter="pct set" ;;
+            esac
+            command -v "${lister%% *}" >/dev/null 2>&1 || continue
+
+            for id in $($lister 2>/dev/null | awk 'NR>1 {print $1}'); do
+              current=$($getter "$id" 2>/dev/null | sed -n 's/^startup: //p' || true)
+
+              # Rebuild the field, keeping every key except down and replacing
+              # that one. Order and up survive untouched.
+              kept=$(printf '%s' "$current" | tr ',' '\n' | grep -v '^down=' | grep -v '^$' | paste -sd, - || true)
+              if [ -n "$kept" ]; then
+                desired="${kept},down=${DOWN}"
+              else
+                desired="down=${DOWN}"
+              fi
+
+              if [ "$current" = "$desired" ]; then
+                continue
+              fi
+
+              echo "  ${kind}/${id}: '${current:-<unset>}' -> '${desired}'"
+              if [ "${CHECK_ONLY}" != "true" ]; then
+                $setter "$id" --startup "$desired" >/dev/null
+              fi
+              changed=$((changed + 1))
+            done
+          done
+
+          if [ "$changed" -gt 0 ]; then
+            echo "CHANGED=${changed}"
+          fi
+        environment:
+          DOWN: "{{ guest_down_seconds }}"
+          CHECK_ONLY: "{{ guest_down_check_only | lower }}"
+      register: budget
+      changed_when: "'CHANGED=' in budget.stdout"
+
+    - name: Reporting what the shutdown budget now is...
+      ansible.builtin.debug:
+        msg: "{{ budget.stdout_lines | default(['already correct on every guest']) }}"
