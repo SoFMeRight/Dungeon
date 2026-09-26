@@ -547,12 +547,17 @@ data:
     // exactly one alloy instance instead of all 10.
     // ==========================================================================
 
-    // Kube-state-metrics (single target)
+    // Kube-state-metrics (single target).
+    // Scraped by POD IP, not the service VIP: under the ambient mesh, service-VIP
+    // scrapes fail (ztunnel/waypoint routing) while pod-IP scrapes succeed — the
+    // generic kubernetes_pods scrape reached KSM on the pod IP fine; the old
+    // service-VIP target was permanently down (up=0). Keep only the http-metrics
+    // port (8080); the pod also exposes telemetry (8081).
     discovery.relabel "kube_state_metrics" {
-      targets = discovery.kubernetes.services.targets
+      targets = discovery.kubernetes.pods.targets
 
       rule {
-        source_labels = ["__meta_kubernetes_service_name"]
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
         regex         = "kube-state-metrics"
         action        = "keep"
       }
@@ -562,13 +567,9 @@ data:
         action        = "keep"
       }
       rule {
-        source_labels = ["__meta_kubernetes_service_name", "__meta_kubernetes_service_port_name"]
-        regex         = "kube-state-metrics;http-metrics"
+        source_labels = ["__meta_kubernetes_pod_container_port_number"]
+        regex         = "8080"
         action        = "keep"
-      }
-      rule {
-        source_labels = ["__meta_kubernetes_service_name"]
-        target_label  = "service"
       }
       rule {
         source_labels = ["__meta_kubernetes_namespace"]
