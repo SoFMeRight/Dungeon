@@ -205,25 +205,48 @@ data:
 
     // Node metrics come from the dedicated node-exporter DaemonSet (lakitu),
     // which — unlike Alloy's built-in unix exporter — sees the host filesystems
-    // (host / mounted read-only) and is a standard, well-audited exporter. It is
-    // hostNetwork and binds 127.0.0.1:9100, so this scrape is node-local over
-    // loopback: the traffic never leaves the node and no network policy applies.
-    // env("HOSTNAME") is the node name on these hostNetwork pods (same value the
-    // kubelet discovery field selectors rely on), so it stamps the node label.
+    // (host / mounted read-only) and is a standard, well-audited exporter.
+    //
+    // discovery.kubernetes.pods is already scoped to the local node (field
+    // selector spec.nodeName=HOSTNAME), so this selects only this node's
+    // node-exporter pod. The address is rewritten to the loopback endpoint the
+    // exporter binds (127.0.0.1:9100), so the scrape stays node-local over
+    // loopback — traffic never leaves the node and no network policy applies.
+    // Carrying the pod/namespace/node identity (kube-prometheus-stack style)
+    // lets metric providers that derive the node by joining node metrics to
+    // kube_pod_info on (pod,namespace) — e.g. Freelens' "operator" provider —
+    // resolve the node for cluster and filesystem panels.
     discovery.relabel "node_exporter" {
-      targets = [{ "__address__" = "127.0.0.1:9100" }]
+      targets = discovery.kubernetes.pods.targets
 
       rule {
-        target_label = "node"
-        replacement  = env("HOSTNAME")
+        source_labels = ["__meta_kubernetes_pod_label_app"]
+        regex         = "node-exporter"
+        action        = "keep"
       }
       rule {
-        target_label = "instance"
-        replacement  = env("HOSTNAME")
+        target_label = "__address__"
+        replacement  = "127.0.0.1:9100"
       }
       rule {
-        target_label = "job"
+        source_labels = ["__meta_kubernetes_namespace"]
+        target_label  = "namespace"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_name"]
+        target_label  = "pod"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        target_label  = "node"
+      }
+      rule {
+        source_labels = ["__meta_kubernetes_pod_node_name"]
+        target_label  = "instance"
+      }
+      rule {
         replacement  = "node-exporter"
+        target_label = "job"
       }
     }
 
