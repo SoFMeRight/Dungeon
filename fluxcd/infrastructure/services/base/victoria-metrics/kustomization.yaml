@@ -5,6 +5,9 @@ resources:
   - statefulset-vmstorage.yaml
   - deployment-vminsert.yaml
   - deployment-vmselect.yaml
+  - deployment-vmauth.yaml
   - service-vmstorage.yaml
   - service-vminsert.yaml
   - service-vmselect.yaml
+  - service-vmauth.yaml
+  - configmap-vmauth.yaml

@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-vmauth-ingress
+spec:
+  description: >-
+    Allow the kube-apiserver service-proxy (Freelens/Lens metrics) and
+    node-sourced traffic to reach vmauth on 8427/TCP. vmauth re-presents the
+    VM cluster's tenant-0 query API at the root path for Prometheus-native
+    clients. This is the only L4 gate on that port; the istio port-only ALLOW
+    admits the non-mesh plaintext proxy traffic above it.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: vmauth
+  ingress:
+    - fromEntities:
+        - kube-apiserver
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "8427"
+              protocol: TCP

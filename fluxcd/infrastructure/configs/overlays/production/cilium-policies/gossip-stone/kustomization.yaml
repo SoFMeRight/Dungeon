@@ -5,6 +5,7 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-monitoring-lb.yaml
   - cnp-victoria-metrics.yaml
+  - cnp-vmauth.yaml
   - cnp-loki.yaml
   - cnp-kube-state-metrics.yaml
   - cnp-umami-db.yaml

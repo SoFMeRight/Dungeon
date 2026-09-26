@@ -64,8 +64,9 @@ metadata:
   name: allow-vmselect-internal
 spec:
   description: >-
-    Allow Grafana pods and Alloy (host/remote-node) to query
-    vmselect on 8481/TCP.
+    Allow Grafana (direct, by mesh identity) and vmauth (the non-mesh read
+    front door for Freelens), plus Alloy (host/remote-node), to query vmselect
+    on 8481/TCP.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -76,6 +77,8 @@ spec:
     - fromEndpoints:
         - matchLabels:
             app: grafana
+        - matchLabels:
+            app: vmauth
       toPorts:
         - ports:
             - port: "8481"

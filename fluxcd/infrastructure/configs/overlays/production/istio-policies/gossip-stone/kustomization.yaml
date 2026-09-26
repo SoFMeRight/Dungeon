@@ -7,6 +7,8 @@ resources:
   - allow-gatus-to-gatus-postgres.yaml
   - allow-grafana-to-grafana-postgres.yaml
   - allow-grafana-to-vmselect.yaml
+  - allow-vmauth-to-vmselect.yaml
+  - allow-freelens-to-vmauth.yaml
   - allow-grafana-to-loki.yaml
   - allow-umami-to-umami-postgres.yaml
   - allow-speedtest-tracker-to-speedtest-tracker-postgres.yaml

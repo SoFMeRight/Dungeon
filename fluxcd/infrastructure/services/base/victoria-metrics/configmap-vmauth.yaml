@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vmauth
+data:
+  auth.yml: |
+    # vmauth exists for non-mesh read consumers (Freelens/Lens via the
+    # kube-apiserver service-proxy) that cannot present a SPIFFE identity and
+    # cannot express the VM cluster's /select/0/prometheus tenant prefix.
+    # In-mesh consumers (Grafana) do NOT use vmauth — they reach vmselect
+    # directly, authenticated by mesh identity (istio AuthorizationPolicy).
+    #
+    # No authentication here by design: access is gated at L3/L4 by cilium
+    # (only the apiserver-proxy may reach :8427). vmauth's job is to re-present
+    # the tenant-0 query API at the root path and restrict callers to read-only
+    # endpoints, concurrency-capped.
+    unauthorized_user:
+      max_concurrent_requests: 10
+      url_map:
+        - src_paths:
+            - "/api/v1/query"
+            - "/api/v1/query_range"
+            - "/api/v1/query_exemplars"
+            - "/api/v1/series"
+            - "/api/v1/labels"
+            - "/api/v1/label/[^/]+/values"
+            - "/api/v1/metadata"
+            - "/api/v1/status/.+"
+          url_prefix: "http://vmselect:8481/select/0/prometheus"

@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-freelens-to-vmauth
+spec:
+  selector:
+    matchLabels:
+      app: vmauth
+  action: ALLOW
+  rules:
+    # The kube-apiserver service-proxy (Freelens/Lens metrics) is non-mesh,
+    # plaintext, and carries no SPIFFE principal, so this rule matches on the
+    # destination port only. The actual L3/L4 source is restricted to the
+    # apiserver/nodes by cilium (cnp allow-vmauth-ingress), so the open port is
+    # gated below the mesh rather than at it.
+    - to:
+        - operation:
+            ports: ["8427"]
