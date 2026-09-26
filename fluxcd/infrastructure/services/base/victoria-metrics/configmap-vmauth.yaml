@@ -12,11 +12,28 @@ data:
     #
     # No authentication here by design: access is gated at L3/L4 by cilium
     # (only the apiserver-proxy may reach :8427). vmauth's job is to re-present
-    # the tenant-0 query API at the root path and restrict callers to read-only
-    # endpoints, concurrency-capped.
+    # the tenant-0 query API and restrict callers to read-only endpoints,
+    # concurrency-capped. Two entries cover the two prefixes a client may use:
+    # Freelens/Lens's "Prometheus" provider prepends "/prometheus", while a
+    # bare Prometheus-native client hits "/api/v1/..." at the root. Both route
+    # to the VM cluster's tenant-0 query API; the "/prometheus" leg drops that
+    # one leading path part first so the backend prefix is not doubled.
     unauthorized_user:
       max_concurrent_requests: 10
       url_map:
+        # Freelens/Lens: /prometheus/api/v1/... -> strip "/prometheus" -> tenant-0
+        - src_paths:
+            - "/prometheus/api/v1/query"
+            - "/prometheus/api/v1/query_range"
+            - "/prometheus/api/v1/query_exemplars"
+            - "/prometheus/api/v1/series"
+            - "/prometheus/api/v1/labels"
+            - "/prometheus/api/v1/label/[^/]+/values"
+            - "/prometheus/api/v1/metadata"
+            - "/prometheus/api/v1/status/.+"
+          drop_src_path_prefix_parts: 1
+          url_prefix: "http://vmselect:8481/select/0/prometheus"
+        # Prometheus-native clients: /api/v1/... at the root -> tenant-0
         - src_paths:
             - "/api/v1/query"
             - "/api/v1/query_range"
