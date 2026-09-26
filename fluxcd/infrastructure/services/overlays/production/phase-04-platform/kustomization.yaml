@@ -9,6 +9,7 @@ resources:
   - ./graphite-exporter-truenas
   - ./kube-state-metrics
   - ./loki
+  - ./node-exporter
   - ./victoria-metrics
   - ./netbird
   - ./dungeon-router

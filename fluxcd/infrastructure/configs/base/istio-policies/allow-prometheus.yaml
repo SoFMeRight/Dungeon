@@ -1,3 +1,12 @@
+# NOTE ON SCRAPE AUTHORIZATION: the Alloy agent that performs scraping runs on
+# hostNetwork (see the alloy controller config) and is therefore NOT in the
+# ambient mesh — it presents no SPIFFE identity, so the sa/alloy principal rule
+# below does not match its traffic. Scrape-path authorization is actually
+# enforced at Cilium L3/L4 (host/remote-node entities) plus hostNetwork node
+# trust, not by this mesh policy. This rule is retained deliberately: it is the
+# contract for any FUTURE in-mesh scraper, and it must not be emptied — an ALLOW
+# AuthorizationPolicy with no rules matches nothing and denies all traffic to the
+# selected (metrics="true") workloads.
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:

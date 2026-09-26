@@ -203,12 +203,32 @@ data:
     // NODE-LOCAL METRICS (no clustering - each DaemonSet pod scrapes its own node)
     // ==========================================================================
 
-    // Built-in Node Exporter - host metrics from each K8s node
-    prometheus.exporter.unix "node_metrics" {
+    // Node metrics come from the dedicated node-exporter DaemonSet (lakitu),
+    // which — unlike Alloy's built-in unix exporter — sees the host filesystems
+    // (host / mounted read-only) and is a standard, well-audited exporter. It is
+    // hostNetwork and binds 127.0.0.1:9100, so this scrape is node-local over
+    // loopback: the traffic never leaves the node and no network policy applies.
+    // env("HOSTNAME") is the node name on these hostNetwork pods (same value the
+    // kubelet discovery field selectors rely on), so it stamps the node label.
+    discovery.relabel "node_exporter" {
+      targets = [{ "__address__" = "127.0.0.1:9100" }]
+
+      rule {
+        target_label = "node"
+        replacement  = env("HOSTNAME")
+      }
+      rule {
+        target_label = "instance"
+        replacement  = env("HOSTNAME")
+      }
+      rule {
+        target_label = "job"
+        replacement  = "node-exporter"
+      }
     }
 
     prometheus.scrape "node_exporter" {
-      targets    = prometheus.exporter.unix.node_metrics.targets
+      targets    = discovery.relabel.node_exporter.output
       forward_to = [prometheus.relabel.drop_high_cardinality.receiver]
 
       scrape_interval = "30s"
