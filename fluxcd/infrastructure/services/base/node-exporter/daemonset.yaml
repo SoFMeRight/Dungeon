@@ -15,6 +15,10 @@ spec:
     spec:
       serviceAccountName: node-exporter
       automountServiceAccountToken: false
+      # Node metrics are node-critical infrastructure and must schedule on every
+      # node, including heavily packed ones. Paired with a minimal CPU request so
+      # it fits without preempting on nodes that are already near capacity.
+      priorityClassName: system-node-critical
       # hostNetwork/hostPID: node-exporter reads host-level stats and is scraped
       # node-locally by the (also hostNetwork) Alloy agent over loopback. The
       # node-telemetry plane runs outside the ambient mesh by design; binding to
