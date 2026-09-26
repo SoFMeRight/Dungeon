@@ -1,0 +1,66 @@
+---
+# Declared shutdown and startup policy for every Proxmox guest.
+#
+# `startup` is one Proxmox field holding three things:
+#   order=N   lower starts earlier and stops LATER. order=1 is first up, last down.
+#   up=N      seconds to wait after this guest starts before starting the next.
+#   down=N    seconds to wait for this guest to stop before killing it.
+#
+# Anything not named here gets the default budget and no order, which means it
+# stops in the first wave alongside its unordered peers. That is correct for a
+# peer — a Kubernetes node has nothing waiting on it — and wrong for anything
+# others depend on while they are still shutting down.
+#
+# Order is per-host. Proxmox sequences each hypervisor's own guests and cannot
+# express "wait for a guest on another node", so a dependency that crosses hosts
+# is not something this file can state. Keep such guests on the same host, or
+# accept that the ordering is advisory across the cluster.
+
+# Every guest gets at least this long to stop. Proxmox's own default is 180s and
+# a graceful Kubernetes guest measured 185s on 2026-09-24, so the default is
+# deliberately above both.
+pve_startup_default_down: 240
+
+# name -> what it declares. Names are used rather than vmids because a policy
+# nobody can read is a policy nobody maintains; the play refuses to run if a name
+# is ambiguous across the cluster.
+pve_guest_startup:
+
+  # ── Last to stop ────────────────────────────────────────────────────────────
+  # Routers and firewalls. order=1 is Proxmox's convention for first-up/last-down
+  # and these already carried it on Avocado and Bamboo; it is written here so the
+  # policy is declared rather than discovered.
+  pfSense-z-1: {order: 1}
+  pfSense-z-2: {order: 1}
+
+  # Both OPNsense guests (199 on Avocado, 299 on Bamboo) already carried order=1.
+  # Preserved as found rather than decided: whether they are live routers or
+  # spares changes whether stopping last is right, and nobody has said which.
+  # They are named here because the policy refuses to erase an order it does not
+  # mention, which is the point at which this had to be looked at rather than
+  # silently dropped.
+  OPNsense: {order: 1}
+
+  # ── Storage and backup ──────────────────────────────────────────────────────
+  # Gringotts already declares order=4,up=200. Preserved as found: it holds the
+  # CNPG archive, so it outliving the workloads that write to it is deliberate.
+  Gringotts: {order: 4, up: 200}
+
+  # ── First to stop, among the ordered ────────────────────────────────────────
+  # Both already declared order=9. Preserved as found.
+  Zebrina: {order: 9}
+  Tradescantia: {order: 9, up: 0}
+
+  # ── Undeclared, deliberately ────────────────────────────────────────────────
+  # Everything else stops in the first wave: the ten Kubernetes nodes, the
+  # gateways, the workstations, the test guests. They are peers of each other and
+  # nothing waits on them.
+  #
+  # Two decisions are still open and are NOT encoded here, because they are
+  # statements about the estate rather than defaults:
+  #
+  #   - The DNS servers (The-Usual-Suspect, Homing-Pigeon) currently stop in the
+  #     first wave. If anything resolves names while shutting down, they want an
+  #     order so they outlive it.
+  #   - The OPNsense guests on Avocado and Bamboo carry order=1 today. Whether
+  #     they are live routers or spares decides whether that is right.

@@ -1,0 +1,172 @@
+---
+# Applies the declared startup policy to every Proxmox guest, over the API.
+#
+# Over the API rather than `qm set` over SSH, because that needs root on five
+# hypervisors and root can do anything. An API token can be scoped to
+# `VM.Config.Options` and then it can set this field and nothing else — it cannot
+# start a guest, cannot stop one, cannot read a disk. Least privilege is not
+# ceremony here: the credential that edits shutdown policy has no business being
+# able to perform a shutdown.
+#
+# Create the token once, on any node:
+#
+#   pveum role add StartupPolicy --privs VM.Config.Options
+#   pveum user add ansible@pve
+#   pveum acl modify / --user ansible@pve --role StartupPolicy
+#   pveum user token add ansible@pve startup --privsep 0
+#
+# and give the play PVE_API_TOKEN_ID and PVE_API_TOKEN_SECRET. Nothing is
+# hardcoded here; the endpoint and credential are environment, not logic.
+#
+# Declares order, up and down together because they are one Proxmox field.
+# Writing one without reading the others is how an order gets silently discarded.
+- name: Ad Arbitorium 🔐 - GitOps - Infrastructure - Proxmox guest startup policy
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars_files:
+    - ../vars/pve-guest-startup.yml
+
+  vars:
+    pve_api_url: "{{ lookup('env', 'PVE_API_URL') }}"
+    pve_api_token_id: "{{ lookup('env', 'PVE_API_TOKEN_ID') }}"
+    pve_api_token_secret: "{{ lookup('env', 'PVE_API_TOKEN_SECRET') }}"
+    pve_api_validate_certs: true
+    # Report without changing. The default, because a play that edits shutdown
+    # policy across a cluster should be asked twice.
+    pve_startup_check_only: true
+
+  tasks:
+    - name: Refusing to run without an endpoint and a token...
+      ansible.builtin.assert:
+        that:
+          - pve_api_url | length > 0
+          - pve_api_token_id | length > 0
+          - pve_api_token_secret | length > 0
+        fail_msg: >-
+          PVE_API_URL, PVE_API_TOKEN_ID and PVE_API_TOKEN_SECRET must be set.
+          The token needs VM.Config.Options and nothing else.
+
+    - name: Listing every guest in the cluster...
+      ansible.builtin.uri:
+        url: "{{ pve_api_url }}/api2/json/cluster/resources?type=vm"
+        method: GET
+        headers:
+          Authorization: "PVEAPIToken={{ pve_api_token_id }}={{ pve_api_token_secret }}"
+        validate_certs: "{{ pve_api_validate_certs }}"
+        status_code: 200
+      register: resources
+
+    - name: Refusing to act on a name that is not unique...
+      ansible.builtin.assert:
+        that: >-
+          resources.json.data
+          | selectattr('name', 'defined')
+          | map(attribute='name')
+          | select('in', pve_guest_startup.keys() | list)
+          | list | unique | length
+          ==
+          resources.json.data
+          | selectattr('name', 'defined')
+          | map(attribute='name')
+          | select('in', pve_guest_startup.keys() | list)
+          | list | length
+        fail_msg: >-
+          A declared name matches more than one guest. Policy is keyed by name so
+          that it can be read; an ambiguous name would silently apply to the
+          wrong machine.
+
+    - name: Reading each guest's current startup setting...
+      ansible.builtin.uri:
+        url: "{{ pve_api_url }}/api2/json/nodes/{{ item.node }}/{{ item.type }}/{{ item.vmid }}/config"
+        method: GET
+        headers:
+          Authorization: "PVEAPIToken={{ pve_api_token_id }}={{ pve_api_token_secret }}"
+        validate_certs: "{{ pve_api_validate_certs }}"
+        status_code: 200
+      register: configs
+      loop: "{{ resources.json.data | sort(attribute='vmid') }}"
+      loop_control:
+        label: "{{ item.vmid }} {{ item.name | default('') }}"
+
+    - name: Working out what each guest should declare...
+      ansible.builtin.set_fact:
+        startup_plan: >-
+          {{ startup_plan | default([]) + [{
+               'vmid':    item.item.vmid,
+               'node':    item.item.node,
+               'type':    item.item.type,
+               'name':    item.item.name | default(''),
+               'current': item.json.data.startup | default(''),
+               'desired': (
+                   ( ['order=' ~ (pve_guest_startup[item.item.name | default('')].order)]
+                     if (item.item.name | default('')) in pve_guest_startup
+                        and pve_guest_startup[item.item.name | default('')].order is defined
+                     else [] )
+                 + ( ['up=' ~ (pve_guest_startup[item.item.name | default('')].up)]
+                     if (item.item.name | default('')) in pve_guest_startup
+                        and pve_guest_startup[item.item.name | default('')].up is defined
+                     else [] )
+                 + ( ['down=' ~ (pve_guest_startup[item.item.name | default('')].down
+                                 | default(pve_startup_default_down))] )
+               ) | join(',')
+             }] }}
+      loop: "{{ configs.results }}"
+      loop_control:
+        label: "{{ item.item.vmid }}"
+
+    # Declarative means undeclared is a statement, so a guest carrying an order
+    # this file does not mention would have it erased. That is how a router stops
+    # in the same wave as the guests depending on it. Stop instead and say which,
+    # because an order nobody wrote down is still an order somebody meant.
+    - name: Refusing to erase an order the policy does not mention...
+      ansible.builtin.assert:
+        that: undeclared_orders | length == 0
+        fail_msg: >-
+          These guests declare order= or up= that this policy does not mention,
+          and applying it would erase them: {{ undeclared_orders | join(', ') }}.
+          Add them to ansible/vars/pve-guest-startup.yml, deliberately, or remove
+          the setting from the guest first.
+      vars:
+        undeclared_orders: >-
+          {{ startup_plan
+             | selectattr('current', 'search', '(order|up)=')
+             | rejectattr('name', 'in', pve_guest_startup.keys() | list)
+             | map(attribute='name') | list }}
+
+    - name: Reporting what would change...
+      ansible.builtin.debug:
+        msg: >-
+          {{ startup_plan | rejectattr('current', 'equalto', none)
+             | selectattr('current', 'ne', '')
+             | list | length }} guests already declare something;
+          {{ startup_plan | selectattr('desired', 'ne', '')
+             | rejectattr('current', 'equalto', '')
+             | list | length }} differ from the policy
+
+    - name: Showing each guest that differs...
+      ansible.builtin.debug:
+        msg: "{{ item.vmid }} {{ item.name }} on {{ item.node }}: '{{ item.current }}' -> '{{ item.desired }}'"
+      loop: "{{ startup_plan | rejectattr('current', 'equalto', 'desired') | list }}"
+      loop_control:
+        label: "{{ item.vmid }}"
+      when: item.current != item.desired
+
+    - name: Declaring the policy on each guest that differs...
+      ansible.builtin.uri:
+        url: "{{ pve_api_url }}/api2/json/nodes/{{ item.node }}/{{ item.type }}/{{ item.vmid }}/config"
+        method: PUT
+        headers:
+          Authorization: "PVEAPIToken={{ pve_api_token_id }}={{ pve_api_token_secret }}"
+        body_format: form-urlencoded
+        body:
+          startup: "{{ item.desired }}"
+        validate_certs: "{{ pve_api_validate_certs }}"
+        status_code: 200
+      loop: "{{ startup_plan }}"
+      loop_control:
+        label: "{{ item.vmid }} {{ item.name }}"
+      when:
+        - not pve_startup_check_only | bool
+        - item.current != item.desired
