@@ -210,6 +210,12 @@ spec:
 
     # Container Registry HA
     registry:
+      # External object storage (ceph-rgw S3). The chart 9.x->10.x major removed
+      # the bundled registry object storage and aborts the upgrade without this;
+      # global.registry.bucket (above) must match the bucket in this secret.
+      storage:
+        secret: gitlab-s3-storage
+        key: config
       hpa:
         minReplicas: 3
         maxReplicas: 5
