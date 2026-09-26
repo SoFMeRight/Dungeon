@@ -401,6 +401,17 @@ data:
         action        = "drop"
       }
 
+      // Drop kube-state-metrics: it carries prometheus.io/scrape and would be
+      // caught here, but its series describe OTHER objects and carry their own
+      // namespace/pod/node labels. This generic scrape overwrites those with the
+      // KSM pod's own identity. KSM is scraped by the dedicated service-based
+      // kube_state_metrics job (honor_labels=true), which preserves them.
+      rule {
+        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
+        regex         = "kube-state-metrics"
+        action        = "drop"
+      }
+
       rule {
         source_labels = ["__meta_kubernetes_namespace"]
         target_label  = "namespace"
@@ -572,6 +583,14 @@ data:
     prometheus.scrape "kube_state_metrics" {
       targets    = discovery.relabel.kube_state_metrics.output
       forward_to = [prometheus.relabel.drop_high_cardinality.receiver]
+
+      // KSM series carry their own namespace/pod/node describing the OBJECT the
+      // metric is about. Without honor_labels the target's namespace=gossip-stone
+      // (set in discovery.relabel.kube_state_metrics) overwrites them and the real
+      // values are shunted to exported_*. honor_labels=true keeps the sample's own
+      // labels on conflict, so kube_pod_info{namespace,pod,node} reflect the target
+      // object — required for correct joins (Freelens/Lens, Grafana dashboards).
+      honor_labels = true
 
       clustering {
         enabled = true
