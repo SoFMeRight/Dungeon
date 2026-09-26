@@ -48,7 +48,7 @@ spec:
     # running operator version (see infrastructure/operators/mariadb-operator). The operator
     # persists these into the CR on create; bump them together with the operator upgrade.
     agent:
-      image: ghcr.io/mariadb-operator/mariadb-operator:26.6.0
+      image: ghcr.io/mariadb-operator/mariadb-operator:26.10.1
       # The agent runs the operator binary (Galera coordination) — needs no caps/privesc.
       securityContext:
         allowPrivilegeEscalation: false
@@ -56,7 +56,7 @@ spec:
           drop:
             - ALL
     initContainer:
-      image: ghcr.io/mariadb-operator/mariadb-operator:26.6.0
+      image: ghcr.io/mariadb-operator/mariadb-operator:26.10.1
       securityContext:
         allowPrivilegeEscalation: false
         capabilities:
