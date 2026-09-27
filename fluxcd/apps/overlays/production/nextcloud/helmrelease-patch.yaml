@@ -163,7 +163,7 @@ spec:
       # through the nextcloud-notify-push Service (repointed at these pods) + the /push HTTPRoute.
       extraSidecarContainers:
         - name: notify-push
-          image: docker.io/icewind1991/notify_push:1.4.0
+          image: docker.io/icewind1991/notify_push:1.4.1
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
