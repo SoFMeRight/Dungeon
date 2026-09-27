@@ -31,7 +31,7 @@ data:
     # its ClusterIP), keeping the hostname for TLS SNI and Harbor's token realm.
     cr.pcfae.com:53 {
         errors
-        template IN AAAA {
+        template IN AAAA cluster.local {
            rcode NOERROR
         }
         rewrite stop name exact cr.pcfae.com phloem-gateway-istio.prelude-of-light.svc.cluster.local answer auto
@@ -47,7 +47,7 @@ data:
     # name (follows its ClusterIP); the NetBird router peers here without hairpin.
     netbird.prplanit.com:53 {
         errors
-        template IN AAAA {
+        template IN AAAA cluster.local {
            rcode NOERROR
         }
         rewrite stop name exact netbird.prplanit.com cell-membrane-gateway-istio.hyrule-castle.svc.cluster.local answer auto
@@ -66,7 +66,7 @@ data:
         }
         ready
         prometheus :9153
-        template IN AAAA {
+        template IN AAAA cluster.local {
            rcode NOERROR
         }
         forward . 10.0.0.1 10.0.0.2 {
