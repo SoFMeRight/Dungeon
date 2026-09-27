@@ -1,0 +1,30 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: enforce-pod-hardening-gitlab-selfsign
+  namespace: zeldas-lullaby
+  annotations:
+    policies.kyverno.io/description: >-
+      GitLab chart shared-secrets self-sign cert job (cfssl-self-sign, hyrule-castle).
+      This ephemeral bootstrap hook generates GitLab's internal self-signed certs and
+      exits. Its pod cannot be hardened: the chart's self-sign template ignores
+      shared-secrets.securityContext / containerSecurityContext (verified — a fresh
+      render still emits a pod with no runAsNonRoot and an empty container
+      securityContext), and the certs are bundled with the Rails secret + SSH host
+      keys in the same job so the job cannot be cleanly replaced by cert-manager
+      without high-risk manual secret management. Exempt this one vendor hook from the
+      three container/pod hardening rules it violates. Scoped to the self-sign pod
+      only (the main shared-secrets job pod is already compliant and is NOT matched).
+spec:
+  exceptions:
+    - policyName: enforce-pod-hardening
+      ruleNames:
+        - require-run-as-non-root
+        - require-no-privilege-escalation
+        - require-drop-all-capabilities
+  match:
+    any:
+      - resources:
+          kinds: [Pod]
+          namespaces: [hyrule-castle]
+          names: ["gitlab-shared-secrets-*-selfsign-*"]
