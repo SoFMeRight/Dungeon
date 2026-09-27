@@ -7,6 +7,15 @@ spec:
   targetNamespace: PLACEHOLDER_TARGET_NAMESPACE
   install:
     createNamespace: false
+    # The chart's crds/ directory contains ONLY the Gateway API CRDs + the
+    # safe-upgrades ValidatingAdmissionPolicy (bundled for the chart's gatewayApi
+    # feature); GitLab ships no custom CRDs of its own. Gateway API is owned
+    # cluster-wide by the gateway-api-crds kustomization, so skip the chart's CRDs
+    # to stop GitLab co-managing (and version-fighting over) those cluster-scoped
+    # resources — single owner.
+    crds: Skip
+  upgrade:
+    crds: Skip
   interval: 30m
   timeout: 30m
   chart:
