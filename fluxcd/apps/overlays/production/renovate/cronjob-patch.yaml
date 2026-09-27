@@ -17,10 +17,21 @@ spec:
               env:
                 - name: RENOVATE_ENDPOINT
                   value: "https://gitlab.prplanit.com/api/v4"
+                # V8 soft heap ceiling. The cold-cache run crashed with "JavaScript
+                # heap out of memory" once docker.io discovery started working; this
+                # caps the heap at 3GB explicitly (rather than relying on Node's
+                # cgroup auto-detection), sitting under the 4Gi container limit with
+                # ~1Gi left for off-heap.
+                - name: NODE_OPTIONS
+                  value: "--max-old-space-size=3072"
               resources:
                 requests:
                   cpu: 100m
                   memory: 512Mi
                 limits:
+                  # Limit raised only (requests + CPU unchanged): 4Gi container
+                  # ceiling to hold the 3GB heap plus off-heap; lets a cold run
+                  # complete and warm the S3 cache, after which steady-state usage
+                  # stays near the 512Mi request.
                   cpu: 500m
-                  memory: 1Gi
+                  memory: 4Gi
