@@ -40,6 +40,19 @@ data:
         cache 30
         reload
     }
+    # Route netbird.prplanit.com to the in-cluster cell-membrane gateway Service by
+    # name (follows its ClusterIP); the NetBird router peers here without hairpin.
+    netbird.prplanit.com:53 {
+        errors
+        rewrite stop name exact netbird.prplanit.com cell-membrane-gateway-istio.hyrule-castle.svc.cluster.local answer auto
+        kubernetes cluster.local {
+           pods insecure
+           ttl 30
+        }
+        forward . 10.0.0.1 10.0.0.2
+        cache 30
+        reload
+    }
     .:53 {
         errors
         health {
