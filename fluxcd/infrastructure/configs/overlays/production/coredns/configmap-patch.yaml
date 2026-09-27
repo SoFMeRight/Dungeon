@@ -27,6 +27,19 @@ data:
         loop
         reload
     }
+    # Route cr.pcfae.com to the in-cluster phloem gateway Service by name (follows
+    # its ClusterIP), keeping the hostname for TLS SNI and Harbor's token realm.
+    cr.pcfae.com:53 {
+        errors
+        rewrite stop name exact cr.pcfae.com phloem-gateway-istio.prelude-of-light.svc.cluster.local answer auto
+        kubernetes cluster.local {
+           pods insecure
+           ttl 30
+        }
+        forward . 10.0.0.1 10.0.0.2
+        cache 30
+        reload
+    }
     .:53 {
         errors
         health {
