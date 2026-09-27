@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-renovate-to-rgw
+spec:
+  selector:
+    matchLabels:
+      app: ceph-rgw
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - "cluster.local/ns/tingle-tuner/sa/renovate"
+      to:
+        - operation:
+            ports: ["8080"]

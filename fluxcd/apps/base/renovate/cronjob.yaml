@@ -69,8 +69,13 @@ spec:
                   value: "enabled"
                 - name: RENOVATE_REPOSITORY_CACHE_TYPE
                   value: "s3://renovate-cache"
+                # In-cluster clients reach ceph-rgw via its ClusterIP service, NOT
+                # the external s3.pcfae.com endpoint — that resolves to a LoadBalancer
+                # IP and hairpins under Cilium DSR, which failed the repo-cache reads
+                # (ECONNRESET/timeout). This is the same address every other in-cluster
+                # S3 consumer (loki, cnpg barman, the rgw-setup jobs) uses.
                 - name: RENOVATE_S3_ENDPOINT
-                  value: "https://s3.pcfae.com"
+                  value: "http://ceph-rgw.gorons-bracelet.svc.cluster.local"
                 - name: RENOVATE_S3_PATH_STYLE
                   value: "true"
                 - name: AWS_REGION
