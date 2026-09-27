@@ -15,9 +15,14 @@ data:
 
       "ignorePaths": ["docker-compose/**", "**/zz-graveyard/**", "**/*\\(disabled\\)*/**", "**/*not-deployed*"],
 
-      "registryAliases": {
-        "docker.io": "docker.cr.pcfae.com"
-      },
+      // No docker.io registryAlias: Renovate must query Docker Hub DIRECTLY to
+      // discover image tags. Routing it through the Harbor pull-through cache
+      // (docker.cr.pcfae.com) does not work — a pull-through cache cannot serve
+      // the tag-list API for images it hasn't cached, so update discovery
+      // silently failed for every docker.io image. Direct docker.io queries are
+      // authenticated via the docker.io hostRule (RENOVATE_HOST_RULES, Docker Hub
+      // creds) to stay within rate limits; the cluster's runtime pulls still go
+      // through the CRI-O -> Harbor mirror, which is unaffected by this.
 
       // Explicitly permit Renovate to reach our internal hosts. Renovate warns
       // that the default for internal-host access flips to "block" in a future
