@@ -31,7 +31,15 @@ spec:
           name: PLACEHOLDER_GITLAB_HOSTNAME
 
       ingress:
-        enabled: false  # Using Gateway API instead
+        enabled: false  # web routed by our own HTTPRoute; shell by LoadBalancer
+
+      # Chart 10.x defaults global.gatewayApi.enabled on and renders a gitlab-shell
+      # TCPRoute at gateway.networking.k8s.io/v1 — but this cluster only serves the
+      # v1alpha2 TCPRoute CRD, so the upgrade fails ("no matches for kind TCPRoute
+      # in version .../v1"). We route GitLab ourselves (own HTTPRoute + shell
+      # LoadBalancer), so disable chart-rendered Gateway API routes entirely.
+      gatewayApi:
+        enabled: false
 
       # Full HA configuration
       gitaly:
