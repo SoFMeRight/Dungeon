@@ -19,6 +19,19 @@ data:
         "docker.io": "docker.cr.pcfae.com"
       },
 
+      // Explicitly permit Renovate to reach our internal hosts. Renovate warns
+      // that the default for internal-host access flips to "block" in a future
+      // major; grant it now via allowInternal so the switch can't silently break
+      // us. Covers the GitLab platform API, the S3 repository cache (ceph-rgw),
+      // and the in-cluster Harbor registries. Auth for these hosts is supplied
+      // separately via RENOVATE_HOST_RULES; hostRules merge per matchHost.
+      "hostRules": [
+        { "matchHost": "gitlab.prplanit.com", "allowInternal": true },
+        { "matchHost": "s3.pcfae.com", "allowInternal": true },
+        { "matchHost": "cr.pcfae.com", "allowInternal": true },
+        { "matchHost": "docker.cr.pcfae.com", "allowInternal": true }
+      ],
+
       "flux": {
         "managerFilePatterns": ["/fluxcd/.+\\.yaml$/"]
       },
