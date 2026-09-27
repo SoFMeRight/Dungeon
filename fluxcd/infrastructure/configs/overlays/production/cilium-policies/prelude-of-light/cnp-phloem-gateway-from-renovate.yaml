@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-phloem-gateway-from-renovate
+spec:
+  description: >-
+    Allow Renovate (tingle-tuner/app=renovate) to reach phloem-gateway on :80/:443.
+    The gateway's LAN rule admits RFC1918 but excepts the pod CIDR to prevent identity
+    bypass via the LB IP; Renovate resolves cr.pcfae.com (and the *.cr.pcfae.com proxy
+    caches) to the gateway ClusterIP for in-cluster Harbor tag discovery, so it needs
+    this explicit identity-based allow. Mirrors allow-phloem-gateway-from-dungeon-router.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: phloem-gateway
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: tingle-tuner
+            app: renovate
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP

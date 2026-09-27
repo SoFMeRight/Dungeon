@@ -5,4 +5,5 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-phloem-gateway.yaml
   - cnp-phloem-gateway-from-dungeon-router.yaml
+  - cnp-phloem-gateway-from-renovate.yaml
   - cnp-egress-phloem-gateway.yaml
