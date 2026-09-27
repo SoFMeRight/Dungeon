@@ -113,6 +113,22 @@ data:
           ],
           "datasourceTemplate": "docker",
           "description": "netbird server + dashboard images, set via overlay JSON6902 patch values"
+        },
+        {
+          // Version-pinned GitHub release-download manifest URLs in kustomize
+          // `resources:` (e.g. Gateway API standard-install.yaml). None of the flux,
+          // kubernetes, kustomize, or helm managers track a raw releases/download/<ver>/
+          // URL, so these went stale INVISIBLY — Gateway API sat at v1.2.1 while Istio
+          // 1.30 needed v1.5.1, with no MR ever opened. Match the version in the URL
+          // and resolve it via the github-releases datasource.
+          //   - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.1/standard-install.yaml
+          "customType": "regex",
+          "managerFilePatterns": ["/fluxcd/.+\\.yaml$/"],
+          "matchStrings": [
+            "https://github\\.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>v?[0-9][^/]*)/"
+          ],
+          "datasourceTemplate": "github-releases",
+          "description": "Version-pinned GitHub release-download manifest URLs in kustomize resources"
         }
       ],
 
