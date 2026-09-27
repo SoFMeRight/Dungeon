@@ -160,3 +160,24 @@ spec:
       email: sofmeright+gitlab@gmail.com
     prometheus:
       install: false
+
+    # Harden the shared-secrets hook jobs (incl. the self-sign cert job) to meet
+    # the cluster's Kyverno pod-hardening policy. The chart's default pod
+    # securityContext omits runAsNonRoot (fails SEC-1/2); set it explicitly, and
+    # pin the compliant container securityContext (SEC-3 no-privesc, SEC-6 drop
+    # ALL caps). Without this the self-sign job pod is denied at admission and the
+    # helm pre-upgrade hook hangs until timeout.
+    shared-secrets:
+      securityContext:
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containerSecurityContext:
+        runAsUser: 65534
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
