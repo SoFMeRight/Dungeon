@@ -5,4 +5,4 @@ resources:
   # 1.30 reads TLSRoute/ReferenceGrant from the standard channel and expects the
   # v1.5 API surface, so v1.2.1 was a latent mismatch. v1.5 also ships the
   # safe-upgrades ValidatingAdmissionPolicy that blocks installing CRDs < v1.5.0.
-  - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.1/standard-install.yaml
+  - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.6.2/standard-install.yaml
