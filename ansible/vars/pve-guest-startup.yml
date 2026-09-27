@@ -26,41 +26,57 @@ pve_startup_default_down: 240
 # is ambiguous across the cluster.
 pve_guest_startup:
 
-  # ── Last to stop ────────────────────────────────────────────────────────────
-  # Routers and firewalls. order=1 is Proxmox's convention for first-up/last-down
-  # and these already carried it on Avocado and Bamboo; it is written here so the
-  # policy is declared rather than discovered.
+  # Tiers, in Proxmox's convention: a lower order starts earlier and stops later,
+  # so tier 1 is first up and last down. Read the list downwards for startup and
+  # upwards for shutdown.
+  #
+  #   1  routers      nothing else has a network without them
+  #   2  DNS          up once there is a network, down just before it goes
+  #   4  storage      the archive outlives the workloads that write to it
+  #   5  kubernetes   up once it can resolve and store; down before either goes
+  #   9  late         declared this way already; first down among the ordered
+  #      unordered    everything else: up last, down first
+
+  # ── 1. Routers ──────────────────────────────────────────────────────────────
   pfSense-z-1: {order: 1}
   pfSense-z-2: {order: 1}
-
-  # Both OPNsense guests (199 on Avocado, 299 on Bamboo) already carried order=1.
+  # Both OPNsense guests (199 Avocado, 299 Bamboo) already carried order=1.
   # Preserved as found rather than decided: whether they are live routers or
   # spares changes whether stopping last is right, and nobody has said which.
-  # They are named here because the policy refuses to erase an order it does not
-  # mention, which is the point at which this had to be looked at rather than
-  # silently dropped.
   OPNsense: {order: 1}
 
-  # ── Storage and backup ──────────────────────────────────────────────────────
-  # Gringotts already declares order=4,up=200. Preserved as found: it holds the
-  # CNPG archive, so it outliving the workloads that write to it is deliberate.
+  # ── 2. DNS ──────────────────────────────────────────────────────────────────
+  # Up immediately after the routers, down immediately before them. Everything
+  # that resolves a name while it is stopping depends on these still being there.
+  The-Usual-Suspect: {order: 2}
+  Homing-Pigeon: {order: 2}
+
+  # ── 4. Storage ──────────────────────────────────────────────────────────────
+  # Left at 4, as found, rather than renumbered: it holds the CNPG archive, so it
+  # comes up before the databases that write to it and goes down after them.
   Gringotts: {order: 4, up: 200}
 
-  # ── First to stop, among the ordered ────────────────────────────────────────
+  # ── 5. Kubernetes ───────────────────────────────────────────────────────────
+  # After network, name resolution and the archive; before everything unordered.
+  # Note the limit: order is per-host, and these ten are spread across all five.
+  # Within a host the sequence holds exactly; across hosts it is advisory, since
+  # Proxmox cannot express "wait for a guest on another node".
+  Dungeon-Map-001: {order: 5}
+  Dungeon-Map-002: {order: 5}
+  Dungeon-Map-003: {order: 5}
+  Dungeon-Map-004: {order: 5}
+  Dungeon-Map-005: {order: 5}
+  Dungeon-Chest-001: {order: 5}
+  Dungeon-Chest-002: {order: 5}
+  Dungeon-Chest-003: {order: 5}
+  Dungeon-Chest-004: {order: 5}
+  Dungeon-Chest-005: {order: 5}
+
+  # ── 9. Late ─────────────────────────────────────────────────────────────────
   # Both already declared order=9. Preserved as found.
   Zebrina: {order: 9}
   Tradescantia: {order: 9, up: 0}
 
-  # ── Undeclared, deliberately ────────────────────────────────────────────────
-  # Everything else stops in the first wave: the ten Kubernetes nodes, the
-  # gateways, the workstations, the test guests. They are peers of each other and
-  # nothing waits on them.
-  #
-  # Two decisions are still open and are NOT encoded here, because they are
-  # statements about the estate rather than defaults:
-  #
-  #   - The DNS servers (The-Usual-Suspect, Homing-Pigeon) currently stop in the
-  #     first wave. If anything resolves names while shutting down, they want an
-  #     order so they outlive it.
-  #   - The OPNsense guests on Avocado and Bamboo carry order=1 today. Whether
-  #     they are live routers or spares decides whether that is right.
+  # ── Unordered, deliberately ─────────────────────────────────────────────────
+  # Everything else: workstations, test guests, the gateways, the PBX, the gitops
+  # runner. They start last and stop first because nothing waits on them.
