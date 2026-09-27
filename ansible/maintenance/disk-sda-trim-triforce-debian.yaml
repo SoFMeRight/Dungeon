@@ -1,0 +1,37 @@
+---
+
+- name: Ad Arbitorium 🔐 - GitOps - Maintenance - Trim (Discard unused blocks in /dev/sda).
+  hosts: "linux"
+  ignore_errors: true
+  ignore_unreachable: true
+  become: true
+  tasks:
+
+    - name: Trimming the disk to disk to free space on Ceph Triforce pool.
+      ansible.builtin.command: fstrim -v /
+      changed_when:
+        - '"trimmed" in (disk_op.stdout | default(""))'
+      register: disk_op
+
+    - name: Extract space saved in bytes for this host
+      ansible.builtin.set_fact:
+        bytes_trimmed: "{{ (disk_op.stdout | regex_findall('\\(([0-9]+) bytes\\)') + ['0']) | first }}"
+      when: disk_op.stdout is defined
+
+    - name: Display space saved for this host
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }}: Trimmed {{ (bytes_trimmed | int / 1024 / 1024 / 1024) | round(2) }} GB ({{ bytes_trimmed }} bytes)"
+      when: disk_op.stdout is defined
+
+- name: Calculate and display total space saved across all hosts
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Sum total bytes trimmed from all hosts
+      ansible.builtin.set_fact:
+        total_bytes: "{{ groups['linux'] | map('extract', hostvars, ['bytes_trimmed']) | map('default', '0') | map('int') | sum }}"
+        total_gb: "{{ (groups['linux'] | map('extract', hostvars, ['bytes_trimmed']) | map('default', '0') | map('int') | sum / 1024 / 1024 / 1024) | round(2) }}"
+
+    - name: Display total space saved across all hosts
+      ansible.builtin.debug:
+        msg: "TOTAL SPACE SAVED: {{ total_gb }} GB ({{ total_bytes }} bytes) across {{ groups['linux'] | length }} hosts"
