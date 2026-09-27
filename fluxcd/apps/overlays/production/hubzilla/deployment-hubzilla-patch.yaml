@@ -15,7 +15,7 @@ spec:
             name: hubzilla-socialauth-button
       containers:
         - name: web
-          image: docker.io/hlhd/hubzilla:dev-dd48c8e
+          image: docker.io/hlhd/hubzilla:v11.4.1
           volumeMounts:
             # addon/socialauth is a symlink, so the file is mounted at the real path it
             # points into rather than through the link.
