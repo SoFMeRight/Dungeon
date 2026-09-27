@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: mariadb
-          image: docker.io/mariadb:11.8
+          image: docker.io/mariadb:12.2
   volumeClaimTemplates:
     - metadata:
         name: data
