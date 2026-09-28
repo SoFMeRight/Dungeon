@@ -38,13 +38,12 @@ pve_guest_startup:
   #      unordered    everything else: up last, down first
 
   # ── 1. Routers ──────────────────────────────────────────────────────────────
+  # First up, last down. Everything else is reachable only through these.
   shield-generator-pfSense: {order: 1}
   shield-regenerator-pfSense: {order: 1}
-  # OPNsense (199 Avocado, 299 Bamboo) is deliberately absent. Both are stopped
-  # with onboot=0, so Proxmox never sequences them and the order=1 they carry is
-  # inert. They are spares, not live routers. They also share one name, which a
-  # name-keyed policy cannot address; declaring them would mean renaming them
-  # first, to claim a tier they do not occupy.
+  # The OPNsense pair (199 Avocado, 299 Bamboo) is deliberately absent. Both are
+  # stopped with onboot=0 and carry no startup field, so Proxmox never sequences
+  # them: they are spares, not live routers.
 
   # ── 2. DNS ──────────────────────────────────────────────────────────────────
   # Up immediately after the routers, down immediately before them. Everything
@@ -52,32 +51,58 @@ pve_guest_startup:
   The-Usual-Suspect: {order: 2}
   Homing-Pigeon: {order: 2}
 
-  # ── 4. Storage ──────────────────────────────────────────────────────────────
-  # Left at 4, as found, rather than renumbered: it holds the CNPG archive, so it
-  # comes up before the databases that write to it and goes down after them.
-  Gringotts: {order: 4, up: 200}
+  # ── 3. Storage and backup targets ───────────────────────────────────────────
+  # Both receive writes from things that stop later, so both must still be there
+  # when those stop. Gringotts holds the CNPG archive; Priscilla is the PBS the
+  # hypervisors back up to.
+  #
+  # up=200 on Gringotts is the only real delay in the whole boot: every later
+  # tier waits for it. order= alone costs nothing, up= costs seconds.
+  Gringotts: {order: 3, up: 200}
+  Priscilla: {order: 3}
 
-  # ── 5. Kubernetes ───────────────────────────────────────────────────────────
-  # After network, name resolution and the archive; before everything unordered.
-  # Note the limit: order is per-host, and these ten are spread across all five.
-  # Within a host the sequence holds exactly; across hosts it is advisory, since
-  # Proxmox cannot express "wait for a guest on another node".
-  Dungeon-Map-001: {order: 5}
-  Dungeon-Map-002: {order: 5}
-  Dungeon-Map-003: {order: 5}
-  Dungeon-Map-004: {order: 5}
-  Dungeon-Map-005: {order: 5}
-  Dungeon-Chest-001: {order: 5}
-  Dungeon-Chest-002: {order: 5}
-  Dungeon-Chest-003: {order: 5}
-  Dungeon-Chest-004: {order: 5}
-  Dungeon-Chest-005: {order: 5}
+  # ── 4. Kubernetes ───────────────────────────────────────────────────────────
+  # After network, name resolution and storage; before everything that is not
+  # infrastructure. Note the limit: order is per-host, and these ten are spread
+  # across all five hypervisors.
+  Dungeon-Map-001: {order: 4}
+  Dungeon-Map-002: {order: 4}
+  Dungeon-Map-003: {order: 4}
+  Dungeon-Map-004: {order: 4}
+  Dungeon-Map-005: {order: 4}
+  Dungeon-Chest-001: {order: 4}
+  Dungeon-Chest-002: {order: 4}
+  Dungeon-Chest-003: {order: 4}
+  Dungeon-Chest-004: {order: 4}
+  Dungeon-Chest-005: {order: 4}
 
-  # ── 9. Late ─────────────────────────────────────────────────────────────────
-  # Both already declared order=9. Preserved as found.
+  # ── 5. Telephony ────────────────────────────────────────────────────────────
+  Bluebell: {order: 5}
+
+  # ── 6. Platform ─────────────────────────────────────────────────────────────
+  # Nothing depends on these, so they stop early. Dungeon-Pedestal is the
+  # Boundary/SSH bastion: move it to 2 if it is ever the break-glass path into a
+  # bad boot, because order 2 is the last thing standing after the routers.
+  Ant-Parade: {order: 6}
+  Dungeon-Pedestal: {order: 6}
+  Freightyard: {order: 6}
+
+  # ── 7. Docker services ──────────────────────────────────────────────────────
+  # Moor runs mailcow and Bitwarden. Not mission critical: up after the phones
+  # and the platform, down before both.
+  Moor: {order: 7}
+
+  # ── 9. Windows Server forest ────────────────────────────────────────────────
+  # Late on purpose: nothing in the estate authenticates against these, so they
+  # buy nothing by starting early and would only delay what does matter. First
+  # down among the ordered. Lancifolia had no startup field at all while the
+  # other two sat at 9; the forest now agrees with itself.
   Zebrina: {order: 9}
   Tradescantia: {order: 9, up: 0}
+  Lancifolia: {order: 9}
 
-  # ── Unordered, deliberately ─────────────────────────────────────────────────
-  # Everything else: workstations, test guests, the gateways, the PBX, the gitops
-  # runner. They start last and stop first because nothing waits on them.
+  # ── Unordered ───────────────────────────────────────────────────────────────
+  # Up last, down first. Deliberate for two groups:
+  #   nginx proxies (Cell-Membrane, Xylem, Phloem) — superseded by Gateway API,
+  #     and ingress should stop before its backends in any case;
+  #   end devices and every stopped guest — nothing waits on them.
