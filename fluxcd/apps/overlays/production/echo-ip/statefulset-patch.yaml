@@ -19,7 +19,7 @@ spec:
               mountPath: /usr/share/GeoIP
       containers:
         - name: echo-ip
-          image: ghcr.io/homelabhd/echoip:2026.7.0@sha256:9ef5aaf1e26ab3c44202e803d291daa2f3460474dba4e5c7e30393aff4bfc700
+          image: ghcr.io/homelabhd/echoip:v2026.9.0@sha256:9f9f6ddb943923b34f18848eb813be52621afdeb151748cfb2346519a1699400
           command: []
           args:
             - "-C"
