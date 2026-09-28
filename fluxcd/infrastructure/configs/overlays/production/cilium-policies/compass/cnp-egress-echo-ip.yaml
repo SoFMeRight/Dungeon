@@ -4,11 +4,13 @@ metadata:
   name: allow-echo-ip-egress
 spec:
   description: >-
-    echo-ip (echoip) downloads MaxMind GeoLite2 databases from
-    updates.maxmind.com via geoipupdate (the STS init container + the weekly
-    echo-ip-geoip-update CronJob, both labelled app=echo-ip). Reverse-DNS
-    (PTR) lookups at request time ride the DNS baseline. Allow egress to
-    updates.maxmind.com on 443/TCP, with L7 DNS.
+    echo-ip (echoip) downloads MaxMind GeoLite2 databases via geoipupdate (the
+    STS init container + the weekly echo-ip-geoip-update CronJob, both labelled
+    app=echo-ip): the account API at updates.maxmind.com issues a signed URL and
+    the database blobs download from MaxMind's Cloudflare R2 bucket
+    (mm-prod-geoip-databases.*.r2.cloudflarestorage.com). Reverse-DNS (PTR)
+    lookups at request time ride the DNS baseline. Allow egress to both hosts on
+    443/TCP, with L7 DNS.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -31,6 +33,7 @@ spec:
               - matchPattern: "*"
     - toFQDNs:
         - matchName: "updates.maxmind.com"
+        - matchPattern: "mm-prod-geoip-databases.*.r2.cloudflarestorage.com"
       toPorts:
         - ports:
             - port: "443"
