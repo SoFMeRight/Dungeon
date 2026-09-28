@@ -29,6 +29,20 @@ spec:
       initContainers:
         - name: geoip-update
           image: docker.io/maxmindinc/geoipupdate:v8.0.0
+          # Bootstrap-only: the GeoLite2 databases live on the persistent volume and
+          # are refreshed by the weekly echo-ip-geoip-update CronJob. Download only
+          # when the volume has no database (fresh install); otherwise start on the
+          # retained copy so a MaxMind outage or daily download limit (HTTP 429)
+          # cannot block echoip from starting.
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              if ls /usr/share/GeoIP/GeoLite2-*.mmdb >/dev/null 2>&1; then
+                echo "GeoLite2 databases already present on the persistent volume; the weekly CronJob owns refreshes. Skipping bootstrap download."
+                exit 0
+              fi
+              echo "No GeoLite2 database found; bootstrapping via geoipupdate."
+              exec /usr/bin/entry.sh
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

@@ -6,3 +6,4 @@ resources:
   - statefulset.yaml
   - service.yaml
   - externalsecret.yaml
+  - cronjob-geoip-update.yaml
