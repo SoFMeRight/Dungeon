@@ -5,7 +5,8 @@ metadata:
   labels:
     app: echo-ip
 spec:
-  schedule: "0 2 * * 0"  # Weekly on Sunday at 2 AM
+  # Daily at 2 AM. GeoLite2 republishes weekly (Tue); geoipupdate only downloads on change, so daily no-ops cheaply while giving prompt pickup + retry resilience.
+  schedule: "0 2 * * *"
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
