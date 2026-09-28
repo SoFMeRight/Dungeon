@@ -19,7 +19,7 @@
 # Every guest gets at least this long to stop. Proxmox's own default is 180s and
 # a graceful Kubernetes guest measured 185s on 2026-09-24, so the default is
 # deliberately above both.
-pve_startup_default_down: 240
+pve_startup_default_down: 60
 
 # name -> what it declares. Names are used rather than vmids because a policy
 # nobody can read is a policy nobody maintains; the play refuses to run if a name
@@ -39,8 +39,8 @@ pve_guest_startup:
 
   # ── 1. Routers ──────────────────────────────────────────────────────────────
   # First up, last down. Everything else is reachable only through these.
-  shield-generator-pfSense: {order: 1}
-  shield-regenerator-pfSense: {order: 1}
+  shield-generator-pfSense: {order: 1, down: 120}
+  shield-regenerator-pfSense: {order: 1, down: 120}
   # The OPNsense pair (199 Avocado, 299 Bamboo) is deliberately absent. Both are
   # stopped with onboot=0 and carry no startup field, so Proxmox never sequences
   # them: they are spares, not live routers.
@@ -48,8 +48,8 @@ pve_guest_startup:
   # ── 2. DNS ──────────────────────────────────────────────────────────────────
   # Up immediately after the routers, down immediately before them. Everything
   # that resolves a name while it is stopping depends on these still being there.
-  The-Usual-Suspect: {order: 2}
-  Homing-Pigeon: {order: 2}
+  The-Usual-Suspect: {order: 2, down: 60}
+  Homing-Pigeon: {order: 2, down: 60}
 
   # ── 3. Storage and backup targets ───────────────────────────────────────────
   # Both receive writes from things that stop later, so both must still be there
@@ -58,48 +58,47 @@ pve_guest_startup:
   #
   # up=200 on Gringotts is the only real delay in the whole boot: every later
   # tier waits for it. order= alone costs nothing, up= costs seconds.
-  Gringotts: {order: 3, up: 200}
-  Priscilla: {order: 3}
+  Gringotts: {order: 3, up: 200, down: 180}
+  Priscilla: {order: 3, down: 120}
 
   # ── 4. Kubernetes ───────────────────────────────────────────────────────────
   # After network, name resolution and storage; before everything that is not
   # infrastructure. Note the limit: order is per-host, and these ten are spread
   # across all five hypervisors.
-  Dungeon-Map-001: {order: 4}
-  Dungeon-Map-002: {order: 4}
-  Dungeon-Map-003: {order: 4}
-  Dungeon-Map-004: {order: 4}
-  Dungeon-Map-005: {order: 4}
-  Dungeon-Chest-001: {order: 4}
-  Dungeon-Chest-002: {order: 4}
-  Dungeon-Chest-003: {order: 4}
-  Dungeon-Chest-004: {order: 4}
-  Dungeon-Chest-005: {order: 4}
+  Dungeon-Map-001: {order: 4, down: 240}
+  Dungeon-Map-002: {order: 4, down: 240}
+  Dungeon-Map-003: {order: 4, down: 240}
+  Dungeon-Map-004: {order: 4, down: 240}
+  Dungeon-Map-005: {order: 4, down: 240}
+  Dungeon-Chest-001: {order: 4, down: 240}
+  Dungeon-Chest-002: {order: 4, down: 240}
+  Dungeon-Chest-003: {order: 4, down: 240}
+  Dungeon-Chest-004: {order: 4, down: 240}
+  Dungeon-Chest-005: {order: 4, down: 240}
 
-  # ── 5. Telephony ────────────────────────────────────────────────────────────
-  Bluebell: {order: 5}
+  # ── 5. Everything ordered but independent ──────────────────────────────────
+  # Phones, platform, docker and the domain controllers share one tier because
+  # none of them depends on any other. They were four tiers, which cost ~180s of
+  # shutdown serialization on Cosmos for no dependency reason: tiers stop one
+  # after another even when their members could stop together.
+  #
+  # Nothing is lost on the way up. order= carries no delay, so tier-mates have
+  # their starts issued back to back — Moor still cannot hold up the phones.
+  #
+  # They sit ahead of Kubernetes rather than unordered so they stop before it,
+  # and behind the routers, DNS and storage that they all rely on.
+  Bluebell: {order: 5, down: 90}
+  Ant-Parade: {order: 5, down: 90}
+  Freightyard: {order: 5, down: 90}
+  Moor: {order: 5, down: 90}
+  Zebrina: {order: 5, down: 90}
+  Tradescantia: {order: 5, up: 0, down: 90}
+  Lancifolia: {order: 5, down: 90}
 
-  # ── 6. Platform ─────────────────────────────────────────────────────────────
-  # Nothing depends on these, so they stop early. Dungeon-Pedestal is the
-  # Boundary/SSH bastion: move it to 2 if it is ever the break-glass path into a
-  # bad boot, because order 2 is the last thing standing after the routers.
-  Ant-Parade: {order: 6}
-  Dungeon-Pedestal: {order: 6}
-  Freightyard: {order: 6}
-
-  # ── 7. Docker services ──────────────────────────────────────────────────────
-  # Moor runs mailcow and Bitwarden. Not mission critical: up after the phones
-  # and the platform, down before both.
-  Moor: {order: 7}
-
-  # ── 9. Windows Server forest ────────────────────────────────────────────────
-  # Late on purpose: nothing in the estate authenticates against these, so they
-  # buy nothing by starting early and would only delay what does matter. First
-  # down among the ordered. Lancifolia had no startup field at all while the
-  # other two sat at 9; the forest now agrees with itself.
-  Zebrina: {order: 9}
-  Tradescantia: {order: 9, up: 0}
-  Lancifolia: {order: 9}
+  # Dungeon-Pedestal is the Boundary/SSH bastion: move it to 2 if it is ever the
+  # break-glass path into a bad boot, because order 2 is the last thing standing
+  # after the routers.
+  Dungeon-Pedestal: {order: 5, down: 90}
 
   # ── Unordered ───────────────────────────────────────────────────────────────
   # Up last, down first. Deliberate for two groups:
