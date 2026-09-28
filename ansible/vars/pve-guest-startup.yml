@@ -38,12 +38,13 @@ pve_guest_startup:
   #      unordered    everything else: up last, down first
 
   # ── 1. Routers ──────────────────────────────────────────────────────────────
-  pfSense-z-1: {order: 1}
-  pfSense-z-2: {order: 1}
-  # Both OPNsense guests (199 Avocado, 299 Bamboo) already carried order=1.
-  # Preserved as found rather than decided: whether they are live routers or
-  # spares changes whether stopping last is right, and nobody has said which.
-  OPNsense: {order: 1}
+  shield-generator-pfSense: {order: 1}
+  shield-regenerator-pfSense: {order: 1}
+  # OPNsense (199 Avocado, 299 Bamboo) is deliberately absent. Both are stopped
+  # with onboot=0, so Proxmox never sequences them and the order=1 they carry is
+  # inert. They are spares, not live routers. They also share one name, which a
+  # name-keyed policy cannot address; declaring them would mean renaming them
+  # first, to claim a tier they do not occupy.
 
   # ── 2. DNS ──────────────────────────────────────────────────────────────────
   # Up immediately after the routers, down immediately before them. Everything

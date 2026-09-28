@@ -10,10 +10,20 @@
 #
 # Create the token once, on any node:
 #
-#   pveum role add StartupPolicy --privs VM.Config.Options
-#   pveum user add ansible@pve
-#   pveum acl modify / --user ansible@pve --role StartupPolicy
-#   pveum user token add ansible@pve startup --privsep 0
+#   pveum role add GitOps -privs "VM.Config.Options,VM.Audit"
+#   pveum user add stagefreight@pve
+#   pveum acl modify / --users stagefreight@pve --roles GitOps
+#   pveum user token add stagefreight@pve guest-config --privsep 1
+#   pveum acl modify / --tokens 'stagefreight@pve!guest-config' --roles GitOps
+#
+# With privsep 1 a token's effective permissions are the intersection of its own
+# ACL and the owning user's, so both entries are required — ACL the token alone
+# and every call is a 403.
+#
+# VM.Audit is not optional. Reading a guest config is gated on it, and
+# /cluster/resources filters to what the caller may audit rather than refusing —
+# so without it this play enumerates zero guests, reports nothing to change, and
+# looks like a clean run.
 #
 # and give the play PVE_API_TOKEN_ID and PVE_API_TOKEN_SECRET. Nothing is
 # hardcoded here; the endpoint and credential are environment, not logic.
@@ -46,7 +56,7 @@
           - pve_api_token_secret | length > 0
         fail_msg: >-
           PVE_API_URL, PVE_API_TOKEN_ID and PVE_API_TOKEN_SECRET must be set.
-          The token needs VM.Config.Options and nothing else.
+          The token needs VM.Config.Options and VM.Audit, and nothing else.
 
     - name: Listing every guest in the cluster...
       ansible.builtin.uri:
@@ -57,6 +67,20 @@
         validate_certs: "{{ pve_api_validate_certs }}"
         status_code: 200
       register: resources
+
+    - name: Refusing to run against an empty inventory...
+      ansible.builtin.assert:
+        that:
+          - resources.json.data | length > 0
+          - resources.json.data | selectattr('name', 'defined')
+            | map(attribute='name') | select('in', pve_guest_startup.keys() | list)
+            | list | length > 0
+        fail_msg: >-
+          The API returned no guests, or none that the policy declares.
+          /cluster/resources filters to what the token may audit rather than
+          refusing, so a token without VM.Audit reaches this point looking
+          healthy and would then report nothing to change. Check the token's
+          role before assuming the cluster is empty.
 
     - name: Refusing to act on a name that is not unique...
       ansible.builtin.assert:
@@ -90,6 +114,56 @@
       loop_control:
         label: "{{ item.vmid }} {{ item.name | default('') }}"
 
+    - name: Reporting declared guests that will never be sequenced...
+      # Proxmox only sequences guests it starts. order= on an onboot=0 guest is
+      # inert, so declaring one is a claim the hypervisor will never honour.
+      # Reported rather than fatal: a guest may be legitimately parked.
+      ansible.builtin.debug:
+        msg: >-
+          {{ inert | join(', ') }} — declared in policy but onboot is not set, so
+          Proxmox will never start them and the order they are given is inert.
+          Either set onboot on them or drop them from the policy.
+      vars:
+        inert: >-
+          {{ configs.results
+             | selectattr('json.data.name', 'defined')
+             | selectattr('json.data.name', 'in', pve_guest_startup.keys() | list)
+             | rejectattr('json.data.onboot', 'defined')
+             | map(attribute='json.data.name') | list
+             +
+             configs.results
+             | selectattr('json.data.name', 'defined')
+             | selectattr('json.data.name', 'in', pve_guest_startup.keys() | list)
+             | selectattr('json.data.onboot', 'defined')
+             | selectattr('json.data.onboot', 'equalto', 0)
+             | map(attribute='json.data.name') | list }}
+      when: inert | length > 0
+
+    - name: Reporting running guests that will not come back...
+      # Not policy's business to fix, but a power event is exactly when this bites:
+      # a guest that is up with onboot=0 stays down after the hosts return.
+      ansible.builtin.debug:
+        msg: >-
+          {{ orphans | join(', ') }} — running now, but onboot is not set, so they
+          will not return after a power event.
+      vars:
+        orphans: >-
+          {{ resources.json.data
+             | selectattr('status', 'equalto', 'running')
+             | map(attribute='name') | list
+             | intersect(
+                 configs.results
+                 | selectattr('json.data.name', 'defined')
+                 | rejectattr('json.data.onboot', 'defined')
+                 | map(attribute='json.data.name') | list
+                 +
+                 configs.results
+                 | selectattr('json.data.name', 'defined')
+                 | selectattr('json.data.onboot', 'defined')
+                 | selectattr('json.data.onboot', 'equalto', 0)
+                 | map(attribute='json.data.name') | list) }}
+      when: orphans | length > 0
+
     - name: Working out what each guest should declare...
       ansible.builtin.set_fact:
         startup_plan: >-
@@ -99,6 +173,7 @@
                'type':    item.item.type,
                'name':    item.item.name | default(''),
                'current': item.json.data.startup | default(''),
+               'onboot':  item.json.data.onboot | default(0) | int,
                'desired': (
                    ( ['order=' ~ (pve_guest_startup[item.item.name | default('')].order)]
                      if (item.item.name | default('')) in pve_guest_startup
@@ -116,10 +191,24 @@
       loop_control:
         label: "{{ item.item.vmid }}"
 
+    - name: Setting aside the guests that differ...
+      ansible.builtin.set_fact:
+        startup_diff: >-
+          {{ startup_diff | default([])
+             + ([item] if item.current != item.desired else []) }}
+      loop: "{{ startup_plan }}"
+      loop_control:
+        label: "{{ item.vmid }}"
+
     # Declarative means undeclared is a statement, so a guest carrying an order
     # this file does not mention would have it erased. That is how a router stops
     # in the same wave as the guests depending on it. Stop instead and say which,
     # because an order nobody wrote down is still an order somebody meant.
+    #
+    # Bounded to onboot=1. Proxmox only sequences guests it starts, so an order on
+    # a guest that never autostarts is one nothing will ever read — there is no
+    # intent there to preserve, and demanding it be declared would mean declaring
+    # every parked spare to describe a boot it takes no part in.
     - name: Refusing to erase an order the policy does not mention...
       ansible.builtin.assert:
         that: undeclared_orders | length == 0
@@ -131,6 +220,7 @@
       vars:
         undeclared_orders: >-
           {{ startup_plan
+             | selectattr('onboot', 'equalto', 1)
              | selectattr('current', 'search', '(order|up)=')
              | rejectattr('name', 'in', pve_guest_startup.keys() | list)
              | map(attribute='name') | list }}
@@ -138,20 +228,16 @@
     - name: Reporting what would change...
       ansible.builtin.debug:
         msg: >-
-          {{ startup_plan | rejectattr('current', 'equalto', none)
-             | selectattr('current', 'ne', '')
-             | list | length }} guests already declare something;
-          {{ startup_plan | selectattr('desired', 'ne', '')
-             | rejectattr('current', 'equalto', '')
-             | list | length }} differ from the policy
+          {{ startup_plan | selectattr('current', 'ne', '') | list | length }} of
+          {{ startup_plan | length }} guests already declare something;
+          {{ startup_diff | default([]) | length }} differ from the policy
 
     - name: Showing each guest that differs...
       ansible.builtin.debug:
         msg: "{{ item.vmid }} {{ item.name }} on {{ item.node }}: '{{ item.current }}' -> '{{ item.desired }}'"
-      loop: "{{ startup_plan | rejectattr('current', 'equalto', 'desired') | list }}"
+      loop: "{{ startup_diff | default([]) }}"
       loop_control:
         label: "{{ item.vmid }}"
-      when: item.current != item.desired
 
     - name: Declaring the policy on each guest that differs...
       ansible.builtin.uri:
@@ -164,9 +250,7 @@
           startup: "{{ item.desired }}"
         validate_certs: "{{ pve_api_validate_certs }}"
         status_code: 200
-      loop: "{{ startup_plan }}"
+      loop: "{{ startup_diff | default([]) }}"
       loop_control:
         label: "{{ item.vmid }} {{ item.name }}"
-      when:
-        - not pve_startup_check_only | bool
-        - item.current != item.desired
+      when: not pve_startup_check_only | bool
