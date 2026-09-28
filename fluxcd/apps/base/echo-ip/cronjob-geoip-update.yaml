@@ -16,6 +16,7 @@ spec:
             app: echo-ip
             job: geoip-update
         spec:
+          serviceAccountName: echo-ip
           restartPolicy: OnFailure
           containers:
             - name: geoipupdate
