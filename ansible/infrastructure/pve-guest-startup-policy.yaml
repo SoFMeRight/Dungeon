@@ -2,25 +2,37 @@
 # Applies the declared startup policy to every Proxmox guest, over the API.
 #
 # Over the API rather than `qm set` over SSH, because that needs root on five
-# hypervisors and root can do anything. An API token can be scoped to
-# `VM.Config.Options` and then it can set this field and nothing else — it cannot
-# start a guest, cannot stop one, cannot read a disk. Least privilege is not
-# ceremony here: the credential that edits shutdown policy has no business being
-# able to perform a shutdown.
+# hypervisors and root can do anything. This token is narrower than root but not
+# as narrow as it looks — see Sys.Modify below. What it decisively cannot do is
+# power anything: Sys.PowerMgmt and VM.PowerMgmt are both absent, so the
+# credential that edits shutdown policy cannot perform a shutdown.
 #
 # Create the token once, on any node:
 #
-#   pveum role add GitOps -privs "VM.Config.Options,VM.Audit"
+#   pveum role add GitOps -privs "VM.Config.Options,VM.Audit,Sys.Modify"
 #   pveum user add stagefreight@pve
 #   pveum acl modify / --users stagefreight@pve --roles GitOps
 #   pveum user token add stagefreight@pve guest-config --privsep 1
 #   pveum acl modify / --tokens 'stagefreight@pve!guest-config' --roles GitOps
 #
+# Sys.Modify is what actually writes this field. Proxmox treats `startup` as host
+# configuration rather than guest configuration — order= changes what the
+# hypervisor does at shutdown, not what the guest does — so it checks Sys.Modify
+# on `/` and ignores VM.Config.Options here entirely. Without it every GET
+# succeeds and every PUT is 403 "Permission check failed (/, Sys.Modify)", so
+# this play reads the whole cluster and then dies on its first write.
+# VM.Config.Options stays because the read path uses it.
+#
+# The cost is real: Sys.Modify also permits node network, DNS, time and
+# datacenter settings. Accepted because this is a dedicated user with one token,
+# held in OpenBao, driving one playbook that writes one field — and because the
+# alternative was root SSH on five hypervisors.
+#
 # With privsep 1 a token's effective permissions are the intersection of its own
 # ACL and the owning user's, so both entries are required — ACL the token alone
 # and every call is a 403.
 #
-# VM.Audit is not optional. Reading a guest config is gated on it, and
+# VM.Audit is not optional either. Reading a guest config is gated on it, and
 # /cluster/resources filters to what the caller may audit rather than refusing —
 # so without it this play enumerates zero guests, reports nothing to change, and
 # looks like a clean run.
