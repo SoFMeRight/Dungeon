@@ -33,7 +33,7 @@ spec:
               value: "192.168.144.0/20 fc00:f1:0ca4:15a0::/56 169.254.0.0/16"
           resources:
             requests:
-              cpu: "250m"
+              cpu: "10m"
               memory: "512Mi"
             limits:
               cpu: "1000m"

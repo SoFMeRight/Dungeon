@@ -60,7 +60,7 @@ spec:
               mountPath: /auth-config
           resources:
             requests:
-              cpu: "500m"
+              cpu: "15m"
               memory: "700Mi"
             limits:
               cpu: "750m"

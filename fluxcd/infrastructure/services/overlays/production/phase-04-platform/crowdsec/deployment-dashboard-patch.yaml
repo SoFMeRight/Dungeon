@@ -16,7 +16,7 @@ spec:
           image: cr.pcfae.com/prplanit/crowdsec-dashboard@sha256:d0655b736f3a33ec92fe081691de53010f7349470d8490f082bb078b53801b59
           resources:
             requests:
-              cpu: "250m"
+              cpu: "100m"
               memory: "512Mi"
             limits:
               cpu: "500m"
