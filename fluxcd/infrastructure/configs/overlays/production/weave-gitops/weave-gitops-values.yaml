@@ -6,14 +6,12 @@ metadata:
   namespace: flux-system
 data:
   values.yaml: |
-    # HomeLabHD weave-gitops fork build, replacing the upstream wego-app image.
-    # Carries the v0.39.x remediation weaveworks finalized in v0.39.1-rc.1 and
-    # archived without releasing, plus the MUI 9 Tabs render-loop fix (detail pages
-    # crashed React #185 on v0.39.1). Pinned to the fixed main build; no fork release
-    # tag is minted for a fix upstream never made. CRI-O mirrors ghcr.io through Harbor.
+    # HomeLabHD weave-gitops fork, replacing the upstream wego-app image. Finalizes the
+    # v0.39.x line weaveworks archived at v0.39.1-rc.1, with the MUI 9 Tabs render-loop
+    # fix (detail pages crashed React #185). CRI-O mirrors ghcr.io through Harbor.
     image:
       repository: ghcr.io/homelabhd/weave-gitops
-      tag: dev-f6637da
+      tag: v0.39.1
 
     # Admin user configuration
     adminUser:
