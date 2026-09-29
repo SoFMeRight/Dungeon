@@ -13,7 +13,7 @@ data:
     # tag is minted for a fix upstream never made. CRI-O mirrors ghcr.io through Harbor.
     image:
       repository: ghcr.io/homelabhd/weave-gitops
-      tag: dev-1b58d1b
+      tag: dev-141dc7a
 
     # Admin user configuration
     adminUser:
