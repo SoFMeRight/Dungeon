@@ -8,12 +8,11 @@ data:
   values.yaml: |
     # HomeLabHD weave-gitops fork, replacing the upstream wego-app image. Finalizes the
     # v0.39.x line weaveworks archived at v0.39.1-rc.1, with the MUI 9 Tabs render-loop
-    # fix (detail pages crashed React #185). CRI-O mirrors ghcr.io through Harbor.
-    # TEMPORARY dev pin: testing the list-sort scroll-jump fix before folding it into
-    # the v0.39.1 re-tag — revert to tag: v0.39.1 once re-cut.
+    # fix (detail pages crashed React #185) and the list-sort scroll-jump fix.
+    # CRI-O mirrors ghcr.io through Harbor.
     image:
       repository: ghcr.io/homelabhd/weave-gitops
-      tag: dev-0c0397f
+      tag: v0.39.1
 
     # Admin user configuration
     adminUser:
