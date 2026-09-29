@@ -16,6 +16,11 @@ spec:
   # Enforce here; enforcement graduates per-dimension via a separate mutate/validate policy
   # once the audit exception list is triaged.
   validationFailureAction: Audit
+  # An audit policy must not be able to block admission. Without this it defaults
+  # to Fail, which put a report-only policy into the -fail webhook and made it one
+  # of the nine policies gating every pod in the cluster — able to cause an outage
+  # while being, by design, incapable of preventing one.
+  failurePolicy: Ignore
   background: true
   rules:
     - name: require-run-as-non-root

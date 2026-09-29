@@ -5,6 +5,46 @@ metadata:
 spec:
   targetNamespace: zeldas-lullaby
   values:
+    # Namespaces the admission webhooks must never gate, because the cluster
+    # cannot start without them and Kyverno cannot start without the cluster.
+    #
+    # The cycle, observed on 2026-09-29 after four nodes bounced: istiod could
+    # not be created because mutate.kyverno.svc-fail was unreachable; Kyverno
+    # could not start because istio-cni reported "no ztunnel connection";
+    # ztunnel could not become Ready because the istiod-ca-cert ConfigMap was
+    # absent; and that ConfigMap is published by istiod. Nothing in that loop
+    # ever succeeds on its own, so it waits forever — it took a human, and a
+    # power failure cold-boots all ten nodes at once, which is strictly worse.
+    #
+    # kube-system is excluded by the chart for exactly this reason. These two
+    # belong beside it: king-of-red-lions runs istiod, ztunnel and istio-cni,
+    # which every other pod's networking depends on; zeldas-lullaby runs Kyverno,
+    # which must never be able to gate its own recovery.
+    #
+    # The cost is admission-time enforcement in those two namespaces only, and it
+    # is close to nothing here:
+    #   - the pod-hardening policies are scoped to istio.io/dataplane-mode=ambient
+    #     namespaces. king-of-red-lions carries no such label, so they never
+    #     applied there at all.
+    #   - mutate-pod-hardening already excludes app.kubernetes.io/name=kyverno.
+    #   - istiod, ztunnel, cert-manager and kyverno already run with dedicated
+    #     ServiceAccounts, drop ALL capabilities and read-only root filesystems;
+    #     cert-manager and kyverno already set seccompProfile RuntimeDefault
+    #     natively. The guarantees are met by configuration, not by mutation.
+    #   - background scanning is unaffected: the reports controller evaluates
+    #     resources already in the cluster and does not go through a webhook, so
+    #     audit coverage of these namespaces continues.
+    config:
+      webhooks:
+        - namespaceSelector:
+            matchExpressions:
+              - key: kubernetes.io/metadata.name
+                operator: NotIn
+                values:
+                  - kube-system
+                  - king-of-red-lions
+                  - zeldas-lullaby
+
     # PolicyExceptions: the scalable exception model for enforce-pod-hardening's larger phases
     # (no-privesc / non-root / RO-root have 25 / 67 / 127 exceptions — name patterns don't scale).
     # Restricted to zeldas-lullaby so exceptions can only be created in this one admin-controlled,
