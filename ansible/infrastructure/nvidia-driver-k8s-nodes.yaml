@@ -1,0 +1,121 @@
+---
+# Installs the NVIDIA driver on Kubernetes nodes that have a GPU.
+#
+# This cannot be the gpu-operator's job here. Its driver container compiles the
+# kernel module inside a pod and loads it unsigned, and these nodes run with
+# Secure Boot enabled, so the kernel refuses it. Ubuntu's packages are signed by
+# Canonical, whose key the kernel already trusts, so they are the only drivers
+# that will load. `driver.enabled: false` in the gpu-operator HelmRelease is a
+# consequence of that, not an oversight — the operator still owns the toolkit,
+# device plugin, DCGM, CDI and validation.
+#
+# What was missing was any automation for the half it cannot own. dungeon-worker-001
+# was found carrying nvidia-kernel-source-580-server with no built module and no
+# nvidia-driver package at all: a partial hand-install that left an RTX A2000
+# invisible to Kubernetes while three GPU workloads queued for slices of the
+# other card.
+#
+# Idempotent and conservative: a node whose module already loads is left alone,
+# including where it runs a different package variant. Nothing here converges an
+# already-working node.
+- name: Ad Arbitorium 🔐 - GitOps - Infrastructure - NVIDIA driver on GPU nodes
+  hosts: "k8s_worker"
+  become: true
+  gather_facts: true
+
+  vars:
+    # The headless variant. These nodes have no display; the desktop package
+    # pulls X libraries they will never use. dungeon-worker-004 predates this and
+    # runs the desktop `580` packages — working, so left alone, and worth
+    # converging the next time that node is rebuilt rather than now.
+    nvidia_driver_package: nvidia-driver-580-server
+
+  tasks:
+
+    - name: Looking for an NVIDIA device on this node...
+      # Vendor 10de is NVIDIA. Reading the PCI bus rather than an inventory group
+      # means a card moved between hosts is found where it actually is.
+      ansible.builtin.shell:
+        cmd: "lspci -n -d 10de: | wc -l"
+      register: nvidia_pci
+      changed_when: false
+      failed_when: false
+      check_mode: false
+
+    - name: Recording whether this node has a GPU...
+      ansible.builtin.set_fact:
+        has_nvidia_gpu: "{{ (nvidia_pci.stdout | default('0') | trim | int) > 0 }}"
+
+    - name: Checking whether a working driver is already loaded...
+      ansible.builtin.shell:
+        cmd: "lsmod | grep -c '^nvidia ' || true"
+      register: nvidia_module
+      changed_when: false
+      check_mode: false
+      when: has_nvidia_gpu
+
+    - name: Recording driver state...
+      ansible.builtin.set_fact:
+        nvidia_driver_loaded: "{{ (nvidia_module.stdout | default('0') | trim | int) > 0 }}"
+      when: has_nvidia_gpu
+
+    - name: Confirming Secure Boot, because it decides which driver can load...
+      # Not a gate, a record. If Secure Boot is ever turned off the gpu-operator
+      # could own the driver too, and this play would become unnecessary — so the
+      # assumption behind it should be visible in the run, not just in a comment.
+      ansible.builtin.shell:
+        cmd: "mokutil --sb-state 2>/dev/null || echo 'unknown'"
+      register: secure_boot
+      changed_when: false
+      failed_when: false
+      check_mode: false
+      when: has_nvidia_gpu
+
+    - name: Reporting what was found...
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }}: gpu={{ has_nvidia_gpu }}
+          driver_loaded={{ nvidia_driver_loaded | default(false) }}
+          secure_boot={{ (secure_boot.stdout | default('n/a')) | trim }}
+
+    - name: Installing the Canonical-signed driver and the headers DKMS needs...
+      # The headers are named for the running kernel deliberately. A DKMS build
+      # without them produces exactly the state found on worker-001: source
+      # packages present, no module, and nvidia-smi failing with a message about
+      # the driver not being installed.
+      ansible.builtin.apt:
+        name:
+          - "{{ nvidia_driver_package }}"
+          - "linux-headers-{{ ansible_kernel }}"
+        state: present
+        update_cache: true
+      when:
+        - has_nvidia_gpu
+        - not (nvidia_driver_loaded | default(false))
+      register: nvidia_install
+
+    - name: Loading the module without waiting for a reboot...
+      ansible.builtin.command: modprobe nvidia
+      register: nvidia_modprobe
+      changed_when: nvidia_modprobe.rc == 0
+      failed_when: false
+      when:
+        - has_nvidia_gpu
+        - nvidia_install is changed
+
+    - name: Reporting whether the node needs a reboot to finish...
+      # A DKMS build against the running kernel usually loads immediately. It will
+      # not if the kernel was updated and not yet booted into, and saying so is
+      # better than leaving the node looking healthy with no GPU capacity.
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }}:
+          {% if nvidia_modprobe is defined and nvidia_modprobe.rc == 0 %}
+          driver loaded, GPU should be advertised within a minute
+          {% else %}
+          driver installed but the module did not load — reboot required
+          ({{ (nvidia_modprobe.stderr | default('')) | trim }})
+          {% endif %}
+      when:
+        - has_nvidia_gpu
+        - nvidia_install is changed
