@@ -32,7 +32,7 @@ spec:
               mountPath: /tmp
           resources:
             requests:
-              cpu: "250m"
+              cpu: "30m"
               memory: "512Mi"
             limits:
               cpu: "1000m"

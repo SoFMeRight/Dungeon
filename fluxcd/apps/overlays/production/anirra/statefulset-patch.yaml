@@ -13,7 +13,7 @@ spec:
           image: docker.io/jpyles0524/anirra:xiFwhijN
           resources:
             requests:
-              cpu: 200m
+              cpu: 15m
               memory: 512Mi
             limits:
               cpu: 1000m
