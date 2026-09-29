@@ -34,16 +34,21 @@ spec:
     #   - background scanning is unaffected: the reports controller evaluates
     #     resources already in the cluster and does not go through a webhook, so
     #     audit coverage of these namespaces continues.
+    # An object, not a list. chart 3.9.x renders this straight into the kyverno
+    # ConfigMap's `webhooks` key, and a list there parses to an empty selector —
+    # which silently removes even the kube-system exclusion the chart ships by
+    # default, leaving every namespace gated. Verified against the live webhook:
+    # the object form applied within seconds, the list form produced `{}`.
     config:
       webhooks:
-        - namespaceSelector:
-            matchExpressions:
-              - key: kubernetes.io/metadata.name
-                operator: NotIn
-                values:
-                  - kube-system
-                  - king-of-red-lions
-                  - zeldas-lullaby
+        namespaceSelector:
+          matchExpressions:
+            - key: kubernetes.io/metadata.name
+              operator: NotIn
+              values:
+                - kube-system
+                - king-of-red-lions
+                - zeldas-lullaby
 
     # PolicyExceptions: the scalable exception model for enforce-pod-hardening's larger phases
     # (no-privesc / non-root / RO-root have 25 / 67 / 127 exceptions — name patterns don't scale).
