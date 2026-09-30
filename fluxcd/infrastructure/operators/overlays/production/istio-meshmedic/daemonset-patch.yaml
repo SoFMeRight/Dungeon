@@ -11,10 +11,10 @@ spec:
     spec:
       containers:
         - name: agent
-          # TEMP (Phase-1 verification): immutable dev sha to collect confirm-reason
-          # telemetry before promoting to a released v0.0.2. Revert to a released
-          # version after verifying — do not float on :latest-dev.
-          image: docker.io/prplanit/istio-meshmedic:dev-2488864
+          # Pinned to a released version, never a dev tag or :latest-dev — release
+          # retention prunes dev tags, which leaves the DaemonSet unschedulable on
+          # any node that has not cached the image.
+          image: docker.io/prplanit/istio-meshmedic:v0.0.2
           imagePullPolicy: IfNotPresent
           args:
             - agent
