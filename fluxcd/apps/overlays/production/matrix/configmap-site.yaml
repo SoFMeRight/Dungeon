@@ -66,6 +66,12 @@ data:
     matrix_rtc:
       transports:
         - type: livekit
+          # The SFU's WebSocket address. Clients that understand it reach the
+          # authorisation service through the homeserver, which proxies /rtc/livekit to
+          # it as an application service.
+          url: wss://livekit.outspokekin.com/livekit/sfu
+          # Deprecated since 1.161.0 but deliberately kept: it is the only path older
+          # clients have, and upstream's guidance is to keep listing it.
           livekit_service_url: https://livekit.outspokekin.com/livekit/jwt
 ---
 apiVersion: v1
