@@ -58,6 +58,9 @@ data:
       per_second: 1
       burst_count: 20
 
+    # Synapse parses this at startup only — there is no config reload — so a change
+    # here takes effect on the next restart, not when the ConfigMap updates.
+    #
     # lk-jwt-service runs as an application service so the homeserver can mediate the
     # MatrixRTC transport rather than clients calling the authorisation service directly.
     app_service_config_files:
