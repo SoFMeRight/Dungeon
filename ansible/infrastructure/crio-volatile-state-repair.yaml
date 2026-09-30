@@ -1,0 +1,88 @@
+---
+# Lets CRI-O start after an unclean node reset.
+#
+# CRI-O keeps a record of containers whose storage is volatile — ones that by
+# definition do not survive a reboot — in overlay-containers/volatile-containers.json.
+# On a hard reset that file can be left allocated but never flushed, so it comes back
+# as NUL bytes. CRI-O then refuses to start:
+#
+#   fatal: validating root config: failed to get store to set defaults:
+#          loading ".../volatile-containers.json": expect [ or n, but found \x00
+#
+# kubelet cannot reach a runtime, crash-loops, and the node stays NotReady until a
+# human notices. dungeon-chest-005 sat that way for 50 minutes on 2026-09-30 with 83
+# pods stranded, which took Redis sentinel quorum and Harbor down with it.
+#
+# The repair is CONDITIONAL, not a boot-time wipe. The file is only removed when it
+# does not parse as JSON — a valid file is never touched, so an ordinary
+# `systemctl restart crio` cannot discard live volatile state. Scoping it to "at boot"
+# instead would be both broader (it would delete valid state every boot) and narrower
+# (it would miss corruption discovered at any other time).
+#
+# Deliberately limited to the volatile file. containers.json and layers.json describe
+# state that DOES survive a reboot; deleting those loses real containers and images, so
+# corruption there must fail loudly rather than be silently repaired.
+- name: Ad Arbitorium 🔐 - GitOps - Infrastructure - CRI-O volatile state repair
+  hosts: "k8s_worker"
+  become: true
+  gather_facts: true
+
+  vars:
+    repair_script: /usr/local/sbin/crio-repair-volatile-state
+    volatile_state: /var/lib/containers/storage/overlay-containers/volatile-containers.json
+
+  tasks:
+    - name: Install the repair helper
+      ansible.builtin.copy:
+        dest: "{{ repair_script }}"
+        owner: root
+        group: root
+        mode: "0755"
+        content: |
+          #!/bin/sh
+          # Managed by Ansible (crio-volatile-state-repair.yaml). Do not edit.
+          #
+          # Removes CRI-O's volatile container state ONLY when it is unparseable.
+          # Exits 0 in every case: this must never be the reason CRI-O fails to start.
+          set -u
+          f="{{ volatile_state }}"
+          [ -e "$f" ] || exit 0
+          if python3 -c 'import json,sys; json.load(open(sys.argv[1]))' "$f" 2>/dev/null; then
+            exit 0
+          fi
+          logger -t crio-repair-volatile-state \
+            "volatile-containers.json does not parse; removing so CRI-O can start (size $(stat -c%s "$f" 2>/dev/null))"
+          rm -f "$f"
+          exit 0
+      register: repair_helper
+
+    - name: Run the helper before CRI-O starts
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/crio.service.d/10-repair-volatile-state.conf
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          # Managed by Ansible (crio-volatile-state-repair.yaml). Do not edit.
+          #
+          # ExecStartPre rather than a separate boot-time unit: the check is cheap and
+          # conditional, so running it on every start costs nothing and also covers
+          # corruption that appears without a reboot.
+          [Service]
+          ExecStartPre={{ repair_script }}
+      register: crio_dropin
+
+    - name: Reload systemd when the unit changed
+      ansible.builtin.systemd:
+        daemon_reload: true
+      when: crio_dropin is changed
+
+    # Deliberately does NOT restart CRI-O. Restarting the runtime kills every container
+    # on the node; the drop-in takes effect on the next start either way, and the case
+    # it guards against only arises after a reboot.
+    - name: Report what is now in place
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }}: helper {{ 'installed' if repair_helper is changed else 'already current' }},
+          drop-in {{ 'installed' if crio_dropin is changed else 'already current' }};
+          takes effect on the next CRI-O start.
