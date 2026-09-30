@@ -1,0 +1,31 @@
+# Restarts a workload when a ConfigMap or Secret it references changes.
+#
+# It exists for the ExternalSecrets gap and nothing else: a configMapGenerator hash
+# suffix (used by bulkvs-ddns, linkstack, cloudflare-ddns) is the better mechanism —
+# the pod spec pins a content hash, so the rollout is visible in git and in rollout
+# history, and a pod can never read a config it was not scheduled with. That cannot
+# work for vault-backed Secrets, because ExternalSecrets renders them at runtime and
+# kustomize can never hash content it has not seen.
+#
+# Opt-in ONLY. No global auto-reload: a credential rotation must not be able to
+# restart a database or a homeserver at an arbitrary moment.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: reloader
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: reloader
+      version: 2.x
+      sourceRef:
+        kind: HelmRepository
+        name: reloader
+      interval: 12h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3

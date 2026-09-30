@@ -6,6 +6,11 @@ metadata:
   name: matrix-lk-jwt
   labels:
     app: matrix-lk-jwt
+  annotations:
+    # The secret is rendered from vault by ExternalSecrets, so no configMapGenerator
+    # hash can cover it — kustomize never sees the content. Without this the Secret
+    # updates and these pods keep the old env indefinitely, silently.
+    secret.reloader.stakater.com/reload: matrix-lk-jwt-secrets
 spec:
   replicas: 2
   selector:

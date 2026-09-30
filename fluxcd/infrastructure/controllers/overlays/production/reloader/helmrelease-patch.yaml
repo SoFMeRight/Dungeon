@@ -1,0 +1,24 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: reloader
+spec:
+  values:
+    fullnameOverride: reloader
+    reloader:
+      # Nothing reloads unless it carries an annotation naming this controller. The
+      # default watches every workload in the cluster, which would let any Secret
+      # rotation restart anything referencing it.
+      ignoreSecrets: false
+      ignoreConfigMaps: false
+      watchGlobally: true
+      reloadOnCreate: false
+      autoReloadAll: false
+      deployment:
+        resources:
+          requests:
+            cpu: 20m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi

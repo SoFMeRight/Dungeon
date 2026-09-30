@@ -4,6 +4,13 @@ metadata:
   name: matrix-synapse
   labels:
     app: matrix-synapse
+  annotations:
+    # conf.d is a PROJECTED volume combining a Secret and a ConfigMap, plus a separate
+    # Secret for the appservice registration. Projected sources are the less-exercised
+    # path in Reloader; if it does not walk into them this annotation is inert, which
+    # is exactly the shape of failure worth proving rather than assuming.
+    secret.reloader.stakater.com/reload: matrix-synapse-secrets,matrix-synapse-appservices
+    configmap.reloader.stakater.com/reload: matrix-synapse-site,matrix-synapse-config
 spec:
   serviceName: matrix-synapse
   replicas: 1
