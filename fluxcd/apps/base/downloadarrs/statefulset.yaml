@@ -148,6 +148,28 @@ spec:
                 secretKeyRef:
                   name: downloadarrs-vpn-secret
                   key: password
+          # gluetun restarts the tunnel itself when its own health check fails, but that
+          # recovery can wedge: this pod sat ready=true for 37 hours with openvpn stuck in
+          # "stopping" and no egress, because nothing outside the container was checking.
+          #
+          # Runs gluetun's own healthcheck, which queries its health server on
+          # 127.0.0.1:9999 and exits 0 healthy / 1 unhealthy. Using the vendor command
+          # rather than a hand-rolled wget keeps the definition of "healthy" theirs, so a
+          # change to that contract cannot silently turn this into a probe that always
+          # passes. An httpGet probe is not an option: kubelet dials the pod IP, and the
+          # health server binds loopback only — exposing it, or putting the control-server
+          # API key in the pod spec, would both be worse than an exec.
+          livenessProbe:
+            exec:
+              command:
+                - /gluetun-entrypoint
+                - healthcheck
+            # The tunnel has to establish before any of this means anything, and a probe
+            # that fires during connect would restart the container forever.
+            initialDelaySeconds: 180
+            periodSeconds: 60
+            timeoutSeconds: 10
+            failureThreshold: 3
           volumeMounts:
             - name: gluetun-config
               mountPath: /gluetun
