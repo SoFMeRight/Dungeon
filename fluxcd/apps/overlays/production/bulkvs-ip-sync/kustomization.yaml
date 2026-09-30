@@ -1,19 +1,19 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: compass
-# Hash-suffixed ConfigMap: any change to bulkvs-ddns.env changes the generated
+# Hash-suffixed ConfigMap: any change to bulkvs-ip-sync.env changes the generated
 # name, so Flux rolls the pod automatically.
 configMapGenerator:
-  - name: bulkvs-ddns-config
+  - name: bulkvs-ip-sync-config
     envs:
-      - bulkvs-ddns.env
+      - bulkvs-ip-sync.env
 resources:
-  - ../../../base/bulkvs-ddns
+  - ../../../base/bulkvs-ip-sync
 patches:
   - path: deployment-patch.yaml
   - target:
       kind: Deployment
-      name: bulkvs-ddns
+      name: bulkvs-ip-sync
     patch: |-
       - op: replace
         path: /spec/template/spec/imagePullSecrets

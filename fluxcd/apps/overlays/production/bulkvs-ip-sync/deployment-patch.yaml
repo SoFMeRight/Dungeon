@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bulkvs-ddns
+  name: bulkvs-ip-sync
 spec:
   template:
     spec:
@@ -9,11 +9,11 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: bulkvs-ddns
+        - name: bulkvs-ip-sync
           # latest-dev on purpose: this is the in-cluster validation deploy, not a
           # release. Repin to a semver tag once it has proven itself running here.
           # imagePullPolicy Always so a pod roll picks up the current dev build.
-          image: cr.pcfae.com/prplanit/bulkvs-ddns:latest-dev
+          image: cr.pcfae.com/prplanit/bulkvs-ip-sync:latest-dev
           imagePullPolicy: Always
           securityContext:
             runAsNonRoot: true
@@ -33,6 +33,6 @@ spec:
               memory: 32Mi
           envFrom:
             - configMapRef:
-                name: bulkvs-ddns-config
+                name: bulkvs-ip-sync-config
             - secretRef:
-                name: bulkvs-ddns-secrets
+                name: bulkvs-ip-sync-secrets

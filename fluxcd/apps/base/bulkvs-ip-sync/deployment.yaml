@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: bulkvs-ddns
+  name: bulkvs-ip-sync
 spec:
   revisionHistoryLimit: 5
   replicas: 1
   selector:
     matchLabels:
-      app: bulkvs-ddns
+      app: bulkvs-ip-sync
   template:
     metadata:
       labels:
-        app: bulkvs-ddns
+        app: bulkvs-ip-sync
     spec:
-      serviceAccountName: bulkvs-ddns
+      serviceAccountName: bulkvs-ip-sync
       containers:
-        - name: bulkvs-ddns
+        - name: bulkvs-ip-sync
           image: PLACEHOLDER_IMAGE
           envFrom:
             - configMapRef:
-                name: bulkvs-ddns-config
+                name: bulkvs-ip-sync-config
             - secretRef:
-                name: bulkvs-ddns-secrets
+                name: bulkvs-ip-sync-secrets
           resources:
             requests:
               cpu: PLACEHOLDER_CPU
