@@ -12,6 +12,8 @@ spec:
       securityContext:
         fsGroup: 1000
       containers:
+        - name: qsticky
+          image: ghcr.io/monstermuffin/qsticky:sha-5ca1746@sha256:27c19a7acc9fb8b39c2b5ebee3183190a3920afbb1c43342b01c7752c02a02d3
         - name: gluetun
           env:
             - name: SERVER_REGIONS
