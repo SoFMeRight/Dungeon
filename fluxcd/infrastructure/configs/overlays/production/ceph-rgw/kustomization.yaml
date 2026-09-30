@@ -11,8 +11,6 @@ resources:
   - harbor-rgw-setup.yaml
   - loki-rgw-credentials-externalsecret.yaml
   - loki-rgw-setup.yaml
-  - mimir-rgw-credentials-externalsecret.yaml
-  - mimir-rgw-setup.yaml
   - appflowy-rgw-credentials-externalsecret.yaml
   - appflowy-rgw-setup.yaml
   - nextcloud-rgw-credentials-externalsecret.yaml
