@@ -59,6 +59,9 @@ spec:
           namespaces: [shooting-gallery]
           names: ["ark-se-tmc-*", "emulatorjs-*", "romm-*"]
       # swift-sail — gluetun cohort (shared netns, can't pod-level non-root) + LSIO *arr + root-vendor.
+      # downloadarrs is a dead end, not a follow-up: gluetun holds NET_ADMIN over the shared
+      # netns and the five LSIO *arr containers start as root so s6 can drop to PUID/PGID.
+      # Its sidecars that COULD harden already have — qsticky and cross-seed run non-root.
       # RE-EVALUATE: byparr/pinchflat/jellyseerr/overseerr (node/elixir) may harden with work.
       - resources:
           kinds: [Pod]
