@@ -16,7 +16,7 @@ data:
       # default IfNotPresent serves the cached layer during a registry/cache outage AND
       # deterministically runs the intended build — a bare re-cuttable tag can otherwise
       # serve a stale cached digest. Update the sha256 whenever v0.39.1 is re-cut.
-      tag: v0.39.1@sha256:4104baadc2e052571dab5612c9a61162e444375b96c29d36105d30b5cc2d08c8
+      tag: v0.39.1@sha256:8fc6d03100d0a5874dbe23550dc521799b47dcb5f38c78e282699102856789e1
 
     # Admin user configuration
     adminUser:
