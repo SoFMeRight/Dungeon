@@ -60,3 +60,15 @@ spec:
       to:
         - operation:
             ports: ["8080"]
+    # The reverse of the OpenID hop above: running as an application service, the
+    # homeserver reverse-proxies /rtc/livekit to this service on the client's behalf, so
+    # the connection is now homeserver -> service as well as service -> homeserver. Its
+    # absence does not read as a policy failure — Synapse reports ConnectionLost and a
+    # 500, which looks like the service being down.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/temple-of-time/sa/matrix-synapse
+      to:
+        - operation:
+            ports: ["8080"]
