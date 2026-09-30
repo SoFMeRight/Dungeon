@@ -1,0 +1,41 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-navidrome-egress
+spec:
+  description: >-
+    navidrome serves the music library read-only. The SMB mount is staged at the
+    node level, not pod egress, so the pod only needs DNS plus optional 443 to
+    external art/metadata agents (last.fm, spotify, deezer, musicbrainz,
+    coverartarchive) if those agents are enabled. Inert until egress default-deny
+    is turned on for the namespace.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: navidrome
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "ws.audioscrobbler.com"
+        - matchPattern: "*.spotify.com"
+        - matchName: "api.deezer.com"
+        - matchName: "musicbrainz.org"
+        - matchName: "coverartarchive.org"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

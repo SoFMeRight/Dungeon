@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: navidrome
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: navidrome
+  template:
+    metadata:
+      labels:
+        app: navidrome
+        # selected by the derived istio AuthorizationPolicy allow-gateway-ingress-phloem
+        policy.prplanit.com/ingress: "true"
+    spec:
+      serviceAccountName: navidrome
+      securityContext:
+        fsGroup: 3144
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: navidrome
+          image: ghcr.io/navidrome/navidrome:0.58.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 4533
+            runAsGroup: 3144
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: ND_MUSICFOLDER
+              value: /music
+            - name: ND_DATAFOLDER
+              value: /data
+            - name: ND_PORT
+              value: "8080"
+            - name: ND_LOGLEVEL
+              value: info
+            - name: TZ
+              value: Etc/UTC
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          volumeMounts:
+            - name: music
+              mountPath: /music
+              readOnly: true
+            - name: data
+              mountPath: /data
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: "1"
+              memory: 512Mi
+      volumes:
+        - name: music
+          persistentVolumeClaim:
+            claimName: navidrome-music
+        - name: data
+          persistentVolumeClaim:
+            claimName: navidrome-data
+        - name: tmp
+          emptyDir: {}

@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: navidrome
+  annotations:
+    gatus.home-operations.com/endpoint: |
+      group: "Private Apps (Temple of Time🕰️)"
+spec:
+  parentRefs:
+    - name: phloem-gateway
+      namespace: prelude-of-light
+  hostnames:
+    - "music.optcp.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: navidrome
+          port: 8080
