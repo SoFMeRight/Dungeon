@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bulkvs-ddns
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bulkvs-ddns
+  template:
+    metadata:
+      labels:
+        app: bulkvs-ddns
+    spec:
+      serviceAccountName: bulkvs-ddns
+      containers:
+        - name: bulkvs-ddns
+          image: PLACEHOLDER_IMAGE
+          envFrom:
+            - configMapRef:
+                name: bulkvs-ddns-config
+            - secretRef:
+                name: bulkvs-ddns-secrets
+          resources:
+            requests:
+              cpu: PLACEHOLDER_CPU
+              memory: PLACEHOLDER_MEMORY
+            limits:
+              cpu: PLACEHOLDER_CPU_LIMIT
+              memory: PLACEHOLDER_MEMORY_LIMIT

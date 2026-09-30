@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bulkvs-ddns
+spec:
+  template:
+    spec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: bulkvs-ddns
+          # latest-dev on purpose: this is the in-cluster validation deploy, not a
+          # release. Repin to a semver tag once it has proven itself running here.
+          # imagePullPolicy Always so a pod roll picks up the current dev build.
+          image: cr.pcfae.com/prplanit/bulkvs-ddns:latest-dev
+          imagePullPolicy: Always
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            runAsGroup: 65532
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+          envFrom:
+            - configMapRef:
+                name: bulkvs-ddns-config
+            - secretRef:
+                name: bulkvs-ddns-secrets

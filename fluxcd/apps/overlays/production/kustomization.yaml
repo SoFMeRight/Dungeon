@@ -97,6 +97,7 @@ resources:
   - reactive-resume
   - roundcube-primary-gmail
   # Utilities
+  - bulkvs-ddns
   - cloudflare-ddns
   - endlessh-go
   - shlink

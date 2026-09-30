@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: compass
+# Hash-suffixed ConfigMap: any change to bulkvs-ddns.env changes the generated
+# name, so Flux rolls the pod automatically.
+configMapGenerator:
+  - name: bulkvs-ddns-config
+    envs:
+      - bulkvs-ddns.env
+resources:
+  - ../../../base/bulkvs-ddns
+patches:
+  - path: deployment-patch.yaml
+  - target:
+      kind: Deployment
+      name: bulkvs-ddns
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/imagePullSecrets
+        value:
+          - name: cr-pcfae-admin-pull-secret
+  - path: externalsecret-patch.yaml
