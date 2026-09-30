@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: synapse
-          image: docker.io/hlhd/synapse:dev-4e88235
+          image: ghcr.io/homelabhd/synapse:v1.162.0
   volumeClaimTemplates:
     - metadata:
         name: data
