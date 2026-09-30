@@ -472,6 +472,57 @@
       no_log: true
       notify: Rescan FreeSWITCH external gateways
 
+    # Reruns the ext-IP convergence above on a systemd timer, so a dynamic-WAN
+    # rotation self-heals between playbook runs. Writes + restart happen only when
+    # the detected IP differs from what is stored.
+    - name: FusionPBX | install external-IP sync script
+      ansible.builtin.copy:
+        src: files/fusionpbx-ip-sync.sh
+        dest: /usr/local/bin/fusionpbx-ip-sync
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: FusionPBX | install external-IP sync service + timer
+      ansible.builtin.copy:
+        dest: "/etc/systemd/system/{{ item.name }}"
+        owner: root
+        group: root
+        mode: "0644"
+        content: "{{ item.content }}"
+      loop:
+        - name: fusionpbx-ip-sync.service
+          content: |
+            [Unit]
+            Description=Sync FreeSWITCH external SIP/RTP IP with the current public IP
+            After=network-online.target
+            Wants=network-online.target
+
+            [Service]
+            Type=oneshot
+            ExecStart=/usr/local/bin/fusionpbx-ip-sync
+        - name: fusionpbx-ip-sync.timer
+          content: |
+            [Unit]
+            Description=Periodic FreeSWITCH external-IP sync
+
+            [Timer]
+            OnBootSec=2min
+            OnUnitActiveSec=2min
+            AccuracySec=15s
+
+            [Install]
+            WantedBy=timers.target
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: FusionPBX | enable and start the external-IP sync timer
+      ansible.builtin.systemd:
+        name: fusionpbx-ip-sync.timer
+        enabled: true
+        state: started
+        daemon_reload: true
+
   handlers:
     # FusionPBX caches the generated sofia config under /var/cache/fusionpbx with the
     # resolved ext-*-ip baked in, so a bare reloadxml re-serves the STALE cached IP.
