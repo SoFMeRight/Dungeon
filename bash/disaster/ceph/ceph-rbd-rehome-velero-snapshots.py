@@ -73,6 +73,33 @@ def targets_all():
     return out
 
 
+def deletion_secret_annotations(vsclass):
+    """Deletion-secret annotations for a hand-built VolumeSnapshotContent.
+
+    A DYNAMICALLY provisioned content gets these from the VolumeSnapshotClass
+    automatically. One created by apply does not — and without them the CSI driver
+    answers "provided secret is empty" on every delete, so the content can never be
+    removed and its rbd snapshot is leaked permanently. deletionPolicy=Delete then
+    describes an intent that can never execute.
+
+    Read from the class rather than hardcoded, so this follows the cluster's own
+    configuration instead of drifting from it.
+    """
+    try:
+        c = kjson("get", "volumesnapshotclass", vsclass, "-o", "json")
+    except RuntimeError:
+        return {}
+    params = c.get("parameters") or {}
+    name = params.get("csi.storage.k8s.io/snapshotter-secret-name")
+    namespace = params.get("csi.storage.k8s.io/snapshotter-secret-namespace")
+    if not name or not namespace:
+        return {}
+    return {
+        "snapshot.storage.kubernetes.io/deletion-secret-name": name,
+        "snapshot.storage.kubernetes.io/deletion-secret-namespace": namespace,
+    }
+
+
 def rehome(ns, name, apply):
     v = kjson("get", "volumesnapshot", name, "-n", ns, "-o", "json")
     vscn = (v.get("status") or {}).get("boundVolumeSnapshotContentName")
@@ -127,7 +154,8 @@ def rehome(ns, name, apply):
 
         # 6. recreate VSC on the operator driver, bound to the new VS
         newvsc = {"apiVersion": "snapshot.storage.k8s.io/v1", "kind": "VolumeSnapshotContent",
-                  "metadata": {"name": vscn},
+                  "metadata": {"name": vscn,
+                               "annotations": deletion_secret_annotations(vsclass)},
                   "spec": {"deletionPolicy": "Delete", "driver": NEW,
                            "source": {"snapshotHandle": handle},
                            "volumeSnapshotClassName": vsclass,
