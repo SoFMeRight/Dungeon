@@ -73,6 +73,12 @@ spec:
             - name: secrets
               mountPath: /config/conf.d
               readOnly: true
+            # Application service registrations are NOT homeserver config: everything in
+            # conf.d is parsed as such, so they get their own directory and are named by
+            # app_service_config_files instead.
+            - name: appservices
+              mountPath: /config/appservices
+              readOnly: true
             # The signing key is this server's identity to the rest of the federation.
             # Losing it is not recoverable: remote servers reject events signed by a
             # replacement, so it lives on a Retain volume.
@@ -101,6 +107,9 @@ spec:
                   name: matrix-synapse-secrets
               - configMap:
                   name: matrix-synapse-site
+        - name: appservices
+          secret:
+            secretName: matrix-synapse-appservices
         - name: tmp
           emptyDir: {}
   volumeClaimTemplates:

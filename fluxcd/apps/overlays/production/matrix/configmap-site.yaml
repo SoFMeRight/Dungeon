@@ -49,6 +49,11 @@ data:
       per_second: 1
       burst_count: 20
 
+    # lk-jwt-service runs as an application service so the homeserver can mediate the
+    # MatrixRTC transport rather than clients calling the authorisation service directly.
+    app_service_config_files:
+      - /config/appservices/lk-jwt.yaml
+
     matrix_rtc:
       transports:
         - type: livekit
