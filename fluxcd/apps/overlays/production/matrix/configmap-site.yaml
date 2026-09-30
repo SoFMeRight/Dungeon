@@ -33,6 +33,15 @@ data:
       msc3266_enabled: true
       msc4143_enabled: true
       msc4222_enabled: true
+      # Both gate the MatrixRTC appservice, and without them it is INERT rather than
+      # broken: the registration still loads and logs cleanly, but the proxy servlet is
+      # never mounted and the membership scope is never honoured.
+      # 4502 — targeted room member queries, the is_joined scope the authorisation
+      # service uses to check membership without joining rooms.
+      msc4502_enabled: true
+      # 4512 — delegating parts of the C-S and S-S API to an application service, which
+      # is what mounts /_matrix/client/*/rtc/livekit/* onto lk-jwt-service.
+      msc4512_enabled: true
 
     # A client schedules its own departure event when it joins, then keeps postponing it.
     # If it drops off the network the delay expires and the call stops showing a ghost.
