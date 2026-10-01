@@ -14,7 +14,7 @@ spec:
         runAsGroup: 1000
       containers:
         - name: google-webfonts-helper
-          image: ghcr.io/majodev/google-webfonts-helper:v1.7.1
+          image: ghcr.io/majodev/google-webfonts-helper:v1.7.2
           securityContext:
             readOnlyRootFilesystem: true
           resources:
