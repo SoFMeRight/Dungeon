@@ -24,7 +24,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: navidrome
-          image: ghcr.io/navidrome/navidrome:0.58.0
+          image: ghcr.io/navidrome/navidrome:0.64.2
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsNonRoot: true
