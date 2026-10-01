@@ -1,0 +1,58 @@
+# navidrome (public)  ·  SSO required on web UI  ·  tier: trusted  (admits: operator, admin, trusted)
+#
+# Self-contained: this file IS the complete access rule for music.optcp.com on the public
+# cell-membrane gateway.
+#   require-login (CUSTOM) → oauth2-proxy proves an SSO session + injects the role header
+#   authz (DENY)          → deny unless the injected role is in `admits` below
+# notPaths /oauth2/* : the oauth2-proxy sign-in/callback/static paths must bypass the gate
+#   (served by the oauth2-proxy-signin-cell-membrane HTTPRoute: music.optcp.com/oauth2/*).
+# notPaths /rest/*   : the Subsonic API is DELIBERATELY exempt from SSO — mobile apps cannot
+#   complete an OAuth redirect, so they authenticate against Navidrome's own per-user Subsonic
+#   token auth over TLS (defended by ND_AUTHREQUESTLIMIT + strong per-user passwords; note a
+#   /rest brute-force is NOT gateway-bannable because Subsonic returns HTTP 200 on a bad
+#   password). The web UI stays fully SSO'd.
+# Tiers (widen by adding roles to notValues; operator is the floor):
+#   operator-only : [operator]   admin: [operator,admin]   trusted: [operator,admin,trusted]
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: sso-music-optcp-require-login
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  action: CUSTOM
+  provider:
+    name: oauth2-proxy
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - music.optcp.com
+            notPaths:
+              - /oauth2/*
+              - /rest/*
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: sso-music-optcp-authz
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  action: DENY
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - music.optcp.com
+            notPaths:
+              - /oauth2/*
+              - /rest/*
+      when:
+        - key: request.headers[x-auth-request-groups]
+          notValues:
+            - operator
+            - admin
+            - trusted     # admits: operator, admin, trusted

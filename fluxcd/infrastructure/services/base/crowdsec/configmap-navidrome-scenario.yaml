@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crowdsec-navidrome-scenario
+data:
+  # Detects Navidrome WEB-UI login brute-force at the cell-membrane gateway access log
+  # (istio-gw acquisition + prplanit/istio-gateway-logs parser → direct_remote_ip, the real
+  # TCP source, header-unspoofable). The web login POSTs to /auth/login and returns 401 on
+  # bad credentials (200 on success), so a 401 there is exclusively an auth failure.
+  #
+  # Scope / honesty: the web UI is already SSO-gated (sso/music.optcp.com.yaml), so /auth/login
+  # is only reachable post-SSO — this is a defence-in-depth backstop for that endpoint, not the
+  # front line. It does NOT cover the Subsonic API (/rest/*): Subsonic returns HTTP 200 even on
+  # a wrong password (error is in the response body, per spec), so a status-keyed gateway
+  # scenario cannot see /rest brute-force. /rest leans on Navidrome's own auth rate limit
+  # (ND_AUTHREQUESTLIMIT) + strong per-user Subsonic passwords over TLS. source_ip is
+  # gateway-derived (spoofable: 0). The leaky bucket (5 / 20s) tolerates a human fumbling a pw.
+  navidrome-bf.yaml: |
+    type: leaky
+    name: prplanit/navidrome-bf
+    description: "Navidrome web login brute-force (cell-membrane gateway access log)"
+    filter: "evt.Parsed.verb == 'POST' && evt.Parsed.target_fqdn == 'music.optcp.com' && evt.Parsed.request matches '^/auth/login/?$' && evt.Parsed.status == '401'"
+    groupby: evt.Meta.source_ip
+    capacity: 5
+    leakspeed: 20s
+    blackhole: 1m
+    labels:
+      service: navidrome
+      behavior: "http:bruteforce"
+      classification:
+        - attack.T1110
+      spoofable: 0
+      confidence: 3
+      label: "Navidrome Login Bruteforce"
+      remediation: true

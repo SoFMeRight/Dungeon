@@ -65,6 +65,7 @@ spec:
   hostnames:
     - "z2m.arbitorium.com"
     - "books.optcp.com"
+    - "music.optcp.com"
   rules:
     - matches:
         - path:

@@ -7,3 +7,4 @@ resources:
   - _gateway-header-strip.yaml
   - z2m.arbitorium.com.yaml
   - books.optcp.com.yaml
+  - music.optcp.com.yaml

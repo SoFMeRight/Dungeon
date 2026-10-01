@@ -46,6 +46,27 @@ spec:
               value: info
             - name: TZ
               value: Etc/UTC
+            # reverse-proxy (SSO) auth: trust the identity header oauth2-proxy injects at the
+            # cell-membrane gateway, so SSO'd users don't double-login. Spoofing is blocked two
+            # ways: the gateway strips any client-supplied x-auth-request-* (EnvoyFilter
+            # sso-strip-spoofed-auth-headers), and Navidrome only trusts the header from the
+            # in-cluster pod network below. The Subsonic API (/rest/*) is SSO-exempt and uses
+            # its own token auth, so it never carries this header.
+            - name: ND_REVERSEPROXYUSERHEADER
+              value: X-Auth-Request-Email
+            - name: ND_REVERSEPROXYWHITELIST
+              value: 192.168.144.0/20
+            # throttle failed login attempts (defence for the internet-exposed Subsonic auth)
+            - name: ND_AUTHREQUESTLIMIT
+              value: "5"
+            - name: ND_AUTHWINDOWLENGTH
+              value: 20s
+            # encrypts stored user & third-party passwords; sourced from Vault, never change it
+            - name: ND_PASSWORDENCRYPTIONKEY
+              valueFrom:
+                secretKeyRef:
+                  name: navidrome-smb-secret
+                  key: nd-password-encryption-key
           ports:
             - containerPort: 8080
               name: http

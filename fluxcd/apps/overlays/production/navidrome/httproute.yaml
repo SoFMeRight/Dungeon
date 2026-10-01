@@ -4,11 +4,14 @@ metadata:
   name: navidrome
   annotations:
     gatus.home-operations.com/endpoint: |
-      group: "Private Apps (Temple of Time🕰️)"
+      group: "Public Apps (Temple of Time🕰️)"
+      conditions:
+        - "[STATUS] == any(200, 302)"
+        - "[RESPONSE_TIME] < 5000"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-gateway
+      namespace: hyrule-castle
   hostnames:
     - "music.optcp.com"
   rules:
