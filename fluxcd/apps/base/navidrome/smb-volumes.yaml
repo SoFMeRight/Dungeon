@@ -21,7 +21,7 @@ spec:
     readOnly: true
     volumeHandle: navidrome-music
     volumeAttributes:
-      source: "//gringotts/timecapsule/Media/Music"
+      source: "//gringotts/media_music"
     nodeStageSecretRef:
       name: navidrome-smb-secret
       namespace: temple-of-time
