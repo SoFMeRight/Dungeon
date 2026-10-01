@@ -224,6 +224,11 @@ spec:
             - name: jellyseerr-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/jellyseerr-bf.yaml
               subPath: jellyseerr-bf.yaml
+            # Navidrome: gateway-log detection of web-login brute-force (POST /auth/login 401).
+            # /rest Subsonic auth returns 200 even on failure, so it can't be caught here.
+            - name: navidrome-scenario
+              mountPath: /etc/crowdsec/scenarios/prplanit/navidrome-bf.yaml
+              subPath: navidrome-bf.yaml
             # TacticalRMM: gateway-log detection (DB-audit only, no log stream; RMM = high value).
             - name: tacticalrmm-scenario
               mountPath: /etc/crowdsec/scenarios/prplanit/tacticalrmm-bf.yaml
@@ -361,6 +366,9 @@ spec:
         - name: jellyseerr-scenario
           configMap:
             name: crowdsec-jellyseerr-scenario
+        - name: navidrome-scenario
+          configMap:
+            name: crowdsec-navidrome-scenario
         - name: tacticalrmm-scenario
           configMap:
             name: crowdsec-tacticalrmm-scenario
