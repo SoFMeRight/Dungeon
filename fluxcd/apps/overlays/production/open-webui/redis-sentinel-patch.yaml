@@ -40,16 +40,8 @@ spec:
                 echo "No master found, defaulting to $MASTER_HOST"
               fi
 
-              # Resolve hostname to IP address for Sentinel config
-              MASTER_IP=$(getent hosts $MASTER_HOST | awk '{ print $1 }' | head -n1)
-              if [ -z "$MASTER_IP" ]; then
-                echo "ERROR: Could not resolve $MASTER_HOST to IP"
-                exit 1
-              fi
-              echo "Resolved $MASTER_HOST to $MASTER_IP"
-
-              # Configure Sentinel to monitor the master by IP
-              echo "sentinel monitor open-webui-redis $MASTER_IP 6379 2" >> /etc/redis/sentinel.conf
+              # Configure Sentinel to monitor the master
+              echo "sentinel monitor open-webui-redis $MASTER_HOST 6379 2" >> /etc/redis/sentinel.conf
               echo "sentinel auth-pass open-webui-redis $REDIS_PASSWORD" >> /etc/redis/sentinel.conf
               echo "sentinel down-after-milliseconds open-webui-redis 5000" >> /etc/redis/sentinel.conf
               echo "sentinel parallel-syncs open-webui-redis 1" >> /etc/redis/sentinel.conf

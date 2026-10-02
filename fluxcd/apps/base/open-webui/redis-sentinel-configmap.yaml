@@ -10,8 +10,10 @@ data:
     port 26379
     dir /data
 
-    # Master monitoring configuration will be added by initContainer
-    # Placeholder for dynamic configuration
+    # Must precede the `sentinel monitor` line the initContainer appends:
+    # Sentinel rejects a hostname unless resolution is enabled first.
+    sentinel resolve-hostnames yes
+    sentinel announce-hostnames yes
 
     # Logging
     loglevel notice
