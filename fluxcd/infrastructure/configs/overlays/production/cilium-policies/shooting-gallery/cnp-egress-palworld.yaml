@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-palworld-egress
+spec:
+  description: >-
+    Palworld auto-updates its dedicated server via SteamCMD on boot (UPDATE_ON_BOOT) — Steam's
+    CDN/content servers are an open-ended external set that can't be allowlisted. Documented
+    broad world+cluster egress; the game-listen ports (8211/27015 UDP) are inbound and covered
+    by cnp-game-servers (allow-palworld-public).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: palworld
+  egress:
+    - toEntities:
+        - world
+        - cluster

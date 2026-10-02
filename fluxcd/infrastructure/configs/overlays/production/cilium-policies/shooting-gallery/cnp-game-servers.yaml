@@ -146,3 +146,28 @@ spec:
         - ports:
             - port: "35566"
               protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-palworld-public
+spec:
+  description: >-
+    Public (internet-facing) ingress to palworld (172.22.30.231) on the game + Steam query
+    ports — friends connect in over the WAN (pfSense forwards 8211/27015 udp). The server is
+    password-protected. Real client IPs preserved (no SNAT), BGP shortest path.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: palworld
+  ingress:
+    - fromCIDRSet:
+        - cidr: "0.0.0.0/0"
+      toPorts:
+        - ports:
+            - port: "8211"
+              protocol: UDP
+            - port: "27015"
+              protocol: UDP

@@ -59,6 +59,7 @@ resources:
   - ark-se
   - emulatorjs
   - minecraft-optcp
+  - palworld
   - romm
   # Media
   - calibre-web

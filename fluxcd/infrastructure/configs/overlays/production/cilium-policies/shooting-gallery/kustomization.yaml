@@ -9,4 +9,5 @@ resources:
   # admin-list-server + romm + romm-db are DNS/mesh-only (no allow needed).
   - cnp-egress-ark-servers.yaml
   - cnp-egress-minecraft.yaml
+  - cnp-egress-palworld.yaml
   - cnp-egress-emulatorjs.yaml

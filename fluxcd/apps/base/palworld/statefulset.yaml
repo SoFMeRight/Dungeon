@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: palworld
+spec:
+  revisionHistoryLimit: 5
+  serviceName: palworld
+  replicas: 1
+  # Recreate: single RWO data volume, no rolling (would deadlock on the PVC).
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: palworld
+  template:
+    metadata:
+      labels:
+        app: palworld
+    spec:
+      serviceAccountName: palworld
+      # The thijsvanloef image starts as root to install/update the server via SteamCMD and
+      # chown the data dir, then drops to PUID/PGID — so unlike the itzg minecraft image it
+      # cannot run runAsNonRoot / readOnlyRootFilesystem (will trip the Kyverno AUDIT policy,
+      # same as plex). fsGroup makes /palworld writable by the steam user.
+      securityContext:
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: palworld
+          # TODO: pin to a release tag (Renovate will propose one); :latest for first bring-up.
+          image: ghcr.io/thijsvanloef/palworld-server-docker:latest
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+          ports:
+            - containerPort: 8211
+              name: game
+              protocol: UDP
+            - containerPort: 27015
+              name: query
+              protocol: UDP
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: PORT
+              value: "8211"
+            - name: QUERY_PORT
+              value: "27015"
+            - name: PLAYERS
+              value: "8"
+            - name: SERVER_NAME
+              value: "Master-Chiefers"
+            - name: SERVER_DESCRIPTION
+              value: "A private server hosted by SoFMeRight!"
+            - name: MULTITHREADING
+              value: "true"
+            # private/password server — not listed on the public Steam community browser
+            - name: COMMUNITY
+              value: "false"
+            - name: RCON_ENABLED
+              value: "true"
+            - name: RCON_PORT
+              value: "25575"
+            - name: UPDATE_ON_BOOT
+              value: "true"
+            - name: BACKUP_ENABLED
+              value: "true"
+            - name: TZ
+              value: Etc/UTC
+          envFrom:
+            # ADMIN_PASSWORD + SERVER_PASSWORD (keys match the image's env names)
+            - secretRef:
+                name: palworld-secret
+          volumeMounts:
+            - name: data
+              mountPath: /palworld
+          # SteamCMD install (~8GB) + world load is slow; wide startup window on the RCON port,
+          # no tight liveness (would kill it mid-install).
+          startupProbe:
+            tcpSocket:
+              port: 25575
+            periodSeconds: 15
+            failureThreshold: 80
+          resources:
+            requests:
+              cpu: "2"
+              memory: 8Gi
+            limits:
+              cpu: "4"
+              memory: 16Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: 20Gi
