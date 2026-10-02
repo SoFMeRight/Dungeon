@@ -46,6 +46,12 @@ spec:
               value: info
             - name: TZ
               value: Etc/UTC
+            # Bigger on-disk cover-art cache (default 100MB) so resized thumbnails persist for a
+            # large library instead of being evicted and re-resized — kills the repeat CPU churn
+            # WITHOUT raising the CPU limit. Disk is cheap (/data); art resizes once per album,
+            # then stays cached. Keeps the CPU ceiling at 1 core.
+            - name: ND_IMAGECACHESIZE
+              value: 2GB
             # reverse-proxy (SSO) auth: trust the identity header oauth2-proxy injects at the
             # cell-membrane gateway, so SSO'd users don't double-login. Spoofing is blocked two
             # ways: the gateway strips any client-supplied x-auth-request-* (EnvoyFilter
@@ -94,13 +100,10 @@ spec:
               mountPath: /tmp
           resources:
             requests:
-              cpu: 100m
+              cpu: 50m
               memory: 128Mi
             limits:
-              # cover-art resize bursts (on-the-fly from embedded FLAC art) are CPU-bound and
-              # pegged 1 core → slow/timing-out getCoverArt on first library browse. Raised to
-              # give the resize burst headroom; cached art (/data/cache/images) stays instant.
-              cpu: "4"
+              cpu: "1"
               memory: 512Mi
       volumes:
         - name: music
