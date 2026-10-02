@@ -28,8 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: palworld
-          # TODO: pin to a release tag (Renovate will propose one); :latest for first bring-up.
-          image: ghcr.io/thijsvanloef/palworld-server-docker:latest
+          image: ghcr.io/thijsvanloef/palworld-server-docker:v2.8.0
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
