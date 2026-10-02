@@ -38,20 +38,13 @@ spec:
               # Copy base config
               cp /tmp/redis/redis.conf /etc/redis/redis.conf
 
-              # Determine master FQDN - redis-0 is always the initial master
-              MASTER_FDQN="open-webui-redis-0.open-webui-redis-headless.NAMESPACE_PLACEHOLDER.svc.cluster.local"
+              # Bootstrap target only; Sentinel issues REPLICAOF at runtime after a
+              # failover. Must be the pod FQDN - Sentinel reports an address, and a
+              # pod IP is stale as soon as the master is rescheduled.
+              MASTER_FQDN="open-webui-redis-0.open-webui-redis-headless.NAMESPACE_PLACEHOLDER.svc.cluster.local"
 
-              # If this is not redis-0, configure as replica
               if [ "$(hostname)" != "open-webui-redis-0" ]; then
-                # Check if Sentinel is available and knows the master
-                if [ "$(redis-cli -h open-webui-sentinel -p 26379 ping 2>/dev/null)" = "PONG" ]; then
-                  # Query Sentinel for current master
-                  SENTINEL_MASTER=$(redis-cli -h open-webui-sentinel -p 26379 sentinel get-master-addr-by-name open-webui-redis 2>/dev/null | head -n1)
-                  if [ -n "$SENTINEL_MASTER" ]; then
-                    MASTER_FDQN="$SENTINEL_MASTER"
-                  fi
-                fi
-                echo "replicaof $MASTER_FDQN 6379" >> /etc/redis/redis.conf
+                echo "replicaof $MASTER_FQDN 6379" >> /etc/redis/redis.conf
               fi
 
               echo "Configuration complete for $(hostname)"
