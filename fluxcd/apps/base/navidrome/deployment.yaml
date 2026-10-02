@@ -94,10 +94,13 @@ spec:
               mountPath: /tmp
           resources:
             requests:
-              cpu: 50m
+              cpu: 100m
               memory: 128Mi
             limits:
-              cpu: "1"
+              # cover-art resize bursts (on-the-fly from embedded FLAC art) are CPU-bound and
+              # pegged 1 core → slow/timing-out getCoverArt on first library browse. Raised to
+              # give the resize burst headroom; cached art (/data/cache/images) stays instant.
+              cpu: "4"
               memory: 512Mi
       volumes:
         - name: music
