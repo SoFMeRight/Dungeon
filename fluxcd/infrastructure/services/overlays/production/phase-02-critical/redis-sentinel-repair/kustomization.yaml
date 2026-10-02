@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# gorons-bracelet is the operator trust domain: redis-operator already holds
+# cluster-wide pod create/delete there, so this adds no privilege the namespace
+# did not have, and it sits beside the operator whose bug it repairs.
+namespace: gorons-bracelet
+
+resources:
+  - ../../../../base/redis-sentinel-repair
+
+patches:
+  - path: cronjob-patch.yaml
+    target:
+      kind: CronJob
+      name: redis-sentinel-repair

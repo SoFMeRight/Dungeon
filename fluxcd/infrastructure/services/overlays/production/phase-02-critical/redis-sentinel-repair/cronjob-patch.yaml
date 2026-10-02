@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: redis-sentinel-repair
+spec:
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: repair
+              image: docker.io/alpine/k8s:1.34.0
+              env:
+                - name: TARGET_NAMESPACES
+                  value: "hyrule-castle lost-woods temple-of-time zeldas-lullaby"

@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-sentinel-repair
+  labels:
+    app: redis-sentinel-repair
+data:
+  repair.sh: |
+    #!/bin/sh
+    # Deletes a Sentinel pod whose sentinel.conf has accumulated a duplicate
+    # `sentinel monitor` directive, which Redis treats as a fatal config error.
+    # The config lives on a pod-lifetime emptyDir, so a container restart never
+    # clears it and the pod crashloops until it is recreated.
+    # Upstream: OT-CONTAINER-KIT/redis-operator#1917 (open, no fix as of v0.26.0).
+    set -u
+
+    : "${TARGET_NAMESPACES:?TARGET_NAMESPACES must be set}"
+    MIN_RESTARTS="${MIN_RESTARTS:-3}"
+    MAX_DELETES="${MAX_DELETES:-3}"
+    LOG_TAIL="${LOG_TAIL:-80}"
+    DRY_RUN="${DRY_RUN:-false}"
+
+    FATAL_SIG="FATAL CONFIG FILE ERROR"
+    WEDGE_SIG="Duplicate master name"
+
+    CAND=/tmp/candidates
+    : > "$CAND"
+
+    for ns in $TARGET_NAMESPACES; do
+      if ! kubectl -n "$ns" get pods -o json 2>/dev/null | jq -r \
+            --arg ns "$ns" --argjson min "$MIN_RESTARTS" '
+              .items[]
+              | .metadata.name as $pod
+              | .status.containerStatuses[]?
+              | select(.state.waiting.reason == "CrashLoopBackOff")
+              | select(.restartCount >= $min)
+              | "\($ns) \($pod) \(.name) \(.restartCount)"
+            ' >> "$CAND"; then
+        echo "WARN: could not list pods in $ns (missing RBAC?)"
+      fi
+    done
+
+    echo "crashlooping containers with >= ${MIN_RESTARTS} restarts: $(wc -l < "$CAND")"
+
+    deleted=0
+    while read -r ns pod ctr restarts; do
+      [ -z "${ns:-}" ] && continue
+
+      if [ "$deleted" -ge "$MAX_DELETES" ]; then
+        echo "SKIP ${ns}/${pod}: per-run delete cap (${MAX_DELETES}) reached"
+        continue
+      fi
+
+      log=$(kubectl -n "$ns" logs "$pod" -c "$ctr" --tail="$LOG_TAIL" 2>/dev/null)
+      if [ -z "$log" ]; then
+        log=$(kubectl -n "$ns" logs "$pod" -c "$ctr" --tail="$LOG_TAIL" --previous 2>/dev/null)
+      fi
+
+      case "$log" in
+        *"$FATAL_SIG"*) ;;
+        *) echo "skip ${ns}/${pod} (${ctr}): no fatal-config signature"; continue ;;
+      esac
+      case "$log" in
+        *"$WEDGE_SIG"*) ;;
+        *) echo "skip ${ns}/${pod} (${ctr}): fatal config, but not a duplicate-monitor wedge"; continue ;;
+      esac
+
+      echo "MATCH ${ns}/${pod} (${ctr}) restarts=${restarts}"
+      if [ "$DRY_RUN" = "true" ]; then
+        echo "  DRY_RUN: would delete pod ${ns}/${pod}"
+      elif kubectl -n "$ns" delete pod "$pod" --wait=false; then
+        deleted=$((deleted + 1))
+      else
+        echo "  ERROR: delete failed for ${ns}/${pod}"
+      fi
+    done < "$CAND"
+
+    echo "=== repaired ${deleted} pod(s) ==="

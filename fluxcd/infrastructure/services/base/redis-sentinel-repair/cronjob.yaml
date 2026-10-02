@@ -1,0 +1,75 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: redis-sentinel-repair
+  labels:
+    app: redis-sentinel-repair
+spec:
+  # The wedge never self-clears, so this is a recovery latency ceiling rather than
+  # a poll of something that changes. Ten minutes keeps a node flap from costing an
+  # hour of lost failover capability.
+  schedule: "*/10 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  startingDeadlineSeconds: 300
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 300
+      template:
+        metadata:
+          labels:
+            app: redis-sentinel-repair
+        spec:
+          serviceAccountName: redis-sentinel-repair
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: repair
+              image: PLACEHOLDER_K8S_IMAGE
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+              command: ["/bin/sh", "/scripts/repair.sh"]
+              env:
+                - name: HOME
+                  value: /tmp
+                - name: TARGET_NAMESPACES
+                  value: PLACEHOLDER_TARGET_NAMESPACES
+                # A healthy Sentinel restarts cleanly; only a wedged one accumulates
+                # restarts, so this keeps a single transient crash out of scope.
+                - name: MIN_RESTARTS
+                  value: "3"
+                - name: MAX_DELETES
+                  value: "3"
+                # Report-only until the match signature has been observed against a
+                # real wedge. Set to "false" in the overlay to let it delete.
+                - name: DRY_RUN
+                  value: "true"
+              volumeMounts:
+                - name: scripts
+                  mountPath: /scripts
+                - name: tmp
+                  mountPath: /tmp
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 64Mi
+                limits:
+                  cpu: 500m
+                  memory: 256Mi
+          volumes:
+            - name: scripts
+              configMap:
+                name: redis-sentinel-repair
+            - name: tmp
+              emptyDir: {}

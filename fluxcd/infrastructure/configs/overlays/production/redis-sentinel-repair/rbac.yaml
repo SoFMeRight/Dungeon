@@ -1,0 +1,127 @@
+# Scoped per namespace rather than cluster-wide: pod deletion is only
+# granted where a Sentinel StatefulSet actually runs. Adding a Sentinel
+# elsewhere means adding it here and to TARGET_NAMESPACES on the CronJob.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: redis-sentinel-repair
+  namespace: hyrule-castle
+  labels:
+    app: redis-sentinel-repair
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: redis-sentinel-repair
+  namespace: hyrule-castle
+  labels:
+    app: redis-sentinel-repair
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: redis-sentinel-repair
+subjects:
+  - kind: ServiceAccount
+    name: redis-sentinel-repair
+    namespace: gorons-bracelet
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: redis-sentinel-repair
+  namespace: lost-woods
+  labels:
+    app: redis-sentinel-repair
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: redis-sentinel-repair
+  namespace: lost-woods
+  labels:
+    app: redis-sentinel-repair
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: redis-sentinel-repair
+subjects:
+  - kind: ServiceAccount
+    name: redis-sentinel-repair
+    namespace: gorons-bracelet
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: redis-sentinel-repair
+  namespace: temple-of-time
+  labels:
+    app: redis-sentinel-repair
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: redis-sentinel-repair
+  namespace: temple-of-time
+  labels:
+    app: redis-sentinel-repair
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: redis-sentinel-repair
+subjects:
+  - kind: ServiceAccount
+    name: redis-sentinel-repair
+    namespace: gorons-bracelet
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: redis-sentinel-repair
+  namespace: zeldas-lullaby
+  labels:
+    app: redis-sentinel-repair
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: redis-sentinel-repair
+  namespace: zeldas-lullaby
+  labels:
+    app: redis-sentinel-repair
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: redis-sentinel-repair
+subjects:
+  - kind: ServiceAccount
+    name: redis-sentinel-repair
+    namespace: gorons-bracelet
