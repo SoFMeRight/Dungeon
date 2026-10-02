@@ -56,11 +56,12 @@ spec:
               value: X-Auth-Request-Email
             - name: ND_REVERSEPROXYWHITELIST
               value: 192.168.144.0/20
-            # throttle failed login attempts (defence for the internet-exposed Subsonic auth)
+            # auth rate-limit DISABLED (0). At >0 it 429s the web player's burst of
+            # /rest/getCoverArt + stream requests (each carries Subsonic token auth), causing
+            # slow cover art + stuttering playback. Brute-force is already covered by SSO on
+            # the web UI + the crowdsec login-bruteforce scenario, so this knob only hurt.
             - name: ND_AUTHREQUESTLIMIT
-              value: "5"
-            - name: ND_AUTHWINDOWLENGTH
-              value: 20s
+              value: "0"
             # encrypts stored user & third-party passwords; sourced from Vault, never change it
             - name: ND_PASSWORDENCRYPTIONKEY
               valueFrom:
