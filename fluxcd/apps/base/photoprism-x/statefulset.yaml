@@ -50,12 +50,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: photoprism-x-secret
-                  key: admin-user
+                  key: ADMIN_USER
             - name: PHOTOPRISM_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: photoprism-x-secret
-                  key: admin-password
+                  key: ADMIN_PASSWORD
             - name: PHOTOPRISM_AUTH_MODE
               value: password
             - name: PHOTOPRISM_SITE_URL
@@ -106,17 +106,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: photoprism-x-secret
-                  key: database-name
+                  key: MARIADB_DATABASE
             - name: PHOTOPRISM_DATABASE_USER
               valueFrom:
                 secretKeyRef:
                   name: photoprism-x-secret
-                  key: database-user
+                  key: MARIADB_USER
             - name: PHOTOPRISM_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: photoprism-x-secret
-                  key: database-password
+                  key: MARIADB_PASSWORD
             - name: PHOTOPRISM_SITE_CAPTION
               value: AI-Powered Photos App
             - name: PHOTOPRISM_SITE_DESCRIPTION
@@ -147,17 +147,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: photoprism-x-secret
-                  key: oidc-uri
+                  key: OIDC_ISSUER
             - name: PHOTOPRISM_OIDC_CLIENT
               valueFrom:
                 secretKeyRef:
                   name: photoprism-x-secret
-                  key: oidc-client
+                  key: OIDC_CLIENT_ID
             - name: PHOTOPRISM_OIDC_SECRET
               valueFrom:
                 secretKeyRef:
                   name: photoprism-x-secret
-                  key: oidc-secret
+                  key: OIDC_CLIENT_SECRET
             - name: PHOTOPRISM_OIDC_SCOPES
               value: openid email profile address
             - name: PHOTOPRISM_OIDC_USERNAME

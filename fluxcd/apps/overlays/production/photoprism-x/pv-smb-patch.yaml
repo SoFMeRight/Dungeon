@@ -6,7 +6,7 @@ metadata:
 spec:
   csi:
     volumeAttributes:
-      source: "//gringotts.prplanit.internal/timecapsule/Media/systemadm/McAfee Antivirus/Home/Photos/Library"
+      source: "//gringotts/xylem-gallery/Photos/Library"
     nodeStageSecretRef:
       namespace: pedestal-of-time
 ---
@@ -17,6 +17,6 @@ metadata:
 spec:
   csi:
     volumeAttributes:
-      source: "//gringotts.prplanit.internal/timecapsule/Media/systemadm/McAfee Antivirus/Home/Photos/Import"
+      source: "//gringotts/xylem-gallery/Photos/Import"
     nodeStageSecretRef:
       namespace: pedestal-of-time
