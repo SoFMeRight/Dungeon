@@ -16,6 +16,12 @@ spec:
     metadata:
       labels:
         app: palworld
+        # enforce-pod-hardening exemptions: the SteamCMD image starts as root to install/chown
+        # then drops to PUID/PGID, writes outside /palworld (so no RO rootfs), and needs caps for
+        # chown/gosu — the three rules it genuinely can't meet (same class as ark-se).
+        policy.prplanit.com/except-non-root: "true"
+        policy.prplanit.com/except-ro-rootfs: "true"
+        policy.prplanit.com/except-drop-caps: "true"
     spec:
       serviceAccountName: palworld
       # The thijsvanloef image starts as root to install/update the server via SteamCMD and
