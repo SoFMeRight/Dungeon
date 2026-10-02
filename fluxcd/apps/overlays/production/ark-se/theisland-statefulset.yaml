@@ -13,6 +13,9 @@ spec:
       labels:
         app: ark-se-tmc-theisland
         policy.prplanit.com/probe: "true"
+        # arkmanager needs the full cap set (root/sudo perm fixups + crontab) — can't drop ALL
+        # capabilities, so except out of the enforce-pod-hardening drop-caps rule. Still audited.
+        policy.prplanit.com/except-drop-caps: "true"
     spec:
       serviceAccountName: ark-se-tmc-theisland
       enableServiceLinks: false
