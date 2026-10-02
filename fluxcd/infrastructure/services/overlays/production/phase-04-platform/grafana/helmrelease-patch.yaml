@@ -756,3 +756,194 @@ spec:
                   summary: 'Namespace {{ "{{" }} $labels.exported_namespace {{ "}}" }} is running without service-account restrictions'
                   resolved: 'Namespace {{ "{{" }} $labels.exported_namespace {{ "}}" }} is back under service-account restrictions'
                   resolved_title: App security restored
+          - orgId: 1
+            name: Certificate Expiry
+            folder: Operations
+            interval: 10m
+            rules:
+              # The apiserver records the remaining lifetime of every client cert
+              # that authenticates against it, so this covers the certs no file-level
+              # check can see: an operator's kubeconfig on a workstation, as well as
+              # admin.conf, controller-manager.conf, scheduler.conf and front-proxy.
+              # It is the signal that was missing when the kubernetes-admin cert in
+              # ~/.kube/config expired with no warning -- the cluster's own certs had
+              # been renewed months earlier and the operator copies had not.
+              - uid: cert-client-expiring
+                title: Login certificate expiring
+                condition: B
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 3600
+                      to: 0
+                    datasourceUid: victoriametrics
+                    model:
+                      refId: A
+                      # Days of life left in the shortest-lived cert seen in the last
+                      # hour. rate() over the cumulative histogram restricts this to
+                      # certs that actually authenticated in the window, so a cert
+                      # nobody uses any more cannot hold the alert on.
+                      #
+                      # p01 rather than min: the bucket edges are coarse at the low
+                      # end (30m, 1h, 2h, 6h...) and the first percentile tracks the
+                      # worst real cert without being pinned to the lowest edge by a
+                      # single sample.
+                      #
+                      # The `and on()` guard means an apiserver that served no cert
+                      # logins in the window produces no series rather than a zero,
+                      # which would otherwise read as "expires immediately".
+                      #
+                      # Metric name is _histogram, not _bucket: Alloy drops every
+                      # .*_bucket series for cardinality and this one is renamed past
+                      # that rule. See the alloy config-patch for why.
+                      expr: '(histogram_quantile(0.01, sum by (le) (rate(apiserver_client_certificate_expiration_seconds_histogram[1h])))
+                        and on() (sum(rate(apiserver_client_certificate_expiration_seconds_count[1h]))
+                        > 0)) / 86400'
+                      instant: true
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                  - refId: B
+                    relativeTimeRange:
+                      from: 3600
+                      to: 0
+                    datasourceUid: "__expr__"
+                    model:
+                      refId: B
+                      type: threshold
+                      expression: A
+                      conditions:
+                        - evaluator:
+                            type: lt
+                            # 30 days. Renewing a kubeadm cert and redistributing the
+                            # operator kubeconfigs is a scheduled job, not an
+                            # emergency, so warn with a month of runway.
+                            params:
+                              - 30
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - B
+                          reducer:
+                            type: last
+                            params: []
+                # Two hours: cert lifetime moves in days, and this must not fire on a
+                # single sparse evaluation window.
+                for: 2h
+                # OK, not Alerting: no series here means no cert logins were observed,
+                # which happens legitimately and is not evidence of expiry. The
+                # critical rule below is the backstop.
+                noDataState: OK
+                execErrState: Error
+                labels:
+                  severity: warning
+                annotations:
+                  summary: 'A client certificate authenticating to the cluster expires in under 30 days'
+                  resolved: 'Client certificates authenticating to the cluster are no longer near expiry'
+                  resolved_title: Login certificates renewed
+              - uid: cert-client-expiring-critical
+                title: Login certificate about to expire
+                condition: B
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 3600
+                      to: 0
+                    datasourceUid: victoriametrics
+                    model:
+                      refId: A
+                      expr: '(histogram_quantile(0.01, sum by (le) (rate(apiserver_client_certificate_expiration_seconds_histogram[1h])))
+                        and on() (sum(rate(apiserver_client_certificate_expiration_seconds_count[1h]))
+                        > 0)) / 86400'
+                      instant: true
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                  - refId: B
+                    relativeTimeRange:
+                      from: 3600
+                      to: 0
+                    datasourceUid: "__expr__"
+                    model:
+                      refId: B
+                      type: threshold
+                      expression: A
+                      conditions:
+                        - evaluator:
+                            type: lt
+                            # 7 days. Past this point every kubectl, Flux
+                            # reconciliation and dashboard behind that cert stops at a
+                            # known hour, so it pages.
+                            params:
+                              - 7
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - B
+                          reducer:
+                            type: last
+                            params: []
+                for: 30m
+                noDataState: OK
+                execErrState: Error
+                labels:
+                  severity: critical
+                annotations:
+                  summary: 'A client certificate authenticating to the cluster expires in under 7 days - renew it and redistribute the kubeconfigs'
+                  resolved: 'Client certificates authenticating to the cluster are no longer near expiry'
+                  resolved_title: Login certificates renewed
+              # Kubelet client certs rotate themselves at roughly 10% of remaining
+              # life, so a node still holding a cert at 30 days has a rotation that is
+              # not working. Left alone the node drops out of the cluster, which is a
+              # worse outage than it sounds: the pods stay up while the control plane
+              # stops being able to manage them.
+              - uid: cert-kubelet-rotation-stalled
+                title: Node certificate not renewing
+                condition: B
+                data:
+                  - refId: A
+                    relativeTimeRange:
+                      from: 1800
+                      to: 0
+                    datasourceUid: victoriametrics
+                    model:
+                      refId: A
+                      # min by node, in days. Reported per node, so the alert names
+                      # the node that stopped rotating rather than the fleet.
+                      expr: 'min by (instance) (kubelet_certificate_manager_client_ttl_seconds) / 86400'
+                      instant: true
+                      intervalMs: 1000
+                      maxDataPoints: 43200
+                  - refId: B
+                    relativeTimeRange:
+                      from: 1800
+                      to: 0
+                    datasourceUid: "__expr__"
+                    model:
+                      refId: B
+                      type: threshold
+                      expression: A
+                      conditions:
+                        - evaluator:
+                            type: lt
+                            params:
+                              - 30
+                          operator:
+                            type: and
+                          query:
+                            params:
+                              - B
+                          reducer:
+                            type: last
+                            params: []
+                for: 1h
+                # Alerting: a kubelet that stops publishing this metric is itself the
+                # failure this rule exists to catch.
+                noDataState: Alerting
+                execErrState: Error
+                labels:
+                  severity: critical
+                annotations:
+                  summary: 'Node {{ "{{" }} $labels.instance {{ "}}" }} has not renewed its certificate and it expires in under 30 days'
+                  resolved: 'Node {{ "{{" }} $labels.instance {{ "}}" }} has renewed its certificate'
+                  resolved_title: Node certificate renewed

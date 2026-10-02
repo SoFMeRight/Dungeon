@@ -75,6 +75,23 @@ data:
     prometheus.relabel "drop_high_cardinality" {
       forward_to = [prometheus.remote_write.default.receiver]
 
+      // KEEP (by rename): the client-certificate expiry histogram is the only
+      // in-cluster signal for a kubeconfig cert nearing expiry -- the apiserver
+      // records remaining lifetime for every cert that authenticates, so an
+      // operator's stale kubeconfig shows up here and nowhere else. The blanket
+      // _bucket drop below would take it, and _sum/_count cannot substitute: a
+      // single expiring cert does not move the mean. Renaming it out of the
+      // _bucket namespace keeps the le label, which is all histogram_quantile
+      // needs -- the metric name is irrelevant to the query. 15 buckets per
+      // apiserver, so the cardinality this reintroduces is negligible.
+      rule {
+        source_labels = ["__name__"]
+        regex         = "apiserver_client_certificate_expiration_seconds_bucket"
+        target_label  = "__name__"
+        replacement   = "apiserver_client_certificate_expiration_seconds_histogram"
+        action        = "replace"
+      }
+
       // DROP: Histogram buckets - massive cardinality, _sum/_count give rate + avg latency
       rule {
         source_labels = ["__name__"]
