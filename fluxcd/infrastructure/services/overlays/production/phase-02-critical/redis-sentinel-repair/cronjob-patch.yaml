@@ -13,3 +13,5 @@ spec:
               env:
                 - name: TARGET_NAMESPACES
                   value: "hyrule-castle lost-woods temple-of-time zeldas-lullaby"
+                - name: DRY_RUN
+                  value: "false"
