@@ -21,4 +21,4 @@ spec:
               echo "Setup job completed! Starting Zitadel..."
       containers:
         - name: zitadel
-          image: ghcr.io/homelabhd/zitadel:dev-df4dbc1@sha256:18bf4c669116a9a8cdd5f902671268a16d4c0d9e8970857034490caee28c0883
+          image: ghcr.io/zitadel/zitadel:v4.17.3
