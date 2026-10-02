@@ -34,10 +34,20 @@ kubelet_settings:
   # is 110, which this fleet exceeds on several workers.
   maxPods: 250
 
-  # Renovate churns images faster than the 85%/80% defaults reclaim them, so
-  # nodes filled up. Lower thresholds collect earlier and more often.
-  imageGCHighThresholdPercent: 60
-  imageGCLowThresholdPercent: 50
+  # Renovate churns images faster than pressure-based collection reclaims them,
+  # so nodes filled up. imageMaximumGCAge is what fixes that: it evicts images
+  # unused for a week whether or not the disk is under pressure, which is the
+  # churn problem stated precisely.
+  #
+  # The thresholds are only the emergency backstop, and they must sit ABOVE the
+  # fleet's irreducible footprint or they cannot function. At 60/50 they were
+  # below it -- steady state is 62-66% of 155GiB with ~55GiB free -- so the high
+  # threshold was permanently tripped, the low one permanently unreachable, and
+  # kubelet collected continuously, freed 0 bytes because every remaining image
+  # was in use, and logged FreeDiskSpaceFailed on a loop. An unsatisfiable
+  # threshold protects nothing and buries the warning that would matter.
+  imageGCHighThresholdPercent: 80
+  imageGCLowThresholdPercent: 70
   imageMaximumGCAge: "168h0m0s"
 
   # Graceful Node Shutdown. At 0s the feature is OFF: kubelet registers no
