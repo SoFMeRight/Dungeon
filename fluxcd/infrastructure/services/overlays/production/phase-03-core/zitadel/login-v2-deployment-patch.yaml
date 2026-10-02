@@ -10,6 +10,7 @@ spec:
     spec:
       containers:
         - name: zitadel-login-v2
+          image: ghcr.io/homelabhd/zitadel-login:v4.17.3
           env:
             - name: ZITADEL_EXTERNAL_DOMAIN
               value: "sso.prplanit.com"
