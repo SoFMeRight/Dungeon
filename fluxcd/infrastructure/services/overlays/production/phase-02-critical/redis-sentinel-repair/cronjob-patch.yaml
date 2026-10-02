@@ -9,7 +9,7 @@ spec:
         spec:
           containers:
             - name: repair
-              image: docker.io/alpine/k8s:1.34.0
+              image: docker.io/alpine/k8s:1.37.1
               env:
                 - name: TARGET_NAMESPACES
                   value: "hyrule-castle lost-woods temple-of-time zeldas-lullaby"
