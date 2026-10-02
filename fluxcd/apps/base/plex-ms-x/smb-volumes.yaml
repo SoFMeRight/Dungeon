@@ -21,7 +21,7 @@ spec:
     readOnly: false
     volumeHandle: plex-ms-x-media-movies
     volumeAttributes:
-      source: "//gringotts/timecapsule/Media/systemadm/McAfee Antivirus/Studio/Movies"
+      source: "//gringotts/xylem-media/Movies"
     nodeStageSecretRef:
       name: plex-ms-x-smb-secret
       namespace: pedestal-of-time
@@ -61,7 +61,7 @@ spec:
     readOnly: false
     volumeHandle: plex-ms-x-media-photos
     volumeAttributes:
-      source: "//gringotts/timecapsule/Media/systemadm/McAfee Antivirus/Studio/Photos"
+      source: "//gringotts/xylem-media/Photos"
     nodeStageSecretRef:
       name: plex-ms-x-smb-secret
       namespace: pedestal-of-time
