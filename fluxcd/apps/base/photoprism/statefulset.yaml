@@ -28,12 +28,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: admin-user
+                  key: ADMIN_USER
             - name: PHOTOPRISM_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: admin-password
+                  key: ADMIN_PASSWORD
             - name: PHOTOPRISM_DATABASE_DRIVER
               value: mysql
             - name: PHOTOPRISM_DATABASE_SERVER
@@ -42,17 +42,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: database-name
+                  key: MARIADB_DATABASE
             - name: PHOTOPRISM_DATABASE_USER
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: database-user
+                  key: MARIADB_USER
             - name: PHOTOPRISM_DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: database-password
+                  key: MARIADB_PASSWORD
             - name: PHOTOPRISM_AUTH_MODE
               value: password
             - name: PHOTOPRISM_SITE_URL
@@ -105,17 +105,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: oidc-uri
+                  key: OIDC_ISSUER
             - name: PHOTOPRISM_OIDC_CLIENT
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: oidc-client
+                  key: OIDC_CLIENT_ID
             - name: PHOTOPRISM_OIDC_SECRET
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: oidc-secret
+                  key: OIDC_CLIENT_SECRET
             - name: PHOTOPRISM_OIDC_PROVIDER
               value: zitadel
             - name: PHOTOPRISM_OIDC_ICON

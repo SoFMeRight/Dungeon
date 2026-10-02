@@ -45,22 +45,22 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: database-name
+                  key: MARIADB_DATABASE
             - name: MARIADB_USER
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: database-user
+                  key: MARIADB_USER
             - name: MARIADB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: database-password
+                  key: MARIADB_PASSWORD
             - name: MARIADB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: photoprism-secret
-                  key: root-password
+                  key: MARIADB_ROOT_PASSWORD
           volumeMounts:
             - name: database
               mountPath: /var/lib/mysql
