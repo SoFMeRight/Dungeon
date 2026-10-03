@@ -67,18 +67,23 @@
     # Reload rather than load when the target changed: the module reads its
     # parameters only at insertion, so an already-loaded module keeps pointing
     # at the old collector until it is removed and re-inserted.
-    - name: Reload netconsole so a changed target takes effect
-      community.general.modprobe:
-        name: netconsole
-        state: absent
+    # community.general is not in the runner image, so this uses modprobe
+    # directly. Loading an already-loaded module is a successful no-op, which is
+    # what makes the load task safe to run unconditionally.
+    - name: Remove netconsole so a changed target takes effect
+      ansible.builtin.command:
+        cmd: modprobe -r netconsole
       when:
         - netconsole_options is changed
         - "'netconsole' in netconsole_lsmod.stdout"
+      changed_when: true
 
     - name: Load netconsole now
-      community.general.modprobe:
-        name: netconsole
-        state: present
+      ansible.builtin.command:
+        cmd: modprobe netconsole
+      changed_when: >-
+        netconsole_options is changed
+        or 'netconsole' not in netconsole_lsmod.stdout
 
     - name: Confirm the kernel reports network logging started
       ansible.builtin.shell:
