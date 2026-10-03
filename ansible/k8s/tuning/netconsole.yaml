@@ -1,0 +1,95 @@
+---
+# netconsole.yaml
+# Mirrors each node's kernel console to the in-cluster netconsole-collector.
+#
+# NOTHING IS TUNED HERE. The target address, port and interface live in
+# group_vars/all.yml as netconsole_*, documented there. Changing where the
+# collector runs is a change there, not an edit here.
+#
+# WHY THIS EXISTS:
+# A kernel panic never reaches journald - journald buffers and the kernel stops
+# before the write completes - so Alloy's journal source cannot ship it and
+# `journalctl -k -b -1` comes back empty on a node that has just panicked. That
+# is exactly what happened on chest-005 (twice) and chest-001, leaving three
+# panics with no evidence at all. netconsole writes printk to the NIC from
+# inside the kernel, synchronously, so the output leaves before the machine dies.
+#
+# WHY A LITERAL MAC:
+# netconsole is netpoll-based and bypasses the normal network stack, so it takes
+# a destination IP and MAC at module load time. It cannot use a Service: a
+# ClusterIP is not ARP-able and a pod IP changes on reschedule. The collector is
+# therefore hostNetwork and pinned by nodeSelector, and this must follow it.
+#
+# Run via Semaphore or:
+#   docker run --rm --network host --user 1000:1000 \
+#     -e HOME=/home/kai -v /etc/passwd:/etc/passwd:ro \
+#     -v <scratch>:/home/kai -v ~/.ssh:/home/kai/.ssh:ro \
+#     -v $PWD:/work -w /work ghcr.io/homelabhd/ansible:v2.21.4 \
+#     ansible-playbook -i inventory k8s/tuning/netconsole.yaml
+
+- name: Mirror the kernel console to the netconsole collector
+  hosts: "{{ netconsole_group | default('k8s_master:k8s_worker') }}"
+  become: true
+  gather_facts: true
+  tasks:
+    # The module takes its target as a module parameter, so the options file is
+    # what makes the setting survive a reboot. Written before modules-load.d so
+    # a boot-time load never races an absent parameter.
+    - name: Pin the netconsole target
+      ansible.builtin.copy:
+        dest: /etc/modprobe.d/netconsole.conf
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          # Managed by ansible: k8s/tuning/netconsole.yaml
+          # src-port@src-ip/dev,tgt-port@tgt-ip/tgt-mac
+          # The device must be named: omitting it defaults to eth0, which does
+          # not exist on these nodes, and the module refuses to load.
+          options netconsole netconsole=@/{{ netconsole_dev }},{{ netconsole_port }}@{{ netconsole_target_ip }}/{{ netconsole_target_mac }}
+      register: netconsole_options
+
+    - name: Load netconsole at boot
+      ansible.builtin.copy:
+        dest: /etc/modules-load.d/netconsole.conf
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          # Managed by ansible: k8s/tuning/netconsole.yaml
+          netconsole
+
+    - name: Check whether netconsole is already loaded
+      ansible.builtin.command: lsmod
+      changed_when: false
+      register: netconsole_lsmod
+
+    # Reload rather than load when the target changed: the module reads its
+    # parameters only at insertion, so an already-loaded module keeps pointing
+    # at the old collector until it is removed and re-inserted.
+    - name: Reload netconsole so a changed target takes effect
+      community.general.modprobe:
+        name: netconsole
+        state: absent
+      when:
+        - netconsole_options is changed
+        - "'netconsole' in netconsole_lsmod.stdout"
+
+    - name: Load netconsole now
+      community.general.modprobe:
+        name: netconsole
+        state: present
+
+    - name: Confirm the kernel reports network logging started
+      ansible.builtin.shell:
+        cmd: "dmesg | tail -40 | grep -c 'netconsole: network logging started'"
+      changed_when: false
+      failed_when: false
+      register: netconsole_started
+
+    - name: Report
+      ansible.builtin.debug:
+        msg: >-
+          netconsole -> {{ netconsole_target_ip }}:{{ netconsole_port }}
+          via {{ netconsole_dev }}
+          (kernel confirmed start: {{ netconsole_started.stdout | default('0') | trim }})
