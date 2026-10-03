@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netconsole-collector
+  labels:
+    app: netconsole-collector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: netconsole-collector
+  template:
+    metadata:
+      labels:
+        app: netconsole-collector
+    spec:
+      serviceAccountName: netconsole-collector
+      # hostNetwork, and pinned by nodeSelector in the overlay, because
+      # netconsole is configured with a literal destination IP AND MAC at module
+      # load time. It cannot resolve a Service: a ClusterIP is not ARP-able and a
+      # pod IP changes on every reschedule. Binding to one node's address is what
+      # makes the target stable.
+      #
+      # A node cannot capture its own panic, so the collector deliberately lives
+      # on the node least likely to panic. chest-004 is the only worker that has
+      # never had an unclean reset.
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: collector
+          image: PLACEHOLDER_SOCAT_IMAGE
+          # Datagrams in, stdout out. Nothing else: stdout is the whole point,
+          # because the pod_logs pipeline already carries it to Loki, so panic
+          # output lands in the same place as every other log and is queryable
+          # and alertable without any new ingest path or credential.
+          args:
+            - -u
+            - UDP-RECV:PLACEHOLDER_PORT,reuseaddr
+            - "-"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
