@@ -50,7 +50,6 @@ spec:
   # fast shutdown does the checkpoint well inside the remaining budget.
   smartShutdownTimeout: 10
   stopDelay: 60
-  livenessProbeTimeout: 5
 
   postgresql:
     # Enable synchronous replication for zero data loss and fast failover
