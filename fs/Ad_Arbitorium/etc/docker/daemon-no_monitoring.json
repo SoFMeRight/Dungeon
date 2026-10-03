@@ -10,5 +10,5 @@
         }
     ],
     "dns": ["10.0.0.1", "10.0.0.2", "1.1.1.1", "8.8.8.8"],
-    "registry-mirrors": ["https://docker.jcr.pcfae.com"]
+    "registry-mirrors": ["https://docker.cr.pcfae.com"]
 }

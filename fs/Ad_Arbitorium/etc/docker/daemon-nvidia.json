@@ -27,5 +27,5 @@
         "loki-max-backoff": "800ms",
         "loki-timeout": "1s"
         },
-    "registry-mirrors": ["https://docker.jcr.pcfae.com"]
+    "registry-mirrors": ["https://docker.cr.pcfae.com"]
 }
