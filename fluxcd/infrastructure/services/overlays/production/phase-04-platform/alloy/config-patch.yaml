@@ -973,3 +973,55 @@ data:
         }
       }
     }
+    // ==========================================================================
+    // LOG COLLECTION - systemd journal (loki.source.journal)
+    // The node's own logs: kernel, kubelet, crio, systemd. Nothing off-pod
+    // reached Loki before this, so every node-level question - a wedged
+    // container runtime, a Postgres PANIC, a crashlooping kubelet - had to be
+    // answered by sshing to ten machines and reading journalctl by hand.
+    //
+    // /var/log is already mounted from the host for pod_logs and journald is
+    // persistent here, so no new volume is needed. Alloy runs as uid 0, which is
+    // what makes the 2750 root:systemd-journal files readable.
+    //
+    // Forwards straight to loki.write rather than through the pod pipeline:
+    // parse_cri would mangle journal entries, and the level regex is redundant
+    // when journald already supplies a priority.
+    //
+    // A panic is NOT captured here and cannot be - journald buffers and the
+    // kernel stops before the write lands, which is why journalctl -k -b -1 came
+    // back empty on a node that had just panicked. That is netconsole's job.
+    // ==========================================================================
+
+    discovery.relabel "journal" {
+      targets = []
+
+      rule {
+        source_labels = ["__journal__systemd_unit"]
+        target_label  = "unit"
+      }
+      rule {
+        source_labels = ["__journal__hostname"]
+        target_label  = "node"
+      }
+      // transport=kernel selects everything the kernel emits, and is the label
+      // to query when chasing a driver or hardware fault.
+      rule {
+        source_labels = ["__journal__transport"]
+        target_label  = "transport"
+      }
+      rule {
+        source_labels = ["__journal_priority_keyword"]
+        target_label  = "level"
+      }
+    }
+
+    loki.source.journal "node_journal" {
+      forward_to    = [loki.write.default.receiver]
+      path          = "/var/log/journal"
+      relabel_rules = discovery.relabel.journal.rules
+      labels        = { job = "node/journal" }
+      // Bounded backfill. The Alloy default is 7 days, which on first start
+      // would replay a week of ten nodes' journals into Loki at once.
+      max_age       = "1h"
+    }
