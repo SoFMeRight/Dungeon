@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-netconsole-ingress
+  namespace: lakitu
+spec:
+  # Selects by `app:` — pods here carry app=<name>, not
+  # app.kubernetes.io/name, and a selector that matches nothing orphans the
+  # policy rather than failing loudly.
+  endpointSelector:
+    matchLabels:
+      app: netconsole-collector
+  ingress:
+    # Senders are the nodes' own kernels, reaching the LoadBalancer VIP via the
+    # default gateway, so the source is outside the cluster's identity model
+    # entirely — no pod identity to match on. fromEntities world covers both the
+    # router hop and the node addresses.
+    #
+    # UDP only, one port. Ambient's AuthorizationPolicies do not apply here at
+    # all: ztunnel captures TCP, so a UDP service is governed by Cilium alone
+    # and needs no istio allow despite lakitu's default-deny.
+    - fromEntities:
+        - world
+        - cluster
+      toPorts:
+        - ports:
+            - port: "6666"
+              protocol: UDP

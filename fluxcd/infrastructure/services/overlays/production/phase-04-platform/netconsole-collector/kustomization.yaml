@@ -11,3 +11,7 @@ patches:
     target:
       kind: Deployment
       name: netconsole-collector
+  - path: service-patch.yaml
+    target:
+      kind: Service
+      name: netconsole-collector

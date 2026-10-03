@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: netconsole-collector
+  labels:
+    app: netconsole-collector
+spec:
+  type: LoadBalancer
+  selector:
+    app: netconsole-collector
+  ports:
+    - name: netconsole
+      port: 6666
+      targetPort: netconsole
+      protocol: UDP

@@ -32,3 +32,5 @@ resources:
   # Batch 5 — Most complex
   - hyrule-castle
   - temple-of-time
+  # lakitu: netconsole collector ingress only (no contract CNPs here)
+  - lakitu

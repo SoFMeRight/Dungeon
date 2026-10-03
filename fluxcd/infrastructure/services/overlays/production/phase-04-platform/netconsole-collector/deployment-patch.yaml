@@ -5,14 +5,6 @@ metadata:
 spec:
   template:
     spec:
-      # Pinned to the one worker that has never had an unclean reset. The node
-      # the collector runs on is the one node whose panics it cannot capture.
-      nodeSelector:
-        kubernetes.io/hostname: dungeon-chest-004
       containers:
         - name: collector
           image: docker.io/alpine/socat:1.8.0.0
-          args:
-            - -u
-            - UDP-RECV:6666,reuseaddr
-            - "-"

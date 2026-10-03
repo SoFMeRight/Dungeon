@@ -15,17 +15,19 @@ spec:
         app: netconsole-collector
     spec:
       serviceAccountName: netconsole-collector
-      # hostNetwork, and pinned by nodeSelector in the overlay, because
-      # netconsole is configured with a literal destination IP AND MAC at module
-      # load time. It cannot resolve a Service: a ClusterIP is not ARP-able and a
-      # pod IP changes on every reschedule. Binding to one node's address is what
-      # makes the target stable.
+      # Deliberately unpinned: no hostNetwork, no nodeSelector. netconsole does
+      # need a literal destination IP and MAC, but those are the LoadBalancer VIP
+      # and the DEFAULT GATEWAY's MAC - not this pod's node. The VIP is on a
+      # different subnet to the nodes, so netpoll hands the frame to the router
+      # and the router delivers it to whichever node currently holds the VIP.
       #
-      # A node cannot capture its own panic, so the collector deliberately lives
-      # on the node least likely to panic. chest-004 is the only worker that has
-      # never had an unclean reset.
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
+      # That indirection is what makes scheduling dynamic: the collector may move
+      # freely and the senders never change. It also closes the self-capture gap,
+      # since a node's own frame leaves for the router rather than needing to
+      # reach a specific peer.
+      #
+      # The gateway MAC is a VRRP virtual address (00:00:5e:00:01:xx), so it
+      # survives a router failover as well.
       containers:
         - name: collector
           image: PLACEHOLDER_SOCAT_IMAGE
@@ -35,8 +37,12 @@ spec:
           # and alertable without any new ingest path or credential.
           args:
             - -u
-            - UDP-RECV:PLACEHOLDER_PORT,reuseaddr
+            - UDP-RECV:6666,reuseaddr
             - "-"
+          ports:
+            - name: netconsole
+              containerPort: 6666
+              protocol: UDP
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

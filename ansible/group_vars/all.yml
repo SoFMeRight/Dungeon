@@ -97,15 +97,17 @@ kubelet_active_delay: 10
 # just panicked. netconsole writes printk straight to the NIC from inside the
 # kernel, so the dying words leave the machine.
 #
-# The target is the in-cluster netconsole-collector, which is hostNetwork and
-# pinned to one node. netconsole needs a literal IP AND MAC at module load time
-# - a ClusterIP is not ARP-able and a pod IP moves - so this must be updated if
-# the collector is ever repinned.
+# The target is the netconsole-collector's LoadBalancer VIP, and the MAC is the
+# DEFAULT GATEWAY's, not the collector's node. netpoll needs a literal IP and MAC
+# at module insertion, and the VIP sits on a different subnet to the nodes - so
+# the frame goes to the router, which delivers it to whichever node holds the
+# VIP. That is what lets the collector be scheduled anywhere without touching
+# any sender, and it means a node can capture its own panic too.
 #
 # Only messages at or above the console loglevel (currently 4, warn) are
 # mirrored. A panic is level 0, so it is always sent; an info-level write to
 # /dev/kmsg is not, which makes it a misleading way to test this.
-netconsole_target_ip: "172.22.144.173"     # dungeon-chest-004
-netconsole_target_mac: "bc:24:11:b6:56:15"
+netconsole_target_ip: "172.22.30.240"      # netconsole-collector LoadBalancer VIP
+netconsole_target_mac: "00:00:5e:00:01:28" # default gateway (VRRP virtual MAC)
 netconsole_port: 6666
 netconsole_dev: enp6s18
