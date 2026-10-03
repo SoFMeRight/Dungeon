@@ -1,0 +1,38 @@
+# Binds the two cluster-wide roles -- read-only diagnostics and flux-reconcile --
+# to the agent group. The group is the client cert's O (`dungeon:cluster-agents`);
+# client-cert auth applies no OIDC prefix, so the subject name is literal (unlike
+# the `gitlab:`-prefixed CI subject in stagefreight-reconciler).
+#
+# The dangerous verbs (exec/delete) are bound per-namespace in rbac-namespaced.yaml,
+# NOT here. Nothing holds this group until a cert with O=dungeon:cluster-agents is
+# issued, so these bindings are inert until the agent credential exists.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-diagnostics
+  labels:
+    app.kubernetes.io/part-of: cluster-agent-rbac
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-diagnostics
+subjects:
+  - kind: Group
+    name: dungeon:cluster-agents
+    apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-repair-flux
+  labels:
+    app.kubernetes.io/part-of: cluster-agent-rbac
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-repair-flux
+subjects:
+  - kind: Group
+    name: dungeon:cluster-agents
+    apiGroup: rbac.authorization.k8s.io

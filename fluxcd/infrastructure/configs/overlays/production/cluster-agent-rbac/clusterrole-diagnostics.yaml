@@ -1,0 +1,101 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cluster-diagnostics
+  labels:
+    app.kubernetes.io/part-of: cluster-agent-rbac
+# Read-only reach for fleet diagnosis. Derived from the API calls an operator
+# session actually made, not from a guess at what might be wanted.
+#
+# SECRETS ARE DELIBERATELY ABSENT. RBAC cannot separate "list the names" from
+# "read the contents" on a Secret -- get and list both return the full object --
+# so any secrets grant here is equivalent to holding every credential in the
+# cluster, which is the cluster-admin blast radius this role exists to avoid.
+# A session that needs a secret value asks for it.
+rules:
+  # Core workload and cluster state.
+  - apiGroups: [""]
+    resources:
+      - pods
+      - nodes
+      - namespaces
+      - services
+      - endpoints
+      - configmaps
+      - events
+      - persistentvolumeclaims
+      - persistentvolumes
+      - serviceaccounts
+    verbs: ["get", "list", "watch"]
+
+  # Logs are the primary diagnostic surface (crash reasons, panics, job output).
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["apps"]
+    resources: ["statefulsets", "deployments", "daemonsets", "replicasets", "controllerrevisions"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods", "nodes"]
+    verbs: ["get", "list"]
+
+  # Discovery: which CRDs and policies exist, and what they bind.
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get", "list"]
+
+  # Reading RBAC is how you answer "what can this thing already do" -- the
+  # question that showed redis-operator already held cluster-wide pod delete.
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterroles", "clusterrolebindings", "roles", "rolebindings"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["kyverno.io"]
+    resources: ["clusterpolicies", "policies", "policyexceptions"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["kustomize.toolkit.fluxcd.io"]
+    resources: ["kustomizations"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["source.toolkit.fluxcd.io"]
+    resources: ["gitrepositories", "helmrepositories", "ocirepositories"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["helm.toolkit.fluxcd.io"]
+    resources: ["helmreleases"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["redis.redis.opstreelabs.in"]
+    resources: ["redis", "redisclusters", "redisreplications", "redissentinels"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["postgresql.cnpg.io"]
+    resources: ["clusters", "backups", "scheduledbackups"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["gateways", "httproutes", "grpcroutes", "tcproutes", "udproutes"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["cilium.io"]
+    resources: ["ciliumnetworkpolicies", "ciliumclusterwidenetworkpolicies"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["security.istio.io", "networking.istio.io"]
+    resources: ["authorizationpolicies", "peerauthentications", "envoyfilters"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots", "volumesnapshotcontents", "volumesnapshotclasses"]
+    verbs: ["get", "list"]
+
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses", "csidrivers", "csinodes", "volumeattachments"]
+    verbs: ["get", "list"]

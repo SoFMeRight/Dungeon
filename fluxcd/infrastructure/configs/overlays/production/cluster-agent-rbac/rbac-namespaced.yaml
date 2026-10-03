@@ -1,0 +1,111 @@
+# Dangerous verbs -- exec, pod delete, job create/delete -- are granted ONLY in
+# the namespaces the agent actually operates in, never cluster-wide. Cluster-wide
+# exec would reach flux-system and the operator pods, and an exec'd pod's
+# ServiceAccount token is an escalation path to whatever that SA can do (up to
+# cluster-admin). Scoping per namespace cuts that path and makes the "no secrets,
+# no RBAC edit, no node/namespace mutation" delta from the admin cert real.
+#
+# Subject is the cert O group `dungeon:cluster-agents` (client-cert auth applies
+# no OIDC prefix). Add a namespace by copying one Role+RoleBinding block.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cluster-repair
+  namespace: gossip-stone
+  labels:
+    app.kubernetes.io/part-of: cluster-agent-rbac
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cluster-repair
+  namespace: gossip-stone
+  labels:
+    app.kubernetes.io/part-of: cluster-agent-rbac
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cluster-repair
+subjects:
+  - kind: Group
+    name: dungeon:cluster-agents
+    apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cluster-repair
+  namespace: zeldas-lullaby
+  labels:
+    app.kubernetes.io/part-of: cluster-agent-rbac
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cluster-repair
+  namespace: zeldas-lullaby
+  labels:
+    app.kubernetes.io/part-of: cluster-agent-rbac
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cluster-repair
+subjects:
+  - kind: Group
+    name: dungeon:cluster-agents
+    apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cluster-repair
+  namespace: shooting-gallery
+  labels:
+    app.kubernetes.io/part-of: cluster-agent-rbac
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+  - apiGroups: ["batch"]
+    resources: ["jobs"]
+    verbs: ["create", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cluster-repair
+  namespace: shooting-gallery
+  labels:
+    app.kubernetes.io/part-of: cluster-agent-rbac
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cluster-repair
+subjects:
+  - kind: Group
+    name: dungeon:cluster-agents
+    apiGroup: rbac.authorization.k8s.io

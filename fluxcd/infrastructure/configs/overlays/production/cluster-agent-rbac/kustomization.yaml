@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - clusterrole-diagnostics.yaml      # read-only fleet diagnosis, cluster-wide (no secrets)
+  - clusterrole-repair-flux.yaml      # flux reconcile (annotation patch), cluster-wide
+  - rbac-namespaced.yaml              # exec/pod-delete/job, namespaced to operated namespaces
+  - clusterrolebinding.yaml           # bind the cluster-wide roles to dungeon:cluster-agents
