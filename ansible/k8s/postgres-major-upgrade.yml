@@ -14,7 +14,7 @@
 #     -v ~/.ssh:/root/.ssh:ro \
 #     -v /srv/dungeon:/dungeon \
 #     -v ~/backups/_postgresql:/backups \
-#     prplanit/ansible-oci:2.20.1-v2 \
+#     ghcr.io/homelabhd/ansible:v2.21.4 \
 #     ansible-playbook /dungeon/ansible/k8s/postgres-major-upgrade.yml \
 #       -e target_app=speedtest-tracker
 #

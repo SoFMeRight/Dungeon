@@ -30,7 +30,7 @@
 #   docker run --rm \
 #     -v ~/.kube:/root/.kube:ro \
 #     -v /srv/dungeon/ansible:/app:ro \
-#     prplanit/ansible-oci:2.20.1-v2 \
+#     ghcr.io/homelabhd/ansible:v2.21.4 \
 #     ansible-playbook k8s/recovery/hasteward.yml \
 #       -e engine=galera \
 #       -e cluster_name=osticket-mariadb \

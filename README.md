@@ -154,7 +154,7 @@ If the cluster fails, we can recover from a local repo clone on `leaf-cutter`:
 docker run --rm \
     -v ~/.ssh/id_rsa:/root/.ssh/id_rsa:ro \
     -v /srv/gitops/ad-arbitorium-private:/srv/gitops/ad-arbitorium-private:ro \
-    cr.pcfae.com/prplanit/ansible:2.18.6 \
+    ghcr.io/homelabhd/ansible:v2.21.4 \
   ansible-playbook --private-key /root/.ssh/id_rsa \
   -i /srv/gitops/ad-arbitorium-private/ansible/inventory \
   /srv/gitops/ad-arbitorium-private/ansible/infrastructure/qemu-guest-agent-debian.yaml
@@ -166,7 +166,7 @@ docker run --rm \
     -v ~/.ssh/id_rsa:/root/.ssh/id_rsa:ro \
     -v /srv/gitops/ad-arbitorium-private:/srv/gitops/ad-arbitorium-private:ro \
     -v ./playbook.yaml:/root/playbook.yaml:ro \
-    cr.pcfae.com/prplanit/ansible:2.18.6 \
+    ghcr.io/homelabhd/ansible:v2.21.4 \
   ansible-playbook \
     --private-key /root/.ssh/id_rsa \
     -i /srv/gitops/ad-arbitorium-private/ansible/inventory \

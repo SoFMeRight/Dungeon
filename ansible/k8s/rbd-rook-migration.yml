@@ -26,7 +26,7 @@
 #
 # USAGE (same container pattern as postgres-major-upgrade.yml):
 #   docker run --rm -v ~/.kube:/root/.kube:ro -v /srv/dungeon:/dungeon -v ~/backups/_rbd-rook:/escrow \
-#     prplanit/ansible-oci:<tag> \
+#     ghcr.io/homelabhd/ansible:v2.21.4 \
 #     ansible-playbook /dungeon/ansible/k8s/rbd-rook-migration.yml [flags]
 #
 #   # See the full tiered plan (safe, no changes):        (no flags; add -e include_sts=true to list STSs)

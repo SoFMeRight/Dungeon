@@ -15,11 +15,11 @@
 # that migrated, makes ONE commit, rebases (survives a Renovate race), pushes, waits for the flux source
 # to carry the new commit, and resumes flux. git always ends matching live, even on a partial rollback.
 #
-# Runs in the prplanit/ansible-oci container. NOTE the extra -v ~/.ssh mount — the run pushes to git:
+# Runs in the ghcr.io/homelabhd/ansible:v2.21.4 container. NOTE the extra -v ~/.ssh mount — the run pushes to git:
 #   docker run --rm --network host -e KUBECONFIG=/root/.kube/config \
 #     -v ~/.kube:/root/.kube:ro -v ~/.ssh:/root/.ssh:ro \
 #     -v /home/kai/repositories/dungeon:/dungeon \
-#     -v ~/backups/_rbd-rook:/escrow -w /dungeon prplanit/ansible-oci:2.20.1-v3 \
+#     -v ~/backups/_rbd-rook:/escrow -w /dungeon ghcr.io/homelabhd/ansible:v2.21.4 \
 #     ansible-playbook ansible/k8s/rbd-rook-migrate-static.yml [flags]
 #
 #   # Plan only (default — no changes, flux untouched):     (no flags)

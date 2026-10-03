@@ -13,10 +13,10 @@
 # to tier=sts — so the two clusters still under DB recovery are excluded by construction. The
 # optional `exclude_owners` is an extra belt-and-suspenders name filter (default: none).
 #
-# Runs in the prplanit/ansible-oci container (escrow dir mounted for lossless rollback):
+# Runs in the ghcr.io/homelabhd/ansible:v2.21.4 container (escrow dir mounted for lossless rollback):
 #   docker run --rm --network host -e KUBECONFIG=/root/.kube/config \
 #     -v ~/.kube:/root/.kube:ro -v /home/kai/repositories/dungeon:/dungeon \
-#     -v ~/backups/_rbd-rook:/escrow -w /dungeon prplanit/ansible-oci:2.20.1-v3 \
+#     -v ~/backups/_rbd-rook:/escrow -w /dungeon ghcr.io/homelabhd/ansible:v2.21.4 \
 #     ansible-playbook ansible/k8s/rbd-rook-migrate-orphans.yml [flags]
 #
 #   # Plan only (default — no changes):        (no flags)

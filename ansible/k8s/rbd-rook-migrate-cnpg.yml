@@ -15,10 +15,10 @@
 #     Ready AND streaming from the primary. A stall FAILS that cluster (no cascade).
 #   - the primary is migrated LAST, via a controlled failover onto an already-migrated replica.
 #
-# Runs in the prplanit/ansible-oci container like the other k8s playbooks:
+# Runs in the ghcr.io/homelabhd/ansible:v2.21.4 container like the other k8s playbooks:
 #   docker run --rm --network host -e KUBECONFIG=/root/.kube/config \
 #     -v ~/.kube:/root/.kube:ro -v /home/kai/repositories/dungeon:/dungeon \
-#     -w /dungeon prplanit/ansible-oci:2.20.1-v3 \
+#     -w /dungeon ghcr.io/homelabhd/ansible:v2.21.4 \
 #     ansible-playbook ansible/k8s/rbd-rook-migrate-cnpg.yml [flags]
 #
 #   # Plan only (default — no changes):                    (no flags)

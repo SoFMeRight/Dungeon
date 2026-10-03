@@ -19,7 +19,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: setup-nvme
-          image: docker.io/prplanit/ansible-oci:2.20.1-v2
+          image: ghcr.io/homelabhd/ansible:v2.21.4
           command:
             - ansible-playbook
             - /scripts/cephfs-init-rootpaths.yml
@@ -51,7 +51,7 @@ spec:
             - name: tmp
               mountPath: /tmp
         - name: setup-hdd
-          image: docker.io/prplanit/ansible-oci:2.20.1-v2
+          image: ghcr.io/homelabhd/ansible:v2.21.4
           command:
             - ansible-playbook
             - /scripts/cephfs-init-rootpaths.yml
@@ -84,7 +84,7 @@ spec:
               mountPath: /tmp
       containers:
         - name: complete
-          image: docker.io/prplanit/ansible-oci:2.20.1-v2
+          image: ghcr.io/homelabhd/ansible:v2.21.4
           command:
             - echo
             - "ARK SA CephFS initialization complete"

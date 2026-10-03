@@ -10,7 +10,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: setup
-          image: docker.io/prplanit/ansible-oci:2.20.1-v2
+          image: ghcr.io/homelabhd/ansible:v2.21.4
           command:
             - ansible-playbook
             - /scripts/cephfs-init-rootpaths.yml

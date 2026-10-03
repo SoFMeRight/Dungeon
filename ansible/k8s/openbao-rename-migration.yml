@@ -32,7 +32,7 @@
 #   docker run --rm \
 #     -v ~/.kube:/root/.kube:ro -v ~/.ssh:/root/.ssh:ro \
 #     -v /srv/dungeon:/dungeon -v ~/backups/_openbao:/backups \
-#     prplanit/ansible-oci:2.20.1-v3 \   # v3+ bakes in kustomize+kubectl (Phase-4 build gate)
+#     ghcr.io/homelabhd/ansible:v2.21.4 \   # v3+ bakes in kustomize+kubectl (Phase-4 build gate)
 #     ansible-playbook /dungeon/ansible/k8s/openbao-rename-migration.yml \
 #       -e rehearse=true            # <- ALWAYS run this first; then drop it for the real cut
 #
