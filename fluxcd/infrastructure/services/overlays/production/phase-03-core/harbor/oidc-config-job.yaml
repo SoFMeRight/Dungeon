@@ -7,6 +7,8 @@ automountServiceAccountToken: false
 apiVersion: batch/v1
 kind: Job
 metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on image bump, not wedge
   name: harbor-oidc-config
 spec:
   backoffLimit: 30
