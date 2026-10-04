@@ -201,7 +201,7 @@ spec:
 
         # qBittorrent - full downloads access
         - name: qbittorrent
-          image: docker.io/linuxserver/qbittorrent:5.2.3
+          image: docker.io/linuxserver/qbittorrent:5.2.4
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
