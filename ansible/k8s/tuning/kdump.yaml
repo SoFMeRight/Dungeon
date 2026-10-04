@@ -1,0 +1,98 @@
+---
+# kdump.yaml
+# Reserves a crash kernel so a panicking node writes its own vmcore to disk.
+#
+# NOTHING IS TUNED HERE. Values live in group_vars/all.yml as kdump_*.
+#
+# WHY, AND WHY IT IS NOT REDUNDANT WITH netconsole:
+# netconsole ships the dying console lines over the network, but it cannot cover
+# the node hosting the collector - the router will not hairpin a frame back
+# toward the subnet it came from - and it only ever yields the last few printk
+# lines. kdump has no such gap: the crash kernel writes to the node's own disk,
+# with no network, collector or router in the path, and produces a full vmcore
+# plus a dmesg transcript rather than a tail.
+#
+# WHAT IT COSTS:
+# Reserved memory, permanently, unavailable to workloads - roughly 512M on a
+# small node and up to 4G on the large ones under Ubuntu's range sizing. That is
+# the price of the crash kernel existing at panic time.
+#
+# IT DOES NOTHING UNTIL A REBOOT:
+# crashkernel= is a boot-time memory reservation, so installing this arms nothing
+# on a running node. Pair it with the kernel upgrade reboot rather than rebooting
+# for it alone. This playbook deliberately does NOT reboot.
+#
+# Run via Semaphore or:
+#   docker run --rm --network host --user 1000:1000 \
+#     -e HOME=/home/kai -v /etc/passwd:/etc/passwd:ro \
+#     -v <scratch>:/home/kai -v ~/.ssh:/home/kai/.ssh:ro \
+#     -v $PWD:/work -w /work ghcr.io/homelabhd/ansible:v2.21.4 \
+#     ansible-playbook -i inventory k8s/tuning/kdump.yaml
+
+- name: Arm kdump so a panic leaves a vmcore behind
+  hosts: "{{ kdump_group | default('k8s_master:k8s_worker') }}"
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Install kdump-tools
+      ansible.builtin.apt:
+        name: kdump-tools
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+      register: kdump_install
+      # The package's postinst drops a grub snippet that sets crashkernel=, so
+      # installing is what reserves the memory at the next boot.
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+
+    - name: Configure kdump
+      ansible.builtin.copy:
+        dest: /etc/default/kdump-tools
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          # Managed by ansible: k8s/tuning/kdump.yaml
+          USE_KDUMP=1
+          KDUMP_COREDIR="{{ kdump_coredir }}"
+          # -c compresses, -d excludes page types that carry no diagnostic value
+          # (free, cache, user data). Without it a vmcore is the machine's whole
+          # RAM, which on the 177G nodes would not fit beside everything else.
+          MAKEDUMP_ARGS="-c -d {{ kdump_dump_level }}"
+          # Keep a bounded history: a node that panics repeatedly must not fill
+          # the disk it shares with the container runtime and the kubelet.
+          KDUMP_NUM_DUMPS={{ kdump_num_dumps }}
+      register: kdump_conf
+
+    - name: Enable kdump-tools at boot
+      ansible.builtin.systemd:
+        name: kdump-tools
+        enabled: true
+
+    - name: Read the effective crashkernel reservation
+      ansible.builtin.shell:
+        cmd: "grep -o 'crashkernel=[^ ]*' /proc/cmdline || true"
+      changed_when: false
+      register: kdump_cmdline
+
+    - name: Read the grub snippet the package installed
+      ansible.builtin.shell:
+        cmd: "cat /etc/default/grub.d/kdump-tools.cfg 2>/dev/null | grep -o 'crashkernel=[^\"]*' || true"
+      changed_when: false
+      register: kdump_grub
+
+    # Only when something changed: update-grub rewrites the boot config, and
+    # there is no reason to touch it on a converged node.
+    - name: Rebuild the boot config
+      ansible.builtin.command:
+        cmd: update-grub
+      when: kdump_install is changed or kdump_conf is changed
+      changed_when: true
+
+    - name: Report what is armed and what is still pending
+      ansible.builtin.debug:
+        msg: >-
+          running kernel reserves: {{ kdump_cmdline.stdout | default('(nothing)') | trim or '(nothing)' }}
+          | configured for next boot: {{ kdump_grub.stdout | default('(none)') | trim or '(none)' }}
+          | REBOOT REQUIRED before kdump can capture anything

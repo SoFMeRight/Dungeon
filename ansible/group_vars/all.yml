@@ -115,3 +115,22 @@ netconsole_target_ip: "172.22.30.240"      # netconsole-collector LoadBalancer V
 netconsole_target_mac: "00:00:5e:00:01:28" # default gateway (VRRP virtual MAC)
 netconsole_port: 6666
 netconsole_dev: enp6s18
+# ============================================================================
+# kdump - a crash kernel that writes the panic to local disk
+# ============================================================================
+# Complements netconsole rather than duplicating it. netconsole yields the last
+# console lines over the network and structurally cannot cover the node hosting
+# its collector; kdump has no gap and produces a full vmcore plus dmesg, because
+# the dying node writes to its own disk with nothing else in the path.
+#
+# Costs reserved memory permanently (Ubuntu's range sizing: ~512M small, up to
+# ~4G on the 177G nodes) and does nothing until the node reboots, since
+# crashkernel= is a boot-time reservation.
+kdump_coredir: /var/crash
+# makedumpfile dump level. 31 excludes zero, cache, cache-private, user and free
+# pages - everything whose absence does not impair a backtrace. The full image of
+# a 177G node would not fit beside the container store.
+kdump_dump_level: 31
+# A node that panics repeatedly must not fill the disk it shares with CRI-O and
+# the kubelet. /var has 53-74G free, and a compressed vmcore runs to a few GB.
+kdump_num_dumps: 3
