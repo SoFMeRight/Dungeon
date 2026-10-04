@@ -27,9 +27,11 @@ spec:
       containers:
         - name: hasteward
           image: ${IMAGE}
-          # ${IMAGE} defaults to the rolling latest-dev tag; always pull so a run never
-          # executes a stale cached image on the scheduling node.
-          imagePullPolicy: Always
+          # run.sh resolves the tag to a digest before substituting it here, so
+          # IfNotPresent cannot serve stale code: there is nothing newer that a re-pull
+          # could find. When the registry is unreachable it substitutes the bare tag
+          # instead, and this policy is what lets the node's cached layer still run.
+          imagePullPolicy: ${PULL_POLICY}
           args: ["repair", "--instance", "${INSTANCE}", "--promote"]
           env:
             # empty unless run.sh was given -f; HASteward reads "" as false

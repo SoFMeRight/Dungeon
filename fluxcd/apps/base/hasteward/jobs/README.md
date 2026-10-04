@@ -27,6 +27,27 @@ Flags: `-c` cluster (required), `-n` namespace (required), `-i` instance, `-e` e
 (`cnpg` default, or `galera`), `--image` (default `docker.io/prplanit/hasteward:latest-dev`),
 `-f`/`--force` (`repair` and `promote` only).
 
+### Which image actually ran
+
+`latest-dev` moves, so the submitted Job is pinned to a **digest**: `run.sh` resolves the
+tag against the registry and substitutes `name@sha256:...`, with
+`imagePullPolicy: IfNotPresent`. Two consequences worth knowing:
+
+- **What ran is recoverable after the fact.** The digest is in the Job spec, so
+  `kubectl -n fairy-bottle get job/<name> -o jsonpath='{.spec.template.spec.containers[0].image}'`
+  answers "which build produced this diagnosis" months later. It also prints whether the
+  digest changed since the previous run.
+- **A registry outage degrades instead of blocking.** Resolution happens on the operator's
+  machine, not in the kubelet, so an unreachable or rate-limited registry is visible at
+  submit time. It then submits the bare tag and the node's **cached layer runs** — with a
+  warning, because that may be old code and will not start at all on a node that has never
+  pulled it. Verify with the jsonpath above before trusting a result. `Always` would
+  instead leave the Job in `ErrImagePull`, which is the wrong failure for a tool you reach
+  for while the cluster is unhealthy.
+
+A tag the registry answers for but does not have is a **refusal**, not a fallback — a typo
+in `--image` must not silently run some other cached image.
+
 ### `--force`, and how to earn it
 
 Triage returns `safeToHeal: false` with `recommendedDonor: none` when authority is
