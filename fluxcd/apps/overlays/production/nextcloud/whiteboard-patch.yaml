@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: whiteboard
-          image: ghcr.io/nextcloud-releases/whiteboard:v1.5.9
+          image: ghcr.io/nextcloud-releases/whiteboard:v1.5.9@sha256:b60b7633f90d106ac6922f9bc27e1a1ca2442488b740fefdae4c812f34e9cebc
           env:
             - name: NEXTCLOUD_URL
               value: "https://ncloud.optcp.com"
