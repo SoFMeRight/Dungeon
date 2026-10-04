@@ -29,7 +29,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: mazanoke
-          image: ghcr.io/civilblur/mazanoke:v1.1.6
+          image: ghcr.io/civilblur/mazanoke:v1.1.7
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
