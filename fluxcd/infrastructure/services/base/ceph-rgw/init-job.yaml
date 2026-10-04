@@ -2,58 +2,62 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: ceph-rgw-init
+  annotations:
+    # Immutable one-shot Job: Flux per-resource force-replaces it in place on an
+    # image/template bump instead of wedging the Kustomization on an immutable patch.
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
 spec:
   ttlSecondsAfterFinished: 86400
   template:
     spec:
       restartPolicy: OnFailure
       containers:
-      - name: init
-        image: quay.io/ceph/ceph:PLACEHOLDER_CEPH_VERSION
-        command:
-        - /bin/bash
-        - -c
-        - |
-          set -ex
+        - name: init
+          image: quay.io/ceph/ceph:PLACEHOLDER_CEPH_VERSION
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -ex
 
-          # Wait for RGW to be ready
-          until radosgw-admin realm list 2>/dev/null; do
-            echo "Waiting for RGW to be accessible..."
-            sleep 5
-          done
+              # Wait for RGW to be ready
+              until radosgw-admin realm list 2>/dev/null; do
+                echo "Waiting for RGW to be accessible..."
+                sleep 5
+              done
 
-          # Create realm if it doesn't exist
-          if ! radosgw-admin realm get --rgw-realm=dungeon 2>/dev/null; then
-            radosgw-admin realm create --rgw-realm=dungeon --default
-          fi
+              # Create realm if it doesn't exist
+              if ! radosgw-admin realm get --rgw-realm=dungeon 2>/dev/null; then
+                radosgw-admin realm create --rgw-realm=dungeon --default
+              fi
 
-          # Create zonegroup if it doesn't exist
-          if ! radosgw-admin zonegroup get --rgw-zonegroup=default 2>/dev/null; then
-            radosgw-admin zonegroup create --rgw-zonegroup=default --endpoints=http://ceph-rgw.PLACEHOLDER_NAMESPACE.svc.cluster.local --master --default
-          fi
+              # Create zonegroup if it doesn't exist
+              if ! radosgw-admin zonegroup get --rgw-zonegroup=default 2>/dev/null; then
+                radosgw-admin zonegroup create --rgw-zonegroup=default --endpoints=http://ceph-rgw.PLACEHOLDER_NAMESPACE.svc.cluster.local --master --default
+              fi
 
-          # Create zone if it doesn't exist
-          if ! radosgw-admin zone get --rgw-zone=default 2>/dev/null; then
-            radosgw-admin zone create --rgw-zonegroup=default --rgw-zone=default --endpoints=http://ceph-rgw.PLACEHOLDER_NAMESPACE.svc.cluster.local --master --default
-          fi
+              # Create zone if it doesn't exist
+              if ! radosgw-admin zone get --rgw-zone=default 2>/dev/null; then
+                radosgw-admin zone create --rgw-zonegroup=default --rgw-zone=default --endpoints=http://ceph-rgw.PLACEHOLDER_NAMESPACE.svc.cluster.local --master --default
+              fi
 
-          # Commit period
-          radosgw-admin period update --commit
+              # Commit period
+              radosgw-admin period update --commit
 
-          echo "RGW initialization complete"
-        volumeMounts:
-        - name: ceph-config
-          mountPath: /etc/ceph/ceph.conf
-          subPath: ceph.conf
-          readOnly: true
-        - name: ceph-keyring
-          mountPath: /etc/ceph/ceph.keyring
-          subPath: keyring
-          readOnly: true
+              echo "RGW initialization complete"
+          volumeMounts:
+            - name: ceph-config
+              mountPath: /etc/ceph/ceph.conf
+              subPath: ceph.conf
+              readOnly: true
+            - name: ceph-keyring
+              mountPath: /etc/ceph/ceph.keyring
+              subPath: keyring
+              readOnly: true
       volumes:
-      - name: ceph-config
-        configMap:
-          name: ceph-config
-      - name: ceph-keyring
-        secret:
-          secretName: ceph-rgw-keyring
+        - name: ceph-config
+          configMap:
+            name: ceph-config
+        - name: ceph-keyring
+          secret:
+            secretName: ceph-rgw-keyring
