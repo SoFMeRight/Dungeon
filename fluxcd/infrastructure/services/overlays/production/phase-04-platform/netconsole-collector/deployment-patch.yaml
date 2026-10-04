@@ -7,4 +7,4 @@ spec:
     spec:
       containers:
         - name: collector
-          image: docker.io/alpine/socat:1.8.0.0
+          image: docker.io/alpine/socat:1.8.1.3
