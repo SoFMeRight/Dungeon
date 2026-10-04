@@ -22,9 +22,14 @@ spec:
       # and the router delivers it to whichever node currently holds the VIP.
       #
       # That indirection is what makes scheduling dynamic: the collector may move
-      # freely and the senders never change. It also closes the self-capture gap,
-      # since a node's own frame leaves for the router rather than needing to
-      # reach a specific peer.
+      # freely and the senders never change.
+      #
+      # It does NOT let a node capture its own panic. The router will not hairpin
+      # a frame back toward the subnet it arrived from, so the sender's own
+      # output dies at the gateway. Whichever node hosts this pod is therefore
+      # uncovered - measured, not assumed: 9 of 10 nodes report, and the missing
+      # one is always the one running the collector. kdump is what covers it,
+      # since there the dying node writes to its own disk.
       #
       # The gateway MAC is a VRRP virtual address (00:00:5e:00:01:xx), so it
       # survives a router failover as well.

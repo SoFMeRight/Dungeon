@@ -102,7 +102,11 @@ kubelet_active_delay: 10
 # at module insertion, and the VIP sits on a different subnet to the nodes - so
 # the frame goes to the router, which delivers it to whichever node holds the
 # VIP. That is what lets the collector be scheduled anywhere without touching
-# any sender, and it means a node can capture its own panic too.
+# any sender.
+#
+# A node still cannot capture its OWN panic: the router will not hairpin the
+# frame back toward the subnet it came from. Whichever node runs the collector
+# is uncovered, so 9 of 10 nodes report. kdump covers that node.
 #
 # Only messages at or above the console loglevel (currently 4, warn) are
 # mirrored. A panic is level 0, so it is always sent; an info-level write to
