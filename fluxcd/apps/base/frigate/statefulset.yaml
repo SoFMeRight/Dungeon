@@ -42,7 +42,7 @@ spec:
             - -c
             - |
               MODEL_PATH="/config/model_cache/yolox_s.onnx"
-              MODEL_URL="https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.1.1rc0/yolox_s.onnx"
+              MODEL_URL="https://github.com/Megvii-BaseDetection/YOLOX/releases/download/0.3.0/yolox_s.onnx"
               if [ -f "$MODEL_PATH" ] && [ -s "$MODEL_PATH" ]; then
                 echo "Model already exists at $MODEL_PATH ($(ls -lh $MODEL_PATH | awk '{print $5}'))"
               else
