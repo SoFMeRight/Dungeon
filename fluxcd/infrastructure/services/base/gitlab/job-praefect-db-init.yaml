@@ -2,6 +2,10 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: gitlab-praefect-db-init
+  annotations:
+    # Immutable one-shot Job: Flux per-resource force-replaces it in place on an
+    # image/template bump instead of wedging the Kustomization on an immutable patch.
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
 spec:
   ttlSecondsAfterFinished: 300
   template:
