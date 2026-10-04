@@ -5,6 +5,7 @@ namespace: zeldas-lullaby
 
 resources:
   - ../../../../base/zitadel
+  - ../../../../base/zitadel-jobs  # one-shot init/setup/admin-sa Jobs (per-resource force-annotated; folded back from the retired infra-zitadel-jobs Kustomization)
   - httproute.yaml
   - login-v2-httproute.yaml
   - externalsecret-postgres-backup.yaml
@@ -12,6 +13,13 @@ resources:
 patches:
   - path: image-patch.yaml
   - path: command-patches.yaml
+  # Job-half patches, folded in from the retired zitadel-jobs overlay:
+  - path: jobs-image-patch.yaml
+  - path: jobs-command-patches.yaml
+  - path: setup-job-env-patch.yaml
+    target:
+      kind: Job
+      name: zitadel-setup
   - path: statefulset-patch.yaml
     target:
       kind: StatefulSet
