@@ -1,0 +1,75 @@
+# Canonical source for /etc/kubernetes/audit/policy.yaml on every control-plane
+# node (dungeon-map-001..005). NOT a cluster resource and NOT in kustomization.yaml --
+# it is deployed to nodes out-of-band (see the header of configmap-patch.yaml).
+# Referenced by the apiserver --audit-policy-file flag set in that ConfigMap.
+apiVersion: audit.k8s.io/v1
+kind: Policy
+# Drop the pre-authz stage; we only care about what was decided/done.
+omitStages:
+  - RequestReceived
+
+rules:
+  # 1. SECRETS NEVER AT BODY LEVEL. Metadata only (who/when/verb) so the audit
+  #    log can't become a plaintext secret store. First-match wins, so this is first.
+  - level: Metadata
+    resources:
+      - group: ""
+        resources: ["secrets", "configmaps", "serviceaccounts/token"]
+      - group: "authentication.k8s.io"
+        resources: ["tokenreviews"]
+
+  # 2. NOISE FLOOR — drop high-volume, low-accountability traffic.
+  - level: None
+    users:
+      - "system:kube-scheduler"
+      - "system:kube-controller-manager"
+      - "system:apiserver"
+    verbs: ["get", "list", "watch"]
+  - level: None
+    userGroups: ["system:nodes"]
+    verbs: ["get", "list", "watch"]
+  - level: None
+    resources:
+      - group: ""
+        resources: ["events", "endpoints"]
+      - group: "discovery.k8s.io"
+        resources: ["endpointslices"]
+      - group: "coordination.k8s.io"
+        resources: ["leases"]
+  - level: None
+    nonResourceURLs:
+      - "/healthz*"
+      - "/readyz*"
+      - "/livez*"
+      - "/version"
+      - "/metrics"
+      - "/openapi/*"
+      - "/apis/*"   # discovery
+      - "/api/*"    # discovery
+
+  # 3. PRIVILEGED / HIGH-RISK — full request+response for real accountability.
+  #    exec/attach/portforward regardless of verb (this is "who ran what in which pod").
+  - level: RequestResponse
+    resources:
+      - group: ""
+        resources: ["pods/exec", "pods/attach", "pods/portforward"]
+  - level: RequestResponse
+    verbs: ["create", "update", "patch", "delete", "deletecollection"]
+    resources:
+      - group: ""
+        resources: ["pods", "namespaces", "persistentvolumeclaims", "persistentvolumes", "nodes", "serviceaccounts"]
+      - group: "apps"
+        resources: ["deployments", "statefulsets", "daemonsets"]
+      - group: "rbac.authorization.k8s.io"
+        resources: ["roles", "rolebindings", "clusterroles", "clusterrolebindings"]
+      - group: "apiextensions.k8s.io"
+        resources: ["customresourcedefinitions"]
+      - group: "policy"
+        resources: ["*"]
+
+  # 4. ALL OTHER MUTATIONS — Request level (what was attempted, not full body).
+  - level: Request
+    verbs: ["create", "update", "patch", "delete", "deletecollection"]
+
+  # 5. CATCH-ALL — everything else (reads) at Metadata.
+  - level: Metadata

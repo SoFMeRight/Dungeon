@@ -1,12 +1,19 @@
-# kubeadm ClusterConfiguration with OIDC for GitLab CI identity.
+# kubeadm ClusterConfiguration: GitLab CI OIDC + apiserver audit (accountability plane).
 #
-# FluxCD reconciles this ConfigMap. After changes, regenerate the
-# apiserver static pod on EACH control plane node (dungeon-map-001..005):
+# FluxCD reconciles this ConfigMap, but it does NOT restart apiservers. To apply,
+# regenerate the apiserver static pod on EACH control plane node (dungeon-map-001..005),
+# ONE AT A TIME, verifying API availability between each:
 #
+#   # 1. place the audit policy FIRST (missing file => apiserver crashloop):
+#   sudo install -D -m 0644 policy.yaml /etc/kubernetes/audit/policy.yaml
+#   sudo mkdir -p /var/log/kubernetes/audit
+#   # 2. regenerate the manifest from this ConfigMap; kubelet restarts the pod:
 #   sudo kubeadm init phase control-plane apiserver
+#   # 3. verify: apiserver Ready, `kubectl get --raw /healthz`, audit.log has events.
 #
-# kubelet detects the manifest change and restarts the apiserver pod.
-# Roll one node at a time — verify API availability between each.
+# audit-policy.yaml in this dir is the canonical source of /etc/kubernetes/audit/policy.yaml.
+# Rollback a node: restore its previous /etc/kubernetes/manifests/kube-apiserver.yaml
+# (or revert this CM + re-run the phase); kubelet restarts clean.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -30,6 +37,30 @@ data:
         value: groups
       - name: oidc-groups-prefix
         value: "gitlab:"
+      # Audit (accountability plane). Policy file is deployed to each control
+      # plane node at /etc/kubernetes/audit/policy.yaml (see audit-policy.yaml
+      # in this dir) BEFORE the apiserver is regenerated, or it will crashloop
+      # on a missing file.
+      - name: audit-policy-file
+        value: /etc/kubernetes/audit/policy.yaml
+      - name: audit-log-path
+        value: /var/log/kubernetes/audit/audit.log
+      - name: audit-log-maxage
+        value: "30"
+      - name: audit-log-maxbackup
+        value: "10"
+      - name: audit-log-maxsize
+        value: "100"
+      extraVolumes:
+      - name: audit-policy
+        hostPath: /etc/kubernetes/audit/policy.yaml
+        mountPath: /etc/kubernetes/audit/policy.yaml
+        readOnly: true
+        pathType: File
+      - name: audit-logs
+        hostPath: /var/log/kubernetes/audit
+        mountPath: /var/log/kubernetes/audit
+        pathType: DirectoryOrCreate
     apiVersion: kubeadm.k8s.io/v1beta4
     caCertificateValidityPeriod: 87600h0m0s
     certificateValidityPeriod: 8760h0m0s
