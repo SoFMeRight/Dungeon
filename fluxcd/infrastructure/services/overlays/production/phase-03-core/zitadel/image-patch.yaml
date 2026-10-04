@@ -8,7 +8,7 @@ spec:
     spec:
       initContainers:
         - name: wait-for-setup
-          image: docker.io/alpine/k8s:1.37.0
+          image: docker.io/alpine/k8s:1.37.1
           command:
             - sh
             - -c
