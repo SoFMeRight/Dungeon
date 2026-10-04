@@ -5,6 +5,19 @@ resources:
   - nas-s3-setup-serviceaccount.yaml
   - nas-s3-provisioner-credentials-externalsecret.yaml
   - nas-s3-setup-script.yaml
-  # The one-shot nas-s3-setup Job lives in ../nas-s3-jobs, reconciled by the
-  # force:true infra-nas-s3-jobs Kustomization so an aws-cli image bump replaces
-  # its immutable template instead of wedging this whole config set.
+  - nas-s3-setup.yaml
+patches:
+  # Kyverno restrict-default-sa-controllers requires a non-default serviceAccountName
+  # for controllers in ambient-mesh namespaces.
+  - target:
+      kind: Job
+      name: nas-s3-setup
+    patch: |
+      apiVersion: batch/v1
+      kind: Job
+      metadata:
+        name: nas-s3-setup
+      spec:
+        template:
+          spec:
+            serviceAccountName: nas-s3-setup
