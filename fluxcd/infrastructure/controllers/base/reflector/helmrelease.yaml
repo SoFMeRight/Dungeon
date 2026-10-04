@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: reflector
-      version: 7.x
+      version: 10.x
       sourceRef:
         kind: HelmRepository
         name: reflector
