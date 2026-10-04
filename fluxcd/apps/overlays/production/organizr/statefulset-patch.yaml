@@ -16,7 +16,7 @@ spec:
         # Runs as uid 1000 (config.php owner); reads client id/secret from the
         # openbao-backed Secret, other settings from env; idempotent + self-validating.
         - name: oidc-seed
-          image: docker.io/php:8.3-cli-alpine
+          image: docker.io/php:8.5-cli-alpine
           command: ["php", "/seed/seed-oidc.php"]
           env:
             - name: OIDC_CLIENT_ID
