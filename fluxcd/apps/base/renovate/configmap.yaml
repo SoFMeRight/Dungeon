@@ -98,6 +98,16 @@ data:
           "description": "Cluster kubernetes pin — minor moves in lockstep with cri-o (grouped k8s-nodes)"
         },
         {
+          "customType": "regex",
+          "managerFilePatterns": ["/fluxcd/infrastructure/configs/overlays/production/kubeadm-oidc/configmap-patch\\.yaml$/"],
+          "matchStrings": [
+            "kubernetesVersion:\\s+(?<currentValue>v\\S+)"
+          ],
+          "depNameTemplate": "kubernetes/kubernetes",
+          "datasourceTemplate": "github-releases",
+          "description": "kubernetesVersion in the Flux kubeadm-config CM; same depName as the group_vars pin so it bumps in the k8s-nodes group and can't drift"
+        },
+        {
           // Generic "split dependency" rescue manager. The base/overlay convention can
           // divorce a value from the metadata Renovate needs to resolve it — an image
           // tag in an overlay patch whose repository is in base, or a chart version
