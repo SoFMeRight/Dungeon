@@ -10,7 +10,7 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: adguardhome-sync
-          image: docker.io/linuxserver/adguardhome-sync:0.9.2
+          image: docker.io/linuxserver/adguardhome-sync:0.9.3
           # LSIO/s6-overlay; setuid-drops to PUID/PGID on :8080 (unprivileged). Partial hardening:
           # keep root, drop ALL, add back s6's file-perm + setuid caps.
           securityContext:
