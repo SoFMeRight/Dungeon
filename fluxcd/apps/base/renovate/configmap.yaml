@@ -162,6 +162,13 @@ data:
 
       "packageRules": [
         {
+          // gpu-operator chart PINNED to v26.7.0 for the GTX 980 Ti (Maxwell, CUDA 5.2):
+          // v26.7.1's ClusterPolicy won't reconcile -> the HR stalls + auto-rolls-back.
+          // Unpin when the GPU is replaced -- see fluxcd/infrastructure/operators/base/gpu-operator/README.md
+          "matchDepNames": ["gpu-operator"],
+          "allowedVersions": "<26.7.1"
+        },
+        {
           // netbird ships management/signal/relay in lockstep (one server release), so
           // group them into a single MR. dashboard versions separately (v2.x) — left alone.
           "matchPackageNames": [

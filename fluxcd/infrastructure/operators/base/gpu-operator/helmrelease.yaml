@@ -7,7 +7,10 @@ spec:
   chart:
     spec:
       chart: gpu-operator
-      version: v26.7.1
+      # PINNED to v26.7.0 for the GTX 980 Ti -- v26.7.1's ClusterPolicy never
+      # reconciles here (UpgradeFailed -> auto-rollback loop). Held with the
+      # v25.10.1 validator pin below; both lift when the 980 Ti is replaced. See README.md.
+      version: v26.7.0
       sourceRef:
         kind: HelmRepository
         name: nvidia
