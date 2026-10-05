@@ -143,26 +143,43 @@ spec:
               ensure_role operator  "Operator"  "Kubernetes"
               # 'admin' already exists (weave binds it); do NOT recreate/clobber it.
 
-              # --- 2. Ensure the kubernetes OIDC app (public/PKCE for kubelogin) ---
+              # --- 2. Ensure the kubernetes OIDC app (public/PKCE for kubelogin + device-code) ---
+              # APP_CFG is the single desired state; create and update both apply it, so a
+              # config change here (e.g. a new grant type) reconciles onto the live app on
+              # the next Job run instead of requiring console/API hand-edits.
+              APP_CFG='{
+                "redirectUris": ["http://localhost:8000", "http://127.0.0.1:18000"],
+                "responseTypes": ["OIDC_RESPONSE_TYPE_CODE"],
+                "grantTypes": ["OIDC_GRANT_TYPE_AUTHORIZATION_CODE", "OIDC_GRANT_TYPE_REFRESH_TOKEN", "OIDC_GRANT_TYPE_DEVICE_CODE"],
+                "appType": "OIDC_APP_TYPE_NATIVE",
+                "authMethodType": "OIDC_AUTH_METHOD_TYPE_NONE",
+                "accessTokenType": "OIDC_TOKEN_TYPE_BEARER",
+                "accessTokenRoleAssertion": true,
+                "idTokenRoleAssertion": true,
+                "idTokenUserinfoAssertion": true
+              }'
               APP_ID="$(api -X POST "${MGMT}/projects/${PROJECT_ID}/apps/_search" -d '{}' \
                 | jq -r --arg n "$K8S_APP_NAME" '.result[]? | select(.name==$n) | .id' | head -n1)"
               if [ -z "$APP_ID" ] || [ "$APP_ID" = "null" ]; then
                 echo "  creating OIDC app '${K8S_APP_NAME}'"
-                RESP="$(api -X POST "${MGMT}/projects/${PROJECT_ID}/apps/oidc" -d "{
-                  \"name\": \"${K8S_APP_NAME}\",
-                  \"redirectUris\": [\"http://localhost:8000\", \"http://127.0.0.1:18000\"],
-                  \"responseTypes\": [\"OIDC_RESPONSE_TYPE_CODE\"],
-                  \"grantTypes\": [\"OIDC_GRANT_TYPE_AUTHORIZATION_CODE\", \"OIDC_GRANT_TYPE_REFRESH_TOKEN\", \"OIDC_GRANT_TYPE_DEVICE_CODE\"],
-                  \"appType\": \"OIDC_APP_TYPE_NATIVE\",
-                  \"authMethodType\": \"OIDC_AUTH_METHOD_TYPE_NONE\",
-                  \"accessTokenType\": \"OIDC_TOKEN_TYPE_BEARER\",
-                  \"accessTokenRoleAssertion\": true,
-                  \"idTokenRoleAssertion\": true,
-                  \"idTokenUserinfoAssertion\": true
-                }")"
+                RESP="$(api -X POST "${MGMT}/projects/${PROJECT_ID}/apps/oidc" \
+                  -d "$(echo "$APP_CFG" | jq --arg n "$K8S_APP_NAME" '. + {name: $n}')")"
                 CLIENT_ID="$(echo "$RESP" | jq -r '.clientId')"
               else
-                echo "  OIDC app '${K8S_APP_NAME}' already present (${APP_ID}) - reading clientId"
+                echo "  OIDC app '${K8S_APP_NAME}' already present (${APP_ID}) - reconciling config"
+                # Zitadel answers 400 "no changes" when live == desired; that is success here.
+                UPD="$(curl -s -w '\n%{http_code}' -H "Host: ${ZITADEL_HOST}" \
+                  -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" \
+                  -X PUT "${MGMT}/projects/${PROJECT_ID}/apps/${APP_ID}/oidc_config" -d "$APP_CFG")"
+                HTTP="${UPD##*$'\n'}"
+                BODY="${UPD%$'\n'*}"
+                case "$HTTP" in
+                  200) echo "  app config updated to desired state" ;;
+                  400) echo "$BODY" | grep -qi "no change" \
+                         && echo "  app config already as desired" \
+                         || { echo "ERROR: app config update rejected: $BODY"; exit 1; } ;;
+                  *) echo "ERROR: app config update failed (http $HTTP): $BODY"; exit 1 ;;
+                esac
                 CLIENT_ID="$(api -X GET "${MGMT}/projects/${PROJECT_ID}/apps/${APP_ID}" \
                   | jq -r '.app.oidcConfig.clientId // .oidcConfig.clientId // empty')"
               fi
