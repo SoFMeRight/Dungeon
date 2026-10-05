@@ -6,3 +6,20 @@ resources:
   - ./gitlab
   - ./harbor
   - ./zitadel
+
+patches:
+  # Durable resilience: every HelmRelease auto-retries a transient upgrade failure
+  # (e.g. a readiness-wait timeout during cluster churn) instead of latching
+  # UpgradeFailed until a manual force. retries:3 matches the house convention;
+  # new HRs in this overlay inherit it automatically.
+  - target:
+      kind: HelmRelease
+    patch: |
+      apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: all-helmreleases
+      spec:
+        upgrade:
+          remediation:
+            retries: 3
