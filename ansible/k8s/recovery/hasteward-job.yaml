@@ -126,7 +126,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: hasteward
-          image: docker.io/prplanit/hasteward:latest-dev
+          image: ghcr.io/prplanit/hasteward:latest-dev
           # latest-dev MOVES. Kubernetes defaults imagePullPolicy to Always only for a
           # tag literally named ":latest", so this would otherwise be IfNotPresent and
           # each node would pin whatever it cached first — a recovery run silently
