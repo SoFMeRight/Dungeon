@@ -1,0 +1,40 @@
+# Canonical source of /etc/kubernetes/auth/auth-config.yaml on each control-plane node.
+# Structured apiserver authentication (apiserver.config.k8s.io/v1, stable in 1.35) — REPLACES
+# the single-issuer --oidc-* flags so the apiserver can trust TWO JWT issuers at once:
+#   1. GitLab   — CI identity (stagefreight), reproduced EXACTLY from the old --oidc-* flags.
+#   2. Zitadel  — human + kubelogin identity, app "Kubernetes: Dungeon".
+#
+# Placed on each node (see configmap-patch.yaml header) BEFORE regenerating the apiserver,
+# or it crashloops on a missing file. The apiserver validates this file at startup and
+# fetches each issuer's /.well-known/openid-configuration — a malformed file or an
+# unreachable issuer fails THAT apiserver to start (hence the one-node-at-a-time canary).
+apiVersion: apiserver.config.k8s.io/v1
+kind: AuthenticationConfiguration
+jwt:
+  # --- GitLab CI (stagefreight) — verbatim equivalent of the prior --oidc-* flags ---
+  - issuer:
+      url: https://gitlab.prplanit.com
+      audiences:
+        - stagefreight
+    claimMappings:
+      username:
+        claim: sub
+        prefix: "gitlab:"
+      groups:
+        claim: groups
+        prefix: "gitlab:"
+  # --- Zitadel (sso.prplanit.com) — app "Kubernetes: Dungeon" ---
+  - issuer:
+      url: https://sso.prplanit.com
+      audiences:
+        - "393723781534750283"
+    claimMappings:
+      username:
+        claim: preferred_username
+        prefix: "zitadel:"
+      groups:
+        # Zitadel asserts project roles as a MAP keyed by roleKey:
+        #   "urn:zitadel:iam:org:project:roles": { "operator": {"<orgId>":"<domain>"}, ... }
+        # Flatten the map's keys into a prefixed group list (e.g. zitadel:operator).
+        # VERIFIED AT CANARY: a real login on map-001 proves this claim/expression before rollout.
+        expression: '(has(claims["urn:zitadel:iam:org:project:roles"]) ? claims["urn:zitadel:iam:org:project:roles"].map(r, "zitadel:" + r) : [])'

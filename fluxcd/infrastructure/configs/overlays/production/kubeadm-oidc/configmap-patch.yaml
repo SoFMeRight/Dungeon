@@ -1,19 +1,25 @@
-# kubeadm ClusterConfiguration: GitLab CI OIDC + apiserver audit (accountability plane).
+# kubeadm ClusterConfiguration: structured apiserver authentication (GitLab CI + Zitadel)
+# + apiserver audit (accountability plane).
 #
 # FluxCD reconciles this ConfigMap, but it does NOT restart apiservers. To apply,
 # regenerate the apiserver static pod on EACH control plane node (dungeon-map-001..005),
 # ONE AT A TIME, verifying API availability between each:
 #
-#   # 1. place the audit policy FIRST (missing file => apiserver crashloop):
-#   sudo install -D -m 0644 policy.yaml /etc/kubernetes/audit/policy.yaml
+#   # 1. place BOTH on-node files FIRST (a missing file => apiserver crashloop):
+#   sudo install -D -m 0644 policy.yaml      /etc/kubernetes/audit/policy.yaml
+#   sudo install -D -m 0644 auth-config.yaml /etc/kubernetes/auth/auth-config.yaml
 #   sudo mkdir -p /var/log/kubernetes/audit
-#   # 2. regenerate the manifest from this ConfigMap; kubelet restarts the pod:
-#   sudo kubeadm init phase control-plane apiserver
-#   # 3. verify: apiserver Ready, `kubectl get --raw /healthz`, audit.log has events.
+#   # 2. regenerate the manifest (--config is MANDATORY; a bare `kubeadm init phase`
+#   #    drops these extraArgs and renders a defaults-only apiserver):
+#   sudo kubeadm init phase control-plane apiserver --config <exported ClusterConfiguration>
+#   # 3. verify: apiserver Ready, `kubectl get --raw /healthz`, audit.log has events, AND
+#   #    both a GitLab (CI) token and a Zitadel login still authenticate. Roll next node only then.
 #
-# audit-policy.yaml in this dir is the canonical source of /etc/kubernetes/audit/policy.yaml.
-# Rollback a node: restore its previous /etc/kubernetes/manifests/kube-apiserver.yaml
-# (or revert this CM + re-run the phase); kubelet restarts clean.
+# audit-policy.yaml / auth-config.yaml in this dir are the canonical sources of the on-node
+# /etc/kubernetes/audit/policy.yaml and /etc/kubernetes/auth/auth-config.yaml.
+# Client-cert auth (the kubernetes-admin break-glass kubeconfig) is INDEPENDENT of
+# authentication-config, so a bad auth-config never locks you out — restore the node's
+# previous /etc/kubernetes/manifests/kube-apiserver.yaml (or revert this CM + re-run the phase).
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -25,18 +31,11 @@ data:
       certSANs:
       - 172.22.144.105
       extraArgs:
-      - name: oidc-issuer-url
-        value: https://gitlab.prplanit.com
-      - name: oidc-client-id
-        value: stagefreight
-      - name: oidc-username-claim
-        value: sub
-      - name: oidc-username-prefix
-        value: "gitlab:"
-      - name: oidc-groups-claim
-        value: groups
-      - name: oidc-groups-prefix
-        value: "gitlab:"
+      # Structured multi-issuer authentication (GitLab CI + Zitadel). Replaces the
+      # single-issuer --oidc-* flags; the config is auth-config.yaml in this dir, placed
+      # on each node at /etc/kubernetes/auth/auth-config.yaml before regenerating.
+      - name: authentication-config
+        value: /etc/kubernetes/auth/auth-config.yaml
       # Audit (accountability plane). Policy file is deployed to each control
       # plane node at /etc/kubernetes/audit/policy.yaml (see audit-policy.yaml
       # in this dir) BEFORE the apiserver is regenerated, or it will crashloop
@@ -52,6 +51,11 @@ data:
       - name: audit-log-maxsize
         value: "100"
       extraVolumes:
+      - name: auth-config
+        hostPath: /etc/kubernetes/auth/auth-config.yaml
+        mountPath: /etc/kubernetes/auth/auth-config.yaml
+        readOnly: true
+        pathType: File
       - name: audit-policy
         hostPath: /etc/kubernetes/audit/policy.yaml
         mountPath: /etc/kubernetes/audit/policy.yaml
