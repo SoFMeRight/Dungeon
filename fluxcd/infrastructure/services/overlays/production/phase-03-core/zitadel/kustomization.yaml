@@ -16,6 +16,7 @@ patches:
   # Job-half patches, folded in from the retired zitadel-jobs overlay:
   - path: jobs-image-patch.yaml
   - path: jobs-command-patches.yaml
+  - path: kubernetes-oidc-provision-patch.yaml
   - path: setup-job-env-patch.yaml
     target:
       kind: Job

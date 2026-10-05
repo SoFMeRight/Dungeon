@@ -9,3 +9,4 @@ resources:
   - zitadel-initjob.yaml
   - zitadel-setupjob.yaml
   - admin-sa-provision-job.yaml
+  - kubernetes-oidc-provision-job.yaml
