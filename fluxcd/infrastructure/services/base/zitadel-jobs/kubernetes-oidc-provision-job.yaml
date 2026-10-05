@@ -33,16 +33,19 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: ZITADEL_ROUTE
+              value: zitadel
           command:
             - sh
             - -c
             - |
-              echo "Waiting for zitadel-k8s-admin-sa (admin PAT) secret..."
-              until kubectl get secret zitadel-k8s-admin-sa -n "$NAMESPACE" >/dev/null 2>&1; do
-                echo "not found yet, waiting..."
+              echo "Waiting for the admin PAT secret and the Zitadel HTTPRoute..."
+              until kubectl get secret zitadel-k8s-admin-sa -n "$NAMESPACE" >/dev/null 2>&1 \
+                 && kubectl get httproute "$ZITADEL_ROUTE" -n "$NAMESPACE" >/dev/null 2>&1; do
+                echo "not ready yet, waiting..."
                 sleep 5
               done
-              echo "found"
+              echo "ready"
       containers:
         - name: provision
           image: PLACEHOLDER_K8S_IMAGE
@@ -64,11 +67,15 @@ spec:
               value: zeldas-letter/data/apps/zitadel
             - name: K8S_APP_NAME
               value: kubernetes
-            # ZITADEL_URL + PROJECT_NAME are instance-specific -> set in the overlay patch.
-            # Keyed by NAME (not a baked ID) so the Job is bootstrap-safe: it reuses the
-            # project if present and creates it if a from-scratch Zitadel doesn't have it yet.
-            - name: ZITADEL_URL
-              value: PLACEHOLDER_ZITADEL_URL
+            # The Zitadel endpoint is DISCOVERED at runtime from its HTTPRoute (ZITADEL_ROUTE):
+            # external domain = .spec.hostnames[0]; backend svc/port = .spec.rules[0].backendRefs[0].
+            # Reached in-cluster (pods can't hairpin the public LB IP) with that domain as the Host
+            # header so Zitadel resolves the instance. Nothing instance-specific is baked here;
+            # NAMESPACE comes from the downward API. ZITADEL_ROUTE is the route name convention.
+            - name: ZITADEL_ROUTE
+              value: zitadel
+            # Project is keyed by NAME (not a baked ID) so the Job is bootstrap-safe: it reuses
+            # the project if present and creates it if a from-scratch Zitadel doesn't have it yet.
             - name: PROJECT_NAME
               value: PLACEHOLDER_PROJECT_NAME
           command:
@@ -77,16 +84,28 @@ spec:
             - |
               set -euo pipefail
 
-              : "${ZITADEL_URL:?}" "${PROJECT_NAME:?}" "${NAMESPACE:?}"
+              : "${ZITADEL_ROUTE:?}" "${PROJECT_NAME:?}" "${NAMESPACE:?}"
               : "${VAULT_ADDR:?}" "${VAULT_ROLE:?}" "${VAULT_PATH:?}" "${K8S_APP_NAME:?}"
-              MGMT="${ZITADEL_URL}/management/v1"
 
               echo "=== Provisioning Kubernetes OIDC into project '${PROJECT_NAME}' ==="
+
+              # Discover the Zitadel endpoint from its own HTTPRoute (single source of truth):
+              #   ZITADEL_HOST = external domain (Host header resolves the instance)
+              #   svc/port     = the route backend, reached in-cluster (pods can't hairpin the LB)
+              HR="$(kubectl get httproute "$ZITADEL_ROUTE" -n "$NAMESPACE" -o json)"
+              ZITADEL_HOST="$(echo "$HR" | jq -r '.spec.hostnames[0] // empty')"
+              SVC="$(echo "$HR" | jq -r '.spec.rules[0].backendRefs[0].name // empty')"
+              PORT="$(echo "$HR" | jq -r '.spec.rules[0].backendRefs[0].port // empty')"
+              [ -n "$ZITADEL_HOST" ] || { echo "ERROR: no hostname on HTTPRoute '$ZITADEL_ROUTE'"; exit 1; }
+              [ -n "$SVC" ] && [ -n "$PORT" ] || { echo "ERROR: no backend on HTTPRoute '$ZITADEL_ROUTE'"; exit 1; }
+              MGMT="http://${SVC}.${NAMESPACE}.svc.cluster.local:${PORT}/management/v1"
+              echo "  endpoint ${MGMT}  (Host: ${ZITADEL_HOST})"
 
               PAT="$(kubectl get secret zitadel-k8s-admin-sa -n "$NAMESPACE" -o jsonpath='{.data.token}' | base64 -d)"
               [ -n "$PAT" ] || { echo "ERROR: empty admin PAT"; exit 1; }
 
-              api() { curl -sf -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" "$@"; }
+              # Host header pins the Zitadel instance when talking to the in-cluster service.
+              api() { curl -sf -H "Host: ${ZITADEL_HOST}" -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" "$@"; }
 
               # --- 0. Ensure the project (idempotent + bootstrap-safe): reuse by name, create if absent ---
               FOUND="$(api -X POST "${MGMT}/projects/_search" \

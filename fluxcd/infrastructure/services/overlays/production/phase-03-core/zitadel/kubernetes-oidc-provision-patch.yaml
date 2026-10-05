@@ -17,8 +17,8 @@ spec:
         - name: provision
           image: docker.io/alpine/k8s:1.37.1
           env:
-            - name: ZITADEL_URL
-              value: https://sso.prplanit.com
+            # Endpoint (domain + svc/port) is discovered from the zitadel HTTPRoute at runtime,
+            # so only the intent values live here.
             - name: PROJECT_NAME
               value: Container Orchestration
             # Cluster-specific app name (house pattern: env/cluster on the app, like "DD-UI (prod)").
