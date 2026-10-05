@@ -1,0 +1,151 @@
+# flatRoles as an Actions v2 target: Zitadel calls this endpoint on preuserinfo /
+# preaccesstoken and the response appends the flat `roles` claim (every role key from
+# every project grant the user holds). This claim is LOAD-BEARING for cluster
+# authentication: the kube-apiserver maps it to zitadel:-prefixed groups. Previously a
+# v1 Action (embedded JS, console-only state); as a v2 target the logic lives here in
+# Git and the zitadel-configuration Job wires the Zitadel side (target + executions).
+#
+# Caller authn: the AuthorizationPolicy allow-zitadel-to-flatroles restricts ingress to
+# sa/zitadel via the ambient mesh; the v2 signing-key of the payload is NOT verified.
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: zitadel-flatroles
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zitadel-flatroles-script
+data:
+  server.py: |
+    import json
+    from http.server import HTTPServer, BaseHTTPRequestHandler
+
+
+    def roles_from(payload):
+        out = []
+        grants = payload.get("user_grants")
+        if isinstance(grants, dict):  # tolerate the wrapped {grants: [...]} shape
+            grants = grants.get("grants", [])
+        for g in grants or []:
+            keys = g.get("roles") or g.get("role_keys") or g.get("roleKeys") or []
+            for r in keys:
+                if r not in out:
+                    out.append(r)
+        return out
+
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            if self.path == "/healthz":
+                self.send_response(200)
+                self.end_headers()
+                self.wfile.write(b"ok")
+            else:
+                self.send_response(404)
+                self.end_headers()
+
+        def do_POST(self):
+            n = int(self.headers.get("Content-Length", 0))
+            try:
+                payload = json.loads(self.rfile.read(n) or b"{}")
+            except Exception:
+                self.send_response(400)
+                self.end_headers()
+                return
+            roles = roles_from(payload)
+            body = {"append_claims": [{"key": "roles", "value": roles}]} if roles else {}
+            data = json.dumps(body).encode()
+            print(f"{payload.get('function_name', '?')}: {len(roles)} roles", flush=True)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+
+        def log_message(self, *args):  # request lines carry user data; step logs above suffice
+            pass
+
+
+    HTTPServer(("0.0.0.0", 8080), Handler).serve_forever()
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zitadel-flatroles
+spec:
+  # Two replicas: this sits on the login path. A total outage does not block logins
+  # (the target is registered interruptOnError=false) but drops the roles claim,
+  # which empties every user's groups until it returns.
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: zitadel-flatroles
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: zitadel-flatroles
+    spec:
+      serviceAccountName: zitadel-flatroles
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: flatroles
+          image: PLACEHOLDER_PYTHON_IMAGE
+          command: ["python3", "-u", "/app/server.py"]
+          env:
+            - name: PYTHONDONTWRITEBYTECODE
+              value: "1"
+          ports:
+            - name: http
+              containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          volumeMounts:
+            - name: script
+              mountPath: /app
+              readOnly: true
+      volumes:
+        - name: script
+          configMap:
+            name: zitadel-flatroles-script
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zitadel-flatroles
+spec:
+  selector:
+    app.kubernetes.io/name: zitadel-flatroles
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

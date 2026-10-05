@@ -1,0 +1,21 @@
+# Zitadel's API pods call the flatRoles Actions-v2 target on preuserinfo/preaccesstoken
+# (and the zitadel-configuration Job self-tests it before cutover); both run as
+# sa/zitadel. The mesh identity is the target's caller authentication: the payload
+# signing key is not verified by the service.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-zitadel-to-flatroles
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: zitadel-flatroles
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/zeldas-lullaby/sa/zitadel
+      to:
+        - operation:
+            ports: ["8080"]

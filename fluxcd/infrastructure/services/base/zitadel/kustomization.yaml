@@ -12,6 +12,7 @@ resources:
   - zitadel-service.yaml
   - login-v2-deployment.yaml
   - login-v2-service.yaml
+  - flatroles.yaml
   - redis-replication.yaml
   - redis-sentinel.yaml
   - redis-configmap.yaml

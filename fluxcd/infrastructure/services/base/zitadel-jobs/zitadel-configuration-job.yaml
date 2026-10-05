@@ -213,4 +213,57 @@ spec:
               vault_patch "$(jq -n --arg c "$CLIENT_ID" '{"k8s-oidc-client-id": $c}')"
               echo "  stored 'k8s-oidc-client-id' at ${VAULT_PATH}"
 
+              # --- step 4: flatRoles as Actions v2 (target + executions), then retire v1 ---
+              # The roles claim is load-bearing for cluster authentication, so this is a
+              # FAIL-CLOSED migration: the v1 Action is only torn down after the v2 target
+              # self-tests AND both executions are set. Any failure leaves v1 serving.
+              echo "--- step 4: flatRoles v2 ---"
+              FLATROLES_URL="http://zitadel-flatroles.${NAMESPACE}.svc.cluster.local:8080"
+
+              SELFTEST=""
+              for i in $(seq 1 12); do
+                SELFTEST="$(curl -sf --max-time 10 -X POST "$FLATROLES_URL" \
+                  -H "Content-Type: application/json" \
+                  -d '{"function_name":"selftest","user_grants":[{"roles":["selftest-role"]}]}' || true)"
+                echo "$SELFTEST" | jq -e '.append_claims[0].value | index("selftest-role")' >/dev/null 2>&1 && break
+                echo "  waiting for flatroles target (${i}/12)..."
+                sleep 5
+              done
+              echo "$SELFTEST" | jq -e '.append_claims[0].value | index("selftest-role")' >/dev/null 2>&1 \
+                || { echo "ERROR: flatroles target self-test failed (got: ${SELFTEST:-<no response>}) - v1 Action left in place"; exit 1; }
+              echo "  target self-test passed"
+
+              TID="$(api -X POST "${BASE}/v2beta/actions/targets/search" -d '{}' \
+                | jq -r '(.result // .targets // [])[]? | select(.name=="flatroles") | .id' | head -n1)"
+              TARGET_CFG="$(jq -n --arg url "$FLATROLES_URL" \
+                '{name: "flatroles", endpoint: $url, timeout: "5s", restCall: {interruptOnError: false}}')"
+              if [ -z "$TID" ] || [ "$TID" = "null" ]; then
+                echo "  creating v2 target 'flatroles'"
+                TID="$(api -X POST "${BASE}/v2beta/actions/targets" -d "$TARGET_CFG" | jq -r '.id')"
+              else
+                echo "  v2 target 'flatroles' present (${TID}) - reconciling"
+                put_ok "v2 target" "$(api_put "${BASE}/v2beta/actions/targets/${TID}" -d "$TARGET_CFG")"
+              fi
+              [ -n "$TID" ] && [ "$TID" != "null" ] || { echo "ERROR: no target id"; exit 1; }
+
+              # Same two points the v1 flow triggered on (Complement Token).
+              for FN in preuserinfo preaccesstoken; do
+                EX="$(jq -n --arg fn "$FN" --arg t "$TID" \
+                  '{condition: {function: {name: $fn}}, targets: [{target: $t}]}')"
+                put_ok "execution ${FN}" "$(api_put "${BASE}/v2beta/actions/executions" -d "$EX")"
+              done
+
+              V1_ID="$(api -X POST "${MGMT}/actions/_search" -d '{}' \
+                | jq -r '.result[]? | select(.name=="flatRoles") | .id' | head -n1)"
+              if [ -n "$V1_ID" ] && [ "$V1_ID" != "null" ]; then
+                echo "  retiring v1 Action flatRoles (${V1_ID})"
+                for TRIG in 4 5; do  # flow 2 (Complement Token): 4=pre-userinfo, 5=pre-access-token
+                  api -X POST "${MGMT}/flows/2/trigger/${TRIG}" -d '{"actionIds":[]}' >/dev/null
+                done
+                api -X DELETE "${MGMT}/actions/${V1_ID}" >/dev/null
+                echo "  v1 Action removed"
+              else
+                echo "  v1 Action already absent"
+              fi
+
               echo "=== configuration converged ==="

@@ -20,6 +20,7 @@ resources:
   - allow-vaultwarden-postgres-replication.yaml
   - allow-zitadel-postgres-replication.yaml
   - allow-zitadel-redis-intra-cluster.yaml
+  - allow-zitadel-to-flatroles.yaml
   - allow-oidc-clients.yaml
   - allow-webhook-external-secrets.yaml
   - allow-webhook-kyverno.yaml
