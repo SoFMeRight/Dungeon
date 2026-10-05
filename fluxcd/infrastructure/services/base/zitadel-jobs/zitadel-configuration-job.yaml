@@ -106,6 +106,8 @@ spec:
               api() { curl -sf -H "Host: ${HOST}" -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" "$@"; }
               # For calls where a 400 "no changes" is the idempotent no-op, not an error.
               api_put() { curl -s -w '\n%{http_code}' -H "Host: ${HOST}" -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" -X PUT "$@"; }
+              # For creates whose error body must surface (api()'s -sf swallows it).
+              api_post() { curl -s -w '\n%{http_code}' -H "Host: ${HOST}" -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" -X POST "$@"; }
               put_ok() { # $1=label $2=response
                 local http="${2##*$'\n'}" body="${2%$'\n'*}"
                 case "$http" in
@@ -239,7 +241,13 @@ spec:
                 '{name: "flatroles", endpoint: $url, timeout: "5s", restCall: {interruptOnError: false}}')"
               if [ -z "$TID" ] || [ "$TID" = "null" ]; then
                 echo "  creating v2 target 'flatroles'"
-                TID="$(api -X POST "${BASE}/v2beta/actions/targets" -d "$TARGET_CFG" | jq -r '.id')"
+                RESP="$(api_post "${BASE}/v2beta/actions/targets" -d "$TARGET_CFG")"
+                HTTP="${RESP##*$'\n'}"
+                BODY="${RESP%$'\n'*}"
+                case "$HTTP" in
+                  200|201) TID="$(echo "$BODY" | jq -r '.id')" ;;
+                  *) echo "ERROR: target create failed (http $HTTP): $BODY"; exit 1 ;;
+                esac
               else
                 echo "  v2 target 'flatroles' present (${TID}) - reconciling"
                 put_ok "v2 target" "$(api_put "${BASE}/v2beta/actions/targets/${TID}" -d "$TARGET_CFG")"
