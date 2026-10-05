@@ -1,0 +1,52 @@
+# The `developer` rung: write workloads, never read secret VALUES. Modeled on the
+# built-in `edit` ClusterRole with three deliberate tightenings:
+#   - core `secrets` removed entirely (built-in edit can `get` them);
+#   - serviceaccounts read-only (SA writes are a token-mount escalation surface);
+#   - networkpolicies excluded (network policy is platform domain: Cilium/Istio,
+#     PolySieve-derived, never hand-edited by app work).
+# Secrets still WORK for developers: a Deployment may reference one by name and the
+# kubelet mounts it. The boundary is accident-prevention, not a hard wall -- a
+# developer with pod-create/exec can still read a secret a pod mounts. The hard
+# wall would cost exec/create, which guts the tier's purpose.
+# Bound per-namespace (RoleBinding) to group `zitadel:developer`, never cluster-wide.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dungeon:developer
+  labels:
+    app.kubernetes.io/part-of: cluster-user-rbac
+rules:
+  # Core workloads + their operational subresources.
+  - apiGroups: [""]
+    resources: ["pods", "pods/log", "pods/status"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec", "pods/attach", "pods/portforward", "pods/eviction"]
+    verbs: ["create"]
+  - apiGroups: [""]
+    resources: ["services", "configmaps", "persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["events", "endpoints", "serviceaccounts", "limitranges", "resourcequotas"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets", "daemonsets", "replicasets",
+                "deployments/scale", "statefulsets/scale", "replicasets/scale"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["policy"]
+    resources: ["poddisruptionbudgets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  # Routing: apps here publish via Gateway API HTTPRoutes (gateways stay platform).
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["httproutes"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]

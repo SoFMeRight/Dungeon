@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Human-user RBAC for the Zitadel OIDC ladder (authority high->low):
+#   zitadel:operator  -> cluster-admin (clusterrolebinding-operator.yaml, cluster-wide)
+#   zitadel:admin     -> built-in `admin`      \  bound per-namespace via
+#   zitadel:developer -> dungeon:developer      } rolebindings-<ns>.yaml files
+#   zitadel:user      -> built-in `view`       /  added as people are granted
+resources:
+  - clusterrole-developer.yaml         # edit minus secret-read (see file header)
+  - clusterrolebinding-operator.yaml   # the ONE cluster-wide human binding
