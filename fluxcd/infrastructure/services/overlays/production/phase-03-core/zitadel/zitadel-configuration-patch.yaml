@@ -1,0 +1,24 @@
+---
+# Instance-specific wiring for the configuration Job (base is templated): concrete
+# image + the intent values. Endpoint/domain are discovered from the zitadel
+# HTTPRoute at runtime; the project is keyed by NAME (reuses the existing
+# "Container Orchestration" project where weave-gitops lives; creates it on a
+# fresh bootstrap); the app name carries the cluster per house style ("DD-UI (prod)").
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: zitadel-configuration
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: wait-for-bootstrap
+          image: docker.io/alpine/k8s:1.37.1
+      containers:
+        - name: configure
+          image: docker.io/alpine/k8s:1.37.1
+          env:
+            - name: PROJECT_NAME
+              value: Container Orchestration
+            - name: K8S_APP_NAME
+              value: "Kubernetes: Dungeon"

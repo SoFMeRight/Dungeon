@@ -1,16 +1,23 @@
+# The ONE post-bootstrap configuration Job: everything declarative that happens to a
+# running Zitadel via its admin API or Vault lives here as an ensure-state step, so a
+# config change is a push (Flux force-replaces the Job) and a fresh bootstrap converges
+# identically. Steps: (1) admin-SA PAT -> Vault, (2) instance features, (3) kubernetes
+# OIDC project/roles/app + clientId -> Vault. Add future configuration as steps, not
+# as new Jobs. The bootstrap pair (zitadel-init/zitadel-setup, the vendor's own
+# lifecycle commands) stays separate.
 apiVersion: batch/v1
 kind: Job
 metadata:
   annotations:
-    kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on image bump, not wedge
-  name: kubernetes-oidc-provision
+    kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on change, not wedge
+  name: zitadel-configuration
 spec:
   ttlSecondsAfterFinished: 3600
   backoffLimit: 3
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: kubernetes-oidc-provision
+        app.kubernetes.io/name: zitadel-configuration
     spec:
       serviceAccountName: zitadel
       restartPolicy: OnFailure
@@ -21,7 +28,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       initContainers:
-        - name: wait-for-secret
+        - name: wait-for-bootstrap
           image: PLACEHOLDER_K8S_IMAGE
           securityContext:
             allowPrivilegeEscalation: false
@@ -39,7 +46,7 @@ spec:
             - sh
             - -c
             - |
-              echo "Waiting for the admin PAT secret and the Zitadel HTTPRoute..."
+              echo "Waiting for the admin PAT secret (written by zitadel-setup) and the Zitadel HTTPRoute..."
               until kubectl get secret zitadel-k8s-admin-sa -n "$NAMESPACE" >/dev/null 2>&1 \
                  && kubectl get httproute "$ZITADEL_ROUTE" -n "$NAMESPACE" >/dev/null 2>&1; do
                 echo "not ready yet, waiting..."
@@ -47,7 +54,7 @@ spec:
               done
               echo "ready"
       containers:
-        - name: provision
+        - name: configure
           image: PLACEHOLDER_K8S_IMAGE
           securityContext:
             allowPrivilegeEscalation: false
@@ -59,55 +66,85 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: ZITADEL_ROUTE
+              value: zitadel
             - name: VAULT_ADDR
               value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
             - name: VAULT_ROLE
               value: zitadel-vault-sync
             - name: VAULT_PATH
               value: zeldas-letter/data/apps/zitadel
-            - name: K8S_APP_NAME
-              value: kubernetes
-            # The Zitadel endpoint is DISCOVERED at runtime from its HTTPRoute (ZITADEL_ROUTE):
-            # external domain = .spec.hostnames[0]; backend svc/port = .spec.rules[0].backendRefs[0].
-            # Reached in-cluster (pods can't hairpin the public LB IP) with that domain as the Host
-            # header so Zitadel resolves the instance. Nothing instance-specific is baked here;
-            # NAMESPACE comes from the downward API. ZITADEL_ROUTE is the route name convention.
-            - name: ZITADEL_ROUTE
-              value: zitadel
-            # Project is keyed by NAME (not a baked ID) so the Job is bootstrap-safe: it reuses
-            # the project if present and creates it if a from-scratch Zitadel doesn't have it yet.
+            # Project keyed by NAME (bootstrap-safe: reuse if present, create if absent);
+            # app name carries the cluster per house style. Instance-specific -> overlay.
             - name: PROJECT_NAME
               value: PLACEHOLDER_PROJECT_NAME
+            - name: K8S_APP_NAME
+              value: PLACEHOLDER_K8S_APP_NAME
           command:
             - bash
             - -c
             - |
               set -euo pipefail
+              : "${ZITADEL_ROUTE:?}" "${NAMESPACE:?}" "${PROJECT_NAME:?}" "${K8S_APP_NAME:?}"
+              : "${VAULT_ADDR:?}" "${VAULT_ROLE:?}" "${VAULT_PATH:?}"
 
-              : "${ZITADEL_ROUTE:?}" "${PROJECT_NAME:?}" "${NAMESPACE:?}"
-              : "${VAULT_ADDR:?}" "${VAULT_ROLE:?}" "${VAULT_PATH:?}" "${K8S_APP_NAME:?}"
-
-              echo "=== Provisioning Kubernetes OIDC into project '${PROJECT_NAME}' ==="
-
-              # Discover the Zitadel endpoint from its own HTTPRoute (single source of truth):
-              #   ZITADEL_HOST = external domain (Host header resolves the instance)
-              #   svc/port     = the route backend, reached in-cluster (pods can't hairpin the LB)
+              # Endpoint + external domain from the Zitadel HTTPRoute: in-cluster service
+              # with the external domain as Host header (pods cannot hairpin the LB IP).
               HR="$(kubectl get httproute "$ZITADEL_ROUTE" -n "$NAMESPACE" -o json)"
-              ZITADEL_HOST="$(echo "$HR" | jq -r '.spec.hostnames[0] // empty')"
+              HOST="$(echo "$HR" | jq -r '.spec.hostnames[0] // empty')"
               SVC="$(echo "$HR" | jq -r '.spec.rules[0].backendRefs[0].name // empty')"
               PORT="$(echo "$HR" | jq -r '.spec.rules[0].backendRefs[0].port // empty')"
-              [ -n "$ZITADEL_HOST" ] || { echo "ERROR: no hostname on HTTPRoute '$ZITADEL_ROUTE'"; exit 1; }
-              [ -n "$SVC" ] && [ -n "$PORT" ] || { echo "ERROR: no backend on HTTPRoute '$ZITADEL_ROUTE'"; exit 1; }
-              MGMT="http://${SVC}.${NAMESPACE}.svc.cluster.local:${PORT}/management/v1"
-              echo "  endpoint ${MGMT}  (Host: ${ZITADEL_HOST})"
+              [ -n "$HOST" ] && [ -n "$SVC" ] && [ -n "$PORT" ] || { echo "ERROR: HTTPRoute '$ZITADEL_ROUTE' incomplete"; exit 1; }
+              BASE="http://${SVC}.${NAMESPACE}.svc.cluster.local:${PORT}"
+              MGMT="${BASE}/management/v1"
+              echo "=== Configuring Zitadel via ${BASE} (Host: ${HOST}) ==="
 
               PAT="$(kubectl get secret zitadel-k8s-admin-sa -n "$NAMESPACE" -o jsonpath='{.data.token}' | base64 -d)"
+              USER_ID="$(kubectl get secret zitadel-k8s-admin-sa -n "$NAMESPACE" -o jsonpath='{.data.userId}' | base64 -d)"
               [ -n "$PAT" ] || { echo "ERROR: empty admin PAT"; exit 1; }
 
-              # Host header pins the Zitadel instance when talking to the in-cluster service.
-              api() { curl -sf -H "Host: ${ZITADEL_HOST}" -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" "$@"; }
+              api() { curl -sf -H "Host: ${HOST}" -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" "$@"; }
+              # For calls where a 400 "no changes" is the idempotent no-op, not an error.
+              api_put() { curl -s -w '\n%{http_code}' -H "Host: ${HOST}" -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" -X PUT "$@"; }
+              put_ok() { # $1=label $2=response
+                local http="${2##*$'\n'}" body="${2%$'\n'*}"
+                case "$http" in
+                  200) echo "  $1: applied" ;;
+                  400) echo "$body" | grep -qi "no change" \
+                         && echo "  $1: already as desired" \
+                         || { echo "ERROR: $1 rejected: $body"; exit 1; } ;;
+                  *) echo "ERROR: $1 failed (http $http): $body"; exit 1 ;;
+                esac
+              }
 
-              # --- 0. Ensure the project (idempotent + bootstrap-safe): reuse by name, create if absent ---
+              vault_token() {
+                local sa; sa="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
+                curl -sf "${VAULT_ADDR}/v1/auth/kubernetes/login" \
+                  -d "{\"jwt\":\"${sa}\",\"role\":\"${VAULT_ROLE}\"}" | jq -r '.auth.client_token'
+              }
+              vault_patch() { # $1=json data object
+                local vt; vt="$(vault_token)"
+                [ -n "$vt" ] && [ "$vt" != "null" ] || { echo "ERROR: Vault auth failed"; exit 1; }
+                curl -sf -X PATCH "${VAULT_ADDR}/v1/${VAULT_PATH}" \
+                  -H "X-Vault-Token: ${vt}" -H "Content-Type: application/merge-patch+json" \
+                  -d "{\"data\": $1}" >/dev/null
+              }
+
+              # --- step 1: admin-SA credentials -> Vault (external-secrets reads them back) ---
+              echo "--- step 1: admin SA -> Vault ---"
+              vault_patch "$(jq -n --arg t "$PAT" --arg u "$USER_ID" '{"admin-sa-token": $t, "admin-sa-userId": $u}')"
+              echo "  stored admin-sa-token/admin-sa-userId at ${VAULT_PATH}"
+
+              # --- step 2: instance features ---
+              # loginV2 required: every flow -- including device-code verification, which is
+              # instance-routed and ignores per-app loginVersion pins -- renders in the v2 login.
+              echo "--- step 2: instance features ---"
+              FEATURES="$(jq -n --arg base "https://${HOST}/ui/v2/login" \
+                '{loginV2: {required: true, baseUri: $base}}')"
+              put_ok "instance features" "$(api_put "${BASE}/v2beta/features/instance" -d "$FEATURES")"
+
+              # --- step 3: kubernetes OIDC (project by name, roles, app, clientId -> Vault) ---
+              echo "--- step 3: kubernetes OIDC ---"
               FOUND="$(api -X POST "${MGMT}/projects/_search" \
                 -d "{\"queries\":[{\"nameQuery\":{\"name\":\"${PROJECT_NAME}\",\"method\":\"TEXT_QUERY_METHOD_EQUALS\"}}]}" \
                 | jq -r '.result[]? | .id')"
@@ -125,7 +162,6 @@ spec:
               fi
               [ -n "$PROJECT_ID" ] && [ "$PROJECT_ID" != "null" ] || { echo "ERROR: could not resolve project id"; exit 1; }
 
-              # --- 1. Ensure project roles (idempotent: create only if the key is absent) ---
               ensure_role() {
                 key="$1"; name="$2"; group="$3"
                 have="$(api -X POST "${MGMT}/projects/${PROJECT_ID}/roles/_search" -d '{}' \
@@ -143,15 +179,10 @@ spec:
               ensure_role operator  "Operator"  "Kubernetes"
               # 'admin' already exists (weave binds it); do NOT recreate/clobber it.
 
-              # --- 2. Ensure the kubernetes OIDC app (public/PKCE for kubelogin + device-code) ---
-              # APP_CFG is the single desired state; create and update both apply it, so a
-              # config change here (e.g. a new grant type) reconciles onto the live app on
-              # the next Job run instead of requiring console/API hand-edits.
-              # Role assertions OFF: the apiserver reads the flat `roles` claim set by the
-              # flatRoles Action (via userinfo assertion, which stays on) — the urn:zitadel
-              # role-map assertion is unused here and only bloats tokens and the device-flow
-              # consent screen with one role scope per project role. loginVersion pins the
-              # v2 login UI, matching every other app in the project (weave, Portainers).
+              # Desired client config; create and update both apply it. Role assertions OFF:
+              # the apiserver reads the flat `roles` claim set by the flatRoles Action (via
+              # userinfo assertion, which stays on); the urn:zitadel role-map only bloats
+              # tokens and the device consent. loginVersion pins the v2 login UI.
               APP_CFG='{
                 "redirectUris": ["http://localhost:8000", "http://127.0.0.1:18000"],
                 "responseTypes": ["OIDC_RESPONSE_TYPE_CODE"],
@@ -173,34 +204,13 @@ spec:
                 CLIENT_ID="$(echo "$RESP" | jq -r '.clientId')"
               else
                 echo "  OIDC app '${K8S_APP_NAME}' already present (${APP_ID}) - reconciling config"
-                # Zitadel answers 400 "no changes" when live == desired; that is success here.
-                UPD="$(curl -s -w '\n%{http_code}' -H "Host: ${ZITADEL_HOST}" \
-                  -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" \
-                  -X PUT "${MGMT}/projects/${PROJECT_ID}/apps/${APP_ID}/oidc_config" -d "$APP_CFG")"
-                HTTP="${UPD##*$'\n'}"
-                BODY="${UPD%$'\n'*}"
-                case "$HTTP" in
-                  200) echo "  app config updated to desired state" ;;
-                  400) echo "$BODY" | grep -qi "no change" \
-                         && echo "  app config already as desired" \
-                         || { echo "ERROR: app config update rejected: $BODY"; exit 1; } ;;
-                  *) echo "ERROR: app config update failed (http $HTTP): $BODY"; exit 1 ;;
-                esac
+                put_ok "app config" "$(api_put "${MGMT}/projects/${PROJECT_ID}/apps/${APP_ID}/oidc_config" -d "$APP_CFG")"
                 CLIENT_ID="$(api -X GET "${MGMT}/projects/${PROJECT_ID}/apps/${APP_ID}" \
                   | jq -r '.app.oidcConfig.clientId // .oidcConfig.clientId // empty')"
               fi
               [ -n "$CLIENT_ID" ] && [ "$CLIENT_ID" != "null" ] || { echo "ERROR: no clientId resolved"; exit 1; }
               echo "  clientId = ${CLIENT_ID}"
+              vault_patch "$(jq -n --arg c "$CLIENT_ID" '{"k8s-oidc-client-id": $c}')"
+              echo "  stored 'k8s-oidc-client-id' at ${VAULT_PATH}"
 
-              # --- 3. Publish the clientId to Vault (apiserver audience + kubelogin/Headlamp consume it) ---
-              SA_TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
-              VT="$(curl -sf "${VAULT_ADDR}/v1/auth/kubernetes/login" \
-                -d "{\"jwt\":\"${SA_TOKEN}\",\"role\":\"${VAULT_ROLE}\"}" | jq -r '.auth.client_token')"
-              [ -n "$VT" ] && [ "$VT" != "null" ] || { echo "ERROR: Vault auth failed"; exit 1; }
-              curl -sf -X PATCH "${VAULT_ADDR}/v1/${VAULT_PATH}" \
-                -H "X-Vault-Token: ${VT}" \
-                -H "Content-Type: application/merge-patch+json" \
-                -d "{\"data\":{\"k8s-oidc-client-id\":\"${CLIENT_ID}\"}}" >/dev/null
-              echo "  stored 'k8s-oidc-client-id' in Vault at ${VAULT_PATH}"
-
-              echo "=== done (roles ensured, app '${K8S_APP_NAME}' clientId published) ==="
+              echo "=== configuration converged ==="
