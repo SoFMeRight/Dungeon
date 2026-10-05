@@ -33,8 +33,9 @@ jwt:
         claim: preferred_username
         prefix: "zitadel:"
       groups:
-        # Zitadel asserts project roles as a MAP keyed by roleKey:
-        #   "urn:zitadel:iam:org:project:roles": { "operator": {"<orgId>":"<domain>"}, ... }
-        # Flatten the map's keys into a prefixed group list (e.g. zitadel:operator).
-        # VERIFIED AT CANARY: a real login on map-001 proves this claim/expression before rollout.
-        expression: '(has(claims["urn:zitadel:iam:org:project:roles"]) ? claims["urn:zitadel:iam:org:project:roles"].map(r, "zitadel:" + r) : [])'
+        # Groups come from the flat `roles` claim set by the Zitadel Action "flatRoles"
+        # (it collects every granted role key into a string array). Plain claim+prefix, no CEL.
+        # NOTE: flatRoles flattens roles across ALL of a user's project grants, so these
+        # groups are NOT project-scoped — the RBAC bindings account for that.
+        claim: roles
+        prefix: "zitadel:"
