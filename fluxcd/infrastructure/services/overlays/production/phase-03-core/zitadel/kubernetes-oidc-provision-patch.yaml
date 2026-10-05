@@ -1,7 +1,8 @@
 ---
 # Instance-specific wiring for the Kubernetes OIDC provisioner (base is templated):
-# concrete image + this Zitadel instance's URL and the project it provisions into
-# (304909944191193091 = the project weave-gitops already lives in).
+# concrete image + this Zitadel instance's URL and the project name to provision into.
+# Keyed by NAME: on this instance it reuses the existing "Container Orchestration"
+# project (where weave-gitops already lives); on a fresh bootstrap it creates it.
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -18,5 +19,5 @@ spec:
           env:
             - name: ZITADEL_URL
               value: https://sso.prplanit.com
-            - name: PROJECT_ID
-              value: "304909944191193091"
+            - name: PROJECT_NAME
+              value: Container Orchestration

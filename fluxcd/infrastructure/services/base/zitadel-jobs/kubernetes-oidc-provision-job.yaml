@@ -64,27 +64,47 @@ spec:
               value: zeldas-letter/data/apps/zitadel
             - name: K8S_APP_NAME
               value: kubernetes
-            # ZITADEL_URL + PROJECT_ID are instance-specific -> set in the overlay patch
+            # ZITADEL_URL + PROJECT_NAME are instance-specific -> set in the overlay patch.
+            # Keyed by NAME (not a baked ID) so the Job is bootstrap-safe: it reuses the
+            # project if present and creates it if a from-scratch Zitadel doesn't have it yet.
             - name: ZITADEL_URL
               value: PLACEHOLDER_ZITADEL_URL
-            - name: PROJECT_ID
-              value: PLACEHOLDER_PROJECT_ID
+            - name: PROJECT_NAME
+              value: PLACEHOLDER_PROJECT_NAME
           command:
             - bash
             - -c
             - |
               set -euo pipefail
 
-              : "${ZITADEL_URL:?}" "${PROJECT_ID:?}" "${NAMESPACE:?}"
+              : "${ZITADEL_URL:?}" "${PROJECT_NAME:?}" "${NAMESPACE:?}"
               : "${VAULT_ADDR:?}" "${VAULT_ROLE:?}" "${VAULT_PATH:?}" "${K8S_APP_NAME:?}"
               MGMT="${ZITADEL_URL}/management/v1"
 
-              echo "=== Provisioning Kubernetes OIDC in project ${PROJECT_ID} ==="
+              echo "=== Provisioning Kubernetes OIDC into project '${PROJECT_NAME}' ==="
 
               PAT="$(kubectl get secret zitadel-k8s-admin-sa -n "$NAMESPACE" -o jsonpath='{.data.token}' | base64 -d)"
               [ -n "$PAT" ] || { echo "ERROR: empty admin PAT"; exit 1; }
 
               api() { curl -sf -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" "$@"; }
+
+              # --- 0. Ensure the project (idempotent + bootstrap-safe): reuse by name, create if absent ---
+              FOUND="$(api -X POST "${MGMT}/projects/_search" \
+                -d "{\"queries\":[{\"nameQuery\":{\"name\":\"${PROJECT_NAME}\",\"method\":\"TEXT_QUERY_METHOD_EQUALS\"}}]}" \
+                | jq -r '.result[]? | .id')"
+              N="$(printf '%s\n' "$FOUND" | grep -c . || true)"
+              if [ "$N" -gt 1 ]; then
+                echo "ERROR: ${N} projects named '${PROJECT_NAME}' exist - refusing to guess which"; exit 1
+              elif [ "$N" -eq 1 ]; then
+                PROJECT_ID="$FOUND"
+                echo "  project '${PROJECT_NAME}' already present (${PROJECT_ID}) - reusing"
+              else
+                echo "  project '${PROJECT_NAME}' absent - creating it"
+                PROJECT_ID="$(api -X POST "${MGMT}/projects" \
+                  -d "{\"name\":\"${PROJECT_NAME}\",\"projectRoleAssertion\":true,\"projectRoleCheck\":true,\"hasProjectCheck\":true}" \
+                  | jq -r '.id')"
+              fi
+              [ -n "$PROJECT_ID" ] && [ "$PROJECT_ID" != "null" ] || { echo "ERROR: could not resolve project id"; exit 1; }
 
               # --- 1. Ensure project roles (idempotent: create only if the key is absent) ---
               ensure_role() {
