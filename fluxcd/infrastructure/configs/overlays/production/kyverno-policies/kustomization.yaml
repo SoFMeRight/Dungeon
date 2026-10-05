@@ -19,3 +19,4 @@ resources:
   - mutate-velero-maintenance-hardening.yaml
   - mutate-vault-sidecar-hardening.yaml
   - mutate-smb-pv-mount-options.yaml
+  - generate-cnpg-peer-authz.yaml

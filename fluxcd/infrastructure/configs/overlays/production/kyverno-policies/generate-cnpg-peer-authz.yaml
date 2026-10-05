@@ -1,0 +1,55 @@
+# CNPG >=1.30 instance managers dial each other on :8000 (/failsafe) and replicas
+# stream from the primary on :5432 — under the namespace default-deny both need the
+# per-cluster self-paired allow (only the cluster's own SA to only that cluster's
+# pods). Generates it on CNPG Cluster creation so a new cluster is never born with
+# silently degraded resilience. CREATE-only and skip-if-exists: the Flux-managed
+# allow-<cluster>-replication policies for existing clusters stay authoritative,
+# and a later Flux manifest with the same name simply takes over. A generated
+# policy outliving a deleted Cluster selects no pods and allows nothing.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno:generate-istio-authorizationpolicies
+  labels:
+    rbac.kyverno.io/aggregate-to-background-controller: "true"
+rules:
+  - apiGroups: ["security.istio.io"]
+    resources: ["authorizationpolicies"]
+    verbs: ["create", "update", "patch", "get", "list", "watch", "delete"]
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: generate-cnpg-peer-authz
+spec:
+  rules:
+    - name: cnpg-instance-peer-allow
+      match:
+        any:
+          - resources:
+              kinds:
+                - postgresql.cnpg.io/v1/Cluster
+              operations:
+                - CREATE
+      generate:
+        generateExisting: false
+        synchronize: false
+        apiVersion: security.istio.io/v1
+        kind: AuthorizationPolicy
+        name: "allow-{{request.object.metadata.name}}-replication"
+        namespace: "{{request.object.metadata.namespace}}"
+        data:
+          spec:
+            selector:
+              matchLabels:
+                cnpg.io/cluster: "{{request.object.metadata.name}}"
+            action: ALLOW
+            rules:
+              - from:
+                  - source:
+                      principals:
+                        - "cluster.local/ns/{{request.object.metadata.namespace}}/sa/{{request.object.metadata.name}}"
+                to:
+                  - operation:
+                      # 5432: streaming replication; 8000: instance-manager peer /failsafe (CNPG >=1.30)
+                      ports: ["5432", "8000"]
