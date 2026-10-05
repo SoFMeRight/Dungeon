@@ -14,4 +14,5 @@ spec:
               - cluster.local/ns/temple-of-time/sa/open-webui-postgres
       to:
         - operation:
-            ports: ["5432"]
+            # 5432: streaming replication; 8000: instance-manager peer /failsafe (CNPG >=1.30)
+            ports: ["5432", "8000"]

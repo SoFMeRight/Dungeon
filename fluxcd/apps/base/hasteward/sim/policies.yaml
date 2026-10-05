@@ -42,5 +42,7 @@ spec:
               - cluster.local/ns/training-dummy/sa/training-dummy-postgres
       to:
         - operation:
+            # 5432: streaming replication; 8000: instance-manager peer /failsafe (CNPG >=1.30)
             ports:
               - "5432"
+              - "8000"
