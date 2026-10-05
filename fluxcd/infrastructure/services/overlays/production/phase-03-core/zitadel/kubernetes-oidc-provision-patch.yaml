@@ -21,3 +21,7 @@ spec:
               value: https://sso.prplanit.com
             - name: PROJECT_NAME
               value: Container Orchestration
+            # Cluster-specific app name (house pattern: env/cluster on the app, like "DD-UI (prod)").
+            # Quoted because the ": " would otherwise read as a YAML mapping.
+            - name: K8S_APP_NAME
+              value: "Kubernetes: Dungeon"
