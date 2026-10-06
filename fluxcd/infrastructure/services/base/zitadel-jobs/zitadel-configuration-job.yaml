@@ -257,9 +257,11 @@ spec:
               [ -n "$TID" ] && [ "$TID" != "null" ] || { echo "ERROR: no target id"; exit 1; }
 
               # Same two points the v1 flow triggered on (Complement Token).
+              # SetExecution.targets is an ordered array of target-ID STRINGS (v2betaSetExecutionRequest),
+              # not objects. PUT /executions = ActionService_SetExecution.
               for FN in preuserinfo preaccesstoken; do
                 EX="$(jq -n --arg fn "$FN" --arg t "$TID" \
-                  '{condition: {function: {name: $fn}}, targets: [{target: $t}]}')"
+                  '{condition: {function: {name: $fn}}, targets: [$t]}')"
                 put_ok "execution ${FN}" "$(api_put "${BASE}/v2beta/actions/executions" -d "$EX")"
               done
 
