@@ -99,12 +99,19 @@ spec:
             - name: tmp
               mountPath: /tmp
           resources:
+            # Sized to measured steady state, not guessed. The 512Mi limit OOM-killed
+            # this pod 98 times in 35 hours (exit 137, roughly every 20 minutes): it sits
+            # at 477-510Mi with the scan already finished, so the cap was the binding
+            # constraint and any transient spike was the kill. Memory is dominated by the
+            # SQLite library DB rather than by scanning — navidrome.db is 344M with a 181M
+            # WAL, page-cached and mmapped — so it does not shrink between scans.
+            # Requests matched it too: 128Mi scheduled a pod that uses four times that.
             requests:
-              cpu: 50m
-              memory: 128Mi
+              cpu: 200m
+              memory: 512Mi
             limits:
               cpu: "1"
-              memory: 512Mi
+              memory: 1Gi
       volumes:
         - name: music
           persistentVolumeClaim:
