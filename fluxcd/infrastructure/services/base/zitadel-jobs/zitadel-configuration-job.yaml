@@ -141,9 +141,12 @@ spec:
               # loginV2 required: every flow -- including device-code verification, which is
               # instance-routed and ignores per-app loginVersion pins -- renders in the v2 login.
               echo "--- step 2: instance features ---"
+              # STABLE /v2/features/instance — the v2beta SetInstanceFeaturesRequest has NO
+              # loginV2 field, so a PUT there silently drops it and returns "No changes"
+              # (verified against the image's OpenAPI: only the stable v2 request carries loginV2).
               FEATURES="$(jq -n --arg base "https://${HOST}/ui/v2/login" \
                 '{loginV2: {required: true, baseUri: $base}}')"
-              put_ok "instance features" "$(api_put "${BASE}/v2beta/features/instance" -d "$FEATURES")"
+              put_ok "instance features" "$(api_put "${BASE}/v2/features/instance" -d "$FEATURES")"
 
               # --- step 3: kubernetes OIDC (project by name, roles, app, clientId -> Vault) ---
               echo "--- step 3: kubernetes OIDC ---"
