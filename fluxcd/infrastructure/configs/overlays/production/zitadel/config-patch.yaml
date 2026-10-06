@@ -81,10 +81,26 @@ data:
         Webhook:
           Enabled: false
 
-    # Enable Actions for K8s webhook integration
-    Actions:
-      HTTP:
-        DenyList: []
+    # Actions v2 targets are outbound webhooks filtered by HTTPClient.DenyList (the
+    # live SSRF guard; Actions.HTTP.DenyList is DEPRECATED and was inert here). The
+    # shipped default denies all RFC1918 + loopback, which blocks in-cluster targets
+    # like the flatRoles claim-mapper. This denylist REPLACES the default and reopens
+    # ONLY the k8s Service CIDR (10.144.0.0/12, where ClusterIPs live) by listing 10/8
+    # as its complement-minus-Service-CIDR. Pod CIDR, the LB range (172.22.x), CGNAT,
+    # and loopback all stay denied — scoped, not a blanket SSRF disable.
+    HTTPClient:
+      DenyList:
+        - localhost
+        - "10.0.0.0/9"         # 10.0.0.0   – 10.127.255.255
+        - "10.128.0.0/12"      # 10.128.0.0 – 10.143.255.255  (gap = 10.144.0.0/12 Service CIDR, ALLOWED)
+        - "10.160.0.0/11"      # 10.160.0.0 – 10.191.255.255
+        - "10.192.0.0/10"      # 10.192.0.0 – 10.255.255.255
+        - "100.64.0.0/10"      # Carrier-Grade NAT
+        - "127.0.0.0/8"        # IPv4 loopback
+        - "::1/128"            # IPv6 loopback
+        - "::/128"             # IPv6 unspecified
+        - "172.16.0.0/12"      # Class B private (incl. LB range 172.22.x)
+        - "192.168.0.0/16"     # Class C private (incl. Pod CIDR)
 
     # Notifications Configuration (required for v4.3.0+)
     Notifications:
