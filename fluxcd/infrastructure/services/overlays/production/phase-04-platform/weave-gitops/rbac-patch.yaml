@@ -13,17 +13,19 @@ subjects:
     name: kai
     apiGroup: rbac.authorization.k8s.io
 ---
-# OIDC group binding - Zitadel "Admin" project role gets full access
-# Add more groups here as needed (e.g., Viewer, Developer)
+# OIDC group binding - `operator` (top of the role ladder) gets Weave read-only.
+# Weave impersonates the RAW `roles` claim (no apiserver prefix), so the group is
+# bare `operator` here -- NOT the prefixed `prplanit-sso:operator` the apiserver's
+# RBAC uses. Add more groups (admin/developer) here if lower tiers should see Weave.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: weave-gitops-oidc-admin
+  name: weave-gitops-oidc-operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: weave-gitops-read-only
 subjects:
   - kind: Group
-    name: admin
+    name: operator
     apiGroup: rbac.authorization.k8s.io
