@@ -1,22 +1,4 @@
-# Give the user "kai" permissions to view resources (user-account auth)
-# This user doesn't need to exist - Kubernetes will check permissions when impersonated
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: weave-gitops-user-kai-read
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: weave-gitops-read-only
-subjects:
-  - kind: User
-    name: kai
-    apiGroup: rbac.authorization.k8s.io
----
-# OIDC group binding - `operator` (top of the role ladder) gets Weave read-only.
-# Weave impersonates the RAW `roles` claim (no apiserver prefix), so the group is
-# bare `operator` here -- NOT the prefixed `prplanit-sso:operator` the apiserver's
-# RBAC uses. Add more groups (admin/developer) here if lower tiers should see Weave.
+# Weave impersonates the raw `roles` claim; group is unprefixed `operator`, not `prplanit-sso:`.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -24,7 +6,7 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: weave-gitops-read-only
+  name: weave-gitops-reconciler
 subjects:
   - kind: Group
     name: operator

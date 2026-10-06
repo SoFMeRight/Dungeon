@@ -1,16 +1,8 @@
-# RBAC for Weave GitOps. The dashboard reads the cluster as the impersonated user
-# (kai / OIDC admin group, bound to this ClusterRole in the overlay's rbac-patch.yaml);
-# the server's own SA only holds impersonate + the two named auth secrets (chart role).
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: weave-gitops-read-only
+  name: weave-gitops-reconciler
 rules:
-  # Core resources for the dashboard. `secrets` is required — weave-gitops's
-  # collector watches Secrets as the impersonated user, and its recommended user
-  # role includes them; denying it empties every view. Secret VALUES are protected
-  # by the UI (redacted) and by users having no kubeconfig (impersonation-only), not
-  # by withholding this grant. Enumerated (not "*") so access is at least explicit.
   - apiGroups: [""]
     resources:
       - configmaps
@@ -35,3 +27,33 @@ rules:
   - apiGroups: ["source.toolkit.fluxcd.io", "kustomize.toolkit.fluxcd.io", "helm.toolkit.fluxcd.io", "notification.toolkit.fluxcd.io", "image.toolkit.fluxcd.io"]
     resources: ["*"]
     verbs: ["get", "list", "watch", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: weave-gitops-viewer
+rules:
+  - apiGroups: [""]
+    resources:
+      - configmaps
+      - endpoints
+      - events
+      - limitranges
+      - namespaces
+      - nodes
+      - persistentvolumeclaims
+      - persistentvolumes
+      - pods
+      - pods/log
+      - replicationcontrollers
+      - resourcequotas
+      - secrets
+      - serviceaccounts
+      - services
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps", "batch", "autoscaling", "extensions", "networking.k8s.io", "policy", "rbac.authorization.k8s.io"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["source.toolkit.fluxcd.io", "kustomize.toolkit.fluxcd.io", "helm.toolkit.fluxcd.io", "notification.toolkit.fluxcd.io", "image.toolkit.fluxcd.io"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
