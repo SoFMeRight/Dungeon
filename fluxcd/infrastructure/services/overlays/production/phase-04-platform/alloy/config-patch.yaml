@@ -935,9 +935,36 @@ data:
 
     // Parse CRI log format: <timestamp> <stream> <flags> <message>
     loki.process "parse_cri" {
-      forward_to = [loki.process.filter_noise.receiver]
+      forward_to = [loki.process.redact_secrets.receiver]
 
       stage.cri {}
+    }
+
+    // Redact credentials that arrive in URL query strings, BEFORE anything reaches Loki.
+    //
+    // The Subsonic API still permits legacy auth as a query parameter, so a client using
+    // it puts the account password in every request line — and the istio gateway access
+    // log records the full path, so the password lands in Loki and in anything reading it.
+    // This is not navidrome-specific: any app can take a secret in a query parameter, so
+    // the stage sits on the shared pod-log pipeline rather than on one host's logs.
+    //
+    // Only the VALUE is captured, so the parameter name survives and the line stays
+    // parseable: `&p=hunter2` becomes `&p=REDACTED`. That is deliberate — stripping the
+    // whole query string (Envoy's %REQ_WITHOUT_QUERY%) would have been simpler and would
+    // have blinded the CrowdSec scenarios that match on query payloads: http-sqli-probing,
+    // http-path-traversal-probing, apache_log4j2_cve-2021-44228 and the CVE scenarios all
+    // read args. CrowdSec acquires from Loki, so anything removed here is removed from its
+    // view too; removing one parameter's value costs nothing a scenario looks for.
+    //
+    // `t=` (the Subsonic salted token) is deliberately NOT matched: a bare single-letter
+    // parameter is too common across apps to redact safely on a pipeline this broad.
+    loki.process "redact_secrets" {
+      forward_to = [loki.process.filter_noise.receiver]
+
+      stage.replace {
+        expression = "[?&](?:p|password|passwd|pwd|access_token|api_key|apikey|secret)=([^&\\s\"]+)"
+        replace    = "REDACTED"
+      }
     }
 
     // Filter out noisy non-actionable log lines
