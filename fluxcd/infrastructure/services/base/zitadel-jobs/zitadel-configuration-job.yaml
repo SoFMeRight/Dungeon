@@ -249,8 +249,10 @@ spec:
                   *) echo "ERROR: target create failed (http $HTTP): $BODY"; exit 1 ;;
                 esac
               else
+                # v2beta UpdateTarget is POST /targets/{id} (ActionService_UpdateTarget),
+                # NOT PUT (PUT 405s - the {id} path only serves GET/DELETE/POST).
                 echo "  v2 target 'flatroles' present (${TID}) - reconciling"
-                put_ok "v2 target" "$(api_put "${BASE}/v2beta/actions/targets/${TID}" -d "$TARGET_CFG")"
+                put_ok "v2 target" "$(api_post "${BASE}/v2beta/actions/targets/${TID}" -d "$TARGET_CFG")"
               fi
               [ -n "$TID" ] && [ "$TID" != "null" ] || { echo "ERROR: no target id"; exit 1; }
 
