@@ -189,7 +189,7 @@ spec:
               # userinfo assertion, which stays on); the urn:zitadel role-map only bloats
               # tokens and the device consent. loginVersion pins the v2 login UI.
               APP_CFG='{
-                "redirectUris": ["http://localhost:8000", "http://127.0.0.1:18000"],
+                "redirectUris": ["http://localhost:8000", "http://127.0.0.1:18000", "http://localhost"],
                 "responseTypes": ["OIDC_RESPONSE_TYPE_CODE"],
                 "grantTypes": ["OIDC_GRANT_TYPE_AUTHORIZATION_CODE", "OIDC_GRANT_TYPE_REFRESH_TOKEN", "OIDC_GRANT_TYPE_DEVICE_CODE"],
                 "appType": "OIDC_APP_TYPE_NATIVE",
