@@ -99,19 +99,24 @@ spec:
             - name: tmp
               mountPath: /tmp
           resources:
-            # Sized to measured steady state, not guessed. The 512Mi limit OOM-killed
-            # this pod 98 times in 35 hours (exit 137, roughly every 20 minutes): it sits
-            # at 477-510Mi with the scan already finished, so the cap was the binding
-            # constraint and any transient spike was the kill. Memory is dominated by the
-            # SQLite library DB rather than by scanning — navidrome.db is 344M with a 181M
-            # WAL, page-cached and mmapped — so it does not shrink between scans.
-            # Requests matched it too: 128Mi scheduled a pod that uses four times that.
+            # Most of this container's memory is NOT navidrome. Per cgroup memory.stat:
+            # anon 415Mi (the Go heap, flat) against slab_reclaimable ~550Mi — kernel
+            # dentry/inode cache for the CIFS music mount, billed to whichever cgroup
+            # faulted it in. Walking and streaming a library of this size populates it,
+            # and a limit with no slack turns reclaim into an OOM kill instead of a cache
+            # eviction. jellyfin shows the same shape (anon 617Mi, slab 362Mi) and simply
+            # has 6Gi to absorb it.
+            #
+            # So the limit covers heap + metadata cache + room to reclaim, and requests
+            # track anon only, which is what the scheduler should reserve. Note `top` and
+            # working-set metrics cannot separate heap from kernel slab — read
+            # memory.stat before changing these.
             requests:
               cpu: 200m
               memory: 512Mi
             limits:
               cpu: "1"
-              memory: 1Gi
+              memory: 2Gi
       volumes:
         - name: music
           persistentVolumeClaim:
