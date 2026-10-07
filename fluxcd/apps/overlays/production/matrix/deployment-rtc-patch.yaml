@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: livekit
-          image: docker.io/livekit/livekit-server:v1.13.7
+          image: docker.io/livekit/livekit-server:v1.13.9
 ---
 apiVersion: apps/v1
 kind: Deployment
