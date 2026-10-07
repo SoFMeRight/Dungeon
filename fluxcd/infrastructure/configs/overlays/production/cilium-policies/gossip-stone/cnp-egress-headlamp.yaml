@@ -7,7 +7,9 @@ spec:
     headlamp reads the Kubernetes API with the signed-in user's OIDC token
     (covered by the universal allow-kube-apiserver-egress CCNP) and hairpins
     OIDC token exchange to sso.prplanit.com, reaching the (non-meshed)
-    cell-membrane/xylem gateway pods on 443. No other external egress.
+    cell-membrane/xylem gateway pods on 443. The install-plugins init container
+    seeds the Flux plugin from GitHub: DNS via coredns, then api.github.com,
+    github.com, and *.githubusercontent.com on 443.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -22,6 +24,27 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: arylls-lookout
             gateway.networking.k8s.io/gateway-name: xylem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "api.github.com"
+        - matchName: "github.com"
+        - matchPattern: "*.githubusercontent.com"
       toPorts:
         - ports:
             - port: "443"

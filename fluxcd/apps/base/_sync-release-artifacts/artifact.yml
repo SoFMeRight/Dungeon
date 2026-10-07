@@ -1,0 +1,109 @@
+---
+# One release artifact `a`. Supported source: github-release.
+# Selection: layout (raw|tar|zip), strip (tar), subdir, include (globs).
+- name: "reconcile {{ a.name }} {{ a.version }}"
+  vars:
+    _tag: "{{ a.tag | replace('{version}', a.version) }}"
+    _asset: "{{ a.asset | replace('{version}', a.version) }}"
+    _raw: "{{ (a.layout | default('tar')) == 'raw' }}"
+    _marker: "{{ (a.dest ~ '.artifact-digest') if (a.layout | default('tar')) == 'raw' else (a.dest ~ '/.artifact-digest') }}"
+    _vmark: "{{ (a.dest ~ '.artifact-version') if (a.layout | default('tar')) == 'raw' else (a.dest ~ '/.artifact-version') }}"
+    _stage: "/tmp/sra-{{ a.name }}"
+  block:
+    - name: "{{ a.name }}: resolve release metadata"
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/{{ a.repo }}/releases/tags/{{ _tag }}"
+        headers:
+          Accept: application/vnd.github+json
+        return_content: true
+      register: _rel
+
+    - name: "{{ a.name }}: pick published digest + download url for {{ _asset }}"
+      ansible.builtin.set_fact:
+        _pub: "{{ _rel.json.assets | selectattr('name', 'equalto', _asset) | selectattr('digest', 'defined') | map(attribute='digest') | list | first | default('') }}"
+        _url: "{{ _rel.json.assets | selectattr('name', 'equalto', _asset) | map(attribute='browser_download_url') | list | first | default('') }}"
+
+    - name: "{{ a.name }}: require a published sha256 digest + url"
+      ansible.builtin.assert:
+        that:
+          - "_pub is string and _pub.startswith('sha256:')"
+          - "_url | length > 0"
+        fail_msg: "no sha256-digested asset '{{ _asset }}' on release {{ _tag }}"
+        quiet: true
+
+    - name: "{{ a.name }}: read cached digest marker"
+      ansible.builtin.slurp:
+        src: "{{ _marker }}"
+      register: _m
+      failed_when: false
+
+    - name: "{{ a.name }}: already current"
+      ansible.builtin.debug:
+        msg: "{{ a.name }} {{ a.version }} current ({{ _pub }}) - skipping"
+      when: "(_m.content | default('') | b64decode) == _pub"
+
+    - name: "{{ a.name }}: fetch, verify, place"
+      when: "(_m.content | default('') | b64decode) != _pub"
+      block:
+        - name: "{{ a.name }}: reset staging dir"
+          ansible.builtin.file:
+            path: "{{ _stage }}"
+            state: absent
+        - name: "{{ a.name }}: create staging dir"
+          ansible.builtin.file:
+            path: "{{ _stage }}"
+            state: directory
+            mode: "0755"
+
+        - name: "{{ a.name }}: download + verify against published digest (fail-closed)"
+          ansible.builtin.get_url:
+            url: "{{ _url }}"
+            dest: "{{ _stage }}/asset"
+            checksum: "{{ _pub if (a.verify | default('github-digest')) != 'none' else omit }}"
+            force: true
+            mode: "0644"
+
+        - name: "{{ a.name }}: unpack, select, place"
+          ansible.builtin.shell:
+            executable: /bin/bash
+            cmd: |
+              set -euo pipefail
+              asset="{{ _stage }}/asset"; work="{{ _stage }}/x"; dest="{{ a.dest }}"
+              rm -rf "$work"; mkdir -p "$work"
+              case "{{ a.layout | default('tar') }}" in
+                raw)
+                  install -D -m "{{ a.mode | default('0644') }}" "$asset" "$dest"
+                  exit 0 ;;
+                tar)
+                  tar -xzf "$asset" -C "$work" {{ ('--strip-components=' ~ (a.strip | int)) if (a.strip | default(0) | int) > 0 else '' }} ;;
+                zip)
+                  python3 -m zipfile -e "$asset" "$work" ;;
+                *)
+                  echo "unknown layout: {{ a.layout | default('tar') }}" >&2; exit 1 ;;
+              esac
+              root="$work{{ ('/' ~ a.subdir) if a.subdir is defined else '' }}"
+              rm -rf "$dest"; mkdir -p "$dest"
+              {% if a.include is defined %}
+              for g in {{ a.include | join(' ') }}; do ( cd "$root" && cp -R --preserve=mode,timestamps $g "$dest"/ ); done
+              {% else %}
+              cp -R --preserve=mode,timestamps "$root"/. "$dest"/
+              {% endif %}
+
+        - name: "{{ a.name }}: write digest + version markers"
+          ansible.builtin.copy:
+            dest: "{{ item.p }}"
+            content: "{{ item.c }}"
+            mode: "0644"
+          loop:
+            - p: "{{ _marker }}"
+              c: "{{ _pub }}"
+            - p: "{{ _vmark }}"
+              c: "{{ a.version }}"
+
+        - name: "{{ a.name }}: installed"
+          ansible.builtin.debug:
+            msg: "{{ a.name }} {{ a.version }} installed & verified ({{ _pub }})"
+  rescue:
+    - name: "{{ a.name }}: keep cached copy on failure"
+      ansible.builtin.debug:
+        msg: "WARN {{ a.name }} {{ a.version }}: {{ ansible_failed_result.msg | default('reconcile failed') }} - keeping cached copy"

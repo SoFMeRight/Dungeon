@@ -5,13 +5,19 @@ resources:
   - ../../../base/headlamp
   - externalsecret.yaml
   - httproute.yaml
+configMapGenerator:
+  - name: headlamp-release-spec
+    files:
+      - releases.yaml
 images:
   - name: ghcr.io/headlamp-k8s/headlamp
     newTag: v0.45.0
+  - name: docker.io/hlhd/ansible
+    newTag: v2.21.4
 patches:
-  - path: deployment-patch.yaml
+  - path: statefulset-patch.yaml
     target:
-      kind: Deployment
+      kind: StatefulSet
       name: headlamp
   - path: service-patch.yaml
     target:

@@ -68,6 +68,14 @@ data:
         },
         {
           "customType": "regex",
+          "managerFilePatterns": ["/fluxcd/apps/overlays/production/.+/releases\\.yaml$/"],
+          "matchStrings": [
+            "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: extractVersion=(?<extractVersion>\\S+))?\\n\\s+version: \"?(?<currentValue>[^\"\\n]+)\"?"
+          ],
+          "description": "release-sync artifact specs (releases.yaml): per-artifact version pin; extractVersion filters monorepo release tags"
+        },
+        {
+          "customType": "regex",
           "managerFilePatterns": ["/fluxcd/.+\\.yaml$/"],
           "matchStrings": [
             "image:\\s+(?<depName>ghcr\\.io/mariadb-operator/mariadb-operator):(?<currentValue>\\S+)"

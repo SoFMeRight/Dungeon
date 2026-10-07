@@ -1,0 +1,11 @@
+releases:
+  - name: flux
+    repo: headlamp-k8s/plugins
+    tag: "flux-{version}"
+    asset: "headlamp-k8s-flux-{version}.tar.gz"
+    # renovate: datasource=github-releases depName=headlamp-k8s/plugins extractVersion=^flux-(?<version>.+)$
+    version: "0.7.0"
+    verify: github-digest
+    layout: tar
+    strip: 1
+    dest: /plugins/flux

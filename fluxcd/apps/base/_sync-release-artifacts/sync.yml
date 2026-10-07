@@ -1,0 +1,21 @@
+---
+# sync-release-artifacts — a generic, repeatable job that reconciles pinned
+# upstream/vendored release artifacts onto a path. Each item in `releases` is
+# fetched, verified against the sha256 digest the source publishes for that
+# version, selected (strip/subdir/include), and placed at its `dest`. Idempotent
+# (skips when the cached digest already matches), fail-closed on a digest
+# mismatch (keeps the cached copy), and graceful on any network/API failure.
+# Consumers pass their own `releases` list; nothing here is app-specific.
+- name: sync release artifacts
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    releases: []
+  tasks:
+    - name: reconcile each release artifact (per-item failures are isolated)
+      ansible.builtin.include_tasks: artifact.yml
+      loop: "{{ releases }}"
+      loop_control:
+        loop_var: a
+        label: "{{ a.name }} {{ a.version }}"

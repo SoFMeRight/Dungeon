@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: headlamp
 spec:
@@ -16,6 +16,15 @@ spec:
         fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: fetch-plugins
+          resources:
+            requests:
+              cpu: 20m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
       containers:
         - name: headlamp
           env:
@@ -44,6 +53,13 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
-      volumes:
-        - name: tmp
-          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: plugins
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-rbd
+        resources:
+          requests:
+            storage: 128Mi
