@@ -3,7 +3,7 @@ kind: HelmRelease
 metadata:
   name: kyverno
 spec:
-  targetNamespace: zeldas-lullaby
+  targetNamespace: mr-resetti
   values:
     # Namespaces the admission webhooks must never gate, because the cluster
     # cannot start without them and Kyverno cannot start without the cluster.
@@ -18,7 +18,7 @@ spec:
     #
     # kube-system is excluded by the chart for exactly this reason. These two
     # belong beside it: king-of-red-lions runs istiod, ztunnel and istio-cni,
-    # which every other pod's networking depends on; zeldas-lullaby runs Kyverno,
+    # which every other pod's networking depends on; mr-resetti runs Kyverno,
     # which must never be able to gate its own recovery.
     #
     # The cost is admission-time enforcement in those two namespaces only, and it
@@ -48,16 +48,16 @@ spec:
               values:
                 - kube-system
                 - king-of-red-lions
-                - zeldas-lullaby
+                - mr-resetti
 
     # PolicyExceptions: the scalable exception model for enforce-pod-hardening's larger phases
     # (no-privesc / non-root / RO-root have 25 / 67 / 127 exceptions — name patterns don't scale).
-    # Restricted to zeldas-lullaby so exceptions can only be created in this one admin-controlled,
+    # Restricted to mr-resetti so exceptions can only be created in this one admin-controlled,
     # flux-managed namespace (a compromised app namespace can't self-except).
     features:
       policyExceptions:
         enabled: true
-        namespace: zeldas-lullaby
+        namespace: mr-resetti
     # Alloy discovers scrape targets from prometheus.io annotations on pods, not from
     # PodMonitor objects, so kyverno_policy_results_total only reaches VictoriaMetrics
     # if the pods carry these. Without them the Kyverno Policy Violations alert

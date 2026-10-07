@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress for mr-resetti (Kyverno's namespace). kube-apiserver +
+    mesh ride the universal CCNP baseline; cnp-kyverno-admission-webhook admits
+    kube-apiserver -> admission controller :9443. Egress is left open: the Kyverno
+    controllers reach the apiserver and arbitrary registries (image/data
+    verification, report posting) and must never be unable to, which is also what
+    keeps this namespace out of the webhook deadlock cycle. Ingress enforcement is
+    triggered by a reserved-label anchor.
+  enableDefaultDeny:
+    ingress: true
+    egress: false
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor

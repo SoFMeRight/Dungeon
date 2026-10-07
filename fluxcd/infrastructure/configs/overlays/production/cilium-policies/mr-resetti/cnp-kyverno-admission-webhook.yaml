@@ -1,20 +1,20 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-external-secrets-webhook
+  name: allow-kyverno-admission-webhook
 spec:
   description: >-
-    Allow kube-apiserver to reach external-secrets-webhook on 10250/TCP.
+    Allow kube-apiserver to reach kyverno admission controller on 9443/TCP.
   enableDefaultDeny:
     ingress: false
     egress: false
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: external-secrets-webhook
+      app.kubernetes.io/component: admission-controller
   ingress:
     - fromEntities:
         - kube-apiserver
       toPorts:
         - ports:
-            - port: "10250"
+            - port: "9443"
               protocol: TCP
