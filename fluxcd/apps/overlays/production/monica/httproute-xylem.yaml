@@ -11,8 +11,8 @@ metadata:
         - "[RESPONSE_TIME] < 5000"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: arylls-lookout
+    - name: xylem-gateway
+      namespace: pedestal-of-time
   hostnames:
     - "monica.pcfae.com"
   rules:

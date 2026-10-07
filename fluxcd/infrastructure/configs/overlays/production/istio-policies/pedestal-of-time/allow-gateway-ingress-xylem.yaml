@@ -18,4 +18,4 @@ spec:
               - cluster.local/ns/pedestal-of-time/sa/xylem-gateway-istio
       to:
         - operation:
-            ports: ["2342", "32400"]
+            ports: ["2342", "8080", "32400"]
