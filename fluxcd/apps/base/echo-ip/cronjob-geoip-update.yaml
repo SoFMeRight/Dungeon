@@ -62,6 +62,10 @@ spec:
                 - name: GEOIPUPDATE_EDITION_IDS
                   value: "GeoLite2-ASN GeoLite2-City GeoLite2-Country"
               volumeMounts:
+                # geoipupdate v8 writes its working dir to /tmp/geoipupdate; give it
+                # a writable emptyDir so the rootfs can stay read-only (SEC-4).
+                - name: tmp
+                  mountPath: /tmp
                 - name: PLACEHOLDER_NAMESPACE-echo-ip-data
                   mountPath: /usr/share/GeoIP
               resources:
@@ -72,6 +76,8 @@ spec:
                   memory: "256Mi"
                   cpu: "500m"
           volumes:
+            - name: tmp
+              emptyDir: {}
             - name: PLACEHOLDER_NAMESPACE-echo-ip-data
               persistentVolumeClaim:
                 claimName: PLACEHOLDER_NAMESPACE-echo-ip-data-echo-ip-0
