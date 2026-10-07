@@ -4,6 +4,7 @@ metadata:
   name: vminsert-ingest-xylem
   annotations:
     gatus.home-operations.com/endpoint: |
+      group: "Monitoring (Gossip Stone💬)"
       conditions:
         - "[STATUS] == 401"
 spec:

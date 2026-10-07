@@ -2,6 +2,11 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: loki-ingest-xylem
+  annotations:
+    # group only — inherits the auto-httproute default URL/conditions, just files
+    # this telemetry-ingest endpoint under Monitoring instead of the ungrouped bucket.
+    gatus.home-operations.com/endpoint: |
+      group: "Monitoring (Gossip Stone💬)"
 spec:
   parentRefs:
     - name: phloem-gateway

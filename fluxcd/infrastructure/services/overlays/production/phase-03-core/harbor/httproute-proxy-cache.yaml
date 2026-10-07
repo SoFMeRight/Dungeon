@@ -6,6 +6,7 @@ metadata:
   name: harbor-proxy-cache-docker
   annotations:
     gatus.home-operations.com/endpoint: |
+      group: "Business Apps (Hyrule Castle🏰)"
       # A registry answers 404 at the root; /v2/ returning an auth challenge is
       # what proves the proxy cache is actually serving.
       url: https://docker.cr.pcfae.com/v2/
@@ -29,6 +30,7 @@ metadata:
   name: harbor-proxy-cache-ghcr
   annotations:
     gatus.home-operations.com/endpoint: |
+      group: "Business Apps (Hyrule Castle🏰)"
       # A registry answers 404 at the root; /v2/ returning an auth challenge is
       # what proves the proxy cache is actually serving.
       url: https://ghcr.cr.pcfae.com/v2/
@@ -52,6 +54,7 @@ metadata:
   name: harbor-proxy-cache-quay
   annotations:
     gatus.home-operations.com/endpoint: |
+      group: "Business Apps (Hyrule Castle🏰)"
       # A registry answers 404 at the root; /v2/ returning an auth challenge is
       # what proves the proxy cache is actually serving.
       url: https://quay.cr.pcfae.com/v2/
@@ -75,6 +78,7 @@ metadata:
   name: harbor-proxy-cache-lscr
   annotations:
     gatus.home-operations.com/endpoint: |
+      group: "Business Apps (Hyrule Castle🏰)"
       # A registry answers 404 at the root; /v2/ returning an auth challenge is
       # what proves the proxy cache is actually serving.
       url: https://lscr.cr.pcfae.com/v2/
