@@ -4,7 +4,7 @@ metadata:
   name: xylem-gateway
   annotations:
     lbipam.cilium.io/ips: "172.22.30.69"
-    lbipam.cilium.io/sharing-key: "arylls-lookout"
+    lbipam.cilium.io/sharing-key: "pedestal-of-time"
     lbipam.cilium.io/sharing-cross-namespace: "*"
     service.cilium.io/loadbalancer-mode: "dsr"
 spec:

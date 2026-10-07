@@ -48,11 +48,11 @@ patches:
     target:
       kind: Gateway
       name: phloem-gateway
-  # Set namespace for xylem-gateway to arylls-lookout
+  # Set namespace for xylem-gateway to pedestal-of-time
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: pedestal-of-time
     target:
       kind: Gateway
       name: xylem-gateway

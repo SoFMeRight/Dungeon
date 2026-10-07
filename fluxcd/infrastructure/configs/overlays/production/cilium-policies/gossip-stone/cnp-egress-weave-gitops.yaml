@@ -20,7 +20,7 @@ spec:
             k8s:io.kubernetes.pod.namespace: hyrule-castle
             gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            k8s:io.kubernetes.pod.namespace: pedestal-of-time
             gateway.networking.k8s.io/gateway-name: xylem-gateway
       toPorts:
         - ports:

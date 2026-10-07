@@ -15,7 +15,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/arylls-lookout/sa/xylem-gateway-istio
+              - cluster.local/ns/pedestal-of-time/sa/xylem-gateway-istio
       to:
         - operation:
             ports: ["80", "443", "3142", "8080"]

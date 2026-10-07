@@ -18,21 +18,21 @@ patches:
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: pedestal-of-time
     target:
       kind: Certificate
       name: pcfae-com-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: pedestal-of-time
     target:
       kind: Certificate
       name: pcfae-com-apex-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: pedestal-of-time
     target:
       kind: Certificate
       name: cr-pcfae-com-tls

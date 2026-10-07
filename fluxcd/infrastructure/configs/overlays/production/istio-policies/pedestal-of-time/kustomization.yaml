@@ -12,3 +12,6 @@ resources:
   - allow-plex-ms-x-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml
+  - allow-xylem-gateway-loadbalancer.yaml
+  - telemetry-access-log-xylem.yaml
+  - sso

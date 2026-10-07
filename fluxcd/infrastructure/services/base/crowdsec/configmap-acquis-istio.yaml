@@ -16,7 +16,7 @@ data:
     url: http://loki.gossip-stone.svc.cluster.local:3100
     limit: 1000
     query: |
-      {namespace=~"hyrule-castle|arylls-lookout|prelude-of-light", pod=~"(cell-membrane|xylem|phloem)-gateway-istio-.*"} |= "HTTP/"
+      {namespace=~"hyrule-castle|arylls-lookout|prelude-of-light|pedestal-of-time", pod=~"(cell-membrane|xylem|phloem)-gateway-istio-.*"} |= "HTTP/"
     labels:
       type: istio-gw
     wait_for_ready: 10s

@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: hsts-xylem
-  namespace: arylls-lookout
+  namespace: pedestal-of-time
 spec:
   workloadSelector:
     labels:

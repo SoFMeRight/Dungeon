@@ -6,6 +6,3 @@ resources:
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-intra-breakglass.yaml
-  - allow-xylem-gateway-loadbalancer.yaml
-  - telemetry-access-log-xylem.yaml
-  - sso

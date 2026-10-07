@@ -8,7 +8,7 @@ metadata:
 spec:
   parentRefs:
     - name: xylem-gateway
-      namespace: arylls-lookout
+      namespace: pedestal-of-time
   hostnames:
     - "whisparr.pcfae.com"
   rules:
