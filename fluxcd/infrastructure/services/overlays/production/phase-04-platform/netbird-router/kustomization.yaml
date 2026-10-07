@@ -20,7 +20,7 @@ patches:
         value: ceph-rbd
     target:
       kind: StatefulSet
-      name: netbird-router
+      name: netbird-router-dungeon
   - patch: |-
       - op: replace
         path: /spec/secretStoreRef/name
@@ -30,4 +30,4 @@ patches:
         value: apps/netbird
     target:
       kind: ExternalSecret
-      name: netbird-router
+      name: netbird-router-dungeon

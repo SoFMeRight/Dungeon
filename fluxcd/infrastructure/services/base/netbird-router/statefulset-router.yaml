@@ -1,11 +1,11 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: netbird-router
+  name: netbird-router-dungeon
 spec:
   revisionHistoryLimit: 5
-  serviceName: netbird-router
-  # HA subnet-router: three DISTINCT NetBird peers (netbird-router-0/1/2), each with its
+  serviceName: netbird-router-dungeon
+  # HA subnet-router: three DISTINCT NetBird peers (netbird-router-dungeon-0/1/2), each with its
   # own identity, WireGuard key and PVC. A StatefulSet (not a Deployment) is required so
   # each replica is a stable, separate peer — a shared identity would collide. All three
   # register via the same reusable setup key; add them to the route group in the NetBird
@@ -29,7 +29,7 @@ spec:
         # public gateway URL, not in-mesh pod-to-pod. Cilium egress still applies.
         istio.io/dataplane-mode: none
     spec:
-      serviceAccountName: netbird-router
+      serviceAccountName: netbird-router-dungeon
       containers:
         - name: netbird
           image: PLACEHOLDER_IMAGE
@@ -57,7 +57,7 @@ spec:
             - name: NB_SETUP_KEY
               valueFrom:
                 secretKeyRef:
-                  name: netbird-router
+                  name: netbird-router-dungeon
                   key: NB_SETUP_KEY
           volumeMounts:
             - name: router-data
