@@ -43,6 +43,11 @@ spec:
           requests:
             storage: 10Gi
 
+  # Volume mounts for raft storage
+  volumeMounts:
+    - name: openbao-data
+      mountPath: /vault/data
+
   # Resources
   resources:
     vault:
