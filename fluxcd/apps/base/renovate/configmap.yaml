@@ -149,7 +149,7 @@ data:
           // URL, so these went stale INVISIBLY — Gateway API sat at v1.2.1 while Istio
           // 1.30 needed v1.5.1, with no MR ever opened. Match the version in the URL
           // and resolve it via the github-releases datasource.
-          //   - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.6.2/standard-install.yaml
+          //   - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.6.3/standard-install.yaml
           "customType": "regex",
           "managerFilePatterns": ["/fluxcd/.+\\.yaml$/"],
           "matchStrings": [
