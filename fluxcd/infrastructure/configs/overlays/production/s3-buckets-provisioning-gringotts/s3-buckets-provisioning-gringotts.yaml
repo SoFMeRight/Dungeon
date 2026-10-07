@@ -58,9 +58,9 @@ spec:
             # the bucket rather than a prefix. Restore calls HeadBucket before it
             # reads anything, and SeaweedFS authorises that against the bucket
             # alone, so a prefix-scoped identity can archive but never restore.
-            # The three original buckets stay for velero and for the CNPG archives
-            # written before the split, until those age past their lock.
-            - --buckets=prplanit,optcp,outspokekin,prplanit-dungeon-cnpg-gitlab,prplanit-dungeon-cnpg-zitadel,prplanit-dungeon-cnpg-netbird,prplanit-dungeon-cnpg-vaultwarden,prplanit-dungeon-cnpg-harbor,prplanit-dungeon-cnpg-calcom,prplanit-dungeon-cnpg-boundary,prplanit-dungeon-cnpg-grafana,prplanit-dungeon-cnpg-gatus,optcp-dungeon-cnpg-homarr,optcp-dungeon-cnpg-appflowy,optcp-dungeon-cnpg-open-webui,optcp-dungeon-cnpg-nextcloud,outspokekin-dungeon-cnpg-matrix
+            # The three original buckets stay for the CNPG archives written before
+            # the split, until those age past their lock.
+            - --buckets=prplanit,optcp,outspokekin,prplanit-dungeon-cnpg-gitlab,prplanit-dungeon-cnpg-zitadel,prplanit-dungeon-cnpg-netbird,prplanit-dungeon-cnpg-vaultwarden,prplanit-dungeon-cnpg-harbor,prplanit-dungeon-cnpg-calcom,prplanit-dungeon-cnpg-boundary,prplanit-dungeon-cnpg-grafana,prplanit-dungeon-cnpg-gatus,optcp-dungeon-cnpg-homarr,optcp-dungeon-cnpg-appflowy,optcp-dungeon-cnpg-open-webui,optcp-dungeon-cnpg-nextcloud,outspokekin-dungeon-cnpg-matrix,prplanit-dungeon-velero
             - --retention-days=29
             - --noncurrent-days=7
             - --abort-mpu-days=7

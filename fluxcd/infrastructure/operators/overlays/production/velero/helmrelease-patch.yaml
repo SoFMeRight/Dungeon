@@ -24,8 +24,7 @@ spec:
       backupStorageLocation:
         - name: default
           provider: aws
-          bucket: prplanit
-          prefix: dungeon/velero
+          bucket: prplanit-dungeon-velero
           default: true
           accessMode: ReadWrite
           config:

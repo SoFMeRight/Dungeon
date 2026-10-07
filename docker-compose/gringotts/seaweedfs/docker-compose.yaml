@@ -119,10 +119,10 @@ configs:
               { "accessKey": "${PRPLANIT_DUNGEON_VELERO_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_VELERO_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit/dungeon/velero/*",
-              "Write:prplanit/dungeon/velero/*",
-              "List:prplanit/dungeon/velero/*",
-              "Tagging:prplanit/dungeon/velero/*"
+              "Read:prplanit-dungeon-velero",
+              "Write:prplanit-dungeon-velero",
+              "List:prplanit-dungeon-velero",
+              "Tagging:prplanit-dungeon-velero"
             ]
           },
           {
