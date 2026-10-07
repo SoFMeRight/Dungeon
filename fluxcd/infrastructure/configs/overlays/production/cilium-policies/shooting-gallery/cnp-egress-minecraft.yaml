@@ -30,7 +30,13 @@ spec:
             dns:
               - matchPattern: "*"
     - toFQDNs:
-        - matchName: "api.papermc.io"
+        # Wildcard, not matchName: PaperMC retired the v2 api.papermc.io endpoint for the
+        # v3 fill.papermc.io, and the pinned matchName silently became a deny. DNS still
+        # resolved, so the init container saw a connection reset rather than a refusal —
+        # mc-image-helper reported "Failed to download paper" and the pod restarted 2093
+        # times over eight days. Matching the vendor domain survives the next move.
+        # NOTE: matchPattern "*.papermc.io" does NOT cover the apex papermc.io.
+        - matchPattern: "*.papermc.io"
         - matchPattern: "*.mojang.com"
         - matchName: "api.minecraftservices.com"
         - matchPattern: "*.minecraft.net"
