@@ -1,0 +1,45 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-pve-cluster-proxy-ingress
+spec:
+  description: >-
+    Allow the phloem ingress gateway to reach the PVE nginx proxy on 8006/TCP.
+    gossip-stone default-denies ingress and this namespace enforces BOTH Cilium and istio
+    ambient policy, so a backend needs an allow in each. The istio side already permitted
+    phloem on 8006 (allow-gateway-ingress-phloem, keyed on the
+    policy.prplanit.com/ingress label the proxy carries) while Cilium silently dropped it,
+    which is why pve.pcfae.com was down with an Accepted route and healthy endpoints.
+    Selected by client-class/ingress-instance label rather than by the gateway's namespace:
+    the gateways rotate namespaces (phloem has lived in prelude-of-light and arylls-lookout),
+    and a label-based rule survives that where a namespace-based one would not.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: pve-cluster-proxy
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/client-class: ingress-gateway
+            policy.prplanit.com/ingress-instance: phloem
+      toPorts:
+        - ports:
+            - port: "8006"
+              protocol: TCP
+  # Egress to the Proxmox hosts the proxy fronts. nginx terminates the gateway's plaintext
+  # and re-originates TLS itself (proxy_pass https://pve_cluster), so without this the
+  # connection is accepted and then hangs — the browser sees a stall rather than an error.
+  # Mirrors allow-prometheus-exporter-pve-lan, which grants the exporter the same reach.
+  egress:
+    - toCIDRSet:
+        - cidr: 172.22.22.3/32
+        - cidr: 172.22.22.4/32
+        - cidr: 172.22.22.5/32
+        - cidr: 172.22.22.6/32
+        - cidr: 172.22.22.7/32
+      toPorts:
+        - ports:
+            - port: "8006"
+              protocol: TCP

@@ -21,3 +21,4 @@ resources:
   - cnp-egress-headlamp.yaml
   - cnp-egress-gatus.yaml
   - cnp-grafana-alerting-gossip.yaml
+  - cnp-pve-cluster-proxy.yaml
