@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: hsts-phloem
-  namespace: prelude-of-light
+  namespace: arylls-lookout
 spec:
   workloadSelector:
     labels:

@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: realip-phloem
-  namespace: prelude-of-light
+  namespace: arylls-lookout
 spec:
   # Gateway-wide real-client-IP normalization. By default Envoy passes a client-supplied
   # X-Forwarded-For through unchanged, so any backend that trusts the leftmost XFF (or reads

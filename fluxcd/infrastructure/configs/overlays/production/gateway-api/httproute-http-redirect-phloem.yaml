@@ -2,11 +2,11 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: http-redirect-phloem
-  namespace: prelude-of-light
+  namespace: arylls-lookout
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
       sectionName: http
   rules:
     - filters:

@@ -11,7 +11,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   hostnames:
     - "shiplog.pcfae.com"
   rules:

@@ -39,7 +39,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   hostnames:
     - "sh.pcfae.com"
   rules:
@@ -62,7 +62,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   hostnames:
     - "shlink.pcfae.com"
   rules:

@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: sideporch-camera-tls12
-  namespace: prelude-of-light
+  namespace: arylls-lookout
 spec:
   workloadSelector:
     labels:

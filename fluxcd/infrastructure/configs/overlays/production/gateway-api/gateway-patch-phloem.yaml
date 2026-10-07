@@ -4,7 +4,7 @@ metadata:
   name: phloem-gateway
   annotations:
     lbipam.cilium.io/ips: "172.22.30.70"
-    lbipam.cilium.io/sharing-key: "prelude-of-light"
+    lbipam.cilium.io/sharing-key: "arylls-lookout"
     lbipam.cilium.io/sharing-cross-namespace: "*"
     service.cilium.io/loadbalancer-mode: "dsr"
 spec:

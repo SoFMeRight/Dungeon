@@ -15,7 +15,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/prelude-of-light/sa/phloem-gateway-istio
+              - cluster.local/ns/arylls-lookout/sa/phloem-gateway-istio
       to:
         - operation:
             ports: ["3000", "4180", "8000", "8080", "8200", "8443"]

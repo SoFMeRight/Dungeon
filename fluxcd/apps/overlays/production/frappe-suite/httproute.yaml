@@ -12,7 +12,7 @@ spec:
   # is reached over the LAN and nothing resolves it from outside.
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   hostnames:
     - "hq.pcfae.com"
   rules:

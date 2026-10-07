@@ -14,7 +14,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   hostnames:
     - "docker.cr.pcfae.com"
   rules:
@@ -37,7 +37,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   hostnames:
     - "ghcr.cr.pcfae.com"
   rules:
@@ -60,7 +60,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   hostnames:
     - "quay.cr.pcfae.com"
   rules:
@@ -83,7 +83,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   hostnames:
     - "lscr.cr.pcfae.com"
   rules:

@@ -4,5 +4,3 @@ namespace: prelude-of-light
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
-  - allow-phloem-gateway-loadbalancer.yaml
-  - telemetry-access-log-phloem.yaml

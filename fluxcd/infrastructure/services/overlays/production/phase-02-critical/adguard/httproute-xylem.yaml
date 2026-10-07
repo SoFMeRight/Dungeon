@@ -8,7 +8,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   # Primary / adguardhome-sync origin → pinned to adguard-0 (stable login session).
   hostnames:
     - "dns.pcfae.com"

@@ -1,7 +1,7 @@
 # Enables JSON access logging for the public phloem gateway. It was emitting none at all:
 # a Telemetry existed in kokiri-forest selecting gateway-name=phloem-gateway, but an istio
 # Telemetry only applies to workloads in its OWN namespace and the gateway runs here in
-# prelude-of-light, so it selected nothing. It also named the stock `envoy` text provider,
+# arylls-lookout, so it selected nothing. It also named the stock `envoy` text provider,
 # which the CrowdSec parser cannot read. Both had to be fixed, and the namespace was the
 # one that mattered — the provider was the second bug behind a resource that never applied.
 #

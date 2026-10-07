@@ -64,11 +64,11 @@ patches:
     target:
       kind: Gateway
       name: cell-membrane-gateway
-  # Set namespace for phloem-gateway to prelude-of-light
+  # Set namespace for phloem-gateway to arylls-lookout
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: prelude-of-light
+        value: arylls-lookout
     target:
       kind: Gateway
       name: phloem-gateway

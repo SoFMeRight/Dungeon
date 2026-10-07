@@ -40,21 +40,21 @@ patches:
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: prelude-of-light
+        value: arylls-lookout
     target:
       kind: Certificate
       name: pcfae-com-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: prelude-of-light
+        value: arylls-lookout
     target:
       kind: Certificate
       name: pcfae-com-apex-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: prelude-of-light
+        value: arylls-lookout
     target:
       kind: Certificate
       name: cr-pcfae-com-phloem-tls

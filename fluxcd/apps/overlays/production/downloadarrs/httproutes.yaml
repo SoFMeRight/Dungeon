@@ -11,7 +11,7 @@ spec:
     - qbitt.pcfae.com
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   rules:
     - backendRefs:
         - name: downloadarrs
@@ -33,7 +33,7 @@ spec:
     - radarr.pcfae.com
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   rules:
     - backendRefs:
         - name: downloadarrs
@@ -55,7 +55,7 @@ spec:
     - sonarr.pcfae.com
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   rules:
     - backendRefs:
         - name: downloadarrs
@@ -77,7 +77,7 @@ spec:
     - lidarr.pcfae.com
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   rules:
     - backendRefs:
         - name: downloadarrs
@@ -99,7 +99,7 @@ spec:
     - readarr.pcfae.com
   parentRefs:
     - name: phloem-gateway
-      namespace: prelude-of-light
+      namespace: arylls-lookout
   rules:
     - backendRefs:
         - name: downloadarrs

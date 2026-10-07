@@ -20,6 +20,10 @@ spec:
       policy.prplanit.com/ingress: "true"
   ingress:
     - fromEndpoints:
+        # phloem-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            policy.prplanit.com/client-class: ingress-gateway
         # cell-membrane-gateway
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: hyrule-castle
@@ -27,10 +31,6 @@ spec:
         # xylem-gateway
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: pedestal-of-time
-            policy.prplanit.com/client-class: ingress-gateway
-        # phloem-gateway
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: prelude-of-light
             policy.prplanit.com/client-class: ingress-gateway
       toPorts:
         - ports:
