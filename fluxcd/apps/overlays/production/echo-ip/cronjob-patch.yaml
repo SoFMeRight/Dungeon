@@ -5,13 +5,13 @@
     # so the rootfs can stay read-only (SEC-4).
     - name: tmp
       mountPath: /tmp
-    - name: compass-echo-ip-data
+    - name: tingle-tuner-echo-ip-data
       mountPath: /usr/share/GeoIP
 - op: replace
   path: /spec/jobTemplate/spec/template/spec/volumes
   value:
     - name: tmp
       emptyDir: {}
-    - name: compass-echo-ip-data
+    - name: tingle-tuner-echo-ip-data
       persistentVolumeClaim:
-        claimName: compass-echo-ip-data-echo-ip-0
+        claimName: tingle-tuner-echo-ip-data-echo-ip-0

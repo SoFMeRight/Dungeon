@@ -10,6 +10,5 @@ resources:
   - cnp-egress-chrony.yaml
   - cnp-egress-bulkvs-ip-sync.yaml
   - cnp-egress-cloudflare-ddns.yaml
-  - cnp-egress-echo-ip.yaml
   - cnp-egress-netbootxyz.yaml
   - cnp-egress-adguardhome-sync.yaml

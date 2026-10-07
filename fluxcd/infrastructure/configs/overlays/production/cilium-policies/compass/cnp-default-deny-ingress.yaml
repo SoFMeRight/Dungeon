@@ -9,7 +9,7 @@ spec:
     other services get ingress from ingress-backend CCNP; chrony/netbootxyz
     get LAN-only LB rules.
     Egress: adguard self-covers via its own CNP; per-app cnp-egress-* grant
-    chrony NTP, cloudflare-ddns/echo-ip/netbootxyz/adguardhome-sync external
+    chrony NTP, cloudflare-ddns/netbootxyz/adguardhome-sync external
     (toFQDNs/toCIDR); the speedtests are inbound-only on DNS/HBONE baseline.
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:

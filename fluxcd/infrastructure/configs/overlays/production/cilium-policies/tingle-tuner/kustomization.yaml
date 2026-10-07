@@ -15,3 +15,4 @@ resources:
   - cnp-egress-searxng.yaml
   - cnp-egress-stable-diffusion-webui.yaml
   - cnp-egress-renovate.yaml
+  - cnp-egress-echo-ip.yaml

@@ -15,7 +15,7 @@ spec:
       initContainers:
         - name: geoip-update
           volumeMounts:
-            - name: compass-echo-ip-data
+            - name: tingle-tuner-echo-ip-data
               mountPath: /usr/share/GeoIP
       containers:
         - name: echo-ip
@@ -45,15 +45,9 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
-            - name: compass-echo-ip-data
+            - name: tingle-tuner-echo-ip-data
               mountPath: /data
               readOnly: true
-            # vestigial: the fork bakes templates at /opt/echoip/html and themes via env,
-            # so -t points there and this PVC is no longer read. Left mounted to avoid a
-            # volumeClaimTemplate change (immutable on an existing StatefulSet); drop it
-            # in a future STS recreate.
-            - name: compass-echo-ip-html
-              mountPath: /html
       volumes:
         # readOnlyRootFilesystem: echoip is a static Go server (reads mmdb + baked
         # templates); /tmp is defensive scratch only.
@@ -61,7 +55,7 @@ spec:
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
-        name: compass-echo-ip-data
+        name: tingle-tuner-echo-ip-data
       spec:
         accessModes:
           - ReadWriteOnce
@@ -69,12 +63,3 @@ spec:
         resources:
           requests:
             storage: 1Gi
-    - metadata:
-        name: compass-echo-ip-html
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        storageClassName: ceph-rbd
-        resources:
-          requests:
-            storage: 100Mi
