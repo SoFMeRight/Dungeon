@@ -34,6 +34,11 @@ kind: HTTPRoute
 metadata:
   name: oauth2-proxy-signin
   namespace: zeldas-lullaby
+  annotations:
+    # /oauth2/* path-helper on an already-monitored app host (books.pcfae.com has
+    # its own app route); the oauth2-proxy backend is covered by the oa2p.pcfae.com
+    # check. Opt out of Gatus auto-discovery to avoid a duplicate, mislabeled entry.
+    gatus.home-operations.com/enabled: "false"
 spec:
   parentRefs:
     - name: phloem-gateway
@@ -58,6 +63,11 @@ kind: HTTPRoute
 metadata:
   name: oauth2-proxy-signin-cell-membrane
   namespace: zeldas-lullaby
+  annotations:
+    # /oauth2/* path-helper on already-monitored public app hosts (z2m.arbitorium.com,
+    # books/music.optcp.com each have their own app routes); the oauth2-proxy backend
+    # is covered by oa2p.pcfae.com. Opt out of Gatus to avoid duplicate entries.
+    gatus.home-operations.com/enabled: "false"
 spec:
   parentRefs:
     - name: cell-membrane-gateway
