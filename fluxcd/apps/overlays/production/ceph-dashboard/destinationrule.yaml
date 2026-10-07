@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: ceph-dashboard
 spec:
-  host: ceph-dashboard.gorons-bracelet.svc.cluster.local
+  host: ceph-dashboard.gossip-stone.svc.cluster.local
   trafficPolicy:
     portLevelSettings:
       - port:

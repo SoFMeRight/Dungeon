@@ -4,11 +4,11 @@ metadata:
   name: ceph-dashboard
 spec:
   hosts:
-    - ceph-dashboard.gorons-bracelet.svc.cluster.local
+    - ceph-dashboard.gossip-stone.svc.cluster.local
   http:
     - route:
         - destination:
-            host: ceph-dashboard.gorons-bracelet.svc.cluster.local
+            host: ceph-dashboard.gossip-stone.svc.cluster.local
             port:
               number: 8443
       retries:
