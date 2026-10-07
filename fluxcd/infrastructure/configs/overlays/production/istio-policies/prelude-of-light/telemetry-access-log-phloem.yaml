@@ -1,0 +1,27 @@
+# Enables JSON access logging for the public phloem gateway. It was emitting none at all:
+# a Telemetry existed in kokiri-forest selecting gateway-name=phloem-gateway, but an istio
+# Telemetry only applies to workloads in its OWN namespace and the gateway runs here in
+# prelude-of-light, so it selected nothing. It also named the stock `envoy` text provider,
+# which the CrowdSec parser cannot read. Both had to be fixed, and the namespace was the
+# one that mattered — the provider was the second bug behind a resource that never applied.
+#
+# Reuses the cell-membrane-access-log provider deliberately: the parser pulls fields with
+# JsonExtract, so field names must match exactly. The provider name is historical — it is
+# a generic JSON-to-stdout provider, not cell-membrane-specific.
+#
+# Scoped to the gateway workload so east-west sidecar traffic stays unlogged and Loki
+# cardinality stays bounded, matching the cell-membrane and xylem Telemetries.
+#
+# The stale kokiri-forest/phloem-access-log is cluster-only (never in git) and selects
+# nothing; it wants deleting by hand once this is reconciled.
+apiVersion: telemetry.istio.io/v1
+kind: Telemetry
+metadata:
+  name: phloem-access-log
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: phloem-gateway
+  accessLogging:
+    - providers:
+        - name: cell-membrane-access-log

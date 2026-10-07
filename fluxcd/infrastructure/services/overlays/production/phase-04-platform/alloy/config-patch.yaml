@@ -965,6 +965,16 @@ data:
         expression = "[?&](?:p|password|passwd|pwd|access_token|api_key|apikey|secret)=([^&\\s\"]+)"
         replace    = "REDACTED"
       }
+
+      // The Subsonic salted token. `t=` alone is far too common a parameter name to
+      // redact on a pipeline this broad, so the match is anchored to the shape that
+      // makes it a credential and nothing else: a /rest/ API path AND a value that is
+      // exactly an MD5 hex digest. A `t=` meaning a timestamp, tab or title elsewhere
+      // matches neither condition.
+      stage.replace {
+        expression = "/rest/[^\\s\"]*[?&]t=([0-9a-f]{32})"
+        replace    = "REDACTED"
+      }
     }
 
     // Filter out noisy non-actionable log lines

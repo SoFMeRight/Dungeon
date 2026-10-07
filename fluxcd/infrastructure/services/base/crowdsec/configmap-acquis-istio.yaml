@@ -3,15 +3,20 @@ kind: ConfigMap
 metadata:
   name: crowdsec-acquis-istio
 data:
-  # Public-edge detection: the cell-membrane istio gateway (172.22.30.71) fronts all public
-  # traffic. Pull its Envoy access logs from Loki (filtered to request lines) and tag them
+  # Public-edge detection: the cell-membrane, xylem and phloem istio gateways front public
+  # traffic.
+  # Pull their Envoy access logs from Loki (filtered to request lines) and tag them
   # type=istio-gw so prplanit/istio-gateway-logs parses them.
+  #
+  # Both gateways must emit the JSON access-log provider for this to parse — the parser
+  # reads fields with JsonExtract, so a gateway left on istio's stock text format is
+  # acquired and then silently unparsed.
   30-istio-loki.yaml: |
     source: loki
     url: http://loki.gossip-stone.svc.cluster.local:3100
     limit: 1000
     query: |
-      {namespace="hyrule-castle", pod=~"cell-membrane-gateway-istio-.*"} |= "HTTP/"
+      {namespace=~"hyrule-castle|arylls-lookout|prelude-of-light", pod=~"(cell-membrane|xylem|phloem)-gateway-istio-.*"} |= "HTTP/"
     labels:
       type: istio-gw
     wait_for_ready: 10s

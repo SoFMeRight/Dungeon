@@ -1,0 +1,23 @@
+# Enables JSON access logging for the public xylem gateway, which emitted none at all —
+# so everything behind it (plexx, ceph-dashboard, the sso hosts) had no CrowdSec coverage
+# while cell-membrane did.
+#
+# Reuses the cell-membrane-access-log provider deliberately rather than defining a second
+# one: the CrowdSec parser reads fields out of the line with JsonExtract, so the field
+# names must match exactly. A gateway on istio's stock text provider gets acquired and
+# then silently fails to parse, which is phloem's current state. The provider name is
+# historical — it is a generic JSON-to-stdout provider, not cell-membrane-specific.
+#
+# Scoped to the gateway workload so east-west sidecar traffic stays unlogged and Loki
+# cardinality stays bounded, matching the cell-membrane Telemetry.
+apiVersion: telemetry.istio.io/v1
+kind: Telemetry
+metadata:
+  name: xylem-access-log
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: xylem-gateway
+  accessLogging:
+    - providers:
+        - name: cell-membrane-access-log
