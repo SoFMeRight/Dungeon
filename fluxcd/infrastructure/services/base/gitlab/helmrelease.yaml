@@ -47,8 +47,12 @@ spec:
       # v1alpha2 TCPRoute CRD, so the upgrade fails ("no matches for kind TCPRoute
       # in version .../v1"). We route GitLab ourselves (own HTTPRoute + shell
       # LoadBalancer), so disable chart-rendered Gateway API routes entirely.
+      # installEnvoy is a SEPARATE toggle: Chart.yaml gates the bundled gateway-helm
+      # (Envoy Gateway v1.9.1) controller subchart on it, so enabled:false suppresses
+      # the routes but leaves the controller running idle — disable it too.
       gatewayApi:
         enabled: false
+        installEnvoy: false
 
       # Full HA configuration
       gitaly:
