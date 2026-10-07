@@ -34,7 +34,7 @@ data:
         template IN AAAA cluster.local {
            rcode NOERROR
         }
-        rewrite stop name exact cr.pcfae.com phloem-gateway-istio.prelude-of-light.svc.cluster.local answer auto
+        rewrite stop name exact cr.pcfae.com phloem-gateway-istio.arylls-lookout.svc.cluster.local answer auto
         kubernetes cluster.local {
            pods insecure
            ttl 30
