@@ -19,23 +19,25 @@ jwt:
     claimMappings:
       username:
         claim: sub
-        prefix: "gitlab:"
+        prefix: "prplanit-git:"
       groups:
         claim: groups
-        prefix: "gitlab:"
-  # --- Zitadel (sso.prplanit.com) — app "Kubernetes: Dungeon" ---
+        prefix: "prplanit-git:"
+  # --- Zitadel (sso.prplanit.com) — apps "Kubernetes: Dungeon" (kubelogin) + Headlamp ---
   - issuer:
       url: https://sso.prplanit.com
       audiences:
-        - "393723781534750283"
+        - "393723781534750283"  # kubelogin (Kubernetes: Dungeon)
+        - "393929303420607200"  # headlamp
+      audienceMatchPolicy: MatchAny
     claimMappings:
       username:
         claim: preferred_username
-        prefix: "zitadel:"
+        prefix: "prplanit-sso:"
       groups:
         # Groups come from the flat `roles` claim set by the Zitadel Action "flatRoles"
         # (it collects every granted role key into a string array). Plain claim+prefix, no CEL.
         # NOTE: flatRoles flattens roles across ALL of a user's project grants, so these
         # groups are NOT project-scoped — the RBAC bindings account for that.
         claim: roles
-        prefix: "zitadel:"
+        prefix: "prplanit-sso:"

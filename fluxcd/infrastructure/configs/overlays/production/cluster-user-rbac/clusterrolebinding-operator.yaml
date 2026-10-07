@@ -1,7 +1,7 @@
 # Binds the top rung of the human ladder -- `operator` (Server Operator) -- to
 # cluster-admin. The group arrives from the apiserver AuthenticationConfiguration's
 # Zitadel issuer: the flatRoles Action flattens a user's granted role keys into the
-# `roles` claim, mapped to groups with the `zitadel:` prefix. This is the ONE
+# `roles` claim, mapped to groups with the `prplanit-sso:` prefix. This is the ONE
 # cluster-wide human binding; the lower rungs (admin/developer/user) bind
 # per-namespace in rolebindings-<ns>.yaml files added as people are granted --
 # a namespace with no lower-tier binding is invisible to everyone below operator.
@@ -9,7 +9,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: zitadel-operator-cluster-admin
+  name: prplanit-sso-operator-cluster-admin
   labels:
     app.kubernetes.io/part-of: cluster-user-rbac
 roleRef:
@@ -18,5 +18,5 @@ roleRef:
   name: cluster-admin
 subjects:
   - kind: Group
-    name: zitadel:operator
+    name: prplanit-sso:operator
     apiGroup: rbac.authorization.k8s.io

@@ -1,7 +1,7 @@
 # Binds the two cluster-wide roles -- read-only diagnostics and flux-reconcile --
 # to the agent group. The group is the client cert's O (`dungeon:cluster-agents`);
 # client-cert auth applies no OIDC prefix, so the subject name is literal (unlike
-# the `gitlab:`-prefixed CI subject in stagefreight-reconciler).
+# the `prplanit-git:`-prefixed CI subject in stagefreight-reconciler).
 #
 # The dangerous verbs (exec/delete) are bound per-namespace in rbac-namespaced.yaml,
 # NOT here. Nothing holds this group until a cert with O=dungeon:cluster-agents is

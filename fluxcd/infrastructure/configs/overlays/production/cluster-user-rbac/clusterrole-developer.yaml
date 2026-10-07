@@ -8,7 +8,7 @@
 # kubelet mounts it. The boundary is accident-prevention, not a hard wall -- a
 # developer with pod-create/exec can still read a secret a pod mounts. The hard
 # wall would cost exec/create, which guts the tier's purpose.
-# Bound per-namespace (RoleBinding) to group `zitadel:developer`, never cluster-wide.
+# Bound per-namespace (RoleBinding) to group `prplanit-sso:developer`, never cluster-wide.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
