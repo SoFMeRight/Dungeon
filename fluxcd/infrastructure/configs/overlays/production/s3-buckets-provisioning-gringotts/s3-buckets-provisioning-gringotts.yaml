@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: nas-s3-setup
+  name: s3-buckets-provisioning-gringotts
   annotations:
     # Immutable one-shot Job: Flux per-resource force-replaces it in place on an
     # image/template bump instead of wedging the Kustomization on an immutable patch.
@@ -75,5 +75,5 @@ spec:
           emptyDir: {}
         - name: setup-script
           configMap:
-            name: nas-s3-setup-script
+            name: s3-buckets-provisioning-gringotts-script
             defaultMode: 0755
