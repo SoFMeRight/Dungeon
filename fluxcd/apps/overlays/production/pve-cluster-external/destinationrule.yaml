@@ -1,10 +1,17 @@
+# Hosts are SHORT names, resolved in this DestinationRule's own namespace. They were
+# FQDNs ending .arylls-lookout.svc.cluster.local, and kustomize's namespace transformer
+# does not rewrite a FQDN inside spec.host — so when these moved to gossip-stone all three
+# rules silently stopped matching anything. That is what broke pbs.pcfae.com: its rule
+# originates TLS to the external PBS host (SIMPLE + insecureSkipVerify), and without it the
+# gateway sent plaintext at an HTTPS port. A short name cannot go stale the same way.
+#
 # Proxy accepts plaintext from gateway, handles TLS to PVE upstream itself
 apiVersion: networking.istio.io/v1
 kind: DestinationRule
 metadata:
   name: pve-cluster-proxy
 spec:
-  host: pve-cluster-proxy.arylls-lookout.svc.cluster.local
+  host: pve-cluster-proxy
   trafficPolicy:
     tls:
       mode: DISABLE
@@ -15,7 +22,7 @@ kind: DestinationRule
 metadata:
   name: pve-cluster
 spec:
-  host: pve-cluster.arylls-lookout.svc.cluster.local
+  host: pve-cluster
   trafficPolicy:
     tls:
       mode: SIMPLE
@@ -26,8 +33,19 @@ kind: DestinationRule
 metadata:
   name: pbs-cluster
 spec:
-  host: pbs-cluster.arylls-lookout.svc.cluster.local
+  host: pbs-cluster
   trafficPolicy:
     tls:
       mode: SIMPLE
       insecureSkipVerify: true
+---
+# nginx listens plaintext; do not let istio originate TLS to it.
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: pbs-cluster-proxy
+spec:
+  host: pbs-cluster-proxy
+  trafficPolicy:
+    tls:
+      mode: DISABLE

@@ -136,3 +136,143 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: pve-cluster-proxy
+---
+# PBS proxy. Same shape as the PVE one and for the same reason: PBS answers plaintext with
+# a 301 to https://, so routing the gateway straight at pbs-cluster:8007 produced an
+# infinite redirect — 1625 requests in four seconds as Gatus followed its own redirect back
+# into the same plaintext route. The pbs-cluster DestinationRule was meant to originate TLS
+# instead, but a DestinationRule resolves from the CLIENT's namespace and the gateway keeps
+# changing namespaces, so terminating in nginx here is the form that cannot drift.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pbs-cluster-proxy-config
+data:
+  nginx.conf: |
+    worker_processes auto;
+    error_log /dev/stderr warn;
+    pid /tmp/nginx.pid;
+
+    events {
+      worker_connections 256;
+    }
+
+    http {
+      log_format main '$remote_addr - $remote_user [$time_local] '
+                      '"$request" $status $body_bytes_sent '
+                      '"$http_referer" "$http_user_agent" '
+                      'upstream=$upstream_addr';
+      access_log /dev/stdout main;
+
+      upstream pbs_cluster {
+        server 172.22.181.51:8007 max_fails=2 fail_timeout=10s;
+      }
+
+      map $http_upgrade $connection_upgrade {
+        default upgrade;
+        ''      close;
+      }
+
+      server {
+        listen 8007;
+
+        client_max_body_size 0;
+        proxy_buffering off;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+        send_timeout 3600s;
+
+        location / {
+          proxy_pass https://pbs_cluster;
+          proxy_ssl_verify off;
+
+          proxy_http_version 1.1;
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection $connection_upgrade;
+          proxy_set_header Host $host;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Forwarded-Host $host;
+          proxy_set_header X-Forwarded-Port $server_port;
+        }
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pbs-cluster-proxy
+  labels:
+    app: pbs-cluster-proxy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pbs-cluster-proxy
+  template:
+    metadata:
+      labels:
+        app: pbs-cluster-proxy
+        policy.prplanit.com/ingress: "true"
+    spec:
+      serviceAccountName: pbs-cluster-proxy
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 101
+        runAsGroup: 101
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: nginx
+          image: docker.io/nginx:1.31.5-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 8007
+              name: http
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+          readinessProbe:
+            tcpSocket:
+              port: 8007
+            initialDelaySeconds: 2
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8007
+            initialDelaySeconds: 5
+            periodSeconds: 30
+      volumes:
+        - name: config
+          configMap:
+            name: pbs-cluster-proxy-config
+        - name: tmp
+          emptyDir:
+            medium: Memory
+        - name: nginx-cache
+          emptyDir: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pbs-cluster-proxy

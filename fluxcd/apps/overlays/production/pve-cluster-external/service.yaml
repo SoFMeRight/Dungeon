@@ -61,3 +61,18 @@ spec:
       targetPort: 8006
       protocol: TCP
       name: https
+---
+# Health-checked PBS proxy Service (browser path); pbs-cluster above stays for any
+# direct-HTTPS consumer such as the exporter.
+apiVersion: v1
+kind: Service
+metadata:
+  name: pbs-cluster-proxy
+spec:
+  selector:
+    app: pbs-cluster-proxy
+  ports:
+    - port: 8007
+      targetPort: 8007
+      protocol: TCP
+      name: https

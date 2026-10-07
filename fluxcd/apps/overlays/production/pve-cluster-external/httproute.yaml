@@ -39,5 +39,5 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: pbs-cluster
+        - name: pbs-cluster-proxy
           port: 8007

@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: arylls-lookout
 resources:
   - cnp-default-deny-ingress.yaml
-  - cnp-egress-pve-cluster-proxy.yaml
   - cnp-phloem-gateway.yaml
   - cnp-phloem-gateway-from-dungeon-router.yaml
   - cnp-phloem-gateway-from-renovate.yaml
