@@ -89,6 +89,18 @@ spec:
           args:
             - --auto-httproute
             - --auto-service
+            # gatus-sidecar names an auto-discovered endpoint after the resource, and gatus
+            # keys an endpoint by group+name and PANICS on a duplicate — taking every check
+            # down, not just the offending one. 60 apps here have a same-named HTTPRoute and
+            # Service, so the only thing keeping them apart was that each route carried a
+            # group annotation while the service had none. One app added without that
+            # annotation (headlamp) killed all uptime monitoring.
+            #
+            # Prefixing the service kind makes the two names distinct at the source, so the
+            # collision is impossible rather than merely avoided by convention. Only the
+            # service kind is prefixed: prefixing routes would rename all 177 curated
+            # endpoints and reset their uptime history.
+            - --prefix-service=svc/
             - --output=/config/endpoints.yaml
           volumeMounts:
             - name: config
