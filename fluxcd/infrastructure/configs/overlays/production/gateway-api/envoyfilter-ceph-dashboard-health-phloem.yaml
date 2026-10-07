@@ -18,7 +18,7 @@ spec:
       match:
         context: GATEWAY
         cluster:
-          service: ceph-dashboard.gorons-bracelet.svc.cluster.local
+          service: ceph-dashboard.gossip-stone.svc.cluster.local
           portNumber: 8443
       patch:
         operation: MERGE
