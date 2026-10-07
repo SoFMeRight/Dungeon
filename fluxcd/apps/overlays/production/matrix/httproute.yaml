@@ -10,7 +10,7 @@ spec:
   # remote servers here.
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
   hostnames:
     - "matrix.outspokekin.com"
   rules:
@@ -58,7 +58,7 @@ metadata:
 spec:
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
   hostnames:
     - "matrix-auth.outspokekin.com"
   rules:
@@ -80,7 +80,7 @@ metadata:
 spec:
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
   hostnames:
     - "chat.outspokekin.com"
   rules:
@@ -126,7 +126,7 @@ spec:
   # apex site — this route claims two paths, not the domain.
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
   hostnames:
     - "outspokekin.com"
   rules:
@@ -154,7 +154,7 @@ metadata:
 spec:
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
   hostnames:
     - "livekit.outspokekin.com"
   rules:
@@ -197,7 +197,7 @@ metadata:
 spec:
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
   hostnames:
     - "matrix-call.outspokekin.com"
   rules:

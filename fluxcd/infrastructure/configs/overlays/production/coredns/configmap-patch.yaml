@@ -50,7 +50,7 @@ data:
         template IN AAAA cluster.local {
            rcode NOERROR
         }
-        rewrite stop name exact netbird.prplanit.com cell-membrane-gateway-istio.hyrule-castle.svc.cluster.local answer auto
+        rewrite stop name exact netbird.prplanit.com cell-membrane-gateway-istio.prelude-of-light.svc.cluster.local answer auto
         kubernetes cluster.local {
            pods insecure
            ttl 30

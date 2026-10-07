@@ -8,7 +8,7 @@ metadata:
 spec:
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
       sectionName: https-prplanit
   hostnames:
     - "boundary.prplanit.com"

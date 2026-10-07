@@ -4,7 +4,7 @@ metadata:
   name: prelude-of-light
   labels:
     name: prelude-of-light
-    purpose: gateway-internal-vpn
+    purpose: gateway-public
     cr-pcfae-pull-secret: "enabled"
     docker-io-pull-secret: "enabled"
     pod-security.kubernetes.io/enforce: baseline

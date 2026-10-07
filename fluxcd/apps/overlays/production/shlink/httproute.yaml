@@ -13,7 +13,7 @@ metadata:
 spec:
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
   hostnames:
     - "sh.uni2.cc"
   rules:

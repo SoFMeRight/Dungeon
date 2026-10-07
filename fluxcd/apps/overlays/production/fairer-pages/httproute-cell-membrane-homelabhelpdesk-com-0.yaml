@@ -10,7 +10,7 @@ metadata:
 spec:
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
   hostnames:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 

@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: netbird-websocket-cell-membrane
-  namespace: hyrule-castle
+  namespace: prelude-of-light
 spec:
   # NetBird's relay (rels://netbird.prplanit.com:443, the /relay route) is a long-lived
   # WebSocket — without the per-route upgrade the gateway answers /relay with 426 and the

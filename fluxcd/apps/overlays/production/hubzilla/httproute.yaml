@@ -10,7 +10,7 @@ spec:
   # activity here and resolve the apex's .well-known redirects to this host.
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
   hostnames:
     - "social.outspokekin.com"
   rules:

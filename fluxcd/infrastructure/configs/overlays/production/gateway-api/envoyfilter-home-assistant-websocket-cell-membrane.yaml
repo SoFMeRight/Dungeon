@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: home-assistant-websocket-cell-membrane
-  namespace: hyrule-castle
+  namespace: prelude-of-light
 spec:
   # Home Assistant's frontend holds a live wss://.../api/websocket. cell-membrane advertises
   # HTTP/2 Extended CONNECT (RFC 8441) gateway-wide (allow_connect from the tacticalrmm filter),

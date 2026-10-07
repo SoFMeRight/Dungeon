@@ -15,7 +15,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hyrule-castle/sa/cell-membrane-gateway-istio
+              - cluster.local/ns/prelude-of-light/sa/cell-membrane-gateway-istio
       to:
         - operation:
             ports: ["8080", "8123"]

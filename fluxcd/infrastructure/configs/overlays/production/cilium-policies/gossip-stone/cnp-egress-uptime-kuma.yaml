@@ -23,7 +23,7 @@ spec:
         - cluster
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            k8s:io.kubernetes.pod.namespace: prelude-of-light
             gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: pedestal-of-time

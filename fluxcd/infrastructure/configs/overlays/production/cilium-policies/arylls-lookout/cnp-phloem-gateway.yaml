@@ -32,7 +32,7 @@ spec:
     # CNP fromEndpoints requires explicit namespace for cross-namespace match
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            k8s:io.kubernetes.pod.namespace: prelude-of-light
             policy.prplanit.com/cap.s3: "true"
             policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
         - matchLabels:

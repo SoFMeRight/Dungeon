@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: https-location-cell-membrane
-  namespace: hyrule-castle
+  namespace: prelude-of-light
 spec:
   workloadSelector:
     labels:

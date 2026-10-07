@@ -9,7 +9,7 @@ metadata:
 spec:
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
   hostnames:
     - "vw.prplanit.com"
   rules:

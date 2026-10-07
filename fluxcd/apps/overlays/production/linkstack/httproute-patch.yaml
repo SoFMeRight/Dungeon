@@ -12,7 +12,7 @@ metadata:
 spec:
   parentRefs:
     - name: cell-membrane-gateway
-      namespace: hyrule-castle
+      namespace: prelude-of-light
   # One instance, three apexes. Each must also appear in ALLOWED_HOSTS on the workload —
   # the OIDC callback is derived from the incoming host, so a host routed here but absent
   # there is refused with a 400 rather than served.

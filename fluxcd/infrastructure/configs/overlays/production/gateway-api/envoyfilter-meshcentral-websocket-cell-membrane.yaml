@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: meshcentral-websocket-cell-membrane
-  namespace: hyrule-castle
+  namespace: prelude-of-light
 spec:
   # MeshCentral's remote-desktop / terminal / agent connections are long-lived WebSockets.
   # Disable the route timeout + idle-timeout so they aren't reaped. Browsers use the standard

@@ -56,11 +56,11 @@ patches:
     target:
       kind: Gateway
       name: xylem-gateway
-  # Set namespace for cell-membrane-gateway to hyrule-castle
+  # Set namespace for cell-membrane-gateway to prelude-of-light
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: hyrule-castle
+        value: prelude-of-light
     target:
       kind: Gateway
       name: cell-membrane-gateway

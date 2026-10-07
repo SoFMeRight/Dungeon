@@ -4,3 +4,7 @@ namespace: prelude-of-light
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-cell-membrane-gateway-loadbalancer.yaml
+  - telemetry-access-log-cell-membrane.yaml
+  - deny-osticket-staff-panel-from-internet.yaml
+  - sso
