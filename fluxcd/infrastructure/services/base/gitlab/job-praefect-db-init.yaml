@@ -15,10 +15,26 @@ spec:
     spec:
       restartPolicy: OnFailure
       serviceAccountName: gitlab-praefect-db-init
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: init-praefect-db
           image: docker.io/alpine/k8s:PLACEHOLDER_TAG
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
           env:
+            # kubectl/psql write discovery cache + history under $HOME; point it at
+            # the writable emptyDir so the container can run with a read-only rootfs.
+            - name: HOME
+              value: /tmp
             - name: PRAEFECT_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -42,9 +58,13 @@ spec:
 
               echo "Praefect database setup complete!"
           volumeMounts:
+            - name: tmp
+              mountPath: /tmp
             - name: sql-scripts
               mountPath: /scripts
       volumes:
+        - name: tmp
+          emptyDir: {}
         - name: sql-scripts
           configMap:
             name: praefect-init-sql
