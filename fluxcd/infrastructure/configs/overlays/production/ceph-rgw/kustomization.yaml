@@ -4,20 +4,20 @@ namespace: gorons-bracelet
 resources:
   - rgw-admin-serviceaccount.yaml
   - ceph-rgw-keyring.enc.yaml
-  - ceph-rgw-setup-script.yaml
+  - ceph-rgw-bucket-provisioning-script.yaml
   - gitlab-rgw-credentials.enc.yaml
-  - gitlab-rgw-setup.yaml
+  - ceph-rgw-bucket-provisioning-gitlab.yaml
   - harbor-rgw-credentials-externalsecret.yaml
-  - harbor-rgw-setup.yaml
+  - ceph-rgw-bucket-provisioning-harbor.yaml
   - loki-rgw-credentials-externalsecret.yaml
-  - loki-rgw-setup.yaml
+  - ceph-rgw-bucket-provisioning-loki.yaml
   - appflowy-rgw-credentials-externalsecret.yaml
-  - appflowy-rgw-setup.yaml
+  - ceph-rgw-bucket-provisioning-appflowy.yaml
   - nextcloud-rgw-credentials-externalsecret.yaml
-  - nextcloud-rgw-setup.yaml
+  - ceph-rgw-bucket-provisioning-nextcloud.yaml
   - renovate-rgw-credentials-externalsecret.yaml
-  - renovate-rgw-setup.yaml
+  - ceph-rgw-bucket-provisioning-renovate.yaml
   - matrix-synapse-rgw-credentials-externalsecret.yaml
-  - matrix-synapse-rgw-setup.yaml
+  - ceph-rgw-bucket-provisioning-matrix-synapse.yaml
   - reactive-resume-rgw-credentials-externalsecret.yaml
-  - reactive-resume-rgw-setup.yaml
+  - ceph-rgw-bucket-provisioning-reactive-resume.yaml

@@ -3,7 +3,7 @@ kind: Job
 metadata:
   annotations:
     kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on image bump, not wedge
-  name: nextcloud-rgw-setup
+  name: ceph-rgw-bucket-provisioning-appflowy
 spec:
   ttlSecondsAfterFinished: 86400
   template:
@@ -36,19 +36,19 @@ spec:
             - name: ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: nextcloud-rgw-credentials
+                  name: appflowy-rgw-credentials
                   key: s3_access_key
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: nextcloud-rgw-credentials
+                  name: appflowy-rgw-credentials
                   key: s3_secret_key
           command:
             - /bin/bash
             - /scripts/setup.sh
-            - --user=nextcloud-user
-            - --display-name="Nextcloud S3 User"
-            - --buckets=nextcloud,nextcloud-backups
+            - --user=appflowy-user
+            - --display-name="AppFlowy S3 User"
+            - --buckets=appflowy-files
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -68,7 +68,7 @@ spec:
           emptyDir: {}
         - name: setup-script
           configMap:
-            name: ceph-rgw-setup-script
+            name: ceph-rgw-bucket-provisioning-script
             defaultMode: 0755
         - name: ceph-config
           configMap:

@@ -3,7 +3,7 @@ kind: Job
 metadata:
   annotations:
     kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on image bump, not wedge
-  name: matrix-synapse-rgw-setup
+  name: ceph-rgw-bucket-provisioning-reactive-resume
 spec:
   ttlSecondsAfterFinished: 86400
   template:
@@ -36,19 +36,19 @@ spec:
             - name: ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: matrix-synapse-rgw-credentials
-                  key: S3_ACCESS_KEY
+                  name: reactive-resume-rgw-credentials
+                  key: s3_access_key
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: matrix-synapse-rgw-credentials
-                  key: S3_SECRET_KEY
+                  name: reactive-resume-rgw-credentials
+                  key: s3_secret_key
           command:
             - /bin/bash
             - /scripts/setup.sh
-            - --user=matrix-synapse-user
-            - --display-name="Matrix media"
-            - --buckets=matrix-synapse-media
+            - --user=reactive-resume-user
+            - --display-name=Reactive Resume S3 User
+            - --buckets=default
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -68,7 +68,7 @@ spec:
           emptyDir: {}
         - name: setup-script
           configMap:
-            name: ceph-rgw-setup-script
+            name: ceph-rgw-bucket-provisioning-script
             defaultMode: 0755
         - name: ceph-config
           configMap:
