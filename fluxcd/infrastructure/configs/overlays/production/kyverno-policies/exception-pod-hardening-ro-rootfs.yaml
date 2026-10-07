@@ -31,7 +31,8 @@ spec:
           namespaces: [hookshot]
           names: ["tactical-*"]
       # hyrule-castle — apt-cacher/bagisto/invoiceninja/osticket apache+root, bookstack LSIO,
-      # frappe-suite (writes /home/frappe + sites), gitlab + harbor Helm charts, opnform-client node.
+      # frappe-suite (writes /home/frappe + sites), gitlab + harbor Helm charts, opnform-client node,
+      # renovate (containerbase installs toolchains at runtime).
       - resources:
           kinds: [Pod]
           namespaces: [hyrule-castle]
@@ -44,6 +45,7 @@ spec:
             - "harbor-*"
             - "invoiceninja-app-*"
             - "osticket-*"
+            - "renovate-*"
       - resources:
           kinds: [Pod]
           namespaces: [kokiri-forest]
@@ -100,11 +102,11 @@ spec:
             - "plex-*"
             - "shlink-db-*"
       # tingle-tuner — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp), apache
-      # (hrconvert2), renovate (containerbase installs toolchains at runtime). searxng is hardened.
+      # (hrconvert2). searxng is hardened.
       - resources:
           kinds: [Pod]
           namespaces: [tingle-tuner]
-          names: ["faster-whisper-*", "hrconvert2-*", "librespeed-speedtest-*", "libretranslate-*", "renovate-*", "stable-diffusion-webui-*"]
+          names: ["faster-whisper-*", "hrconvert2-*", "librespeed-speedtest-*", "libretranslate-*", "stable-diffusion-webui-*"]
       # zeldas-lullaby — Vault operator, netbird-dashboard supervisord, netbox/unifi LSIO, DBs.
       - resources:
           kinds: [Pod]

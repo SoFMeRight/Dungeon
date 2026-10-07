@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - "cluster.local/ns/tingle-tuner/sa/renovate"
+              - "cluster.local/ns/hyrule-castle/sa/renovate"
       to:
         - operation:
             ports: ["8080"]

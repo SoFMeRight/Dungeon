@@ -21,7 +21,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: tingle-tuner
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
             app: renovate
       toPorts:
         - ports:
