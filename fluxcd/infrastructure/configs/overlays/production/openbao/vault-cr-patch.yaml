@@ -238,6 +238,8 @@ spec:
               algorithm_signer: "rsa-sha2-256"
               allow_user_certificates: "true"
               allowed_users: "kai"
+              # bank-vaults injects a list without this; OpenBao's ssh role API requires a string.
+              allowed_domains: ""
               default_user: "kai"
               allowed_extensions: "permit-pty,permit-user-rc"
               default_extensions:
