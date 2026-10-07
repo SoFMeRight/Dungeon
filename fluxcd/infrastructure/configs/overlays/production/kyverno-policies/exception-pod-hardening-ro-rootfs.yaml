@@ -21,7 +21,7 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [compass]
-          names: ["adguard-*", "adguardhome-sync-*", "chrony-*", "librespeed-speedtest-*", "netbootxyz-*"]
+          names: ["adguard-*", "adguardhome-sync-*", "chrony-*", "netbootxyz-*"]
       - resources:
           kinds: [Pod]
           namespaces: [gossip-stone]
@@ -104,7 +104,7 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [tingle-tuner]
-          names: ["faster-whisper-*", "hrconvert2-*", "libretranslate-*", "renovate-*", "stable-diffusion-webui-*"]
+          names: ["faster-whisper-*", "hrconvert2-*", "librespeed-speedtest-*", "libretranslate-*", "renovate-*", "stable-diffusion-webui-*"]
       # zeldas-lullaby — Vault operator, netbird-dashboard supervisord, netbox/unifi LSIO, DBs.
       - resources:
           kinds: [Pod]
