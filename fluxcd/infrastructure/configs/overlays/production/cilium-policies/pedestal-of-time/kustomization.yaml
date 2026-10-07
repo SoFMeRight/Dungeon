@@ -8,6 +8,6 @@ resources:
   - cnp-plex-lb.yaml
   - cnp-unlabeled-dbs.yaml
   - cnp-xylem-gateway.yaml
-  - cnp-xylem-gateway-from-dungeon-router.yaml
+  - cnp-xylem-gateway-from-netbird-router.yaml
   - cnp-renovate-gateway.yaml
   - cnp-egress-xylem-gateway.yaml

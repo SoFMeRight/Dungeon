@@ -1,20 +1,20 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-xylem-gateway-from-dungeon-router
+  name: allow-phloem-gateway-from-netbird-router
 spec:
   description: >-
-    Allow the in-cluster NetBird subnet router (farores-wind) to reach xylem-gateway
+    Allow the in-cluster NetBird subnet router (farores-wind) to reach phloem-gateway
     on :80/:443. The gateway's LAN rule admits RFC1918 but excepts the pod CIDR to
     prevent identity bypass via the LB IP; the router forwards VPN traffic from a pod
-    IP, so it needs this explicit identity-based allow. This is the sanctioned VPN
-    ingress path to *.pcfae.com internal services served by xylem.
+    IP, so it needs this explicit identity-based allow. phloem is the VPN-internal
+    gateway, so this is the sanctioned VPN ingress path to *.pcfae.com services on it.
   enableDefaultDeny:
     ingress: false
     egress: false
   endpointSelector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: xylem-gateway
+      gateway.networking.k8s.io/gateway-name: phloem-gateway
   ingress:
     - fromEndpoints:
         - matchLabels:

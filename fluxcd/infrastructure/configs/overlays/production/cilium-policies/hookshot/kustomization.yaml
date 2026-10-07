@@ -8,6 +8,6 @@ resources:
   - cnp-egress-rustdesk.yaml
   - cnp-egress-tactical-rmm.yaml
   - cnp-loadbalancers.yaml
-  - cnp-boundary-worker-from-dungeon-router.yaml
+  - cnp-boundary-worker-from-netbird-router.yaml
   - cnp-guacamole-internal.yaml
   - cnp-tactical-mesh.yaml

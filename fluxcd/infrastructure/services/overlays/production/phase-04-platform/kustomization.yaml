@@ -12,7 +12,7 @@ resources:
   - ./node-exporter
   - ./victoria-metrics
   - ./netbird
-  - ./dungeon-router
+  - ./netbird-router
   - ./ntfy
   - ./nutify
   - ./prometheus-exporter-eaton-ups

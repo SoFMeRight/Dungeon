@@ -8,7 +8,7 @@ spec:
     The gateway's LAN rule admits RFC1918 but excepts the pod CIDR to prevent identity
     bypass via the LB IP; Renovate resolves cr.pcfae.com (and the *.cr.pcfae.com proxy
     caches) to the gateway ClusterIP for in-cluster Harbor tag discovery, so it needs
-    this explicit identity-based allow. Mirrors allow-phloem-gateway-from-dungeon-router.
+    this explicit identity-based allow. Mirrors allow-phloem-gateway-from-netbird-router.
   enableDefaultDeny:
     ingress: false
     egress: false
