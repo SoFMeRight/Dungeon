@@ -2,6 +2,14 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: headlamp
+  annotations:
+    # Required, not optional. gatus-sidecar names an auto-discovered endpoint after the
+    # resource, so this route and the same-named Service both produce "headlamp" — and a
+    # duplicate name+group makes gatus PANIC at startup, taking every uptime check down,
+    # not just this one. The group is what keeps the two distinct, since the Service's is
+    # empty. Every other HTTPRoute here carries one for the same reason.
+    gatus.home-operations.com/endpoint: |
+      group: "Monitoring (Gossip Stone💬)"
 spec:
   parentRefs:
     - name: phloem-gateway
