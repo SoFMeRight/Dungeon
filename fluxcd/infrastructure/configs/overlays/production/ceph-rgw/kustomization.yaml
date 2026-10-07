@@ -4,20 +4,20 @@ namespace: gorons-bracelet
 resources:
   - rgw-admin-serviceaccount.yaml
   - ceph-rgw-keyring.enc.yaml
-  - s3-bucket-provisioning-arbitorium-script.yaml
+  - ceph-rgw-bucket-provisioning-script.yaml
   - gitlab-rgw-credentials.enc.yaml
-  - s3-bucket-provisioning-arbitorium-gitlab.yaml
+  - ceph-rgw-bucket-provisioning-gitlab.yaml
   - harbor-rgw-credentials-externalsecret.yaml
-  - s3-bucket-provisioning-arbitorium-harbor.yaml
+  - ceph-rgw-bucket-provisioning-harbor.yaml
   - loki-rgw-credentials-externalsecret.yaml
-  - s3-bucket-provisioning-arbitorium-loki.yaml
+  - ceph-rgw-bucket-provisioning-loki.yaml
   - appflowy-rgw-credentials-externalsecret.yaml
-  - s3-bucket-provisioning-arbitorium-appflowy.yaml
+  - ceph-rgw-bucket-provisioning-appflowy.yaml
   - nextcloud-rgw-credentials-externalsecret.yaml
-  - s3-bucket-provisioning-arbitorium-nextcloud.yaml
+  - ceph-rgw-bucket-provisioning-nextcloud.yaml
   - renovate-rgw-credentials-externalsecret.yaml
-  - s3-bucket-provisioning-arbitorium-renovate.yaml
+  - ceph-rgw-bucket-provisioning-renovate.yaml
   - matrix-synapse-rgw-credentials-externalsecret.yaml
-  - s3-bucket-provisioning-arbitorium-matrix-synapse.yaml
+  - ceph-rgw-bucket-provisioning-matrix-synapse.yaml
   - reactive-resume-rgw-credentials-externalsecret.yaml
-  - s3-bucket-provisioning-arbitorium-reactive-resume.yaml
+  - ceph-rgw-bucket-provisioning-reactive-resume.yaml

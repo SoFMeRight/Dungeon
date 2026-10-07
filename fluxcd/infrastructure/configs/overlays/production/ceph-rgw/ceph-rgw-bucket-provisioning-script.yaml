@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: s3-bucket-provisioning-arbitorium-script
+  name: ceph-rgw-bucket-provisioning-script
 data:
   setup.sh: |
     #!/bin/bash
