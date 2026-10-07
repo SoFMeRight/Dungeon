@@ -50,12 +50,14 @@ spec:
 
   # Resources
   resources:
+    # vault spikes above 256Mi while restoring an ~84MB raft snapshot on (re)join
+    # (steady-state ~212Mi), so a 256Mi limit OOM-killed rejoining replicas mid-restore.
     vault:
       requests:
-        memory: "144Mi"
+        memory: "256Mi"
         cpu: "70m"
       limits:
-        memory: "256Mi"
+        memory: "384Mi"
         cpu: "150m"
     bankVaults:
       requests:
