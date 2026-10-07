@@ -2,7 +2,7 @@ apiVersion: kyverno.io/v2
 kind: PolicyException
 metadata:
   name: enforce-pod-hardening-ro-rootfs
-  namespace: zeldas-lullaby
+  namespace: mr-resetti
   annotations:
     policies.kyverno.io/description: >-
       Workloads exempt from enforce-pod-hardening's require-readonly-root-fs rule. The vast

@@ -2,7 +2,7 @@ apiVersion: kyverno.io/v2
 kind: PolicyException
 metadata:
   name: enforce-pod-hardening-gitlab-selfsign
-  namespace: zeldas-lullaby
+  namespace: mr-resetti
   annotations:
     policies.kyverno.io/description: >-
       GitLab chart shared-secrets self-sign cert job (cfssl-self-sign, hyrule-castle).

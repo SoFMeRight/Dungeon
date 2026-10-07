@@ -2,7 +2,7 @@ apiVersion: kyverno.io/v2
 kind: PolicyException
 metadata:
   name: enforce-pod-hardening-non-root
-  namespace: zeldas-lullaby
+  namespace: mr-resetti
   annotations:
     policies.kyverno.io/description: >-
       Workloads exempt from enforce-pod-hardening's require-run-as-non-root rule. All are

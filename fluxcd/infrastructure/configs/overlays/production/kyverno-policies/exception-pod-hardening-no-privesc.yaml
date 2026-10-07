@@ -2,7 +2,7 @@ apiVersion: kyverno.io/v2
 kind: PolicyException
 metadata:
   name: enforce-pod-hardening-no-privesc
-  namespace: zeldas-lullaby
+  namespace: mr-resetti
   annotations:
     policies.kyverno.io/description: >-
       Workloads exempt from enforce-pod-hardening's require-no-privilege-escalation rule.
