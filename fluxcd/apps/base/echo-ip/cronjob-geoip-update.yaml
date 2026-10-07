@@ -7,6 +7,9 @@ metadata:
 spec:
   # Daily at 2 AM. GeoLite2 republishes weekly (Tue); geoipupdate only downloads on change, so daily no-ops cheaply while giving prompt pickup + retry resilience.
   schedule: "0 2 * * *"
+  # The job mounts echo-ip's RWO PVC; a run that can't mount must not accumulate
+  # behind the next day's run. Replace kills any still-active run before the next.
+  concurrencyPolicy: Replace
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
@@ -19,6 +22,15 @@ spec:
         spec:
           serviceAccountName: echo-ip
           restartPolicy: OnFailure
+          # Co-locate with echo-ip-0: the GeoIP PVC is ReadWriteOnce, so this pod
+          # must land on the node already holding it, else it wedges on Multi-Attach.
+          affinity:
+            podAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                - labelSelector:
+                    matchLabels:
+                      statefulset.kubernetes.io/pod-name: echo-ip-0
+                  topologyKey: kubernetes.io/hostname
           containers:
             - name: geoipupdate
               image: docker.io/maxmindinc/geoipupdate:v8.0.0
