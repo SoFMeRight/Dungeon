@@ -49,11 +49,10 @@ spec:
           - SETUID
         drop:
           - ALL
+    # The operator already injects /vault/config and /vault/data; only the openbao-native
+    # config path is declared here. Re-adding the vault paths duplicates the operator's own
+    # mounts and the StatefulSet reconcile fails on non-unique mountPaths.
     volumeMounts:
-      - name: vault-config
-        mountPath: /vault/config
-      - name: openbao-data
-        mountPath: /vault/data
       - name: vault-config
         mountPath: /openbao/config
   unsealConfig:
