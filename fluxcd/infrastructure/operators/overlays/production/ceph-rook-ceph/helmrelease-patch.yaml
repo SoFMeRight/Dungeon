@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       # renovate: datasource=helm depName=rook-ceph registryUrl=https://charts.rook.io/release
-      version: "v1.20.8"
+      version: "v1.21.0"
   values:
     csi:
       enableCSIHostNetwork: true
