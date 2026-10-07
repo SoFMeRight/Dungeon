@@ -24,6 +24,7 @@ resources:
   - umami
   # Remote Access & Dashboards
   - guacamole
+  - headlamp
   - homarr
   - organizr
   - rustdesk-server

@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: headlamp
+spec:
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/cap.oidc: "true"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: headlamp
+          env:
+            - name: HOME
+              value: /tmp
+            - name: HEADLAMP_CONFIG_OIDC_IDP_ISSUER_URL
+              value: "https://sso.prplanit.com"
+            - name: HEADLAMP_CONFIG_OIDC_SCOPES
+              value: "openid,profile,email"
+            - name: HEADLAMP_CONFIG_OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: headlamp-oidc
+                  key: OIDC_CLIENT_ID
+            - name: HEADLAMP_CONFIG_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: headlamp-oidc
+                  key: OIDC_CLIENT_SECRET
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

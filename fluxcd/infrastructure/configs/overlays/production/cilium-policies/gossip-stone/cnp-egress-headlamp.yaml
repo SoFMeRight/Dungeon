@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-headlamp-egress
+spec:
+  description: >-
+    headlamp reads the Kubernetes API with the signed-in user's OIDC token
+    (covered by the universal allow-kube-apiserver-egress CCNP) and hairpins
+    OIDC token exchange to sso.prplanit.com, reaching the (non-meshed)
+    cell-membrane/xylem gateway pods on 443. No other external egress.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: headlamp
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: xylem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

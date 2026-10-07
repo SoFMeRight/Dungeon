@@ -1,22 +1,19 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
-namespace: kokiri-forest
-
+namespace: gossip-stone
 resources:
-  - ../../../base/yesimvegan-site
+  - ../../../base/headlamp
+  - externalsecret.yaml
   - httproute.yaml
-
+images:
+  - name: ghcr.io/headlamp-k8s/headlamp
+    newTag: v0.45.0
 patches:
   - path: deployment-patch.yaml
     target:
       kind: Deployment
-      name: yesimvegan-site
+      name: headlamp
   - path: service-patch.yaml
     target:
       kind: Service
-      name: yesimvegan-site
-  - path: service-yesimvegan-site-ingress-patch.yaml
-    target:
-      kind: Service
-      name: yesimvegan-site
+      name: headlamp

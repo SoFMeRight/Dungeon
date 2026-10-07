@@ -54,6 +54,8 @@ spec:
               protocol: TCP
             - port: "4180"
               protocol: TCP
+            - port: "4466"
+              protocol: TCP
             - port: "5000"
               protocol: TCP
             - port: "5006"
@@ -112,9 +114,9 @@ spec:
               protocol: TCP
             - port: "8200"
               protocol: TCP
+        - ports:
             - port: "8227"
               protocol: TCP
-        - ports:
             - port: "8443"
               protocol: TCP
             - port: "8480"
