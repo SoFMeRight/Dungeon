@@ -75,13 +75,23 @@
                   install -D -m "{{ a.mode | default('0644') }}" "$asset" "$dest"
                   exit 0 ;;
                 tar)
-                  tar -xzf "$asset" -C "$work" {{ ('--strip-components=' ~ (a.strip | int)) if (a.strip | default(0) | int) > 0 else '' }} ;;
+                  tar -xzf "$asset" -C "$work" ;;
                 zip)
                   python3 -m zipfile -e "$asset" "$work" ;;
                 *)
                   echo "unknown layout: {{ a.layout | default('tar') }}" >&2; exit 1 ;;
               esac
-              root="$work{{ ('/' ~ a.subdir) if a.subdir is defined else '' }}"
+              # strip N leading single-directory levels (wrapper unwrap) - uniform for tar and zip
+              root="$work"; n={{ a.strip | default(0) | int }}
+              while [ "$n" -gt 0 ]; do
+                sub="$(ls -A "$root")"
+                if [ "$(printf '%s\n' "$sub" | wc -l)" -eq 1 ] && [ -d "$root/$sub" ]; then
+                  root="$root/$sub"; n=$((n - 1))
+                else
+                  echo "strip: no single wrapper dir to descend at '$root'; stopping" >&2; break
+                fi
+              done
+              {% if a.subdir is defined %}root="$root/{{ a.subdir }}"{% endif %}
               rm -rf "$dest"; mkdir -p "$dest"
               {% if a.include is defined %}
               for g in {{ a.include | join(' ') }}; do ( cd "$root" && cp -R --preserve=mode,timestamps $g "$dest"/ ); done

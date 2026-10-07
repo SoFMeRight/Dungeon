@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: headlamp
+  annotations:
+    # force-replace on immutable-field change (e.g. volumeClaimTemplates); PVC retained
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
 spec:
   replicas: 1
   revisionHistoryLimit: 5
