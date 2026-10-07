@@ -3,7 +3,7 @@ kind: Job
 metadata:
   annotations:
     kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on image bump, not wedge
-  name: ceph-rgw-bucket-provisioning-appflowy
+  name: s3-bucket-provisioning-arbitorium-matrix-synapse
 spec:
   ttlSecondsAfterFinished: 86400
   template:
@@ -36,19 +36,19 @@ spec:
             - name: ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: appflowy-rgw-credentials
-                  key: s3_access_key
+                  name: matrix-synapse-rgw-credentials
+                  key: S3_ACCESS_KEY
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: appflowy-rgw-credentials
-                  key: s3_secret_key
+                  name: matrix-synapse-rgw-credentials
+                  key: S3_SECRET_KEY
           command:
             - /bin/bash
             - /scripts/setup.sh
-            - --user=appflowy-user
-            - --display-name="AppFlowy S3 User"
-            - --buckets=appflowy-files
+            - --user=matrix-synapse-user
+            - --display-name="Matrix media"
+            - --buckets=matrix-synapse-media
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -68,7 +68,7 @@ spec:
           emptyDir: {}
         - name: setup-script
           configMap:
-            name: ceph-rgw-bucket-provisioning-script
+            name: s3-bucket-provisioning-arbitorium-script
             defaultMode: 0755
         - name: ceph-config
           configMap:

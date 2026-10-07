@@ -3,7 +3,7 @@ kind: Job
 metadata:
   annotations:
     kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on image bump, not wedge
-  name: ceph-rgw-bucket-provisioning-renovate
+  name: s3-bucket-provisioning-arbitorium-gitlab
 spec:
   ttlSecondsAfterFinished: 86400
   template:
@@ -36,19 +36,19 @@ spec:
             - name: ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: renovate-rgw-credentials
-                  key: s3_access_key
+                  name: gitlab-s3-credentials
+                  key: access_key
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: renovate-rgw-credentials
-                  key: s3_secret_key
+                  name: gitlab-s3-credentials
+                  key: secret_key
           command:
             - /bin/bash
             - /scripts/setup.sh
-            - --user=renovate-user
-            - --display-name="Renovate S3 User"
-            - --buckets=renovate-cache
+            - --user=gitlab-user
+            - --display-name="GitLab S3 User"
+            - --buckets=gitlab-lfs,gitlab-artifacts,gitlab-uploads,gitlab-packages,gitlab-backups,gitlab-tmp,gitlab-registry
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -68,7 +68,7 @@ spec:
           emptyDir: {}
         - name: setup-script
           configMap:
-            name: ceph-rgw-bucket-provisioning-script
+            name: s3-bucket-provisioning-arbitorium-script
             defaultMode: 0755
         - name: ceph-config
           configMap:

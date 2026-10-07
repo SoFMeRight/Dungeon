@@ -3,7 +3,7 @@ kind: Job
 metadata:
   annotations:
     kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on image bump, not wedge
-  name: ceph-rgw-bucket-provisioning-reactive-resume
+  name: s3-bucket-provisioning-arbitorium-loki
 spec:
   ttlSecondsAfterFinished: 86400
   template:
@@ -36,19 +36,19 @@ spec:
             - name: ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: reactive-resume-rgw-credentials
-                  key: s3_access_key
+                  name: loki-rgw-credentials
+                  key: S3_ACCESS_KEY
             - name: SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: reactive-resume-rgw-credentials
-                  key: s3_secret_key
+                  name: loki-rgw-credentials
+                  key: S3_SECRET_KEY
           command:
             - /bin/bash
             - /scripts/setup.sh
-            - --user=reactive-resume-user
-            - --display-name=Reactive Resume S3 User
-            - --buckets=default
+            - --user=loki-user
+            - --display-name="Loki S3 User"
+            - --buckets=loki-chunks,loki-ruler,loki-admin
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -68,7 +68,7 @@ spec:
           emptyDir: {}
         - name: setup-script
           configMap:
-            name: ceph-rgw-bucket-provisioning-script
+            name: s3-bucket-provisioning-arbitorium-script
             defaultMode: 0755
         - name: ceph-config
           configMap:
