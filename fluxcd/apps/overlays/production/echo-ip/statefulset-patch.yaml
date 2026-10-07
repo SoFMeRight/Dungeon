@@ -48,6 +48,11 @@ spec:
             - name: tingle-tuner-echo-ip-data
               mountPath: /data
               readOnly: true
+            # Drop the base's vestigial /html mount (the fork bakes templates at
+            # /opt/echoip/html and themes via the echo-ip-branding configMap, so the
+            # PVC was never read). strategic-merge delete by mountPath merge-key.
+            - mountPath: /html
+              $patch: delete
       volumes:
         # readOnlyRootFilesystem: echoip is a static Go server (reads mmdb + baked
         # templates); /tmp is defensive scratch only.
