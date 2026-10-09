@@ -22,6 +22,13 @@ rules:
   - apiGroups: ["apps"]
     resources: ["statefulsets"]
     verbs: ["get"]
+  # Lets the configuration Job roll the flatroles Deployment after (re)writing its signing
+  # key, so the pods pick up SIGNING_KEY (Reloader is reloadOnCreate=false, so a freshly
+  # created key-Secret does not auto-restart it).
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "patch"]
+    resourceNames: ["zitadel-flatroles"]
   # For service account token creation (K8s auth)
   - apiGroups: [""]
     resources: ["serviceaccounts/token"]

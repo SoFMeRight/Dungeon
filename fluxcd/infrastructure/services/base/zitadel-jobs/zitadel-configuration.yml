@@ -353,6 +353,36 @@
         status_code: [200, 204]
       when: signing_key != cur_key
 
+    # Reloader is reloadOnCreate=false, so a freshly created key-Secret does not restart
+    # flatroles on its own. When we (re)wrote the key, wait for ESO to land it in the
+    # Secret, then roll the Deployment so the pods read SIGNING_KEY and begin enforcing.
+    - name: "step 4: wait for ESO to sync the signing key into the Secret"
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Secret
+        name: zitadel-flatroles-signing
+        namespace: "{{ app_namespace }}"
+      register: sign_secret
+      until: (sign_secret.resources | default([]) | length) > 0 and ((sign_secret.resources[0].data.signing_key | default('')) | length) > 0
+      retries: 18
+      delay: 10
+      when: signing_key != cur_key
+
+    - name: "step 4: roll flatroles to pick up the new SIGNING_KEY"
+      kubernetes.core.k8s:
+        state: patched
+        api_version: apps/v1
+        kind: Deployment
+        name: zitadel-flatroles
+        namespace: "{{ app_namespace }}"
+        definition:
+          spec:
+            template:
+              metadata:
+                annotations:
+                  flatroles.prplanit.com/signing-key-rev: "{{ signing_key | hash('sha256') }}"
+      when: signing_key != cur_key
+
     # /healthz self-test (no signature needed - works whether or not enforcement is live).
     - name: "step 4: flatroles /healthz self-test (fail-closed gate)"
       ansible.builtin.uri:
