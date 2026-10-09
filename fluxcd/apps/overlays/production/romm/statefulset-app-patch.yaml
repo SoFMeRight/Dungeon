@@ -8,10 +8,38 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/cap.oidc: "true"
     spec:
       containers:
         - name: romm
           image: docker.io/rommapp/romm:5.3.1
+          env:
+            - name: OIDC_ENABLED
+              value: "true"
+            - name: OIDC_PROVIDER
+              value: "Zitadel"
+            - name: OIDC_SERVER_APPLICATION_URL
+              value: "https://sso.prplanit.com"
+            - name: OIDC_REDIRECT_URI
+              value: "https://romm.pcfae.com/api/oauth/openid"
+            - name: OIDC_CLAIM_ROLES
+              value: "roles"
+            - name: OIDC_ROLE_ADMIN
+              value: "operator"
+            - name: OIDC_ROLE_EDITOR
+              value: "admin"
+            - name: OIDC_ROLE_VIEWER
+              value: "trusted"
+            - name: OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: romm-secrets
+                  key: oidc-client-id
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: romm-secrets
+                  key: oidc-client-secret
   volumeClaimTemplates:
     - metadata:
         name: shooting-gallery-romm-resources

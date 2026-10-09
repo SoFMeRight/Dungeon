@@ -15,12 +15,12 @@ spec:
   data:
     - secretKey: username
       remoteRef:
-        key: smb/romm
-        property: username
+        key: apps/romm
+        property: SAMBA_USERNAME
     - secretKey: password
       remoteRef:
-        key: smb/romm
-        property: password
+        key: apps/romm
+        property: SAMBA_PASSWORD
 ---
 # Games PV - SMB share from gringotts
 apiVersion: v1
