@@ -21,6 +21,9 @@ spec:
       # Enable CSI snapshots feature
       features: EnableCSI
 
+      clientQPS: 100
+      clientBurst: 200
+
       backupStorageLocation:
         - name: default
           provider: aws
