@@ -9,6 +9,7 @@ resources:
   - httproute.yaml
   - login-v2-httproute.yaml
   - externalsecret-postgres-backup.yaml
+  - externalsecret-flatroles-signing.yaml
 
 patches:
   - path: image-patch.yaml

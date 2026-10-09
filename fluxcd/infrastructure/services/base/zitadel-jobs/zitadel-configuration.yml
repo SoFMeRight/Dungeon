@@ -1,0 +1,417 @@
+---
+# Post-bootstrap Zitadel configuration — Ansible replacement for the former bash Job.
+# Idempotent/convergent: a config change is a git push (Flux force-replaces the Job) and a
+# fresh bootstrap converges identically. Steps:
+#   1. admin-SA PAT + userId        -> Vault
+#   2. instance features (loginV2)
+#   3. kubernetes OIDC: project, roles, OIDC app, clientId -> Vault
+#   4. flatRoles Actions-v2 target + per-target signing key -> Vault, executions, retire v1
+- name: Configure Zitadel
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    app_namespace: "{{ lookup('ansible.builtin.env', 'NAMESPACE') }}"
+    zitadel_route: "{{ lookup('ansible.builtin.env', 'ZITADEL_ROUTE') }}"
+    project_name: "{{ lookup('ansible.builtin.env', 'PROJECT_NAME') }}"
+    k8s_app_name: "{{ lookup('ansible.builtin.env', 'K8S_APP_NAME') }}"
+    vault_addr: "{{ lookup('ansible.builtin.env', 'VAULT_ADDR') }}"
+    vault_role: "{{ lookup('ansible.builtin.env', 'VAULT_ROLE') }}"
+    vault_path: "{{ lookup('ansible.builtin.env', 'VAULT_PATH') }}"   # full KV-v2 data path, as the bash used it
+    sa_jwt: "{{ lookup('ansible.builtin.file', '/var/run/secrets/kubernetes.io/serviceaccount/token') }}"
+    flatroles_url: "http://zitadel-flatroles.{{ app_namespace }}.svc.cluster.local:8080"
+
+  tasks:
+    # ------------------------------------------------------------------ setup
+    - name: Read the Zitadel HTTPRoute
+      kubernetes.core.k8s_info:
+        api_version: gateway.networking.k8s.io/v1
+        kind: HTTPRoute
+        name: "{{ zitadel_route }}"
+        namespace: "{{ app_namespace }}"
+      register: hr
+
+    - name: Resolve endpoint from the HTTPRoute (pods cannot hairpin the LB IP)
+      ansible.builtin.set_fact:
+        zitadel_host: "{{ hr.resources[0].spec.hostnames[0] }}"
+        base_url: "http://{{ hr.resources[0].spec.rules[0].backendRefs[0].name }}.{{ app_namespace }}.svc.cluster.local:{{ hr.resources[0].spec.rules[0].backendRefs[0].port }}"
+
+    - name: Read the admin-SA PAT secret (written by zitadel-setup)
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Secret
+        name: zitadel-k8s-admin-sa
+        namespace: "{{ app_namespace }}"
+      register: adminsa
+
+    - name: Derive API context
+      ansible.builtin.set_fact:
+        mgmt_url: "{{ base_url }}/management/v1"
+        admin_pat: "{{ adminsa.resources[0].data.token | b64decode }}"
+        admin_user_id: "{{ adminsa.resources[0].data.userId | b64decode }}"
+
+    - name: Build request headers
+      ansible.builtin.set_fact:
+        zitadel_headers:
+          Host: "{{ zitadel_host }}"
+          Authorization: "Bearer {{ admin_pat }}"
+
+    - name: Vault login (kubernetes auth)
+      ansible.builtin.uri:
+        url: "{{ vault_addr }}/v1/auth/kubernetes/login"
+        method: POST
+        body_format: json
+        body:
+          jwt: "{{ sa_jwt }}"
+          role: "{{ vault_role }}"
+      register: vault_login
+
+    - name: Set Vault token + KV-v2 data URL
+      ansible.builtin.set_fact:
+        vault_token: "{{ vault_login.json.auth.client_token }}"
+        vault_data_url: "{{ vault_addr }}/v1/{{ vault_path }}"
+
+    # ------------------------------------------------- step 1: admin-SA -> Vault
+    # merge-patch so sibling keys (redis/backup/etc.) are never clobbered.
+    - name: "step 1: store admin-SA creds in Vault"
+      ansible.builtin.uri:
+        url: "{{ vault_data_url }}"
+        method: PATCH
+        headers:
+          X-Vault-Token: "{{ vault_token }}"
+          Content-Type: application/merge-patch+json
+        body_format: json
+        body:
+          data:
+            admin-sa-token: "{{ admin_pat }}"
+            admin-sa-userId: "{{ admin_user_id }}"
+        status_code: [200, 204]
+
+    # --------------------------------------------- step 2: instance features
+    # STABLE /v2/features carries loginV2; the v2beta request drops it silently.
+    - name: "step 2: enable loginV2 instance feature"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/v2/features/instance"
+        method: PUT
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          loginV2:
+            required: true
+            baseUri: "https://{{ zitadel_host }}/ui/v2/login"
+        status_code: [200, 400]   # 400 "No changes" = idempotent no-op
+        return_content: true
+      register: feat
+      failed_when: feat.status == 400 and ('no change' not in (feat.content | default('') | lower))
+
+    # ------------------------------------------ step 3: kubernetes OIDC
+    - name: "step 3: search project '{{ project_name }}'"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/projects/_search"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          queries:
+            - nameQuery:
+                name: "{{ project_name }}"
+                method: TEXT_QUERY_METHOD_EQUALS
+      register: proj_search
+
+    - name: "step 3: refuse to guess among duplicate projects"
+      ansible.builtin.assert:
+        that: (proj_search.json.result | default([]) | length) <= 1
+        fail_msg: "multiple projects named '{{ project_name }}' exist"
+
+    - name: "step 3: create project when absent"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/projects"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          name: "{{ project_name }}"
+          projectRoleAssertion: true
+          projectRoleCheck: true
+          hasProjectCheck: true
+      register: proj_create
+      when: (proj_search.json.result | default([]) | length) == 0
+
+    - name: "step 3: resolve project id"
+      ansible.builtin.set_fact:
+        project_id: "{{ proj_search.json.result[0].id if (proj_search.json.result | default([]) | length) == 1 else proj_create.json.id }}"
+
+    # Search-first (not create-tolerate-error): the dup-role error code is not relied upon.
+    # 'admin' already exists (weave binds it) - do NOT recreate/clobber it.
+    - name: "step 3: list existing project roles"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/projects/{{ project_id }}/roles/_search"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body: {}
+      register: roles_search
+
+    - name: "step 3: create missing project roles"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/projects/{{ project_id }}/roles"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          roleKey: "{{ item.key }}"
+          displayName: "{{ item.name }}"
+          group: Kubernetes
+      loop:
+        - key: user
+          name: User
+        - key: developer
+          name: Developer
+        - key: operator
+          name: Operator
+      when: item.key not in (roles_search.json.result | default([]) | map(attribute='key') | list)
+
+    # Role assertions OFF: the apiserver reads the flat `roles` claim (userinfo assertion
+    # stays on); the urn:zitadel role-map only bloats tokens + device consent.
+    - name: "step 3: search OIDC app '{{ k8s_app_name }}'"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/projects/{{ project_id }}/apps/_search"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body: {}
+      register: app_search
+
+    - name: "step 3: resolve existing app id (if any)"
+      ansible.builtin.set_fact:
+        app_id: "{{ (app_search.json.result | default([]) | selectattr('name', 'equalto', k8s_app_name) | map(attribute='id') | list | first) | default('') }}"
+
+    - name: "step 3: OIDC app config"
+      ansible.builtin.set_fact:
+        app_cfg:
+          redirectUris: ["http://localhost:8000", "http://127.0.0.1:18000", "http://localhost"]
+          responseTypes: ["OIDC_RESPONSE_TYPE_CODE"]
+          grantTypes: ["OIDC_GRANT_TYPE_AUTHORIZATION_CODE", "OIDC_GRANT_TYPE_REFRESH_TOKEN", "OIDC_GRANT_TYPE_DEVICE_CODE"]
+          appType: OIDC_APP_TYPE_NATIVE
+          authMethodType: OIDC_AUTH_METHOD_TYPE_NONE
+          accessTokenType: OIDC_TOKEN_TYPE_BEARER
+          accessTokenRoleAssertion: false
+          idTokenRoleAssertion: false
+          idTokenUserinfoAssertion: true
+          loginVersion:
+            loginV2:
+              baseUri: ""
+
+    - name: "step 3: create OIDC app when absent"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/projects/{{ project_id }}/apps/oidc"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body: "{{ app_cfg | combine({'name': k8s_app_name}) }}"
+      register: app_create
+      when: app_id | length == 0
+
+    - name: "step 3: reconcile OIDC app config when present"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/projects/{{ project_id }}/apps/{{ app_id }}/oidc_config"
+        method: PUT
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body: "{{ app_cfg }}"
+        status_code: [200, 400]
+        return_content: true
+      register: app_update
+      when: app_id | length > 0
+      failed_when: app_update.status == 400 and ('no change' not in (app_update.content | default('') | lower))
+
+    - name: "step 3: read clientId when app pre-existed"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/projects/{{ project_id }}/apps/{{ app_id }}"
+        method: GET
+        headers: "{{ zitadel_headers }}"
+      register: app_get
+      when: app_id | length > 0
+
+    - name: "step 3: resolve clientId"
+      ansible.builtin.set_fact:
+        client_id: "{{ app_create.json.clientId if (app_id | length == 0) else (app_get.json.app.oidcConfig.clientId | default(app_get.json.oidcConfig.clientId)) }}"
+
+    - name: "step 3: assert clientId"
+      ansible.builtin.assert:
+        that: client_id | length > 0
+        fail_msg: "no clientId resolved"
+
+    - name: "step 3: store clientId in Vault"
+      ansible.builtin.uri:
+        url: "{{ vault_data_url }}"
+        method: PATCH
+        headers:
+          X-Vault-Token: "{{ vault_token }}"
+          Content-Type: application/merge-patch+json
+        body_format: json
+        body:
+          data:
+            k8s-oidc-client-id: "{{ client_id }}"
+        status_code: [200, 204]
+
+    # --------------------------------- step 4: flatRoles v2 (fail-closed)
+    # Executions are wired (and v1 retired) only after the target passes a /healthz
+    # self-test, so any failure leaves the prior state serving.
+    - name: "step 4: read cached signing key from Vault"
+      ansible.builtin.uri:
+        url: "{{ vault_data_url }}"
+        method: GET
+        headers:
+          X-Vault-Token: "{{ vault_token }}"
+        status_code: [200, 404]
+      register: vault_get
+
+    - name: "step 4: set cached signing key"
+      ansible.builtin.set_fact:
+        cur_key: "{{ (vault_get.json.data.data.FLATROLES_SIGNING_KEY | default('')) if vault_get.status == 200 else '' }}"
+
+    - name: "step 4: search flatroles target"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/v2beta/actions/targets/search"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body: {}
+      register: tgt_search
+
+    - name: "step 4: resolve existing target id (if any)"
+      ansible.builtin.set_fact:
+        target_id: "{{ ((tgt_search.json.result | default(tgt_search.json.targets) | default([])) | selectattr('name', 'equalto', 'flatroles') | map(attribute='id') | list | first) | default('') }}"
+        target_cfg:
+          name: flatroles
+          endpoint: "{{ flatroles_url }}"
+          timeout: "5s"
+          restCall:
+            interruptOnError: false
+
+    # Zitadel returns the signing key only on create or regenerate. Fresh -> create;
+    # existing with no cached key -> regenerate once (expirationSigningKey "0s" = immediate);
+    # existing with a cached key -> reconcile WITHOUT rotating (no churn each run).
+    - name: "step 4: create target when absent"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/v2beta/actions/targets"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body: "{{ target_cfg }}"
+      register: tgt_create
+      when: target_id | length == 0
+
+    - name: "step 4: regenerate signing key when target exists but no key cached"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/v2beta/actions/targets/{{ target_id }}"   # UpdateTarget is POST (PUT 405s)
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body: "{{ target_cfg | combine({'expirationSigningKey': '0s'}) }}"
+      register: tgt_regen
+      when: target_id | length > 0 and cur_key | length == 0
+
+    - name: "step 4: reconcile target without rotating when key already cached"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/v2beta/actions/targets/{{ target_id }}"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body: "{{ target_cfg }}"
+        status_code: [200, 400]
+        return_content: true
+      register: tgt_reconcile
+      when: target_id | length > 0 and cur_key | length > 0
+      failed_when: tgt_reconcile.status == 400 and ('no change' not in (tgt_reconcile.content | default('') | lower))
+
+    - name: "step 4: resolve target id + signing key"
+      ansible.builtin.set_fact:
+        target_id: "{{ target_id if (target_id | length > 0) else tgt_create.json.id }}"
+        signing_key: "{{ cur_key if (cur_key | length > 0) else (tgt_create.json.signingKey if (target_id | length == 0) else tgt_regen.json.signingKey) }}"
+
+    - name: "step 4: assert target id + signing key"
+      ansible.builtin.assert:
+        that:
+          - target_id | length > 0
+          - signing_key | length > 0
+        fail_msg: "no target id / signing key obtained"
+
+    - name: "step 4: persist signing key to Vault when changed"
+      ansible.builtin.uri:
+        url: "{{ vault_data_url }}"
+        method: PATCH
+        headers:
+          X-Vault-Token: "{{ vault_token }}"
+          Content-Type: application/merge-patch+json
+        body_format: json
+        body:
+          data:
+            FLATROLES_SIGNING_KEY: "{{ signing_key }}"
+        status_code: [200, 204]
+      when: signing_key != cur_key
+
+    # /healthz self-test (no signature needed - works whether or not enforcement is live).
+    - name: "step 4: flatroles /healthz self-test (fail-closed gate)"
+      ansible.builtin.uri:
+        url: "{{ flatroles_url }}/healthz"
+        method: GET
+        return_content: true
+      register: selftest
+      until: selftest.status == 200 and (selftest.content | trim) == 'ok'
+      retries: 12
+      delay: 5
+
+    - name: "step 4: set flatroles executions"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/v2beta/actions/executions"
+        method: PUT
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          condition:
+            function:
+              name: "{{ item }}"
+          targets: ["{{ target_id }}"]
+        status_code: [200, 400]
+        return_content: true
+      loop: [preuserinfo, preaccesstoken]
+      register: ex_set
+      failed_when: ex_set.status == 400 and ('no change' not in (ex_set.content | default('') | lower))
+
+    - name: "step 4: find legacy v1 Action 'flatRoles'"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/actions/_search"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body: {}
+      register: v1_search
+
+    - name: "step 4: resolve v1 Action id (if any)"
+      ansible.builtin.set_fact:
+        v1_id: "{{ ((v1_search.json.result | default([])) | selectattr('name', 'equalto', 'flatRoles') | map(attribute='id') | list | first) | default('') }}"
+
+    - name: "step 4: detach v1 Action from Complement-Token triggers"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/flows/2/trigger/{{ item }}"   # 4=pre-userinfo, 5=pre-access-token
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          actionIds: []
+      loop: [4, 5]
+      when: v1_id | length > 0
+
+    - name: "step 4: delete legacy v1 Action"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/actions/{{ v1_id }}"
+        method: DELETE
+        headers: "{{ zitadel_headers }}"
+      when: v1_id | length > 0
+
+    - name: Done
+      ansible.builtin.debug:
+        msg: "configuration converged (project={{ project_id }} app={{ client_id }} target={{ target_id }})"

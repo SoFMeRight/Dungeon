@@ -11,3 +11,14 @@ resources:
   - zitadel-initjob.yaml
   - zitadel-setupjob.yaml
   - zitadel-configuration-job.yaml
+
+# The configuration Job runs this Ansible playbook, mounted from a ConfigMap.
+configMapGenerator:
+  - name: zitadel-configuration-playbook
+    files:
+      - zitadel-configuration.yml
+
+# Stable name so the Job references it directly; the Job is force-replaced on change
+# and re-reads the playbook, so no content-hash rollout trigger is needed.
+generatorOptions:
+  disableNameSuffixHash: true

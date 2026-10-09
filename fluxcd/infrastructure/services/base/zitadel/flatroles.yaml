@@ -19,6 +19,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: zitadel-flatroles
+  annotations:
+    # Restart to pick up SIGNING_KEY when ESO (re)writes the signing-key Secret.
+    secret.reloader.stakater.com/reload: zitadel-flatroles-signing
 spec:
   # Two replicas: this sits on the login path. A total outage does not block logins
   # (the target is registered interruptOnError=false) but drops the roles claim,
@@ -42,6 +45,16 @@ spec:
       containers:
         - name: flatroles
           image: PLACEHOLDER_IMAGE
+          env:
+            # When ESO has populated the signing-key Secret, the binary verifies the
+            # ZITADEL-Signature HMAC; absent (e.g. fresh bootstrap before the key exists)
+            # it starts with verification off and relies on the mesh AuthorizationPolicy.
+            - name: SIGNING_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: zitadel-flatroles-signing
+                  key: signing_key
+                  optional: true
           ports:
             - name: http
               containerPort: 8080

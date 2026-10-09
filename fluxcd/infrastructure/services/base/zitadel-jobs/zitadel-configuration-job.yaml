@@ -1,10 +1,12 @@
 # The ONE post-bootstrap configuration Job: everything declarative that happens to a
 # running Zitadel via its admin API or Vault lives here as an ensure-state step, so a
 # config change is a push (Flux force-replaces the Job) and a fresh bootstrap converges
-# identically. Steps: (1) admin-SA PAT -> Vault, (2) instance features, (3) kubernetes
-# OIDC project/roles/app + clientId -> Vault. Add future configuration as steps, not
-# as new Jobs. The bootstrap pair (zitadel-init/zitadel-setup, the vendor's own
-# lifecycle commands) stays separate.
+# identically. The logic is an Ansible playbook (configuration-playbook.yml, mounted from
+# a ConfigMap) run on the HomeLabHD ansible image; its steps: (1) admin-SA PAT -> Vault,
+# (2) instance features, (3) kubernetes OIDC project/roles/app + clientId -> Vault, (4)
+# flatRoles Actions-v2 target + signing key -> Vault, executions, retire v1. Add future
+# configuration as plays/tasks, not as new Jobs. The bootstrap pair (zitadel-init/
+# zitadel-setup, the vendor's own lifecycle commands) stays separate.
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -74,211 +76,21 @@ spec:
               value: zitadel-vault-sync
             - name: VAULT_PATH
               value: zeldas-letter/data/apps/zitadel
+            # Ansible (uid 1000) needs a writable HOME for its local tmp/control path.
+            - name: HOME
+              value: /tmp
             # Project keyed by NAME (bootstrap-safe: reuse if present, create if absent);
             # app name carries the cluster per house style. Instance-specific -> overlay.
             - name: PROJECT_NAME
               value: PLACEHOLDER_PROJECT_NAME
             - name: K8S_APP_NAME
               value: PLACEHOLDER_K8S_APP_NAME
-          command:
-            - bash
-            - -c
-            - |
-              set -euo pipefail
-              : "${ZITADEL_ROUTE:?}" "${NAMESPACE:?}" "${PROJECT_NAME:?}" "${K8S_APP_NAME:?}"
-              : "${VAULT_ADDR:?}" "${VAULT_ROLE:?}" "${VAULT_PATH:?}"
-
-              # Endpoint + external domain from the Zitadel HTTPRoute: in-cluster service
-              # with the external domain as Host header (pods cannot hairpin the LB IP).
-              HR="$(kubectl get httproute "$ZITADEL_ROUTE" -n "$NAMESPACE" -o json)"
-              HOST="$(echo "$HR" | jq -r '.spec.hostnames[0] // empty')"
-              SVC="$(echo "$HR" | jq -r '.spec.rules[0].backendRefs[0].name // empty')"
-              PORT="$(echo "$HR" | jq -r '.spec.rules[0].backendRefs[0].port // empty')"
-              [ -n "$HOST" ] && [ -n "$SVC" ] && [ -n "$PORT" ] || { echo "ERROR: HTTPRoute '$ZITADEL_ROUTE' incomplete"; exit 1; }
-              BASE="http://${SVC}.${NAMESPACE}.svc.cluster.local:${PORT}"
-              MGMT="${BASE}/management/v1"
-              echo "=== Configuring Zitadel via ${BASE} (Host: ${HOST}) ==="
-
-              PAT="$(kubectl get secret zitadel-k8s-admin-sa -n "$NAMESPACE" -o jsonpath='{.data.token}' | base64 -d)"
-              USER_ID="$(kubectl get secret zitadel-k8s-admin-sa -n "$NAMESPACE" -o jsonpath='{.data.userId}' | base64 -d)"
-              [ -n "$PAT" ] || { echo "ERROR: empty admin PAT"; exit 1; }
-
-              api() { curl -sf -H "Host: ${HOST}" -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" "$@"; }
-              # For calls where a 400 "no changes" is the idempotent no-op, not an error.
-              api_put() { curl -s -w '\n%{http_code}' -H "Host: ${HOST}" -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" -X PUT "$@"; }
-              # For creates whose error body must surface (api()'s -sf swallows it).
-              api_post() { curl -s -w '\n%{http_code}' -H "Host: ${HOST}" -H "Authorization: Bearer ${PAT}" -H "Content-Type: application/json" -X POST "$@"; }
-              put_ok() { # $1=label $2=response
-                local http="${2##*$'\n'}" body="${2%$'\n'*}"
-                case "$http" in
-                  200) echo "  $1: applied" ;;
-                  400) echo "$body" | grep -qi "no change" \
-                         && echo "  $1: already as desired" \
-                         || { echo "ERROR: $1 rejected: $body"; exit 1; } ;;
-                  *) echo "ERROR: $1 failed (http $http): $body"; exit 1 ;;
-                esac
-              }
-
-              vault_token() {
-                local sa; sa="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
-                curl -sf "${VAULT_ADDR}/v1/auth/kubernetes/login" \
-                  -d "{\"jwt\":\"${sa}\",\"role\":\"${VAULT_ROLE}\"}" | jq -r '.auth.client_token'
-              }
-              vault_patch() { # $1=json data object
-                local vt; vt="$(vault_token)"
-                [ -n "$vt" ] && [ "$vt" != "null" ] || { echo "ERROR: Vault auth failed"; exit 1; }
-                curl -sf -X PATCH "${VAULT_ADDR}/v1/${VAULT_PATH}" \
-                  -H "X-Vault-Token: ${vt}" -H "Content-Type: application/merge-patch+json" \
-                  -d "{\"data\": $1}" >/dev/null
-              }
-
-              # --- step 1: admin-SA credentials -> Vault (external-secrets reads them back) ---
-              echo "--- step 1: admin SA -> Vault ---"
-              vault_patch "$(jq -n --arg t "$PAT" --arg u "$USER_ID" '{"admin-sa-token": $t, "admin-sa-userId": $u}')"
-              echo "  stored admin-sa-token/admin-sa-userId at ${VAULT_PATH}"
-
-              # --- step 2: instance features ---
-              # loginV2 required: every flow -- including device-code verification, which is
-              # instance-routed and ignores per-app loginVersion pins -- renders in the v2 login.
-              echo "--- step 2: instance features ---"
-              # STABLE /v2/features/instance — the v2beta SetInstanceFeaturesRequest has NO
-              # loginV2 field, so a PUT there silently drops it and returns "No changes"
-              # (verified against the image's OpenAPI: only the stable v2 request carries loginV2).
-              FEATURES="$(jq -n --arg base "https://${HOST}/ui/v2/login" \
-                '{loginV2: {required: true, baseUri: $base}}')"
-              put_ok "instance features" "$(api_put "${BASE}/v2/features/instance" -d "$FEATURES")"
-
-              # --- step 3: kubernetes OIDC (project by name, roles, app, clientId -> Vault) ---
-              echo "--- step 3: kubernetes OIDC ---"
-              FOUND="$(api -X POST "${MGMT}/projects/_search" \
-                -d "{\"queries\":[{\"nameQuery\":{\"name\":\"${PROJECT_NAME}\",\"method\":\"TEXT_QUERY_METHOD_EQUALS\"}}]}" \
-                | jq -r '.result[]? | .id')"
-              N="$(printf '%s\n' "$FOUND" | grep -c . || true)"
-              if [ "$N" -gt 1 ]; then
-                echo "ERROR: ${N} projects named '${PROJECT_NAME}' exist - refusing to guess which"; exit 1
-              elif [ "$N" -eq 1 ]; then
-                PROJECT_ID="$FOUND"
-                echo "  project '${PROJECT_NAME}' already present (${PROJECT_ID}) - reusing"
-              else
-                echo "  project '${PROJECT_NAME}' absent - creating it"
-                PROJECT_ID="$(api -X POST "${MGMT}/projects" \
-                  -d "{\"name\":\"${PROJECT_NAME}\",\"projectRoleAssertion\":true,\"projectRoleCheck\":true,\"hasProjectCheck\":true}" \
-                  | jq -r '.id')"
-              fi
-              [ -n "$PROJECT_ID" ] && [ "$PROJECT_ID" != "null" ] || { echo "ERROR: could not resolve project id"; exit 1; }
-
-              ensure_role() {
-                key="$1"; name="$2"; group="$3"
-                have="$(api -X POST "${MGMT}/projects/${PROJECT_ID}/roles/_search" -d '{}' \
-                  | jq -r --arg k "$key" '.result[]? | select(.key==$k) | .key')"
-                if [ "$have" = "$key" ]; then
-                  echo "  role '${key}' already present - leaving as-is"
-                else
-                  echo "  creating role '${key}'"
-                  api -X POST "${MGMT}/projects/${PROJECT_ID}/roles" \
-                    -d "{\"roleKey\":\"${key}\",\"displayName\":\"${name}\",\"group\":\"${group}\"}" >/dev/null
-                fi
-              }
-              ensure_role user      "User"      "Kubernetes"
-              ensure_role developer "Developer" "Kubernetes"
-              ensure_role operator  "Operator"  "Kubernetes"
-              # 'admin' already exists (weave binds it); do NOT recreate/clobber it.
-
-              # Desired client config; create and update both apply it. Role assertions OFF:
-              # the apiserver reads the flat `roles` claim set by the flatRoles Action (via
-              # userinfo assertion, which stays on); the urn:zitadel role-map only bloats
-              # tokens and the device consent. loginVersion pins the v2 login UI.
-              APP_CFG='{
-                "redirectUris": ["http://localhost:8000", "http://127.0.0.1:18000", "http://localhost"],
-                "responseTypes": ["OIDC_RESPONSE_TYPE_CODE"],
-                "grantTypes": ["OIDC_GRANT_TYPE_AUTHORIZATION_CODE", "OIDC_GRANT_TYPE_REFRESH_TOKEN", "OIDC_GRANT_TYPE_DEVICE_CODE"],
-                "appType": "OIDC_APP_TYPE_NATIVE",
-                "authMethodType": "OIDC_AUTH_METHOD_TYPE_NONE",
-                "accessTokenType": "OIDC_TOKEN_TYPE_BEARER",
-                "accessTokenRoleAssertion": false,
-                "idTokenRoleAssertion": false,
-                "idTokenUserinfoAssertion": true,
-                "loginVersion": {"loginV2": {"baseUri": ""}}
-              }'
-              APP_ID="$(api -X POST "${MGMT}/projects/${PROJECT_ID}/apps/_search" -d '{}' \
-                | jq -r --arg n "$K8S_APP_NAME" '.result[]? | select(.name==$n) | .id' | head -n1)"
-              if [ -z "$APP_ID" ] || [ "$APP_ID" = "null" ]; then
-                echo "  creating OIDC app '${K8S_APP_NAME}'"
-                RESP="$(api -X POST "${MGMT}/projects/${PROJECT_ID}/apps/oidc" \
-                  -d "$(echo "$APP_CFG" | jq --arg n "$K8S_APP_NAME" '. + {name: $n}')")"
-                CLIENT_ID="$(echo "$RESP" | jq -r '.clientId')"
-              else
-                echo "  OIDC app '${K8S_APP_NAME}' already present (${APP_ID}) - reconciling config"
-                put_ok "app config" "$(api_put "${MGMT}/projects/${PROJECT_ID}/apps/${APP_ID}/oidc_config" -d "$APP_CFG")"
-                CLIENT_ID="$(api -X GET "${MGMT}/projects/${PROJECT_ID}/apps/${APP_ID}" \
-                  | jq -r '.app.oidcConfig.clientId // .oidcConfig.clientId // empty')"
-              fi
-              [ -n "$CLIENT_ID" ] && [ "$CLIENT_ID" != "null" ] || { echo "ERROR: no clientId resolved"; exit 1; }
-              echo "  clientId = ${CLIENT_ID}"
-              vault_patch "$(jq -n --arg c "$CLIENT_ID" '{"k8s-oidc-client-id": $c}')"
-              echo "  stored 'k8s-oidc-client-id' at ${VAULT_PATH}"
-
-              # --- step 4: flatRoles as Actions v2 (target + executions), then retire v1 ---
-              # The roles claim is load-bearing for cluster authentication, so this is a
-              # FAIL-CLOSED migration: the v1 Action is only torn down after the v2 target
-              # self-tests AND both executions are set. Any failure leaves v1 serving.
-              echo "--- step 4: flatRoles v2 ---"
-              FLATROLES_URL="http://zitadel-flatroles.${NAMESPACE}.svc.cluster.local:8080"
-
-              SELFTEST=""
-              for i in $(seq 1 12); do
-                SELFTEST="$(curl -sf --max-time 10 -X POST "$FLATROLES_URL" \
-                  -H "Content-Type: application/json" \
-                  -d '{"function_name":"selftest","user_grants":[{"roles":["selftest-role"]}]}' || true)"
-                echo "$SELFTEST" | jq -e '.append_claims[0].value | index("selftest-role")' >/dev/null 2>&1 && break
-                echo "  waiting for flatroles target (${i}/12)..."
-                sleep 5
-              done
-              echo "$SELFTEST" | jq -e '.append_claims[0].value | index("selftest-role")' >/dev/null 2>&1 \
-                || { echo "ERROR: flatroles target self-test failed (got: ${SELFTEST:-<no response>}) - v1 Action left in place"; exit 1; }
-              echo "  target self-test passed"
-
-              TID="$(api -X POST "${BASE}/v2beta/actions/targets/search" -d '{}' \
-                | jq -r '(.result // .targets // [])[]? | select(.name=="flatroles") | .id' | head -n1)"
-              TARGET_CFG="$(jq -n --arg url "$FLATROLES_URL" \
-                '{name: "flatroles", endpoint: $url, timeout: "5s", restCall: {interruptOnError: false}}')"
-              if [ -z "$TID" ] || [ "$TID" = "null" ]; then
-                echo "  creating v2 target 'flatroles'"
-                RESP="$(api_post "${BASE}/v2beta/actions/targets" -d "$TARGET_CFG")"
-                HTTP="${RESP##*$'\n'}"
-                BODY="${RESP%$'\n'*}"
-                case "$HTTP" in
-                  200|201) TID="$(echo "$BODY" | jq -r '.id')" ;;
-                  *) echo "ERROR: target create failed (http $HTTP): $BODY"; exit 1 ;;
-                esac
-              else
-                # v2beta UpdateTarget is POST /targets/{id} (ActionService_UpdateTarget),
-                # NOT PUT (PUT 405s - the {id} path only serves GET/DELETE/POST).
-                echo "  v2 target 'flatroles' present (${TID}) - reconciling"
-                put_ok "v2 target" "$(api_post "${BASE}/v2beta/actions/targets/${TID}" -d "$TARGET_CFG")"
-              fi
-              [ -n "$TID" ] && [ "$TID" != "null" ] || { echo "ERROR: no target id"; exit 1; }
-
-              # Same two points the v1 flow triggered on (Complement Token).
-              # SetExecution.targets is an ordered array of target-ID STRINGS (v2betaSetExecutionRequest),
-              # not objects. PUT /executions = ActionService_SetExecution.
-              for FN in preuserinfo preaccesstoken; do
-                EX="$(jq -n --arg fn "$FN" --arg t "$TID" \
-                  '{condition: {function: {name: $fn}}, targets: [$t]}')"
-                put_ok "execution ${FN}" "$(api_put "${BASE}/v2beta/actions/executions" -d "$EX")"
-              done
-
-              V1_ID="$(api -X POST "${MGMT}/actions/_search" -d '{}' \
-                | jq -r '.result[]? | select(.name=="flatRoles") | .id' | head -n1)"
-              if [ -n "$V1_ID" ] && [ "$V1_ID" != "null" ]; then
-                echo "  retiring v1 Action flatRoles (${V1_ID})"
-                for TRIG in 4 5; do  # flow 2 (Complement Token): 4=pre-userinfo, 5=pre-access-token
-                  api -X POST "${MGMT}/flows/2/trigger/${TRIG}" -d '{"actionIds":[]}' >/dev/null
-                done
-                api -X DELETE "${MGMT}/actions/${V1_ID}" >/dev/null
-                echo "  v1 Action removed"
-              else
-                echo "  v1 Action already absent"
-              fi
-
-              echo "=== configuration converged ==="
+          command: ["ansible-playbook", "-i", "localhost,", "/ansible/zitadel-configuration.yml"]
+          volumeMounts:
+            - name: playbook
+              mountPath: /ansible
+              readOnly: true
+      volumes:
+        - name: playbook
+          configMap:
+            name: zitadel-configuration-playbook

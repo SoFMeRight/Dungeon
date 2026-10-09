@@ -16,7 +16,7 @@ spec:
           image: docker.io/alpine/k8s:1.37.1
       containers:
         - name: configure
-          image: docker.io/alpine/k8s:1.37.1
+          image: ghcr.io/homelabhd/ansible:v2.21.5
           env:
             - name: PROJECT_NAME
               value: Container Orchestration
