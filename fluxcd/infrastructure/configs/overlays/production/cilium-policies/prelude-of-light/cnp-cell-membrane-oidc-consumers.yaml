@@ -39,6 +39,9 @@ spec:
             k8s:io.kubernetes.pod.namespace: lens-of-truth
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: shooting-gallery
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: hookshot
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:

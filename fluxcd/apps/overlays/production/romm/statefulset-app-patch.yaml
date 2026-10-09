@@ -20,6 +20,18 @@ spec:
               value: "Zitadel"
             - name: OIDC_SERVER_APPLICATION_URL
               value: "https://sso.prplanit.com"
+            - name: OIDC_SERVER_METADATA_URL
+              value: "https://sso.prplanit.com/.well-known/openid-configuration"
+            - name: OIDC_USERNAME_ATTRIBUTE
+              value: "preferred_username"
+            - name: OIDC_AUTOLOGIN
+              value: "false"
+            - name: OIDC_ALLOW_REGISTRATION
+              value: "true"
+            - name: OIDC_RP_INITIATED_LOGOUT
+              value: "false"
+            - name: OIDC_END_SESSION_ENDPOINT
+              value: ""
             - name: OIDC_REDIRECT_URI
               value: "https://romm.pcfae.com/api/oauth/openid"
             - name: OIDC_CLAIM_ROLES
