@@ -12,6 +12,19 @@ spec:
       containers:
         - name: pyload-ng
           image: docker.io/linuxserver/pyload-ng:0.5.0
+          # Readiness probes the share, not the web port: the port answers even
+          # when the SMB session is dead. No liveness probe - gluetun drops egress
+          # on each VPN reconnect and a restart on that would loop.
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - test -r /downloads && test -w /downloads
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
           env:
             - name: TZ
               value: "America/Los_Angeles"

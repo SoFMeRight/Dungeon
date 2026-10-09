@@ -16,6 +16,22 @@ spec:
           image: quay.io/oauth2-proxy/oauth2-proxy:v7.15.5
           securityContext:
             readOnlyRootFilesystem: true
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 3
           resources:
             requests:
               cpu: "2m"
