@@ -32,4 +32,4 @@ spec:
     spec:
       containers:
         - name: flatroles
-          image: docker.io/library/python:3.12-slim
+          image: ghcr.io/prplanit/zitadel-flatroles:latest-dev
