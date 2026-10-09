@@ -54,11 +54,16 @@ spec:
                       name: renovate-gitlab
                       key: host_rules
                 - name: RENOVATE_AUTODISCOVER
-                  value: "false"
+                  value: "true"
                 - name: RENOVATE_GIT_AUTHOR
                   value: "Renovate Bot <renovate@precisionplanit.com>"
-                - name: RENOVATE_REPOSITORIES
-                  value: "SoFMeRight/dungeon"
+                # Scope autodiscover to the two orgs (3rd-party = HomeLabHD, internal =
+                # PrPlanIT) plus the dungeon GitOps monorepo. Every repo gets a Dependency
+                # Dashboard on Renovate's own schedule, independent of whether it builds --
+                # so dormant / less-active projects' dep drift is still visible (the point:
+                # the in-CI deps engine only fires when a project actually builds).
+                - name: RENOVATE_AUTODISCOVER_FILTER
+                  value: "HomeLabHD/**,PrPlanIT/**,SoFMeRight/dungeon"
                 - name: LOG_LEVEL
                   value: "info"
                 - name: RENOVATE_CONFIG_FILE
