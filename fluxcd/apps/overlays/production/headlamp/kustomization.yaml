@@ -13,7 +13,7 @@ images:
   - name: ghcr.io/headlamp-k8s/headlamp
     newTag: v0.45.0
   - name: docker.io/hlhd/ansible
-    newTag: v2.21.4
+    newTag: v2.21.6
 patches:
   - path: statefulset-patch.yaml
     target:
