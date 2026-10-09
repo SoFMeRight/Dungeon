@@ -12,7 +12,7 @@ spec:
         - name: webroot
           image: ghcr.io/homelabhd/hubzilla:v11.4.1
         - name: schema
-          image: docker.io/mariadb:11.8
+          image: docker.io/mariadb:12.2
       containers:
         - name: cron
           image: ghcr.io/homelabhd/hubzilla:v11.4.1
