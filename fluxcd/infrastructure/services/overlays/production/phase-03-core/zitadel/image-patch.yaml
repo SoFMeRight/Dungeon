@@ -32,4 +32,4 @@ spec:
     spec:
       containers:
         - name: flatroles
-          image: ghcr.io/prplanit/zitadel-flatroles:latest-dev
+          image: ghcr.io/prplanit/zitadel-flatroles:v0.0.1
