@@ -17,7 +17,6 @@ resources:
   - ./mariadb-operator
   - ./redis-operator
   - ./snapshot-controller
-  - ./strimzi-kafka-operator
   - ./velero
 
 patches:
