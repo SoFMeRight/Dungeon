@@ -69,6 +69,8 @@ perform:
   id_tokens:
     STAGEFREIGHT_OIDC:
       aud: stagefreight
+  tags:
+    - k8s-dungeon-production
   variables:
     GIT_DEPTH: 0
     <<: *transport
@@ -102,6 +104,8 @@ publish:
   id_tokens:
     STAGEFREIGHT_OIDC:
       aud: stagefreight
+  tags:
+    - k8s-dungeon-production
   needs:
     - perform
     - review

@@ -63,6 +63,9 @@ ansible:
     known_hosts: ansible/known_hosts
     user: kai
 ci:
+  forge:
+    - gitlab
+  image: docker.cr.pcfae.com/prplanit/stagefreight:latest-dev
   routing:
     perform:
       labels:
@@ -74,6 +77,11 @@ forges:
   preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/forges.yml
 git:
   preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/git.yml
+llms:
+  glicynia:
+    model: deepseek-r1:1.5b
+    provider: ollama
+    url: http://glicynia:11434
 metadata:
   category: infrastructure
   description:
@@ -88,6 +96,27 @@ metadata:
     - fluxcd
     - ansible
     - homelab
+notifications:
+  phone:
+    credentials: NTFY
+    provider: ntfy
+    url: https://ntfy.pcfae.com/Dungeon-CI
+  recap:
+    body: "\U0001F916 {recap}"
+    credentials: NTFY
+    provider: ntfy
+    url: https://ntfy.pcfae.com/Dungeon-CI
+    when:
+      outcomes:
+        - success
+  triage:
+    body: '{triage}'
+    credentials: NTFY
+    provider: ntfy
+    url: https://ntfy.pcfae.com/Dungeon-CI
+    when:
+      outcomes:
+        - failure
 orgs:
   SoFMeRight:
     aliases:
@@ -115,10 +144,35 @@ repos:
       - primary
     worktree: .
 stencils:
+  ci-detail:
+    body: |
+      {commit_title}
+      {status} · {project} {ref}
+      Failed in {failure.subsystem} — {failure.reason}
+      {failures}
+      Converged {reconcile.succeeded}/{reconcile.total} {reconcile.units} on {reconcile.cluster}
+      Commits since {changelog.range} — {changelog.count}
+    type: text
   presets:
     - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-base.yml
     - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-status.yml
     - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-pipeline.yml
     - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-gitops.yml
+  recap:
+    body: |
+      {summary}
+
+      In one or two sentences, recap this GitOps reconcile for a team chat —
+      plain and direct, lead with what converged. No markdown, no preamble.
+    llm: glicynia
+    type: llm
+  triage:
+    body: |
+      {ci-detail}
+
+      In 2-3 sentences: which kustomizations broke, the likely cause, and the
+      first thing to check on the cluster.
+    llm: glicynia
+    type: llm
 toolchains:
   preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/toolchains.yml
