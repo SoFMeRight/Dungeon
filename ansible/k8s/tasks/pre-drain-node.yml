@@ -5,7 +5,12 @@
 #   - switches every CNPG primary off this node (status.targetPrimary patch) and waits
 #     until the primary role has moved — CNPG will NOT do this for a drain on its own,
 #     so a primary would otherwise block the drain on its always-zero -primary PDB; and
-#   - fails fast by name on any remaining genuine (non-CNPG) zero-disruption PDB.
+#   - classifies every remaining (non-CNPG) zero-disruption PDB covering a pod here:
+#     a structurally un-evictable one (desiredHealthy >= expectedPods) fails fast by
+#     name, while one merely closed by an unhealthy pod is waited out and then handed
+#     to the drain, which retries refused evictions within its own --timeout. A
+#     transient closure must NEVER abort the node: the rescue below fail-opens, so
+#     aborting leaves the node running the old version while the roll moves on.
 # It does NOT wait for a demoted instance to rejoin — CNPG's rejoin is unreliable here,
 # so anything that strands is re-cloned after the drain by post-drain-reconcile.yml.
 
