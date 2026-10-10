@@ -33,7 +33,7 @@ import time
 
 KUBECTL = ["kubectl", "--kubeconfig", "/etc/kubernetes/admin.conf", "--request-timeout=20s"]
 CALL_TIMEOUT = 30        # hard subprocess ceiling on any single kubectl call
-RECOVER_DEADLINE = 300   # total time a just-evicted replica gets to re-attach
+RECOVER_DEADLINE = 900   # total time a just-evicted replica gets to re-attach
 POLL_INTERVAL = 10       # gap between health polls while still degraded
 
 
