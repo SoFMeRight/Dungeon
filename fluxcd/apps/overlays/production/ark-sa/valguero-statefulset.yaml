@@ -29,7 +29,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: valguero
-          image: docker.io/acekorneya/asa_server:2_1_latest
+          image: docker.io/acekorneya/asa_server:2_1_latest@sha256:1278d8e1c3347f4fe0141ac28f8e471b1aacf22e67f429cc9298dbe32e3f9023
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

@@ -63,7 +63,7 @@ spec:
               mountPath: /config
       containers:
         - name: frigate
-          image: ghcr.io/blakeblackshear/frigate:stable-tensorrt
+          image: ghcr.io/blakeblackshear/frigate:stable-tensorrt@sha256:82d7475ba7e5f950911bd9d06f2392de96881f39eeacd78824a526dde9b5cad9
           ports:
             - containerPort: 5000
               name: http

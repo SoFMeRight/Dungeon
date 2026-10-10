@@ -51,7 +51,7 @@ spec:
               mountPath: /config
       containers:
         - name: signaling
-          image: docker.io/strukturag/nextcloud-spreed-signaling:latest
+          image: docker.io/strukturag/nextcloud-spreed-signaling:latest@sha256:b306eae9d1e62c4b2eaf10a6683dfe1fe76b833bd0f68d1606861e33aff5bca1
           # Image starts root + su-exec-drops to its own user — needs SETUID/SETGID.
           securityContext:
             allowPrivilegeEscalation: false
