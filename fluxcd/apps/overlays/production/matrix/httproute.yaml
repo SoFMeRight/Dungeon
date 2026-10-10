@@ -5,6 +5,9 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Social (Temple of Time⏳)"
+      url: https://matrix.outspokekin.com/health
+      conditions:
+        - "[STATUS] == 200"
 spec:
   # Public: federation is inbound as well as outbound, and the apex's .well-known points
   # remote servers here.
