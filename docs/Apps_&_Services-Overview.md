@@ -1,6 +1,6 @@
 # Apps & Services Overview
 
-<!-- sf:k8s-inventory:start -->
+<!-- sf:apps:start -->
 > Generated from live Kubernetes state
 > Cluster: dungeon
 
@@ -1425,4 +1425,4 @@
 
 </details>
 
-<!-- sf:k8s-inventory:end -->
+<!-- sf:apps:end -->
