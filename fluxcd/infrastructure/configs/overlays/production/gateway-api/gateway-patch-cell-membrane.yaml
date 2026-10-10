@@ -7,6 +7,9 @@ metadata:
     lbipam.cilium.io/sharing-key: "prelude-of-light"
     lbipam.cilium.io/sharing-cross-namespace: "*"
     service.cilium.io/loadbalancer-mode: "dsr"
+    # Carries envoyproxy/envoy#45198 (HBONE connect_originate stream leak), which
+    # ships in 1.32 and is not backported to 1.31. Control plane stays on 1.31.1.
+    sidecar.istio.io/proxyImage: docker.io/istio/proxyv2:1.32.0-alpha.0-distroless
 spec:
   infrastructure:
     labels:
