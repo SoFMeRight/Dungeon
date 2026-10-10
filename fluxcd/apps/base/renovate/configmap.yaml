@@ -272,13 +272,54 @@ data:
           // push those tags deliberately.)
           "matchDatasources": ["docker"],
           "matchPackageNames": [
-            "**/mealie", "**/readarr", "**/faster-whisper", "**/jellyfin", "**/pihole",
-            "**/clamav", "**/py-kms", "**/umami", "**/whiteboard",
+            "**/faster-whisper", "**/pihole", "**/py-kms", "**/umami", "**/whiteboard",
             "**/nextcloud-spreed-signaling", "**/vlmcsd", "**/asa_server", "**/arkserver",
-            "**/anirra", "**/minecraft-server", "**/kasm", "**/whisparr", "**/tikiwiki",
-            "**/frigate"
+            "**/anirra", "**/minecraft-server", "**/tikiwiki"
           ],
           "pinDigests": true
+        },
+        {
+          // jellyfin/jellyfin publishes the unstable next-gen 12.x line and date-stamped
+          // nightlies in the SAME repo as stable 10.x. Constrain to 10.x so an update never
+          // jumps the stable track onto a dev build.
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/jellyfin"],
+          "allowedVersions": "<11"
+        },
+        {
+          // clamav tags every build as <ver>-debian13-slim / <ver>_base-debian variants;
+          // track bare X.Y.Z only so updates never latch onto a variant or _base tag.
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/clamav"],
+          "allowedVersions": "/^\\d+\\.\\d+\\.\\d+$/"
+        },
+        {
+          // frigate ships <semver>-tensorrt stable builds alongside dev-<hash>-tensorrt and
+          // betas; semver the X.Y.Z within the -tensorrt variant, ignore the rest.
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/frigate"],
+          "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-tensorrt$"
+        },
+        {
+          // LinuxServer kasm is <semver>-ls<build>; track both the semver and the ls build
+          // so it follows the LSIO rebuilds instead of sitting frozen on a digest.
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/kasm"],
+          "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-ls(?<build>\\d+)$"
+        },
+        {
+          // hotio whisparr pins to the v2 release channel (v2-v<semver>); stay on v2 and
+          // semver within it, never the nightly-* builds or the v3 channel.
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/whisparr"],
+          "versioning": "regex:^v2-v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)$"
+        },
+        {
+          // readarr has no stable channel — only <semver>-nightly; track the nightly version
+          // forward so it stays current instead of frozen on a digest.
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/readarr"],
+          "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-nightly$"
         },
         {
           "matchDatasources": ["helm"],
