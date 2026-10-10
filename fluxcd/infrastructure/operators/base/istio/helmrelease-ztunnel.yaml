@@ -30,6 +30,11 @@ spec:
     # ztunnel is the core of Ambient mode
     # Handles L4 mTLS between pods
 
+    # Must stay top-level: this chart reads .Values.hub; global.hub is ignored.
+    hub: docker.io/istio
+    imagePullSecrets:
+      - docker-io-pull-secret
+
     # Override namespace to king-of-red-lions instead of istio-system
     global:
       istioNamespace: king-of-red-lions

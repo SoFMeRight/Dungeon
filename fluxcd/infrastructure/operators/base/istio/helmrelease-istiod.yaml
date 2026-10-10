@@ -24,6 +24,10 @@ spec:
     # Override namespace to king-of-red-lions instead of istio-system
     global:
       istioNamespace: king-of-red-lions
+      # Also sets the kube-gateway proxyv2 image, not just pilot.
+      hub: docker.io/istio
+      imagePullSecrets:
+        - docker-io-pull-secret
       # Default proxy resources. In this ambient mesh there are no sidecars, so this
       # only feeds the Gateway-API kube-gateways (xylem/cell-membrane/phloem) -- the
       # kube-gateway injection template reads resources ONLY from here, never from a

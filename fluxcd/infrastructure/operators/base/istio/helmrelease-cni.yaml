@@ -27,6 +27,11 @@ spec:
         namespace: flux-system
       interval: 12h
   values:
+    hub: docker.io/istio
+    global:
+      imagePullSecrets:
+        - docker-io-pull-secret
+
     # CNI configuration for Ambient mode
     cni:
       # Use Cilium's CNI paths

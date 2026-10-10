@@ -5,6 +5,7 @@ metadata:
   labels:
     name: king-of-red-lions
     purpose: gateway-controller
+    docker-io-pull-secret: "enabled"
     # Privileged mode required for Istio CNI and ztunnel DaemonSets
     pod-security.kubernetes.io/enforce: privileged
     pod-security.kubernetes.io/audit: privileged
