@@ -22,10 +22,54 @@ release:
   preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/release.yml
 lifecycle:
   mode: gitops
+gitops:
+  dungeon:
+    backend: flux
+    endpoint: https://172.22.144.105:6443
+    exposure:
+      - gateways:
+          - cell-membrane-gateway
+        level: internet
+      - gateways:
+          - phloem-gateway
+          - xylem-gateway
+        level: intranet
+      - level: cluster
+        service_types:
+          - ClusterIP
+      - level: intranet
+        service_types:
+          - NodePort
+    oidc:
+      audience: stagefreight
+ansible:
+  image: ghcr.io/homelabhd/ansible:v2.21.6
+  inventory: ansible/inventory
+  playbooks:
+    kubelet-provision:
+      converge: true
+      groups:
+        - k8s_master
+        - k8s_worker
+      path: ansible/k8s/kubelet-provision.yml
+    provision-hosts:
+      converge: true
+      groups:
+        - k8s_worker
+        - k8s_master
+      path: ansible/k8s/provision-hosts.yml
+  ssh:
+    credentials: DUNGEON
+    known_hosts: ansible/known_hosts
+    user: kai
 ci:
-  forge:
-    - gitlab
-  image: docker.cr.pcfae.com/prplanit/stagefreight:latest-dev
+  routing:
+    perform:
+      labels:
+        - k8s-dungeon-production
+    publish:
+      labels:
+        - k8s-dungeon-production
 forges:
   preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/forges.yml
 git:
