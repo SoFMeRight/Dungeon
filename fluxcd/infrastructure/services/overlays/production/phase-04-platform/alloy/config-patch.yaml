@@ -454,12 +454,6 @@ data:
         target_label  = "__address__"
       }
 
-      // Drop Mimir pods - they use memberlist and have separate ServiceMonitor
-      rule {
-        source_labels = ["__meta_kubernetes_pod_label_app_kubernetes_io_name"]
-        regex         = "mimir"
-        action        = "drop"
-      }
 
       // Drop kube-state-metrics: it carries prometheus.io/scrape and would be
       // caught here, but its series describe OTHER objects and carry their own
@@ -727,11 +721,6 @@ data:
         target_label  = "__address__"
       }
       rule {
-        source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_name"]
-        regex         = "mimir"
-        action        = "drop"
-      }
-      rule {
         source_labels = ["__meta_kubernetes_namespace"]
         target_label  = "namespace"
       }
@@ -981,9 +970,6 @@ data:
     loki.process "filter_noise" {
       forward_to = [loki.process.add_labels.receiver]
 
-      stage.drop {
-        expression = "err-mimir-sample-timestamp-too-old"
-      }
       stage.drop {
         expression = "sample has been rejected because another sample with a more recent timestamp"
       }

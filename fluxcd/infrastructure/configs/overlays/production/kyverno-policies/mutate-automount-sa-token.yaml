@@ -61,7 +61,6 @@ spec:
               - grafana-postgres
               - kube-state-metrics
               - loki
-              - mimir-rollout-operator
               - weave-gitops
               - boundary-postgres
               - tacticalrmm-tls-reader

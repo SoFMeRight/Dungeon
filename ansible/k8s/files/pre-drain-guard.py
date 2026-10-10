@@ -119,11 +119,6 @@ def scan_budgets(node):
         # post-drain reconcile — not a genuine wedge.
         if "cnpg.io/cluster" in pdb["metadata"].get("labels", {}):
             continue
-        # expectedPods 0 means the selector matches nothing cluster-wide (a PDB left
-        # behind by a removed app). It can never gate an eviction.
-        expected = status.get("expectedPods", 0)
-        if not expected:
-            continue
         ns = pdb["metadata"]["namespace"]
         selector = pdb.get("spec", {}).get("selector", {}).get("matchLabels", {})
         if not selector:
@@ -136,6 +131,7 @@ def scan_budgets(node):
         ]
         if not covered:
             continue
+        expected = status.get("expectedPods", 0)
         desired = status.get("desiredHealthy", 0)
         healthy = status.get("currentHealthy", 0)
         where = f"{ns}/{pdb['metadata']['name']}"
