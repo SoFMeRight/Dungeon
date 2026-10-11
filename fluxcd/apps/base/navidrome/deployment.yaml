@@ -59,7 +59,7 @@ spec:
             # in-cluster pod network below. The Subsonic API (/rest/*) is SSO-exempt and uses
             # its own token auth, so it never carries this header.
             - name: ND_REVERSEPROXYUSERHEADER
-              value: X-Auth-Request-Email
+              value: X-Auth-Request-Preferred-Username
             - name: ND_REVERSEPROXYWHITELIST
               value: 192.168.144.0/20
             # auth rate-limit DISABLED (0). At >0 it 429s the web player's burst of
