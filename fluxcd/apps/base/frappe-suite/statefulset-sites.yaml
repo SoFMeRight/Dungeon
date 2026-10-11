@@ -119,6 +119,10 @@ spec:
                   $SITE_NAME;
               else
                 echo "Site $SITE_NAME already exists, skipping creation";
+                # Bring the schema up to this image's code. A no-op when nothing is
+                # pending; no --skip-failing, so a broken patch stops the pod instead of
+                # serving new code on a half-migrated database.
+                bench --site $SITE_NAME migrate;
               fi
               # Routing is nginx's job via FRAPPE_SITE_NAME_HEADER; what the site itself
               # needs is the URL to put in the links it generates — password resets,
