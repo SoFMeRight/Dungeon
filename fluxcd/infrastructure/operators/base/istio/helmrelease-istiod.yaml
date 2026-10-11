@@ -32,11 +32,8 @@ spec:
       # only feeds the Gateway-API kube-gateways (xylem/cell-membrane/phloem) -- the
       # kube-gateway injection template reads resources ONLY from here, never from a
       # per-gateway annotation or the generated Deployment (istiod reverts direct
-      # patches). Memory limit raised 1024Mi->1280Mi: xylem fronts 107 HTTPRoutes /
-      # 194 hostnames and its config-reload spike (envoy holds old+new during a push)
-      # peaked at 916Mi on the one replica that never restarted and tipped just over
-      # 1Gi on the others -> chronic OOMKilled flap. Limit-only bump reserves zero
-      # extra capacity (a limit is a ceiling); the smaller gateways never approach it.
+      # patches). The memory limit is headroom for the largest gateway's config-reload
+      # spike (envoy holds old+new config during a push).
       proxy:
         resources:
           requests:
