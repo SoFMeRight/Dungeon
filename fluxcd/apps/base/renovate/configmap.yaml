@@ -85,6 +85,16 @@ data:
         },
         {
           "customType": "regex",
+          "managerFilePatterns": ["/fluxcd/.+\\.yaml$/"],
+          "matchStrings": [
+            "sidecar\\.istio\\.io/proxyImage:\\s+\"?(?<depName>[^\\s\":]+):(?<currentValue>[^\\s\"]+)\"?"
+          ],
+          "datasourceTemplate": "docker",
+          "versioningTemplate": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-(?<prerelease>(?:alpha|beta|rc)\\.\\d+))?-(?<compatibility>distroless)$",
+          "description": "Gateway proxy image pins (sidecar.istio.io/proxyImage). The kubernetes manager only reads image: fields, so without this a pin is invisible and never moves."
+        },
+        {
+          "customType": "regex",
           "managerFilePatterns": ["/ansible/group_vars/.+\\.ya?ml$/"],
           "matchStrings": [
             "crio_version:\\s+\"?(?<currentValue>[^\"\\s]+)\"?"
@@ -423,6 +433,21 @@ data:
           "groupName": "istio",
           "matchFileNames": ["fluxcd/infrastructure/operators/base/istio/**"],
           "commitMessagePrefix": "chore(istio):"
+        },
+        {
+          // Gateway proxy pins run ahead of the charts to carry a fix before its release.
+          // Joining the istio group makes the stable release arrive as ONE MR with the
+          // charts; stable-only so alphas/RCs never touch it.
+          "groupName": "istio",
+          "matchManagers": ["custom.regex"],
+          "matchDepNames": ["docker.io/istio/proxyv2"],
+          "allowedVersions": "/^\\d+\\.\\d+\\.\\d+-distroless$/",
+          "commitMessagePrefix": "chore(istio):",
+          "prBodyNotes": [
+            "**Gateway proxy pin — do not merge as-is.** This release supersedes a temporary `sidecar.istio.io/proxyImage` pin.",
+            "Before merging: delete every pin (`git grep -n proxyImage fluxcd/`) and keep the istio charts on this MR's version,",
+            "so every gateway runs the proxy istiod ships with. Afterwards check each gateway with `pilot-agent request GET server_info`."
+          ]
         },
         {
           // Wazuh manager/indexer/dashboard are version-locked (all must be the same
