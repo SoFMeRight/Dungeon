@@ -14,7 +14,7 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: copy-assets
-          image: docker.io/hlhd/frappe-suite:v16.33.0
+          image: docker.io/hlhd/frappe-suite:v16.50.0
           imagePullPolicy: Always
           volumeMounts:
             - $patch: delete
@@ -22,7 +22,7 @@ spec:
             - name: sites-data
               mountPath: /mnt/sites
         - name: configurator
-          image: docker.io/hlhd/frappe-suite:v16.33.0
+          image: docker.io/hlhd/frappe-suite:v16.50.0
           imagePullPolicy: Always
           volumeMounts:
             - $patch: delete
@@ -34,7 +34,7 @@ spec:
             - name: logs-data
               mountPath: /home/frappe/frappe-bench/logs
         - name: create-site
-          image: docker.io/hlhd/frappe-suite:v16.33.0
+          image: docker.io/hlhd/frappe-suite:v16.50.0
           imagePullPolicy: Always
           volumeMounts:
             - $patch: delete
@@ -50,7 +50,7 @@ spec:
               readOnly: true
       containers:
         - name: backend
-          image: docker.io/hlhd/frappe-suite:v16.33.0
+          image: docker.io/hlhd/frappe-suite:v16.50.0
           imagePullPolicy: Always
           volumeMounts:
             - $patch: delete

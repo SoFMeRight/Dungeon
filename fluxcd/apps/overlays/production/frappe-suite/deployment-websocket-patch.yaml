@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: websocket
-          image: docker.io/hlhd/frappe-suite:v16.33.0
+          image: docker.io/hlhd/frappe-suite:v16.50.0
           imagePullPolicy: Always
           resources:
             requests:
