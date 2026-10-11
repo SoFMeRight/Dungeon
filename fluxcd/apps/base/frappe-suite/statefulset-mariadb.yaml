@@ -45,7 +45,7 @@ spec:
               command:
                 - sh
                 - -c
-                - mysqladmin ping -h localhost --password=$MYSQL_ROOT_PASSWORD
+                - mariadb-admin ping -h localhost --password=$MYSQL_ROOT_PASSWORD
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
