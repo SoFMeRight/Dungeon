@@ -25,6 +25,83 @@ lifecycle:
 gitops:
   dungeon:
     backend: flux
+    categories:
+      - name: Administrative
+        namespaces:
+          - zeldas-lullaby
+      - name: DNS & NTP
+        namespaces:
+          - compass
+      - name: Routing Infrastructure
+        namespaces:
+          - king-of-red-lions
+      - name: Storage Services
+        namespaces:
+          - gorons-bracelet
+      - name: Backup Services
+        namespaces:
+          - fairy-bottle
+      - name: Monitoring
+        namespaces:
+          - gossip-stone
+      - name: Security & IDS
+        namespaces:
+          - lens-of-truth
+        tier: app
+      - name: Bot Protection
+        namespaces:
+          - wallmaster
+        tier: app
+      - name: Internal Trust
+        namespaces:
+          - gerudo-crest
+      - name: Business Gateway
+        namespaces:
+          - hyrule-castle
+      - name: Personal Gateway
+        namespaces:
+          - kokiri-forest
+      - name: Internal Gateway
+        namespaces:
+          - arylls-lookout
+      - name: Archival & Media
+        namespaces:
+          - temple-of-time
+        tier: app
+      - name: Discovery & Dashboards
+        namespaces:
+          - lost-woods
+        tier: app
+      - name: Downloads & Arr
+        namespaces:
+          - swift-sail
+        tier: app
+      - name: Game Servers
+        namespaces:
+          - shooting-gallery
+        tier: app
+      - name: Mail Services
+        namespaces:
+          - delivery-bag
+        tier: app
+      - name: Remote Management
+        namespaces:
+          - hookshot
+        tier: app
+      - name: Tools & Utilities
+        namespaces:
+          - tingle-tuner
+        tier: app
+      - name: Privileged Services
+        namespaces:
+          - pedestal-of-time
+      - name: Platform
+        namespaces:
+          - kube-system
+          - flux-system
+          - istio-system
+          - cert-manager
+        tier: platform
     endpoint: https://172.22.144.105:6443
     exposure:
       - gateways:
