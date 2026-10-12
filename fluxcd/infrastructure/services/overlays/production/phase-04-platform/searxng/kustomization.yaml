@@ -1,11 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: tingle-tuner
+namespace: compass
 
 resources:
   - ../../../../base/searxng
-  - httproute-xylem.yaml
+  - httproute-phloem.yaml
   - externalsecret.yaml
 
 patches:
@@ -42,7 +42,7 @@ patches:
           metadata:
             labels:
               policy.prplanit.com/access-class: redis
-              policy.prplanit.com/service-scope: tingle-tuner.searxng.redis
+              policy.prplanit.com/service-scope: compass.searxng.redis
     target:
       kind: Deployment
       name: searxng-redis

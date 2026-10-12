@@ -4,7 +4,6 @@ namespace: tingle-tuner
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
-  - allow-searxng-to-searxng-redis.yaml
   - allow-endlessh-go-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml

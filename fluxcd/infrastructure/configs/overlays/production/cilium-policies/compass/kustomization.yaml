@@ -5,6 +5,7 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-chrony-ntp.yaml
   - cnp-netbootxyz-tftp.yaml
+  - cnp-searxng-internal.yaml
   # Egress allows (inert until egress default-deny is enabled for the namespace).
   # adguard has its own egress CNP in the adguard overlay; speedtests are inbound-only.
   - cnp-egress-chrony.yaml
@@ -12,3 +13,4 @@ resources:
   - cnp-egress-cloudflare-ddns.yaml
   - cnp-egress-netbootxyz.yaml
   - cnp-egress-adguardhome-sync.yaml
+  - cnp-egress-searxng.yaml

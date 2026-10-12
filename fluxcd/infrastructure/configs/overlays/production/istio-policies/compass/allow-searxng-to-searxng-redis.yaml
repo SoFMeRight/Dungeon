@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/tingle-tuner/sa/searxng
+              - cluster.local/ns/compass/sa/searxng
       to:
         - operation:
             ports: ["6379"]

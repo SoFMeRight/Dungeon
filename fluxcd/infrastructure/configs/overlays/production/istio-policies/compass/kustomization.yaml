@@ -4,6 +4,7 @@ namespace: compass
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-searxng-to-searxng-redis.yaml
   - allow-dns-loadbalancer.yaml
   - allow-ntp-loadbalancer.yaml
   - allow-netbootxyz-loadbalancer.yaml
