@@ -1,41 +1,22 @@
 {
   "schema_version": 1,
   "cluster": "dungeon",
-  "generated_at": "2026-08-26T02:05:32.825802284Z",
+  "generated_at": "2026-10-12T16:54:33.481467499Z",
   "discovery_status": {
     "complete": true,
     "source": "live_cluster"
   },
   "apps": {
-    "arylls-lookout/pve-cluster-proxy": {
+    "arylls-lookout/phloem-gateway-istio": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "arylls-lookout",
-        "name": "pve-cluster-proxy",
+        "name": "phloem-gateway-istio",
         "images": [
-          "docker.io/library/nginx:1-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "arylls-lookout/xylem-gateway-istio": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "arylls-lookout",
-        "name": "xylem-gateway-istio",
-        "images": [
-          "registry.istio.io/release/proxyv2:1.30.3-distroless"
+          "docker.io/istio/proxyv2:1.32.0-alpha.0-distroless"
         ],
         "image_digests": null
       },
@@ -48,7 +29,7 @@
     "compass/adguard": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "compass",
@@ -67,13 +48,32 @@
     "compass/adguardhome-sync": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "compass",
         "name": "adguardhome-sync",
         "images": [
-          "docker.io/linuxserver/adguardhome-sync:0.9.2"
+          "docker.io/linuxserver/adguardhome-sync:0.9.4"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "compass/bulkvs-ip-sync": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "compass",
+        "name": "bulkvs-ip-sync",
+        "images": [
+          "ghcr.io/prplanit/bulkvs-ip-sync:v0.0.1"
         ],
         "image_digests": null
       },
@@ -86,7 +86,7 @@
     "compass/chrony": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "compass",
@@ -105,7 +105,7 @@
     "compass/cloudflare-ddns": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "compass",
@@ -121,48 +121,10 @@
         "reason": "new_app"
       }
     },
-    "compass/echo-ip": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "compass",
-        "name": "echo-ip",
-        "images": [
-          "ghcr.io/homelabhd/echoip:2026.7.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "compass/librespeed-speedtest": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "compass",
-        "name": "librespeed-speedtest",
-        "images": [
-          "ghcr.io/librespeed/speedtest:6.2.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
     "compass/netbootxyz": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "compass",
@@ -178,16 +140,17 @@
         "reason": "new_app"
       }
     },
-    "compass/openspeedtest": {
+    "compass/searxng": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "compass",
-        "name": "openspeedtest",
+        "name": "searxng",
         "images": [
-          "docker.io/openspeedtest/latest:v2.0.6"
+          "ghcr.io/searxng/searxng:2026.10.11-ad46ebd7d",
+          "docker.io/valkey/valkey:9-alpine"
         ],
         "image_digests": null
       },
@@ -200,13 +163,13 @@
     "delivery-bag/ntfy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "delivery-bag",
         "name": "ntfy",
         "images": [
-          "docker.io/binwiederhier/ntfy:v2.27.0"
+          "docker.io/binwiederhier/ntfy:v2.29.0"
         ],
         "image_digests": null
       },
@@ -219,7 +182,7 @@
     "fairy-bottle/snapshot-controller": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "fairy-bottle",
@@ -238,13 +201,32 @@
     "fairy-bottle/velero": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "fairy-bottle",
         "name": "velero",
         "images": [
-          "docker.io/velero/velero:v1.18.2"
+          "docker.io/velero/velero:v1.18.4"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "farores-wind/netbird-router-dungeon": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "farores-wind",
+        "name": "netbird-router-dungeon",
+        "images": [
+          "docker.io/netbirdio/netbird:0.78.1"
         ],
         "image_digests": null
       },
@@ -257,16 +239,16 @@
     "flux-system/flux-system": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "flux-system",
         "name": "flux-system",
         "images": [
-          "ghcr.io/fluxcd/helm-controller:v1.6.3",
-          "ghcr.io/fluxcd/kustomize-controller:v1.9.4",
-          "ghcr.io/fluxcd/notification-controller:v1.9.3",
-          "ghcr.io/fluxcd/source-controller:v1.9.4"
+          "ghcr.io/fluxcd/helm-controller:v1.6.5",
+          "ghcr.io/fluxcd/kustomize-controller:v1.9.6",
+          "ghcr.io/fluxcd/notification-controller:v1.9.4",
+          "ghcr.io/fluxcd/source-controller:v1.9.6"
         ],
         "image_digests": null
       },
@@ -279,13 +261,13 @@
     "gerudo-crest/reflector": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gerudo-crest",
         "name": "reflector",
         "images": [
-          "docker.io/emberstack/kubernetes-reflector:7.1.288"
+          "docker.io/emberstack/kubernetes-reflector:10.0.65"
         ],
         "image_digests": null
       },
@@ -295,67 +277,16 @@
         "reason": "new_app"
       }
     },
-    "gorons-bracelet/ceph": {
+    "gerudo-crest/reloader": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
-        "namespace": "gorons-bracelet",
-        "name": "ceph",
+        "namespace": "gerudo-crest",
+        "name": "reloader",
         "images": [
-          "quay.io/ceph/ceph:v19",
-          "quay.io/cephcsi/cephcsi:v3.17.1",
-          "docker.io/prplanit/external-provisioner:v6.1.0-r1",
-          "registry.k8s.io/sig-storage/csi-resizer:v2.1.0",
-          "registry.k8s.io/sig-storage/csi-snapshotter:v8.5.0",
-          "registry.k8s.io/sig-storage/csi-attacher:v4.11.0",
-          "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.16.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "gorons-bracelet/ceph-csi-rbd-nodeplugin": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "gorons-bracelet",
-        "name": "ceph-csi-rbd-nodeplugin",
-        "images": [
-          "quay.io/cephcsi/cephcsi:v3.15.0",
-          "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "gorons-bracelet/ceph-csi-rbd-provisioner": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "gorons-bracelet",
-        "name": "ceph-csi-rbd-provisioner",
-        "images": [
-          "quay.io/cephcsi/cephcsi:v3.15.0",
-          "docker.io/prplanit/external-provisioner:v6.1.0-r1",
-          "registry.k8s.io/sig-storage/csi-resizer:v1.13.1",
-          "registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0",
-          "registry.k8s.io/sig-storage/csi-attacher:v4.8.0"
+          "ghcr.io/stakater/reloader:v1.4.22"
         ],
         "image_digests": null
       },
@@ -367,9 +298,8 @@
     },
     "gorons-bracelet/ceph-rgw": {
       "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -388,7 +318,7 @@
     "gorons-bracelet/cifs-csi-driver": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -412,13 +342,13 @@
     "gorons-bracelet/cloudnative-pg": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
         "name": "cloudnative-pg",
         "images": [
-          "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.0"
+          "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.1"
         ],
         "image_digests": null
       },
@@ -431,18 +361,18 @@
     "gorons-bracelet/gorons-bracelet.cephfs.csi.ceph.com": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
         "name": "gorons-bracelet.cephfs.csi.ceph.com",
         "images": [
-          "quay.io/cephcsi/cephcsi:v3.17.0",
-          "registry.k8s.io/sig-storage/csi-provisioner:v6.2.0",
-          "registry.k8s.io/sig-storage/csi-resizer:v2.1.0",
-          "registry.k8s.io/sig-storage/csi-attacher:v4.12.0",
-          "registry.k8s.io/sig-storage/csi-snapshotter:v8.5.0",
-          "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.17.0"
+          "quay.io/cephcsi/cephcsi:v3.18.1",
+          "registry.k8s.io/sig-storage/csi-provisioner:v6.3.0",
+          "registry.k8s.io/sig-storage/csi-resizer:v2.2.1",
+          "registry.k8s.io/sig-storage/csi-attacher:v4.13.0",
+          "registry.k8s.io/sig-storage/csi-snapshotter:v8.6.0",
+          "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.18.0"
         ],
         "image_digests": null
       },
@@ -455,18 +385,18 @@
     "gorons-bracelet/gorons-bracelet.rbd.csi.ceph.com": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
         "name": "gorons-bracelet.rbd.csi.ceph.com",
         "images": [
-          "quay.io/cephcsi/cephcsi:v3.15.0",
-          "registry.k8s.io/sig-storage/csi-provisioner:v5.2.0",
-          "registry.k8s.io/sig-storage/csi-resizer:v1.13.2",
-          "registry.k8s.io/sig-storage/csi-attacher:v4.8.1",
-          "registry.k8s.io/sig-storage/csi-snapshotter:v8.2.1",
-          "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.13.0"
+          "quay.io/cephcsi/cephcsi:v3.18.1",
+          "registry.k8s.io/sig-storage/csi-provisioner:v6.3.0",
+          "registry.k8s.io/sig-storage/csi-resizer:v2.2.1",
+          "registry.k8s.io/sig-storage/csi-attacher:v4.13.0",
+          "registry.k8s.io/sig-storage/csi-snapshotter:v8.6.0",
+          "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.18.0"
         ],
         "image_digests": null
       },
@@ -479,17 +409,18 @@
     "gorons-bracelet/gpu-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
         "name": "gpu-operator",
         "images": [
-          "nvcr.io/nvidia/gpu-operator:v25.10.1",
-          "registry.k8s.io/nfd/node-feature-discovery:v0.18.2",
-          "nvcr.io/nvidia/k8s-device-plugin:v0.18.1",
-          "nvcr.io/nvidia/k8s/container-toolkit:v1.18.1",
-          "nvcr.io/nvidia/k8s/dcgm-exporter:4.4.2-4.7.0-distroless"
+          "nvcr.io/nvidia/gpu-operator:v26.7.0",
+          "registry.k8s.io/nfd/node-feature-discovery:v0.19.0",
+          "nvcr.io/nvidia/k8s-device-plugin:v0.20.0",
+          "nvcr.io/nvidia/k8s/container-toolkit:v1.20.0",
+          "nvcr.io/nvidia/k8s/dcgm-exporter:4.6.0-4.8.3-distroless",
+          "nvcr.io/nvidia/gpu-operator:v25.10.1"
         ],
         "image_digests": null
       },
@@ -502,13 +433,32 @@
     "gorons-bracelet/mariadb-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
         "name": "mariadb-operator",
         "images": [
-          "ghcr.io/mariadb-operator/mariadb-operator:26.6.0"
+          "ghcr.io/mariadb-operator/mariadb-operator:26.10.1"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "gorons-bracelet/plugin-barman-cloud": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "gorons-bracelet",
+        "name": "plugin-barman-cloud",
+        "images": [
+          "ghcr.io/cloudnative-pg/plugin-barman-cloud:v0.15.1"
         ],
         "image_digests": null
       },
@@ -521,7 +471,7 @@
     "gorons-bracelet/rbd-toolbox": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -540,33 +490,13 @@
     "gorons-bracelet/redis-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
         "name": "redis-operator",
         "images": [
-          "quay.io/opstree/redis-operator:v0.26.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "gorons-bracelet/rook-ceph": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-08-02T16:41:49.970388031Z",
-        "missing_since": "2026-08-26T00:05:41.448712942Z"
-      },
-      "observed": {
-        "namespace": "gorons-bracelet",
-        "name": "rook-ceph",
-        "images": [
-          "docker.io/rook/ceph:v1.18.2"
+          "quay.io/opstree/redis-operator:v0.27.0"
         ],
         "image_digests": null
       },
@@ -579,14 +509,14 @@
     "gorons-bracelet/rook-ceph-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
         "name": "rook-ceph-operator",
         "images": [
-          "quay.io/cephcsi/ceph-csi-operator:v1.0.4",
-          "docker.io/rook/ceph:v1.20.6"
+          "quay.io/cephcsi/ceph-csi-operator:v1.1.0",
+          "docker.io/rook/ceph:v1.21.0"
         ],
         "image_digests": null
       },
@@ -598,8 +528,9 @@
     },
     "gorons-bracelet/strimzi-cluster-operator": {
       "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "state": "missing",
+        "last_seen": "2026-08-26T02:05:32.825802284Z",
+        "missing_since": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gorons-bracelet",
@@ -618,13 +549,13 @@
     "gossip-stone/beszel": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
         "name": "beszel",
         "images": [
-          "docker.io/henrygd/beszel:0.18.8"
+          "docker.io/henrygd/beszel:0.21.0"
         ],
         "image_digests": null
       },
@@ -637,14 +568,14 @@
     "gossip-stone/gatus": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
         "name": "gatus",
         "images": [
-          "ghcr.io/twin/gatus:v5.36.0",
-          "ghcr.io/home-operations/gatus-sidecar:0.5.1"
+          "ghcr.io/twin/gatus:v5.37.0",
+          "ghcr.io/home-operations/gatus-sidecar:0.5.3"
         ],
         "image_digests": null
       },
@@ -657,13 +588,13 @@
     "gossip-stone/grafana": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
         "name": "grafana",
         "images": [
-          "docker.io/grafana/grafana:12.4.9"
+          "docker.io/grafana/grafana:12.4.12"
         ],
         "image_digests": null
       },
@@ -676,7 +607,7 @@
     "gossip-stone/graphite-exporter-truenas": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -692,10 +623,29 @@
         "reason": "new_app"
       }
     },
+    "gossip-stone/headlamp": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "gossip-stone",
+        "name": "headlamp",
+        "images": [
+          "ghcr.io/headlamp-k8s/headlamp:v0.45.0"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
     "gossip-stone/kube-state-metrics": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -714,16 +664,16 @@
     "gossip-stone/loki": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
         "name": "loki",
         "images": [
           "docker.io/nginxinc/nginx-unprivileged:1.29-alpine",
-          "docker.io/kiwigrid/k8s-sidecar:2.10.1",
-          "docker.io/grafana/loki:3.7.6",
-          "docker.io/grafana/loki-canary:3.6.8"
+          "docker.io/kiwigrid/k8s-sidecar:2.14.1",
+          "docker.io/grafana/loki:3.7.8",
+          "docker.io/grafana/loki-canary:3.6.12"
         ],
         "image_digests": null
       },
@@ -736,7 +686,7 @@
     "gossip-stone/nutify": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -752,18 +702,16 @@
         "reason": "new_app"
       }
     },
-    "gossip-stone/prometheus": {
+    "gossip-stone/pbs-cluster-proxy": {
       "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
-        "name": "prometheus",
+        "name": "pbs-cluster-proxy",
         "images": [
-          "docker.io/prompve/prometheus-pve-exporter:3",
-          "cr.pcfae.com/hlhd/prometheus-eaton-ups-exporter:v0.9.3"
+          "docker.io/nginx:1.31.5-alpine"
         ],
         "image_digests": null
       },
@@ -776,54 +724,33 @@
     "gossip-stone/prometheus-exporter": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
         "name": "prometheus-exporter",
         "images": [
-          "docker.io/prompve/prometheus-pve-exporter:3",
-          "cr.pcfae.com/hlhd/prometheus-eaton-ups-exporter:v0.9.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "gossip-stone/prometheus-exporter-eaton-ups": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "gossip-stone",
-        "name": "prometheus-exporter-eaton-ups",
-        "images": [
-          "cr.pcfae.com/hlhd/prometheus-eaton-ups-exporter:v0.9.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "gossip-stone/prometheus-exporter-pve": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "gossip-stone",
-        "name": "prometheus-exporter-pve",
-        "images": [
+          "cr.pcfae.com/hlhd/prometheus-eaton-ups-exporter:v0.9.3",
           "docker.io/prompve/prometheus-pve-exporter:3"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "gossip-stone/pve-cluster-proxy": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "gossip-stone",
+        "name": "pve-cluster-proxy",
+        "images": [
+          "docker.io/nginx:1.31.5-alpine"
         ],
         "image_digests": null
       },
@@ -836,7 +763,7 @@
     "gossip-stone/speedtest": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -853,76 +780,17 @@
         "reason": "new_app"
       }
     },
-    "gossip-stone/speedtest-tracker": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "gossip-stone",
-        "name": "speedtest-tracker",
-        "images": [
-          "docker.io/linuxserver/speedtest-tracker:1.13.11"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "gossip-stone/speedtest-tracker-postgres": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "gossip-stone",
-        "name": "speedtest-tracker-postgres",
-        "images": [
-          "docker.io/postgres:17"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
     "gossip-stone/umami": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
         "name": "umami",
         "images": [
-          "ghcr.io/umami-software/umami:postgresql-latest"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "gossip-stone/umami-postgres": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "gossip-stone",
-        "name": "umami-postgres",
-        "images": [
-          "docker.io/library/postgres:15-alpine"
+          "ghcr.io/umami-software/umami:postgresql-latest",
+          "docker.io/library/postgres:18-alpine"
         ],
         "image_digests": null
       },
@@ -935,13 +803,32 @@
     "gossip-stone/uptime-kuma": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
         "name": "uptime-kuma",
         "images": [
-          "docker.io/louislam/uptime-kuma:2.5.3"
+          "docker.io/louislam/uptime-kuma:2.5.6"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "gossip-stone/vmauth": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "gossip-stone",
+        "name": "vmauth",
+        "images": [
+          "docker.io/victoriametrics/vmauth:v1.97.1"
         ],
         "image_digests": null
       },
@@ -954,7 +841,7 @@
     "gossip-stone/vminsert": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -973,7 +860,7 @@
     "gossip-stone/vmselect": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -992,7 +879,7 @@
     "gossip-stone/vmstorage": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
@@ -1011,13 +898,13 @@
     "gossip-stone/weave-gitops": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "gossip-stone",
         "name": "weave-gitops",
         "images": [
-          "ghcr.io/weaveworks/wego-app:v0.38.0"
+          "ghcr.io/homelabhd/weave-gitops:v0.39.1"
         ],
         "image_digests": null
       },
@@ -1030,7 +917,7 @@
     "hookshot/boundary": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hookshot",
@@ -1049,54 +936,14 @@
     "hookshot/guacamole": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hookshot",
         "name": "guacamole",
         "images": [
           "docker.io/guacamole/guacamole:latest",
-          "docker.io/postgres:15-alpine",
-          "docker.io/guacamole/guacd:latest"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/guacamole-guacd": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "guacamole-guacd",
-        "images": [
-          "docker.io/guacamole/guacd:latest"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/guacamole-postgres": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "guacamole-postgres",
-        "images": [
+          "docker.io/guacamole/guacd:latest",
           "docker.io/postgres:15-alpine"
         ],
         "image_digests": null
@@ -1110,7 +957,7 @@
     "hookshot/rustdesk": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hookshot",
@@ -1129,240 +976,20 @@
     "hookshot/tactical": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hookshot",
         "name": "tactical",
         "images": [
-          "docker.io/redis:8-alpine",
-          "docker.io/tacticalrmm/tactical-meshcentral:1.5.2",
           "docker.io/tacticalrmm/tactical:1.5.2",
-          "docker.io/tacticalrmm/tactical-nginx:1.5.2",
-          "docker.io/mongo:4.4",
-          "docker.io/postgres:15-alpine",
           "docker.io/tacticalrmm/tactical-frontend:1.5.2",
-          "docker.io/tacticalrmm/tactical-nats:1.5.2"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/tactical-backend": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "tactical-backend",
-        "images": [
-          "docker.io/tacticalrmm/tactical:1.4.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/tactical-celery": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "tactical-celery",
-        "images": [
-          "docker.io/tacticalrmm/tactical:1.4.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/tactical-celerybeat": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "tactical-celerybeat",
-        "images": [
-          "docker.io/tacticalrmm/tactical:1.4.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/tactical-frontend": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "tactical-frontend",
-        "images": [
-          "docker.io/tacticalrmm/tactical-frontend:1.4.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/tactical-meshcentral": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "tactical-meshcentral",
-        "images": [
-          "docker.io/tacticalrmm/tactical-meshcentral:1.4.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/tactical-mongodb": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "tactical-mongodb",
-        "images": [
-          "docker.io/mongo:4.4"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/tactical-nats": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "tactical-nats",
-        "images": [
-          "docker.io/tacticalrmm/tactical-nats:1.4.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/tactical-nginx": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "tactical-nginx",
-        "images": [
-          "docker.io/tacticalrmm/tactical-nginx:1.4.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/tactical-postgres": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "tactical-postgres",
-        "images": [
-          "docker.io/postgres:15-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/tactical-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "tactical-redis",
-        "images": [
-          "docker.io/redis:7-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hookshot/tactical-websockets": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hookshot",
-        "name": "tactical-websockets",
-        "images": [
-          "docker.io/tacticalrmm/tactical:1.4.0"
+          "docker.io/tacticalrmm/tactical-meshcentral:1.5.2",
+          "docker.io/mongo:4.4",
+          "docker.io/tacticalrmm/tactical-nats:1.5.2",
+          "docker.io/tacticalrmm/tactical-nginx:1.5.2",
+          "docker.io/postgres:15-alpine",
+          "docker.io/redis:8-alpine"
         ],
         "image_digests": null
       },
@@ -1375,7 +1002,7 @@
     "hyrule-castle/apt-cacher-ng": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1394,53 +1021,13 @@
     "hyrule-castle/bagisto": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
         "name": "bagisto",
         "images": [
-          "docker.io/mysql:8",
-          "docker.io/webkul/bagisto:2.4.10"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/bagisto-demo": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "bagisto-demo",
-        "images": [
-          "docker.io/webkul/bagisto:2.3.15"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/bagisto-demo-db": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "bagisto-demo-db",
-        "images": [
+          "docker.io/webkul/bagisto:2.5.0",
           "docker.io/mysql:8"
         ],
         "image_digests": null
@@ -1454,33 +1041,14 @@
     "hyrule-castle/bookstack": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
         "name": "bookstack",
         "images": [
-          "docker.io/linuxserver/bookstack:25.12.20251224"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/bookstack-db": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "bookstack-db",
-        "images": [
-          "docker.io/linuxserver/mariadb:11.4.9"
+          "docker.io/linuxserver/bookstack:25.12.20251224",
+          "docker.io/linuxserver/mariadb:11.8.8"
         ],
         "image_digests": null
       },
@@ -1493,7 +1061,7 @@
     "hyrule-castle/calcom": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1509,29 +1077,11 @@
         "reason": "new_app"
       }
     },
-    "hyrule-castle/cell-membrane-gateway-istio": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "cell-membrane-gateway-istio",
-        "images": [
-          "registry.istio.io/release/proxyv2:1.30.3-distroless"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
     "hyrule-castle/dolibarr": {
       "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "state": "missing",
+        "last_seen": "2026-08-26T02:05:32.825802284Z",
+        "missing_since": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1539,26 +1089,6 @@
         "images": [
           "docker.io/linuxserver/mariadb:11.8.8",
           "docker.io/dolibarr/dolibarr:23.0.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/dolibarr-mariadb": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "dolibarr-mariadb",
-        "images": [
-          "docker.io/linuxserver/mariadb:11.4.9"
         ],
         "image_digests": null
       },
@@ -1590,8 +1120,9 @@
     },
     "hyrule-castle/erpnext": {
       "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "state": "missing",
+        "last_seen": "2026-08-26T02:05:32.825802284Z",
+        "missing_since": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1620,26 +1151,6 @@
         "name": "erpnext-frontend",
         "images": [
           "docker.io/frappe/erpnext:v15.101.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/erpnext-mariadb": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "erpnext-mariadb",
-        "images": [
-          "docker.io/mariadb:10.11"
         ],
         "image_digests": null
       },
@@ -1680,46 +1191,6 @@
         "name": "erpnext-queue-short",
         "images": [
           "docker.io/frappe/erpnext:v15.101.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/erpnext-redis-cache": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "erpnext-redis-cache",
-        "images": [
-          "docker.io/redis:6.2-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/erpnext-redis-queue": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "erpnext-redis-queue",
-        "images": [
-          "docker.io/redis:6.2-alpine"
         ],
         "image_digests": null
       },
@@ -1789,24 +1260,47 @@
         "reason": "new_app"
       }
     },
+    "hyrule-castle/frappe-suite": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "hyrule-castle",
+        "name": "frappe-suite",
+        "images": [
+          "docker.io/hlhd/frappe-suite:v16.50.0",
+          "docker.io/mariadb:12.3",
+          "docker.io/redis:8.10-alpine"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
     "hyrule-castle/gitlab": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
         "name": "gitlab",
         "images": [
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-exporter:16.7.0",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-shell:v14.50.0",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-kas:v18.11.11",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry:v4.39.0-gitlab",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ce:v18.11.11",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ce:v18.11.11",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ce:v18.11.11",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ce:v18.11.11",
-          "registry.gitlab.com/gitlab-org/build/cng/gitaly:v18.11.11"
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-exporter:17.0.2",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-shell:v14.57.3",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-kas:v19.4.1",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry:v4.40.2-gitlab",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ce:v19.4.1",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ce:v19.4.1",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ce:v19.4.1",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ce:v19.4.1",
+          "registry.gitlab.com/gitlab-org/build/cng/gitaly:v19.4.1",
+          "quay.io/opstree/redis:v7.4.11",
+          "quay.io/opstree/redis-sentinel:v7.4.11"
         ],
         "image_digests": null
       },
@@ -1819,53 +1313,13 @@
     "hyrule-castle/gitlab-gitlab-runner": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
         "name": "gitlab-gitlab-runner",
         "images": [
-          "registry.gitlab.com/gitlab-org/gitlab-runner:alpine-v18.11.2"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/gitlab-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "gitlab-redis",
-        "images": [
-          "quay.io/opstree/redis:v7.4.8"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/gitlab-sentinel": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "gitlab-sentinel",
-        "images": [
-          "quay.io/opstree/redis-sentinel:v7.4.8"
+          "registry.gitlab.com/gitlab-org/gitlab-runner:alpine-v19.4.0"
         ],
         "image_digests": null
       },
@@ -1878,7 +1332,7 @@
     "hyrule-castle/harbor": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1889,7 +1343,8 @@
           "docker.io/goharbor/nginx-photon:v2.15.2",
           "docker.io/goharbor/harbor-portal:v2.15.2",
           "docker.io/goharbor/registry-photon:v2.15.2",
-          "docker.io/goharbor/harbor-registryctl:v2.15.2"
+          "docker.io/goharbor/harbor-registryctl:v2.15.2",
+          "docker.io/library/redis:8.10-alpine"
         ],
         "image_digests": null
       },
@@ -1902,7 +1357,7 @@
     "hyrule-castle/harbor-proxy-cache-proxy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -1918,99 +1373,18 @@
         "reason": "new_app"
       }
     },
-    "hyrule-castle/harbor-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "harbor-redis",
-        "images": [
-          "docker.io/library/redis:7.4-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
     "hyrule-castle/invoiceninja": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
         "name": "invoiceninja",
         "images": [
-          "docker.io/invoiceninja/invoiceninja-debian:5.13.35",
-          "docker.io/nginx:alpine",
+          "docker.io/invoiceninja/invoiceninja-debian:5.13.47",
+          "docker.io/nginx:1.31.5-alpine",
           "docker.io/mysql:8",
-          "docker.io/redis:alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/invoiceninja-app": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "invoiceninja-app",
-        "images": [
-          "docker.io/invoiceninja/invoiceninja-debian:5.13.1",
-          "docker.io/nginx:alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/invoiceninja-mysql": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "invoiceninja-mysql",
-        "images": [
-          "docker.io/mysql:8"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/invoiceninja-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "invoiceninja-redis",
-        "images": [
           "docker.io/redis:alpine"
         ],
         "image_digests": null
@@ -2024,157 +1398,17 @@
     "hyrule-castle/opnform": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
         "name": "opnform",
         "images": [
-          "docker.io/jhumanj/opnform-client:2.4.0",
-          "docker.io/nginx:1",
-          "docker.io/jhumanj/opnform-api:2.4.0",
-          "docker.io/redis:8-alpine",
-          "docker.io/postgres:16"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/opnform-api": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "opnform-api",
-        "images": [
-          "docker.io/jhumanj/opnform-api:1.13.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/opnform-api-scheduler": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "opnform-api-scheduler",
-        "images": [
-          "docker.io/jhumanj/opnform-api:1.13.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/opnform-api-worker": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "opnform-api-worker",
-        "images": [
-          "docker.io/jhumanj/opnform-api:1.13.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/opnform-client": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "opnform-client",
-        "images": [
-          "docker.io/jhumanj/opnform-client:1.13.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/opnform-ingress": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "opnform-ingress",
-        "images": [
-          "docker.io/nginx:1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/opnform-postgres": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "opnform-postgres",
-        "images": [
-          "docker.io/postgres:16"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "hyrule-castle/opnform-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "opnform-redis",
-        "images": [
-          "docker.io/redis:7"
+          "docker.io/jhumanj/opnform-api:2.5.0",
+          "docker.io/jhumanj/opnform-client:2.5.0",
+          "docker.io/nginx:1.31.5-alpine",
+          "docker.io/postgres:16",
+          "docker.io/redis:8-alpine"
         ],
         "image_digests": null
       },
@@ -2204,30 +1438,10 @@
         "reason": "new_app"
       }
     },
-    "hyrule-castle/orangehrm-mariadb": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "hyrule-castle",
-        "name": "orangehrm-mariadb",
-        "images": [
-          "docker.io/mariadb:10.11"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
     "hyrule-castle/osticket-app": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
@@ -2246,14 +1460,14 @@
     "hyrule-castle/osticket-mariadb": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "hyrule-castle",
         "name": "osticket-mariadb",
         "images": [
-          "docker.io/mariadb:12.3.2",
-          "ghcr.io/mariadb-operator/mariadb-operator:26.6.0"
+          "docker.io/mariadb:12.3.3",
+          "ghcr.io/mariadb-operator/mariadb-operator:26.10.1"
         ],
         "image_digests": null
       },
@@ -2266,15 +1480,15 @@
     "king-of-red-lions/cert-manager": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
         "name": "cert-manager",
         "images": [
-          "quay.io/jetstack/cert-manager-controller:v1.21.1",
-          "quay.io/jetstack/cert-manager-cainjector:v1.21.1",
-          "quay.io/jetstack/cert-manager-webhook:v1.21.1"
+          "quay.io/jetstack/cert-manager-controller:v1.21.2",
+          "quay.io/jetstack/cert-manager-cainjector:v1.21.2",
+          "quay.io/jetstack/cert-manager-webhook:v1.21.2"
         ],
         "image_digests": null
       },
@@ -2287,13 +1501,13 @@
     "king-of-red-lions/istio-cni": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
         "name": "istio-cni",
         "images": [
-          "registry.istio.io/release/install-cni:1.30.3"
+          "docker.io/istio/install-cni:1.31.1"
         ],
         "image_digests": null
       },
@@ -2306,13 +1520,13 @@
     "king-of-red-lions/istio-meshmedic": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
         "name": "istio-meshmedic",
         "images": [
-          "docker.io/prplanit/istio-meshmedic:dev-2488864"
+          "docker.io/prplanit/istio-meshmedic:v0.0.2"
         ],
         "image_digests": null
       },
@@ -2325,13 +1539,13 @@
     "king-of-red-lions/istiod": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
         "name": "istiod",
         "images": [
-          "registry.istio.io/release/pilot:1.30.3-distroless"
+          "docker.io/istio/pilot:1.31.1-distroless"
         ],
         "image_digests": null
       },
@@ -2344,7 +1558,7 @@
     "king-of-red-lions/stunner": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
@@ -2361,56 +1575,111 @@
         "reason": "new_app"
       }
     },
-    "king-of-red-lions/stunner-auth": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "king-of-red-lions",
-        "name": "stunner-auth",
-        "images": [
-          "docker.io/l7mp/stunner-auth-server:1.1.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "king-of-red-lions/stunner-gateway-operator-controller-manager": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "king-of-red-lions",
-        "name": "stunner-gateway-operator-controller-manager",
-        "images": [
-          "docker.io/l7mp/stunner-gateway-operator:1.1.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
     "king-of-red-lions/ztunnel": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "king-of-red-lions",
         "name": "ztunnel",
         "images": [
-          "registry.istio.io/release/ztunnel:1.30.3"
+          "docker.io/istio/ztunnel:1.31.1"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "kokiri-forest/astralfocal-site": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "kokiri-forest",
+        "name": "astralfocal-site",
+        "images": [
+          "cr.pcfae.com/sofmeright/astralfocal.com:v0.0.3"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "kokiri-forest/enamorafoto-site": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "kokiri-forest",
+        "name": "enamorafoto-site",
+        "images": [
+          "cr.pcfae.com/sofmeright/enamorafoto.com:v0.0.3"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "kokiri-forest/etherealclique-site": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "kokiri-forest",
+        "name": "etherealclique-site",
+        "images": [
+          "cr.pcfae.com/sofmeright/etherealclique.com:v0.0.3"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "kokiri-forest/homelabhelpdesk-site": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "kokiri-forest",
+        "name": "homelabhelpdesk-site",
+        "images": [
+          "cr.pcfae.com/prplanit/homelabhelpdesk.com:v0.0.3"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "kokiri-forest/kai-hamilton-site": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "kokiri-forest",
+        "name": "kai-hamilton-site",
+        "images": [
+          "cr.pcfae.com/sofmeright/kai-hamilton.com:v0.0.3"
         ],
         "image_digests": null
       },
@@ -2423,13 +1692,14 @@
     "kokiri-forest/linkstack": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "kokiri-forest",
         "name": "linkstack",
         "images": [
-          "docker.io/linkstackorg/linkstack:latest"
+          "docker.io/hlhd/linkstack:v4.8.7-rc",
+          "docker.io/mariadb:12.3.3"
         ],
         "image_digests": null
       },
@@ -2439,36 +1709,54 @@
         "reason": "new_app"
       }
     },
-    "kokiri-forest/linkstack-db": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "kokiri-forest",
-        "name": "linkstack-db",
-        "images": [
-          "docker.io/mariadb:11.8.6"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "kokiri-forest/phloem-gateway-istio": {
+    "kokiri-forest/precisionplanit-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "kokiri-forest",
-        "name": "phloem-gateway-istio",
+        "name": "precisionplanit-site",
         "images": [
-          "registry.istio.io/release/proxyv2:1.30.3-distroless"
+          "cr.pcfae.com/prplanit/precisionplanit.com:v0.0.3"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "kokiri-forest/sofmeright-site": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "kokiri-forest",
+        "name": "sofmeright-site",
+        "images": [
+          "cr.pcfae.com/sofmeright/sofmeright.com:v0.0.6"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "kokiri-forest/yesimvegan-site": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "kokiri-forest",
+        "name": "yesimvegan-site",
+        "images": [
+          "cr.pcfae.com/sofmeright/yesimvegan.com:v0.1.0"
         ],
         "image_digests": null
       },
@@ -2481,7 +1769,7 @@
     "kube-system/cilium-agent": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2498,7 +1786,7 @@
     "kube-system/cilium-envoy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2515,7 +1803,7 @@
     "kube-system/cilium-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2532,7 +1820,7 @@
     "kube-system/coredns": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2551,7 +1839,7 @@
     "kube-system/hubble-relay": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2568,7 +1856,7 @@
     "kube-system/hubble-ui": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2585,13 +1873,13 @@
     "kube-system/kube-vip": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "kube-system",
         "name": "kube-vip",
         "images": [
-          "ghcr.io/kube-vip/kube-vip:v1.2.3"
+          "ghcr.io/kube-vip/kube-vip:v1.2.4"
         ],
         "image_digests": null
       },
@@ -2604,7 +1892,7 @@
     "kube-system/metrics-server": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -2623,14 +1911,14 @@
     "lakitu/alloy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "lakitu",
         "name": "alloy",
         "images": [
-          "docker.io/grafana/alloy:v1.19.0",
-          "quay.io/prometheus-operator/prometheus-config-reloader:v0.91.0"
+          "docker.io/grafana/alloy:v1.20.1",
+          "quay.io/prometheus-operator/prometheus-config-reloader:v0.94.0"
         ],
         "image_digests": null
       },
@@ -2643,13 +1931,51 @@
     "lakitu/netalertx": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "lakitu",
         "name": "netalertx",
         "images": [
-          "ghcr.io/jokob-sk/netalertx:26.8.5"
+          "ghcr.io/jokob-sk/netalertx:26.10.0"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "lakitu/netconsole-collector": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "lakitu",
+        "name": "netconsole-collector",
+        "images": [
+          "docker.io/alpine/socat:1.8.1.3"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "lakitu/node-exporter": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "lakitu",
+        "name": "node-exporter",
+        "images": [
+          "quay.io/prometheus/node-exporter:v1.9.1"
         ],
         "image_digests": null
       },
@@ -2662,55 +1988,16 @@
     "lens-of-truth/crowdsec": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
         "name": "crowdsec",
         "images": [
-          "ghcr.io/crowdsecurity/crowdsec:v1.7.8",
+          "ghcr.io/crowdsecurity/crowdsec:v1.8.1",
+          "ghcr.io/crowdsecurity/cloudflare-worker-bouncer:v0.0.18",
           "cr.pcfae.com/prplanit/crowdsec-dashboard:latest",
-          "ghcr.io/crowdsecurity/cloudflare-bouncer:v0.3.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lens-of-truth/crowdsec-cloudflare-bouncer": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "lens-of-truth",
-        "name": "crowdsec-cloudflare-bouncer",
-        "images": [
-          "ghcr.io/crowdsecurity/cloudflare-bouncer:v0.3.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lens-of-truth/crowdsec-dashboard": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "lens-of-truth",
-        "name": "crowdsec-dashboard",
-        "images": [
-          "cr.pcfae.com/prplanit/crowdsec-dashboard:latest"
+          "docker.io/postgres:18.6-alpine"
         ],
         "image_digests": null
       },
@@ -2723,13 +2010,13 @@
     "lens-of-truth/frigate": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
         "name": "frigate",
         "images": [
-          "ghcr.io/blakeblackshear/frigate:0.17.2-tensorrt",
+          "ghcr.io/blakeblackshear/frigate:0.18.0-tensorrt",
           "ghcr.io/0x2142/frigate-notify:v0.5.4"
         ],
         "image_digests": null
@@ -2743,13 +2030,13 @@
     "lens-of-truth/home-assistant": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
         "name": "home-assistant",
         "images": [
-          "ghcr.io/home-assistant/home-assistant:2026.8.3"
+          "ghcr.io/home-assistant/home-assistant:2026.10.1"
         ],
         "image_digests": null
       },
@@ -2762,7 +2049,7 @@
     "lens-of-truth/mosquitto": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
@@ -2781,75 +2068,15 @@
     "lens-of-truth/wazuh": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
         "name": "wazuh",
         "images": [
-          "docker.io/wazuh/wazuh-manager:4.14.7",
-          "docker.io/wazuh/wazuh-dashboard:4.14.7",
-          "docker.io/wazuh/wazuh-indexer:4.14.7"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lens-of-truth/wazuh-dashboard": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "lens-of-truth",
-        "name": "wazuh-dashboard",
-        "images": [
-          "docker.io/wazuh/wazuh-dashboard:4.14.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lens-of-truth/wazuh-indexer": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "lens-of-truth",
-        "name": "wazuh-indexer",
-        "images": [
-          "docker.io/wazuh/wazuh-indexer:4.14.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lens-of-truth/wazuh-manager": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "lens-of-truth",
-        "name": "wazuh-manager",
-        "images": [
-          "docker.io/wazuh/wazuh-manager:4.14.3"
+          "docker.io/wazuh/wazuh-dashboard:4.14.8",
+          "docker.io/wazuh/wazuh-indexer:4.14.8",
+          "docker.io/wazuh/wazuh-manager:4.14.8"
         ],
         "image_digests": null
       },
@@ -2862,70 +2089,13 @@
     "lens-of-truth/zigbee2mqtt": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "lens-of-truth",
         "name": "zigbee2mqtt",
         "images": [
-          "ghcr.io/koenkk/zigbee2mqtt:2.13.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lost-woods/astralfocal-site": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "lost-woods",
-        "name": "astralfocal-site",
-        "images": [
-          "cr.pcfae.com/sofmeright/astralfocal.com:v0.0.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lost-woods/enamorafoto-site": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "lost-woods",
-        "name": "enamorafoto-site",
-        "images": [
-          "cr.pcfae.com/sofmeright/enamorafoto.com:v0.0.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lost-woods/etherealclique-site": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "lost-woods",
-        "name": "etherealclique-site",
-        "images": [
-          "cr.pcfae.com/sofmeright/etherealclique.com:v0.0.3"
+          "ghcr.io/koenkk/zigbee2mqtt:2.14.2"
         ],
         "image_digests": null
       },
@@ -2938,13 +2108,13 @@
     "lost-woods/ferdium": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "lost-woods",
         "name": "ferdium",
         "images": [
-          "docker.io/linuxserver/ferdium:7.2.2"
+          "docker.io/linuxserver/ferdium:7.2.3"
         ],
         "image_digests": null
       },
@@ -2957,91 +2127,15 @@
     "lost-woods/homarr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "lost-woods",
         "name": "homarr",
         "images": [
-          "ghcr.io/homarr-labs/homarr:v1.76.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lost-woods/homarr-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "lost-woods",
-        "name": "homarr-redis",
-        "images": [
-          "quay.io/opstree/redis:v7.4.8"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lost-woods/homarr-sentinel": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "lost-woods",
-        "name": "homarr-sentinel",
-        "images": [
-          "quay.io/opstree/redis-sentinel:v7.4.8"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lost-woods/homelabhelpdesk-site": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "lost-woods",
-        "name": "homelabhelpdesk-site",
-        "images": [
-          "cr.pcfae.com/prplanit/homelabhelpdesk.com:v0.0.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lost-woods/kai-hamilton-site": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "lost-woods",
-        "name": "kai-hamilton-site",
-        "images": [
-          "cr.pcfae.com/sofmeright/kai-hamilton.com:v0.0.3"
+          "ghcr.io/homarr-labs/homarr:v1.77.2",
+          "quay.io/opstree/redis:v7.4.11",
+          "quay.io/opstree/redis-sentinel:v7.4.11"
         ],
         "image_digests": null
       },
@@ -3054,7 +2148,7 @@
     "lost-woods/organizr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "lost-woods",
@@ -3070,54 +2164,19 @@
         "reason": "new_app"
       }
     },
-    "lost-woods/precisionplanit-site": {
+    "mr-resetti/kyverno": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
-        "namespace": "lost-woods",
-        "name": "precisionplanit-site",
+        "namespace": "mr-resetti",
+        "name": "kyverno",
         "images": [
-          "cr.pcfae.com/prplanit/precisionplanit.com:v0.0.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lost-woods/sofmeright-site": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "lost-woods",
-        "name": "sofmeright-site",
-        "images": [
-          "cr.pcfae.com/sofmeright/sofmeright.com:v0.0.6"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "lost-woods/yesimvegan-site": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "lost-woods",
-        "name": "yesimvegan-site",
-        "images": [
-          "cr.pcfae.com/sofmeright/yesimvegan.com:v0.0.3"
+          "ghcr.io/kyverno/kyverno:v1.19.1",
+          "ghcr.io/kyverno/background-controller:v1.19.1",
+          "ghcr.io/kyverno/cleanup-controller:v1.19.1",
+          "ghcr.io/kyverno/reports-controller:v1.19.1"
         ],
         "image_digests": null
       },
@@ -3130,7 +2189,7 @@
     "pedestal-of-time/actualbudget": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
@@ -3149,13 +2208,13 @@
     "pedestal-of-time/dailytxt": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
         "name": "dailytxt",
         "images": [
-          "docker.io/phitux/dailytxt:2.6.3"
+          "docker.io/phitux/dailytxt:2.6.4"
         ],
         "image_digests": null
       },
@@ -3168,7 +2227,7 @@
     "pedestal-of-time/homebox": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
@@ -3187,13 +2246,13 @@
     "pedestal-of-time/lubelogger": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
         "name": "lubelogger",
         "images": [
-          "ghcr.io/hargata/lubelogger:v1.7.1"
+          "ghcr.io/hargata/lubelogger:v1.7.3"
         ],
         "image_digests": null
       },
@@ -3206,33 +2265,14 @@
     "pedestal-of-time/monica": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
         "name": "monica",
         "images": [
-          "docker.io/nginx:1.31.4-alpine",
-          "docker.io/monica:4.1.2-fpm-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "pedestal-of-time/monica-db": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "pedestal-of-time",
-        "name": "monica-db",
-        "images": [
+          "docker.io/nginx:1.31.5-alpine",
+          "docker.io/monica:4.1.2-fpm-alpine",
           "docker.io/mariadb:11"
         ],
         "image_digests": null
@@ -3246,75 +2286,15 @@
     "pedestal-of-time/paperless": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
         "name": "paperless",
         "images": [
+          "docker.io/postgres:18.6-alpine",
           "docker.io/library/redis:8-alpine",
-          "docker.io/postgres:18.4-alpine3.23",
-          "ghcr.io/paperless-ngx/paperless-ngx:3.0.5"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "pedestal-of-time/paperless-db": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "pedestal-of-time",
-        "name": "paperless-db",
-        "images": [
-          "docker.io/postgres:18.3-alpine3.23"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "pedestal-of-time/paperless-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "pedestal-of-time",
-        "name": "paperless-redis",
-        "images": [
-          "docker.io/library/redis:7"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "pedestal-of-time/paperless-webserver": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "pedestal-of-time",
-        "name": "paperless-webserver",
-        "images": [
-          "ghcr.io/paperless-ngx/paperless-ngx:2.20.10"
+          "ghcr.io/paperless-ngx/paperless-ngx:3.3.0"
         ],
         "image_digests": null
       },
@@ -3327,53 +2307,13 @@
     "pedestal-of-time/photoprism": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
         "name": "photoprism",
         "images": [
-          "docker.io/mariadb:11",
-          "docker.io/photoprism/photoprism:251130"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "pedestal-of-time/photoprism-x": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "pedestal-of-time",
-        "name": "photoprism-x",
-        "images": [
-          "docker.io/photoprism/photoprism:251130"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "pedestal-of-time/photoprism-x-mariadb": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "pedestal-of-time",
-        "name": "photoprism-x-mariadb",
-        "images": [
+          "docker.io/photoprism/photoprism:261007",
           "docker.io/mariadb:11"
         ],
         "image_digests": null
@@ -3387,35 +2327,13 @@
     "pedestal-of-time/plex-ms-x": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
         "name": "plex-ms-x",
         "images": [
-          "docker.io/plexinc/pms-docker:1.43.3.10896-cb3ebc72d"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "pedestal-of-time/roundcube": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "pedestal-of-time",
-        "name": "roundcube",
-        "images": [
-          "docker.io/library/mysql:5.7",
-          "docker.io/roundcube/roundcubemail:1.6.13-fpm-alpine-nonroot",
-          "docker.io/nginxinc/nginx-unprivileged:1.29-alpine"
+          "docker.io/plexinc/pms-docker:1.43.4.10903-e5521bd8c"
         ],
         "image_digests": null
       },
@@ -3428,56 +2346,53 @@
     "pedestal-of-time/roundcube-primary": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "pedestal-of-time",
         "name": "roundcube-primary",
         "images": [
-          "docker.io/library/mysql:5.7",
-          "docker.io/roundcube/roundcubemail:1.7.3-fpm-alpine-nonroot",
-          "docker.io/nginxinc/nginx-unprivileged:1.31-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "pedestal-of-time/roundcube-primary-gmail": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "pedestal-of-time",
-        "name": "roundcube-primary-gmail",
-        "images": [
-          "docker.io/roundcube/roundcubemail:1.6.13-fpm-alpine-nonroot",
-          "docker.io/nginxinc/nginx-unprivileged:1.29-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "pedestal-of-time/roundcube-primary-gmail-db": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "pedestal-of-time",
-        "name": "roundcube-primary-gmail-db",
-        "images": [
+          "docker.io/roundcube/roundcubemail:1.7.4-fpm-alpine-nonroot",
+          "docker.io/nginxinc/nginx-unprivileged:1.31-alpine",
           "docker.io/library/mysql:5.7"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "pedestal-of-time/xylem-gateway-istio": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "pedestal-of-time",
+        "name": "xylem-gateway-istio",
+        "images": [
+          "docker.io/istio/proxyv2:1.32.0-alpha.0-distroless"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "prelude-of-light/cell-membrane-gateway-istio": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "prelude-of-light",
+        "name": "cell-membrane-gateway-istio",
+        "images": [
+          "docker.io/istio/proxyv2:1.32.0-alpha.0-distroless"
         ],
         "image_digests": null
       },
@@ -3490,95 +2405,15 @@
     "shooting-gallery/ark": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "shooting-gallery",
         "name": "ark",
         "images": [
+          "docker.io/nginx:1.31.5-alpine",
           "docker.io/acekorneya/asa_server:2_1_latest",
-          "docker.io/drpsychick/arkserver:latest-v1.6.62",
-          "docker.io/library/nginx:alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "shooting-gallery/ark-sa-tmc-admin-list-server": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "shooting-gallery",
-        "name": "ark-sa-tmc-admin-list-server",
-        "images": [
-          "docker.io/library/nginx:alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "shooting-gallery/ark-sa-tmc-theisland": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "shooting-gallery",
-        "name": "ark-sa-tmc-theisland",
-        "images": [
-          "docker.io/acekorneya/asa_server:2_1_latest"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "shooting-gallery/ark-sa-tmc-valguero": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "shooting-gallery",
-        "name": "ark-sa-tmc-valguero",
-        "images": [
-          "docker.io/acekorneya/asa_server:2_1_latest"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "shooting-gallery/ark-se-tmc-theisland": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "shooting-gallery",
-        "name": "ark-se-tmc-theisland",
-        "images": [
-          "docker.io/drpsychick/arkserver:latest-v1.6.62"
+          "ghcr.io/homelabhd/ark-se-server:v1.6.69"
         ],
         "image_digests": null
       },
@@ -3591,7 +2426,7 @@
     "shooting-gallery/emulatorjs": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "shooting-gallery",
@@ -3610,7 +2445,7 @@
     "shooting-gallery/minecraft": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "shooting-gallery",
@@ -3626,16 +2461,16 @@
         "reason": "new_app"
       }
     },
-    "shooting-gallery/romm": {
+    "shooting-gallery/palworld": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "shooting-gallery",
-        "name": "romm",
+        "name": "palworld",
         "images": [
-          "docker.io/rommapp/romm:5.2.0"
+          "ghcr.io/thijsvanloef/palworld-server-docker:v2.8.0"
         ],
         "image_digests": null
       },
@@ -3645,17 +2480,17 @@
         "reason": "new_app"
       }
     },
-    "shooting-gallery/romm-db": {
+    "shooting-gallery/romm": {
       "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "shooting-gallery",
-        "name": "romm-db",
+        "name": "romm",
         "images": [
-          "docker.io/linuxserver/mariadb:11.4.9"
+          "docker.io/rommapp/romm:5.4.0",
+          "docker.io/linuxserver/mariadb:11.8.8"
         ],
         "image_digests": null
       },
@@ -3668,7 +2503,7 @@
     "swift-sail/anirra": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3687,13 +2522,13 @@
     "swift-sail/bazarr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
         "name": "bazarr",
         "images": [
-          "docker.io/linuxserver/bazarr:1.6.0",
+          "docker.io/linuxserver/bazarr:1.6.2",
           "docker.io/qmcgaw/gluetun:v3.41.3"
         ],
         "image_digests": null
@@ -3707,7 +2542,7 @@
     "swift-sail/byparr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3727,20 +2562,20 @@
     "swift-sail/downloadarrs": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
         "name": "downloadarrs",
         "images": [
+          "ghcr.io/monstermuffin/qsticky:sha-5ca1746",
           "docker.io/qmcgaw/gluetun:v3.41.3",
-          "docker.io/linuxserver/qbittorrent:5.2.3",
-          "docker.io/linuxserver/radarr:6.3.0",
-          "docker.io/linuxserver/sonarr:4.0.19",
+          "docker.io/linuxserver/qbittorrent:5.2.4",
+          "docker.io/linuxserver/radarr:6.4.4",
+          "docker.io/linuxserver/sonarr:4.0.20",
           "docker.io/linuxserver/lidarr:3.1.0",
           "docker.io/linuxserver/readarr:0.4.19-nightly",
-          "docker.io/crossseed/cross-seed:6.13.7",
-          "docker.io/prplanit/qbittorrent-port-manager:1.3"
+          "docker.io/crossseed/cross-seed:6.13.7"
         ],
         "image_digests": null
       },
@@ -3753,7 +2588,7 @@
     "swift-sail/jellyseerr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3773,56 +2608,15 @@
     "swift-sail/neko": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
         "name": "neko",
         "images": [
+          "docker.io/l7mp/stunnerd:1.2.1",
           "docker.io/qmcgaw/gluetun:v3.41.3",
-          "ghcr.io/m1k1o/neko/vivaldi:3.1.5",
-          "docker.io/l7mp/stunnerd:1.2.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "swift-sail/neko-gateway": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "swift-sail",
-        "name": "neko-gateway",
-        "images": [
-          "docker.io/l7mp/stunnerd:1.1.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "swift-sail/neko-vpn": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "swift-sail",
-        "name": "neko-vpn",
-        "images": [
-          "docker.io/qmcgaw/gluetun:v3.41.1",
-          "ghcr.io/m1k1o/neko/vivaldi:3.0.7"
+          "ghcr.io/m1k1o/neko/vivaldi:3.1.6"
         ],
         "image_digests": null
       },
@@ -3835,7 +2629,7 @@
     "swift-sail/overseerr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3855,13 +2649,13 @@
     "swift-sail/pinchflat": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
         "name": "pinchflat",
         "images": [
-          "ghcr.io/kieraneglin/pinchflat:latest",
+          "ghcr.io/kieraneglin/pinchflat:v2025.6.6",
           "docker.io/qmcgaw/gluetun:v3.41.3"
         ],
         "image_digests": null
@@ -3875,13 +2669,13 @@
     "swift-sail/prowlarr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
         "name": "prowlarr",
         "images": [
-          "docker.io/linuxserver/prowlarr:2.5.2",
+          "docker.io/linuxserver/prowlarr:2.6.5",
           "docker.io/qmcgaw/gluetun:v3.41.3"
         ],
         "image_digests": null
@@ -3895,7 +2689,7 @@
     "swift-sail/py-kms": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3914,7 +2708,7 @@
     "swift-sail/pyload-ng": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3934,13 +2728,13 @@
     "swift-sail/sabnzbd": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
         "name": "sabnzbd",
         "images": [
-          "docker.io/linuxserver/sabnzbd:5.1.1",
+          "docker.io/linuxserver/sabnzbd:5.1.3",
           "docker.io/qmcgaw/gluetun:v3.41.3"
         ],
         "image_digests": null
@@ -3954,7 +2748,7 @@
     "swift-sail/supermicro-license-generator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3973,7 +2767,7 @@
     "swift-sail/thelounge": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "swift-sail",
@@ -3993,180 +2787,20 @@
     "temple-of-time/appflowy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "appflowy",
         "images": [
-          "docker.io/appflowyinc/gotrue:0.17.12",
-          "docker.io/nginx:1.31.4-alpine",
-          "docker.io/redis:8.10.1-alpine",
-          "docker.io/appflowyinc/appflowy_web:0.16.18",
-          "docker.io/appflowyinc/appflowy_worker:0.17.12",
+          "docker.io/appflowyinc/admin_frontend:0.19.0",
           "docker.io/appflowyinc/appflowy_ai:0.17.7",
-          "docker.io/appflowyinc/admin_frontend:0.17.13",
-          "docker.io/appflowyinc/appflowy_cloud:0.17.12"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/appflowy-admin-frontend": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "appflowy-admin-frontend",
-        "images": [
-          "docker.io/appflowyinc/admin_frontend:0.13.5"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/appflowy-ai": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "appflowy-ai",
-        "images": [
-          "docker.io/appflowyinc/appflowy_ai:0.13.5"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/appflowy-cloud": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "appflowy-cloud",
-        "images": [
-          "docker.io/appflowyinc/appflowy_cloud:0.13.4"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/appflowy-gotrue": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "appflowy-gotrue",
-        "images": [
-          "docker.io/appflowyinc/gotrue:0.13.4"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/appflowy-nginx": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "appflowy-nginx",
-        "images": [
-          "docker.io/nginx:1.29.6-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/appflowy-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "appflowy-redis",
-        "images": [
-          "docker.io/redis:8.6.1-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/appflowy-web": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "appflowy-web",
-        "images": [
-          "docker.io/appflowyinc/appflowy_web:0.11.2"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/appflowy-worker": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "appflowy-worker",
-        "images": [
-          "docker.io/appflowyinc/appflowy_worker:0.13.4"
+          "docker.io/appflowyinc/appflowy_cloud:0.19.5",
+          "docker.io/appflowyinc/gotrue:0.18.11",
+          "docker.io/nginx:1.31.5-alpine",
+          "docker.io/redis:8.10.2-alpine",
+          "docker.io/appflowyinc/appflowy_web:0.19.10",
+          "docker.io/appflowyinc/appflowy_worker:0.19.5"
         ],
         "image_digests": null
       },
@@ -4179,7 +2813,7 @@
     "temple-of-time/calibre-web": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4198,13 +2832,14 @@
     "temple-of-time/ghost": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "ghost",
         "images": [
-          "docker.io/library/ghost:6-alpine"
+          "docker.io/library/ghost:6-alpine",
+          "docker.io/library/mysql:8.4"
         ],
         "image_digests": null
       },
@@ -4214,17 +2849,17 @@
         "reason": "new_app"
       }
     },
-    "temple-of-time/ghost-mysql": {
+    "temple-of-time/hubzilla": {
       "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
-        "name": "ghost-mysql",
+        "name": "hubzilla",
         "images": [
-          "docker.io/library/mysql:8.4"
+          "ghcr.io/homelabhd/hubzilla:v11.4.1",
+          "docker.io/mariadb:12.3"
         ],
         "image_digests": null
       },
@@ -4237,14 +2872,14 @@
     "temple-of-time/immich": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "immich",
         "images": [
-          "ghcr.io/immich-app/immich-server:v2.5.6",
-          "ghcr.io/immich-app/immich-machine-learning:v2.5.0-cuda",
+          "ghcr.io/immich-app/immich-server:v2.7.5",
+          "ghcr.io/immich-app/immich-machine-learning:v2.7.5-cuda",
           "docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0",
           "docker.io/library/redis:8.10-alpine"
         ],
@@ -4259,7 +2894,7 @@
     "temple-of-time/jellyfin": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
@@ -4278,53 +2913,13 @@
     "temple-of-time/joplin": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "joplin",
         "images": [
-          "docker.io/postgres:15",
-          "docker.io/joplin/server:3.7.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/joplin-app": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "joplin-app",
-        "images": [
-          "docker.io/joplin/server:3.5.2"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/joplin-postgres": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "joplin-postgres",
-        "images": [
+          "docker.io/joplin/server:3.7.2",
           "docker.io/postgres:15"
         ],
         "image_digests": null
@@ -4338,34 +2933,15 @@
     "temple-of-time/kimai": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "kimai",
         "images": [
-          "docker.io/kimai/kimai2:apache"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/kimai-mariadb": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "kimai-mariadb",
-        "images": [
-          "docker.io/mariadb:11.8.6",
-          "docker-registry3.mariadb.com/mariadb-operator/mariadb-operator:v0.0.33"
+          "docker.io/kimai/kimai2:apache",
+          "docker.io/mariadb:12.3.3",
+          "ghcr.io/mariadb-operator/mariadb-operator:26.10.1"
         ],
         "image_digests": null
       },
@@ -4378,14 +2954,14 @@
     "temple-of-time/linkwarden": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "linkwarden",
         "images": [
-          "ghcr.io/linkwarden/linkwarden:v2.16.1",
-          "docker.io/getmeili/meilisearch:v1.53.1",
+          "ghcr.io/linkwarden/linkwarden:v2.16.3",
+          "docker.io/getmeili/meilisearch:v1.54.3",
           "docker.io/library/postgres:18-alpine"
         ],
         "image_digests": null
@@ -4396,37 +2972,23 @@
         "reason": "new_app"
       }
     },
-    "temple-of-time/linkwarden-meilisearch": {
+    "temple-of-time/matrix": {
       "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
-        "name": "linkwarden-meilisearch",
+        "name": "matrix",
         "images": [
-          "docker.io/getmeili/meilisearch:v1.38.2"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/linkwarden-postgres": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "linkwarden-postgres",
-        "images": [
-          "docker.io/library/postgres:16-alpine"
+          "ghcr.io/element-hq/matrix-authentication-service:1.26.0",
+          "ghcr.io/element-hq/element-web:v1.12.30",
+          "ghcr.io/element-hq/element-call:v0.27.0",
+          "docker.io/livekit/livekit-server:v1.13.9",
+          "ghcr.io/element-hq/lk-jwt-service:0.8.0",
+          "ghcr.io/homelabhd/synapse:v1.162.0",
+          "docker.io/l7mp/stunnerd:1.2.1",
+          "docker.io/nginx:1.31.5-alpine"
         ],
         "image_digests": null
       },
@@ -4439,13 +3001,14 @@
     "temple-of-time/mealie": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "mealie",
         "images": [
-          "ghcr.io/mealie-recipes/mealie:nightly"
+          "ghcr.io/mealie-recipes/mealie:v3.28.0",
+          "docker.io/library/postgres:18-alpine"
         ],
         "image_digests": null
       },
@@ -4455,17 +3018,16 @@
         "reason": "new_app"
       }
     },
-    "temple-of-time/mealie-postgres": {
+    "temple-of-time/navidrome": {
       "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
-        "name": "mealie-postgres",
+        "name": "navidrome",
         "images": [
-          "docker.io/library/postgres:15"
+          "ghcr.io/navidrome/navidrome:0.64.2"
         ],
         "image_digests": null
       },
@@ -4478,156 +3040,22 @@
     "temple-of-time/nextcloud": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "nextcloud",
         "images": [
-          "docker.io/library/nextcloud:34.0.3",
-          "docker.io/icewind1991/notify_push:1.4.0",
-          "docker.io/collabora/code:26.04.3.1.1",
-          "docker.io/h2non/imaginary:1.2.4"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/nextcloud-clamav": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "nextcloud-clamav",
-        "images": [
-          "docker.io/clamav/clamav:1.5.2"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/nextcloud-elasticsearch": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "nextcloud-elasticsearch",
-        "images": [
-          "docker.io/library/elasticsearch:9.3.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/nextcloud-notify-push": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "nextcloud-notify-push",
-        "images": [
-          "docker.io/icewind1991/notify_push:1.3.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/nextcloud-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "nextcloud-redis",
-        "images": [
-          "quay.io/opstree/redis:v7.4.8"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/nextcloud-sentinel": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "nextcloud-sentinel",
-        "images": [
-          "quay.io/opstree/redis-sentinel:v7.4.8"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/nextcloud-talk-hpb": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "nextcloud-talk-hpb",
-        "images": [
-          "docker.io/strukturag/nextcloud-spreed-signaling:e78e914"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/nextcloud-whiteboard": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "nextcloud-whiteboard",
-        "images": [
-          "ghcr.io/nextcloud-releases/whiteboard:v1.5.7"
+          "docker.io/library/nextcloud:34.0.4",
+          "docker.io/icewind1991/notify_push:1.4.1",
+          "docker.io/collabora/code:25.04.10.3.1",
+          "docker.io/h2non/imaginary:1.2.4",
+          "docker.io/clamav/clamav:1.5.4",
+          "docker.io/library/elasticsearch:9.5.5",
+          "quay.io/opstree/redis:v7.4.11",
+          "quay.io/opstree/redis-sentinel:v7.4.11",
+          "docker.io/strukturag/nextcloud-spreed-signaling:e78e914",
+          "ghcr.io/nextcloud-releases/whiteboard:v1.5.9"
         ],
         "image_digests": null
       },
@@ -4640,74 +3068,14 @@
     "temple-of-time/open": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "open",
         "images": [
-          "ghcr.io/open-webui/open-webui:v0.7.2",
+          "ghcr.io/open-webui/open-webui:v0.12.0",
           "docker.io/redis:8.10-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/open-webui": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "open-webui",
-        "images": [
-          "ghcr.io/open-webui/open-webui:v0.7.2"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/open-webui-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "open-webui-redis",
-        "images": [
-          "docker.io/redis:7.4-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/open-webui-sentinel": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "open-webui-sentinel",
-        "images": [
-          "docker.io/redis:7.4-alpine"
         ],
         "image_digests": null
       },
@@ -4720,117 +3088,17 @@
     "temple-of-time/penpot": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "penpot",
         "images": [
-          "docker.io/penpotapp/exporter:2.17.1",
-          "docker.io/penpotapp/frontend:2.17.1",
-          "docker.io/redis:8-alpine",
-          "docker.io/penpotapp/backend:2.17.1",
-          "docker.io/postgres:15"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/penpot-backend": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "penpot-backend",
-        "images": [
-          "docker.io/penpotapp/backend:2.13.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/penpot-exporter": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "penpot-exporter",
-        "images": [
-          "docker.io/penpotapp/exporter:2.13.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/penpot-frontend": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "penpot-frontend",
-        "images": [
-          "docker.io/penpotapp/frontend:2.13.3"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/penpot-postgres": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "penpot-postgres",
-        "images": [
-          "docker.io/postgres:15"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/penpot-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "penpot-redis",
-        "images": [
-          "docker.io/redis:7"
+          "docker.io/penpotapp/backend:2.18.3",
+          "docker.io/penpotapp/exporter:2.18.3",
+          "docker.io/penpotapp/frontend:2.18.3",
+          "docker.io/postgres:15",
+          "docker.io/redis:8-alpine"
         ],
         "image_digests": null
       },
@@ -4843,32 +3111,13 @@
     "temple-of-time/photoprism": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "photoprism",
         "images": [
-          "docker.io/photoprism/photoprism:251130"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/photoprism-mariadb": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "photoprism-mariadb",
-        "images": [
+          "docker.io/photoprism/photoprism:261007",
           "docker.io/mariadb:11"
         ],
         "image_digests": null
@@ -4882,36 +3131,13 @@
     "temple-of-time/plex": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "plex",
         "images": [
-          "docker.io/plexinc/pms-docker:1.43.3.10896-cb3ebc72d"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/reactive": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "reactive",
-        "images": [
-          "docker.io/minio/minio:RELEASE.2025-09-07T16-13-09Z",
-          "docker.io/amruthpillai/reactive-resume:v5.0.11",
-          "ghcr.io/browserless/chromium:v2.43.0",
-          "docker.io/library/postgres:16-alpine"
+          "docker.io/plexinc/pms-docker:1.43.4.10903-e5521bd8c"
         ],
         "image_digests": null
       },
@@ -4924,55 +3150,15 @@
     "temple-of-time/reactive-resume": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "reactive-resume",
         "images": [
-          "ghcr.io/browserless/chromium:v2.56.0",
-          "docker.io/library/postgres:18-alpine",
-          "docker.io/amruthpillai/reactive-resume:v5.2.8"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/reactive-resume-app": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "reactive-resume-app",
-        "images": [
-          "docker.io/amruthpillai/reactive-resume:v5.0.11"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/reactive-resume-chrome": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "reactive-resume-chrome",
-        "images": [
-          "ghcr.io/browserless/chromium:v2.43.0"
+          "docker.io/amruthpillai/reactive-resume:v5.3.2",
+          "ghcr.io/browserless/chromium:v2.57.0",
+          "docker.io/library/postgres:18-alpine"
         ],
         "image_digests": null
       },
@@ -5002,98 +3188,18 @@
         "reason": "new_app"
       }
     },
-    "temple-of-time/reactive-resume-postgres": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "reactive-resume-postgres",
-        "images": [
-          "docker.io/library/postgres:16-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
     "temple-of-time/shlink": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "shlink",
         "images": [
-          "docker.io/shlinkio/shlink-web-client:4.8.1",
-          "docker.io/shlinkio/shlink:5.1.5",
-          "docker.io/linuxserver/mariadb:11.8.8"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/shlink-app": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "shlink-app",
-        "images": [
-          "docker.io/shlinkio/shlink:5.0.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/shlink-db": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "shlink-db",
-        "images": [
-          "docker.io/linuxserver/mariadb:11.4.9"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/shlink-web-client": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "shlink-web-client",
-        "images": [
-          "docker.io/shlinkio/shlink-web-client:4.7.0"
+          "docker.io/shlinkio/shlink:5.1.7",
+          "docker.io/linuxserver/mariadb:11.8.8",
+          "docker.io/shlinkio/shlink-web-client:4.8.1"
         ],
         "image_digests": null
       },
@@ -5106,53 +3212,13 @@
     "temple-of-time/wikijs": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "temple-of-time",
         "name": "wikijs",
         "images": [
-          "docker.io/library/postgres:18-alpine",
-          "ghcr.io/requarks/wiki:2"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/wikijs-vegan": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "wikijs-vegan",
-        "images": [
-          "ghcr.io/requarks/wiki:2"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "temple-of-time/wikijs-vegan-db": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "temple-of-time",
-        "name": "wikijs-vegan-db",
-        "images": [
+          "ghcr.io/requarks/wiki:2",
           "docker.io/library/postgres:15-alpine"
         ],
         "image_digests": null
@@ -5186,13 +3252,13 @@
     "tingle-tuner/convertx": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
         "name": "convertx",
         "images": [
-          "ghcr.io/c4illin/convertx:v0.18.0"
+          "ghcr.io/c4illin/convertx:v0.19.0"
         ],
         "image_digests": null
       },
@@ -5205,13 +3271,32 @@
     "tingle-tuner/draw-io": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
         "name": "draw-io",
         "images": [
-          "docker.io/jgraph/drawio:31.3.2"
+          "docker.io/jgraph/drawio:31.7.0"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "tingle-tuner/echo-ip": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "tingle-tuner",
+        "name": "echo-ip",
+        "images": [
+          "ghcr.io/homelabhd/echoip:v2026.9.0"
         ],
         "image_digests": null
       },
@@ -5224,7 +3309,7 @@
     "tingle-tuner/endlessh-go": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5243,7 +3328,7 @@
     "tingle-tuner/fairer-pages": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5262,7 +3347,7 @@
     "tingle-tuner/faster-whisper": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5301,13 +3386,13 @@
     "tingle-tuner/google-webfonts-helper": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
         "name": "google-webfonts-helper",
         "images": [
-          "ghcr.io/majodev/google-webfonts-helper:v1.7.1"
+          "ghcr.io/majodev/google-webfonts-helper:v1.7.2"
         ],
         "image_digests": null
       },
@@ -5320,13 +3405,13 @@
     "tingle-tuner/hrconvert2": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
         "name": "hrconvert2",
         "images": [
-          "docker.io/zelon88/hrconvert2:v3.7.2"
+          "docker.io/zelon88/hrconvert2:v3.8.4"
         ],
         "image_digests": null
       },
@@ -5339,7 +3424,7 @@
     "tingle-tuner/it-tools": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5355,10 +3440,29 @@
         "reason": "new_app"
       }
     },
+    "tingle-tuner/librespeed-speedtest": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "tingle-tuner",
+        "name": "librespeed-speedtest",
+        "images": [
+          "ghcr.io/librespeed/speedtest:6.3.0-alpine"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
     "tingle-tuner/libretranslate": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5377,13 +3481,13 @@
     "tingle-tuner/mazanoke": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
         "name": "mazanoke",
         "images": [
-          "ghcr.io/civilblur/mazanoke:v1.1.6"
+          "ghcr.io/civilblur/mazanoke:v1.1.7"
         ],
         "image_digests": null
       },
@@ -5396,13 +3500,32 @@
     "tingle-tuner/ollama": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
         "name": "ollama",
         "images": [
-          "docker.io/ollama/ollama:0.32.15"
+          "docker.io/ollama/ollama:0.40.2"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "tingle-tuner/openspeedtest": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
+      },
+      "observed": {
+        "namespace": "tingle-tuner",
+        "name": "openspeedtest",
+        "images": [
+          "docker.io/openspeedtest/latest:v2.0.6"
         ],
         "image_digests": null
       },
@@ -5415,7 +3538,7 @@
     "tingle-tuner/openwakeword": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5434,52 +3557,13 @@
     "tingle-tuner/piper": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
         "name": "piper",
         "images": [
-          "docker.io/rhasspy/wyoming-piper:2.4.2"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "tingle-tuner/searxng": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "tingle-tuner",
-        "name": "searxng",
-        "images": [
-          "ghcr.io/searxng/searxng:2026.8.22-9fea41204"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "tingle-tuner/searxng-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "tingle-tuner",
-        "name": "searxng-redis",
-        "images": [
-          "docker.io/valkey/valkey:7-alpine"
+          "docker.io/rhasspy/wyoming-piper:2.5.2"
         ],
         "image_digests": null
       },
@@ -5492,7 +3576,7 @@
     "tingle-tuner/stable-diffusion-webui": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "tingle-tuner",
@@ -5511,13 +3595,13 @@
     "wallmaster/anubis": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "wallmaster",
         "name": "anubis",
         "images": [
-          "ghcr.io/techarohq/anubis:v1.27.0"
+          "ghcr.io/techarohq/anubis:v1.28.1"
         ],
         "image_digests": null
       },
@@ -5530,13 +3614,13 @@
     "zeldas-lullaby/bank-vaults-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "bank-vaults-operator",
         "images": [
-          "ghcr.io/bank-vaults/vault-operator:v1.24.0"
+          "ghcr.io/bank-vaults/vault-operator:v1.24.1"
         ],
         "image_digests": null
       },
@@ -5549,35 +3633,13 @@
     "zeldas-lullaby/external-secrets": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "external-secrets",
         "images": [
-          "ghcr.io/external-secrets/external-secrets:v2.8.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/kyverno": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "kyverno",
-        "images": [
-          "ghcr.io/kyverno/kyverno:v1.19.0",
-          "ghcr.io/kyverno/background-controller:v1.19.0",
-          "ghcr.io/kyverno/cleanup-controller:v1.19.0",
-          "ghcr.io/kyverno/reports-controller:v1.19.0"
+          "ghcr.io/external-secrets/external-secrets:v2.12.0"
         ],
         "image_digests": null
       },
@@ -5590,17 +3652,17 @@
     "zeldas-lullaby/netbird": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "netbird",
         "images": [
-          "docker.io/netbirdio/management:0.64.4",
-          "docker.io/netbirdio/relay:0.64.4",
-          "docker.io/netbirdio/signal:0.64.4",
-          "docker.io/netbirdio/dashboard:v2.30.1",
-          "docker.io/coturn/coturn:4.8.0"
+          "docker.io/netbirdio/dashboard:v2.94.0",
+          "docker.io/netbirdio/management:0.80.0",
+          "docker.io/netbirdio/relay:0.80.0",
+          "docker.io/netbirdio/signal:0.80.0",
+          "docker.io/l7mp/stunnerd:1.2.1"
         ],
         "image_digests": null
       },
@@ -5630,158 +3692,18 @@
         "reason": "new_app"
       }
     },
-    "zeldas-lullaby/netbird-dashboard": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "netbird-dashboard",
-        "images": [
-          "docker.io/netbirdio/dashboard:v2.30.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/netbird-management": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "netbird-management",
-        "images": [
-          "docker.io/netbirdio/management:0.64.4"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/netbird-relay": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "netbird-relay",
-        "images": [
-          "docker.io/netbirdio/relay:0.64.4"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/netbird-signal": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "netbird-signal",
-        "images": [
-          "docker.io/netbirdio/signal:0.64.4"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
     "zeldas-lullaby/netbox": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "netbox",
         "images": [
-          "docker.io/linuxserver/netbox:4.6.8",
+          "docker.io/postgres:15-alpine",
           "docker.io/redis:8-alpine",
-          "docker.io/postgres:15-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/netbox-postgres": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "netbox-postgres",
-        "images": [
-          "docker.io/postgres:15-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/netbox-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "netbox-redis",
-        "images": [
-          "docker.io/redis:7-alpine"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/netbox-server": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "netbox-server",
-        "images": [
-          "docker.io/linuxserver/netbox:4.5.4"
+          "docker.io/linuxserver/netbox:4.7.2"
         ],
         "image_digests": null
       },
@@ -5794,13 +3716,13 @@
     "zeldas-lullaby/oauth2-proxy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "oauth2-proxy",
         "images": [
-          "quay.io/oauth2-proxy/oauth2-proxy:v7.15.4"
+          "quay.io/oauth2-proxy/oauth2-proxy:v7.15.5"
         ],
         "image_digests": null
       },
@@ -5813,14 +3735,14 @@
     "zeldas-lullaby/semaphore": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "semaphore",
         "images": [
           "docker.io/postgres:14",
-          "docker.io/semaphoreui/semaphore:v2.19.8"
+          "docker.io/semaphoreui/semaphore:v2.19.16"
         ],
         "image_digests": null
       },
@@ -5833,13 +3755,13 @@
     "zeldas-lullaby/twofauth": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "twofauth",
         "images": [
-          "docker.io/2fauth/2fauth:8.0.1"
+          "docker.io/2fauth/2fauth:8.0.2"
         ],
         "image_digests": null
       },
@@ -5852,54 +3774,14 @@
     "zeldas-lullaby/unifi": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "unifi",
         "images": [
-          "docker.io/linuxserver/unifi-network-application:10.5.67",
-          "docker.io/library/mongo:7.0.40"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/unifi-app": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "unifi-app",
-        "images": [
-          "docker.io/linuxserver/unifi-network-application:9.5.21"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/unifi-db": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-30T08:30:12.845138781Z",
-        "missing_since": "2026-03-30T20:43:16.206367187Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "unifi-db",
-        "images": [
-          "docker.io/library/mongo:7.0.30"
+          "docker.io/linuxserver/unifi-network-application:10.6.106",
+          "docker.io/library/mongo:7.0.43"
         ],
         "image_digests": null
       },
@@ -5912,15 +3794,15 @@
     "zeldas-lullaby/vault": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "vault",
         "images": [
-          "docker.io/openbao/openbao:2.6.2",
-          "ghcr.io/bank-vaults/bank-vaults:v1.33.1",
-          "docker.io/prom/statsd-exporter:v0.29.0"
+          "docker.io/openbao/openbao:2.7.1",
+          "ghcr.io/bank-vaults/bank-vaults:v1.33.2",
+          "docker.io/prom/statsd-exporter:v0.31.0"
         ],
         "image_digests": null
       },
@@ -5933,13 +3815,13 @@
     "zeldas-lullaby/vault-configurator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "vault-configurator",
         "images": [
-          "ghcr.io/bank-vaults/bank-vaults:v1.33.1"
+          "ghcr.io/bank-vaults/bank-vaults:v1.33.2"
         ],
         "image_digests": null
       },
@@ -5952,13 +3834,13 @@
     "zeldas-lullaby/vaultwarden": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "vaultwarden",
         "images": [
-          "docker.io/vaultwarden/server:1.37.2"
+          "docker.io/vaultwarden/server:1.37.4"
         ],
         "image_digests": null
       },
@@ -5971,72 +3853,17 @@
     "zeldas-lullaby/zitadel": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
+        "last_seen": "2026-10-12T16:54:33.481467499Z"
       },
       "observed": {
         "namespace": "zeldas-lullaby",
         "name": "zitadel",
         "images": [
-          "ghcr.io/zitadel/zitadel:v4.17.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/zitadel-login-v2": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-08-26T02:05:32.825802284Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "zitadel-login-v2",
-        "images": [
-          "ghcr.io/zitadel/zitadel-login:v4.17.1"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/zitadel-redis": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "zitadel-redis",
-        "images": [
-          "quay.io/opstree/redis:v7.4.8"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "zeldas-lullaby/zitadel-sentinel": {
-      "lifecycle": {
-        "state": "graveyard",
-        "last_seen": "2026-03-31T07:08:41.438990608Z",
-        "missing_since": "2026-08-02T16:23:13.194271188Z"
-      },
-      "observed": {
-        "namespace": "zeldas-lullaby",
-        "name": "zitadel-sentinel",
-        "images": [
-          "quay.io/opstree/redis-sentinel:v7.4.8"
+          "ghcr.io/homelabhd/zitadel:v4.19.4",
+          "ghcr.io/prplanit/zitadel-flatroles:v0.0.1",
+          "ghcr.io/homelabhd/zitadel-login:v4.19.4",
+          "quay.io/opstree/redis:v7.4.11",
+          "quay.io/opstree/redis-sentinel:v7.4.11"
         ],
         "image_digests": null
       },
