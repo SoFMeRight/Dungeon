@@ -4,21 +4,19 @@
 > Generated from live Kubernetes state
 > Cluster: dungeon
 
-## Apps & Services (117)
+## Apps & Services (115)
 
-✅ 115 healthy · ⚠️ 2 degraded
+✅ 110 healthy · ⚠️ 3 degraded · ❌ 2 down
 
 ### Administrative (zeldas-lullaby)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Netbird (5 components) | ✅ | 🌐 netbird.prplanit.com | [open](https://netbird.prplanit.com) |
-| Netbox (3 components) | ✅ | ❓ netbox.pcfae.com | [open](https://netbox.pcfae.com) |
 | Oauth2 Proxy | ✅ | ❓ books.optcp.com | [open](https://books.optcp.com) |
 | OpenBao | ✅ | 🔒 vault.pcfae.com | [open](https://vault.pcfae.com) |
 | Semaphore | ✅ | 🔒 ansible.pcfae.com | [open](https://ansible.pcfae.com) |
 | Twofauth | ✅ | 🔒 2fa.pcfae.com | [open](https://2fa.pcfae.com) |
-| Unifi (2 components) | ✅ | 🔒 unifi.pcfae.com | [open](https://unifi.pcfae.com) |
 | Vaultwarden | ✅ | ❓ bitwarden.pcfae.com | [open](https://bitwarden.pcfae.com) |
 | Zitadel (5 components) | ✅ | 🌐 sso.prplanit.com | [open](https://sso.prplanit.com) |
 
@@ -27,6 +25,7 @@
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Netbootxyz | ✅ | 🔒 netboot.pcfae.com | [open](https://netboot.pcfae.com) |
+| Searxng (2 components) | ✅ | 🔒 search.pcfae.com | [open](https://search.pcfae.com) |
 
 ### Storage Services (gorons-bracelet)
 
@@ -57,9 +56,9 @@
 | --- | --- | --- | --- |
 | Crowdsec (4 components) | ✅ | 🔒 crowdsec-lapi.pcfae.com | [open](https://crowdsec-lapi.pcfae.com) |
 | Frigate | ✅ | 🔒 nvr.pcfae.com | [open](https://nvr.pcfae.com) |
-| Home Assistant | ✅ | ❓ hass.arbitorium.com | [open](https://hass.arbitorium.com) |
+| Home Assistant | ❌ | ❓ hass.arbitorium.com | [open](https://hass.arbitorium.com) |
 | Mosquitto | ✅ | 🏠 |  |
-| Wazuh (3 components) | ⚠️ | 🔒 siem.pcfae.com | [open](https://siem.pcfae.com) |
+| Wazuh (3 components) | ⚠️ | 🏠 |  |
 | Zigbee2mqtt | ✅ | ❓ z2m.arbitorium.com | [open](https://z2m.arbitorium.com) |
 
 ### Bot Protection (wallmaster)
@@ -73,7 +72,6 @@
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Apt Cacher Ng | ✅ | 🔒 apt.pcfae.com | [open](https://apt.pcfae.com) |
-| Bagisto (2 components) | ✅ | 🔒 bagisto.pcfae.com | [open](https://bagisto.pcfae.com) |
 | Bookstack (2 components) | ✅ | 🌐 kb.precisionplanit.com | [open](https://kb.precisionplanit.com) |
 | Calcom | ✅ | 🌐 cal.prplanit.com | [open](https://cal.prplanit.com) |
 | Harbor Proxy Cache Proxy | ✅ | 🔒 docker.cr.pcfae.com | [open](https://docker.cr.pcfae.com) |
@@ -106,17 +104,17 @@
 | Joplin (2 components) | ✅ | 🔒 joplin.pcfae.com | [open](https://joplin.pcfae.com) |
 | Kimai (2 components) | ✅ | 🔒 kimai.pcfae.com | [open](https://kimai.pcfae.com) |
 | Linkwarden (3 components) | ✅ | ❓ bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
-| Matrix (8 components) | ✅ | 🌐 chat.outspokekin.com | [open](https://chat.outspokekin.com) |
+| Matrix (8 components) | ✅ | 🌐 livekit.outspokekin.com | [open](https://livekit.outspokekin.com) |
 | Mealie (2 components) | ✅ | ❓ meals.yesimvegan.com | [open](https://meals.yesimvegan.com) |
 | Navidrome | ✅ | 🌐 music.optcp.com | [open](https://music.optcp.com) |
 | Nextcloud (9 components) | ✅ | 🌐 ncloud.optcp.com | [open](https://ncloud.optcp.com) |
-| Open (3 components) | ✅ | 🏠 |  |
+| Open (3 components) | ⚠️ | 🏠 |  |
 | Penpot (5 components) | ✅ | 🏠 |  |
 | Photoprism (2 components) | ✅ | 🔒 photos.pcfae.com | [open](https://photos.pcfae.com) |
 | Plex | ✅ | 🌐 plex.optcp.com | [open](https://plex.optcp.com) |
 | Reactive Resume (3 components) | ✅ | 🏠 |  |
-| Shlink (3 components) | ✅ | 🏠 |  |
-| Wikijs (2 components) | ✅ | 🏠 |  |
+| Shlink (3 components) | ✅ | ❓ sh.pcfae.com | [open](https://sh.pcfae.com) |
+| Wikijs (2 components) | ✅ | 🌐 wiki.yesimvegan.com | [open](https://wiki.yesimvegan.com) |
 
 ### Discovery & Dashboards (lost-woods)
 
@@ -135,7 +133,7 @@
 | Byparr | ✅ | 🏠 |  |
 | Downloadarrs | ✅ | 🔒 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
 | Jellyseerr | ✅ | 🌐 jseer.optcp.com | [open](https://jseer.optcp.com) |
-| Neko (2 components) | ✅ | 🔒 web.pcfae.com | [open](https://web.pcfae.com) |
+| Neko (2 components) | ✅ | 🏠 |  |
 | Overseerr | ✅ | 🔒 overseer.pcfae.com | [open](https://overseer.pcfae.com) |
 | Pinchflat | ✅ | 🔒 pinchflat.pcfae.com | [open](https://pinchflat.pcfae.com) |
 | Prowlarr | ✅ | 🔒 prowlarr.pcfae.com | [open](https://prowlarr.pcfae.com) |
@@ -190,7 +188,6 @@
 | Openspeedtest | ✅ | 🔒 speedtest.pcfae.com | [open](https://speedtest.pcfae.com) |
 | Openwakeword | ✅ | 🏠 |  |
 | Piper | ✅ | 🏠 |  |
-| Searxng (2 components) | ✅ | 🔒 search.pcfae.com | [open](https://search.pcfae.com) |
 | Stable Diffusion Webui | ✅ | 🔒 sdiff.pcfae.com | [open](https://sdiff.pcfae.com) |
 
 ### Privileged Services (pedestal-of-time)
@@ -198,11 +195,12 @@
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Actualbudget | ✅ | 🔒 budget.pcfae.com | [open](https://budget.pcfae.com) |
-| Dailytxt | ✅ | 🔒 shiplog.pcfae.com | [open](https://shiplog.pcfae.com) |
+| Dailytxt | ❌ | 🔒 shiplog.pcfae.com | [open](https://shiplog.pcfae.com) |
 | Homebox | ✅ | 🔒 inventory.pcfae.com | [open](https://inventory.pcfae.com) |
 | Lubelogger | ✅ | 🔒 lubelogger.pcfae.com | [open](https://lubelogger.pcfae.com) |
 | Monica (2 components) | ✅ | 🔒 monica.pcfae.com | [open](https://monica.pcfae.com) |
 | Plex Ms X | ✅ | 🔒 plexx.pcfae.com | [open](https://plexx.pcfae.com) |
+| Roundcube Primary (2 components) | ✅ | 🔒 mail.pcfae.com | [open](https://mail.pcfae.com) |
 
 ### Uncategorized (lakitu)
 
@@ -221,19 +219,9 @@
 - Components:
   - netbird-relay (Deployment)
   - netbird-turn (Deployment)
-  - netbird-signal (StatefulSet)
   - netbird-dashboard (Deployment)
+  - netbird-signal (StatefulSet)
   - netbird-management (StatefulSet)
-
-**Netbox — 3 components** — StatefulSet — 
-- Namespace: zeldas-lullaby
-- Replicas: 3/3
-- Hosts: netbox.pcfae.com, netbox.prplanit.com
-- Gateway: cell-membrane-gateway
-- Components:
-  - netbox-server (StatefulSet)
-  - netbox-redis (StatefulSet, cache)
-  - netbox-postgres (StatefulSet, database)
 
 **Oauth2 Proxy** — Deployment — v7.15.5
 - Namespace: zeldas-lullaby
@@ -259,15 +247,6 @@
 - Hosts: 2fa.pcfae.com
 - Gateway: phloem-gateway
 
-**Unifi — 2 components** — StatefulSet — 
-- Namespace: zeldas-lullaby
-- Replicas: 2/2
-- Hosts: unifi.pcfae.com
-- Gateway: phloem-gateway
-- Components:
-  - unifi-app (StatefulSet)
-  - unifi-db (StatefulSet, database)
-
 **Vaultwarden** — Deployment — 1.37.4
 - Namespace: zeldas-lullaby
 - Replicas: 3/3
@@ -291,6 +270,15 @@
 - Replicas: 1/1
 - Hosts: netboot.pcfae.com
 - Gateway: phloem-gateway
+
+**Searxng — 2 components** — Deployment — 2026.10.11-ad46ebd7d
+- Namespace: compass
+- Replicas: 3/3
+- Hosts: search.pcfae.com
+- Gateway: phloem-gateway
+- Components:
+  - searxng (Deployment)
+  - searxng-redis (Deployment, cache)
 
 **Ceph Rgw** — StatefulSet — v19
 - Namespace: gorons-bracelet
@@ -384,9 +372,9 @@
 - Gateway: phloem-gateway
 - Components:
   - crowdsec (StatefulSet)
+  - crowdsec-postgres (StatefulSet, database)
   - crowdsec-dashboard (Deployment)
   - crowdsec-cloudflare-bouncer (StatefulSet)
-  - crowdsec-postgres (StatefulSet, database)
 
 **Frigate** — StatefulSet — 
 - Namespace: lens-of-truth
@@ -394,9 +382,9 @@
 - Hosts: nvr.pcfae.com
 - Gateway: phloem-gateway
 
-**Home Assistant** — StatefulSet — 2026.10.0
+**Home Assistant** — StatefulSet — 2026.10.1
 - Namespace: lens-of-truth
-- Replicas: 1/1
+- Replicas: 0/1
 - Hosts: hass.arbitorium.com, hass.pcfae.com
 - Gateway: cell-membrane-gateway
 
@@ -407,11 +395,9 @@
 **Wazuh — 3 components** — StatefulSet — 4.14.8
 - Namespace: lens-of-truth
 - Replicas: 2/3
-- Hosts: siem.pcfae.com
-- Gateway: phloem-gateway
 - Components:
-  - wazuh-dashboard (StatefulSet)
   - wazuh-manager (StatefulSet)
+  - wazuh-dashboard (StatefulSet)
   - wazuh-indexer (StatefulSet)
 
 **Zigbee2mqtt** — StatefulSet — 2.14.2
@@ -431,15 +417,6 @@
 - Replicas: 1/1
 - Hosts: apt.pcfae.com
 - Gateway: phloem-gateway
-
-**Bagisto — 2 components** — StatefulSet — 
-- Namespace: hyrule-castle
-- Replicas: 2/2
-- Hosts: bagisto.pcfae.com
-- Gateway: phloem-gateway
-- Components:
-  - bagisto-demo (StatefulSet)
-  - bagisto-demo-db (StatefulSet, database)
 
 **Bookstack — 2 components** — StatefulSet — 25.12.20251224
 - Namespace: hyrule-castle
@@ -530,13 +507,13 @@
 - Replicas: 9/9
 - Components:
   - appflowy-worker (Deployment)
+  - appflowy-web (Deployment)
   - appflowy-nginx (Deployment)
+  - appflowy-admin-frontend (Deployment)
   - appflowy-cloud (Deployment)
-  - appflowy-ai (Deployment)
   - appflowy-gotrue (Deployment)
   - appflowy-redis (StatefulSet, cache)
-  - appflowy-web (Deployment)
-  - appflowy-admin-frontend (Deployment)
+  - appflowy-ai (Deployment)
 
 **Calibre Web** — Deployment — 0.6.27
 - Namespace: temple-of-time
@@ -560,8 +537,8 @@
 - Gateway: cell-membrane-gateway
 - Components:
   - hubzilla (Deployment)
-  - hubzilla-cron (Deployment)
   - hubzilla-mariadb (StatefulSet, database)
+  - hubzilla-cron (Deployment)
 
 **Immich** — StatefulSet — 
 - Namespace: temple-of-time
@@ -600,23 +577,23 @@
 - Gateway: cell-membrane-gateway
 - Components:
   - linkwarden (StatefulSet)
-  - linkwarden-meilisearch (StatefulSet)
   - linkwarden-postgres (StatefulSet, database)
+  - linkwarden-meilisearch (StatefulSet)
 
 **Matrix — 8 components** — Mixed — 
 - Namespace: temple-of-time
 - Replicas: 13/13
-- Hosts: chat.outspokekin.com
+- Hosts: livekit.outspokekin.com
 - Gateway: cell-membrane-gateway
 - Components:
+  - matrix-livekit (Deployment)
+  - matrix-turn (Deployment)
+  - matrix-lk-jwt (Deployment)
   - matrix-element (Deployment)
   - matrix-wellknown (Deployment)
-  - matrix-auth (Deployment)
-  - matrix-livekit (Deployment)
   - matrix-element-call (Deployment)
-  - matrix-lk-jwt (Deployment)
+  - matrix-auth (Deployment)
   - matrix-synapse (StatefulSet)
-  - matrix-turn (Deployment)
 
 **Mealie — 2 components** — StatefulSet — v3.28.0
 - Namespace: temple-of-time
@@ -651,21 +628,21 @@
 
 **Open — 3 components** — StatefulSet — 
 - Namespace: temple-of-time
-- Replicas: 9/9
+- Replicas: 8/9
 - Components:
-  - open-webui-sentinel (StatefulSet, cache)
   - open-webui-redis (StatefulSet, cache)
+  - open-webui-sentinel (StatefulSet, cache)
   - open-webui (StatefulSet)
 
 **Penpot — 5 components** — StatefulSet — 
 - Namespace: temple-of-time
 - Replicas: 5/5
 - Components:
-  - penpot-backend (StatefulSet)
-  - penpot-exporter (StatefulSet)
   - penpot-postgres (StatefulSet, database)
   - penpot-frontend (StatefulSet)
   - penpot-redis (StatefulSet, cache)
+  - penpot-exporter (StatefulSet)
+  - penpot-backend (StatefulSet)
 
 **Photoprism — 2 components** — StatefulSet — 261007
 - Namespace: temple-of-time
@@ -687,23 +664,27 @@
 - Replicas: 3/3
 - Components:
   - reactive-resume-chrome (Deployment)
-  - reactive-resume-app (Deployment)
   - reactive-resume-postgres (StatefulSet, database)
+  - reactive-resume-app (Deployment)
 
 **Shlink — 3 components** — Mixed — 
 - Namespace: temple-of-time
 - Replicas: 3/3
+- Hosts: sh.pcfae.com, sh.uni2.cc
+- Gateway: cell-membrane-gateway
 - Components:
-  - shlink-db (StatefulSet, database)
-  - shlink-web-client (Deployment)
   - shlink-app (StatefulSet)
+  - shlink-web-client (Deployment)
+  - shlink-db (StatefulSet, database)
 
 **Wikijs — 2 components** — StatefulSet — 
 - Namespace: temple-of-time
 - Replicas: 2/2
+- Hosts: wiki.yesimvegan.com
+- Gateway: cell-membrane-gateway
 - Components:
-  - wikijs-vegan-db (StatefulSet, database)
   - wikijs-vegan (StatefulSet)
+  - wikijs-vegan-db (StatefulSet, database)
 
 **Ferdium** — StatefulSet — 7.2.3
 - Namespace: lost-woods
@@ -758,11 +739,9 @@
 **Neko — 2 components** — Mixed — 
 - Namespace: swift-sail
 - Replicas: 2/2
-- Hosts: web.pcfae.com
-- Gateway: phloem-gateway
 - Components:
-  - neko-vpn (StatefulSet)
   - neko-gateway (Deployment)
+  - neko-vpn (StatefulSet)
 
 **Overseerr** — StatefulSet — 
 - Namespace: swift-sail
@@ -817,8 +796,8 @@
 - Replicas: 3/4
 - Components:
   - ark-sa-tmc-admin-list-server (Deployment)
-  - ark-se-tmc-theisland (StatefulSet)
   - ark-sa-tmc-valguero (StatefulSet)
+  - ark-se-tmc-theisland (StatefulSet)
   - ark-sa-tmc-theisland (StatefulSet)
 
 **Emulatorjs** — StatefulSet — 1.9.2
@@ -835,7 +814,7 @@
 - Namespace: shooting-gallery
 - Replicas: 1/1
 
-**Romm — 2 components** — StatefulSet — 5.3.1
+**Romm — 2 components** — StatefulSet — 5.4.0
 - Namespace: shooting-gallery
 - Replicas: 1/1
 - Hosts: romm.pcfae.com
@@ -866,8 +845,8 @@
 - Gateway: phloem-gateway
 - Components:
   - guacamole (Deployment)
-  - guacamole-postgres (StatefulSet, database)
   - guacamole-guacd (Deployment)
+  - guacamole-postgres (StatefulSet, database)
 
 **Rustdesk** — StatefulSet — 1.1.16
 - Namespace: hookshot
@@ -877,17 +856,17 @@
 - Namespace: hookshot
 - Replicas: 11/11
 - Components:
-  - tactical-postgres (StatefulSet, database)
-  - tactical-websockets (Deployment)
-  - tactical-redis (StatefulSet, cache)
-  - tactical-backend (Deployment)
-  - tactical-nats (Deployment, queue)
-  - tactical-celery (Deployment)
-  - tactical-nginx (Deployment)
   - tactical-meshcentral (Deployment)
   - tactical-mongodb (StatefulSet)
+  - tactical-redis (StatefulSet, cache)
+  - tactical-celery (Deployment)
   - tactical-celerybeat (Deployment)
+  - tactical-backend (Deployment)
+  - tactical-websockets (Deployment)
   - tactical-frontend (Deployment)
+  - tactical-nats (Deployment, queue)
+  - tactical-nginx (Deployment)
+  - tactical-postgres (StatefulSet, database)
 
 **Convertx** — StatefulSet — v0.19.0
 - Namespace: tingle-tuner
@@ -977,15 +956,6 @@
 - Namespace: tingle-tuner
 - Replicas: 1/1
 
-**Searxng — 2 components** — Deployment — 2026.9.15-ca4965040
-- Namespace: tingle-tuner
-- Replicas: 3/3
-- Hosts: search.pcfae.com
-- Gateway: phloem-gateway
-- Components:
-  - searxng (Deployment)
-  - searxng-redis (Deployment, cache)
-
 **Stable Diffusion Webui** — StatefulSet — v2-cuda-12.1.1-base-22.04-v1.10.1
 - Namespace: tingle-tuner
 - Replicas: 1/1
@@ -998,9 +968,9 @@
 - Hosts: budget.pcfae.com
 - Gateway: phloem-gateway
 
-**Dailytxt** — StatefulSet — 2.6.3
+**Dailytxt** — StatefulSet — 2.6.4
 - Namespace: pedestal-of-time
-- Replicas: 1/1
+- Replicas: 0/1
 - Hosts: shiplog.pcfae.com
 - Gateway: phloem-gateway
 
@@ -1031,6 +1001,15 @@
 - Hosts: plexx.pcfae.com
 - Gateway: xylem-gateway
 
+**Roundcube Primary — 2 components** — StatefulSet — 
+- Namespace: pedestal-of-time
+- Replicas: 2/2
+- Hosts: mail.pcfae.com
+- Gateway: phloem-gateway
+- Components:
+  - roundcube-primary-gmail (StatefulSet)
+  - roundcube-primary-gmail-db (StatefulSet, database)
+
 **Netalertx** — StatefulSet — 26.10.0
 - Namespace: lakitu
 - Replicas: 1/1
@@ -1038,11 +1017,13 @@
 - Gateway: phloem-gateway
 
 </details>
-## Platform Components (62)
+## Platform Components (64)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
 | External Secrets (3 components) | zeldas-lullaby | ✅ |
+| Netbox (3 components) | zeldas-lullaby | ✅ |
+| Unifi (2 components) | zeldas-lullaby | ✅ |
 | Vault Configurator | zeldas-lullaby | ✅ |
 | Vault Operator | zeldas-lullaby | ✅ |
 | Adguard | compass | ✅ |
@@ -1077,17 +1058,17 @@
 | Vmstorage | gossip-stone | ✅ |
 | Reflector | gerudo-crest | ✅ |
 | Reloader | gerudo-crest | ✅ |
-| Frappe Suite (9 components) | hyrule-castle | ⚠️ |
+| Bagisto (2 components) | hyrule-castle | ✅ |
+| Frappe Suite (9 components) | hyrule-castle | ✅ |
 | Gitlab (11 components) | hyrule-castle | ✅ |
-| Gitlab Gitlab Runner | hyrule-castle | ✅ |
+| Gitlab Gitlab Runner | hyrule-castle | ❌ |
 | Harbor (6 components) | hyrule-castle | ✅ |
-| Invoiceninja (3 components) | hyrule-castle | ✅ |
+| Invoiceninja (3 components) | hyrule-castle | ⚠️ |
 | Mariadb | hyrule-castle | ✅ |
 | Opnform (7 components) | hyrule-castle | ✅ |
 | Phloem Gateway Istio | arylls-lookout | ✅ |
 | Paperless (3 components) | pedestal-of-time | ✅ |
 | Photoprism (2 components) | pedestal-of-time | ✅ |
-| Roundcube Primary (2 components) | pedestal-of-time | ✅ |
 | Xylem Gateway Istio | pedestal-of-time | ✅ |
 | Cilium Agent | kube-system | ✅ |
 | Cilium Envoy | kube-system | ✅ |
@@ -1111,6 +1092,14 @@
 **External Secrets** — Deployment — v2.12.0
 - Namespace: zeldas-lullaby
 - Replicas: 5/5
+
+**Netbox** — StatefulSet — 
+- Namespace: zeldas-lullaby
+- Replicas: 3/3
+
+**Unifi** — StatefulSet — 
+- Namespace: zeldas-lullaby
+- Replicas: 2/2
 
 **Vault Configurator** — Deployment — v1.33.2
 - Namespace: zeldas-lullaby
@@ -1248,9 +1237,13 @@
 - Namespace: gerudo-crest
 - Replicas: 1/1
 
+**Bagisto** — StatefulSet — 
+- Namespace: hyrule-castle
+- Replicas: 2/2
+
 **Frappe Suite** — Mixed — 
 - Namespace: hyrule-castle
-- Replicas: 8/9
+- Replicas: 9/9
 
 **Gitlab** — Mixed — v19.4.1
 - Namespace: hyrule-castle
@@ -1258,7 +1251,7 @@
 
 **Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
 - Namespace: hyrule-castle
-- Replicas: 1/1
+- Replicas: 0/1
 
 **Harbor** — Deployment — 2.15.2
 - Namespace: hyrule-castle
@@ -1266,7 +1259,7 @@
 
 **Invoiceninja** — StatefulSet — 
 - Namespace: hyrule-castle
-- Replicas: 3/3
+- Replicas: 2/3
 
 **Mariadb** — StatefulSet — 
 - Namespace: hyrule-castle
@@ -1285,10 +1278,6 @@
 - Replicas: 3/3
 
 **Photoprism** — StatefulSet — 
-- Namespace: pedestal-of-time
-- Replicas: 2/2
-
-**Roundcube Primary** — StatefulSet — 
 - Namespace: pedestal-of-time
 - Replicas: 2/2
 
@@ -1358,166 +1347,5 @@
 
 </details>
 
-<details>
-<summary>Retired / Graveyard (154)</summary>
-
-| Name | Namespace | Reason |
-| --- | --- | --- |
-| appflowy-admin-frontend | temple-of-time | missing since 2026-03-30 |
-| appflowy-ai | temple-of-time | missing since 2026-03-30 |
-| appflowy-cloud | temple-of-time | missing since 2026-03-30 |
-| appflowy-gotrue | temple-of-time | missing since 2026-03-30 |
-| appflowy-nginx | temple-of-time | missing since 2026-03-30 |
-| appflowy-redis | temple-of-time | missing since 2026-03-30 |
-| appflowy-web | temple-of-time | missing since 2026-03-30 |
-| appflowy-worker | temple-of-time | missing since 2026-03-30 |
-| ark-sa-tmc-admin-list-server | shooting-gallery | missing since 2026-03-30 |
-| ark-sa-tmc-theisland | shooting-gallery | missing since 2026-03-30 |
-| ark-sa-tmc-valguero | shooting-gallery | missing since 2026-03-30 |
-| ark-se-tmc-theisland | shooting-gallery | missing since 2026-03-30 |
-| astralfocal-site | lost-woods | missing since 2026-10-11 |
-| bagisto-demo | hyrule-castle | missing since 2026-03-30 |
-| bagisto-demo-db | hyrule-castle | missing since 2026-03-30 |
-| bookstack-db | hyrule-castle | missing since 2026-08-02 |
-| cell-membrane-gateway-istio | hyrule-castle | missing since 2026-10-11 |
-| ceph | gorons-bracelet | missing since 2026-10-11 |
-| ceph-csi-rbd-nodeplugin | gorons-bracelet | missing since 2026-03-30 |
-| ceph-csi-rbd-provisioner | gorons-bracelet | missing since 2026-03-30 |
-| code-server | tingle-tuner | missing since 2026-08-02 |
-| crowdsec-cloudflare-bouncer | lens-of-truth | missing since 2026-03-30 |
-| crowdsec-dashboard | lens-of-truth | missing since 2026-03-30 |
-| dolibarr | hyrule-castle | missing since 2026-10-11 |
-| dolibarr-mariadb | hyrule-castle | missing since 2026-03-30 |
-| dolibarr-web | hyrule-castle | missing since 2026-03-30 |
-| echo-ip | compass | missing since 2026-10-11 |
-| enamorafoto-site | lost-woods | missing since 2026-10-11 |
-| erpnext | hyrule-castle | missing since 2026-10-11 |
-| erpnext-frontend | hyrule-castle | missing since 2026-03-30 |
-| erpnext-mariadb | hyrule-castle | missing since 2026-03-30 |
-| erpnext-queue-long | hyrule-castle | missing since 2026-03-30 |
-| erpnext-queue-short | hyrule-castle | missing since 2026-03-30 |
-| erpnext-redis-cache | hyrule-castle | missing since 2026-03-30 |
-| erpnext-redis-queue | hyrule-castle | missing since 2026-03-30 |
-| erpnext-scheduler | hyrule-castle | missing since 2026-03-30 |
-| erpnext-sites | hyrule-castle | missing since 2026-03-30 |
-| erpnext-websocket | hyrule-castle | missing since 2026-03-30 |
-| etherealclique-site | lost-woods | missing since 2026-10-11 |
-| filebrowser | tingle-tuner | missing since 2026-08-02 |
-| ghost-mysql | temple-of-time | missing since 2026-08-02 |
-| gitlab-redis | hyrule-castle | missing since 2026-08-02 |
-| gitlab-sentinel | hyrule-castle | missing since 2026-08-02 |
-| guacamole-guacd | hookshot | missing since 2026-03-30 |
-| guacamole-postgres | hookshot | missing since 2026-03-30 |
-| harbor-redis | hyrule-castle | missing since 2026-08-02 |
-| homarr-redis | lost-woods | missing since 2026-08-02 |
-| homarr-sentinel | lost-woods | missing since 2026-08-02 |
-| homelabhelpdesk-site | lost-woods | missing since 2026-10-11 |
-| invoiceninja-app | hyrule-castle | missing since 2026-03-30 |
-| invoiceninja-mysql | hyrule-castle | missing since 2026-03-30 |
-| invoiceninja-redis | hyrule-castle | missing since 2026-03-30 |
-| joplin-app | temple-of-time | missing since 2026-03-30 |
-| joplin-postgres | temple-of-time | missing since 2026-03-30 |
-| kai-hamilton-site | lost-woods | missing since 2026-10-11 |
-| kimai-mariadb | temple-of-time | missing since 2026-08-02 |
-| kyverno | zeldas-lullaby | missing since 2026-10-11 |
-| librespeed-speedtest | compass | missing since 2026-10-11 |
-| linkstack-db | kokiri-forest | missing since 2026-08-02 |
-| linkwarden-meilisearch | temple-of-time | missing since 2026-03-30 |
-| linkwarden-postgres | temple-of-time | missing since 2026-03-30 |
-| mealie-postgres | temple-of-time | missing since 2026-08-02 |
-| monica-db | pedestal-of-time | missing since 2026-08-02 |
-| neko-gateway | swift-sail | missing since 2026-03-30 |
-| neko-vpn | swift-sail | missing since 2026-03-30 |
-| netbird-coturn | zeldas-lullaby | missing since 2026-03-30 |
-| netbird-dashboard | zeldas-lullaby | missing since 2026-03-30 |
-| netbird-management | zeldas-lullaby | missing since 2026-03-30 |
-| netbird-relay | zeldas-lullaby | missing since 2026-03-30 |
-| netbird-signal | zeldas-lullaby | missing since 2026-03-30 |
-| netbox-postgres | zeldas-lullaby | missing since 2026-03-30 |
-| netbox-redis | zeldas-lullaby | missing since 2026-03-30 |
-| netbox-server | zeldas-lullaby | missing since 2026-03-30 |
-| nextcloud-clamav | temple-of-time | missing since 2026-08-02 |
-| nextcloud-elasticsearch | temple-of-time | missing since 2026-08-02 |
-| nextcloud-notify-push | temple-of-time | missing since 2026-08-02 |
-| nextcloud-redis | temple-of-time | missing since 2026-08-02 |
-| nextcloud-sentinel | temple-of-time | missing since 2026-08-02 |
-| nextcloud-talk-hpb | temple-of-time | missing since 2026-08-02 |
-| nextcloud-whiteboard | temple-of-time | missing since 2026-08-02 |
-| open-webui | temple-of-time | missing since 2026-03-30 |
-| open-webui-redis | temple-of-time | missing since 2026-03-30 |
-| open-webui-sentinel | temple-of-time | missing since 2026-03-30 |
-| openspeedtest | compass | missing since 2026-10-11 |
-| opnform-api | hyrule-castle | missing since 2026-03-30 |
-| opnform-api-scheduler | hyrule-castle | missing since 2026-03-30 |
-| opnform-api-worker | hyrule-castle | missing since 2026-03-30 |
-| opnform-client | hyrule-castle | missing since 2026-03-30 |
-| opnform-ingress | hyrule-castle | missing since 2026-03-30 |
-| opnform-postgres | hyrule-castle | missing since 2026-03-30 |
-| opnform-redis | hyrule-castle | missing since 2026-03-30 |
-| orangehrm | hyrule-castle | missing since 2026-08-26 |
-| orangehrm-mariadb | hyrule-castle | missing since 2026-08-02 |
-| paperless-db | pedestal-of-time | missing since 2026-03-30 |
-| paperless-redis | pedestal-of-time | missing since 2026-03-30 |
-| paperless-webserver | pedestal-of-time | missing since 2026-03-30 |
-| penpot-backend | temple-of-time | missing since 2026-03-30 |
-| penpot-exporter | temple-of-time | missing since 2026-03-30 |
-| penpot-frontend | temple-of-time | missing since 2026-03-30 |
-| penpot-postgres | temple-of-time | missing since 2026-03-30 |
-| penpot-redis | temple-of-time | missing since 2026-03-30 |
-| phloem-gateway-istio | kokiri-forest | missing since 2026-10-11 |
-| photoprism-mariadb | temple-of-time | missing since 2026-08-02 |
-| photoprism-x | pedestal-of-time | missing since 2026-03-30 |
-| photoprism-x-mariadb | pedestal-of-time | missing since 2026-03-30 |
-| precisionplanit-site | lost-woods | missing since 2026-10-11 |
-| prometheus | gossip-stone | missing since 2026-08-02 |
-| prometheus-exporter-eaton-ups | gossip-stone | missing since 2026-03-30 |
-| prometheus-exporter-pve | gossip-stone | missing since 2026-03-30 |
-| pve-cluster-proxy | arylls-lookout | missing since 2026-10-11 |
-| reactive | temple-of-time | missing since 2026-08-02 |
-| reactive-resume-app | temple-of-time | missing since 2026-03-30 |
-| reactive-resume-chrome | temple-of-time | missing since 2026-03-30 |
-| reactive-resume-minio | temple-of-time | missing since 2026-03-30 |
-| reactive-resume-postgres | temple-of-time | missing since 2026-03-30 |
-| romm-db | shooting-gallery | missing since 2026-08-02 |
-| rook-ceph | gorons-bracelet | missing since 2026-08-26 |
-| roundcube | pedestal-of-time | missing since 2026-08-02 |
-| roundcube-primary-gmail | pedestal-of-time | missing since 2026-03-30 |
-| roundcube-primary-gmail-db | pedestal-of-time | missing since 2026-03-30 |
-| searxng-redis | tingle-tuner | missing since 2026-08-02 |
-| shlink-app | temple-of-time | missing since 2026-03-30 |
-| shlink-db | temple-of-time | missing since 2026-03-30 |
-| shlink-web-client | temple-of-time | missing since 2026-03-30 |
-| sofmeright-site | lost-woods | missing since 2026-10-11 |
-| speedtest-tracker | gossip-stone | missing since 2026-03-30 |
-| speedtest-tracker-postgres | gossip-stone | missing since 2026-03-30 |
-| strimzi-cluster-operator | gorons-bracelet | missing since 2026-10-11 |
-| stunner-auth | king-of-red-lions | missing since 2026-03-30 |
-| stunner-gateway-operator-controller-manager | king-of-red-lions | missing since 2026-03-30 |
-| tactical-backend | hookshot | missing since 2026-03-30 |
-| tactical-celery | hookshot | missing since 2026-03-30 |
-| tactical-celerybeat | hookshot | missing since 2026-03-30 |
-| tactical-frontend | hookshot | missing since 2026-03-30 |
-| tactical-meshcentral | hookshot | missing since 2026-03-30 |
-| tactical-mongodb | hookshot | missing since 2026-03-30 |
-| tactical-nats | hookshot | missing since 2026-03-30 |
-| tactical-nginx | hookshot | missing since 2026-03-30 |
-| tactical-postgres | hookshot | missing since 2026-03-30 |
-| tactical-redis | hookshot | missing since 2026-03-30 |
-| tactical-websockets | hookshot | missing since 2026-03-30 |
-| umami-postgres | gossip-stone | missing since 2026-08-02 |
-| unifi-app | zeldas-lullaby | missing since 2026-03-30 |
-| unifi-db | zeldas-lullaby | missing since 2026-03-30 |
-| wazuh-dashboard | lens-of-truth | missing since 2026-03-30 |
-| wazuh-indexer | lens-of-truth | missing since 2026-03-30 |
-| wazuh-manager | lens-of-truth | missing since 2026-03-30 |
-| wikijs-vegan | temple-of-time | missing since 2026-03-30 |
-| wikijs-vegan-db | temple-of-time | missing since 2026-03-30 |
-| xylem-gateway-istio | arylls-lookout | missing since 2026-10-11 |
-| yesimvegan-site | lost-woods | missing since 2026-10-11 |
-| zitadel-login-v2 | zeldas-lullaby | missing since 2026-10-11 |
-| zitadel-redis | zeldas-lullaby | missing since 2026-08-02 |
-| zitadel-sentinel | zeldas-lullaby | missing since 2026-08-02 |
-
-</details>
 
 <!-- sf:apps:end -->
