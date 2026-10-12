@@ -49,7 +49,10 @@ data:
       method: "GET"
 
     redis:
-      url: redis://searxng-redis:6379/0
+      # Query params make the pooled client resilient to the ambient-mesh (ztunnel)
+      # recycling idle connections: health_check_interval PINGs before reuse and
+      # reconnects on failure instead of 500-ing; socket_keepalive keeps them warm.
+      url: "redis://searxng-redis:6379/0?health_check_interval=30&socket_keepalive=true&socket_timeout=5"
 
     ui:
       static_use_hash: true

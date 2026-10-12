@@ -35,8 +35,13 @@ spec:
           env:
             - name: SEARXNG_BASE_URL
               value: "PLACEHOLDER_BASE_URL"
+            # Valkey rides the ambient mesh (HBONE via ztunnel), whose connection pool
+            # recycles idle upstreams; a pooled client that reused a recycled connection
+            # saw "reset by peer" and returned a 500 on search. health_check_interval
+            # PINGs an idle connection before reuse and transparently reconnects on
+            # failure; socket_keepalive keeps connections warm.
             - name: SEARXNG_REDIS_URL
-              value: "redis://searxng-redis:6379/0"
+              value: "redis://searxng-redis:6379/0?health_check_interval=30&socket_keepalive=true&socket_timeout=5"
           volumeMounts:
             - name: searxng-config
               mountPath: /etc/searxng

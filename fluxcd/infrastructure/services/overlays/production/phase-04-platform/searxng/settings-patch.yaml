@@ -122,7 +122,10 @@ data:
       # URL to connect valkey database. Is overwritten by ${SEARXNG_VALKEY_URL}.
       # https://docs.searxng.org/admin/settings/settings_valkey.html#settings-valkey
       # url: valkey://localhost:6379/0
-      url: redis://searxng-redis:6379/0
+      # Query params make the pooled client resilient to the ambient-mesh (ztunnel)
+      # recycling idle connections: health_check_interval PINGs before reuse and
+      # reconnects on failure instead of 500-ing; socket_keepalive keeps them warm.
+      url: "redis://searxng-redis:6379/0?health_check_interval=30&socket_keepalive=true&socket_timeout=5"
 
     ui:
       # Custom static path - leave it blank if you didn't change
