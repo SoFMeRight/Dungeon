@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: romm
-          image: docker.io/rommapp/romm:5.3.1
+          image: docker.io/rommapp/romm:5.4.0
           env:
             - name: OIDC_ENABLED
               value: "true"
