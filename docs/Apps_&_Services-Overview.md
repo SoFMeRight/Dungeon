@@ -1169,6 +1169,7 @@
 - Gateway: phloem-gateway
 
 </details>
+
 ## Platform Components (23)
 
 | Component | Namespace | Status |
