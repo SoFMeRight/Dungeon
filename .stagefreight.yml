@@ -35,6 +35,8 @@ gitops:
       - name: Routing Infrastructure
         namespaces:
           - king-of-red-lions
+          - prelude-of-light
+          - farores-wind
       - name: Storage Services
         namespaces:
           - gorons-bracelet
@@ -44,6 +46,7 @@ gitops:
       - name: Monitoring
         namespaces:
           - gossip-stone
+          - lakitu
       - name: Security & IDS
         namespaces:
           - lens-of-truth
@@ -55,6 +58,10 @@ gitops:
       - name: Internal Trust
         namespaces:
           - gerudo-crest
+      - name: Policy Enforcement
+        namespaces:
+          - mr-resetti
+        tier: platform
       - name: Business Gateway
         namespaces:
           - hyrule-castle
