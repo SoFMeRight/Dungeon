@@ -35,7 +35,7 @@
 | --- | --- | --- | --- |
 | Ceph Rgw | ✅ | 🔒 s3.pcfae.com | [open](https://s3.pcfae.com) |
 
-### Monitoring (gossip-stone)
+### Monitoring (gossip-stone, lakitu)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
@@ -44,6 +44,7 @@
 | Grafana | ✅ | 🔒 grafana.pcfae.com | [open](https://grafana.pcfae.com) |
 | Headlamp | ✅ | 🔒 headlamp.pcfae.com | [open](https://headlamp.pcfae.com) |
 | Loki (3 components) | ✅ | 🔒 logging.pcfae.com | [open](https://logging.pcfae.com) |
+| Netalertx | ✅ | 🔒 hosts.pcfae.com | [open](https://hosts.pcfae.com) |
 | Nutify | ✅ | 🔒 nut.pcfae.com | [open](https://nut.pcfae.com) |
 | Pbs Cluster Proxy | ✅ | 🔒 pbs.pcfae.com | [open](https://pbs.pcfae.com) |
 | Pve Cluster Proxy | ✅ | 🔒 pve.pcfae.com | [open](https://pve.pcfae.com) |
@@ -213,12 +214,6 @@
 | Plex Ms X | ✅ | 🔒 plexx.pcfae.com | [open](https://plexx.pcfae.com) |
 | Roundcube Primary (2 components) | ✅ | 🔒 mail.pcfae.com | [open](https://mail.pcfae.com) |
 
-### Uncategorized (lakitu)
-
-| App | Status | Exposure | Links |
-| --- | --- | --- | --- |
-| Netalertx | ✅ | 🔒 hosts.pcfae.com | [open](https://hosts.pcfae.com) |
-
 <details>
 <summary>App details</summary>
 
@@ -348,6 +343,12 @@
   - loki-gateway (Deployment)
   - loki (StatefulSet)
   - loki-canary (DaemonSet)
+
+**Netalertx** — StatefulSet — 26.10.0
+- Namespace: lakitu
+- Replicas: 1/1
+- Hosts: hosts.pcfae.com
+- Gateway: phloem-gateway
 
 **Nutify** — StatefulSet — 
 - Namespace: gossip-stone
@@ -1159,30 +1160,56 @@
   - roundcube-primary-gmail (StatefulSet)
   - roundcube-primary-gmail-db (StatefulSet, database)
 
-**Netalertx** — StatefulSet — 26.10.0
-- Namespace: lakitu
-- Replicas: 1/1
-- Hosts: hosts.pcfae.com
-- Gateway: phloem-gateway
-
 </details>
 
-## Platform Components (23)
+## Platform Components (53)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
+| External Secrets (3 components) | zeldas-lullaby | ✅ |
+| Vault Configurator | zeldas-lullaby | ✅ |
 | Vault Operator | zeldas-lullaby | ✅ |
+| Adguard | compass | ✅ |
+| Adguardhome Sync | compass | ✅ |
+| Bulkvs Ip Sync | compass | ✅ |
+| Chrony | compass | ✅ |
+| Cloudflare Ddns | compass | ✅ |
+| Cell Membrane Gateway Istio | prelude-of-light | ✅ |
+| Cert Manager (3 components) | king-of-red-lions | ✅ |
 | Istio Cni | king-of-red-lions | ✅ |
 | Istio Meshmedic | king-of-red-lions | ✅ |
+| Istiod | king-of-red-lions | ✅ |
+| Netbird Router Dungeon | farores-wind | ✅ |
+| Stunner (2 components) | king-of-red-lions | ✅ |
 | Ztunnel | king-of-red-lions | ✅ |
 | Ceph Csi (2 components) | gorons-bracelet | ✅ |
+| Cloudnative Pg | gorons-bracelet | ✅ |
 | Csi Driver Smb (3 components) | gorons-bracelet | ✅ |
+| Gorons Bracelet.cephfs.csi.ceph.com (2 components) | gorons-bracelet | ✅ |
+| Gorons Bracelet.rbd.csi.ceph.com (2 components) | gorons-bracelet | ✅ |
 | Gpu Operator (11 components) | gorons-bracelet | ⚠️ |
 | Mariadb Operator (3 components) | gorons-bracelet | ✅ |
+| Plugin Barman Cloud | gorons-bracelet | ✅ |
+| Rbd Toolbox | gorons-bracelet | ✅ |
 | Redis Operator | gorons-bracelet | ✅ |
 | Snapshot Controller | fairy-bottle | ✅ |
+| Velero (2 components) | fairy-bottle | ✅ |
+| Alloy | lakitu | ✅ |
 | Graphite Exporter Truenas | gossip-stone | ✅ |
+| Kube State Metrics | gossip-stone | ✅ |
+| Netconsole Collector | lakitu | ✅ |
+| Node Exporter | lakitu | ✅ |
 | Prometheus Exporter (2 components) | gossip-stone | ✅ |
+| Vmauth | gossip-stone | ✅ |
+| Vmselect | gossip-stone | ✅ |
+| Vmstorage | gossip-stone | ✅ |
+| Reflector | gerudo-crest | ✅ |
+| Reloader | gerudo-crest | ✅ |
+| Kyverno Admission Controller (4 components) | mr-resetti | ✅ |
+| Gitlab Gitlab Runner | hyrule-castle | ✅ |
+| Mariadb | hyrule-castle | ✅ |
+| Phloem Gateway Istio | arylls-lookout | ✅ |
+| Xylem Gateway Istio | pedestal-of-time | ✅ |
 | Cilium Agent | kube-system | ✅ |
 | Cilium Envoy | kube-system | ✅ |
 | Cilium Operator | kube-system | ✅ |
@@ -1192,15 +1219,49 @@
 | Hubble Ui | kube-system | ✅ |
 | Kube Vip | kube-system | ✅ |
 | Metrics Server | kube-system | ✅ |
-| Alloy | lakitu | ✅ |
-| Node Exporter | lakitu | ✅ |
 
 <details>
 <summary>Platform details</summary>
 
+**External Secrets** — Deployment — v2.12.0
+- Namespace: zeldas-lullaby
+- Replicas: 5/5
+
+**Vault Configurator** — Deployment — v1.33.2
+- Namespace: zeldas-lullaby
+- Replicas: 1/1
+
 **Vault Operator** — Deployment — v1.24.1
 - Namespace: zeldas-lullaby
 - Replicas: 1/1
+
+**Adguard** — StatefulSet — v0.107.79
+- Namespace: compass
+- Replicas: 2/2
+
+**Adguardhome Sync** — Deployment — 0.9.4
+- Namespace: compass
+- Replicas: 1/1
+
+**Bulkvs Ip Sync** — Deployment — v0.0.1
+- Namespace: compass
+- Replicas: 1/1
+
+**Chrony** — Deployment — 0.9.2
+- Namespace: compass
+- Replicas: 1/1
+
+**Cloudflare Ddns** — Deployment — 1
+- Namespace: compass
+- Replicas: 1/1
+
+**Cell Membrane Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
+- Namespace: prelude-of-light
+- Replicas: 1/1
+
+**Cert Manager** — Deployment — v1.21.2
+- Namespace: king-of-red-lions
+- Replicas: 3/3
 
 **Istio Cni** — DaemonSet — 1.31.1
 - Namespace: king-of-red-lions
@@ -1210,6 +1271,18 @@
 - Namespace: king-of-red-lions
 - Replicas: 10/10
 
+**Istiod** — Deployment — 1.31.1
+- Namespace: king-of-red-lions
+- Replicas: 1/1
+
+**Netbird Router Dungeon** — StatefulSet — 0.78.1
+- Namespace: farores-wind
+- Replicas: 3/3
+
+**Stunner** — Deployment — 1.2.1
+- Namespace: king-of-red-lions
+- Replicas: 2/2
+
 **Ztunnel** — DaemonSet — 1.31.1
 - Namespace: king-of-red-lions
 - Replicas: 10/10
@@ -1218,9 +1291,21 @@
 - Namespace: gorons-bracelet
 - Replicas: 2/2
 
+**Cloudnative Pg** — Deployment — 1.30.1
+- Namespace: gorons-bracelet
+- Replicas: 1/1
+
 **Csi Driver Smb** — Mixed — 1.20.3
 - Namespace: gorons-bracelet
 - Replicas: 12/12
+
+**Gorons Bracelet.cephfs.csi.ceph.com** — Mixed — 
+- Namespace: gorons-bracelet
+- Replicas: 7/7
+
+**Gorons Bracelet.rbd.csi.ceph.com** — Mixed — 
+- Namespace: gorons-bracelet
+- Replicas: 7/7
 
 **Gpu Operator** — Mixed — v26.7.0
 - Namespace: gorons-bracelet
@@ -1230,6 +1315,14 @@
 - Namespace: gorons-bracelet
 - Replicas: 5/5
 
+**Plugin Barman Cloud** — Deployment — v0.15.1
+- Namespace: gorons-bracelet
+- Replicas: 1/1
+
+**Rbd Toolbox** — Deployment — v18
+- Namespace: gorons-bracelet
+- Replicas: 1/1
+
 **Redis Operator** — Deployment — v0.27.0
 - Namespace: gorons-bracelet
 - Replicas: 1/1
@@ -1238,13 +1331,73 @@
 - Namespace: fairy-bottle
 - Replicas: 2/2
 
+**Velero** — Mixed — 1.18.2
+- Namespace: fairy-bottle
+- Replicas: 11/11
+
+**Alloy** — DaemonSet — 
+- Namespace: lakitu
+- Replicas: 10/10
+
 **Graphite Exporter Truenas** — Deployment — v0.17.0
 - Namespace: gossip-stone
 - Replicas: 1/1
 
+**Kube State Metrics** — Deployment — v2.20.0
+- Namespace: gossip-stone
+- Replicas: 1/1
+
+**Netconsole Collector** — Deployment — 1.8.1.3
+- Namespace: lakitu
+- Replicas: 1/1
+
+**Node Exporter** — DaemonSet — v1.9.1
+- Namespace: lakitu
+- Replicas: 10/10
+
 **Prometheus Exporter** — Deployment — 
 - Namespace: gossip-stone
 - Replicas: 2/2
+
+**Vmauth** — Deployment — v1.97.1
+- Namespace: gossip-stone
+- Replicas: 2/2
+
+**Vmselect** — Deployment — v1.97.1-cluster
+- Namespace: gossip-stone
+- Replicas: 2/2
+
+**Vmstorage** — StatefulSet — v1.97.1-cluster
+- Namespace: gossip-stone
+- Replicas: 3/3
+
+**Reflector** — Deployment — 10.0.65
+- Namespace: gerudo-crest
+- Replicas: 1/1
+
+**Reloader** — Deployment — v1.4.22
+- Namespace: gerudo-crest
+- Replicas: 1/1
+
+**Kyverno Admission Controller** — Deployment — 3.9.1
+- Namespace: mr-resetti
+- Replicas: 5/5
+
+**Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
+- Namespace: hyrule-castle
+- Replicas: 1/1
+
+**Mariadb** — StatefulSet — 
+- Namespace: hyrule-castle
+- Replicas: 3/3
+
+**Phloem Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
+- Namespace: arylls-lookout
+- Replicas: 1/1
+
+**Xylem Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
+- Namespace: pedestal-of-time
+- Replicas: 1/1
 
 **Cilium Agent** — DaemonSet — 
 - Namespace: kube-system
@@ -1282,52 +1435,7 @@
 - Namespace: kube-system
 - Replicas: 2/2
 
-**Alloy** — DaemonSet — 
-- Namespace: lakitu
-- Replicas: 10/10
-
-**Node Exporter** — DaemonSet — v1.9.1
-- Namespace: lakitu
-- Replicas: 10/10
-
 </details>
-
-## Unclassified (30)
-
-Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
-
-| Workload | Namespace | Status |
-| --- | --- | --- |
-| External Secrets | zeldas-lullaby | ✅ |
-| Vault Configurator | zeldas-lullaby | ✅ |
-| Adguard | compass | ✅ |
-| Adguardhome Sync | compass | ✅ |
-| Bulkvs Ip Sync | compass | ✅ |
-| Chrony | compass | ✅ |
-| Cloudflare Ddns | compass | ✅ |
-| Cert Manager | king-of-red-lions | ✅ |
-| Istiod | king-of-red-lions | ✅ |
-| Stunner | king-of-red-lions | ✅ |
-| Cloudnative Pg | gorons-bracelet | ✅ |
-| Gorons Bracelet.cephfs.csi.ceph.com | gorons-bracelet | ✅ |
-| Gorons Bracelet.rbd.csi.ceph.com | gorons-bracelet | ✅ |
-| Plugin Barman Cloud | gorons-bracelet | ✅ |
-| Rbd Toolbox | gorons-bracelet | ✅ |
-| Velero | fairy-bottle | ✅ |
-| Kube State Metrics | gossip-stone | ✅ |
-| Vmauth | gossip-stone | ✅ |
-| Vmselect | gossip-stone | ✅ |
-| Vmstorage | gossip-stone | ✅ |
-| Reflector | gerudo-crest | ✅ |
-| Reloader | gerudo-crest | ✅ |
-| Gitlab Gitlab Runner | hyrule-castle | ❌ |
-| Mariadb | hyrule-castle | ✅ |
-| Phloem Gateway Istio | arylls-lookout | ✅ |
-| Xylem Gateway Istio | pedestal-of-time | ✅ |
-| Cell Membrane Gateway Istio | prelude-of-light | ✅ |
-| Kyverno Admission Controller | mr-resetti | ✅ |
-| Netbird Router Dungeon | farores-wind | ✅ |
-| Netconsole Collector | lakitu | ✅ |
 
 <details>
 <summary>Retired / Graveyard (8)</summary>
