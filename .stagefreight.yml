@@ -104,10 +104,24 @@ gitops:
         tier: platform
     endpoint: https://172.22.144.105:6443
     exposure:
-      - gateways:
+      - endpoints:
+          - 172.22.30.71:80
+          - 172.22.30.71:443
+          - 172.22.30.231:8211
+          - 172.22.30.231:27015
+          - 172.22.30.231:35566
+          - 172.22.30.231:8777
+          - 172.22.30.231:8778
+          - 172.22.30.231:28020
+          - 172.22.30.86:3478
+          - 172.22.30.87:3479
+          - 172.22.30.102:25
+        gateways:
           - cell-membrane-gateway
         level: internet
-      - gateways:
+      - cidrs:
+          - 172.22.30.0/24
+        gateways:
           - phloem-gateway
           - xylem-gateway
         level: intranet
