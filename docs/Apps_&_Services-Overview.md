@@ -156,17 +156,17 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Ark (4 components) | ⚠️ | 🏠 |  |
+| Ark (4 components) | ⚠️ | 🌐 |  |
 | Emulatorjs | ✅ | 🔒 emulatorjs.pcfae.com | [open](https://emulatorjs.pcfae.com) |
-| Minecraft | ✅ | 🏠 |  |
-| Palworld | ✅ | 🏠 |  |
+| Minecraft | ✅ | 🌐 |  |
+| Palworld | ✅ | 🌐 |  |
 | Romm (2 components) | ✅ | 🔒 romm.pcfae.com | [open](https://romm.pcfae.com) |
 
 ### Mail Services (delivery-bag)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Ntfy | ✅ | ❓ ntfy.pcfae.com | [open](https://ntfy.pcfae.com) |
+| Ntfy | ✅ | 🌐 ntfy.pcfae.com | [open](https://ntfy.pcfae.com) |
 
 ### Remote Management (hookshot)
 
@@ -174,7 +174,7 @@
 | --- | --- | --- | --- |
 | Boundary (2 components) | ✅ | 🌐 boundary.prplanit.com | [open](https://boundary.prplanit.com) |
 | Guacamole (3 components) | ✅ | 🔒 guacamole.pcfae.com | [open](https://guacamole.pcfae.com) |
-| Rustdesk | ✅ | 🏠 |  |
+| Rustdesk | ✅ | 🔒 |  |
 | Tactical (11 components) | ✅ | 🌐 meshc.prplanit.com | [open](https://meshc.prplanit.com) |
 
 ### Tools & Utilities (tingle-tuner)
@@ -184,7 +184,7 @@
 | Convertx | ✅ | 🔒 convertx.pcfae.com | [open](https://convertx.pcfae.com) |
 | Draw Io | ✅ | 🔒 draw.pcfae.com | [open](https://draw.pcfae.com) |
 | Echo Ip | ✅ | 🌐 ipleek.com | [open](https://ipleek.com) |
-| Endlessh Go | ✅ | 🏠 |  |
+| Endlessh Go | ✅ | 🔒 |  |
 | Fairer Pages | ✅ | ❓ *.arbitorium.com | [open](https://*.arbitorium.com) |
 | Faster Whisper | ✅ | 🏠 |  |
 | Google Webfonts Helper | ✅ | 🔒 gwfonts.pcfae.com | [open](https://gwfonts.pcfae.com) |
@@ -226,7 +226,6 @@
 - Namespace: zeldas-lullaby
 - Replicas: 9/9
 - Hosts: netbird.prplanit.com
-- Gateway: cell-membrane-gateway
 - Components:
   - netbird-dashboard (Deployment)
   - netbird-management (StatefulSet)
@@ -707,7 +706,6 @@
 - Namespace: temple-of-time
 - Replicas: 13/13
 - Hosts: chat.outspokekin.com, livekit.outspokekin.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, outspokekin.com
-- Gateway: cell-membrane-gateway
 - Components:
   - matrix-auth (Deployment)
   - matrix-element (Deployment)
@@ -958,7 +956,6 @@
 - Namespace: delivery-bag
 - Replicas: 1/1
 - Hosts: ntfy.pcfae.com, ntfy.prplanit.com
-- Gateway: cell-membrane-gateway
 
 **Boundary — 2 components** — Deployment — 0.21.3
 - Namespace: hookshot
@@ -1333,17 +1330,18 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Netconsole Collector | lakitu | ✅ |
 
 <details>
-<summary>Retired / Graveyard (7)</summary>
+<summary>Retired / Graveyard (8)</summary>
 
 | Name | Namespace | Reason |
 | --- | --- | --- |
 | code-server | tingle-tuner | missing since 2026-08-02 |
-| dolibarr-web | hyrule-castle | missing since 2026-03-30 |
-| erpnext-sites | hyrule-castle | missing since 2026-03-30 |
+| dolibarr | hyrule-castle | missing since 2026-10-12 |
+| erpnext | hyrule-castle | missing since 2026-10-12 |
 | filebrowser | tingle-tuner | missing since 2026-08-02 |
 | netbird-coturn | zeldas-lullaby | missing since 2026-03-30 |
 | orangehrm | hyrule-castle | missing since 2026-08-26 |
 | reactive-resume-minio | temple-of-time | missing since 2026-03-30 |
+| strimzi-cluster-operator | gorons-bracelet | missing since 2026-10-12 |
 
 </details>
 
