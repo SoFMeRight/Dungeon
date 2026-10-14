@@ -739,6 +739,36 @@
       changed_when: "'INSERT 0 0' not in stdout"
       no_log: true
 
+    # The scaffold above only creates the empty slots; the operator fills the real
+    # numbers in the FusionPBX Variables UI (box-managed user data). Those values
+    # land in v_vars but nothing loads them into the RUNNING FreeSWITCH: reloadxml
+    # does not reprocess vars.xml X-PRE-PROCESS globals, so ${personal_*} in the
+    # recognition dialplan expand to empty and recognized callers fall through to the
+    # IVR. Push the enabled box-managed vars straight into the switch with
+    # global_setvar (no restart, no downtime). Values are read from the DB at run
+    # time — the numbers never enter this repo.
+    - name: FusionPBX | load box-managed personal_* globals into running FreeSWITCH
+      ansible.builtin.shell: >-
+        psql -h "{{ fusionpbx_db.host }}" -U "{{ fusionpbx_db.user }}" -d "{{ fusionpbx_db.name }}" -At
+        -c "SELECT var_name || '=' || var_value FROM v_vars WHERE var_command = 'set'
+        AND var_enabled = 'true' AND var_name LIKE 'personal%'
+        AND coalesce(var_value, '') <> ''"
+        | while IFS= read -r kv; do fs_cli -x "global_setvar $kv" >/dev/null; done
+      environment:
+        PGPASSWORD: "{{ fusionpbx_db.password }}"
+      changed_when: false
+      no_log: true
+
+    # vars.xml globals load only at FreeSWITCH start, so also regenerate vars.xml from
+    # v_vars for restart-persistence. FusionPBX's vars app_defaults ends with an
+    # unconditional save_var_xml(); upgrade_domains.php runs it add-only (the same
+    # mechanism the dialplan handler already uses).
+    - name: FusionPBX | regenerate vars.xml from v_vars (restart-persistent globals)
+      ansible.builtin.shell: >-
+        cd /var/www/fusionpbx &&
+        sudo -u www-data php core/upgrade/upgrade_domains.php >/dev/null 2>&1
+      changed_when: false
+
     - name: FusionPBX | clone the BulkVS outbound route into the personal domain
       ansible.builtin.command:
         argv:
