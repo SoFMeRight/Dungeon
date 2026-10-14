@@ -9,7 +9,7 @@ metadata:
     # not just this one. The group is what keeps the two distinct, since the Service's is
     # empty. Every other HTTPRoute here carries one for the same reason.
     gatus.home-operations.com/endpoint: |
-      group: "Monitoring (Gossip Stone💬)"
+      group: "Observability (Gossip Stone💬)"
 spec:
   parentRefs:
     - name: phloem-gateway

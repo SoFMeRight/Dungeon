@@ -5,7 +5,7 @@ metadata:
   namespace: gossip-stone
   annotations:
     gatus.home-operations.com/endpoint: |
-      group: "Monitoring (Gossip Stone💬)"
+      group: "Observability (Gossip Stone💬)"
 spec:
   parentRefs:
     - name: phloem-gateway

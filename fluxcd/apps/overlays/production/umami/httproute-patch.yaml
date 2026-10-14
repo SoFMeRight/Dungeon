@@ -4,7 +4,7 @@ metadata:
   name: umami
   annotations:
     gatus.home-operations.com/endpoint: |
-      group: "Monitoring (Gossip Stone💬)"
+      group: "Observability (Gossip Stone💬)"
 spec:
   parentRefs:
     - name: cell-membrane-gateway

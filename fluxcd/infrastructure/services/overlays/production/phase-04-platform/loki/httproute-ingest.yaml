@@ -6,7 +6,7 @@ metadata:
     # group only — inherits the auto-httproute default URL/conditions, just files
     # this telemetry-ingest endpoint under Monitoring instead of the ungrouped bucket.
     gatus.home-operations.com/endpoint: |
-      group: "Monitoring (Gossip Stone💬)"
+      group: "Observability (Gossip Stone💬)"
 spec:
   parentRefs:
     - name: phloem-gateway

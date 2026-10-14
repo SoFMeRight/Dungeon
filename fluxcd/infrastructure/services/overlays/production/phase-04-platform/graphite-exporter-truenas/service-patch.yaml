@@ -7,7 +7,7 @@ metadata:
     lbipam.cilium.io/sharing-key: "gossip-stone"
     lbipam.cilium.io/sharing-cross-namespace: "*"
     gatus.home-operations.com/endpoint: |
-      group: "Monitoring (Gossip Stone💬)"
+      group: "Observability (Gossip Stone💬)"
       url: tcp://172.22.30.137:2003
       interval: 60s
       conditions:
