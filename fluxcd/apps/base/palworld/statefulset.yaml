@@ -16,12 +16,10 @@ spec:
     metadata:
       labels:
         app: palworld
-        # enforce-pod-hardening exemptions: the SteamCMD image starts as root to install/chown
-        # then drops to PUID/PGID, writes outside /palworld (so no RO rootfs), and needs caps for
-        # chown/gosu — the three rules it genuinely can't meet (same class as ark-se).
+        # enforce-pod-hardening exemptions: the SteamCMD image starts as root to install/chown,
+        # then drops to PUID/PGID, and writes outside /palworld (so no RO rootfs).
         policy.prplanit.com/except-non-root: "true"
         policy.prplanit.com/except-ro-rootfs: "true"
-        policy.prplanit.com/except-drop-caps: "true"
         policy.prplanit.com/probe: "true"
     spec:
       serviceAccountName: palworld
@@ -39,6 +37,12 @@ spec:
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
+            # init.sh's root phase: usermod/chown (CHOWN), the Steam-home copy into steam-owned
+            # dirs (DAC_OVERRIDE), chmod (FOWNER), dropping to steam (SETUID/SETGID), and the
+            # shutdown handler signalling the steam-owned server (KILL).
+            capabilities:
+              drop: ["ALL"]
+              add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "SETUID", "SETGID", "KILL"]
           ports:
             - containerPort: 8211
               name: game
