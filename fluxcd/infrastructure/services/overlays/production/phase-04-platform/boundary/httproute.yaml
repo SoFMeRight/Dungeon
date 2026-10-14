@@ -4,7 +4,7 @@ metadata:
   name: boundary
   annotations:
     gatus.home-operations.com/endpoint: |
-      group: "Remote Access (Hookshot)"
+      group: "Remote Access (Hookshot🪝)"
 spec:
   parentRefs:
     - name: cell-membrane-gateway
