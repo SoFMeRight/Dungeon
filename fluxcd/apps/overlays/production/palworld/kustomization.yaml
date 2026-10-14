@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: shooting-gallery
 resources:
   - ../../../base/palworld
+  - api-service.yaml
 patches:
   - path: service-patch.yaml
   - path: storage-patch.yaml

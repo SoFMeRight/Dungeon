@@ -22,6 +22,7 @@ spec:
         policy.prplanit.com/except-non-root: "true"
         policy.prplanit.com/except-ro-rootfs: "true"
         policy.prplanit.com/except-drop-caps: "true"
+        policy.prplanit.com/probe: "true"
     spec:
       serviceAccountName: palworld
       # The thijsvanloef image starts as root to install/update the server via SteamCMD and
@@ -45,6 +46,9 @@ spec:
             - containerPort: 27015
               name: query
               protocol: UDP
+            - containerPort: 8080
+              name: api
+              protocol: TCP
           env:
             - name: PUID
               value: "1000"
@@ -69,6 +73,12 @@ spec:
               value: "true"
             - name: RCON_PORT
               value: "25575"
+            # On 8080 so Gatus reaches it through the existing probe allow; an unauthenticated
+            # request answers 401, which proves the server is up without its admin password.
+            - name: REST_API_ENABLED
+              value: "true"
+            - name: REST_API_PORT
+              value: "8080"
             - name: UPDATE_ON_BOOT
               value: "true"
             - name: BACKUP_ENABLED
@@ -89,6 +99,16 @@ spec:
               port: 25575
             periodSeconds: 15
             failureThreshold: 80
+          readinessProbe:
+            tcpSocket:
+              port: 25575
+            periodSeconds: 15
+            failureThreshold: 4
+          livenessProbe:
+            tcpSocket:
+              port: 25575
+            periodSeconds: 30
+            failureThreshold: 6
           resources:
             requests:
               cpu: "2"

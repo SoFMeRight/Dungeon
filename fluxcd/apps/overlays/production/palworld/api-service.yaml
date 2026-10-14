@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: palworld-api
+  annotations:
+    gatus.home-operations.com/endpoint: |
+      group: "Game Servers (Shooting Gallery🎯)"
+      url: http://palworld-api.shooting-gallery.svc.cluster.local:8080/v1/api/info
+      interval: 60s
+      conditions:
+        - "[STATUS] == 401"
+spec:
+  type: ClusterIP
+  selector:
+    app: palworld
+  ports:
+    - name: api
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
