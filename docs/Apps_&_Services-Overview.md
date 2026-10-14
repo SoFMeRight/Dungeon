@@ -6,7 +6,7 @@
 
 ## Apps & Services (130)
 
-✅ 128 healthy · ⚠️ 2 degraded
+✅ 129 healthy · ⚠️ 1 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -208,7 +208,7 @@
 | Frigate | ✅ | 🔒 nvr.pcfae.com | [open](https://nvr.pcfae.com) |
 | Home Assistant | ✅ | ❓ hass.arbitorium.com | [open](https://hass.arbitorium.com) |
 | Mosquitto | ✅ | 🏠 |  |
-| Wazuh (3 components) | ⚠️ | 🔒 siem.pcfae.com | [open](https://siem.pcfae.com) |
+| Wazuh (3 components) | ✅ | 🔒 siem.pcfae.com | [open](https://siem.pcfae.com) |
 | Zigbee2mqtt | ✅ | ❓ z2m.arbitorium.com | [open](https://z2m.arbitorium.com) |
 
 ### Social (Temple of Time⏳)
@@ -1085,7 +1085,7 @@
 
 **Wazuh — 3 components** — StatefulSet — 4.14.8
 - Namespace: lens-of-truth
-- Replicas: 2/3
+- Replicas: 3/3
 - Hosts: siem.pcfae.com
 - Gateway: phloem-gateway
 - Components:
