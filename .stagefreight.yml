@@ -26,10 +26,10 @@ gitops:
   dungeon:
     backend: flux
     categories:
-      - name: Administrative
+      - name: "Administration (Zelda's Lullaby\U0001F3B5)"
         namespaces:
           - zeldas-lullaby
-      - name: DNS & NTP
+      - name: "DNS & Network (Compass\U0001F9ED)"
         namespaces:
           - compass
       - name: Routing Infrastructure
@@ -37,21 +37,21 @@ gitops:
           - king-of-red-lions
           - prelude-of-light
           - farores-wind
-      - name: Storage Services
+      - name: "Storage (Goron's Bracelet\U0001F4AA)"
         namespaces:
           - gorons-bracelet
       - name: Backup Services
         namespaces:
           - fairy-bottle
-      - name: Monitoring
+      - name: "Observability (Gossip Stone\U0001F4AC)"
         namespaces:
           - gossip-stone
           - lakitu
-      - name: Security & IDS
+      - name: "Security & IoT (Lens of Truth\U0001F50D)"
         namespaces:
           - lens-of-truth
         tier: app
-      - name: Bot Protection
+      - name: "Bot Protection (Wallmaster\U0001F590️)"
         namespaces:
           - wallmaster
         tier: app
@@ -62,44 +62,44 @@ gitops:
         namespaces:
           - mr-resetti
         tier: platform
-      - name: Business Gateway
+      - name: "Business Apps (Hyrule Castle\U0001F3F0)"
         namespaces:
           - hyrule-castle
-      - name: Personal Gateway
+      - name: "Personal Sites (Kokiri Forest\U0001F33F)"
         namespaces:
           - kokiri-forest
-      - name: Internal Gateway
+      - name: "Infrastructure (Aryll's Lookout\U0001F52D)"
         namespaces:
           - arylls-lookout
-      - name: Archival & Media
+      - name: "Content & Media (Temple of Time\U0001F3DB️)"
         namespaces:
           - temple-of-time
         tier: app
-      - name: Discovery & Dashboards
+      - name: "Discovery & Dashboards (Lost Woods\U0001F332)"
         namespaces:
           - lost-woods
         tier: app
-      - name: Downloads & Arr
+      - name: Downloads & Media (Swift Sail⛵)
         namespaces:
           - swift-sail
         tier: app
-      - name: Game Servers
+      - name: "Game Servers (Shooting Gallery\U0001F3AF)"
         namespaces:
           - shooting-gallery
         tier: app
-      - name: Mail Services
+      - name: "Notifications (Delivery Bag\U0001F4EC)"
         namespaces:
           - delivery-bag
         tier: app
-      - name: Remote Management
+      - name: "Remote Access (Hookshot\U0001FA9D)"
         namespaces:
           - hookshot
         tier: app
-      - name: Tools & Utilities
+      - name: "Tools & Utilities (Tingle Tuner\U0001F527)"
         namespaces:
           - tingle-tuner
         tier: app
-      - name: Privileged Services
+      - name: Private Apps (Pedestal of Time⚔️)
         namespaces:
           - pedestal-of-time
       - name: Platform
@@ -138,6 +138,11 @@ gitops:
       - level: intranet
         service_types:
           - NodePort
+    inventory:
+      groups:
+        from:
+          annotation: gatus.home-operations.com/endpoint
+          field: group
     oidc:
       audience: stagefreight
 ansible:
