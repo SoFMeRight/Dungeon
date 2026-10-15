@@ -399,3 +399,17 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "*.cr.pcfae.com"
+---
+# siem.prplanit.com on phloem: a certificate for the one name, rather than a copy of the
+# *.prplanit.com wildcard key on a second gateway.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: siem-prplanit-com-phloem-tls
+spec:
+  secretName: siem-prplanit-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "siem.prplanit.com"

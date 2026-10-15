@@ -10,7 +10,7 @@ spec:
     - name: phloem-gateway
       namespace: arylls-lookout
   hostnames:
-    - "siem.pcfae.com"
+    - "siem.prplanit.com"
   rules:
     - matches:
         - path:

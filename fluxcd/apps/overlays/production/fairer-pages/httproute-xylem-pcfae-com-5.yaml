@@ -17,7 +17,6 @@ spec:
     # pcfae.com
     - "shiplog.pcfae.com"
     - "shlink.pcfae.com"
-    - "siem.pcfae.com"
     - "smkeygen.pcfae.com"
     - "sonarr.pcfae.com"
     - "speedtest.pcfae.com"
