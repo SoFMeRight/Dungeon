@@ -20,8 +20,9 @@ spec:
   duration: 87600h # 10y
   renewBefore: 8760h # 1y
   privateKey:
-    algorithm: RSA
-    size: 4096
+    algorithm: ECDSA
+    size: 384
+    encoding: PKCS8
   issuerRef:
     name: wazuh-selfsigned
     kind: Issuer
@@ -48,10 +49,11 @@ spec:
     organizations: ["Wazuh"]
     localities: ["California"]
     countries: ["US"]
-  usages: ["client auth", "digital signature", "key encipherment"]
+  usages: ["client auth", "digital signature"]
   privateKey:
-    algorithm: RSA
-    size: 2048
+    algorithm: ECDSA
+    size: 384
+    encoding: PKCS8
   issuerRef:
     name: wazuh-ca
     kind: Issuer
@@ -72,10 +74,11 @@ spec:
     countries: ["US"]
   dnsNames: ["wazuh-indexer", "localhost"]
   ipAddresses: ["127.0.0.1"]
-  usages: ["server auth", "client auth", "digital signature", "key encipherment"]
+  usages: ["server auth", "client auth", "digital signature"]
   privateKey:
-    algorithm: RSA
-    size: 2048
+    algorithm: ECDSA
+    size: 384
+    encoding: PKCS8
   issuerRef:
     name: wazuh-ca
     kind: Issuer
@@ -96,10 +99,11 @@ spec:
     countries: ["US"]
   dnsNames: ["wazuh-manager", "localhost"]
   ipAddresses: ["127.0.0.1"]
-  usages: ["server auth", "client auth", "digital signature", "key encipherment"]
+  usages: ["server auth", "client auth", "digital signature"]
   privateKey:
-    algorithm: RSA
-    size: 2048
+    algorithm: ECDSA
+    size: 384
+    encoding: PKCS8
   issuerRef:
     name: wazuh-ca
     kind: Issuer
@@ -120,10 +124,11 @@ spec:
     countries: ["US"]
   dnsNames: ["wazuh-dashboard", "localhost"]
   ipAddresses: ["127.0.0.1"]
-  usages: ["server auth", "client auth", "digital signature", "key encipherment"]
+  usages: ["server auth", "client auth", "digital signature"]
   privateKey:
-    algorithm: RSA
-    size: 2048
+    algorithm: ECDSA
+    size: 384
+    encoding: PKCS8
   issuerRef:
     name: wazuh-ca
     kind: Issuer
