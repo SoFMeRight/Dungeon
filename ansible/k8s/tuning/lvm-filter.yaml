@@ -1,0 +1,44 @@
+---
+# lvm-filter.yaml
+# Keeps LVM off the Ceph RBD and NBD devices kubelet maps for PVCs.
+#
+# Without a filter every lvm command scans every /dev/rbd*. Once Ceph is out of
+# reach that read blocks in D state: lvm2-monitor's stop hung on it for ~270s on
+# chest-005 (2026-09-29), past SIGTERM and SIGKILL, and held the VM's shutdown
+# to 7.5 minutes. Reject-only, so the root VG (ubuntu-vg on /dev/sda3) is
+# unaffected. Read per invocation; no restart.
+#
+# Run via Semaphore or:
+#   docker run --rm --network host --user 1000:1000 \
+#     -e HOME=/home/kai -v /etc/passwd:/etc/passwd:ro \
+#     -v <scratch>:/home/kai -v ~/.ssh:/home/kai/.ssh:ro \
+#     -v $PWD:/work -w /work ghcr.io/homelabhd/ansible:v2.21.6 \
+#     ansible-playbook -i inventory k8s/tuning/lvm-filter.yaml
+
+- name: Keep LVM off RBD and NBD devices
+  hosts: "{{ lvm_filter_group | default('k8s_master:k8s_worker') }}"
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Set devices/global_filter
+      ansible.builtin.lineinfile:
+        path: /etc/lvm/lvm.conf
+        insertafter: '^devices \{'
+        regexp: '^\s*global_filter\s*='
+        line: "\tglobal_filter = [ \"r|^/dev/rbd.*|\", \"r|^/dev/nbd.*|\" ]"
+
+    - name: Read the effective filter
+      ansible.builtin.command: lvmconfig devices/global_filter
+      register: lvm_filter
+      changed_when: false
+      when: not ansible_check_mode
+
+    - name: Refuse a filter LVM did not take
+      when: not ansible_check_mode
+      ansible.builtin.assert:
+        that: "'r|^/dev/rbd.*|' in lvm_filter.stdout"
+        fail_msg: "lvmconfig reports {{ lvm_filter.stdout }}"
+
+    - name: Root VG still visible
+      ansible.builtin.command: vgs --noheadings -o vg_name ubuntu-vg
+      changed_when: false
