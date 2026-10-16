@@ -1,7 +1,7 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-phloem-to-wazuh-manager
+  name: allow-wazuh-manager-loadbalancer
 spec:
   selector:
     matchLabels:
@@ -10,8 +10,12 @@ spec:
   rules:
     - from:
         - source:
-            principals:
-              - cluster.local/ns/arylls-lookout/sa/phloem-gateway-istio
+            ipBlocks:
+              - "10.0.0.0/8"
+              - "172.16.0.0/12"
+              - "192.168.0.0/16"
+            notIpBlocks:
+              - "192.168.144.0/20"
       to:
         - operation:
             ports: ["1514", "1515"]

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: wazuh-manager-syslog
+  name: wazuh-manager-ingest
   annotations:
     lbipam.cilium.io/ips: "172.22.30.119"
     lbipam.cilium.io/sharing-key: "lens-of-truth"
@@ -10,6 +10,14 @@ spec:
   selector:
     app: wazuh-manager
   ports:
+    - name: agent-events
+      port: 1514
+      targetPort: 1514
+      protocol: TCP
+    - name: agent-auth
+      port: 1515
+      targetPort: 1515
+      protocol: TCP
     - name: syslog
       port: 514
       targetPort: 514

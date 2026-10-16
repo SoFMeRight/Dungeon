@@ -7,7 +7,7 @@ spec:
     wazuh-manager fetches ruleset/CTI/vulnerability feed updates and runs
     integrations (threat-intel lookups, webhooks) against an open-ended set of
     external services on 443, so its outbound is granted world. Agents connect
-    inbound through the phloem gateway; the indexer is in-cluster (mesh/universal CCNP).
+    inbound through its LoadBalancer; the indexer is in-cluster (mesh/universal CCNP).
     world+cluster covers external and in-cluster. Inert until egress
     default-deny is enabled.
   enableDefaultDeny:

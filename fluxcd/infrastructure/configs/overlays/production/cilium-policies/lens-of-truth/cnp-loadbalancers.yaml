@@ -35,8 +35,8 @@ metadata:
   name: allow-wazuh-manager-lan
 spec:
   description: >-
-    LAN-only syslog ingress to wazuh-manager (172.22.30.119). Agents reach the
-    manager through the phloem gateway, and the API stays in-cluster.
+    LAN-only agent and syslog ingress to wazuh-manager (172.22.30.119). The API
+    stays in-cluster.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -52,5 +52,9 @@ spec:
             - "192.168.144.0/20"
       toPorts:
         - ports:
+            - port: "1514"
+              protocol: TCP
+            - port: "1515"
+              protocol: TCP
             - port: "514"
               protocol: UDP

@@ -28,10 +28,6 @@ spec:
               protocol: TCP
             - port: "443"
               protocol: TCP
-            - port: "1514"
-              protocol: TCP
-            - port: "1515"
-              protocol: TCP
     # S3 consumer pods reaching s3.pcfae.com via phloem-gateway
     # CNP fromEndpoints requires explicit namespace for cross-namespace match
     - fromEndpoints:
@@ -76,8 +72,4 @@ spec:
             - port: "80"
               protocol: TCP
             - port: "443"
-              protocol: TCP
-            - port: "1514"
-              protocol: TCP
-            - port: "1515"
               protocol: TCP

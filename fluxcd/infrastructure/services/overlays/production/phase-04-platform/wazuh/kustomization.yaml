@@ -4,8 +4,7 @@ namespace: lens-of-truth
 resources:
   - ../../../../base/wazuh
   - httproute-xylem.yaml
-  - tcproute-phloem.yaml
-  - service-wazuh-manager-syslog.yaml
+  - service-wazuh-manager-ingest.yaml
 patches:
   - path: manager-statefulset-patch.yaml
   - path: indexer-statefulset-patch.yaml
