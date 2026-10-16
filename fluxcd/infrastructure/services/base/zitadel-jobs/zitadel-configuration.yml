@@ -5,7 +5,8 @@
 #   1. admin-SA PAT + userId        -> Vault
 #   2. instance features (loginV2)
 #   3. kubernetes OIDC: project, roles, OIDC app, clientId -> Vault
-#   4. flatRoles Actions-v2 target + per-target signing key -> Vault, executions, retire v1
+#   4. flatRoles client directory: read-only machine user (IAM_OWNER_VIEWER) + PAT -> Vault
+#   5. flatRoles Actions-v2 target + per-target signing key -> Vault, executions, retire v1
 - name: Configure Zitadel
   hosts: localhost
   connection: local
@@ -21,6 +22,7 @@
     vault_path: "{{ lookup('ansible.builtin.env', 'VAULT_PATH') }}"   # full KV-v2 data path, as the bash used it
     sa_jwt: "{{ lookup('ansible.builtin.file', '/var/run/secrets/kubernetes.io/serviceaccount/token') }}"
     flatroles_url: "http://zitadel-flatroles.{{ app_namespace }}.svc.cluster.local:8080"
+    directory_user: flatroles-directory
 
   tasks:
     # ------------------------------------------------------------------ setup
@@ -256,10 +258,176 @@
             k8s-oidc-client-id: "{{ client_id }}"
         status_code: [200, 204]
 
-    # --------------------------------- step 4: flatRoles v2 (fail-closed)
+    # ------------------------- step 4: flatRoles client directory (read-only)
+    # flatRoles emits only the roles granted in the requesting app's own project, so it
+    # needs the client -> project map from the API. A dedicated machine user holding only
+    # IAM_OWNER_VIEWER reads it; its PAT goes to Vault for ESO. Runs before step 5:
+    # without the token flatroles stays unready and step 5's self-test would fail.
+    - name: "step 4: search directory machine user"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/v2/users"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          queries:
+            - userNameQuery:
+                userName: "{{ directory_user }}"
+                method: TEXT_QUERY_METHOD_EQUALS
+      register: dir_user_search
+
+    - name: "step 4: create directory machine user when absent"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/users/machine"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          userName: "{{ directory_user }}"
+          name: flatRoles client directory
+          description: Read-only instance viewer flatroles uses to map OIDC client IDs to projects.
+          accessTokenType: ACCESS_TOKEN_TYPE_BEARER
+      register: dir_user_create
+      when: dir_user_search.json.result | default([]) | length == 0
+
+    - name: "step 4: resolve directory user id"
+      ansible.builtin.set_fact:
+        dir_user_id: "{{ dir_user_create.json.userId if dir_user_create is not skipped else dir_user_search.json.result[0].userId }}"
+
+    - name: "step 4: read the directory user's instance roles"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/admin/v1/members/_search"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          queries:
+            - userIdQuery:
+                userId: "{{ dir_user_id }}"
+      register: dir_member
+
+    - name: "step 4: grant IAM_OWNER_VIEWER"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/admin/v1/members"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          userId: "{{ dir_user_id }}"
+          roles: ["IAM_OWNER_VIEWER"]
+      when: dir_member.json.result | default([]) | length == 0
+
+    - name: "step 4: reconcile instance roles to exactly IAM_OWNER_VIEWER"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/admin/v1/members/{{ dir_user_id }}"
+        method: PUT
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          roles: ["IAM_OWNER_VIEWER"]
+      when:
+        - dir_member.json.result | default([]) | length > 0
+        - dir_member.json.result[0].roles | default([]) | sort != ["IAM_OWNER_VIEWER"]
+
+    - name: "step 4: read cached directory token from Vault"
+      ansible.builtin.uri:
+        url: "{{ vault_data_url }}"
+        method: GET
+        headers:
+          X-Vault-Token: "{{ vault_token }}"
+        status_code: [200, 404]
+      register: dir_vault_get
+
+    - name: "step 4: set cached directory token"
+      ansible.builtin.set_fact:
+        cur_dir_token: "{{ (dir_vault_get.json.data.data.FLATROLES_DIRECTORY_TOKEN | default('')) if dir_vault_get.status == 200 else '' }}"
+
+    # A cached token is reused only while Zitadel still accepts it, so a recreated user
+    # or revoked PAT is replaced instead of leaving flatroles unready.
+    - name: "step 4: check the cached directory token"
+      ansible.builtin.uri:
+        url: "{{ base_url }}/admin/v1/orgs/_search"
+        method: POST
+        headers:
+          Host: "{{ zitadel_host }}"
+          Authorization: "Bearer {{ cur_dir_token }}"
+        body_format: json
+        body: {}
+        status_code: [200, 401, 403]
+      register: dir_token_check
+      when: cur_dir_token | length > 0
+
+    - name: "step 4: decide whether to mint a directory token"
+      ansible.builtin.set_fact:
+        mint_dir_token: "{{ cur_dir_token | length == 0 or dir_token_check.status != 200 }}"
+
+    - name: "step 4: mint directory PAT"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/users/{{ dir_user_id }}/pats"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body: {}
+      register: dir_pat
+      when: mint_dir_token | bool
+
+    - name: "step 4: persist directory token to Vault"
+      ansible.builtin.uri:
+        url: "{{ vault_data_url }}"
+        method: PATCH
+        headers:
+          X-Vault-Token: "{{ vault_token }}"
+          Content-Type: application/merge-patch+json
+        body_format: json
+        body:
+          data:
+            FLATROLES_DIRECTORY_TOKEN: "{{ dir_pat.json.token }}"
+        status_code: [200, 204]
+      when: mint_dir_token | bool
+
+    - name: "step 4: wait for ESO to sync the directory token into the Secret"
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Secret
+        name: zitadel-flatroles-directory
+        namespace: "{{ app_namespace }}"
+      register: dir_secret
+      until: (dir_secret.resources | default([]) | length) > 0 and (dir_secret.resources[0].data.token | default('') | b64decode) == dir_pat.json.token
+      retries: 18
+      delay: 10
+      when: mint_dir_token | bool
+
+    - name: "step 4: roll flatroles to pick up the new ZITADEL_TOKEN"
+      kubernetes.core.k8s:
+        state: patched
+        api_version: apps/v1
+        kind: Deployment
+        name: zitadel-flatroles
+        namespace: "{{ app_namespace }}"
+        definition:
+          spec:
+            template:
+              metadata:
+                annotations:
+                  flatroles.prplanit.com/directory-token-rev: "{{ dir_pat.json.token | hash('sha256') }}"
+      when: mint_dir_token | bool
+
+    # Ready means the directory synced with the token, so this proves the token works.
+    - name: "step 4: flatroles /readyz self-test (directory synced)"
+      ansible.builtin.uri:
+        url: "{{ flatroles_url }}/readyz"
+        method: GET
+        return_content: true
+        status_code: [200, 503]
+      register: dir_ready
+      until: dir_ready.status == 200
+      retries: 18
+      delay: 10
+
+    # --------------------------------- step 5: flatRoles v2 (fail-closed)
     # Executions are wired (and v1 retired) only after the target passes a /healthz
     # self-test, so any failure leaves the prior state serving.
-    - name: "step 4: read cached signing key from Vault"
+    - name: "step 5: read cached signing key from Vault"
       ansible.builtin.uri:
         url: "{{ vault_data_url }}"
         method: GET
@@ -268,11 +436,11 @@
         status_code: [200, 404]
       register: vault_get
 
-    - name: "step 4: set cached signing key"
+    - name: "step 5: set cached signing key"
       ansible.builtin.set_fact:
         cur_key: "{{ (vault_get.json.data.data.FLATROLES_SIGNING_KEY | default('')) if vault_get.status == 200 else '' }}"
 
-    - name: "step 4: search flatroles target"
+    - name: "step 5: search flatroles target"
       ansible.builtin.uri:
         url: "{{ base_url }}/v2beta/actions/targets/search"
         method: POST
@@ -281,7 +449,7 @@
         body: {}
       register: tgt_search
 
-    - name: "step 4: resolve existing target id (if any)"
+    - name: "step 5: resolve existing target id (if any)"
       ansible.builtin.set_fact:
         target_id: "{{ ((tgt_search.json.result | default(tgt_search.json.targets) | default([])) | selectattr('name', 'equalto', 'flatroles') | map(attribute='id') | list | first) | default('') }}"
         target_cfg:
@@ -294,7 +462,7 @@
     # Zitadel returns the signing key only on create or regenerate. Fresh -> create;
     # existing with no cached key -> regenerate once (expirationSigningKey "0s" = immediate);
     # existing with a cached key -> reconcile WITHOUT rotating (no churn each run).
-    - name: "step 4: create target when absent"
+    - name: "step 5: create target when absent"
       ansible.builtin.uri:
         url: "{{ base_url }}/v2beta/actions/targets"
         method: POST
@@ -304,7 +472,7 @@
       register: tgt_create
       when: target_id | length == 0
 
-    - name: "step 4: regenerate signing key when target exists but no key cached"
+    - name: "step 5: regenerate signing key when target exists but no key cached"
       ansible.builtin.uri:
         url: "{{ base_url }}/v2beta/actions/targets/{{ target_id }}"   # UpdateTarget is POST (PUT 405s)
         method: POST
@@ -314,7 +482,7 @@
       register: tgt_regen
       when: target_id | length > 0 and cur_key | length == 0
 
-    - name: "step 4: reconcile target without rotating when key already cached"
+    - name: "step 5: reconcile target without rotating when key already cached"
       ansible.builtin.uri:
         url: "{{ base_url }}/v2beta/actions/targets/{{ target_id }}"
         method: POST
@@ -327,19 +495,19 @@
       when: target_id | length > 0 and cur_key | length > 0
       failed_when: tgt_reconcile.status == 400 and ('no change' not in (tgt_reconcile.content | default('') | lower))
 
-    - name: "step 4: resolve target id + signing key"
+    - name: "step 5: resolve target id + signing key"
       ansible.builtin.set_fact:
         target_id: "{{ target_id if (target_id | length > 0) else tgt_create.json.id }}"
         signing_key: "{{ cur_key if (cur_key | length > 0) else (tgt_create.json.signingKey if (target_id | length == 0) else tgt_regen.json.signingKey) }}"
 
-    - name: "step 4: assert target id + signing key"
+    - name: "step 5: assert target id + signing key"
       ansible.builtin.assert:
         that:
           - target_id | length > 0
           - signing_key | length > 0
         fail_msg: "no target id / signing key obtained"
 
-    - name: "step 4: persist signing key to Vault when changed"
+    - name: "step 5: persist signing key to Vault when changed"
       ansible.builtin.uri:
         url: "{{ vault_data_url }}"
         method: PATCH
@@ -356,7 +524,7 @@
     # Reloader is reloadOnCreate=false, so a freshly created key-Secret does not restart
     # flatroles on its own. When we (re)wrote the key, wait for ESO to land it in the
     # Secret, then roll the Deployment so the pods read SIGNING_KEY and begin enforcing.
-    - name: "step 4: wait for ESO to sync the signing key into the Secret"
+    - name: "step 5: wait for ESO to sync the signing key into the Secret"
       kubernetes.core.k8s_info:
         api_version: v1
         kind: Secret
@@ -368,7 +536,7 @@
       delay: 10
       when: signing_key != cur_key
 
-    - name: "step 4: roll flatroles to pick up the new SIGNING_KEY"
+    - name: "step 5: roll flatroles to pick up the new SIGNING_KEY"
       kubernetes.core.k8s:
         state: patched
         api_version: apps/v1
@@ -384,7 +552,7 @@
       when: signing_key != cur_key
 
     # /healthz self-test (no signature needed - works whether or not enforcement is live).
-    - name: "step 4: flatroles /healthz self-test (fail-closed gate)"
+    - name: "step 5: flatroles /healthz self-test (fail-closed gate)"
       ansible.builtin.uri:
         url: "{{ flatroles_url }}/healthz"
         method: GET
@@ -394,7 +562,7 @@
       retries: 12
       delay: 5
 
-    - name: "step 4: set flatroles executions"
+    - name: "step 5: set flatroles executions"
       ansible.builtin.uri:
         url: "{{ base_url }}/v2beta/actions/executions"
         method: PUT
@@ -411,7 +579,7 @@
       register: ex_set
       failed_when: ex_set.status == 400 and ('no change' not in (ex_set.content | default('') | lower))
 
-    - name: "step 4: find legacy v1 Action 'flatRoles'"
+    - name: "step 5: find legacy v1 Action 'flatRoles'"
       ansible.builtin.uri:
         url: "{{ mgmt_url }}/actions/_search"
         method: POST
@@ -420,11 +588,11 @@
         body: {}
       register: v1_search
 
-    - name: "step 4: resolve v1 Action id (if any)"
+    - name: "step 5: resolve v1 Action id (if any)"
       ansible.builtin.set_fact:
         v1_id: "{{ ((v1_search.json.result | default([])) | selectattr('name', 'equalto', 'flatRoles') | map(attribute='id') | list | first) | default('') }}"
 
-    - name: "step 4: detach v1 Action from Complement-Token triggers"
+    - name: "step 5: detach v1 Action from Complement-Token triggers"
       ansible.builtin.uri:
         url: "{{ mgmt_url }}/flows/2/trigger/{{ item }}"   # 4=pre-userinfo, 5=pre-access-token
         method: POST
@@ -435,7 +603,7 @@
       loop: [4, 5]
       when: v1_id | length > 0
 
-    - name: "step 4: delete legacy v1 Action"
+    - name: "step 5: delete legacy v1 Action"
       ansible.builtin.uri:
         url: "{{ mgmt_url }}/actions/{{ v1_id }}"
         method: DELETE
