@@ -6,7 +6,7 @@
 
 ## Apps & Services (130)
 
-✅ 129 healthy · ⚠️ 1 degraded
+✅ 128 healthy · ⚠️ 2 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -15,7 +15,7 @@
 | Netbird (5 components) | ✅ | 🌐 netbird.prplanit.com | [open](https://netbird.prplanit.com) |
 | Netbox (3 components) | ✅ | ❓ netbox.pcfae.com | [open](https://netbox.pcfae.com) |
 | Oauth2 Proxy | ✅ | ❓ books.optcp.com | [open](https://books.optcp.com) |
-| OpenBao | ✅ | 🔒 vault.pcfae.com | [open](https://vault.pcfae.com) |
+| OpenBao | ⚠️ | 🔒 vault.pcfae.com | [open](https://vault.pcfae.com) |
 | Semaphore | ✅ | 🔒 ansible.pcfae.com | [open](https://ansible.pcfae.com) |
 | Twofauth | ✅ | 🔒 2fa.pcfae.com | [open](https://2fa.pcfae.com) |
 | Unifi (2 components) | ✅ | 🔒 unifi.pcfae.com | [open](https://unifi.pcfae.com) |
@@ -275,7 +275,7 @@
 
 **OpenBao** — StatefulSet — 
 - Namespace: zeldas-lullaby
-- Replicas: 3/3
+- Replicas: 2/3
 - Hosts: vault.pcfae.com
 - Gateway: phloem-gateway
 
@@ -1221,7 +1221,7 @@
 | Vault Operator | zeldas-lullaby | ✅ |
 | Snapshot Controller | fairy-bottle | ✅ |
 | Velero (2 components) | fairy-bottle | ✅ |
-| Gitlab Gitlab Runner | hyrule-castle | ❌ |
+| Gitlab Gitlab Runner | hyrule-castle | ✅ |
 | Mariadb | hyrule-castle | ✅ |
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
@@ -1291,7 +1291,7 @@
 
 **Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
 - Namespace: hyrule-castle
-- Replicas: 0/1
+- Replicas: 1/1
 
 **Mariadb** — StatefulSet — 
 - Namespace: hyrule-castle
