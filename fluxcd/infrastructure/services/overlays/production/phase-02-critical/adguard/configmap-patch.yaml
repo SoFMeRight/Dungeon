@@ -244,7 +244,7 @@ data:
           answer: 172.22.30.70
         - domain: siem.prplanit.com
           answer: 172.22.30.70
-        - domain: wazuh.prplanit.com
+        - domain: wazuh-manager.prplanit.com
           answer: 172.22.30.119
       safe_fs_patterns:
         - /opt/adguardhome/work/userfilters/*
