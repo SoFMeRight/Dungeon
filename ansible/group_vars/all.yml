@@ -57,13 +57,15 @@ kubelet_settings:
   #
   # The total is the budget for stopping every pod on the node. Critical pods are
   # stopped last and get the portion named below; ORDINARY PODS GET THE
-  # DIFFERENCE — 150 - 30 = 120s here, and that 120s is the number that has to be
-  # large enough, not the 150.
+  # DIFFERENCE — 90 - 20 = 70s here, and that 70s is the number that has to be
+  # large enough, not the 90.
   #
-  # 120s is where it sits because Harbor's core, registry and jobservice ask for
-  # exactly that, and the registry can be mid-upload. Everything above it on this
-  # fleet - gitlab-kas at 300s, the TURN relays and backup agents at 3600s - is
-  # unreachable on a 7m41s battery at any setting, and is built to be interrupted.
+  # This budget governs only a stop nobody drained: a power event. Maintenance
+  # drains first, and eviction honours each pod's own grace. Pods that ask for
+  # more than 70s - Harbor at 120s, gitlab-kas at 300s, the TURN relays and backup
+  # agents at 3600s - are cut at 70s, and an upload or session in flight during a
+  # power loss dies with its client anyway. Every second here is battery the UPS
+  # keeps after the cut.
   #
   # The ordinary budget must cover the slowest thing that has to finish writing,
   # which on this fleet is CNPG: a Postgres instance is SIGKILLed at its
@@ -75,8 +77,8 @@ kubelet_settings:
   # and the whole per-host guest sequence must still fit the UPS battery. A pod
   # whose terminationGracePeriodSeconds exceeds the ordinary budget is killed at
   # the budget, not at its own value.
-  shutdownGracePeriod: "150s"
-  shutdownGracePeriodCriticalPods: "30s"
+  shutdownGracePeriod: "90s"
+  shutdownGracePeriodCriticalPods: "20s"
 
 # systemd caps how long ANY delay inhibitor may hold a shutdown, and defaults to
 # 5 seconds. Left at the default, shutdownGracePeriod above is decorative — it
