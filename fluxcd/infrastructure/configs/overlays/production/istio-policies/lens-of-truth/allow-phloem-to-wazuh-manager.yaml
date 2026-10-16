@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-phloem-to-wazuh-manager
+spec:
+  selector:
+    matchLabels:
+      app: wazuh-manager
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/arylls-lookout/sa/phloem-gateway-istio
+      to:
+        - operation:
+            ports: ["1514", "1515"]

@@ -3,13 +3,11 @@ kind: Service
 metadata:
   name: wazuh-manager
   annotations:
-    lbipam.cilium.io/ips: "172.22.30.119"
-    lbipam.cilium.io/sharing-key: "lens-of-truth"
     gatus.home-operations.com/endpoint: |
       group: "Security & IoT (Lens of Truth🔍)"
-      url: tcp://172.22.30.119:55000
+      url: https://wazuh-manager.lens-of-truth.svc.cluster.local:55000/
       interval: 60s
+      client:
+        insecure: true
       conditions:
-        - "[CONNECTED] == true"
-spec:
-  type: LoadBalancer
+        - "[STATUS] == 401"

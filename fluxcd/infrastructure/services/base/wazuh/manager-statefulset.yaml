@@ -60,6 +60,10 @@ spec:
               mountPath: /wazuh-config-mount/etc/ossec.conf
               subPath: ossec.conf
               readOnly: true
+            - name: authd-pass
+              mountPath: /wazuh-config-mount/etc/authd.pass
+              subPath: authd.pass
+              readOnly: true
             - name: manager-certs
               mountPath: /etc/ssl/wazuh
               readOnly: true
@@ -107,6 +111,10 @@ spec:
         - name: manager-certs
           secret:
             secretName: wazuh-manager-tls
+        - name: authd-pass
+          secret:
+            secretName: wazuh-manager-authd
+            defaultMode: 0440
   volumeClaimTemplates:
     - metadata:
         name: wazuh-manager-data

@@ -6,6 +6,7 @@ resources:
   - manager-service.yaml
   - manager-config.yaml
   - manager-externalsecret.yaml
+  - manager-authd-externalsecret.yaml
   - indexer-statefulset.yaml
   - indexer-service.yaml
   - indexer-config.yaml

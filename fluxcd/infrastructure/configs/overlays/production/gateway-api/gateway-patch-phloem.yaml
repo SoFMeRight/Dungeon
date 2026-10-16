@@ -76,3 +76,25 @@ spec:
         certificateRefs:
           - kind: Secret
             name: siem-prplanit-com-tls
+    - name: tcp-wazuh-agent-events
+      protocol: TCP
+      port: 1514
+      allowedRoutes:
+        kinds:
+          - kind: TCPRoute
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              kubernetes.io/metadata.name: lens-of-truth
+    - name: tcp-wazuh-agent-auth
+      protocol: TCP
+      port: 1515
+      allowedRoutes:
+        kinds:
+          - kind: TCPRoute
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              kubernetes.io/metadata.name: lens-of-truth

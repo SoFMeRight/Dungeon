@@ -1,7 +1,7 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-wazuh-manager-loadbalancer
+  name: allow-wazuh-dashboard-to-wazuh-manager
 spec:
   selector:
     matchLabels:
@@ -10,10 +10,8 @@ spec:
   rules:
     - from:
         - source:
-            ipBlocks:
-              - "10.0.0.0/8"
-              - "172.16.0.0/12"
-              - "192.168.0.0/16"
+            principals:
+              - cluster.local/ns/lens-of-truth/sa/wazuh-dashboard
       to:
         - operation:
-            ports: ["1514", "1515", "514", "55000"]
+            ports: ["55000"]

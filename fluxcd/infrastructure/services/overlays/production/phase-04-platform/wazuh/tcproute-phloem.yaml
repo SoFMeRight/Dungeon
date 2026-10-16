@@ -1,0 +1,27 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: TCPRoute
+metadata:
+  name: wazuh-manager-agent-events
+spec:
+  parentRefs:
+    - name: phloem-gateway
+      namespace: arylls-lookout
+      sectionName: tcp-wazuh-agent-events
+  rules:
+    - backendRefs:
+        - name: wazuh-manager
+          port: 1514
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: TCPRoute
+metadata:
+  name: wazuh-manager-agent-auth
+spec:
+  parentRefs:
+    - name: phloem-gateway
+      namespace: arylls-lookout
+      sectionName: tcp-wazuh-agent-auth
+  rules:
+    - backendRefs:
+        - name: wazuh-manager
+          port: 1515

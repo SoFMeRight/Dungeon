@@ -244,6 +244,8 @@ data:
           answer: 172.22.30.70
         - domain: siem.prplanit.com
           answer: 172.22.30.70
+        - domain: wazuh.prplanit.com
+          answer: 172.22.30.70
       safe_fs_patterns:
         - /opt/adguardhome/work/userfilters/*
       safebrowsing_cache_size: 1048576
