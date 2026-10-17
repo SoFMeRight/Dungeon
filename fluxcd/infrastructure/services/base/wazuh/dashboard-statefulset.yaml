@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: wazuh-dashboard
+  annotations:
+    # wazuh.yml and opensearch_dashboards.yml are subPath mounts, which never refresh.
+    secret.reloader.stakater.com/reload: wazuh-dashboard-secrets
 spec:
   serviceName: wazuh-dashboard
   replicas: 1
