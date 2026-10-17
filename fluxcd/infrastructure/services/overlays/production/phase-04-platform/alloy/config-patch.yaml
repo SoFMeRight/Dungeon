@@ -647,9 +647,9 @@ data:
       // object — required for correct joins (Freelens/Lens, Grafana dashboards).
       honor_labels = true
 
-      clustering {
-        enabled = true
-      }
+      // No clustering: pod discovery is node-local, so only the Alloy on KSM's node
+      // sees it. Clustering would hash the target to an instance that never
+      // discovered it, and nobody would scrape it.
 
       scrape_interval = "30s"
       scrape_timeout  = "10s"
