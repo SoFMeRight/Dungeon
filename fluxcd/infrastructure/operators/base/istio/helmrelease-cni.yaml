@@ -28,6 +28,7 @@ spec:
       interval: 12h
   values:
     hub: docker.io/istio
+    variant: distroless
     global:
       imagePullSecrets:
         - docker-io-pull-secret

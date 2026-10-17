@@ -26,6 +26,7 @@ spec:
       istioNamespace: king-of-red-lions
       # Also sets the kube-gateway proxyv2 image, not just pilot.
       hub: docker.io/istio
+      variant: distroless
       imagePullSecrets:
         - docker-io-pull-secret
       # Default proxy resources. In this ambient mesh there are no sidecars, so this

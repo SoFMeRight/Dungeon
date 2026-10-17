@@ -32,6 +32,7 @@ spec:
 
     # Must stay top-level: this chart reads .Values.hub; global.hub is ignored.
     hub: docker.io/istio
+    variant: distroless
     imagePullSecrets:
       - docker-io-pull-secret
 
