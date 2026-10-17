@@ -797,7 +797,7 @@
 
 **Ark — 4 components** — Mixed — 
 - Namespace: shooting-gallery
-- Replicas: 2/4
+- Replicas: 3/4
 - Components:
   - ark-sa-tmc-admin-list-server (Deployment)
   - ark-sa-tmc-theisland (StatefulSet)
@@ -1221,7 +1221,7 @@
 | Vault Operator | zeldas-lullaby | ✅ |
 | Snapshot Controller | fairy-bottle | ✅ |
 | Velero (2 components) | fairy-bottle | ✅ |
-| Gitlab Gitlab Runner | hyrule-castle | ❌ |
+| Gitlab Gitlab Runner | hyrule-castle | ✅ |
 | Mariadb | hyrule-castle | ✅ |
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
@@ -1291,7 +1291,7 @@
 
 **Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
 - Namespace: hyrule-castle
-- Replicas: 0/1
+- Replicas: 1/1
 
 **Mariadb** — StatefulSet — 
 - Namespace: hyrule-castle
