@@ -9,6 +9,10 @@ spec:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: temple-of-time.joplin.postgres
+      annotations:
+        # tmp (incl. /tmp/pm2) is an emptyDir scratch with no backup value; joplin's state
+        # lives in postgres, which is backed up separately.
+        backup.velero.io/backup-volumes-excludes: tmp
     spec:
       securityContext:
         runAsNonRoot: true

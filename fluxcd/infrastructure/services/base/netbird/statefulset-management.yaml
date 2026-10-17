@@ -20,6 +20,10 @@ spec:
         app: netbird
         component: management
         policy.prplanit.com/cap.oidc: "true"
+      annotations:
+        # generated-config is an emptyDir rendered at startup — no backup value. The
+        # management-data PVC (NetBird's own state) stays backed up.
+        backup.velero.io/backup-volumes-excludes: generated-config
     spec:
       serviceAccountName: netbird-management
       # Non-root: fsGroup 65532 makes the /var/lib/netbird PVC and the generated-config

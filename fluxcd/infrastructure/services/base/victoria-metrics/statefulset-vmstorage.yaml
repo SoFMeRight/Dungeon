@@ -13,6 +13,11 @@ spec:
     metadata:
       labels:
         app: vmstorage
+      annotations:
+        # VictoriaMetrics TSDB shard: observability history that reconstructs forward.
+        # High-churn and poorly dedupable, with low restore value, so it is kept out of
+        # Velero fs-backup.
+        backup.velero.io/backup-volumes-excludes: storage
     spec:
       serviceAccountName: vmstorage
       securityContext:

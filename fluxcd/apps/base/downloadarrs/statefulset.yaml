@@ -13,6 +13,11 @@ spec:
     metadata:
       labels:
         app: downloadarrs
+      annotations:
+        # qBittorrent's live download scratch is transient, re-downloadable, and the
+        # highest-churn volume in the cluster. It is kept out of Velero fs-backup; the
+        # *arr config volumes (catalogue DBs/settings) stay backed up.
+        backup.velero.io/backup-volumes-excludes: downloads
     spec:
       serviceAccountName: downloadarrs
       securityContext:

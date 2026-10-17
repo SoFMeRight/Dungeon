@@ -16,6 +16,10 @@ spec:
       labels:
         app: matrix-livekit
         policy.prplanit.com/ingress: "true"
+      annotations:
+        # Stateless media server; tmp is emptyDir scratch with no backup value, and
+        # fails when the pod rolls mid-backup.
+        backup.velero.io/backup-volumes-excludes: tmp
     spec:
       serviceAccountName: matrix-livekit
       securityContext:

@@ -13,6 +13,11 @@ spec:
       labels:
         app: ark-sa-tmc-valguero
         policy.prplanit.com/probe: "true"
+      annotations:
+        # Reinstallable ASA server binaries + Steam download cache (both SteamCMD-restorable).
+        # Kept out of Velero fs-backup; the saved/ volume holds the irreplaceable world state
+        # and stays backed up.
+        backup.velero.io/backup-volumes-excludes: serverfiles,steamapps
     spec:
       serviceAccountName: ark-sa-tmc-valguero
       enableServiceLinks: false

@@ -45,6 +45,11 @@ spec:
       enabled: false
     singleBinary:
       replicas: 3
+      # The storage PVC is the log TSDB: high-churn, reconstructs forward, and only worth
+      # restoring if logs were shipped to WORM off-cluster for a full-compromise case
+      # (they are not). Kept out of Velero fs-backup.
+      podAnnotations:
+        backup.velero.io/backup-volumes-excludes: storage
       resources:
         requests:
           cpu: 500m

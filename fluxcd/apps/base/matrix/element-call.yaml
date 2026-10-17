@@ -17,6 +17,10 @@ spec:
       labels:
         app: matrix-element-call
         policy.prplanit.com/ingress: "true"
+      annotations:
+        # Stateless SFU: cache/run/tmp are emptyDir scratch with no backup value, and
+        # fail when the pod rolls mid-backup.
+        backup.velero.io/backup-volumes-excludes: cache,run,tmp
     spec:
       serviceAccountName: matrix-element-call
       securityContext:

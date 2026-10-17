@@ -16,6 +16,11 @@ spec:
       policy.prplanit.com/metrics: "true"
       policy.prplanit.com/client-class: ingress-gateway
       policy.prplanit.com/ingress-instance: xylem
+    # Istio propagates these to the generated gateway pod (as it does the labels above).
+    # The istio-proxy socket/cert volumes are ephemeral with no backup value; keep them
+    # out of Velero fs-backup.
+    annotations:
+      backup.velero.io/backup-volumes-excludes: workload-socket,credential-socket,istio-envoy,workload-certs,istio-data
   listeners:
     - name: http
       protocol: HTTP

@@ -20,6 +20,11 @@ spec:
         # gateway VIP from inside the cluster, so the pod needs the gateway to accept it.
         policy.prplanit.com/cap.oidc: "true"
         policy.prplanit.com/access-scope-mariadb: PLACEHOLDER_DB_SCOPE
+      annotations:
+        # smarty (Smarty template cache, regenerated) and tmp (scratch) are emptyDir with
+        # no backup value; their fs-backup fails when this web pod rolls mid-backup. The
+        # store PVC (uploads/attachments) and the MariaDB stay backed up.
+        backup.velero.io/backup-volumes-excludes: smarty,tmp
     spec:
       serviceAccountName: hubzilla
       securityContext:

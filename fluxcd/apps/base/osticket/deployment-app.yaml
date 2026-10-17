@@ -12,6 +12,10 @@ spec:
     metadata:
       labels:
         app: osticket-app
+      annotations:
+        # emptyDir nginx/runtime scratch with no backup value; osticket's persistent
+        # state lives in its MariaDB, which is backed up separately.
+        backup.velero.io/backup-volumes-excludes: run-osticket,nginx-lib,tmp
     spec:
       serviceAccountName: osticket-app
       securityContext:

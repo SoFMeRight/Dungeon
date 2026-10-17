@@ -21,6 +21,9 @@ spec:
         metadata:
           labels:
             app: redis-sentinel-repair
+          annotations:
+            # Short-lived repair job; tmp is an emptyDir with no backup value.
+            backup.velero.io/backup-volumes-excludes: tmp
         spec:
           serviceAccountName: redis-sentinel-repair
           restartPolicy: OnFailure

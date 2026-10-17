@@ -16,6 +16,11 @@ spec:
         # Privileged NVR (GPU + device access) — cannot drop caps. Excepted from the drop-caps
         # enforce rule; still audited in audit-pod-hardening.
         policy.prplanit.com/except-drop-caps: "true"
+      annotations:
+        # storage = NVR recordings, governed by Frigate's own retention rotation, and
+        # cache = a RAM-backed emptyDir — both transient with no backup value. The config
+        # volume (DB + settings) stays backed up.
+        backup.velero.io/backup-volumes-excludes: storage,cache
     spec:
       serviceAccountName: frigate
       # Pin to a GPU with CUDA compute capability >= 7 (Ampere A2000 = 8). The GTX
