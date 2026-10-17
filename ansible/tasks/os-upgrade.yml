@@ -23,9 +23,26 @@
         path: /var/run/reboot-required
       register: deb_reboot
 
+    # Proxmox kernel packages never write /var/run/reboot-required. The kernel
+    # the host boots next is the proxmox-boot-tool next-boot pin, else its
+    # permanent pin, else the newest installed.
+    - name: Resolve the kernel the next boot loads (Debian)
+      ansible.builtin.shell: |
+        set -o pipefail
+        pins=$(proxmox-boot-tool kernel list 2>/dev/null || true)
+        next=$(echo "$pins" | awk '/^Kernel pinned on next-boot:/{getline; print $1}')
+        pinned=$(echo "$pins" | awk '/^Pinned kernel:/{getline; print $1}')
+        newest=$(ls /boot/vmlinuz-* 2>/dev/null | sed 's|^/boot/vmlinuz-||' | sort -V | tail -1)
+        echo "${next:-${pinned:-${newest:-$(uname -r)}}}"
+      args:
+        executable: /bin/bash
+      register: deb_boot_kernel
+      changed_when: false
+      check_mode: false
+
     - name: Record reboot requirement
       ansible.builtin.set_fact:
-        node_reboot_required: "{{ deb_reboot.stat.exists }}"
+        node_reboot_required: "{{ deb_reboot.stat.exists or deb_boot_kernel.stdout != ansible_facts['kernel'] }}"
 
 - name: Upgrade RHEL 8+ with dnf
   when: ansible_os_family == "RedHat" and ansible_distribution_major_version != "7"

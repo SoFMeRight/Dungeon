@@ -153,12 +153,12 @@
         # onto a node that is about to go down with the host.
         - name: Cordon every resident node
           ansible.builtin.command: "{{ kubectl_admin }} cordon {{ item }}"
-          loop: "{{ resident_k8s_nodes }}"
-          delegate_to: "{{ k8s_delegate }}"
+          loop: "{{ resident_k8s_nodes | default([]) }}"
+          delegate_to: "{{ k8s_delegate | default(groups[control_plane_group] | first) }}"
 
         - name: Empty each resident node
           ansible.builtin.include_tasks: ../k8s/tasks/node-drain.yml
-          loop: "{{ resident_k8s_nodes }}"
+          loop: "{{ resident_k8s_nodes | default([]) }}"
           loop_control:
             loop_var: drain_node
 
@@ -182,7 +182,7 @@
 
         - name: Return each resident node to service
           ansible.builtin.include_tasks: ../k8s/tasks/node-undrain.yml
-          loop: "{{ resident_k8s_nodes }}"
+          loop: "{{ resident_k8s_nodes | default([]) }}"
           loop_control:
             loop_var: drain_node
           vars:
