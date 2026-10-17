@@ -1,0 +1,13 @@
+---
+# Wazuh agent enrollment. A host's tenant (its agent group, which labels every alert
+# agent.labels.tenant) is `wazuh_tenant` from group_vars; a host without one is refused.
+wazuh_manager: wazuh-manager.prplanit.com
+# Agents may not be newer than the manager; keep this on the manager's version.
+wazuh_agent_version: "4.14.8-1"
+wazuh_apt_repo: https://packages.wazuh.com/4.x/apt/
+wazuh_apt_key: https://packages.wazuh.com/key/GPG-KEY-WAZUH
+# Public certificate of the CA that signs the manager's enrollment certificate
+# (lens-of-truth wazuh-root-ca-tls, ca.crt). Replace it when that CA rotates.
+wazuh_manager_ca_file: ../files/wazuh-manager-ca.pem
+# Seconds an apt step may take before the host fails instead of stalling the run.
+wazuh_apt_timeout: 600
