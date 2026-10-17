@@ -45,6 +45,8 @@ spec:
             - -storageNode=vmstorage-0.vmstorage:8400,vmstorage-1.vmstorage:8400,vmstorage-2.vmstorage:8400
             - -httpListenAddr=:8480
             - -replicationFactor=2
+            # Default is 2x CPU; each remote sender holds a slot while its body uploads.
+            - -maxConcurrentInserts=16
           ports:
             - containerPort: 8480
               name: http
