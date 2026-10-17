@@ -1,0 +1,247 @@
+# Installs Grafana Alloy as a systemd service on hosts outside the docker template.
+# Hosts come from --limit. A host's first run needs the ingest credentials, given at launch:
+#   -e @file   holding alloy_loki_username / alloy_loki_password /
+#              alloy_vm_username / alloy_vm_password
+# (OpenBao: the loki-gateway-basic-auth and vminsert-basic-auth sources). Hosts that
+# already have them converge without.
+- name: Ad Arbitorium 🔐 - GitOps - Services - Install Grafana Alloy for host logs and metrics
+  become: true
+  hosts: all
+  vars_files:
+    - ../vars/alloy-host.yml
+
+  pre_tasks:
+    - name: Read whether the ingest credentials are installed
+      ansible.builtin.stat:
+        path: /etc/alloy/ingest.env
+      register: ingest_env
+
+    - name: Require the ingest credentials for hosts that have none
+      ansible.builtin.assert:
+        that:
+          - alloy_loki_username is defined and alloy_loki_password is defined
+          - alloy_vm_username is defined and alloy_vm_password is defined
+        fail_msg: "{{ inventory_hostname }} has no ingest credentials; pass -e @file with alloy_loki_* and alloy_vm_*"
+      when: not ingest_env.stat.exists
+
+    - name: Read installed packages
+      ansible.builtin.package_facts:
+
+    - name: Decide whether alloy needs installing
+      ansible.builtin.set_fact:
+        alloy_install: "{{ (ansible_facts.packages['alloy'] | default([{}]) | first).version | default('') != alloy_version }}"
+
+  tasks:
+    - name: Fetch the Grafana signing key
+      ansible.builtin.get_url:
+        url: "{{ alloy_apt_key }}"
+        dest: /usr/share/keyrings/grafana.asc
+        mode: "0644"
+      when: alloy_install | bool
+
+    - name: Add the Grafana apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/grafana.asc] {{ alloy_apt_repo }} stable main"
+        filename: grafana
+        state: present
+      timeout: "{{ alloy_apt_timeout }}"
+      when: alloy_install | bool
+
+    - name: Install alloy
+      ansible.builtin.apt:
+        name: "alloy={{ alloy_version }}"
+        state: present
+        allow_change_held_packages: true
+        update_cache: true
+        cache_valid_time: 3600
+      timeout: "{{ alloy_apt_timeout }}"
+      when: alloy_install | bool
+
+    - name: Hold the alloy package
+      ansible.builtin.dpkg_selections:
+        name: alloy
+        selection: hold
+
+    - name: Install the ingest credentials
+      ansible.builtin.copy:
+        content: |
+          LOKI_AUTH_USERNAME={{ alloy_loki_username }}
+          LOKI_AUTH_PASSWORD={{ alloy_loki_password }}
+          VM_AUTH_USERNAME={{ alloy_vm_username }}
+          VM_AUTH_PASSWORD={{ alloy_vm_password }}
+        dest: /etc/alloy/ingest.env
+        owner: root
+        group: root
+        mode: "0600"
+      no_log: true
+      when: alloy_loki_password is defined
+      notify: Restart alloy
+
+    - name: Set the service arguments
+      ansible.builtin.copy:
+        content: |
+          CONFIG_FILE="/etc/alloy/config.alloy"
+          CUSTOM_ARGS="--server.http.listen-addr=127.0.0.1:12345"
+          RESTART_ON_UPGRADE=true
+        dest: /etc/default/alloy
+        mode: "0644"
+      notify: Restart alloy
+
+    - name: Create the service drop-in directory
+      ansible.builtin.file:
+        path: /etc/systemd/system/alloy.service.d
+        state: directory
+        mode: "0755"
+
+    # The alloy user reads the journal and every application log through one capability
+    # instead of joining each log's group or running as root.
+    - name: Confine the service and grant it read access to logs
+      ansible.builtin.copy:
+        content: |
+          [Service]
+          EnvironmentFile=/etc/alloy/ingest.env
+          AmbientCapabilities=CAP_DAC_READ_SEARCH
+          CapabilityBoundingSet=CAP_DAC_READ_SEARCH
+          NoNewPrivileges=yes
+          ProtectSystem=strict
+          ProtectHome=read-only
+          ReadWritePaths=/var/lib/alloy
+          PrivateTmp=yes
+        dest: /etc/systemd/system/alloy.service.d/override.conf
+        mode: "0644"
+      notify: Restart alloy
+
+    - name: Write the pipeline
+      ansible.builtin.copy:
+        content: |
+          // The host's journal, labelled like the cluster nodes' node/journal. Transient
+          // per-instance scopes collapse to their type so each login does not open a stream.
+          discovery.relabel "journal" {
+            targets = []
+            rule {
+              source_labels = ["__journal__systemd_unit"]
+              target_label  = "unit"
+            }
+            rule {
+              source_labels = ["unit"]
+              regex         = "([a-z-]+?)-[0-9a-f]{12,}\\.scope|(session)-[0-9]+\\.scope"
+              target_label  = "unit"
+              replacement   = "$1$2.scope"
+            }
+            rule {
+              source_labels = ["__journal__transport"]
+              target_label  = "transport"
+            }
+            rule {
+              source_labels = ["__journal_priority_keyword"]
+              target_label  = "level"
+            }
+          }
+
+          loki.source.journal "host" {
+            forward_to    = [loki.write.k8s.receiver]
+            relabel_rules = discovery.relabel.journal.rules
+            labels        = { job = "host/journal" }
+            max_age       = "1h"
+          }
+          {% if alloy_log_paths | default([]) | length > 0 %}
+
+          local.file_match "host" {
+            path_targets = [
+          {% for p in alloy_log_paths %}
+              { __path__ = "{{ p }}", job = "host-logs" },
+          {% endfor %}
+            ]
+          }
+
+          loki.source.file "host" {
+            targets    = local.file_match.host.targets
+            forward_to = [loki.write.k8s.receiver]
+          }
+          {% endif %}
+
+          loki.write "k8s" {
+            endpoint {
+              url            = "{{ alloy_loki_url }}"
+              batch_size     = "1MiB"
+              batch_wait     = "5s"
+              remote_timeout = "10s"
+              basic_auth {
+                username = sys.env("LOKI_AUTH_USERNAME")
+                password = sys.env("LOKI_AUTH_PASSWORD")
+              }
+            }
+            external_labels = {
+              host = "{{ inventory_hostname }}",
+              role = "{{ alloy_role | default('host') }}",
+              env  = "{{ alloy_env }}",
+            }
+          }
+
+          prometheus.exporter.unix "host" { }
+
+          prometheus.scrape "node" {
+            targets         = prometheus.exporter.unix.host.targets
+            scrape_interval = "30s"
+            scrape_timeout  = "10s"
+            forward_to      = [prometheus.relabel.instance.receiver]
+          }
+
+          prometheus.relabel "instance" {
+            rule {
+              target_label = "instance"
+              replacement  = "{{ inventory_hostname }}"
+            }
+            rule {
+              target_label = "job"
+              replacement  = "node_exporter"
+            }
+            forward_to = [prometheus.remote_write.vm.receiver]
+          }
+
+          prometheus.remote_write "vm" {
+            endpoint {
+              url            = "{{ alloy_vm_url }}"
+              remote_timeout = "10s"
+              basic_auth {
+                username = sys.env("VM_AUTH_USERNAME")
+                password = sys.env("VM_AUTH_PASSWORD")
+              }
+            }
+            external_labels = {
+              host = "{{ inventory_hostname }}",
+              role = "{{ alloy_role | default('host') }}",
+              env  = "{{ alloy_env }}",
+            }
+          }
+        dest: /etc/alloy/config.alloy
+        owner: root
+        group: alloy
+        mode: "0640"
+        validate: /usr/bin/alloy fmt %s
+      notify: Restart alloy
+
+    - name: Enable and start alloy
+      ansible.builtin.systemd_service:
+        name: alloy
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: Apply pending configuration changes
+      ansible.builtin.meta: flush_handlers
+
+    - name: Wait until alloy has loaded its configuration
+      ansible.builtin.uri:
+        url: http://127.0.0.1:12345/-/ready
+      register: alloy_ready
+      until: alloy_ready.status == 200
+      retries: 12
+      delay: 5
+
+  handlers:
+    - name: Restart alloy
+      ansible.builtin.systemd_service:
+        name: alloy
+        state: restarted
+        daemon_reload: true

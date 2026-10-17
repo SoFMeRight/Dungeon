@@ -1,2 +1,6 @@
 ---
 wazuh_tenant: platform
+alloy_role: pve
+alloy_log_paths:
+  - /var/log/pveproxy/access.log
+  - /var/log/pve-firewall.log

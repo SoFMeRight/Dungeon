@@ -1,2 +1,8 @@
 ---
 wazuh_tenant: platform
+alloy_role: pbx
+alloy_log_paths:
+  - /var/log/freeswitch/freeswitch.log
+  - /var/log/nginx/*.log
+  - /var/log/fail2ban.log
+  - /var/log/postgresql/*.log

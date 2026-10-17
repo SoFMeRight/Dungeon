@@ -1,0 +1,15 @@
+---
+# Grafana Alloy on hosts that run no containers (Proxmox, PBS, appliances): the host's
+# journal and its application logs to Loki, host metrics to VictoriaMetrics. Labelled
+# like the docker hosts (host / role / env, job="host/journal", job="node_exporter").
+alloy_version: "1.20.1"
+alloy_apt_repo: https://apt.grafana.com
+alloy_apt_key: https://apt.grafana.com/gpg.key
+alloy_apt_timeout: 600
+
+alloy_loki_url: https://logging.pcfae.com/loki/api/v1/push
+alloy_vm_url: https://metrics.pcfae.com/insert/0/prometheus/api/v1/write
+alloy_env: prod
+
+# `alloy_role` and `alloy_log_paths` belong to group_vars/host_vars (play vars would
+# override them there). Tail a path only for logs the journal does not already carry.

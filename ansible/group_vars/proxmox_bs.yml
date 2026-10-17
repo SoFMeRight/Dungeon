@@ -1,2 +1,6 @@
 ---
 wazuh_tenant: platform
+alloy_role: pbs
+alloy_log_paths:
+  - /var/log/proxmox-backup/api/access.log
+  - /var/log/proxmox-backup/api/auth.log
