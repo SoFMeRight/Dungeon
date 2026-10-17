@@ -15,7 +15,7 @@ spec:
           image: ghcr.io/homelabhd/ansible:v2.21.6
           env:
             - name: TENANT_GROUPS
-              value: prplanit,arbitorium,optcp
+              value: platform,prplanit,arbitorium
       volumes:
         - name: security-config
           configMap:
