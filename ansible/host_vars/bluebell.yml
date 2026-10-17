@@ -1,5 +1,5 @@
 ---
-wazuh_tenant: platform
+wazuh_tenant: optcp
 alloy_role: pbx
 alloy_log_paths:
   - /var/log/freeswitch/freeswitch.log

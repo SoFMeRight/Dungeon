@@ -171,6 +171,31 @@
         status_code: [200, 201]
       loop: "{{ tenant_groups | product(['developer', 'user']) | list }}"
 
+    # A tenant dropped from TENANT_GROUPS keeps granting its scope until its roles go; the
+    # siem-group-* names are this job's own, so anything else under that prefix is stale.
+    - name: "indexer: read roles"
+      ansible.builtin.uri:
+        url: "{{ sec }}/roles"
+        client_cert: "{{ cert }}"
+        client_key: "{{ key }}"
+        ca_path: "{{ ca }}"
+      register: indexer_roles
+
+    - name: "indexer: remove dropped tenants' mappings, then roles"
+      ansible.builtin.uri:
+        url: "{{ sec }}/{{ item.0 }}/{{ item.1 }}"
+        method: DELETE
+        client_cert: "{{ cert }}"
+        client_key: "{{ key }}"
+        ca_path: "{{ ca }}"
+        status_code: [200, 404]
+      vars:
+        desired: "{{ tenant_groups | product(['developer', 'user']) | map('join', '-') | map('regex_replace', '^', 'siem-group-') | list }}"
+        stale: "{{ indexer_roles.json.keys() | select('match', '^siem-group-.+-(developer|user)$') | reject('in', desired) | list }}"
+      loop: "{{ ['rolesmapping', 'roles'] | product(stale) | list }}"
+      loop_control:
+        label: "{{ item.0 }}/{{ item.1 }}"
+
     - name: "indexer: remove the demo internal users"
       ansible.builtin.uri:
         url: "{{ sec }}/internalusers/{{ item }}"
@@ -414,6 +439,26 @@
       loop_control:
         label: "{{ item.name }} -> {{ item.role }}"
       when: rule.id not in role.rules
+
+    - name: "api: remove dropped tenants' rules, roles and policies"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/{{ item.kind }}?{{ item.param }}={{ item.ids | join(',') }}"
+        method: DELETE
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      loop:
+        - kind: rules
+          param: rule_ids
+          ids: "{{ api_reread.results[0].json.data.affected_items | selectattr('name', 'match', '^siem-group-') | rejectattr('name', 'in', api_rules | map(attribute='name') | list) | map(attribute='id') | list }}"
+        - kind: roles
+          param: role_ids
+          ids: "{{ api_reread.results[1].json.data.affected_items | selectattr('name', 'match', '^siem-group-') | rejectattr('name', 'in', api_roles | map(attribute='name') | list) | map(attribute='id') | list }}"
+        - kind: policies
+          param: policy_ids
+          ids: "{{ api_policies.json.data.affected_items | selectattr('name', 'match', '^siem-group-') | rejectattr('name', 'in', tenant_policies | map(attribute='name') | list) | map(attribute='id') | list }}"
+      loop_control:
+        label: "{{ item.kind }}: {{ item.ids }}"
+      when: item.ids | length > 0
 
     # ============================================================ tenant agent groups
     - name: "groups: read"

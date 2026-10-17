@@ -1,5 +1,5 @@
 ---
-wazuh_tenant: platform
+wazuh_tenant: optcp
 # Domain controllers have no local accounts; this domain account is a domain administrator,
 # so it never shares the workstations' credential.
 ansible_user: svc-ansible-dc
