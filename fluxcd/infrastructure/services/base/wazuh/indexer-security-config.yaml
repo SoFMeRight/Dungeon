@@ -147,8 +147,7 @@ data:
               challenge: false
               config:
                 subject_key: preferred_username
-                # No roles_key: Zitadel's roles claim is a nested object, not the flat
-                # array OpenSearch requires; authorization is by roles_mapping.
+                roles_key: roles
                 openid_connect_url: https://sso.prplanit.com/.well-known/openid-configuration
             authentication_backend:
               type: noop

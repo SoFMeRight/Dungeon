@@ -1,0 +1,468 @@
+# Wazuh access control and tenancy, applied as ensure-state over the indexer security REST
+# API (admin client certificate) and the Wazuh API. Rerunning converges; nothing here is
+# created twice. Authority comes from the flat `roles` claim, mapped with the house role
+# ladder plus tenant scope keys:
+#   operator   indexer all_access          API administrator
+#   admin      all wazuh-* data, dashboards API agents/groups/rules/config, no security
+#   developer  dashboards; data only via a scope key
+#   user       read-only dashboards; data only via a scope key
+#   group-<g>  with developer or user: alerts/states of tenant <g> only, and API read of
+#              that agent group's agents and inventory
+- name: Configure wazuh access and tenancy
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    indexer_url: "{{ lookup('ansible.builtin.env', 'INDEXER_URL') }}"
+    api_url: "{{ lookup('ansible.builtin.env', 'API_URL') }}"
+    api_user: "{{ lookup('ansible.builtin.env', 'API_USERNAME') }}"
+    api_password: "{{ lookup('ansible.builtin.env', 'API_PASSWORD') }}"
+    tenant_groups: "{{ lookup('ansible.builtin.env', 'TENANT_GROUPS').split(',') | map('trim') | reject('equalto', '') | list }}"
+    sec: "{{ indexer_url }}/_plugins/_security/api"
+    cert: /certs/tls.crt
+    key: /certs/tls.key
+    ca: /certs/ca.crt
+
+    # Internal service users keep full access through this backend role instead of the
+    # ladder's `admin`, which now means wazuh admin, not superuser.
+    internal_admin_role: internal-admin
+    demo_users: [kibanaro, readall, logstash, snapshotrestore]
+
+    siem_admin_role:
+      cluster_permissions: [cluster_composite_ops_ro, cluster_monitor]
+      index_permissions:
+        - index_patterns: ["wazuh-*"]
+          allowed_actions: [read, indices_monitor]
+
+    # API: administrator minus security/user management and event ingestion.
+    siem_admin_api_policies:
+      - agents_all_resourceless
+      - agents_all_agents
+      - agents_all_groups
+      - agents_commands_agents
+      - ciscat_read_ciscat
+      - decoders_read_decoders
+      - decoders_all_files
+      - decoders_all_resourceless
+      - mitre_read_mitre
+      - lists_read_rules
+      - lists_all_rules
+      - lists_all_resourceless
+      - rootcheck_read_rootcheck
+      - rootcheck_all_rootcheck
+      - rules_read_rules
+      - rules_all_files
+      - rules_all_resourceless
+      - sca_read_sca
+      - syscheck_read_syscheck
+      - syscheck_all_syscheck
+      - syscollector_read_syscollector
+      - cluster_all_resourceless
+      - cluster_all_nodes
+      - cluster_read_resourceless
+      - cluster_read_nodes
+      - logtest_all_logtest
+      - task_status_task
+    # Read-only context every scoped role needs to render agent and alert pages.
+    scoped_shared_api_policies:
+      - mitre_read_mitre
+      - rules_read_rules
+      - decoders_read_decoders
+      - lists_read_rules
+      - cluster_read_resourceless
+      - cluster_read_nodes
+
+  tasks:
+    # ============================================================ indexer security
+    - name: "indexer: siem-admin role"
+      ansible.builtin.uri:
+        url: "{{ sec }}/roles/siem-admin"
+        method: PUT
+        client_cert: "{{ cert }}"
+        client_key: "{{ key }}"
+        ca_path: "{{ ca }}"
+        body_format: json
+        body: "{{ siem_admin_role }}"
+        status_code: [200, 201]
+
+    - name: "indexer: tenant scope roles (one per ladder rung that may hold a scope)"
+      ansible.builtin.uri:
+        url: "{{ sec }}/roles/siem-group-{{ item.0 }}-{{ item.1 }}"
+        method: PUT
+        client_cert: "{{ cert }}"
+        client_key: "{{ key }}"
+        ca_path: "{{ ca }}"
+        body_format: json
+        body:
+          cluster_permissions: [cluster_composite_ops_ro]
+          index_permissions:
+            - index_patterns: ["wazuh-alerts-*", "wazuh-states-*", "wazuh-monitoring-*"]
+              allowed_actions: [read]
+              dls: "{{ {'bool': {'minimum_should_match': 1, 'should': [{'term': {'agent.labels.tenant': item.0}}, {'term': {'agent.groups': item.0}}, {'term': {'group': item.0}}]}} | to_json }}"
+        status_code: [200, 201]
+      loop: "{{ tenant_groups | product(['developer', 'user']) | list }}"
+
+    # Keep internal service users (filebeat, the dashboard's plugin checks) superuser
+    # through the transition: map internal-admin first, then move admin onto it, then
+    # drop the temporary user grant.
+    - name: "indexer: all_access during the internal-admin move"
+      ansible.builtin.uri:
+        url: "{{ sec }}/rolesmapping/all_access"
+        method: PUT
+        client_cert: "{{ cert }}"
+        client_key: "{{ key }}"
+        ca_path: "{{ ca }}"
+        body_format: json
+        body:
+          backend_roles: [operator, "{{ internal_admin_role }}"]
+          users: [admin]
+          hosts: []
+        status_code: [200, 201]
+
+    - name: "indexer: move the internal admin user onto internal-admin"
+      ansible.builtin.uri:
+        url: "{{ sec }}/internalusers/admin"
+        method: PATCH
+        client_cert: "{{ cert }}"
+        client_key: "{{ key }}"
+        ca_path: "{{ ca }}"
+        body_format: json
+        body:
+          - op: replace
+            path: /backend_roles
+            value: ["{{ internal_admin_role }}"]
+        status_code: [200]
+
+    - name: "indexer: role mappings"
+      ansible.builtin.uri:
+        url: "{{ sec }}/rolesmapping/{{ item.role }}"
+        method: PUT
+        client_cert: "{{ cert }}"
+        client_key: "{{ key }}"
+        ca_path: "{{ ca }}"
+        body_format: json
+        body: "{{ item.mapping }}"
+        status_code: [200, 201]
+      loop:
+        - role: all_access
+          mapping: {backend_roles: [operator, "{{ internal_admin_role }}"], users: [], hosts: []}
+        - role: siem-admin
+          mapping: {backend_roles: [admin]}
+        - role: kibana_user
+          mapping: {backend_roles: [admin, developer, user]}
+        - role: kibana_read_only
+          mapping: {backend_roles: [user]}
+        - role: readall
+          mapping: {backend_roles: []}
+      loop_control:
+        label: "{{ item.role }}"
+
+    - name: "indexer: tenant scope mappings (rung AND scope key)"
+      ansible.builtin.uri:
+        url: "{{ sec }}/rolesmapping/siem-group-{{ item.0 }}-{{ item.1 }}"
+        method: PUT
+        client_cert: "{{ cert }}"
+        client_key: "{{ key }}"
+        ca_path: "{{ ca }}"
+        body_format: json
+        body:
+          and_backend_roles: ["{{ item.1 }}", "group-{{ item.0 }}"]
+        status_code: [200, 201]
+      loop: "{{ tenant_groups | product(['developer', 'user']) | list }}"
+
+    - name: "indexer: remove the demo internal users"
+      ansible.builtin.uri:
+        url: "{{ sec }}/internalusers/{{ item }}"
+        method: DELETE
+        client_cert: "{{ cert }}"
+        client_key: "{{ key }}"
+        ca_path: "{{ ca }}"
+        status_code: [200, 404]
+      loop: "{{ demo_users }}"
+
+    # ================================================================== Wazuh API
+    - name: "api: authenticate"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/user/authenticate?raw=true"
+        method: POST
+        url_username: "{{ api_user }}"
+        url_password: "{{ api_password }}"
+        force_basic_auth: true
+        validate_certs: false
+        return_content: true
+      register: api_auth
+      no_log: true
+
+    - name: "api: request headers"
+      ansible.builtin.set_fact:
+        api_headers:
+          Authorization: "Bearer {{ api_auth.content | trim }}"
+      no_log: true
+
+    - name: "api: read users"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/users?limit=500"
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      register: api_users
+
+    # The dashboard calls the API as the signed-in user (run_as), so API scoping follows
+    # the same roles as the indexer.
+    - name: "api: allow run_as for the dashboard's API user"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/users/{{ item.id }}/run_as?allow_run_as=true"
+        method: PUT
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      loop: "{{ api_users.json.data.affected_items | selectattr('username', 'equalto', api_user) | rejectattr('allow_run_as') | list }}"
+      loop_control:
+        label: "{{ item.username }}"
+
+    - name: "api: read policies"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/policies?limit=500"
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      register: api_policies
+
+    - name: "api: desired tenant policies"
+      ansible.builtin.set_fact:
+        tenant_policies: "{{ tenant_policies | default([]) + [
+          {'name': 'siem-group-' ~ item ~ '-agents', 'policy': {'actions': ['agent:read'], 'resources': ['agent:group:' ~ item], 'effect': 'allow'}},
+          {'name': 'siem-group-' ~ item ~ '-group', 'policy': {'actions': ['group:read'], 'resources': ['group:id:' ~ item], 'effect': 'allow'}},
+          {'name': 'siem-group-' ~ item ~ '-inventory', 'policy': {'actions': ['syscollector:read', 'sca:read', 'syscheck:read', 'rootcheck:read', 'ciscat:read'], 'resources': ['agent:group:' ~ item], 'effect': 'allow'}}
+          ] }}"
+      loop: "{{ tenant_groups }}"
+
+    - name: "api: create missing tenant policies"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/policies"
+        method: POST
+        headers: "{{ api_headers }}"
+        validate_certs: false
+        body_format: json
+        body: "{{ item }}"
+      loop: "{{ tenant_policies | rejectattr('name', 'in', api_policies.json.data.affected_items | map(attribute='name') | list) | list }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: "api: update drifted tenant policies"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/policies/{{ (api_policies.json.data.affected_items | selectattr('name', 'equalto', item.name) | first).id }}"
+        method: PUT
+        headers: "{{ api_headers }}"
+        validate_certs: false
+        body_format: json
+        body:
+          policy: "{{ item.policy }}"
+      loop: "{{ tenant_policies }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when:
+        - item.name in (api_policies.json.data.affected_items | map(attribute='name') | list)
+        - (api_policies.json.data.affected_items | selectattr('name', 'equalto', item.name) | first).policy != item.policy
+
+    - name: "api: re-read policies"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/policies?limit=500"
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      register: api_policies
+
+    - name: "api: policy ids by name"
+      ansible.builtin.set_fact:
+        policy_id: "{{ api_policies.json.data.affected_items | items2dict(key_name='name', value_name='id') }}"
+
+    - name: "api: desired roles and rules"
+      ansible.builtin.set_fact:
+        api_roles: "{{ [
+          {'name': 'siem-admin', 'policies': siem_admin_api_policies,
+           'rule': {'MATCH': {'backend_roles': ['admin']}}}
+          ] + tenant_api_roles }}"
+      vars:
+        tenant_api_roles: >-
+          {%- set out = [] -%}
+          {%- for g in tenant_groups -%}
+          {%- set _ = out.append({'name': 'siem-group-' ~ g,
+                'policies': ['siem-group-' ~ g ~ '-agents', 'siem-group-' ~ g ~ '-group', 'siem-group-' ~ g ~ '-inventory'] + scoped_shared_api_policies,
+                'rule': {'AND': [{'MATCH': {'backend_roles': ['group-' ~ g]}},
+                                 {'OR': [{'MATCH': {'backend_roles': ['developer']}}, {'MATCH': {'backend_roles': ['user']}}]}]}}) -%}
+          {%- endfor -%}
+          {{ out }}
+
+    - name: "api: read roles"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/roles?limit=500"
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      register: api_roles_live
+
+    - name: "api: create missing roles"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/roles"
+        method: POST
+        headers: "{{ api_headers }}"
+        validate_certs: false
+        body_format: json
+        body:
+          name: "{{ item.name }}"
+      loop: "{{ api_roles | rejectattr('name', 'in', api_roles_live.json.data.affected_items | map(attribute='name') | list) | list }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: "api: re-read roles"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/roles?limit=500"
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      register: api_roles_live
+
+    - name: "api: add missing role policies"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/roles/{{ live.id }}/policies?policy_ids={{ missing | join(',') }}"
+        method: POST
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      vars:
+        live: "{{ api_roles_live.json.data.affected_items | selectattr('name', 'equalto', item.name) | first }}"
+        missing: "{{ item.policies | map('extract', policy_id) | difference(live.policies) | list }}"
+      loop: "{{ api_roles }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: missing | length > 0
+
+    - name: "api: remove extra role policies"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/roles/{{ live.id }}/policies?policy_ids={{ extra | join(',') }}"
+        method: DELETE
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      vars:
+        live: "{{ api_roles_live.json.data.affected_items | selectattr('name', 'equalto', item.name) | first }}"
+        extra: "{{ live.policies | difference(item.policies | map('extract', policy_id) | list) | list }}"
+      loop: "{{ api_roles }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: extra | length > 0
+
+    # Each role above gets a rule of the same name; operator maps to the built-in administrator.
+    - name: "api: desired rules"
+      ansible.builtin.set_fact:
+        api_rules: >-
+          {%- set out = [{'name': 'siem-operator', 'role': 'administrator', 'rule': {'MATCH': {'backend_roles': ['operator']}}}] -%}
+          {%- for r in api_roles -%}
+          {%- set _ = out.append({'name': r.name, 'role': r.name, 'rule': r.rule}) -%}
+          {%- endfor -%}
+          {{ out }}
+
+    - name: "api: read rules"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/rules?limit=500"
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      register: api_rules_live
+
+    - name: "api: create missing rules"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/rules"
+        method: POST
+        headers: "{{ api_headers }}"
+        validate_certs: false
+        body_format: json
+        body:
+          name: "{{ item.name }}"
+          rule: "{{ item.rule }}"
+      loop: "{{ api_rules | rejectattr('name', 'in', api_rules_live.json.data.affected_items | map(attribute='name') | list) | list }}"
+      loop_control:
+        label: "{{ item.name }}"
+
+    - name: "api: update drifted rules"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/rules/{{ live.id }}"
+        method: PUT
+        headers: "{{ api_headers }}"
+        validate_certs: false
+        body_format: json
+        body:
+          rule: "{{ item.rule }}"
+      vars:
+        live: "{{ api_rules_live.json.data.affected_items | selectattr('name', 'equalto', item.name) | first | default({}) }}"
+      loop: "{{ api_rules }}"
+      loop_control:
+        label: "{{ item.name }}"
+      when: live | length > 0 and live.rule != item.rule
+
+    - name: "api: re-read rules and roles"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/{{ item }}?limit=500"
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      register: api_reread
+      loop: [rules, roles]
+
+    - name: "api: link each rule to its role"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/security/roles/{{ role.id }}/rules?rule_ids={{ rule.id }}"
+        method: POST
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      vars:
+        rule: "{{ api_reread.results[0].json.data.affected_items | selectattr('name', 'equalto', item.name) | first }}"
+        role: "{{ api_reread.results[1].json.data.affected_items | selectattr('name', 'equalto', item.role) | first }}"
+      loop: "{{ api_rules }}"
+      loop_control:
+        label: "{{ item.name }} -> {{ item.role }}"
+      when: rule.id not in role.rules
+
+    # ============================================================ tenant agent groups
+    - name: "groups: read"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/groups?limit=500"
+        headers: "{{ api_headers }}"
+        validate_certs: false
+      register: api_groups
+
+    - name: "groups: create missing"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/groups"
+        method: POST
+        headers: "{{ api_headers }}"
+        validate_certs: false
+        body_format: json
+        body:
+          group_id: "{{ item }}"
+      loop: "{{ tenant_groups | difference(api_groups.json.data.affected_items | map(attribute='name') | list) }}"
+
+    - name: "groups: read shared agent.conf"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/groups/{{ item }}/files/agent.conf?raw=true"
+        headers: "{{ api_headers }}"
+        validate_certs: false
+        return_content: true
+        status_code: [200, 404]
+      register: group_conf
+      loop: "{{ tenant_groups }}"
+
+    # Every agent in the group stamps agent.labels.tenant on its events, which is what the
+    # indexer scope roles filter on.
+    - name: "groups: label agents with their tenant"
+      ansible.builtin.uri:
+        url: "{{ api_url }}/groups/{{ item.item }}/configuration"
+        method: PUT
+        headers:
+          Authorization: "{{ api_headers.Authorization }}"
+          Content-Type: application/xml
+        validate_certs: false
+        body: "{{ desired }}"
+      vars:
+        desired: |-
+          <agent_config>
+            <labels>
+              <label key="tenant">{{ item.item }}</label>
+            </labels>
+          </agent_config>
+      loop: "{{ group_conf.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      when: (item.content | default('') | trim) != desired

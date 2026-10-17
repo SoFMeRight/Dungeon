@@ -15,3 +15,10 @@ resources:
   - dashboard-service.yaml
   - dashboard-externalsecret.yaml
   - certificates.yaml
+  - configuration-job.yaml
+
+# Hash-suffixed so a playbook edit changes the Job template and Flux reruns it.
+configMapGenerator:
+  - name: wazuh-configuration-playbook
+    files:
+      - configuration-playbook.yml

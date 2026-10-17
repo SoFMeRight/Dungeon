@@ -1,0 +1,126 @@
+# The ONE post-bootstrap configuration Job for wazuh: access control and tenancy that live
+# in the running indexer's security index and the manager's API database, applied as
+# ensure-state steps so a change is a push and a fresh install converges identically.
+#   init  security-config: securityadmin uploads config.yml (authc, incl. the roles claim)
+#   main  configure: Ansible playbook (configuration-playbook.yml) over the indexer
+#         security REST API and the Wazuh API — roles, role mappings, internal users,
+#         API roles/rules/run_as, and the tenant agent groups.
+# The playbook ConfigMap is hash-suffixed, so editing it changes this Job's template and
+# Flux force-replaces the Job, which reruns it.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on change, not wedge
+  name: wazuh-configuration
+spec:
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 3
+  template:
+    metadata:
+      labels:
+        app: wazuh-configuration
+    spec:
+      serviceAccountName: wazuh-configuration
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: security-config
+          image: PLACEHOLDER_INDEXER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: JAVA_HOME
+              value: /usr/share/wazuh-indexer/jdk
+            - name: HOME
+              value: /tmp
+          command:
+            - /usr/share/wazuh-indexer/plugins/opensearch-security/tools/securityadmin.sh
+            - -f
+            - /seccfg/config.yml
+            - -t
+            - config
+            - -h
+            - wazuh-indexer
+            - -p
+            - "9200"
+            - -icl
+            - -cacert
+            - /certs/ca.crt
+            - -cert
+            - /certs/tls.crt
+            - -key
+            - /certs/tls.key
+          volumeMounts:
+            - name: security-config
+              mountPath: /seccfg
+              readOnly: true
+            - name: admin-certs
+              mountPath: /certs
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      containers:
+        - name: configure
+          image: PLACEHOLDER_ANSIBLE_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            # Ansible needs a writable HOME for its local tmp/control path.
+            - name: HOME
+              value: /tmp
+            - name: INDEXER_URL
+              value: https://wazuh-indexer:9200
+            - name: API_URL
+              value: https://wazuh-manager:55000
+            # Tenant agent groups, comma-separated: each gets an agent group whose agents
+            # carry agent.labels.tenant=<group>, an indexer scope and an API scope.
+            - name: TENANT_GROUPS
+              value: PLACEHOLDER_TENANT_GROUPS
+            - name: API_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-manager-secrets
+                  key: API_USERNAME
+            - name: API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: wazuh-manager-secrets
+                  key: API_PASSWORD
+          command: ["ansible-playbook", "-i", "localhost,", "/ansible/configuration-playbook.yml"]
+          volumeMounts:
+            - name: playbook
+              mountPath: /ansible
+              readOnly: true
+            - name: admin-certs
+              mountPath: /certs
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: playbook
+          configMap:
+            name: wazuh-configuration-playbook
+        - name: security-config
+          configMap:
+            name: PLACEHOLDER_INDEXER_SECURITY_CONFIG
+        - name: admin-certs
+          secret:
+            secretName: wazuh-admin-tls
+            defaultMode: 0440
+        - name: tmp
+          emptyDir: {}

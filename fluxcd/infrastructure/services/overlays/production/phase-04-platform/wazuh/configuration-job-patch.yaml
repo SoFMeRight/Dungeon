@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: wazuh-configuration
+spec:
+  template:
+    spec:
+      imagePullSecrets:
+        - name: cr-pcfae-admin-pull-secret
+      initContainers:
+        - name: security-config
+          image: docker.io/wazuh/wazuh-indexer:4.14.8
+      containers:
+        - name: configure
+          image: ghcr.io/homelabhd/ansible:v2.21.6
+          env:
+            - name: TENANT_GROUPS
+              value: prplanit,optcp
+      volumes:
+        - name: security-config
+          configMap:
+            name: wazuh-indexer-security-config

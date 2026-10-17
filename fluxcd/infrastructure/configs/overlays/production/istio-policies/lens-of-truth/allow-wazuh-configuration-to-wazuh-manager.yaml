@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-wazuh-configuration-to-wazuh-manager
+spec:
+  selector:
+    matchLabels:
+      app: wazuh-manager
+  action: ALLOW
+  rules:
+    # The wazuh-configuration Job applies roles, mappings and tenancy through the
+    # Wazuh API.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/lens-of-truth/sa/wazuh-configuration
+      to:
+        - operation:
+            ports: ["55000"]

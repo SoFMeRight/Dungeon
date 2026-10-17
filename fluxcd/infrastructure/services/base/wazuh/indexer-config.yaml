@@ -11,52 +11,17 @@ data:
 
     # Define your internal users here
 
-    ## Demo users
-
     admin:
       hash: "$2a$12$S9EjQJA4hj7w/bmgBKjgIey9vsu8eJHyB7hr2B42YUVSx0tdSPo5i"
       reserved: true
       backend_roles:
-      - "admin"
-      description: "Demo admin user"
+      - "internal-admin"
+      description: "Internal superuser for filebeat and the dashboard's plugin checks"
 
     kibanaserver:
       hash: "$2a$12$ufdDGUes2vhDChfis4SGqe9QzDz0iQGOFuTjwc5kN3.agJ8RvgDrG"
       reserved: true
-      description: "Demo kibanaserver user"
-
-    kibanaro:
-      hash: "$2a$12$JJSXNfTowz7Uu5ttXfeYpeYE0arACvcwlPBStB1F.MI7f0U9Z4DGC"
-      reserved: false
-      backend_roles:
-      - "kibanauser"
-      - "readall"
-      attributes:
-        attribute1: "value1"
-        attribute2: "value2"
-        attribute3: "value3"
-      description: "Demo kibanaro user"
-
-    logstash:
-      hash: "$2a$12$u1ShR4l4uBS3Uv59Pa2y5.1uQuZBrZtmNfqB3iM/.jL0XoV9sghS2"
-      reserved: false
-      backend_roles:
-      - "logstash"
-      description: "Demo logstash user"
-
-    readall:
-      hash: "$2a$12$ae4ycwzwvLtZxwZ82RmiEunBbIPiAmGZduBAjKN0TXdwQFtCwARz2"
-      reserved: false
-      backend_roles:
-      - "readall"
-      description: "Demo readall user"
-
-    snapshotrestore:
-      hash: "$2y$12$DpwmetHKwgYnorbgdvORCenv4NAK8cPUg8AI6pxLCuWf/ALc0.v7W"
-      reserved: false
-      backend_roles:
-      - "snapshotrestore"
-      description: "Demo snapshotrestore user"
+      description: "OpenSearch Dashboards server user"
   wazuh.indexer.yml: |-
     network.host: "0.0.0.0"
     node.name: "wazuh.indexer"

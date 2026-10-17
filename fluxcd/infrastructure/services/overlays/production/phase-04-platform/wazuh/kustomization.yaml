@@ -15,6 +15,7 @@ patches:
   - path: manager-externalsecret-patch.yaml
   - path: manager-authd-externalsecret-patch.yaml
   - path: manager-certificate-patch.yaml
+  - path: configuration-job-patch.yaml
   - path: dashboard-externalsecret-patch.yaml
   - path: service-wazuh-dashboard-ingress-patch.yaml
     target:
