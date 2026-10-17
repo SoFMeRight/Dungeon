@@ -465,4 +465,5 @@
       loop: "{{ group_conf.results }}"
       loop_control:
         label: "{{ item.item }}"
-      when: (item.content | default('') | trim) != desired
+      # The API stores the file re-indented, so compare with whitespace removed.
+      when: (item.content | default('') | regex_replace('\\s+', '')) != (desired | regex_replace('\\s+', ''))
