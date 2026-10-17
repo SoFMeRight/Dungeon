@@ -746,39 +746,6 @@ data:
       scrape_timeout  = "10s"
     }
 
-    // Lighthouse Docker host exporters (static targets)
-    discovery.relabel "lighthouse_exporters" {
-      targets = [
-        {
-          __address__ = "10.55.6.137:9100",
-          job         = "node-exporter-lighthouse",
-          instance    = "lighthouse",
-        },
-        {
-          __address__ = "10.55.6.137:8098",
-          job         = "cadvisor-lighthouse",
-          instance    = "lighthouse",
-        },
-        {
-          __address__ = "10.55.6.137:9795",
-          job         = "eaton-ups-exporter",
-          instance    = "lighthouse",
-        },
-      ]
-    }
-
-    prometheus.scrape "lighthouse_exporters" {
-      targets    = discovery.relabel.lighthouse_exporters.output
-      forward_to = [prometheus.relabel.drop_high_cardinality.receiver]
-
-      clustering {
-        enabled = true
-      }
-
-      scrape_interval = "30s"
-      scrape_timeout  = "10s"
-    }
-
     // Proxmox VE exporter (multi-target pattern)
     // The in-cluster PVE exporter is a multi-target exporter: Alloy passes
     // each Proxmox host as ?target= param, exporter reaches out to PVE API.

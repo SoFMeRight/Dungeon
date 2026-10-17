@@ -216,26 +216,3 @@ data:
         }
       }
     }
-
-    // Remote scrape targets - Placeholder (override in overlay)
-    discovery.relabel "lighthouse_exporters" {
-      targets = [
-        {
-          __address__ = "PLACEHOLDER_LIGHTHOUSE_IP:9100",
-          job         = "node-exporter-lighthouse",
-          instance    = "lighthouse",
-        },
-      ]
-    }
-
-    prometheus.scrape "lighthouse_exporters" {
-      targets    = discovery.relabel.lighthouse_exporters.output
-      forward_to = [prometheus.remote_write.default.receiver]
-
-      clustering {
-        enabled = true
-      }
-
-      scrape_interval = "30s"
-      scrape_timeout  = "10s"
-    }
