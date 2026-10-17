@@ -2,7 +2,7 @@
 # Grafana Alloy on hosts that run no containers (Proxmox, PBS, appliances): the host's
 # journal and its application logs to Loki, host metrics to VictoriaMetrics. Labelled
 # like the docker hosts (host / role / env, job="host/journal", job="node_exporter").
-alloy_version: "1.20.1"
+alloy_version: "1.20.1-1"
 alloy_apt_repo: https://apt.grafana.com
 alloy_apt_key: https://apt.grafana.com/gpg.key
 alloy_apt_timeout: 600

@@ -7,6 +7,9 @@
 - name: Ad Arbitorium 🔐 - GitOps - Services - Install Grafana Alloy for host logs and metrics
   become: true
   hosts: all
+  # One host at a time: an install on every hypervisor at once stalled their shared root
+  # disks long enough for the HA watchdog to fence one.
+  serial: 1
   vars_files:
     - ../vars/alloy-host.yml
 
@@ -24,12 +27,25 @@
         fail_msg: "{{ inventory_hostname }} has no ingest credentials; pass -e @file with alloy_loki_* and alloy_vm_*"
       when: not ingest_env.stat.exists
 
-    - name: Read installed packages
-      ansible.builtin.package_facts:
+    # dpkg-query, not package_facts: a half-installed package still reports its version.
+    - name: Read the installed alloy package
+      ansible.builtin.command: dpkg-query -W -f='${Status} ${Version}' alloy
+      register: alloy_pkg
+      changed_when: false
+      failed_when: false
 
     - name: Decide whether alloy needs installing
       ansible.builtin.set_fact:
-        alloy_install: "{{ (ansible_facts.packages['alloy'] | default([{}]) | first).version | default('') != alloy_version }}"
+        alloy_install: "{{ alloy_pkg.stdout != 'install ok installed ' ~ alloy_version and alloy_pkg.stdout != 'hold ok installed ' ~ alloy_version }}"
+
+    - name: Read whether this host is a Proxmox cluster member
+      ansible.builtin.stat:
+        path: /etc/pve/corosync.conf
+      register: pve_cluster
+
+    - name: Wait until the Proxmox cluster and its Ceph are settled
+      ansible.builtin.include_tasks: ../tasks/gate-proxmox-quorum.yml
+      when: pve_cluster.stat.exists
 
   tasks:
     - name: Fetch the Grafana signing key
@@ -52,6 +68,9 @@
         name: "alloy={{ alloy_version }}"
         state: present
         allow_change_held_packages: true
+        # Unpacking without a per-file fsync keeps the write burst off ceph-mon and pmxcfs,
+        # which share the hypervisor's root disk.
+        dpkg_options: force-confdef,force-confold,force-unsafe-io
         update_cache: true
         cache_valid_time: 3600
       timeout: "{{ alloy_apt_timeout }}"
@@ -238,6 +257,10 @@
       until: alloy_ready.status == 200
       retries: 12
       delay: 5
+
+    - name: Wait until the Proxmox cluster and its Ceph are settled before the next host
+      ansible.builtin.include_tasks: ../tasks/gate-proxmox-quorum.yml
+      when: pve_cluster.stat.exists
 
   handlers:
     - name: Restart alloy
