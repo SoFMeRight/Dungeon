@@ -26,6 +26,15 @@
         fail_msg: "{{ inventory_hostname }} is not enrolled; pass -e wazuh_enrollment_password=..."
       when: not (client_keys.stat.exists and client_keys.stat.size > 0)
 
+    # Installing touches the apt proxy and the Wazuh repo; a host already on the pinned
+    # version skips all of it, so a routine converge needs nothing but SSH.
+    - name: Read installed packages
+      ansible.builtin.package_facts:
+
+    - name: Decide whether the agent needs installing
+      ansible.builtin.set_fact:
+        wazuh_agent_install: "{{ (ansible_facts.packages['wazuh-agent'] | default([{}]) | first).version | default('') != wazuh_agent_version }}"
+
   tasks:
     - name: Install apt prerequisites
       ansible.builtin.apt:
@@ -34,12 +43,14 @@
         update_cache: true
         cache_valid_time: 3600
       timeout: "{{ wazuh_apt_timeout }}"
+      when: wazuh_agent_install | bool
 
     - name: Fetch the Wazuh signing key
       ansible.builtin.get_url:
         url: "{{ wazuh_apt_key }}"
         dest: /usr/share/keyrings/wazuh.asc
         mode: "0644"
+      when: wazuh_agent_install | bool
 
     - name: Add the Wazuh apt repository
       ansible.builtin.apt_repository:
@@ -47,6 +58,7 @@
         filename: wazuh
         state: present
       timeout: "{{ wazuh_apt_timeout }}"
+      when: wazuh_agent_install | bool
 
     - name: Install the agent at the manager's version
       ansible.builtin.apt:
@@ -56,6 +68,7 @@
         update_cache: true
         cache_valid_time: 3600
       timeout: "{{ wazuh_apt_timeout }}"
+      when: wazuh_agent_install | bool
 
     # The manager drives agent upgrades; an unattended apt upgrade must not move the agent
     # past it.
