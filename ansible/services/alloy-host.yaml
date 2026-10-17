@@ -195,7 +195,7 @@
               }
             }
             external_labels = {
-              host = "{{ inventory_hostname }}",
+              host = "{{ ansible_facts['hostname'] }}",
               role = "{{ alloy_role | default('host') }}",
               env  = "{{ alloy_env }}",
             }
@@ -213,7 +213,7 @@
           prometheus.relabel "instance" {
             rule {
               target_label = "instance"
-              replacement  = "{{ inventory_hostname }}"
+              replacement  = "{{ ansible_facts['hostname'] }}"
             }
             rule {
               target_label = "job"
@@ -232,7 +232,7 @@
               }
             }
             external_labels = {
-              host = "{{ inventory_hostname }}",
+              host = "{{ ansible_facts['hostname'] }}",
               role = "{{ alloy_role | default('host') }}",
               env  = "{{ alloy_env }}",
             }
