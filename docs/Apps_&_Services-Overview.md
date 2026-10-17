@@ -797,7 +797,7 @@
 
 **Ark — 4 components** — Mixed — 
 - Namespace: shooting-gallery
-- Replicas: 2/4
+- Replicas: 3/4
 - Components:
   - ark-sa-tmc-admin-list-server (Deployment)
   - ark-sa-tmc-theisland (StatefulSet)
@@ -1212,7 +1212,7 @@
 
 </details>
 
-## Platform Components (49)
+## Platform Components (50)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
@@ -1230,6 +1230,7 @@
 | Reflector | gerudo-crest | ✅ |
 | Reloader | gerudo-crest | ✅ |
 | Alloy | lakitu | ✅ |
+| Alloy Syslog | lakitu | ✅ |
 | Graphite Exporter Truenas | gossip-stone | ✅ |
 | Kube State Metrics | gossip-stone | ✅ |
 | Netconsole Collector | lakitu | ✅ |
@@ -1260,7 +1261,7 @@
 | Csi Driver Smb (3 components) | gorons-bracelet | ✅ |
 | Gorons Bracelet.cephfs.csi.ceph.com (2 components) | gorons-bracelet | ✅ |
 | Gorons Bracelet.rbd.csi.ceph.com (2 components) | gorons-bracelet | ✅ |
-| Gpu Operator (11 components) | gorons-bracelet | ⚠️ |
+| Gpu Operator (11 components) | gorons-bracelet | ✅ |
 | Mariadb Operator (3 components) | gorons-bracelet | ✅ |
 | Plugin Barman Cloud | gorons-bracelet | ✅ |
 | Rbd Toolbox | gorons-bracelet | ✅ |
@@ -1324,6 +1325,10 @@
 **Alloy** — DaemonSet — 
 - Namespace: lakitu
 - Replicas: 10/10
+
+**Alloy Syslog** — Deployment — v1.20.1
+- Namespace: lakitu
+- Replicas: 2/2
 
 **Graphite Exporter Truenas** — Deployment — v0.17.0
 - Namespace: gossip-stone
@@ -1447,7 +1452,7 @@
 
 **Gpu Operator** — Mixed — v26.7.0
 - Namespace: gorons-bracelet
-- Replicas: 24/25
+- Replicas: 25/25
 
 **Mariadb Operator** — Deployment — 26.10.1
 - Namespace: gorons-bracelet
