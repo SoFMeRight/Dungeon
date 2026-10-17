@@ -335,7 +335,7 @@ data:
 
       <cluster>
         <name>wazuh</name>
-        <node_name>node01</node_name>
+        <node_name>wazuh-manager-0</node_name>
         <node_type>master</node_type>
         <key>aa093264ef885029653eea20dfcf51ae</key>
         <port>1516</port>
