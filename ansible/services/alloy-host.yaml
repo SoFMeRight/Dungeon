@@ -230,6 +230,11 @@
                 username = sys.env("VM_AUTH_USERNAME")
                 password = sys.env("VM_AUTH_PASSWORD")
               }
+              queue_config {
+                capacity             = 10000
+                max_shards           = 10
+                max_samples_per_send = 2000
+              }
             }
             external_labels = {
               host = "{{ ansible_facts['hostname'] }}",
