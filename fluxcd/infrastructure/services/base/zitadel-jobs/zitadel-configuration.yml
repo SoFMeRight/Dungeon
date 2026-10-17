@@ -6,6 +6,7 @@
 #   2. instance features (loginV2)
 #   3. kubernetes OIDC: project, roles, OIDC app, clientId -> Vault
 #   4. flatRoles Actions-v2 target + per-target signing key -> Vault, executions, retire v1
+#   5. declared role keys for other projects (PROJECT_ROLES), created when missing
 - name: Configure Zitadel
   hosts: localhost
   connection: local
@@ -441,6 +442,77 @@
         method: DELETE
         headers: "{{ zitadel_headers }}"
       when: v1_id | length > 0
+
+    # ---------------------------------------- step 5: declared project roles
+    # Role keys other projects need (PROJECT_ROLES, a JSON list of {project, roles[]} set
+    # in the overlay). The project must already exist; only missing keys are created,
+    # existing keys and their grants are never changed.
+    - name: "step 5: read declared project roles"
+      ansible.builtin.set_fact:
+        declared_roles: "{{ lookup('ansible.builtin.env', 'PROJECT_ROLES') | default('[]', true) | from_json }}"
+
+    - name: "step 5: search declared projects"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/projects/_search"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          queries:
+            - nameQuery:
+                name: "{{ item.project }}"
+                method: TEXT_QUERY_METHOD_EQUALS
+      loop: "{{ declared_roles }}"
+      loop_control:
+        label: "{{ item.project }}"
+      register: decl_proj
+
+    - name: "step 5: refuse missing or duplicate projects"
+      ansible.builtin.assert:
+        that: (item.json.result | default([]) | length) == 1
+        fail_msg: "expected exactly one project named '{{ item.item.project }}'"
+      loop: "{{ decl_proj.results }}"
+      loop_control:
+        label: "{{ item.item.project }}"
+
+    - name: "step 5: list roles of declared projects"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/projects/{{ item.json.result[0].id }}/roles/_search"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body: {}
+      loop: "{{ decl_proj.results }}"
+      loop_control:
+        label: "{{ item.item.project }}"
+      register: decl_roles
+
+    - name: "step 5: roles to create"
+      ansible.builtin.set_fact:
+        roles_to_create: >-
+          {%- set out = [] -%}
+          {%- for r in decl_roles.results -%}
+          {%- set have = r.json.result | default([]) | map(attribute='key') | list -%}
+          {%- for role in r.item.item.roles if role.key not in have -%}
+          {%- set _ = out.append({'project': r.item.item.project, 'project_id': r.item.json.result[0].id,
+                                  'key': role.key, 'name': role.name, 'group': role.group | default('')}) -%}
+          {%- endfor -%}
+          {%- endfor -%}
+          {{ out }}
+
+    - name: "step 5: create missing declared roles"
+      ansible.builtin.uri:
+        url: "{{ mgmt_url }}/projects/{{ item.project_id }}/roles"
+        method: POST
+        headers: "{{ zitadel_headers }}"
+        body_format: json
+        body:
+          roleKey: "{{ item.key }}"
+          displayName: "{{ item.name }}"
+          group: "{{ item.group }}"
+      loop: "{{ roles_to_create }}"
+      loop_control:
+        label: "{{ item.project }}: {{ item.key }}"
 
     - name: Done
       ansible.builtin.debug:

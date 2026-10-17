@@ -22,3 +22,13 @@ spec:
               value: Container Orchestration
             - name: K8S_APP_NAME
               value: "Kubernetes: Dungeon"
+            # Security (Wazuh): the role ladder plus one scope key per wazuh tenant group.
+            - name: PROJECT_ROLES
+              value: >-
+                [{"project": "Security", "roles": [
+                  {"key": "operator", "name": "Operator", "group": "Operators"},
+                  {"key": "admin", "name": "Administrator", "group": "Administration"},
+                  {"key": "developer", "name": "Developer", "group": "Developers"},
+                  {"key": "user", "name": "User", "group": "Users"},
+                  {"key": "group-prplanit", "name": "Scope: PrPlanIT", "group": "Tenant scopes"},
+                  {"key": "group-optcp", "name": "Scope: OpTCP", "group": "Tenant scopes"}]}]

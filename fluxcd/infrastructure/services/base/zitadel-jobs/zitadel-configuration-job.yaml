@@ -85,6 +85,9 @@ spec:
               value: PLACEHOLDER_PROJECT_NAME
             - name: K8S_APP_NAME
               value: PLACEHOLDER_K8S_APP_NAME
+            # Step 5: role keys to ensure in other projects (JSON list of {project, roles}).
+            - name: PROJECT_ROLES
+              value: "[]"
           command: ["ansible-playbook", "-i", "localhost,", "/ansible/zitadel-configuration.yml"]
           volumeMounts:
             - name: playbook
