@@ -1401,7 +1401,7 @@
 - Namespace: king-of-red-lions
 - Replicas: 3/3
 
-**Istio Cni** — DaemonSet — 1.31.1
+**Istio Cni** — DaemonSet — 1.31.2
 - Namespace: king-of-red-lions
 - Replicas: 10/10
 
@@ -1409,7 +1409,7 @@
 - Namespace: king-of-red-lions
 - Replicas: 10/10
 
-**Istiod** — Deployment — 1.31.1
+**Istiod** — Deployment — 1.31.2
 - Namespace: king-of-red-lions
 - Replicas: 1/1
 
@@ -1421,7 +1421,7 @@
 - Namespace: king-of-red-lions
 - Replicas: 2/2
 
-**Ztunnel** — DaemonSet — 1.31.1
+**Ztunnel** — DaemonSet — 1.31.2
 - Namespace: king-of-red-lions
 - Replicas: 10/10
 
