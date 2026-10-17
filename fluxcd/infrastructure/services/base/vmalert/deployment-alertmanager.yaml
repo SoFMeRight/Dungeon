@@ -1,0 +1,77 @@
+# Routes vmalert's alerts to ntfy. A single instance: silences and notification state
+# live in an emptyDir and reset on restart, which at worst re-sends a notification.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmanager
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alertmanager
+  template:
+    metadata:
+      labels:
+        app: alertmanager
+    spec:
+      serviceAccountName: alertmanager
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        runAsGroup: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: alertmanager
+          image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          args:
+            - --config.file=/etc/alertmanager/alertmanager.yml
+            - --storage.path=/alertmanager
+            - --web.listen-address=:9093
+            # Single instance: no gossip peers.
+            - --cluster.listen-address=
+          ports:
+            - containerPort: 9093
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: http
+            periodSeconds: 30
+          volumeMounts:
+            - name: config
+              mountPath: /etc/alertmanager
+              readOnly: true
+            - name: ntfy-token
+              mountPath: /etc/alertmanager-secrets/ntfy
+              readOnly: true
+            - name: data
+              mountPath: /alertmanager
+          resources:
+            requests:
+              cpu: PLACEHOLDER_CPU
+              memory: PLACEHOLDER_MEMORY
+            limits:
+              cpu: PLACEHOLDER_CPU_LIMIT
+              memory: PLACEHOLDER_MEMORY_LIMIT
+      volumes:
+        - name: config
+          configMap:
+            name: alertmanager-config
+        - name: ntfy-token
+          secret:
+            secretName: alertmanager-ntfy-token
+        - name: data
+          emptyDir: {}

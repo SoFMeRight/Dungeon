@@ -7,6 +7,9 @@ resources:
   - allow-gatus-to-gatus-postgres.yaml
   - allow-grafana-to-grafana-postgres.yaml
   - allow-grafana-to-vmselect.yaml
+  - allow-vmalert-to-vmselect.yaml
+  - allow-vmalert-to-vminsert.yaml
+  - allow-vmalert-to-alertmanager.yaml
   - allow-vmauth-to-vmselect.yaml
   - allow-freelens-to-vmauth.yaml
   - allow-grafana-to-loki.yaml

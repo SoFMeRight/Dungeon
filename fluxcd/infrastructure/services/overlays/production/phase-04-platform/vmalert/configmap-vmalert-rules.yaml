@@ -1,0 +1,219 @@
+# Metric alerts, evaluated by vmalert against VictoriaMetrics. Log alerts stay in
+# Grafana (vmalert cannot query Loki).
+#
+# Every rule carries the annotations the ntfy templates read: title (the notification
+# title while firing), summary (its message), and resolved_title / resolved for the
+# all-clear. Where a missing metric must not read as healthy, a separate absent() rule
+# says so; a rule on its own stays silent when its data disappears.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vmalert-rules
+data:
+  backups.yaml: |
+    groups:
+      - name: Backup Health
+        interval: 5m
+        rules:
+          # Hours since the last backup barman can see in the object store, per
+          # cluster: read from the archive, not from Backup objects, which have gone
+          # missing while the backups themselves were fine. The pod name becomes the
+          # cluster name so three instances raise one alert, and max takes the
+          # freshest instance so a lagging replica does not read as a missed backup.
+          # Backups are nightly, staggered 22:00-00:10, so a healthy cluster peaks
+          # just under 24h; 26 leaves two hours of grace.
+          - alert: BackupMissing
+            expr: |
+              (time() - max by (cluster, namespace) (label_replace(barman_cloud_cloudnative_pg_io_last_available_backup_timestamp,
+                "cluster", "$1", "pod", "(.+)-[0-9]+"))) / 3600 > 26
+            for: 1h
+            labels:
+              severity: warning
+            annotations:
+              title: Backup missing
+              summary: Postgres cluster {{ $labels.namespace }}/{{ $labels.cluster }} has no backup in over 26 hours
+              resolved_title: Backup restored
+              resolved: Postgres cluster {{ $labels.namespace }}/{{ $labels.cluster }} has a fresh backup again
+          - alert: BackupStatusMissing
+            expr: absent(barman_cloud_cloudnative_pg_io_last_available_backup_timestamp)
+            for: 1h
+            labels:
+              severity: warning
+            annotations:
+              title: Backup status not reported
+              summary: No Postgres cluster is reporting its backup status, so missed backups would go unnoticed
+              resolved_title: Backup status reported again
+              resolved: Postgres clusters are reporting their backup status again
+
+  flux.yaml: |
+    groups:
+      - name: Flux Health
+        interval: 5m
+        rules:
+          # gotk_resource_info comes from kube-state-metrics' custom-resource config.
+          - alert: DeploymentStuck
+            expr: gotk_resource_info{ready="False", suspended!="true"} > 0
+            for: 15m
+            labels:
+              severity: warning
+            annotations:
+              title: Deployment stuck
+              summary: '{{ $labels.customresource_kind }} {{ $labels.exported_namespace }}/{{ $labels.name }} has been stuck for 15 minutes'
+              resolved_title: Deployment finished
+              resolved: '{{ $labels.customresource_kind }} {{ $labels.exported_namespace }}/{{ $labels.name }} is healthy again'
+          - alert: DeploymentStatusMissing
+            expr: absent(gotk_resource_info)
+            for: 15m
+            labels:
+              severity: warning
+            annotations:
+              title: Deployment status not reported
+              summary: Flux resource status is not being reported, so stuck deployments would go unnoticed
+              resolved_title: Deployment status reported again
+              resolved: Flux resource status is being reported again
+
+  security.yaml: |
+    groups:
+      - name: Security Guardrails
+        interval: 1m
+        rules:
+          - alert: ClusterEmergencyAccessOn
+            expr: kube_namespace_labels{exported_namespace="kube-system", label_zt_breakglass_active="true"} > 0
+            labels:
+              severity: critical
+            annotations:
+              title: Cluster emergency access on
+              summary: Cluster-wide security bypass is on - policy enforcement is suspended
+              resolved_title: Cluster emergency access off
+              resolved: Bypass is off - policy enforcement is active again
+          - alert: AppEmergencyAccessOn
+            expr: kube_namespace_labels{label_zt_breakglass_namespace="true"} > 0
+            labels:
+              severity: warning
+            annotations:
+              title: App emergency access on
+              summary: Namespace {{ $labels.exported_namespace }} has its bypass on - its policies are not enforced
+              resolved_title: App emergency access off
+              resolved: Namespace {{ $labels.exported_namespace }} is back under normal policy enforcement
+          # Only while kube-state-metrics is reporting: without it the webhook metric is
+          # absent too, and ClusterStateMissing says that instead.
+          - alert: SecurityEnforcementDown
+            expr: |
+              absent(kube_validatingwebhookconfiguration_info{validatingwebhookconfiguration=~"kyverno.*"})
+                and on() (count(kube_pod_info) > 0)
+            for: 2m
+            labels:
+              severity: critical
+            annotations:
+              title: Security enforcement is down
+              summary: Nothing is checking what gets deployed to the cluster
+              resolved_title: Security enforcement is back
+              resolved: Deployments are being checked again
+          - alert: DeploymentsBreakingRules
+            expr: sum(rate(kyverno_policy_results_total{rule_result="fail", policy_validation_mode="enforce"}[5m])) > 0.5
+            for: 5m
+            labels:
+              severity: warning
+            annotations:
+              title: Deployments are breaking the rules
+              summary: Deployments are being rejected for breaking policy
+              resolved_title: Deployments are passing again
+              resolved: Nothing is being rejected
+          - alert: AppSecurityRelaxed
+            expr: |
+              kube_namespace_labels{label_policy_prplanit_com_restrict_default_sa="suspended",
+                exported_namespace!~"gorons-bracelet|hookshot|hyrule-castle|temple-of-time|tingle-tuner|training-dummy"} > 0
+            labels:
+              severity: warning
+            annotations:
+              title: App security relaxed
+              summary: Namespace {{ $labels.exported_namespace }} is running without service-account restrictions
+              resolved_title: App security restored
+              resolved: Namespace {{ $labels.exported_namespace }} is back under service-account restrictions
+          # kube-state-metrics feeds every guardrail above and Flux's status; without
+          # it they all go quiet.
+          - alert: ClusterStateMissing
+            expr: absent(kube_pod_info)
+            for: 15m
+            labels:
+              severity: critical
+            annotations:
+              title: Cluster state not reported
+              summary: kube-state-metrics data is missing - the security guardrails and deployment alerts cannot see the cluster
+              resolved_title: Cluster state reported again
+              resolved: kube-state-metrics data is arriving again
+
+  certificates.yaml: |
+    groups:
+      - name: Certificate Expiry
+        interval: 10m
+        rules:
+          # The 1st percentile of client certificates seen by the API server in the
+          # last hour, in days; the second clause keeps it silent when no client
+          # certificate was presented at all.
+          - alert: LoginCertificateExpiring
+            expr: |
+              (histogram_quantile(0.01, sum by (le) (rate(apiserver_client_certificate_expiration_seconds_histogram[1h])))
+                and on() (sum(rate(apiserver_client_certificate_expiration_seconds_count[1h])) > 0)) / 86400 < 30
+            for: 2h
+            labels:
+              severity: warning
+            annotations:
+              title: Login certificate expiring
+              summary: A client certificate authenticating to the cluster expires in under 30 days
+              resolved_title: Login certificates renewed
+              resolved: Client certificates authenticating to the cluster are no longer near expiry
+          - alert: LoginCertificateAboutToExpire
+            expr: |
+              (histogram_quantile(0.01, sum by (le) (rate(apiserver_client_certificate_expiration_seconds_histogram[1h])))
+                and on() (sum(rate(apiserver_client_certificate_expiration_seconds_count[1h])) > 0)) / 86400 < 7
+            for: 30m
+            labels:
+              severity: critical
+            annotations:
+              title: Login certificate about to expire
+              summary: A client certificate authenticating to the cluster expires in under 7 days - renew it and redistribute the kubeconfigs
+              resolved_title: Login certificates renewed
+              resolved: Client certificates authenticating to the cluster are no longer near expiry
+          - alert: NodeCertificateNotRenewing
+            expr: min by (instance) (kubelet_certificate_manager_client_ttl_seconds) / 86400 < 30
+            for: 1h
+            labels:
+              severity: critical
+            annotations:
+              title: Node certificate not renewing
+              summary: Node {{ $labels.instance }} has not renewed its certificate and it expires in under 30 days
+              resolved_title: Node certificate renewed
+              resolved: Node {{ $labels.instance }} has renewed its certificate
+          - alert: NodeCertificateStatusMissing
+            expr: absent(kubelet_certificate_manager_client_ttl_seconds)
+            for: 1h
+            labels:
+              severity: critical
+            annotations:
+              title: Node certificate status not reported
+              summary: No node is reporting its certificate lifetime, so an expiring node certificate would go unnoticed
+              resolved_title: Node certificate status reported again
+              resolved: Nodes are reporting their certificate lifetime again
+
+  edge.yaml: |
+    groups:
+      - name: Edge Protection
+        interval: 5m
+        rules:
+          # Each pfSense firewall bouncer pulls CrowdSec's decisions every few seconds.
+          # No pulls in 30 minutes, or no series at all, means the edge has stopped
+          # blocking banned IPs; this went unnoticed for 33 days once already.
+          - alert: FirewallBlocklistStale
+            expr: |
+              (sum by (bouncer) (increase(cs_lapi_bouncer_requests_total{bouncer=~"shield_generator_fw|shield_regenerator_fw"}[30m])) == 0)
+                or absent_over_time(cs_lapi_bouncer_requests_total{bouncer="shield_generator_fw"}[30m])
+                or absent_over_time(cs_lapi_bouncer_requests_total{bouncer="shield_regenerator_fw"}[30m])
+            for: 10m
+            labels:
+              severity: critical
+            annotations:
+              title: Firewall stopped blocking
+              summary: pfSense {{ $labels.bouncer }} has not fetched CrowdSec's blocklist in 30 minutes - banned IPs can reach the forwarded ports
+              resolved_title: Firewall blocking again
+              resolved: pfSense {{ $labels.bouncer }} is fetching CrowdSec's blocklist again

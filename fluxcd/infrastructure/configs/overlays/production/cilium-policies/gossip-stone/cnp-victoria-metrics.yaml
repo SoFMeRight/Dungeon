@@ -33,8 +33,8 @@ metadata:
   name: allow-vminsert-internal
 spec:
   description: >-
-    Allow Alloy (host/remote-node) and ingress gateways to push
-    metrics to vminsert on 8480/TCP.
+    Allow Alloy (host/remote-node), ingress gateways and vmalert (its alert
+    state) to push metrics to vminsert on 8480/TCP.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -57,6 +57,13 @@ spec:
         - ports:
             - port: "8480"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            app: vmalert
+      toPorts:
+        - ports:
+            - port: "8480"
+              protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
@@ -64,9 +71,9 @@ metadata:
   name: allow-vmselect-internal
 spec:
   description: >-
-    Allow Grafana (direct, by mesh identity) and vmauth (the non-mesh read
-    front door for Freelens), plus Alloy (host/remote-node), to query vmselect
-    on 8481/TCP.
+    Allow Grafana (direct, by mesh identity), vmalert (rule evaluation) and
+    vmauth (the non-mesh read front door for Freelens), plus Alloy
+    (host/remote-node), to query vmselect on 8481/TCP.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -79,6 +86,8 @@ spec:
             app: grafana
         - matchLabels:
             app: vmauth
+        - matchLabels:
+            app: vmalert
       toPorts:
         - ports:
             - port: "8481"

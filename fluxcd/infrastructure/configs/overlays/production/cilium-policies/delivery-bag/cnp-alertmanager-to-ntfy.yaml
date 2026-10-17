@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-alertmanager-to-ntfy
+spec:
+  description: >-
+    Allow Alertmanager (gossip-stone) to reach ntfy on 80/TCP for alert
+    notifications via the internal service.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: ntfy
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gossip-stone
+            app: alertmanager
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP

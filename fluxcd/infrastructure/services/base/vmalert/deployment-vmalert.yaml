@@ -1,0 +1,90 @@
+# Evaluates alerting rules against VictoriaMetrics and hands firing alerts to
+# Alertmanager. Its own alert state is written back to VictoriaMetrics and read on
+# start, so a restart does not reset pending "for" timers.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vmalert
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vmalert
+  template:
+    metadata:
+      labels:
+        app: vmalert
+    spec:
+      serviceAccountName: vmalert
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: vmalert
+          image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          args:
+            - -rule=/etc/vmalert/rules/*.yaml
+            - -datasource.url=http://vmselect:8481/select/0/prometheus
+            - -remoteRead.url=http://vmselect:8481/select/0/prometheus
+            - -remoteWrite.url=http://vminsert:8480/insert/0/prometheus
+            - -remoteWrite.basicAuth.username=$(VM_AUTH_USERNAME)
+            - -remoteWrite.basicAuth.passwordFile=/etc/vmalert/vminsert/password
+            - -notifier.url=http://alertmanager:9093
+            - -evaluationInterval=1m
+            - -httpListenAddr=:8880
+          env:
+            - name: VM_AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: vminsert-basic-auth
+                  key: username
+          ports:
+            - containerPort: 8880
+              name: http
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 30
+          volumeMounts:
+            - name: rules
+              mountPath: /etc/vmalert/rules
+              readOnly: true
+            - name: vminsert-auth
+              mountPath: /etc/vmalert/vminsert
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: PLACEHOLDER_CPU
+              memory: PLACEHOLDER_MEMORY
+            limits:
+              cpu: PLACEHOLDER_CPU_LIMIT
+              memory: PLACEHOLDER_MEMORY_LIMIT
+      volumes:
+        - name: rules
+          configMap:
+            name: vmalert-rules
+        - name: vminsert-auth
+          secret:
+            secretName: vminsert-basic-auth
+            items:
+              - key: password
+                path: password
+        - name: tmp
+          emptyDir: {}

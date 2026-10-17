@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-vmalert-to-vminsert
+spec:
+  selector:
+    matchLabels:
+      app: vminsert
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/gossip-stone/sa/vmalert
+      to:
+        - operation:
+            ports: ["8480"]

@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+data:
+  alertmanager.yml: |
+    # Same tiers and ntfy topics as Grafana's contact points: warn by default, the
+    # paging topic for severity=critical. ntfy renders the notification itself
+    # (tpl=yes): t is the title, m one line per alert, p the tier's priority. The
+    # title comes from each rule's title annotation, since alert names cannot carry
+    # spaces.
+    route:
+      receiver: ntfy-prod-warn
+      group_by: [alertgroup, alertname]
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+      routes:
+        - receiver: ntfy-prod-alert
+          matchers: ['severity="critical"']
+          repeat_interval: 1h
+    receivers:
+      - name: ntfy-prod-warn
+        webhook_configs:
+          - url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Warn?tpl=yes&t=%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7B%28index+.alerts+0%29.annotations.resolved_title%7D%7D%7B%7Belse%7D%7D%7B%7B%28index+.alerts+0%29.annotations.title%7D%7D%7B%7Bend%7D%7D&m=%7B%7Brange+.alerts%7D%7D%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7Bif+.annotations.resolved%7D%7D%7B%7B.annotations.resolved%7D%7D%7B%7Belse%7D%7DBack+to+normal.%7B%7Bend%7D%7D%7B%7Belse%7D%7D%7B%7B.annotations.summary%7D%7D%7B%7Bend%7D%7D%0A%7B%7Bend%7D%7D&p=4"
+            send_resolved: true
+            http_config:
+              authorization:
+                type: Bearer
+                credentials_file: /etc/alertmanager-secrets/ntfy/token
+      - name: ntfy-prod-alert
+        webhook_configs:
+          - url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Alert?tpl=yes&t=%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7B%28index+.alerts+0%29.annotations.resolved_title%7D%7D%7B%7Belse%7D%7D%7B%7B%28index+.alerts+0%29.annotations.title%7D%7D%7B%7Bend%7D%7D&m=%7B%7Brange+.alerts%7D%7D%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7Bif+.annotations.resolved%7D%7D%7B%7B.annotations.resolved%7D%7D%7B%7Belse%7D%7DBack+to+normal.%7B%7Bend%7D%7D%7B%7Belse%7D%7D%7B%7B.annotations.summary%7D%7D%7B%7Bend%7D%7D%0A%7B%7Bend%7D%7D&p=5"
+            send_resolved: true
+            http_config:
+              authorization:
+                type: Bearer
+                credentials_file: /etc/alertmanager-secrets/ntfy/token

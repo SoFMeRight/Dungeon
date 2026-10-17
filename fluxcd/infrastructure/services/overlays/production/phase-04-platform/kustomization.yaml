@@ -27,6 +27,7 @@ resources:
   - ./unifi
   - ./netconsole-collector
   - ./alloy-syslog
+  - ./vmalert
 
 patches:
   # Durable resilience: every HelmRelease auto-retries a transient upgrade failure
