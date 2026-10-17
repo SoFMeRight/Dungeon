@@ -17,3 +17,5 @@ spec:
         - ports:
             - port: "5514"
               protocol: UDP
+            - port: "5424"
+              protocol: UDP

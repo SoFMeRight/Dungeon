@@ -7,8 +7,21 @@ metadata:
   name: alloy-syslog-config
 data:
   config.alloy: |
-    otelcol.receiver.syslog "in" {
+    // RFC 5424 carries a zoned timestamp and the sender's hostname; prefer it (pfSense).
+    otelcol.receiver.syslog "rfc5424" {
+      protocol = "rfc5424"
+      udp {
+        listen_address = "0.0.0.0:5424"
+      }
+      output {
+        logs = [otelcol.processor.attributes.loki_labels.input, otelcol.exporter.syslog.wazuh.input]
+      }
+    }
+
+    // RFC 3164 timestamps have no zone; devices that only speak it log in local time.
+    otelcol.receiver.syslog "rfc3164" {
       protocol = "rfc3164"
+      location = "America/Los_Angeles"
       udp {
         listen_address = "0.0.0.0:5514"
       }

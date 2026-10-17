@@ -43,6 +43,9 @@ spec:
             - name: syslog
               containerPort: 5514
               protocol: UDP
+            - name: syslog-rfc5424
+              containerPort: 5424
+              protocol: UDP
             - name: http
               containerPort: 12345
               protocol: TCP
