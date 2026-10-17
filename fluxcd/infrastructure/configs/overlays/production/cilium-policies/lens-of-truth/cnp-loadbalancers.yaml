@@ -35,8 +35,8 @@ metadata:
   name: allow-wazuh-manager-lan
 spec:
   description: >-
-    LAN-only agent and syslog ingress to wazuh-manager (172.22.30.119). The API
-    stays in-cluster.
+    LAN-only agent ingress to wazuh-manager (172.22.30.119). Syslog arrives only
+    through alloy-syslog, and the API stays in-cluster.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -56,5 +56,3 @@ spec:
               protocol: TCP
             - port: "1515"
               protocol: TCP
-            - port: "514"
-              protocol: UDP

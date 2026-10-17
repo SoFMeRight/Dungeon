@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alloy-syslog
+  labels:
+    app: alloy-syslog
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: alloy-syslog
+  template:
+    metadata:
+      labels:
+        app: alloy-syslog
+      annotations:
+        configmap.reloader.stakater.com/reload: alloy-syslog-config
+    spec:
+      serviceAccountName: alloy-syslog
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 473
+        runAsGroup: 473
+        fsGroup: 473
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: alloy
+          image: PLACEHOLDER_IMAGE
+          args:
+            - run
+            # otelcol.exporter.syslog is a public-preview component.
+            - --stability.level=public-preview
+            - --server.http.listen-addr=0.0.0.0:12345
+            - --storage.path=/tmp/alloy
+            - /etc/alloy/config.alloy
+          env:
+            - name: LOKI_PUSH_URL
+              value: PLACEHOLDER_LOKI_PUSH_URL
+            - name: WAZUH_SYSLOG_HOST
+              value: PLACEHOLDER_WAZUH_SYSLOG_HOST
+          ports:
+            - name: syslog
+              containerPort: 5514
+              protocol: UDP
+            - name: http
+              containerPort: 12345
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: http
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/alloy
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: config
+          configMap:
+            name: alloy-syslog-config
+        - name: tmp
+          emptyDir: {}

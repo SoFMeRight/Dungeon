@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-alloy-syslog-ingress
+  namespace: lakitu
+spec:
+  endpointSelector:
+    matchLabels:
+      app: alloy-syslog
+  ingress:
+    # Syslog senders are devices outside the cluster (pfSense, appliances) reaching the
+    # LoadBalancer VIP. UDP is not captured by ztunnel, so Cilium alone governs it.
+    - fromEntities:
+        - world
+        - cluster
+      toPorts:
+        - ports:
+            - port: "5514"
+              protocol: UDP

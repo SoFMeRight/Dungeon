@@ -14,6 +14,7 @@ resources:
   - allow-speedtest-tracker-to-speedtest-tracker-postgres.yaml
   - allow-vminsert-to-vmstorage.yaml
   - allow-alloy-to-loki.yaml
+  - allow-alloy-syslog-to-loki.yaml
   - allow-alloy-to-vminsert.yaml
   - allow-graphite-exporter-loadbalancer.yaml
   - allow-nutify-loadbalancer.yaml

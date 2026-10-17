@@ -6,3 +6,4 @@ metadata:
     # Pinned: every node's netconsole module holds this address literally, set at
     # module insertion time, so it must not be reallocated.
     lbipam.cilium.io/ips: "172.22.30.240"
+    lbipam.cilium.io/sharing-key: "lakitu"

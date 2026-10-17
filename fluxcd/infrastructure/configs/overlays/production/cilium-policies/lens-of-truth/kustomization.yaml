@@ -10,4 +10,5 @@ resources:
   - cnp-egress-wazuh-manager.yaml
   - cnp-egress-wazuh.yaml
   - cnp-loadbalancers.yaml
+  - cnp-wazuh-syslog-from-alloy.yaml
   - cnp-iot-mesh.yaml

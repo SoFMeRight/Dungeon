@@ -1,0 +1,63 @@
+# The estate's syslog intake. Devices that can only speak syslog (pfSense, switches,
+# appliances) send here; every message lands in Loki first, where Grafana and CrowdSec
+# read it like any other log, and a copy is relayed to the Wazuh manager for detection.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alloy-syslog-config
+data:
+  config.alloy: |
+    otelcol.receiver.syslog "in" {
+      protocol = "rfc3164"
+      udp {
+        listen_address = "0.0.0.0:5514"
+      }
+      output {
+        logs = [otelcol.processor.attributes.loki_labels.input, otelcol.exporter.syslog.wazuh.input]
+      }
+    }
+
+    otelcol.processor.attributes "loki_labels" {
+      action {
+        key    = "loki.attribute.labels"
+        action = "insert"
+        value  = "hostname, appname"
+      }
+      output {
+        logs = [otelcol.exporter.loki.default.input]
+      }
+    }
+
+    otelcol.exporter.loki "default" {
+      forward_to = [loki.process.syslog.receiver]
+    }
+
+    // The exporter wraps each record as OTLP JSON; Loki keeps the original syslog line.
+    loki.process "syslog" {
+      stage.json {
+        expressions = { body = "body" }
+      }
+      stage.output {
+        source = "body"
+      }
+      stage.label_drop {
+        values = ["exporter"]
+      }
+      stage.static_labels {
+        values = { job = "syslog" }
+      }
+      forward_to = [loki.write.default.receiver]
+    }
+
+    loki.write "default" {
+      endpoint {
+        url = env("LOKI_PUSH_URL")
+      }
+    }
+
+    otelcol.exporter.syslog "wazuh" {
+      endpoint = env("WAZUH_SYSLOG_HOST")
+      port     = 514
+      network  = "udp"
+      protocol = "rfc3164"
+    }

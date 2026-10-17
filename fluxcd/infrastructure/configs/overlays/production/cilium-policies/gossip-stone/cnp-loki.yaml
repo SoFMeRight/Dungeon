@@ -38,6 +38,14 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: lakitu
+            app: alloy-syslog
+      toPorts:
+        - ports:
+            - port: "3100"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
             app.kubernetes.io/name: loki
       toPorts:
         - ports:

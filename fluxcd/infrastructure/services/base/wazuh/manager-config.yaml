@@ -37,6 +37,16 @@ data:
         <queue_size>131072</queue_size>
       </remote>
 
+      <!-- Syslog relayed by alloy-syslog after it lands in Loki. Cilium limits who may
+           reach this port to the alloy-syslog pods; the pod network is all that is
+           trusted here. -->
+      <remote>
+        <connection>syslog</connection>
+        <port>514</port>
+        <protocol>udp</protocol>
+        <allowed-ips>192.168.144.0/20</allowed-ips>
+      </remote>
+
       <!-- Policy monitoring -->
       <rootcheck>
         <disabled>no</disabled>

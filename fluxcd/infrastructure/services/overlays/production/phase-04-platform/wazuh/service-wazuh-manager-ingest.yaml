@@ -18,7 +18,3 @@ spec:
       port: 1515
       targetPort: 1515
       protocol: TCP
-    - name: syslog
-      port: 514
-      targetPort: 514
-      protocol: UDP

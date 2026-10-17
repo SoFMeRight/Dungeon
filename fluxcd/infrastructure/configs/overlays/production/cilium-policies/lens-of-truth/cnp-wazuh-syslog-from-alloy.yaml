@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-alloy-syslog-to-wazuh-manager
+spec:
+  description: >-
+    alloy-syslog relays every syslog message it stores in Loki to the Wazuh manager.
+    The only syslog sender the manager accepts.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: wazuh-manager
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: lakitu
+            app: alloy-syslog
+      toPorts:
+        - ports:
+            - port: "514"
+              protocol: UDP
