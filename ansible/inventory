@@ -89,6 +89,13 @@ all:
     priscilla:
       ansible_host: 172.22.181.51
 # ------- Windows ------- #
+# windows_server:
+    zebrina:
+      ansible_host: 10.13.37.1
+    lancifolia:
+      ansible_host: 10.13.37.2
+    tradescantia:
+      ansible_host: 10.13.37.3
 # windows_10:
     LeafBlower:
       ansible_host: 10.13.37.145
@@ -137,6 +144,11 @@ k8s_worker:
     dungeon_worker_003:
     dungeon_worker_004:
     dungeon_worker_005:
+windows_server:
+  hosts:
+    zebrina:
+    lancifolia:
+    tradescantia:
 windows_10:
   hosts:
     LeafBlower:
@@ -145,11 +157,16 @@ windows_11:
     Glicynia:
     Wisteria:
     WaterLily:
+windows:
+  children:
+    windows_server:
+    windows_10:
+    windows_11:
   vars:
     ansible_connection: winrm
     ansible_user: gitops
     ansible_password: '{{ ansible_windows_password }}'
-    anisble_port: 5986
+    ansible_port: 5986
     ansible_winrm_transport: ntlm
     ansible_winrm_server_cert_validation: ignore
 

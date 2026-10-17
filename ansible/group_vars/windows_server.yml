@@ -1,0 +1,6 @@
+---
+wazuh_tenant: platform
+# Domain controllers have no local accounts; this domain account is a domain administrator,
+# so it never shares the workstations' credential.
+ansible_user: svc-ansible-dc
+ansible_password: "{{ ansible_windows_dc_password }}"

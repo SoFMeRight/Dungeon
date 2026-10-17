@@ -1,0 +1,131 @@
+# Installs the Wazuh agent on Windows and enrolls it into its tenant group. Hosts come from
+# --limit; each must have `wazuh_tenant` in group_vars/host_vars. Enrolling a host for the
+# first time needs the authd password, given at launch:
+#   -e wazuh_enrollment_password=...   (OpenBao zeldas-letter apps/wazuh ENROLLMENT_PASSWORD)
+# Hosts that are already enrolled converge without it.
+- name: Ad Arbitorium 🔐 - GitOps - Services - Install and enroll the Wazuh agent (Windows)
+  hosts: all
+  vars_files:
+    - ../vars/wazuh-agent.yml
+  vars:
+    wazuh_dir: 'C:\Program Files (x86)\ossec-agent'
+
+  pre_tasks:
+    - name: Refuse hosts without a declared tenant
+      ansible.builtin.assert:
+        that: wazuh_tenant is defined and wazuh_tenant | length > 0
+        fail_msg: "{{ inventory_hostname }} has no wazuh_tenant in group_vars"
+
+    - name: Read whether the agent is already enrolled
+      ansible.windows.win_stat:
+        path: '{{ wazuh_dir }}\client.keys'
+      register: client_keys
+
+    - name: Require the enrollment password for hosts not yet enrolled
+      ansible.builtin.assert:
+        that: wazuh_enrollment_password is defined and wazuh_enrollment_password | length > 0
+        fail_msg: "{{ inventory_hostname }} is not enrolled; pass -e wazuh_enrollment_password=..."
+      when: not (client_keys.stat.exists and client_keys.stat.size > 0)
+
+  tasks:
+    # The MSI gets no enrollment settings: a password on its command line would land in the
+    # installer log. Enrollment is configured in ossec.conf below, as on Linux.
+    - name: Install the agent at the manager's version
+      ansible.windows.win_package:
+        path: "{{ wazuh_windows_msi_url }}"
+        product_id: "{{ wazuh_windows_product_id | default(omit) }}"
+        arguments: /qn
+        state: present
+      register: wazuh_msi
+
+    - name: Install the enrollment password
+      ansible.windows.win_copy:
+        content: "{{ wazuh_enrollment_password }}"
+        dest: '{{ wazuh_dir }}\authd.pass'
+      no_log: true
+      when: wazuh_enrollment_password is defined
+      notify: Restart WazuhSvc
+
+    # authd.pass inherits the install directory's ACL, which grants Users read access.
+    - name: Restrict the enrollment password to SYSTEM and Administrators
+      ansible.windows.win_acl_inheritance:
+        path: '{{ wazuh_dir }}\authd.pass'
+        state: absent
+        reorganize: false
+      when: wazuh_enrollment_password is defined
+
+    - name: Grant SYSTEM and Administrators the enrollment password
+      ansible.windows.win_acl:
+        path: '{{ wazuh_dir }}\authd.pass'
+        user: "{{ item }}"
+        rights: FullControl
+        type: allow
+        state: present
+      loop: [SYSTEM, Administrators]
+      when: wazuh_enrollment_password is defined
+
+    - name: Install the manager's CA, so enrollment verifies the manager's certificate
+      ansible.windows.win_copy:
+        src: "{{ wazuh_manager_ca_file }}"
+        dest: '{{ wazuh_dir }}\manager-ca.pem'
+      notify: Restart WazuhSvc
+
+    - name: Point the agent at the manager and enroll it into its tenant group
+      ansible.windows.win_powershell:
+        script: |
+          param($Path, $Client)
+          $conf = [IO.File]::ReadAllText($Path)
+          $new = [regex]::Replace($conf, '(?s)<client>.*?</client>', $Client)
+          if ($new -ne $conf) {
+            [IO.File]::WriteAllText($Path, $new)
+            $Ansible.Changed = $true
+          } else {
+            $Ansible.Changed = $false
+          }
+        parameters:
+          Path: '{{ wazuh_dir }}\ossec.conf'
+          Client: |-
+            <client>
+                <server>
+                  <address>{{ wazuh_manager }}</address>
+                  <port>1514</port>
+                  <protocol>tcp</protocol>
+                </server>
+                <notify_time>10</notify_time>
+                <time-reconnect>60</time-reconnect>
+                <auto_restart>yes</auto_restart>
+                <crypto_method>aes</crypto_method>
+                <enrollment>
+                  <enabled>yes</enabled>
+                  <manager_address>{{ wazuh_manager }}</manager_address>
+                  <port>1515</port>
+                  <agent_name>{{ ansible_facts['hostname'] }}</agent_name>
+                  <groups>{{ wazuh_tenant }}</groups>
+                  <server_ca_path>manager-ca.pem</server_ca_path>
+                  <authorization_pass_path>authd.pass</authorization_pass_path>
+                </enrollment>
+              </client>
+      notify: Restart WazuhSvc
+
+    - name: Enable and start the agent
+      ansible.windows.win_service:
+        name: WazuhSvc
+        start_mode: auto
+        state: started
+
+    - name: Apply pending configuration changes
+      ansible.builtin.meta: flush_handlers
+
+    - name: Wait until the agent is enrolled and connected
+      ansible.windows.win_shell: Select-String -Quiet -Pattern "^status='connected'" -Path '{{ wazuh_dir }}\wazuh-agent.state'
+      register: agent_state
+      until: agent_state.stdout | trim == 'True'
+      retries: 12
+      delay: 10
+      changed_when: false
+
+  handlers:
+    - name: Restart WazuhSvc
+      ansible.windows.win_service:
+        name: WazuhSvc
+        state: restarted

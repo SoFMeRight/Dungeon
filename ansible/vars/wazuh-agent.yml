@@ -11,3 +11,5 @@ wazuh_apt_key: https://packages.wazuh.com/key/GPG-KEY-WAZUH
 wazuh_manager_ca_file: ../files/wazuh-manager-ca.pem
 # Seconds an apt step may take before the host fails instead of stalling the run.
 wazuh_apt_timeout: 600
+# Windows installs the same version from its MSI.
+wazuh_windows_msi_url: "https://packages.wazuh.com/4.x/windows/wazuh-agent-{{ wazuh_agent_version }}.msi"
