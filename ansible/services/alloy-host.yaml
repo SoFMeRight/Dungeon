@@ -63,6 +63,10 @@
       timeout: "{{ alloy_apt_timeout }}"
       when: alloy_install | bool
 
+    - name: Finish an interrupted dpkg run
+      ansible.builtin.command: dpkg --configure -a --force-unsafe-io
+      when: alloy_install | bool and 'reinstreq' in alloy_pkg.stdout
+
     - name: Install alloy
       ansible.builtin.apt:
         name: "alloy={{ alloy_version }}"
