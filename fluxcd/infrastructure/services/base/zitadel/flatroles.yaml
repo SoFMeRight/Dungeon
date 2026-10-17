@@ -1,10 +1,11 @@
 # flatRoles as an Actions v2 target: Zitadel calls this endpoint on preuserinfo /
-# preaccesstoken and the response appends the flat `roles` claim: the role keys the user
-# is granted in the requesting application's own project. This claim is LOAD-BEARING for
-# cluster authentication: the kube-apiserver maps it to prplanit-sso:-prefixed groups.
-# The target is the PrPlanIT/zitadel-flatroles Go binary (image set in the overlay); the
-# zitadel-configuration Job wires the Zitadel side (directory token, target, executions)
-# and self-tests it before retiring the legacy v1 Action.
+# preaccesstoken and the response appends the flat `roles` claim: every role key in the
+# grants Zitadel sends, which are only the user's active grants on the token's role
+# audience (the requesting app's project, plus any project it requests). This claim is
+# LOAD-BEARING for cluster authentication: the kube-apiserver maps it to
+# prplanit-sso:-prefixed groups. The target is the PrPlanIT/zitadel-flatroles Go binary
+# (image set in the overlay); the zitadel-configuration Job wires the Zitadel side (target
+# + executions) and self-tests it before retiring the legacy v1 Action.
 #
 # Caller authn: the AuthorizationPolicy allow-zitadel-to-flatroles restricts ingress to
 # sa/zitadel via the ambient mesh, and the binary verifies the ZITADEL-Signature payload
@@ -20,8 +21,8 @@ kind: Deployment
 metadata:
   name: zitadel-flatroles
   annotations:
-    # Restart to pick up SIGNING_KEY / ZITADEL_TOKEN when ESO (re)writes either Secret.
-    secret.reloader.stakater.com/reload: zitadel-flatroles-signing,zitadel-flatroles-directory
+    # Restart to pick up SIGNING_KEY when ESO (re)writes the signing-key Secret.
+    secret.reloader.stakater.com/reload: zitadel-flatroles-signing
 spec:
   # Two replicas: this sits on the login path. A total outage does not block logins
   # (the target is registered interruptOnError=false) but drops the roles claim,
@@ -55,21 +56,6 @@ spec:
                   name: zitadel-flatroles-signing
                   key: signing_key
                   optional: true
-            # Roles come only from the requesting application's own project. The client ->
-            # project directory is read through the Zitadel API with a read-only token the
-            # zitadel-configuration Job mints; flatroles stays unready until it has synced.
-            - name: MODE
-              value: PLACEHOLDER_FLATROLES_MODE
-            - name: ZITADEL_API_URL
-              value: http://zitadel:8174
-            - name: ZITADEL_HOST
-              value: PLACEHOLDER_ZITADEL_HOST
-            - name: ZITADEL_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: zitadel-flatroles-directory
-                  key: token
-                  optional: true
           ports:
             - name: http
               containerPort: 8080
@@ -81,7 +67,7 @@ spec:
                 - ALL
           readinessProbe:
             httpGet:
-              path: /readyz
+              path: /healthz
               port: http
             initialDelaySeconds: 2
             periodSeconds: 10

@@ -10,11 +10,9 @@ resources:
   - login-v2-httproute.yaml
   - externalsecret-postgres-backup.yaml
   - externalsecret-flatroles-signing.yaml
-  - externalsecret-flatroles-directory.yaml
 
 patches:
   - path: image-patch.yaml
-  - path: flatroles-patch.yaml
   - path: command-patches.yaml
   # Job-half patches, folded in from the retired zitadel-jobs overlay:
   - path: jobs-image-patch.yaml
