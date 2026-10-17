@@ -1023,6 +1023,15 @@ data:
         source_labels = ["__journal__systemd_unit"]
         target_label  = "unit"
       }
+      // Every container exec gets its own transient unit (crio-conmon-<id>.scope) and
+      // every login its own session-<n>.scope; as label values they opened a stream
+      // each, ~13k a day on the node with the most exec probes. Collapse them to type.
+      rule {
+        source_labels = ["unit"]
+        regex         = "([a-z-]+?)-[0-9a-f]{12,}\\.scope|(session)-[0-9]+\\.scope"
+        target_label  = "unit"
+        replacement   = "$1$2.scope"
+      }
       rule {
         source_labels = ["__journal__hostname"]
         target_label  = "node"
