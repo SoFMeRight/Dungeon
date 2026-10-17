@@ -31,4 +31,5 @@ spec:
                   {"key": "developer", "name": "Developer", "group": "Developers"},
                   {"key": "user", "name": "User", "group": "Users"},
                   {"key": "group-prplanit", "name": "Scope: PrPlanIT", "group": "Tenant scopes"},
+                  {"key": "group-arbitorium", "name": "Scope: Arbitorium", "group": "Tenant scopes"},
                   {"key": "group-optcp", "name": "Scope: OpTCP", "group": "Tenant scopes"}]}]
