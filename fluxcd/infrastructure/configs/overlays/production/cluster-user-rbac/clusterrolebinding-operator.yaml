@@ -1,7 +1,8 @@
 # Binds the top rung of the human ladder -- `operator` (Server Operator) -- to
 # cluster-admin. The group arrives from the apiserver AuthenticationConfiguration's
-# Zitadel issuer: the flatRoles Action flattens a user's granted role keys into the
-# `roles` claim, mapped to groups with the `prplanit-sso:` prefix. This is the ONE
+# Zitadel issuer: the flatRoles target flattens the user's role keys on the client's
+# project (Container Orchestration) into the `roles` claim, mapped to groups with the
+# `prplanit-sso:` prefix. This is the ONE
 # cluster-wide human binding; the lower rungs (admin/developer/user) bind
 # per-namespace in rolebindings-<ns>.yaml files added as people are granted --
 # a namespace with no lower-tier binding is invisible to everyone below operator.

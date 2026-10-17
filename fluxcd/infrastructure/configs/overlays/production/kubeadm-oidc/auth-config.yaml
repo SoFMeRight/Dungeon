@@ -35,9 +35,9 @@ jwt:
         claim: preferred_username
         prefix: "prplanit-sso:"
       groups:
-        # Groups come from the flat `roles` claim set by the Zitadel Action "flatRoles"
-        # (it collects every granted role key into a string array). Plain claim+prefix, no CEL.
-        # NOTE: flatRoles flattens roles across ALL of a user's project grants, so these
-        # groups are NOT project-scoped — the RBAC bindings account for that.
+        # Groups come from the flat `roles` claim set by the flatRoles Actions-v2 target: every
+        # role key in the grants Zitadel sends, which are only the user's active grants on the
+        # token's role audience. For kubelogin and headlamp that is their project, Container
+        # Orchestration, so these groups are that project's roles. Plain claim+prefix, no CEL.
         claim: roles
         prefix: "prplanit-sso:"
