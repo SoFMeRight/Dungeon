@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: wazuh-manager
+  annotations:
+    configmap.reloader.stakater.com/reload: wazuh-manager-config
 spec:
   serviceName: wazuh-manager
   replicas: 1
