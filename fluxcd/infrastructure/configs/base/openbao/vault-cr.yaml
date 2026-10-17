@@ -52,13 +52,16 @@ spec:
   resources:
     # vault spikes above 256Mi while restoring an ~84MB raft snapshot on (re)join
     # (steady-state ~212Mi), so a 256Mi limit OOM-killed rejoining replicas mid-restore.
+    # CPU: ~140m average demand, but raft catch-up, unseal and token-revocation sweeps burst
+    # to ~0.8-1.1 cores. The limit covers the bursts; a tight quota freezes raft mid-period
+    # and the followers call elections.
     vault:
       requests:
         memory: "256Mi"
-        cpu: "70m"
+        cpu: "150m"
       limits:
         memory: "384Mi"
-        cpu: "150m"
+        cpu: "1000m"
     bankVaults:
       requests:
         memory: "64Mi"

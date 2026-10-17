@@ -35,10 +35,11 @@ spec:
         path: /v1/sys/health?standbyok=true&perfstandbyok=true&sealedcode=200&uninitcode=200&drsecondarycode=200
         port: api-port
         scheme: HTTP
-      failureThreshold: 3
+      # /sys/health answers slowly during a raft election; 3s x 3 killed nodes mid-election.
+      failureThreshold: 6
       initialDelaySeconds: 60
       periodSeconds: 10
-      timeoutSeconds: 3
+      timeoutSeconds: 10
     securityContext:
       capabilities:
         add:
