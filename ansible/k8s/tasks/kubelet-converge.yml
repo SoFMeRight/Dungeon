@@ -15,9 +15,8 @@
 #   any other node — the inverse of crio-converge's workers-first ordering.
 #   The calling play (kubelet-provision.yml) enforces this with three phases.
 #
-# The pre-drain guard (CNPG primary switchover + PDB audit) is shared with
-# crio-converge.yml via tasks/pre-drain-node.yml. The fail-open rescue and mesh
-# dataplane restart still mirror crio-converge.yml inline.
+# The drain and the return to service are tasks/node-drain.yml and
+# tasks/node-undrain.yml, shared with crio-converge.yml and update-hosts.yml.
 
 - name: Read live kubelet version
   ansible.builtin.command: kubelet --version
@@ -30,7 +29,6 @@
   vars:
     k8s_minor: "{{ kubernetes_version.split('.')[0] }}.{{ kubernetes_version.split('.')[1] }}"
     kubectl_admin: kubectl --kubeconfig /etc/kubernetes/admin.conf
-    mesh_namespace: king-of-red-lions
     is_first_control_plane: "{{ inventory_hostname == groups['k8s_master'][0] }}"
     live_minor: "{{ kubelet_live.stdout | regex_search('v(\\d+\\.\\d+)', '\\1') | first }}"
   block:
@@ -78,22 +76,10 @@
       ansible.builtin.command: kubeadm upgrade node
       when: not (is_first_control_plane | bool)
 
-    - name: Cordon {{ ansible_facts['hostname'] }}
-      ansible.builtin.command: "{{ kubectl_admin }} cordon {{ ansible_facts['hostname'] }}"
-      delegate_to: "{{ groups['k8s_master'][0] }}"
-
-    # Cordoning triggers CNPG to switch any primary off this node and rejoin the
-    # demoted instance itself. Wait for that to complete, then fail fast on genuine
-    # non-CNPG PDB blockers. Shared with crio-converge.yml.
-    - name: Wait for CNPG failover + PDB audit before draining
-      ansible.builtin.include_tasks: pre-drain-node.yml
-
-    - name: Drain {{ ansible_facts['hostname'] }}
-      ansible.builtin.command: >-
-        {{ kubectl_admin }} drain {{ ansible_facts['hostname'] }}
-        --ignore-daemonsets --delete-emptydir-data
-        --grace-period=90 --timeout=600s
-      delegate_to: "{{ groups['k8s_master'][0] }}"
+    - name: Empty {{ ansible_facts['hostname'] }}
+      ansible.builtin.include_tasks: node-drain.yml
+      vars:
+        drain_grace_period: 90
 
     - name: Install kubelet + kubectl {{ kubernetes_version }}
       ansible.builtin.apt:
@@ -125,61 +111,8 @@
       failed_when: kubernetes_version not in kubelet_after.stdout
       when: not ansible_check_mode
 
-    - name: Wait for {{ ansible_facts['hostname'] }} Ready
-      ansible.builtin.command: >-
-        {{ kubectl_admin }} wait --for=condition=Ready
-        node/{{ ansible_facts['hostname'] }} --timeout=300s
-      delegate_to: "{{ groups['k8s_master'][0] }}"
-
-    # Same istiod-gated mesh dataplane restart as crio-converge: daemonset pods
-    # survive the drain and run atop the freshly-restarted kubelet; bounce them
-    # so post-upgrade workloads enroll cleanly, but only with a control plane
-    # present to reprogram them.
-    - name: Check the mesh control plane can reprogram a restarted dataplane
-      ansible.builtin.command: >-
-        {{ kubectl_admin }} -n {{ mesh_namespace }} get deploy istiod
-        -o jsonpath={.status.readyReplicas}
-      register: istiod_ready
-      delegate_to: "{{ groups['k8s_master'][0] }}"
-      changed_when: false
-      failed_when: false
-
-    - name: Restart the node's mesh dataplane under the new kubelet
-      ansible.builtin.shell: |
-        set -o pipefail
-        pods=$({{ kubectl_admin }} -n {{ mesh_namespace }} get pods \
-          --field-selector spec.nodeName={{ ansible_facts['hostname'] }} -o name | grep -E 'ztunnel|istio-cni' || true)
-        if [ -n "$pods" ]; then
-          echo "$pods" | xargs {{ kubectl_admin }} -n {{ mesh_namespace }} delete --wait=false
-        fi
-      args:
-        executable: /bin/bash
-      when: (istiod_ready.stdout | default('0')) | int > 0
-      delegate_to: "{{ groups['k8s_master'][0] }}"
-
-    # Wait via daemonset rollout, NOT `kubectl wait` on pods by node: right after the
-    # bounce the old pods are Terminating but still match a node selector, so a
-    # pod-Ready wait latches onto doomed pods and times out (ztunnel/istio-cni linger
-    # in Terminating well past 180s on graceful shutdown). rollout status tracks the
-    # DS reaching desired/available and ignores the terminating ones.
-    - name: Wait for the node's mesh dataplane to resync
-      ansible.builtin.command: >-
-        {{ kubectl_admin }} -n {{ mesh_namespace }} rollout status {{ item }} --timeout=180s
-      loop:
-        - daemonset/ztunnel
-        - daemonset/istio-cni-node
-      when: (istiod_ready.stdout | default('0')) | int > 0
-      delegate_to: "{{ groups['k8s_master'][0] }}"
-      changed_when: false
-
-    - name: Uncordon {{ ansible_facts['hostname'] }}
-      ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
-      delegate_to: "{{ groups['k8s_master'][0] }}"
-
-    # CNPG can't always re-attach an instance the drain evicted; fail loud naming any
-    # that stranded so a human repairs it deliberately — never auto-repaired.
-    - name: Surface any CNPG instances that stranded after the drain
-      ansible.builtin.include_tasks: post-drain-reconcile.yml
+    - name: Return {{ ansible_facts['hostname'] }} to service
+      ansible.builtin.include_tasks: node-undrain.yml
 
   # Fail OPEN, exactly as crio-converge: a failed roll must never freeze the
   # node's capacity behind a cordon and cascade into the rest of the fleet.

@@ -1,0 +1,27 @@
+---
+# Empty a Kubernetes node: cordon → pre-drain guard → drain. node-undrain.yml is
+# the other half. Shared by crio-converge.yml, kubelet-converge.yml and
+# maintenance/update-hosts.yml; the caller's rescue uncordons (fail-open).
+#
+#   drain_node          kubernetes node name (default: this host's hostname)
+#   k8s_delegate        inventory host whose admin.conf runs kubectl (default: first k8s_master)
+#   drain_grace_period  seconds each pod gets; -1 uses the pod's own (default: 300)
+
+- name: Drain {{ drain_node | default(ansible_facts['hostname']) }}
+  vars:
+    _drain_node: "{{ drain_node | default(ansible_facts['hostname']) }}"
+    _k8s_delegate: "{{ k8s_delegate | default(groups['k8s_master'][0]) }}"
+  block:
+    - name: Cordon {{ _drain_node }}
+      ansible.builtin.command: "{{ kubectl_admin }} cordon {{ _drain_node }}"
+      delegate_to: "{{ _k8s_delegate }}"
+
+    - name: Move CNPG primaries off {{ _drain_node }} + PDB audit
+      ansible.builtin.include_tasks: pre-drain-node.yml
+
+    - name: Evict {{ _drain_node }}
+      ansible.builtin.command: >-
+        {{ kubectl_admin }} drain {{ _drain_node }}
+        --ignore-daemonsets --delete-emptydir-data
+        --grace-period={{ drain_grace_period | default(300) }} --timeout=600s
+      delegate_to: "{{ _k8s_delegate }}"

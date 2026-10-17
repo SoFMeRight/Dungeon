@@ -1,18 +1,24 @@
 ---
 # Fleet OS patching — deduped, cluster-aware successor to
-# update-hosts-linux_{clustered,unclustered}.yaml (byte-identical but for the
-# hosts line, and rebooting cluster nodes with no graceful eviction).
+# update-hosts-linux_{clustered,unclustered}.yaml.
 #
 # One shared OS body (tasks/os-upgrade.yml) for every host. serial: 1 within
 # each class. Order and eviction per class:
-#   1. k8s nodes FIRST — cordon + drain (graceful, PDB-respecting) → upgrade →
-#      reboot → Ready → uncordon; fail-open (a failed roll never leaves a node
+#   1. k8s nodes FIRST — k8s/tasks/node-drain.yml → upgrade → reboot →
+#      k8s/tasks/node-undrain.yml; fail-open (a failed roll never leaves a node
 #      cordoned). The k8s VMs run ON the proxmox hosts, so they patch first.
-#   2. proxmox hypervisors — reboot IN PLACE (resource-scarce; VMs can't
-#      migrate), then gate on PVE quorum + Ceph HEALTH_OK before the next host.
+#   2. proxmox hypervisors — upgrade; when a reboot is needed, check Ceph
+#      ok-to-stop for the host's OSDs, drain every k8s node running on the host,
+#      set noout on the host's OSDs, reboot in place, gate on PVE quorum + Ceph
+#      recovered (tasks/gate-proxmox-quorum.yml), unset noout, return the nodes
+#      to service.
 #   3. standalone hosts — plain reboot, nothing to evacuate.
 #
-# kubectl invocation + control-plane delegate read group_vars/all.yml; the three
+# The drain and the return to service are the same tasks crio-converge and
+# kubelet-converge use. kubectl runs on a control-plane host that is not the
+# one going down.
+#
+# kubectl invocation + control-plane group read group_vars/all.yml; the three
 # host-class targets are inline `hosts:` defaults (a play's hosts resolves before
 # group_vars load) — override per-run with Semaphore extra-vars / -e:
 #   os_patch_k8s_group   (default k8s_master:k8s_worker)
@@ -21,6 +27,10 @@
 # OS patching ONLY; cri-o + kubelet version convergence are separate version-
 # gated plays. Run on its own cadence:
 #   ansible-playbook -i inventory maintenance/update-hosts.yml
+# One hypervisor only:
+#   ansible-playbook -i inventory maintenance/update-hosts.yml \
+#     -e os_patch_k8s_group=none -e os_patch_standalone_group=none \
+#     -e os_patch_proxmox_group=dragonfruit
 
 - name: OS patch — Kubernetes nodes (drain-safe), before the hypervisors
   hosts: "{{ os_patch_k8s_group | default('k8s_master:k8s_worker') }}"
@@ -30,35 +40,20 @@
   tasks:
     - name: Drain-wrapped OS upgrade + reboot
       vars:
-        cp_delegate: "{{ groups[control_plane_group] | first }}"
+        k8s_delegate: "{{ groups[control_plane_group] | reject('equalto', inventory_hostname) | first }}"
       block:
-        - name: Cordon {{ ansible_facts['hostname'] }}
-          ansible.builtin.command: "{{ kubectl_admin }} cordon {{ ansible_facts['hostname'] }}"
-          delegate_to: "{{ cp_delegate }}"
-
-        - name: Drain {{ ansible_facts['hostname'] }}
-          ansible.builtin.command: >-
-            {{ kubectl_admin }} drain {{ ansible_facts['hostname'] }}
-            --ignore-daemonsets --delete-emptydir-data
-            --grace-period=300 --timeout=600s
-          delegate_to: "{{ cp_delegate }}"
+        - name: Empty {{ ansible_facts['hostname'] }}
+          ansible.builtin.include_tasks: ../k8s/tasks/node-drain.yml
 
         - ansible.builtin.import_tasks: ../tasks/os-upgrade.yml
         - ansible.builtin.import_tasks: ../tasks/reboot-if-required.yml
 
-        - name: Wait for {{ ansible_facts['hostname'] }} to rejoin Ready
-          ansible.builtin.command: >-
-            {{ kubectl_admin }} wait --for=condition=Ready
-            node/{{ ansible_facts['hostname'] }} --timeout=300s
-          delegate_to: "{{ cp_delegate }}"
-
-        - name: Uncordon {{ ansible_facts['hostname'] }}
-          ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
-          delegate_to: "{{ cp_delegate }}"
+        - name: Return {{ ansible_facts['hostname'] }} to service
+          ansible.builtin.include_tasks: ../k8s/tasks/node-undrain.yml
       rescue:
         - name: Fail open — uncordon {{ ansible_facts['hostname'] }}
           ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ ansible_facts['hostname'] }}"
-          delegate_to: "{{ groups[control_plane_group] | first }}"
+          delegate_to: "{{ k8s_delegate }}"
           changed_when: false
 
         - name: Surface the patch failure
@@ -67,7 +62,7 @@
               OS patch failed on {{ ansible_facts['hostname'] }} — node left
               schedulable (fail-open); see the failed task above.
 
-- name: OS patch — Proxmox hypervisors (reboot in place, quorum-gated)
+- name: OS patch — Proxmox hypervisors (resident k8s nodes drained, quorum-gated)
   hosts: "{{ os_patch_proxmox_group | default('proxmox') }}"
   serial: 1
   gather_facts: true
@@ -87,14 +82,130 @@
           ({{ controller_hostname }}) — packages upgraded, REBOOT DEFERRED. It
           would kill this run. Reboot it separately (from another controller, or
           manually) to finish patching it.
-      when: hosts_ansible_controller | bool
+      when: hosts_ansible_controller | bool and node_reboot_required | default(false) | bool
 
-    # Reboot + quorum gate only when this host is NOT the controller's host.
-    - ansible.builtin.import_tasks: ../tasks/reboot-if-required.yml
-      when: not (hosts_ansible_controller | bool)
+    - name: Reboot with the resident Kubernetes nodes drained
+      when: not (hosts_ansible_controller | bool) and node_reboot_required | default(false) | bool
+      block:
+        # The CRUSH host bucket is the hostname (Dragonfruit). rc 2 = no such
+        # bucket: this host carries no OSDs.
+        - name: List this host's Ceph OSDs
+          ansible.builtin.command: ceph osd ls-tree {{ ansible_facts['hostname'] }}
+          register: host_osds
+          check_mode: false
+          changed_when: false
+          failed_when: host_osds.rc not in [0, 2]
 
-    - ansible.builtin.import_tasks: ../tasks/gate-proxmox-quorum.yml
-      when: not (hosts_ansible_controller | bool)
+        # Before anything is drained: refuses if stopping these OSDs would take
+        # any PG below min_size.
+        - name: Confirm Ceph can lose this host's OSDs
+          ansible.builtin.command: ceph osd ok-to-stop {{ host_osds.stdout_lines | join(' ') }}
+          when: host_osds.stdout_lines | length > 0
+          check_mode: false
+          changed_when: false
+
+        - name: List the Kubernetes nodes and their addresses
+          ansible.builtin.command: >-
+            {{ kubectl_admin }} get nodes -o
+            jsonpath='{range .items[*]}{.metadata.name} {.status.addresses[?(@.type=="InternalIP")].address}{"\n"}{end}'
+          delegate_to: "{{ groups[control_plane_group] | first }}"
+          register: k8s_nodes
+          check_mode: false
+          changed_when: false
+
+        # Guest names are the kubernetes node names (Dungeon-Map-004 → dungeon-map-004).
+        - name: List the guests running on this host
+          ansible.builtin.shell: |
+            set -o pipefail
+            qm list | awk 'NR>1 && $3=="running" {print tolower($2)}'
+          args:
+            executable: /bin/bash
+          register: running_guests
+          check_mode: false
+          changed_when: false
+
+        - name: Pick the Kubernetes nodes running on this host
+          vars:
+            node_ip: "{{ dict(k8s_nodes.stdout_lines | map('split') | list) }}"
+            resident: "{{ running_guests.stdout_lines | select('in', node_ip.keys() | list) | list }}"
+          ansible.builtin.set_fact:
+            resident_k8s_nodes: "{{ resident }}"
+            resident_k8s_ips: "{{ resident | map('extract', node_ip) | list }}"
+
+        # kubectl must run where it survives the reboot: the first control-plane
+        # host whose node is not on this hypervisor.
+        - name: Pick a control-plane host off this hypervisor for kubectl
+          ansible.builtin.set_fact:
+            k8s_delegate: >-
+              {{ groups[control_plane_group]
+                 | map('extract', hostvars)
+                 | rejectattr('ansible_host', 'in', resident_k8s_ips)
+                 | map(attribute='inventory_hostname')
+                 | first }}
+
+        - name: Report what this reboot takes down
+          ansible.builtin.debug:
+            msg: >-
+              {{ inventory_hostname }}: draining {{ resident_k8s_nodes | join(', ') or 'no k8s nodes' }};
+              kubectl via {{ k8s_delegate }}
+
+        # All of them first, so the pre-drain guard never moves a CNPG primary
+        # onto a node that is about to go down with the host.
+        - name: Cordon every resident node
+          ansible.builtin.command: "{{ kubectl_admin }} cordon {{ item }}"
+          loop: "{{ resident_k8s_nodes }}"
+          delegate_to: "{{ k8s_delegate }}"
+
+        - name: Empty each resident node
+          ansible.builtin.include_tasks: ../k8s/tasks/node-drain.yml
+          loop: "{{ resident_k8s_nodes }}"
+          loop_control:
+            loop_var: drain_node
+
+        # Ceph would otherwise mark this host's OSDs out after
+        # mon_osd_down_out_interval and rebalance onto the surviving hosts, then
+        # back again once they return. Scoped to this host's bucket, so an OSD
+        # failing elsewhere during the window is still marked out and recovered.
+        - name: Hold this host's OSDs in for the reboot (noout)
+          ansible.builtin.command: ceph osd set-group noout {{ ansible_facts['hostname'] }}
+          when: host_osds.stdout_lines | length > 0
+
+        - ansible.builtin.import_tasks: ../tasks/reboot-if-required.yml
+
+        # Held until its OSDs are back up and PGs clean, so a slow OSD start is
+        # never marked out mid-recovery.
+        - ansible.builtin.import_tasks: ../tasks/gate-proxmox-quorum.yml
+
+        - name: Release noout on this host's OSDs
+          ansible.builtin.command: ceph osd unset-group noout {{ ansible_facts['hostname'] }}
+          when: host_osds.stdout_lines | length > 0
+
+        - name: Return each resident node to service
+          ansible.builtin.include_tasks: ../k8s/tasks/node-undrain.yml
+          loop: "{{ resident_k8s_nodes }}"
+          loop_control:
+            loop_var: drain_node
+          vars:
+            ready_timeout: 900
+      rescue:
+        - name: Fail open — release noout on this host's OSDs
+          ansible.builtin.command: ceph osd unset-group noout {{ ansible_facts['hostname'] }}
+          when: host_osds.stdout_lines | default([]) | length > 0
+          failed_when: false
+          changed_when: false
+
+        - name: Fail open — uncordon the resident nodes
+          ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ item }}"
+          loop: "{{ resident_k8s_nodes | default([]) }}"
+          delegate_to: "{{ k8s_delegate | default(groups[control_plane_group] | first) }}"
+          failed_when: false
+          changed_when: false
+
+        - name: Surface the patch failure
+          ansible.builtin.fail:
+            msg: >-
+              OS patch failed on {{ inventory_hostname }} — noout released, resident
+              nodes left schedulable (fail-open); see the failed task above.
 
 - name: OS patch — standalone hosts (plain reboot)
   hosts: "{{ os_patch_standalone_group | default('linux_unclustered') }}"

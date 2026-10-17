@@ -1,5 +1,5 @@
 ---
-# Shared pre-drain guard, included by crio-converge.yml and kubelet-converge.yml
+# Pre-drain guard, included by node-drain.yml
 # AFTER the node is cordoned and BEFORE it is drained. It runs
 # files/pre-drain-guard.py on a control-plane host, which:
 #   - switches every CNPG primary off this node (status.targetPrimary patch) and waits
@@ -15,10 +15,10 @@
 # so anything that strands is re-cloned after the drain by post-drain-reconcile.yml.
 
 - name: Switch CNPG primaries off the node + PDB audit before draining
-  ansible.builtin.script: "{{ playbook_dir }}/files/pre-drain-guard.py {{ ansible_facts['hostname'] }}"
+  ansible.builtin.script: "../files/pre-drain-guard.py {{ _drain_node }}"
   args:
     executable: python3
   register: pre_drain_guard
   changed_when: "'switching over' in pre_drain_guard.stdout"
   when: not ansible_check_mode
-  delegate_to: "{{ groups['k8s_master'][0] }}"
+  delegate_to: "{{ _k8s_delegate }}"

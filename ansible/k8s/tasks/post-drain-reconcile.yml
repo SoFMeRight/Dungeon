@@ -1,5 +1,5 @@
 ---
-# Shared post-drain health gate, included by crio-converge.yml and kubelet-converge.yml
+# Post-drain health gate, included by node-undrain.yml
 # AFTER the node is drained and uncordoned. It runs files/post-drain-reconcile.py on a
 # control-plane host: after a grace window (to let CNPG re-attach what it can), it fails
 # loud naming any CNPG instance that stranded, so an operator investigates and repairs it
@@ -9,10 +9,10 @@
 # STOP for a human rather than guess.
 
 - name: Verify CNPG clusters recovered after the drain (surface strands, no auto-repair)
-  ansible.builtin.script: "{{ playbook_dir }}/files/post-drain-reconcile.py {{ ansible_facts['hostname'] }}"
+  ansible.builtin.script: "../files/post-drain-reconcile.py {{ _drain_node }}"
   args:
     executable: python3
   register: post_drain_check
   changed_when: false
   when: not ansible_check_mode
-  delegate_to: "{{ groups['k8s_master'][0] }}"
+  delegate_to: "{{ _k8s_delegate }}"
