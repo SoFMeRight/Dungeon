@@ -4,6 +4,7 @@ metadata:
   name: wazuh-manager
   annotations:
     configmap.reloader.stakater.com/reload: wazuh-manager-config
+    secret.reloader.stakater.com/reload: wazuh-manager-secrets
 spec:
   serviceName: wazuh-manager
   replicas: 1
