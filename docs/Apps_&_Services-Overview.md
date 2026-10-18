@@ -376,7 +376,7 @@
 
 **Gitlab — 11 components** — Mixed — v19.4.1
 - Namespace: hyrule-castle
-- Replicas: 23/23
+- Replicas: 22/22
 - Hosts: git.prplanit.com
 - Gateway: cell-membrane-gateway
 - Components:
@@ -1221,7 +1221,7 @@
 | Vault Operator | zeldas-lullaby | ✅ |
 | Snapshot Controller | fairy-bottle | ✅ |
 | Velero (2 components) | fairy-bottle | ✅ |
-| Gitlab Gitlab Runner | hyrule-castle | ✅ |
+| Gitlab Gitlab Runner | hyrule-castle | ❌ |
 | Mariadb | hyrule-castle | ✅ |
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
@@ -1294,7 +1294,7 @@
 
 **Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
 - Namespace: hyrule-castle
-- Replicas: 1/1
+- Replicas: 0/1
 
 **Mariadb** — StatefulSet — 
 - Namespace: hyrule-castle
@@ -1488,7 +1488,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 
 | Workload | Namespace | Status |
 | --- | --- | --- |
-| Steam Headless | arbitorium-game-streaming | ✅ |
+| Steam Headless | arbitorium-game-streaming | ❌ |
 
 <details>
 <summary>Retired / Graveyard (8)</summary>
