@@ -12,7 +12,7 @@
 #   docker run --rm --network host --user 1000:1000 \
 #     -e HOME=/home/kai -v /etc/passwd:/etc/passwd:ro \
 #     -v <scratch>:/home/kai -v ~/.ssh:/home/kai/.ssh:ro \
-#     -v $PWD:/work -w /work ghcr.io/homelabhd/ansible:v2.21.6 \
+#     -v $PWD:/work -w /work ghcr.io/homelabhd/ansible:v2.21.5 \
 #     ansible-playbook -i inventory k8s/tuning/lvm-filter.yaml
 
 - name: Keep LVM off RBD and NBD devices
