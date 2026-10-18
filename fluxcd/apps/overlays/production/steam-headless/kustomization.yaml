@@ -20,7 +20,7 @@ configMapGenerator:
       - library/port-Faugus_Launcher.sh
 images:
   - name: docker.io/hlhd/ansible
-    newTag: v2.21.6
+    newTag: v2.21.5
 patches:
   - path: statefulset-patch.yaml
     target:
