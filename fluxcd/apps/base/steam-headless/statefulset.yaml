@@ -1,0 +1,139 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: steam-headless
+spec:
+  revisionHistoryLimit: 5
+  serviceName: steam-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app: steam-headless
+  template:
+    metadata:
+      labels:
+        app: steam-headless
+        # Privileged seat: Xorg on the GPU, uinput virtual input devices, root s6/supervisor init
+        # that installs the host-matched NVIDIA userspace driver. None of the five hardening
+        # dimensions can hold.
+        policy.prplanit.com/except-seccomp: "true"
+        policy.prplanit.com/except-drop-caps: "true"
+        policy.prplanit.com/except-no-privesc: "true"
+        policy.prplanit.com/except-non-root: "true"
+        policy.prplanit.com/except-ro-rootfs: "true"
+    spec:
+      serviceAccountName: steam-headless
+      runtimeClassName: nvidia
+      # Sunshine binds its streaming ports on the node address; Moonlight reaches the seat there.
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      securityContext:
+        fsGroup: 1000
+        seccompProfile:
+          type: Unconfined
+      containers:
+        - name: steam-headless
+          image: PLACEHOLDER_IMAGE
+          securityContext:
+            privileged: true
+          env:
+            - name: TZ
+              value: "PLACEHOLDER_TZ"
+            - name: USER_LOCALES
+              value: "en_US.UTF-8 UTF-8"
+            - name: DISPLAY
+              value: ":55"
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: UMASK
+              value: "000"
+            - name: USER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: steam-headless-secret
+                  key: USER_PASSWORD
+            - name: MODE
+              value: "primary"
+            - name: WEB_UI_MODE
+              value: "none"
+            - name: ENABLE_STEAM
+              value: "true"
+            - name: ENABLE_SUNSHINE
+              value: "true"
+            - name: SUNSHINE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: steam-headless-secret
+                  key: SUNSHINE_USER
+            - name: SUNSHINE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: steam-headless-secret
+                  key: SUNSHINE_PASS
+            - name: ENABLE_EVDEV_INPUTS
+              value: "true"
+            - name: NVIDIA_VISIBLE_DEVICES
+              value: "all"
+            - name: NVIDIA_DRIVER_CAPABILITIES
+              value: "all"
+          ports:
+            - containerPort: 47984
+              name: sunshine-https
+              protocol: TCP
+            - containerPort: 47989
+              name: sunshine-http
+              protocol: TCP
+            - containerPort: 47990
+              name: sunshine-web
+              protocol: TCP
+            - containerPort: 48010
+              name: sunshine-rtsp
+              protocol: TCP
+            - containerPort: 47998
+              name: sunshine-video
+              protocol: UDP
+            - containerPort: 47999
+              name: sunshine-ctrl
+              protocol: UDP
+            - containerPort: 48000
+              name: sunshine-audio
+              protocol: UDP
+          volumeMounts:
+            - name: home
+              mountPath: /home/default
+            - name: games
+              mountPath: /mnt/games
+              readOnly: true
+            - name: input-devices
+              mountPath: /dev/input
+            - name: dshm
+              mountPath: /dev/shm
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+      volumes:
+        - name: games
+          persistentVolumeClaim:
+            claimName: steam-headless-games
+            readOnly: true
+        # Sunshine creates its virtual gamepads/keyboard/mouse through /dev/uinput; the kernel
+        # registers them under the HOST's /dev/input, which Xorg must see to read them.
+        - name: input-devices
+          hostPath:
+            path: /dev/input
+            type: Directory
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 2Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: home
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi

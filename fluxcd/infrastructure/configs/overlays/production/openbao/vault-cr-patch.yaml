@@ -100,6 +100,12 @@ spec:
           path "pedestal-of-time/metadata/*" {
             capabilities = ["read", "list"]
           }
+          path "arbitorium/data/*" {
+            capabilities = ["read", "list"]
+          }
+          path "arbitorium/metadata/*" {
+            capabilities = ["read", "list"]
+          }
       - name: zitadel-provisioner
         rules: |
           path "zeldas-letter/data/apps/zitadel" {
@@ -218,6 +224,11 @@ spec:
       - path: pedestal-of-time
         type: kv
         description: Personal productivity and management apps
+        options:
+          version: 2
+      - path: arbitorium
+        type: kv
+        description: The house — personal-sensitive, home automation and household amenity secrets
         options:
           version: 2
       # SSH client-cert signer — Boundary brokers short-lived certs for access to

@@ -15,6 +15,7 @@ resources:
   - clustersecretstore-zeldas-letter.yaml  # External Secrets for the Hyrule family (system/core apps)
   - clustersecretstore-outspokekin.yaml  # External Secrets for the fediverse hub (temple-of-time)
   - clustersecretstore-great-sea.yaml  # External Secrets for great-sea (VPN-routed media automation apps in swift-sail)
+  - clustersecretstore-arbitorium.yaml  # External Secrets for the house tenant (arbitorium-* namespaces)
 
 patches:
   - path: vault-cr-patch.yaml

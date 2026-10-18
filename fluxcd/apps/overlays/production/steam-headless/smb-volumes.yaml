@@ -1,0 +1,63 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: steam-headless-smb-secret
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: openbao-arbitorium
+    kind: ClusterSecretStore
+  target:
+    name: steam-headless-smb-secret
+    creationPolicy: Owner
+  data:
+    - secretKey: username
+      remoteRef:
+        key: apps/steam-headless
+        property: SAMBA_USERNAME
+    - secretKey: password
+      remoteRef:
+        key: apps/steam-headless
+        property: SAMBA_PASSWORD
+---
+# Games library (ROMs) — read-only to the seat.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: steam-headless-games
+spec:
+  capacity:
+    storage: 5Ti
+  accessModes:
+    - ReadOnlyMany
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions:
+    - vers=3.1.1
+    - hard
+    - ro
+    - uid=1000
+    - gid=1000
+    - file_mode=0444
+    - dir_mode=0555
+  csi:
+    driver: smb.csi.k8s.io
+    readOnly: true
+    volumeHandle: steam-headless-games-gringotts-games
+    volumeAttributes:
+      source: "//gringotts/Games"
+    nodeStageSecretRef:
+      name: steam-headless-smb-secret
+      namespace: arbitorium-game-streaming
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: steam-headless-games
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 5Ti
+  volumeName: steam-headless-games

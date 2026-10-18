@@ -62,6 +62,7 @@ resources:
   - minecraft-optcp
   - palworld
   - romm
+  - steam-headless
   # Media
   - calibre-web
   - hubzilla

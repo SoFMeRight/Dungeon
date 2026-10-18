@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: steam-headless
+spec:
+  template:
+    spec:
+      # The GTX 980 Ti seat node.
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: nvidia.com/gpu.family
+                    operator: In
+                    values:
+                      - maxwell
+      containers:
+        - name: steam-headless
+          image: docker.io/josh5/steam-headless:2.44.20261004.1
+          env:
+            - name: TZ
+              value: "America/Los_Angeles"
+            - name: ENABLE_STEAM
+              value: "false"
+          volumeMounts:
+            - name: arbitorium-game-streaming-steam-headless-home
+              mountPath: /home/default
+          resources:
+            requests:
+              cpu: 4000m
+              memory: 8Gi
+            limits:
+              cpu: 8000m
+              memory: 16Gi
+              nvidia.com/gpu: 1
+  volumeClaimTemplates:
+    - metadata:
+        name: arbitorium-game-streaming-steam-headless-home
+      spec:
+        storageClassName: ceph-rbd
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
