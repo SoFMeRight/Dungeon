@@ -123,10 +123,15 @@ spec:
           image: PLACEHOLDER_IMAGE
           securityContext:
             privileged: true
-          # NVIDIA Container Toolkit >= 1.18 stacks a second tmpfs (its disable-device-node-modification
-          # hook, source /nvct-params) on /proc/driver/nvidia/params over libnvidia-container's. The
-          # image's init unmounts once, leaving one; any submount on /proc makes the kernel refuse
-          # Bubblewrap's fresh /proc, so every Flatpak fails. Unmount until none remain.
+          # 1. NVIDIA Container Toolkit >= 1.18 stacks a second tmpfs (its disable-device-node-modification
+          #    hook, source /nvct-params) on /proc/driver/nvidia/params over libnvidia-container's. The
+          #    image's init unmounts once, leaving one; any submount on /proc makes the kernel refuse
+          #    Bubblewrap's fresh /proc, so every Flatpak fails. Unmount until none remain.
+          # 2. The image's init deletes every /dev/dri/card* node. NVIDIA's Wayland EGL (egl-wayland)
+          #    identifies its GPU by the primary node, so without it every Wayland client (plasmashell,
+          #    Firefox, Flatpak apps) falls back to llvmpipe. Recreate only the render GPU's own card
+          #    node, matched by its sysfs device, once PID 1 has become systemd: after the init's
+          #    deletion and before the session's clients pick a renderer.
           lifecycle:
             postStart:
               exec:
@@ -136,6 +141,22 @@ spec:
                   - |
                     while mountpoint -q /proc/driver/nvidia/params; do
                       umount /proc/driver/nvidia/params || break
+                    done
+                    i=0
+                    while [ "$(cat /proc/1/comm)" != "systemd" ] && [ $i -lt 300 ]; do
+                      sleep 0.2; i=$((i + 1))
+                    done
+                    render=$(ls /dev/dri/renderD* 2>/dev/null | head -n 1)
+                    [ -n "$render" ] || exit 0
+                    gpu=$(readlink -f "/sys/class/drm/$(basename "$render")/device")
+                    for card in /sys/class/drm/card*; do
+                      name=$(basename "$card")
+                      case "$name" in *-*) continue ;; esac
+                      [ "$(readlink -f "$card/device")" = "$gpu" ] || continue
+                      [ -e "/dev/dri/$name" ] && continue
+                      dev=$(cat "$card/dev")
+                      mknod -m 0660 "/dev/dri/$name" c "${dev%%:*}" "${dev##*:}"
+                      chgrp --reference="$render" "/dev/dri/$name"
                     done
                     exit 0
           env:
