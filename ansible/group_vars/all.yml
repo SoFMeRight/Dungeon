@@ -51,6 +51,13 @@ kubelet_settings:
   imageGCLowThresholdPercent: 70
   imageMaximumGCAge: "168h0m0s"
 
+  # Per-pod process+thread cap, so one pod (a runaway or hostile game on a
+  # streaming seat, a fork bomb anywhere) cannot exhaust the node's PIDs. Measured
+  # per-pod peaks on 2026-10-18: the steam-headless seat 726, ceph-rgw 622, all
+  # others under ~200 — 8192 is >10x the highest, room for Proton titles that run
+  # a thousand-plus threads, and far below pid_max (4194304).
+  podPidsLimit: 8192
+
   # Graceful Node Shutdown. At 0s the feature is OFF: kubelet registers no
   # systemd inhibitor and pods are killed rather than sent SIGTERM, so Postgres
   # never checkpoints and Galera never writes safe_to_bootstrap — every recovery
