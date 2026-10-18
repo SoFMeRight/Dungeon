@@ -4,9 +4,9 @@
 > Generated from live Kubernetes state
 > Cluster: dungeon
 
-## Apps & Services (132)
+## Apps & Services (131)
 
-✅ 131 healthy · ⚠️ 1 degraded
+✅ 130 healthy · ⚠️ 1 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -124,7 +124,6 @@
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Ark (4 components) | ⚠️ | 🌐 |  |
-| Emulatorjs | ✅ | 🔒 emulatorjs.pcfae.com | [open](https://emulatorjs.pcfae.com) |
 | Minecraft | ✅ | 🌐 |  |
 | Palworld | ✅ | 🌐 |  |
 | Romm (2 components) | ✅ | 🔒 romm.pcfae.com | [open](https://romm.pcfae.com) |
@@ -806,12 +805,6 @@
   - ark-sa-tmc-valguero (StatefulSet)
   - ark-se-tmc-theisland (StatefulSet)
 
-**Emulatorjs** — StatefulSet — 1.9.2
-- Namespace: shooting-gallery
-- Replicas: 1/1
-- Hosts: emulatorjs.pcfae.com
-- Gateway: phloem-gateway
-
 **Minecraft** — StatefulSet — java25
 - Namespace: shooting-gallery
 - Replicas: 1/1
@@ -1154,7 +1147,7 @@
 **Fairer Pages** — Deployment — v0.0.14
 - Namespace: tingle-tuner
 - Replicas: 3/3
-- Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.outspokekin.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, 2fa.pcfae.com, ai.pcfae.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, bitwarden.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, chat.outspokekin.com, code.pcfae.com, convertx.pcfae.com, cr.pcfae.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, docker.cr.pcfae.com, dolibarr.prplanit.com, draw.pcfae.com, emulatorjs.pcfae.com, erpnext.prplanit.com, fairer-pages.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, ghcr.cr.pcfae.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, hass.arbitorium.com, hass.pcfae.com, homelabhelpdesk.com, hosts.pcfae.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, joplin.pcfae.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, livekit.outspokekin.com, ls.sofmeright.com, lscr.cr.pcfae.com, lubelogger.pcfae.com, lwd.optcp.com, mail.pcfae.com, mail.precisionplanit.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, mazanoke.pcfae.com, meals.yesimvegan.com, monica.pcfae.com, ncloud.optcp.com, netalertx.pcfae.com, netbird.prplanit.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, optcp.com, orangehrm.prplanit.com, outspokekin.com, overseer.pcfae.com, paperless.pcfae.com, pbx.pcfae.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, prowlarr.pcfae.com, prplanit.com, qbitt.pcfae.com, quay.cr.pcfae.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.pcfae.com, search.pcfae.com, sh.pcfae.com, sh.uni2.cc, shiplog.pcfae.com, shlink.pcfae.com, siem.prplanit.com, smkeygen.pcfae.com, social.outspokekin.com, sofmeright.com, sonarr.pcfae.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.prplanit.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.pcfae.com, trmm.prplanit.com, uni2.cc, uptime.pcfae.com, uptime.sofmeright.com, vault.pcfae.com, vw.prplanit.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.pcfae.com
+- Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.outspokekin.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, 2fa.pcfae.com, ai.pcfae.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, bitwarden.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, chat.outspokekin.com, code.pcfae.com, convertx.pcfae.com, cr.pcfae.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, docker.cr.pcfae.com, dolibarr.prplanit.com, draw.pcfae.com, erpnext.prplanit.com, fairer-pages.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, ghcr.cr.pcfae.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, hass.arbitorium.com, hass.pcfae.com, homelabhelpdesk.com, hosts.pcfae.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, joplin.pcfae.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, livekit.outspokekin.com, ls.sofmeright.com, lscr.cr.pcfae.com, lubelogger.pcfae.com, lwd.optcp.com, mail.pcfae.com, mail.precisionplanit.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, mazanoke.pcfae.com, meals.yesimvegan.com, monica.pcfae.com, ncloud.optcp.com, netalertx.pcfae.com, netbird.prplanit.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, optcp.com, orangehrm.prplanit.com, outspokekin.com, overseer.pcfae.com, paperless.pcfae.com, pbx.pcfae.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, prowlarr.pcfae.com, prplanit.com, qbitt.pcfae.com, quay.cr.pcfae.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.pcfae.com, search.pcfae.com, sh.pcfae.com, sh.uni2.cc, shiplog.pcfae.com, shlink.pcfae.com, siem.prplanit.com, smkeygen.pcfae.com, social.outspokekin.com, sofmeright.com, sonarr.pcfae.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.prplanit.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.pcfae.com, trmm.prplanit.com, uni2.cc, uptime.pcfae.com, uptime.sofmeright.com, vault.pcfae.com, vw.prplanit.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.pcfae.com
 - Gateway: cell-membrane-gateway
 
 **Faster Whisper** — StatefulSet — gpu
@@ -1231,7 +1224,7 @@
 | Vault Operator | zeldas-lullaby | ✅ |
 | Snapshot Controller | fairy-bottle | ✅ |
 | Velero (2 components) | fairy-bottle | ✅ |
-| Gitlab Gitlab Runner | hyrule-castle | ✅ |
+| Gitlab Gitlab Runner | hyrule-castle | ❌ |
 | Mariadb | hyrule-castle | ✅ |
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
@@ -1302,7 +1295,7 @@
 
 **Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
 - Namespace: hyrule-castle
-- Replicas: 1/1
+- Replicas: 0/1
 
 **Mariadb** — StatefulSet — 
 - Namespace: hyrule-castle
@@ -1488,7 +1481,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 
 | Workload | Namespace | Status |
 | --- | --- | --- |
-| Steam Headless | arbitorium-game-streaming | ❌ |
+| Steam Headless | arbitorium-game-streaming | ✅ |
 
 <details>
 <summary>Retired / Graveyard (8)</summary>
