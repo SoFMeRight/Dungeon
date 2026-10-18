@@ -102,12 +102,13 @@ spec:
               protocol: UDP
           volumeMounts:
             - name: home
-              mountPath: /home/default
+              mountPath: /home/steamheadless
+              subPath: home
             # The image's persistent state root (incl. the host-matched NVIDIA 32-bit libraries it
             # extracts on first boot); must be mounted whole — the image initialises it when empty.
             - name: home
               mountPath: /var/lib/steam-headless
-              subPath: .steam-headless-state
+              subPath: state
             # /mnt/games is the image's writable Steam library (chowned at every start); the ROM
             # library is mounted read-only beside it.
             - name: games
@@ -117,6 +118,10 @@ spec:
               mountPath: /dev/input
             - name: dshm
               mountPath: /dev/shm
+            # systemd (PID 1) mounts its own tmpfs over /run unless /run is already a mount point,
+            # hiding the session environment the init script writes there before exec.
+            - name: run
+              mountPath: /run
           resources:
             limits:
               nvidia.com/gpu: 1
@@ -135,6 +140,10 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 2Gi
+        - name: run
+          emptyDir:
+            medium: Memory
+            sizeLimit: 512Mi
   volumeClaimTemplates:
     - metadata:
         name: home

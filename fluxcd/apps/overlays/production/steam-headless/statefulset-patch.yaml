@@ -25,7 +25,7 @@ spec:
               value: "false"
           volumeMounts:
             - name: arbitorium-game-streaming-steam-headless-home
-              mountPath: /home/default
+              mountPath: /home/steamheadless
             - name: arbitorium-game-streaming-steam-headless-home
               mountPath: /var/lib/steam-headless
           resources:
