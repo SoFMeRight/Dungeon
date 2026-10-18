@@ -1,0 +1,114 @@
+---
+# Converges the seat's ES-DE library onto the home volume from the mounted spec (/library):
+#   systems.txt          "<es-de system> <folder under ROMS_SRC>" per line; ~/ROMs/<system> -> ROMS_SRC/<folder>
+#   port-<Title>.sh      installed as ~/ROMs/ports/<Title>.sh with "_" shown as a space (ES-DE
+#                        "ports" system; ConfigMap keys cannot hold spaces)
+#   es_find_rules.xml    installed as ~/ES-DE/custom_systems/es_find_rules.xml
+#   es_systems.xml       installed as ~/ES-DE/custom_systems/es_systems.xml
+# System links, launchers and custom files no longer declared are removed; ROMS_SRC itself is
+# never written.
+- name: converge the ES-DE library
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    spec: /library
+    home: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+    roms: "{{ home }}/ROMs"
+    roms_src: "{{ lookup('ansible.builtin.env', 'ROMS_SRC') }}"
+    custom_files: [es_find_rules.xml, es_systems.xml]
+    systems: >-
+      {{ lookup('ansible.builtin.file', spec ~ '/systems.txt').splitlines()
+         | map('trim') | reject('match', '^(#|$)') | map('split') | list }}
+  tasks:
+    - name: ensure the library directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "{{ roms }}/ports"
+        - "{{ home }}/ES-DE/custom_systems"
+
+    - name: link each declared system to its games folder
+      ansible.builtin.file:
+        src: "{{ roms_src }}/{{ item.1 }}"
+        dest: "{{ roms }}/{{ item.0 }}"
+        state: link
+        force: true
+        follow: false
+      loop: "{{ systems }}"
+      loop_control:
+        label: "{{ item.0 }} -> {{ item.1 }}"
+
+    - name: find the system links in the library
+      ansible.builtin.find:
+        paths: "{{ roms }}"
+        file_type: link
+      register: _links
+
+    - name: remove system links no longer declared
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ _links.files | rejectattr('path', 'in', systems | map('first') | map('regex_replace', '^', roms ~ '/') | list) | list }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    - name: find the declared launchers
+      ansible.builtin.find:
+        paths: "{{ spec }}"
+        patterns: "port-*.sh"
+        file_type: any
+      register: _spec_ports
+
+    - name: install each declared launcher
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: "{{ roms }}/ports/{{ item.path | basename | regex_replace('^port-', '') | replace('_', ' ') }}"
+        remote_src: true
+        mode: "0755"
+      loop: "{{ _spec_ports.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    - name: find the installed launchers
+      ansible.builtin.find:
+        paths: "{{ roms }}/ports"
+        patterns: "*.sh"
+      register: _ports
+
+    - name: remove launchers no longer declared
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ _ports.files }}"
+      when: >-
+        ('port-' ~ (item.path | basename | replace(' ', '_')))
+        not in (_spec_ports.files | map(attribute='path') | map('basename') | list)
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    - name: check which ES-DE custom files are declared
+      ansible.builtin.stat:
+        path: "{{ spec }}/{{ item }}"
+      loop: "{{ custom_files }}"
+      register: _custom
+
+    - name: install the declared ES-DE custom files, remove the undeclared
+      ansible.builtin.copy:
+        src: "{{ spec }}/{{ item.item }}"
+        dest: "{{ home }}/ES-DE/custom_systems/{{ item.item }}"
+        remote_src: true
+        mode: "0644"
+      loop: "{{ _custom.results | selectattr('stat.exists') | list }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: remove the ES-DE custom files no longer declared
+      ansible.builtin.file:
+        path: "{{ home }}/ES-DE/custom_systems/{{ item.item }}"
+        state: absent
+      loop: "{{ _custom.results | rejectattr('stat.exists') | list }}"
+      loop_control:
+        label: "{{ item.item }}"

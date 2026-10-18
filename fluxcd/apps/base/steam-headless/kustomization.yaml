@@ -7,4 +7,5 @@ resources:
 configMapGenerator:
   - name: steam-headless-library-script
     files:
-      - library/library.sh
+      - library/library.yml
+      - library/flatpaks.sh

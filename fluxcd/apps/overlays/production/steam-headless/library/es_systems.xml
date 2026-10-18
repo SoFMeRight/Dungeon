@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- ES-DE 3.5's bundled switch system plus the frozen yuzu and Suyu builds the seat keeps;
+     a custom system replaces the bundled system of the same name. -->
+<systemList>
+    <system>
+        <name>switch</name>
+        <fullname>Nintendo Switch</fullname>
+        <path>%ROMPATH%/switch</path>
+        <extension>.nca .NCA .nro .NRO .nso .NSO .nsp .NSP .xci .XCI</extension>
+        <command label="Eden (Standalone)">%EMULATOR_EDEN% -f -g %ROM%</command>
+        <command label="Ryujinx (Standalone)">%EMULATOR_RYUJINX% %ROM%</command>
+        <command label="yuzu mainline-0-1734 (Standalone)">%EMULATOR_YUZU% -f -g %ROM%</command>
+        <command label="Suyu v0.0.3 (Standalone)">%EMULATOR_SUYU% -f -g %ROM%</command>
+        <platform>switch</platform>
+        <theme>switch</theme>
+    </system>
+</systemList>

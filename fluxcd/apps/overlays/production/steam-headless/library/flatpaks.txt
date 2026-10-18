@@ -1,0 +1,8 @@
+# <flathub app-id> [signed commit to hold]
+org.libretro.RetroArch
+org.DolphinEmu.dolphin-emu
+net.lutris.Lutris
+# Ryujinx 1.1.1403, the last official release (Flathub "Update to 1.1.1403", 2024-10-01)
+org.ryujinx.Ryujinx 6127ac663d00f056557bd41e99a42132833bc33ab3cbfbab8ea4164512df2857
+# yuzu mainline-0-1734, the last mainline release (2024-03-04)
+org.yuzu_emu.yuzu cb48bfe2bb3ffcdc42c970d67aa2050a5e03c7da74ad45409ffd17dc1dd71fdb

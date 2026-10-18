@@ -1,7 +1,25 @@
 # <es-de system> <folder on the Games share>
+dreamcast Sega_-_Dreamcast
+gb Nintendo_-_GB
+gba Nintendo_-_GBA
+gbc Nintendo_-_GBC
+gc Nintendo_-_GCN
+mame 0_-_Mame
 n3ds Nintendo_-_3DS
+n64 Nintendo_-_N64
+naomi Sega_-_Naomi
+naomi2 Sega_-_Naomi_2
 nds Nintendo_-_DS
+nes Nintendo_-_NES
 ps2 Sony_-_PS2
+ps3 Sony_-_PS3
+ps4 Sony_-_PS4
 psp Sony_-_PSP
+psvita Sony_-_PS_Vita
+psx Sony_-_PS
+snes Nintendo_-_SNES
+switch Nintendo_-_Switch
+wii Nintendo_-_Wii
 wiiu Nintendo_-_Wii_U
 xbox Microsoft_-_Xbox
+xbox360 Microsoft_-_Xbox_360

@@ -1,9 +1,25 @@
 <?xml version="1.0"?>
-<!-- Overrides ES-DE's bundled rule for emulators the seat installs outside ~/Applications/<name>*.AppImage. -->
+<!-- Rules for emulators the seat installs outside ES-DE's bundled locations; a custom rule
+     replaces the bundled rule of the same name. -->
 <ruleList>
     <emulator name="MELONDS">
         <rule type="staticpath">
             <entry>~/Applications/melonDS/melonDS*.AppImage</entry>
+        </rule>
+    </emulator>
+    <emulator name="SHADPS4">
+        <rule type="staticpath">
+            <entry>~/Applications/shadps4/Shadps4-sdl*.AppImage</entry>
+        </rule>
+    </emulator>
+    <emulator name="SUYU">
+        <rule type="staticpath">
+            <entry>~/Applications/Suyu.AppImage</entry>
+        </rule>
+    </emulator>
+    <emulator name="YUZU">
+        <rule type="staticpath">
+            <entry>~/.local/share/flatpak/exports/bin/org.yuzu_emu.yuzu</entry>
         </rule>
     </emulator>
 </ruleList>

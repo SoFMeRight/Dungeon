@@ -3,25 +3,33 @@
 # Sources (a.source):
 #   github-release (default) — a.repo owner/name, a.tag; the asset is a.asset (exact name,
 #     {version} substituted) or the first asset whose name matches the regex a.asset_match.
+#     version "latest" follows the repo's latest release (rolling projects); a changed
+#     published digest is what triggers the update.
 #   gitlab-package — a GitLab generic package: a.repo group/project, a.package (package
 #     name), version a.version, file a.asset; digest is the package file's sha256.
-# Selection: layout (raw|tar|zip), strip (tar), subdir, include (globs).
-# a.executables: globs (relative to dest) made executable after placement (tar/zip).
+#   pinned — a.url ({version} substituted; https:// or file://) verified against a.sha256
+#     pinned in the spec, for sources that publish no digest or no longer exist upstream.
+# Placement (native modules, extraction via argv commands; no shell): layout raw|tar|zip (default tar).
+#   raw   the file itself to a.dest, a.mode (default 0644).
+#   tar   the image's tar (gzip/xz/bzip2 detected); a.strip leading path components.
+#   zip   the image's unzip.
+#   a.subdir selects a directory inside the archive; a.include basename globs at its top level
+#   (default: everything); a.executables basename globs anywhere under a.dest made 0755.
 - name: "reconcile {{ a.name }} {{ a.version }}"
   vars:
     _src: "{{ a.source | default('github-release') }}"
     _tag: "{{ (a.tag | default('{version}')) | replace('{version}', a.version) }}"
     _asset: "{{ (a.asset | default('')) | replace('{version}', a.version) }}"
-    _raw: "{{ (a.layout | default('tar')) == 'raw' }}"
+    _layout: "{{ a.layout | default('tar') }}"
     _marker: "{{ (a.dest ~ '.artifact-digest') if (a.layout | default('tar')) == 'raw' else (a.dest ~ '/.artifact-digest') }}"
     _vmark: "{{ (a.dest ~ '.artifact-version') if (a.layout | default('tar')) == 'raw' else (a.dest ~ '/.artifact-version') }}"
     _stage: "/tmp/sra-{{ a.name }}"
-    _glapi: "https://gitlab.com/api/v4/projects/{{ a.repo | replace('/', '%2F') }}"
+    _glapi: "https://gitlab.com/api/v4/projects/{{ (a.repo | default('')) | replace('/', '%2F') }}"
   block:
     - name: "{{ a.name }}: resolve release metadata"
       when: _src == 'github-release'
       ansible.builtin.uri:
-        url: "https://api.github.com/repos/{{ a.repo }}/releases/tags/{{ _tag }}"
+        url: "https://api.github.com/repos/{{ a.repo }}/releases/{{ 'latest' if a.version == 'latest' else ('tags/' ~ _tag) }}"
         headers:
           Accept: application/vnd.github+json
         return_content: true
@@ -60,12 +68,19 @@
         _pub: "{{ ('sha256:' ~ _sha) if _sha | length == 64 else '' }}"
         _url: "{{ (_glapi ~ '/packages/generic/' ~ a.package ~ '/' ~ a.version ~ '/' ~ _asset) if _sha | length == 64 else '' }}"
 
+    - name: "{{ a.name }}: take the pinned digest + url"
+      when: _src == 'pinned'
+      ansible.builtin.set_fact:
+        _pub: "{{ ('sha256:' ~ (a.sha256 | string)) if (a.sha256 | default('') | string) | length == 64 else '' }}"
+        _url: "{{ (a.url | default('')) | replace('{version}', a.version) }}"
+
     - name: "{{ a.name }}: require a published sha256 digest + url"
       ansible.builtin.assert:
         that:
           - "_pub is string and _pub.startswith('sha256:')"
           - "_url | length > 0"
-        fail_msg: "no sha256-digested asset '{{ a.asset_match | default(_asset) }}' on {{ _src }} {{ _tag }}"
+          - "_layout in ['raw', 'tar', 'zip']"
+        fail_msg: "no sha256-digested asset '{{ a.asset_match | default(_asset) }}' on {{ _src }} {{ _tag }}, or unknown layout '{{ _layout }}'"
         quiet: true
 
     - name: "{{ a.name }}: read cached digest marker"
@@ -100,44 +115,97 @@
             force: true
             mode: "0644"
 
-        - name: "{{ a.name }}: unpack, select, place"
-          ansible.builtin.shell:
-            executable: /bin/bash
-            cmd: |
-              set -euo pipefail
-              asset="{{ _stage }}/asset"; work="{{ _stage }}/x"; dest="{{ a.dest }}"
-              rm -rf "$work"; mkdir -p "$work"
-              case "{{ a.layout | default('tar') }}" in
-                raw)
-                  install -D -m "{{ a.mode | default('0644') }}" "$asset" "$dest"
-                  exit 0 ;;
-                tar)
-                  tar -xzf "$asset" -C "$work" ;;
-                zip)
-                  python3 -m zipfile -e "$asset" "$work" ;;
-                *)
-                  echo "unknown layout: {{ a.layout | default('tar') }}" >&2; exit 1 ;;
-              esac
-              # strip N leading single-directory levels (wrapper unwrap) - uniform for tar and zip
-              root="$work"; n={{ a.strip | default(0) | int }}
-              while [ "$n" -gt 0 ]; do
-                sub="$(ls -A "$root")"
-                if [ "$(printf '%s\n' "$sub" | wc -l)" -eq 1 ] && [ -d "$root/$sub" ]; then
-                  root="$root/$sub"; n=$((n - 1))
-                else
-                  echo "strip: no single wrapper dir to descend at '$root'; stopping" >&2; break
-                fi
-              done
-              {% if a.subdir is defined %}root="$root/{{ a.subdir }}"{% endif %}
-              rm -rf "$dest"; mkdir -p "$dest"
-              {% if a.include is defined %}
-              for g in {{ a.include | join(' ') }}; do ( cd "$root" && cp -R --preserve=mode,timestamps $g "$dest"/ ); done
-              {% else %}
-              cp -R --preserve=mode,timestamps "$root"/. "$dest"/
-              {% endif %}
-              {% for g in a.executables | default([]) %}
-              ( cd "$dest" && chmod 0755 {{ g }} )
-              {% endfor %}
+        - name: "{{ a.name }}: place the file (raw)"
+          when: _layout == 'raw'
+          block:
+            - name: "{{ a.name }}: ensure the destination directory"
+              ansible.builtin.file:
+                path: "{{ a.dest | dirname }}"
+                state: directory
+                mode: "0755"
+            - name: "{{ a.name }}: place {{ a.dest }}"
+              ansible.builtin.copy:
+                src: "{{ _stage }}/asset"
+                dest: "{{ a.dest }}"
+                remote_src: true
+                mode: "{{ a.mode | default('0644') }}"
+
+        - name: "{{ a.name }}: unpack, select, place (tar|zip)"
+          when: _layout in ['tar', 'zip']
+          vars:
+            _work: "{{ _stage }}/x"
+            _root: "{{ _work ~ (('/' ~ a.subdir) if a.subdir is defined else '') }}"
+          block:
+            # strip unwraps leading directory levels; GNU tar does it at extraction, and
+            # zip archives carry no such option.
+            - name: "{{ a.name }}: reject strip on a zip"
+              ansible.builtin.assert:
+                that: "_layout == 'tar' or (a.strip | default(0) | int) == 0"
+                fail_msg: "strip is supported for tar archives only"
+                quiet: true
+            - name: "{{ a.name }}: create the extraction dir"
+              ansible.builtin.file:
+                path: "{{ _work }}"
+                state: directory
+                mode: "0755"
+            # The image's busybox tar/unzip, invoked as argv (no shell); unarchive needs GNU tar
+            # and Info-ZIP's zipinfo, which the image does not ship.
+            - name: "{{ a.name }}: extract"
+              ansible.builtin.command:
+                argv: >-
+                  {{ (['tar', '-xf', _stage ~ '/asset', '-C', _work]
+                      + (['--strip-components=' ~ (a.strip | int)] if (a.strip | default(0) | int) > 0 else []))
+                     if _layout == 'tar'
+                     else ['unzip', '-q', '-o', _stage ~ '/asset', '-d', _work] }}
+              changed_when: true
+            - name: "{{ a.name }}: reset {{ a.dest }}"
+              ansible.builtin.file:
+                path: "{{ a.dest }}"
+                state: absent
+            - name: "{{ a.name }}: create {{ a.dest }}"
+              ansible.builtin.file:
+                path: "{{ a.dest }}"
+                state: directory
+                mode: "0755"
+            - name: "{{ a.name }}: place the whole extraction"
+              when: a.include is not defined
+              ansible.builtin.copy:
+                src: "{{ _root }}/"
+                dest: "{{ a.dest }}/"
+                remote_src: true
+            # include: basename globs matched at the top level of the extraction
+            - name: "{{ a.name }}: find the included entries"
+              when: a.include is defined
+              ansible.builtin.find:
+                paths: "{{ _root }}"
+                patterns: "{{ a.include }}"
+                file_type: any
+              register: _incl
+            - name: "{{ a.name }}: place the included entries"
+              when: a.include is defined
+              ansible.builtin.copy:
+                src: "{{ item.path ~ ('/' if item.isdir else '') }}"
+                dest: "{{ a.dest }}/{{ item.path | basename }}{{ '/' if item.isdir else '' }}"
+                remote_src: true
+              loop: "{{ _incl.files }}"
+              loop_control:
+                label: "{{ item.path | basename }}"
+            # executables: basename globs matched anywhere under dest
+            - name: "{{ a.name }}: find the executables"
+              when: a.executables is defined
+              ansible.builtin.find:
+                paths: "{{ a.dest }}"
+                patterns: "{{ a.executables }}"
+                recurse: true
+              register: _exe
+            - name: "{{ a.name }}: mark them executable"
+              when: a.executables is defined
+              ansible.builtin.file:
+                path: "{{ item.path }}"
+                mode: "0755"
+              loop: "{{ _exe.files }}"
+              loop_control:
+                label: "{{ item.path | basename }}"
 
         - name: "{{ a.name }}: write digest + version markers"
           ansible.builtin.copy:

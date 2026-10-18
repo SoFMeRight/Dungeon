@@ -42,7 +42,8 @@ spec:
             - |
               ansible-playbook /playbook/sync.yml -e @/spec/releases.yaml \
                 || echo "release-sync: reconcile failed; starting with cached apps"
-              sh /library-script/library.sh || echo "library: converge failed; starting with the previous library"
+              ansible-playbook /library-script/library.yml \
+                || echo "library: converge failed; starting with the previous library"
           env:
             - name: HOME
               value: /home/steamheadless
@@ -50,6 +51,8 @@ spec:
               value: /tmp/ansible
             - name: ANSIBLE_LOCAL_TEMP
               value: /tmp/ansible/tmp
+            - name: ANSIBLE_REMOTE_TEMP
+              value: /tmp/ansible/remote
             - name: ANSIBLE_LOCALHOST_WARNING
               value: "false"
             - name: ROMS_SRC
@@ -70,6 +73,40 @@ spec:
             - name: release-spec
               mountPath: /spec
               readOnly: true
+            - name: library-script
+              mountPath: /library-script
+              readOnly: true
+            - name: library
+              mountPath: /library
+              readOnly: true
+            - name: home
+              mountPath: /home/steamheadless
+              subPath: home
+            - name: sync-tmp
+              mountPath: /tmp
+            # file:// sources (preserved builds on the games share)
+            - name: games
+              mountPath: /mnt/roms
+              readOnly: true
+        # Converge the declared Flathub apps (library/flatpaks.txt) into the seat user's Flatpak
+        # installation on the home volume. Runs on the seat image, which carries flatpak; the
+        # install triggers run in Bubblewrap and need the same privilege as the seat. Never
+        # blocks the seat.
+        - name: sync-flatpaks
+          image: PLACEHOLDER_IMAGE
+          command:
+            - sh
+            - -c
+            - |
+              bash /library-script/flatpaks.sh || echo "flatpak: converge failed; starting with installed apps"
+          env:
+            - name: HOME
+              value: /home/steamheadless
+          securityContext:
+            privileged: true
+            runAsUser: 1000
+            runAsGroup: 1000
+          volumeMounts:
             - name: library-script
               mountPath: /library-script
               readOnly: true

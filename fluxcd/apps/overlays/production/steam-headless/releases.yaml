@@ -94,6 +94,86 @@ releases:
     mode: "0755"
     dest: /home/steamheadless/Applications/Cemu.AppImage
 
+  - name: rmg
+    repo: Rosalie241/RMG
+    tag: "v{version}"
+    asset: "RMG-Portable-Linux64-v{version}.AppImage"
+    # renovate: datasource=github-releases depName=Rosalie241/RMG extractVersion=^v(?<version>.+)$
+    version: "0.9.0"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/RMG.AppImage
+  - name: flycast
+    repo: flyinghead/flycast
+    tag: "v{version}"
+    asset: "flycast-x86_64-{version}.AppImage"
+    # renovate: datasource=github-releases depName=flyinghead/flycast extractVersion=^v(?<version>.+)$
+    version: "2.7"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/flycast-x86_64.AppImage
+  - name: shadps4
+    repo: shadps4-emu/shadPS4
+    tag: "v.{version}"
+    asset: "shadps4-linux-sdl-{version}.zip"
+    # renovate: datasource=github-releases depName=shadps4-emu/shadPS4 extractVersion=^v\.(?<version>.+)$
+    version: "0.20.0"
+    layout: zip
+    executables: ["Shadps4-sdl.AppImage"]
+    dest: /home/steamheadless/Applications/shadps4
+
+  # Rolling emulators: no orderable version tags, so they follow the latest release; the
+  # published sha256 is still verified and a changed digest is what triggers the update.
+  - name: duckstation
+    repo: stenzek/duckstation
+    asset: DuckStation-x64.AppImage
+    version: latest
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/DuckStation.AppImage
+  - name: rpcs3
+    repo: RPCS3/rpcs3-binaries-linux
+    asset_match: '^rpcs3-.*_linux64\.AppImage$'
+    version: latest
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/rpcs3.AppImage
+  - name: xenia-canary
+    repo: xenia-canary/xenia-canary
+    asset: xenia_canary_linux.AppImage
+    version: latest
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/xenia_canary.AppImage
+  - name: vita3k
+    repo: Vita3K/Vita3K
+    asset: Vita3K-x86_64.AppImage
+    version: latest
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/Vita3K.AppImage
+
+  # Switch. Eden publishes no checksums: its sha256 is pinned here from the official server
+  # (stable.eden-emu.dev), and a version bump needs the new sha256 alongside it.
+  - name: eden
+    source: pinned
+    url: "https://stable.eden-emu.dev/v{version}/Eden-Linux-v{version}-amd64-clang-pgo.AppImage"
+    version: "0.2.1"
+    sha256: 7a28bf988b0648831989722bdbaa90ab31371b403808199813e0ea7c8b25ba6d
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/Eden.AppImage
+  # Suyu's last release (v0.0.3, 2024-04-10), preserved on the games share; its SHA-1 matches
+  # the Internet Archive capture of the official git.suyu.dev release asset.
+  - name: suyu
+    source: pinned
+    url: file:///mnt/roms/_Emulators/Suyu-Linux_x86_64.AppImage
+    version: "0.0.3"
+    sha256: dbab16853bc1e8ad62fcaddf9b0620e690c8522fbbc6cdddcfcc958f9abb1f47
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/Suyu.AppImage
+
   # Native PC ports — release assets are named by codename, so selected by pattern
   - name: paperboat
     repo: HarbourMasters/PaperBoat
