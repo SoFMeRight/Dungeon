@@ -21,11 +21,6 @@ patches:
         value: steam-headless-marxii-test
       - op: remove
         path: /spec/template/spec/initContainers
-      # TEMPORARY: the SMB games share cannot be idmap-mounted (CIFS); probing everything else.
-      - op: remove
-        path: /spec/template/spec/containers/0/volumeMounts/2
-      - op: remove
-        path: /spec/template/spec/volumes/0
   - target:
       kind: Service
       name: steam-headless

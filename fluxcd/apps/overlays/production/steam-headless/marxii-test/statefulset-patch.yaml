@@ -43,6 +43,14 @@ spec:
               value: "America/Los_Angeles"
             - name: SUNSHINE_NAME
               value: "Marxii-test"
+          volumeMounts:
+            # The image owns /mnt/games (its Steam library, chowned at boot); a user-namespace seat
+            # can only chown a volume mapped into its namespace.
+            - name: steam-library
+              mountPath: /mnt/games
+            # TEMPORARY: the SMB games share cannot be idmap-mounted (CIFS); probing everything else.
+            - mountPath: /mnt/roms
+              $patch: delete
           resources:
             requests:
               cpu: 1000m
@@ -55,6 +63,12 @@ spec:
               devic.es/uinput: 1
               devic.es/uhid: 1
               devic.es/fuse: 1
+      volumes:
+        - name: games
+          $patch: delete
+        - name: steam-library
+          emptyDir:
+            sizeLimit: 2Gi
   volumeClaimTemplates:
     - metadata:
         name: steam-headless-home

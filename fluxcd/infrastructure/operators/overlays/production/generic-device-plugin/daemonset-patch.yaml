@@ -14,7 +14,8 @@ spec:
           image: docker.io/squat/generic-device-plugin:0.2.0@sha256:66c8d5c270eb2b721f1064c549b9b7898152a6d2f0163380a5d37dc7636c20ff
           args:
             # The seat GPU's DRM nodes, by stable PCI path (card0 is the VM's bochs console),
-            # exposed under their kernel names. Shared by up to 4 seats on the time-sliced GPU.
+            # card as seat-card1 (the seat image deletes /dev/dri/card* at boot; its postStart links
+            # card1 to it), render under its kernel name. Shared by up to 4 seats on the time-sliced GPU.
             - --device
             - |
               name: seat-gpu
@@ -22,7 +23,7 @@ spec:
                 - count: 4
                   paths:
                     - path: /dev/dri/by-path/pci-0000:01:00.0-card
-                      mountPath: /dev/dri/card1
+                      mountPath: /dev/dri/seat-card1
                     - path: /dev/dri/by-path/pci-0000:01:00.0-render
                       mountPath: /dev/dri/renderD128
             # Sunshine's virtual controllers, keyboard and mouse.
