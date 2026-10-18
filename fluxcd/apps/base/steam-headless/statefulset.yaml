@@ -114,8 +114,6 @@ spec:
             - name: games
               mountPath: /mnt/roms
               readOnly: true
-            - name: input-devices
-              mountPath: /dev/input
             - name: dshm
               mountPath: /dev/shm
             # systemd (PID 1) mounts its own tmpfs over /run unless /run is already a mount point,
@@ -130,12 +128,6 @@ spec:
           persistentVolumeClaim:
             claimName: steam-headless-games
             readOnly: true
-        # Sunshine creates its virtual gamepads/keyboard/mouse through /dev/uinput; the kernel
-        # registers them under the HOST's /dev/input, which Xorg must see to read them.
-        - name: input-devices
-          hostPath:
-            path: /dev/input
-            type: Directory
         - name: dshm
           emptyDir:
             medium: Memory
