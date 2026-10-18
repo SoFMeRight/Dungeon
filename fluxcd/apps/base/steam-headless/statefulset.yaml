@@ -13,9 +13,9 @@ spec:
     metadata:
       labels:
         app: steam-headless
-        # Privileged seat: Xorg on the GPU, uinput virtual input devices, root s6/supervisor init
-        # that installs the host-matched NVIDIA userspace driver. None of the five hardening
-        # dimensions can hold.
+        # Privileged seat: systemd as PID 1, a KWin compositor on the GPU, uinput virtual input
+        # devices, and a root init that installs host-matched NVIDIA 32-bit libraries. None of the
+        # five hardening dimensions can hold.
         policy.prplanit.com/except-seccomp: "true"
         policy.prplanit.com/except-drop-caps: "true"
         policy.prplanit.com/except-no-privesc: "true"
@@ -38,41 +38,12 @@ spec:
           env:
             - name: TZ
               value: "PLACEHOLDER_TZ"
-            - name: USER_LOCALES
-              value: "en_US.UTF-8 UTF-8"
             - name: DISPLAY
               value: ":55"
             - name: PUID
               value: "1000"
             - name: PGID
               value: "1000"
-            - name: UMASK
-              value: "000"
-            - name: USER_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: steam-headless-secret
-                  key: USER_PASSWORD
-            - name: MODE
-              value: "primary"
-            - name: WEB_UI_MODE
-              value: "none"
-            - name: ENABLE_STEAM
-              value: "true"
-            - name: ENABLE_SUNSHINE
-              value: "true"
-            - name: SUNSHINE_USER
-              valueFrom:
-                secretKeyRef:
-                  name: steam-headless-secret
-                  key: SUNSHINE_USER
-            - name: SUNSHINE_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: steam-headless-secret
-                  key: SUNSHINE_PASS
-            - name: ENABLE_EVDEV_INPUTS
-              value: "true"
             - name: NVIDIA_VISIBLE_DEVICES
               value: "all"
             - name: NVIDIA_DRIVER_CAPABILITIES

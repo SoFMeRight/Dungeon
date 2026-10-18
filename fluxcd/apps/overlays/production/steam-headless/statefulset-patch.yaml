@@ -21,8 +21,8 @@ spec:
           env:
             - name: TZ
               value: "America/Los_Angeles"
-            - name: ENABLE_STEAM
-              value: "false"
+            - name: SUNSHINE_NAME
+              value: "Marxii"
           volumeMounts:
             - name: arbitorium-game-streaming-steam-headless-home
               mountPath: /home/steamheadless
