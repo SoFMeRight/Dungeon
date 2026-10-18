@@ -19,6 +19,12 @@ spec:
       containers:
         - name: gatus
           image: ghcr.io/twin/gatus:v5.37.0
+          env:
+            - name: NTFY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gatus-ntfy-token
+                  key: token
           resources:
             requests:
               cpu: 50m

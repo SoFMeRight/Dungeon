@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-grafana-to-alertmanager
+spec:
+  selector:
+    matchLabels:
+      app: alertmanager
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/gossip-stone/sa/grafana
+      to:
+        - operation:
+            ports: ["9093"]

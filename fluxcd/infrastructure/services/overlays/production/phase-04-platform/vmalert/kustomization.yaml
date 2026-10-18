@@ -7,6 +7,7 @@ resources:
   - configmap-alertmanager.yaml
   - externalsecret-ntfy.yaml
 patches:
+  - path: service-gatus-patch.yaml
   - target:
       kind: Deployment
       name: vmalert
@@ -27,7 +28,7 @@ patches:
         path: /spec/template/spec/containers/0/resources/limits/memory
         value: "256Mi"
   - target:
-      kind: Deployment
+      kind: StatefulSet
       name: alertmanager
     patch: |-
       - op: replace

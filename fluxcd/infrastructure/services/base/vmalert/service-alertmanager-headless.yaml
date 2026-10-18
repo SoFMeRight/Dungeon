@@ -1,0 +1,22 @@
+# Stable per-pod names for vmalert (one notifier per instance) and the gossip ring.
+apiVersion: v1
+kind: Service
+metadata:
+  name: alertmanager-headless
+spec:
+  clusterIP: None
+  publishNotReadyAddresses: true
+  selector:
+    app: alertmanager
+  ports:
+    - name: http
+      port: 9093
+      targetPort: http
+    - name: cluster
+      port: 9094
+      targetPort: cluster
+      protocol: TCP
+    - name: cluster-udp
+      port: 9094
+      targetPort: cluster-udp
+      protocol: UDP

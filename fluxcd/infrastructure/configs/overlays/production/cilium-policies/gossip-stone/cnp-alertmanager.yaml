@@ -4,7 +4,8 @@ metadata:
   name: allow-alertmanager-ingress
 spec:
   description: >-
-    Allow vmalert to hand alerts to Alertmanager on 9093/TCP.
+    Allow vmalert to hand alerts to Alertmanager, and Grafana to read alerts and
+    manage silences, on 9093/TCP.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -15,7 +16,43 @@ spec:
     - fromEndpoints:
         - matchLabels:
             app: vmalert
+        - matchLabels:
+            app.kubernetes.io/name: grafana
       toPorts:
         - ports:
             - port: "9093"
               protocol: TCP
+---
+# The Alertmanager gossip ring. Both directions are named because the namespace
+# default-denies ingress and egress, and UDP alongside TCP because memberlist gossips
+# over UDP while joining over TCP -- ambient does not carry UDP, so only Cilium
+# governs that half.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: alertmanager-cluster-gossip
+spec:
+  description: Alertmanager cluster gossip between replicas on 9094.
+  endpointSelector:
+    matchLabels:
+      app: alertmanager
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: alertmanager
+      toPorts:
+        - ports:
+            - port: "9094"
+              protocol: TCP
+            - port: "9094"
+              protocol: UDP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app: alertmanager
+      toPorts:
+        - ports:
+            - port: "9094"
+              protocol: TCP
+            - port: "9094"
+              protocol: UDP

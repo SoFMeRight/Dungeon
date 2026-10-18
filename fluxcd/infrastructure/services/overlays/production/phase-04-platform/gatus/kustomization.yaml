@@ -5,6 +5,7 @@ resources:
   - ../../../../base/gatus
   - httproute-xylem.yaml
   - externalsecret-postgres-backup.yaml
+  - externalsecret-ntfy.yaml
 patches:
   - path: deployment-patch.yaml
   - path: httproute-patch.yaml

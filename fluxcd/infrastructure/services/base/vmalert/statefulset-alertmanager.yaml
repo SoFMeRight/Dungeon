@@ -1,15 +1,18 @@
-# Routes vmalert's alerts to ntfy. A single instance: silences and notification state
-# live in an emptyDir and reset on restart, which at worst re-sends a notification.
+# Routes vmalert's alerts to ntfy. Two instances gossip silences and the notification
+# log over 9094, so either can be lost without missing or duplicating a notification.
+# Their state lives in an emptyDir and is rebuilt from the surviving peer.
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: alertmanager
   annotations:
     configmap.reloader.stakater.com/reload: alertmanager-config
     secret.reloader.stakater.com/reload: alertmanager-ntfy-token
 spec:
+  serviceName: alertmanager-headless
+  replicas: 2
+  podManagementPolicy: Parallel
   revisionHistoryLimit: 5
-  replicas: 1
   selector:
     matchLabels:
       app: alertmanager
@@ -17,8 +20,18 @@ spec:
     metadata:
       labels:
         app: alertmanager
+        policy.prplanit.com/probe: "true"
     spec:
       serviceAccountName: alertmanager
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: alertmanager
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
@@ -39,11 +52,24 @@ spec:
             - --config.file=/etc/alertmanager/alertmanager.yml
             - --storage.path=/alertmanager
             - --web.listen-address=:9093
-            # Single instance: no gossip peers.
-            - --cluster.listen-address=
+            - --cluster.listen-address=0.0.0.0:9094
+            - --cluster.advertise-address=$(POD_IP):9094
+            - --cluster.peer=alertmanager-0.alertmanager-headless:9094
+            - --cluster.peer=alertmanager-1.alertmanager-headless:9094
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           ports:
             - containerPort: 9093
               name: http
+            - containerPort: 9094
+              name: cluster
+              protocol: TCP
+            - containerPort: 9094
+              name: cluster-udp
+              protocol: UDP
           readinessProbe:
             httpGet:
               path: /-/ready

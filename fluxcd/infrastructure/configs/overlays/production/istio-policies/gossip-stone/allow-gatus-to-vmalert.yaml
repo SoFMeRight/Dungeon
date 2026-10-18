@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-gatus-to-vmalert
+spec:
+  selector:
+    matchLabels:
+      app: vmalert
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/gossip-stone/sa/gatus
+      to:
+        - operation:
+            ports: ["8880"]

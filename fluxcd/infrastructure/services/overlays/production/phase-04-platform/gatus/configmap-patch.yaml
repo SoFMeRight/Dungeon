@@ -14,3 +14,15 @@ data:
       # Opens on the grouped view. A browser that already chose a sort keeps its own —
       # gatus applies this to visitors with no stored preference, it does not enforce it.
       default-sort-by: group
+    # Only endpoints that list `alerts` notify, which is the alerting pipeline itself
+    # (vmalert, Alertmanager): Gatus is what notices when those are down.
+    alerting:
+      ntfy:
+        url: "http://ntfy.delivery-bag.svc.cluster.local"
+        topic: "Arbitorium-Prod-Alert"
+        priority: 5
+        token: "${NTFY_TOKEN}"
+        default-alert:
+          failure-threshold: 3
+          success-threshold: 2
+          send-on-resolved: true

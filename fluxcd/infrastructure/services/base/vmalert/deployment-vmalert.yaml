@@ -1,6 +1,7 @@
-# Evaluates alerting rules against VictoriaMetrics and hands firing alerts to
+# Evaluates alerting rules against VictoriaMetrics and hands firing alerts to every
 # Alertmanager. Its own alert state is written back to VictoriaMetrics and read on
-# start, so a restart does not reset pending "for" timers.
+# start, so a restart does not reset pending "for" timers. Two identical replicas:
+# Alertmanager de-duplicates what they both send.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10,7 +11,7 @@ metadata:
     configmap.reloader.stakater.com/reload: vmalert-rules
 spec:
   revisionHistoryLimit: 5
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: vmalert
@@ -18,8 +19,18 @@ spec:
     metadata:
       labels:
         app: vmalert
+        policy.prplanit.com/probe: "true"
     spec:
       serviceAccountName: vmalert
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: kubernetes.io/hostname
+                labelSelector:
+                  matchLabels:
+                    app: vmalert
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
@@ -42,7 +53,10 @@ spec:
             - -remoteWrite.url=http://vminsert:8480/insert/0/prometheus
             - -remoteWrite.basicAuth.username=$(VM_AUTH_USERNAME)
             - -remoteWrite.basicAuth.passwordFile=/etc/vmalert/vminsert/password
-            - -notifier.url=http://alertmanager:9093
+            # Each Alertmanager directly, not the Service: a firing alert must reach
+            # every instance for the cluster to de-duplicate it.
+            - -notifier.url=http://alertmanager-0.alertmanager-headless:9093
+            - -notifier.url=http://alertmanager-1.alertmanager-headless:9093
             - -evaluationInterval=1m
             - -httpListenAddr=:8880
           env:

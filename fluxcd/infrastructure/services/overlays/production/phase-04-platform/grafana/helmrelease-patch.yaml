@@ -137,6 +137,17 @@ spec:
             editable: false
             jsonData:
               maxLines: 1000
+          # vmalert's alerts and Alertmanager's silences, shown on Grafana's alerting
+          # page. Grafana's own rules still notify through its contact points.
+          - name: Alertmanager
+            uid: alertmanager
+            type: alertmanager
+            access: proxy
+            url: http://alertmanager.gossip-stone.svc.cluster.local:9093
+            editable: false
+            jsonData:
+              implementation: prometheus
+              handleGrafanaManagedAlerts: false
 
     # Dashboard provisioning
     dashboardProviders:

@@ -10,6 +10,10 @@ resources:
   - allow-vmalert-to-vmselect.yaml
   - allow-vmalert-to-vminsert.yaml
   - allow-vmalert-to-alertmanager.yaml
+  - allow-alertmanager-cluster-gossip.yaml
+  - allow-grafana-to-alertmanager.yaml
+  - allow-gatus-to-vmalert.yaml
+  - allow-gatus-to-alertmanager.yaml
   - allow-vmauth-to-vmselect.yaml
   - allow-freelens-to-vmauth.yaml
   - allow-grafana-to-loki.yaml

@@ -1,0 +1,31 @@
+# Gatus watches the alerting pipeline from outside it, so its own failure still pages.
+# These are the only Gatus checks with alerts.
+apiVersion: v1
+kind: Service
+metadata:
+  name: vmalert
+  annotations:
+    gatus.home-operations.com/endpoint: |
+      group: "Observability (Gossip Stone💬)"
+      url: http://vmalert.gossip-stone.svc.cluster.local:8880/health
+      interval: 1m
+      conditions:
+        - "[STATUS] == 200"
+      alerts:
+        - type: ntfy
+          description: "vmalert is down - metric alerts are not being evaluated"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alertmanager
+  annotations:
+    gatus.home-operations.com/endpoint: |
+      group: "Observability (Gossip Stone💬)"
+      url: http://alertmanager.gossip-stone.svc.cluster.local:9093/-/healthy
+      interval: 1m
+      conditions:
+        - "[STATUS] == 200"
+      alerts:
+        - type: ntfy
+          description: "Alertmanager is down - alerts are not being delivered"

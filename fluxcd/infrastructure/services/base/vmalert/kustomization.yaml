@@ -4,5 +4,6 @@ resources:
   - serviceaccounts.yaml
   - deployment-vmalert.yaml
   - service-vmalert.yaml
-  - deployment-alertmanager.yaml
+  - statefulset-alertmanager.yaml
+  - service-alertmanager-headless.yaml
   - service-alertmanager.yaml

@@ -7,6 +7,7 @@ resources:
   - allow-ntfy-smtp-loadbalancer.yaml
   - allow-grafana-to-ntfy.yaml
   - allow-alertmanager-to-ntfy.yaml
+  - allow-gatus-to-ntfy.yaml
   - allow-frigate-to-ntfy.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml

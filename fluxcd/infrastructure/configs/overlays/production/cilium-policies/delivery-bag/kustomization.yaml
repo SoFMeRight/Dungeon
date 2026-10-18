@@ -6,4 +6,5 @@ resources:
   - cnp-ntfy-smtp.yaml
   - cnp-grafana-to-ntfy.yaml
   - cnp-alertmanager-to-ntfy.yaml
+  - cnp-gatus-to-ntfy.yaml
   - cnp-frigate-to-ntfy.yaml

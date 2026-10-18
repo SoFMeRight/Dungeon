@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-gatus-to-ntfy
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ntfy
+  action: ALLOW
+  rules:
+    # Gatus watchdog notifications to ntfy. ntfy runs non-root on container port 8080
+    # (Service 80->8080); istio ambient enforces on the workload port, so this is 8080.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/gossip-stone/sa/gatus
+      to:
+        - operation:
+            ports: ["8080"]
