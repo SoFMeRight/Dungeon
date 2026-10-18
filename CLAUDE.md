@@ -144,25 +144,26 @@
 
 - PersistentVolume Naming Standard:
   - **NO hostPath VOLUMES**: This is a cluster - hostPath only works on a single node. Use ConfigMaps, Secrets, or PVCs instead.
-  - **StatefulSet volumeClaimTemplates Behavior**: StatefulSets automatically append the StatefulSet name before the ordinal when creating PVCs from volumeClaimTemplates
-    - Template naming pattern: `<namespace>-<app>-<purpose>`
-    - StatefulSet name: `<app>`
-    - Resulting PVC name: `<namespace>-<app>-<purpose>-<app>-<ordinal>`
-    - **NOTE**: This creates intentional redundancy where the app name appears twice - this is how Kubernetes StatefulSets work and cannot be avoided without non-standard naming
+  - **StatefulSet volumeClaimTemplates Behavior**: StatefulSets name each PVC `<template>-<statefulset>-<ordinal>`; only the template name is ours to choose
+  - **Rules (namespaced objects — PVCs, volumeClaimTemplates):**
+    - Template name: `<app>-<purpose>` — **no namespace**. A PVC is already scoped by its namespace (every listing shows and sorts by it), and a namespace in the name goes stale the moment the app moves namespaces (PVC names are immutable)
+    - StatefulSet name: `<app>` for a single instance, `<app>-<instance>` for named instances (e.g., one per seat). Its leading `<app>` MUST equal the templates' `<app>` — this is what makes two apps in one namespace unable to produce the same PVC name
+    - Resulting PVC name: `<app>-<purpose>-<statefulset>-<ordinal>` — sorts by app; the app name appearing twice is inherent to StatefulSets
+    - `<app>` is the application, identical across instances (`steam-headless`, never `steam-headless-marxii`); the instance is carried only by the StatefulSet name Kubernetes appends
+  - **Rules (cluster-scoped objects — static PersistentVolumes):** `<namespace>-<app>-<purpose>-<ordinal>`. PVs share one cluster-wide name space and have no namespace column, so the prefix is what keeps them unique and sortable
   - Components:
-    - `<namespace>`: The Kubernetes namespace (e.g., temple-of-time, lost-woods, gossip-stone)
-    - `<app>`: The application name (e.g., jellyfin, homarr, netalertx, beszel)
+    - `<namespace>`: The Kubernetes namespace (cluster-scoped names only)
+    - `<app>`: The application name (e.g., jellyfin, homarr, netalertx, beszel, steam-headless)
     - `<purpose>`: Descriptive purpose/type identifying what the volume stores
       - For databases: Use specific DB type (postgres, mysql, sqlite, redis) NOT generic "database" or "data"
-      - For storage: Use descriptive purpose (config, images, media, transcode, cache, storage, data)
+      - For storage: Use descriptive purpose (config, images, media, transcode, cache, home, storage)
+    - `<instance>`: A named instance of the app (e.g., marxii)
     - `<ordinal>`: StatefulSet replica index (0, 1, 2, etc.)
-  - **Actual PVC naming examples** (as created by StatefulSets):
-    - `temple-of-time-jellyfin-config-jellyfin-0` - Jellyfin configuration (template: temple-of-time-jellyfin-config)
-    - `temple-of-time-jellyfin-cache-jellyfin-0` - Jellyfin cache (template: temple-of-time-jellyfin-cache)
-    - `lost-woods-homarr-sqlite-homarr-0` - Homarr SQLite database (template: lost-woods-homarr-sqlite)
-    - `lost-woods-homarr-images-homarr-0` - Homarr image storage (template: lost-woods-homarr-images)
-    - `gossip-stone-netalertx-config-netalertx-0` - NetAlertX configuration (template: gossip-stone-netalertx-config)
-    - `gossip-stone-beszel-data-beszel-0` - Beszel data (template: gossip-stone-beszel-data)
+  - **Examples** (as created by StatefulSets):
+    - `jellyfin-config-jellyfin-0` - Jellyfin configuration (template: jellyfin-config)
+    - `homarr-sqlite-homarr-0` - Homarr SQLite database (template: homarr-sqlite)
+    - `steam-headless-home-steam-headless-marxii-0` - seat "marxii"'s home (template: steam-headless-home, StatefulSet: steam-headless-marxii)
+  - **Existing volumes** named `<namespace>-<app>-<purpose>-<app>-<ordinal>` (the previous standard) keep their names: a PVC cannot be renamed in place. Move one to the current standard only when it is migrated anyway (scale to 0, set the PV Retain, delete the PVC, clear the PV's claimRef, pre-create the new-named PVC with `volumeName`, then let the StatefulSet adopt it — pause Flux at `flux-system`, not just the app's Kustomization, which flux-system re-applies)
 
 - Ceph Storage Configuration:
   - External Ceph cluster managed via Proxmox
