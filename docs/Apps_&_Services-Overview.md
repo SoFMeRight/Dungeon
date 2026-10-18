@@ -4,9 +4,9 @@
 > Generated from live Kubernetes state
 > Cluster: dungeon
 
-## Apps & Services (130)
+## Apps & Services (132)
 
-✅ 129 healthy · ⚠️ 1 degraded
+✅ 131 healthy · ⚠️ 1 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -146,6 +146,7 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
+| Alertmanager | ✅ | 🏠 |  |
 | Beszel | ✅ | 🔒 beszel.pcfae.com | [open](https://beszel.pcfae.com) |
 | Gatus | ✅ | ❓ status.pcfae.com | [open](https://status.pcfae.com) |
 | Grafana | ✅ | 🔒 grafana.pcfae.com | [open](https://grafana.pcfae.com) |
@@ -156,6 +157,7 @@
 | Speedtest (2 components) | ✅ | 🔒 isptest.pcfae.com | [open](https://isptest.pcfae.com) |
 | Umami (2 components) | ✅ | 🌐 analytics.prplanit.com | [open](https://analytics.prplanit.com) |
 | Uptime Kuma | ✅ | ❓ uptime.pcfae.com | [open](https://uptime.pcfae.com) |
+| Vmalert | ✅ | 🏠 |  |
 | Vminsert | ✅ | 🔒 metrics.pcfae.com | [open](https://metrics.pcfae.com) |
 | Weave Gitops | ✅ | 🔒 flux.pcfae.com | [open](https://flux.pcfae.com) |
 
@@ -844,6 +846,10 @@
 - Replicas: 1/1
 - Hosts: ntfy.pcfae.com, ntfy.prplanit.com
 
+**Alertmanager** — StatefulSet — v0.28.1
+- Namespace: gossip-stone
+- Replicas: 2/2
+
 **Beszel** — StatefulSet — 0.21.0
 - Namespace: gossip-stone
 - Replicas: 1/1
@@ -914,6 +920,10 @@
 - Replicas: 1/1
 - Hosts: uptime.pcfae.com, uptime.sofmeright.com
 - Gateway: cell-membrane-gateway
+
+**Vmalert** — Deployment — v1.97.1
+- Namespace: gossip-stone
+- Replicas: 2/2
 
 **Vminsert** — Deployment — v1.97.1-cluster
 - Namespace: gossip-stone
@@ -1212,7 +1222,7 @@
 
 </details>
 
-## Platform Components (52)
+## Platform Components (50)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
@@ -1229,14 +1239,12 @@
 | Phloem Gateway Istio | arylls-lookout | ✅ |
 | Reflector | gerudo-crest | ✅ |
 | Reloader | gerudo-crest | ✅ |
-| Alertmanager | gossip-stone | ✅ |
 | Alloy | lakitu | ✅ |
 | Alloy Syslog | lakitu | ✅ |
 | Graphite Exporter Truenas | gossip-stone | ✅ |
 | Kube State Metrics | gossip-stone | ✅ |
 | Netconsole Collector | lakitu | ✅ |
 | Node Exporter | lakitu | ✅ |
-| Vmalert | gossip-stone | ✅ |
 | Vmauth | gossip-stone | ✅ |
 | Vmselect | gossip-stone | ✅ |
 | Vmstorage | gossip-stone | ✅ |
@@ -1324,10 +1332,6 @@
 - Namespace: gerudo-crest
 - Replicas: 1/1
 
-**Alertmanager** — Deployment — v0.28.1
-- Namespace: gossip-stone
-- Replicas: 1/1
-
 **Alloy** — DaemonSet — 
 - Namespace: lakitu
 - Replicas: 10/10
@@ -1351,10 +1355,6 @@
 **Node Exporter** — DaemonSet — v1.9.1
 - Namespace: lakitu
 - Replicas: 10/10
-
-**Vmalert** — Deployment — v1.97.1
-- Namespace: gossip-stone
-- Replicas: 1/1
 
 **Vmauth** — Deployment — v1.97.1
 - Namespace: gossip-stone
