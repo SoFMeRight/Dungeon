@@ -1,0 +1,72 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-steam-headless-seats-lan
+spec:
+  description: >-
+    LAN-only ingress to every steam-headless seat's Sunshine (Moonlight pairing, RTSP, video,
+    control, audio) and setup-UI ports.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: steam-headless
+  ingress:
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.144.0/20"
+      toPorts:
+        - ports:
+            - port: "47984"
+              protocol: TCP
+            - port: "47989"
+              protocol: TCP
+            - port: "47990"
+              protocol: TCP
+            - port: "48010"
+              protocol: TCP
+            - port: "47998"
+              protocol: UDP
+            - port: "47999"
+              protocol: UDP
+            - port: "48000"
+              protocol: UDP
+            - port: "8483"
+              protocol: TCP
+            - port: "8483"
+              protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-steam-headless-seats-egress
+spec:
+  description: >-
+    Seats need open internet egress: Steam's CDN and content servers, online games' servers,
+    Flathub, the pinned release downloads (GitHub, GitLab, Eden) and NVIDIA's driver download are
+    open-ended external sets that can't be allowlisted, the same reason as Palworld. Every private
+    range is excluded so an untrusted game cannot reach the LAN or the cluster; the games share is
+    mounted by the node, not the pod.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: steam-headless
+  egress:
+    - toCIDRSet:
+        - cidr: "0.0.0.0/0"
+          except:
+            - "10.0.0.0/8"
+            - "172.16.0.0/12"
+            - "192.168.0.0/16"
+            - "100.64.0.0/10"
+            - "169.254.0.0/16"
+        - cidr: "::/0"
+          except:
+            - "fc00::/7"
+            - "fe80::/10"

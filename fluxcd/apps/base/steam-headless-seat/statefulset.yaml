@@ -21,12 +21,12 @@ spec:
         policy.prplanit.com/except-no-privesc: "true"
         policy.prplanit.com/except-non-root: "true"
         policy.prplanit.com/except-ro-rootfs: "true"
+        # Outside the ambient mesh: the seat's Sunshine streams are UDP from LAN clients and its
+        # egress is the open internet; Cilium policy scopes both.
+        istio.io/dataplane-mode: none
     spec:
       serviceAccountName: steam-headless
       runtimeClassName: nvidia
-      # Sunshine binds its streaming ports on the node address; Moonlight reaches the seat there.
-      hostNetwork: true
-      dnsPolicy: ClusterFirstWithHostNet
       securityContext:
         seccompProfile:
           type: Unconfined
@@ -79,7 +79,7 @@ spec:
             - name: library
               mountPath: /library
               readOnly: true
-            - name: home
+            - name: steam-headless-home
               mountPath: /home/steamheadless
               subPath: home
             - name: sync-tmp
@@ -113,7 +113,7 @@ spec:
             - name: library
               mountPath: /library
               readOnly: true
-            - name: home
+            - name: steam-headless-home
               mountPath: /home/steamheadless
               subPath: home
             - name: sync-tmp
@@ -202,12 +202,12 @@ spec:
               name: sunshine-audio
               protocol: UDP
           volumeMounts:
-            - name: home
+            - name: steam-headless-home
               mountPath: /home/steamheadless
               subPath: home
             # The image's persistent state root (incl. the host-matched NVIDIA 32-bit libraries it
             # extracts on first boot); must be mounted whole — the image initialises it when empty.
-            - name: home
+            - name: steam-headless-home
               mountPath: /var/lib/steam-headless
               subPath: state
             # /mnt/games is the image's writable Steam library (chowned at every start); the ROM
@@ -254,7 +254,7 @@ spec:
             sizeLimit: 2Gi
   volumeClaimTemplates:
     - metadata:
-        name: home
+        name: steam-headless-home
       spec:
         accessModes:
           - ReadWriteOnce

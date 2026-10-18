@@ -1,0 +1,22 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  description: >-
+    Default-deny ingress AND egress for arbitorium-game-streaming. Seats run untrusted games, so
+    ingress is LAN-only on the Sunshine and setup-UI ports and egress is the internet minus every
+    private range (cnp-seats). CCNPs cover DNS, kubelet probes and the mesh guardrail. Both
+    directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor

@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# Seat "marxii": its StatefulSet, home volume and LoadBalancer IP. Each seat is its own
+# sub-overlay with its own name, seat label, IP/sharing key and Sunshine name.
+resources:
+  - ../../../../base/steam-headless-seat
+patches:
+  - path: statefulset-patch.yaml
+    target:
+      kind: StatefulSet
+      name: steam-headless
+  - path: service-patch.yaml
+    target:
+      kind: Service
+      name: steam-headless
+  - target:
+      kind: StatefulSet
+      name: steam-headless
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: steam-headless-marxii
+      - op: replace
+        path: /spec/serviceName
+        value: steam-headless-marxii
+  - target:
+      kind: Service
+      name: steam-headless
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: steam-headless-marxii

@@ -3,7 +3,13 @@ kind: StatefulSet
 metadata:
   name: steam-headless
 spec:
+  selector:
+    matchLabels:
+      seat: marxii
   template:
+    metadata:
+      labels:
+        seat: marxii
     spec:
       # The GTX 980 Ti seat node.
       affinity:
@@ -18,7 +24,7 @@ spec:
       initContainers:
         - name: sync-apps
           volumeMounts:
-            - name: arbitorium-game-streaming-steam-headless-home
+            - name: steam-headless-home
               mountPath: /home/steamheadless
           resources:
             requests:
@@ -30,7 +36,7 @@ spec:
         - name: sync-flatpaks
           image: docker.io/josh5/steam-headless:2.44.20261004.1
           volumeMounts:
-            - name: arbitorium-game-streaming-steam-headless-home
+            - name: steam-headless-home
               mountPath: /home/steamheadless
           resources:
             requests:
@@ -48,9 +54,9 @@ spec:
             - name: SUNSHINE_NAME
               value: "Marxii"
           volumeMounts:
-            - name: arbitorium-game-streaming-steam-headless-home
+            - name: steam-headless-home
               mountPath: /home/steamheadless
-            - name: arbitorium-game-streaming-steam-headless-home
+            - name: steam-headless-home
               mountPath: /var/lib/steam-headless
           resources:
             requests:
@@ -62,7 +68,7 @@ spec:
               nvidia.com/gpu: 1
   volumeClaimTemplates:
     - metadata:
-        name: arbitorium-game-streaming-steam-headless-home
+        name: steam-headless-home
       spec:
         storageClassName: ceph-rbd
         accessModes:

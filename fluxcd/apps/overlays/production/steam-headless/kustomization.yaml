@@ -1,9 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: arbitorium-game-streaming
+# Shared by every seat: service account, release-sync playbook and spec, the ES-DE library,
+# the read-only games share. Each seat is a sub-overlay.
 resources:
   - ../../../base/steam-headless
   - smb-volumes.yaml
+  - marxii
 configMapGenerator:
   - name: steam-headless-release-spec
     files:
@@ -23,8 +26,3 @@ configMapGenerator:
 images:
   - name: docker.io/hlhd/ansible
     newTag: v2.21.5
-patches:
-  - path: statefulset-patch.yaml
-    target:
-      kind: StatefulSet
-      name: steam-headless
