@@ -11,6 +11,7 @@ resources:
   - ./plugin-barman-cloud
   - ./external-secrets
   - ./gpu-operator
+  - ./generic-device-plugin
   - ./istio
   - ./istio-meshmedic
   - ./mariadb-operator-crds

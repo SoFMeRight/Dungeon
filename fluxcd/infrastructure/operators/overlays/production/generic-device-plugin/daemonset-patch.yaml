@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: generic-device-plugin
+spec:
+  template:
+    spec:
+      # Only the game-streaming seat node (GTX 980 Ti).
+      nodeSelector:
+        nvidia.com/gpu.family: maxwell
+      containers:
+        - name: generic-device-plugin
+          # 0.2.0; upstream publishes no image signature, so the digest is the pin.
+          image: docker.io/squat/generic-device-plugin:0.2.0@sha256:66c8d5c270eb2b721f1064c549b9b7898152a6d2f0163380a5d37dc7636c20ff
+          args:
+            # The seat GPU's DRM nodes, by stable PCI path (card0 is the VM's bochs console),
+            # exposed under their kernel names. Shared by up to 4 seats on the time-sliced GPU.
+            - --device
+            - |
+              name: seat-gpu
+              groups:
+                - count: 4
+                  paths:
+                    - path: /dev/dri/by-path/pci-0000:01:00.0-card
+                      mountPath: /dev/dri/card1
+                    - path: /dev/dri/by-path/pci-0000:01:00.0-render
+                      mountPath: /dev/dri/renderD128
+            # Sunshine's virtual controllers, keyboard and mouse.
+            - --device
+            - |
+              name: uinput
+              groups:
+                - count: 4
+                  paths:
+                    - path: /dev/uinput
+            - --device
+            - |
+              name: uhid
+              groups:
+                - count: 4
+                  paths:
+                    - path: /dev/uhid
+            # AppImages and Flatpak.
+            - --device
+            - |
+              name: fuse
+              groups:
+                - count: 10
+                  paths:
+                    - path: /dev/fuse
