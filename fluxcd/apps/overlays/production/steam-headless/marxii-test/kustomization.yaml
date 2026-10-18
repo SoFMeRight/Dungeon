@@ -21,6 +21,12 @@ patches:
         value: steam-headless-marxii-test
       - op: remove
         path: /spec/template/spec/initContainers
+      # TEMPORARY debug: hold the container open instead of booting, to inspect what systemd gets.
+      - op: add
+        path: /spec/template/spec/containers/0/command
+        value: ["sleep", "infinity"]
+      - op: remove
+        path: /spec/template/spec/containers/0/lifecycle
   - target:
       kind: Service
       name: steam-headless
