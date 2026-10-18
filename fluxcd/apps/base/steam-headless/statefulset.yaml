@@ -123,6 +123,21 @@ spec:
           image: PLACEHOLDER_IMAGE
           securityContext:
             privileged: true
+          # NVIDIA Container Toolkit >= 1.18 stacks a second tmpfs (its disable-device-node-modification
+          # hook, source /nvct-params) on /proc/driver/nvidia/params over libnvidia-container's. The
+          # image's init unmounts once, leaving one; any submount on /proc makes the kernel refuse
+          # Bubblewrap's fresh /proc, so every Flatpak fails. Unmount until none remain.
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - sh
+                  - -c
+                  - |
+                    while mountpoint -q /proc/driver/nvidia/params; do
+                      umount /proc/driver/nvidia/params || break
+                    done
+                    exit 0
           env:
             - name: TZ
               value: "PLACEHOLDER_TZ"
