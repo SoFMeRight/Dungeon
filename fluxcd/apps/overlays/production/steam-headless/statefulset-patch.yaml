@@ -26,6 +26,8 @@ spec:
           volumeMounts:
             - name: arbitorium-game-streaming-steam-headless-home
               mountPath: /home/default
+            - name: arbitorium-game-streaming-steam-headless-home
+              mountPath: /var/lib/steam-headless/nvidia-compat
           resources:
             requests:
               cpu: 4000m

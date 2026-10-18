@@ -103,8 +103,15 @@ spec:
           volumeMounts:
             - name: home
               mountPath: /home/default
+            # Host-matched NVIDIA 32-bit libraries extracted from the official installer on first
+            # boot; kept on the home volume so a container restart reuses them.
+            - name: home
+              mountPath: /var/lib/steam-headless/nvidia-compat
+              subPath: .nvidia-compat
+            # /mnt/games is the image's writable Steam library (chowned at every start); the ROM
+            # library is mounted read-only beside it.
             - name: games
-              mountPath: /mnt/games
+              mountPath: /mnt/roms
               readOnly: true
             - name: input-devices
               mountPath: /dev/input
