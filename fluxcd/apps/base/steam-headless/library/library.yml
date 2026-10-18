@@ -112,3 +112,47 @@
       loop: "{{ _custom.results | rejectattr('stat.exists') | list }}"
       loop_control:
         label: "{{ item.item }}"
+
+- name: give RetroArch a writable controller-profile directory
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    home: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+    ra_config: "{{ home }}/.var/app/org.libretro.RetroArch/config/retroarch"
+    ra_bundled_autoconfig: "{{ home }}/.local/share/flatpak/app/org.libretro.RetroArch/current/active/files/share/libretro/autoconfig"
+  tasks:
+    # The Flatpak's default joypad_autoconfig_dir is inside the read-only app image, so saving a
+    # controller profile fails. Profiles live in RetroArch's own config instead, seeded from the
+    # bundled set without overwriting profiles saved from the menu.
+    - name: check for an installed RetroArch
+      ansible.builtin.stat:
+        path: "{{ ra_bundled_autoconfig }}"
+      register: _ra_bundled
+
+    - name: create the controller-profile directory
+      when: _ra_bundled.stat.exists
+      ansible.builtin.file:
+        path: "{{ ra_config }}/autoconfig"
+        state: directory
+        mode: "0755"
+
+    # copy with force: false skips a whole subdirectory once it exists; cp -n adds each missing
+    # profile and leaves every existing one untouched.
+    - name: seed the bundled controller profiles
+      when: _ra_bundled.stat.exists
+      ansible.builtin.command:
+        argv: [cp, -R, -n, "{{ ra_bundled_autoconfig }}/.", "{{ ra_config }}/autoconfig/"]
+      changed_when: false
+
+    - name: check for RetroArch's config
+      ansible.builtin.stat:
+        path: "{{ ra_config }}/retroarch.cfg"
+      register: _ra_cfg
+
+    - name: point joypad_autoconfig_dir at the writable directory
+      when: _ra_cfg.stat.exists
+      ansible.builtin.lineinfile:
+        path: "{{ ra_config }}/retroarch.cfg"
+        regexp: '^joypad_autoconfig_dir = '
+        line: 'joypad_autoconfig_dir = "~/.var/app/org.libretro.RetroArch/config/retroarch/autoconfig"'
