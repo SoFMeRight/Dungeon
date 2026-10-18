@@ -1,0 +1,5 @@
+# steam-headless installer offers for apps the seat already manages (hidden from the menu)
+es-de
+faugus
+heroic
+prism-launcher

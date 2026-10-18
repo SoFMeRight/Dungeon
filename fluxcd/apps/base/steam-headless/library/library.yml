@@ -156,3 +156,68 @@
         path: "{{ ra_config }}/retroarch.cfg"
         regexp: '^joypad_autoconfig_dir = '
         line: 'joypad_autoconfig_dir = "~/.var/app/org.libretro.RetroArch/config/retroarch/autoconfig"'
+
+- name: menu entries for the managed apps
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    spec: /library
+    home: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+    apps_dir: "{{ home }}/Applications"
+    menu_dir: "{{ home }}/.local/share/applications"
+    installer_state: "{{ home }}/.local/state/steam-headless/app-installers"
+    menu: >-
+      {{ (lookup('ansible.builtin.file', spec ~ '/menu.txt', errors='ignore') | default('', true)).splitlines()
+         | map('trim') | reject('match', '^(#|$)') | map('split', '|') | list }}
+    dismissed: >-
+      {{ (lookup('ansible.builtin.file', spec ~ '/dismiss.txt', errors='ignore') | default('', true)).splitlines()
+         | map('trim') | reject('match', '^(#|$)') | list }}
+  tasks:
+    - name: ensure the menu and installer-state directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop: ["{{ menu_dir }}", "{{ installer_state }}"]
+
+    - name: write a menu entry for each managed app
+      ansible.builtin.copy:
+        dest: "{{ menu_dir }}/seat-{{ item.0 }}.desktop"
+        mode: "0644"
+        content: |
+          [Desktop Entry]
+          Type=Application
+          Name={{ item.1 }}
+          Exec="{{ apps_dir }}/{{ item.2 }}"
+          Path={{ (apps_dir ~ '/' ~ item.2) | dirname }}
+          Icon=applications-games
+          Terminal=false
+          Categories={{ item.3 }}
+      loop: "{{ menu }}"
+      loop_control:
+        label: "{{ item.0 }}"
+
+    - name: find the seat's menu entries
+      ansible.builtin.find:
+        paths: "{{ menu_dir }}"
+        patterns: "seat-*.desktop"
+      register: _seat_entries
+
+    - name: remove menu entries no longer declared
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ _seat_entries.files }}"
+      when: (item.path | basename | regex_replace('^seat-(.*)\\.desktop$', '\\1')) not in (menu | map('first') | list)
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    # The image's own reconcile (steam-headless-app-install) drops the launcher of any installer
+    # offer whose state is "dismissed".
+    - name: dismiss the image's installer offers for apps the seat manages
+      ansible.builtin.copy:
+        dest: "{{ installer_state }}/{{ item }}"
+        content: "dismissed\n"
+        mode: "0600"
+      loop: "{{ dismissed }}"

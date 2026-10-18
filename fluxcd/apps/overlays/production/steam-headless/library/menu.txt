@@ -1,0 +1,24 @@
+# <id>|<menu name>|<executable under ~/Applications>|<categories>
+es-de|ES-DE|ES-DE_x64.AppImage|Game;
+paperboat|PaperBoat (Paper Mario 64)|paperboat/Paperboat.AppImage|Game;
+shipwright|Ship of Harkinian (Ocarina of Time)|SoH.AppImage|Game;
+2ship|2 Ship 2 Harkinian (Majora's Mask)|2ship/2ship.appimage|Game;
+openmw|OpenMW Launcher (Morrowind)|openmw/openmw-launcher|Game;
+prismlauncher|Minecraft (Prism Launcher)|PrismLauncher.AppImage|Game;
+heroic|Heroic Games Launcher|Heroic.AppImage|Game;
+faugus|Faugus Launcher|Faugus.AppImage|Game;
+pcsx2|PCSX2 (PS2)|pcsx2-Qt.AppImage|Game;Emulator;
+ppsspp|PPSSPP (PSP)|PPSSPP.AppImage|Game;Emulator;
+duckstation|DuckStation (PS1)|DuckStation.AppImage|Game;Emulator;
+rpcs3|RPCS3 (PS3)|rpcs3.AppImage|Game;Emulator;
+shadps4|shadPS4 (PS4)|shadps4/Shadps4-sdl.AppImage|Game;Emulator;
+vita3k|Vita3K (PS Vita)|Vita3K.AppImage|Game;Emulator;
+rmg|Rosalie's Mupen GUI (N64)|RMG.AppImage|Game;Emulator;
+melonds|melonDS (DS)|melonDS/melonDS-x86_64.AppImage|Game;Emulator;
+azahar|Azahar (3DS)|azahar.AppImage|Game;Emulator;
+cemu|Cemu (Wii U)|Cemu.AppImage|Game;Emulator;
+eden|Eden (Switch)|Eden.AppImage|Game;Emulator;
+suyu|Suyu v0.0.3 (Switch)|Suyu.AppImage|Game;Emulator;
+xemu|xemu (Xbox)|xemu.AppImage|Game;Emulator;
+xenia|Xenia Canary (Xbox 360)|xenia_canary.AppImage|Game;Emulator;
+flycast|Flycast (Dreamcast, Naomi)|flycast-x86_64.AppImage|Game;Emulator;

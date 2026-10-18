@@ -17,6 +17,8 @@ configMapGenerator:
       - library/es_find_rules.xml
       - library/es_systems.xml
       - library/flatpaks.txt
+      - library/menu.txt
+      - library/dismiss.txt
       - library/port-PaperBoat.sh
       - library/port-Ship_of_Harkinian.sh
       - library/port-2_Ship_2_Harkinian.sh
