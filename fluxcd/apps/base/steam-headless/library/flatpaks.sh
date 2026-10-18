@@ -8,7 +8,14 @@
 # Result per app: installed | updated | pinned | unchanged | failed.
 set -uo pipefail
 spec=/library/flatpaks.txt
-fp() { flatpak --user --noninteractive "$@"; }
+fp() {
+    local cmd="$1"
+    shift
+    case "${cmd}" in
+    install | update | uninstall) flatpak "${cmd}" --user --noninteractive "$@" ;;
+    *) flatpak "${cmd}" --user "$@" ;;
+    esac
+}
 commit_of() { fp info --show-commit "$1" 2>/dev/null; }
 # Network operations get four attempts, 5s apart, so a transient DNS or mirror failure does not
 # skip an app until the next boot.
