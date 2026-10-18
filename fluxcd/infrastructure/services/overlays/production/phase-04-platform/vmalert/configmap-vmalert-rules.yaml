@@ -78,7 +78,7 @@ data:
         interval: 1m
         rules:
           - alert: ClusterEmergencyAccessOn
-            expr: kube_namespace_labels{exported_namespace="kube-system", label_zt_breakglass_active="true"} > 0
+            expr: kube_namespace_labels{namespace="kube-system", label_zt_breakglass_active="true"} > 0
             labels:
               severity: critical
             annotations:
@@ -92,9 +92,9 @@ data:
               severity: warning
             annotations:
               title: App emergency access on
-              summary: Namespace {{ $labels.exported_namespace }} has its bypass on - its policies are not enforced
+              summary: Namespace {{ $labels.namespace }} has its bypass on - its policies are not enforced
               resolved_title: App emergency access off
-              resolved: Namespace {{ $labels.exported_namespace }} is back under normal policy enforcement
+              resolved: Namespace {{ $labels.namespace }} is back under normal policy enforcement
           # Only while kube-state-metrics is reporting: without it the webhook metric is
           # absent too, and ClusterStateMissing says that instead.
           - alert: SecurityEnforcementDown
@@ -122,14 +122,14 @@ data:
           - alert: AppSecurityRelaxed
             expr: |
               kube_namespace_labels{label_policy_prplanit_com_restrict_default_sa="suspended",
-                exported_namespace!~"gorons-bracelet|hookshot|hyrule-castle|temple-of-time|tingle-tuner|training-dummy"} > 0
+                namespace!~"gorons-bracelet|hookshot|hyrule-castle|temple-of-time|tingle-tuner|training-dummy"} > 0
             labels:
               severity: warning
             annotations:
               title: App security relaxed
-              summary: Namespace {{ $labels.exported_namespace }} is running without service-account restrictions
+              summary: Namespace {{ $labels.namespace }} is running without service-account restrictions
               resolved_title: App security restored
-              resolved: Namespace {{ $labels.exported_namespace }} is back under service-account restrictions
+              resolved: Namespace {{ $labels.namespace }} is back under service-account restrictions
           # kube-state-metrics feeds every guardrail above and Flux's status; without
           # it they all go quiet.
           - alert: ClusterStateMissing
