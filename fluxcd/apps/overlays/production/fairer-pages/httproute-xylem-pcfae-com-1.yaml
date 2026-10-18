@@ -25,7 +25,6 @@ spec:
     - "dns2.pcfae.com"
     - "docker.cr.pcfae.com"
     - "draw.pcfae.com"
-    - "emulatorjs.pcfae.com"
     - "flowy.pcfae.com"
     - "flux.pcfae.com"
     - "fotos.pcfae.com"

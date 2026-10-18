@@ -11,4 +11,3 @@ resources:
   - cnp-egress-minecraft.yaml
   - cnp-egress-palworld.yaml
   - cnp-egress-romm.yaml
-  - cnp-egress-emulatorjs.yaml

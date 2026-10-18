@@ -58,7 +58,6 @@ resources:
   # Games
   - ark-sa
   - ark-se
-  - emulatorjs
   - minecraft-optcp
   - palworld
   - romm

@@ -12,6 +12,13 @@ spec:
       containers:
         - name: emulatorjs
           image: docker.io/linuxserver/emulatorjs:1.9.2
+          env:
+            # Turn off the embedded IPFS node (LSIO-documented). It peers with arbitrary hosts
+            # worldwide on :4001 only to fetch frontend artwork for the collection; the library
+            # is empty, so it ran for nothing. Re-enable temporarily when building a collection
+            # (and restore the :4001 world egress in cnp-egress-emulatorjs.yaml with it).
+            - name: DISABLE_IPFS
+              value: "true"
   volumeClaimTemplates:
     - metadata:
         name: config

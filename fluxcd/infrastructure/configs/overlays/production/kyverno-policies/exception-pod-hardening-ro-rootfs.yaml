@@ -65,7 +65,7 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [shooting-gallery]
-          names: ["ark-sa-*", "ark-se-*", "emulatorjs-*", "romm-*"]
+          names: ["ark-sa-*", "ark-se-*", "romm-*"]
       # swift-sail — gluetun cohort + LSIO *arr + root-vendor.
       - resources:
           kinds: [Pod]
