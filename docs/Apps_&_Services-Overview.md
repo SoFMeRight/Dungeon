@@ -1482,6 +1482,14 @@
 
 </details>
 
+## Unclassified (1)
+
+Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
+
+| Workload | Namespace | Status |
+| --- | --- | --- |
+| Steam Headless | arbitorium-game-streaming | ❌ |
+
 <details>
 <summary>Retired / Graveyard (8)</summary>
 
