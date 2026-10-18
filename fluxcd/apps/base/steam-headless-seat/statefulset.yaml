@@ -26,6 +26,8 @@ spec:
         istio.io/dataplane-mode: none
     spec:
       serviceAccountName: steam-headless
+      # Seats run untrusted games and never talk to the Kubernetes API: no token in the pod.
+      automountServiceAccountToken: false
       runtimeClassName: nvidia
       securityContext:
         seccompProfile:

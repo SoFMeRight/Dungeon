@@ -202,3 +202,12 @@ releases:
     layout: zip
     executables: ["2ship.appimage"]
     dest: /home/steamheadless/Applications/2ship
+  - name: openmw
+    repo: OpenMW/openmw
+    tag: "openmw-{version}"
+    asset: "openmw-{version}-Linux-64Bit.tar.gz"
+    # renovate: datasource=github-releases depName=OpenMW/openmw extractVersion=^openmw-(?<version>.+)$
+    version: "0.51.0"
+    layout: tar
+    strip: 1
+    dest: /home/steamheadless/Applications/openmw

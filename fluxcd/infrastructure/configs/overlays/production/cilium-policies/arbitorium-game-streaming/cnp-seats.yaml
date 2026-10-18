@@ -50,13 +50,19 @@ spec:
     Flathub, the pinned release downloads (GitHub, GitLab, Eden) and NVIDIA's driver download are
     open-ended external sets that can't be allowlisted, the same reason as Palworld. Every private
     range is excluded so an untrusted game cannot reach the LAN or the cluster; the games share is
-    mounted by the node, not the pod.
+    mounted by the node, not the pod. The explicit deny outranks the cluster-wide kube-apiserver
+    allow, and closes the seat's own node and the other nodes.
   enableDefaultDeny:
     ingress: false
     egress: false
   endpointSelector:
     matchLabels:
       app: steam-headless
+  egressDeny:
+    - toEntities:
+        - kube-apiserver
+        - host
+        - remote-node
   egress:
     - toCIDRSet:
         - cidr: "0.0.0.0/0"

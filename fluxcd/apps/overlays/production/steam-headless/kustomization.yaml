@@ -23,6 +23,7 @@ configMapGenerator:
       - library/port-Minecraft.sh
       - library/port-Heroic_Games_Launcher.sh
       - library/port-Faugus_Launcher.sh
+      - library/port-OpenMW.sh
 images:
   - name: docker.io/hlhd/ansible
     newTag: v2.21.5
