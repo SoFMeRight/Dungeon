@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: gorons-bracelet
 resources:
   - ../../../base/gpu-operator
+  - runtimeclass-nvidia-userns.yaml
 patches:
   - path: helmrelease-patch.yaml
     target:

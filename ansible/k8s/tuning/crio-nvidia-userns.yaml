@@ -1,0 +1,68 @@
+---
+# crio-nvidia-userns.yaml
+# Adds the nvidia-userns CRI-O runtime handler on the game-streaming seat node.
+#
+# WHY THIS EXISTS:
+# A seat in a user namespace (hostUsers: false) runs systemd as PID 1, and systemd
+# must create its own slices in /sys/fs/cgroup. An unprivileged container gets the
+# cgroup2 hierarchy read-only, so systemd exits at once. CRI-O mounts it writable
+# for a container in its own user and cgroup namespace when the pod carries the
+# annotation io.kubernetes.cri-o.cgroup2-mount-hierarchy-rw — but only if the
+# runtime handler allows that annotation, and the GPU operator's generated
+# 99-nvidia.conf handlers allow none (and that file is rewritten by the operator).
+#
+# So this is a SEPARATE handler, nvidia-userns: the same NVIDIA runtime binary,
+# allowing only that one annotation. Only pods that select RuntimeClass
+# nvidia-userns (fluxcd/infrastructure/operators/overlays/production/gpu-operator,
+# scheduled onto this node only) can use it; the operator's handlers are untouched.
+#
+# Run via Semaphore or:
+#   ansible-playbook -i inventory k8s/tuning/crio-nvidia-userns.yaml
+
+- name: Add the nvidia-userns CRI-O runtime handler
+  hosts: "{{ crio_userns_group | default('dungeon_worker_004') }}"
+  become: true
+  gather_facts: true
+  tasks:
+    - name: Write the nvidia-userns handler drop-in
+      ansible.builtin.copy:
+        dest: /etc/crio/crio.conf.d/99-zz-nvidia-userns.conf
+        mode: "0644"
+        content: |
+          # Managed by dungeon/ansible/k8s/tuning/crio-nvidia-userns.yaml
+          [crio.runtime.runtimes.nvidia-userns]
+          runtime_path = "/usr/local/nvidia/toolkit/nvidia-container-runtime"
+          runtime_type = "oci"
+          runtime_root = ""
+          monitor_path = "/usr/bin/conmon"
+          monitor_cgroup = "system.slice"
+          container_min_memory = "12MiB"
+          container_create_timeout = 240
+          allowed_annotations = [
+              "io.kubernetes.cri-o.cgroup2-mount-hierarchy-rw",
+          ]
+      register: _dropin
+
+    # CRI-O parses every drop-in on start; a file it rejects would stop it from
+    # starting at all, so prove the merged config first.
+    - name: Prove CRI-O parses the merged config with the handler
+      ansible.builtin.command: crio config
+      register: _crio_config
+      changed_when: false
+      failed_when: >-
+        _crio_config.rc != 0
+        or '[crio.runtime.runtimes.nvidia-userns]' not in _crio_config.stdout
+        or 'cgroup2-mount-hierarchy-rw' not in _crio_config.stdout
+
+    - name: Restart CRI-O to load the handler (running containers keep running under conmon)
+      when: _dropin.changed
+      ansible.builtin.systemd:
+        name: crio
+        state: restarted
+
+    - name: Wait for the node to report Ready again
+      when: _dropin.changed
+      ansible.builtin.command: >-
+        {{ kubectl_admin }} wait --for=condition=Ready node/{{ ansible_facts['hostname'] }} --timeout=180s
+      delegate_to: "{{ groups['k8s_master'] | first }}"
+      changed_when: false

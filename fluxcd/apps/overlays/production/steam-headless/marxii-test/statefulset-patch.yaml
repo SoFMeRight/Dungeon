@@ -10,7 +10,11 @@ spec:
     metadata:
       labels:
         seat: marxii-test
+      annotations:
+        # systemd needs a writable cgroup2 hierarchy; honoured only by the nvidia-userns handler.
+        io.kubernetes.cri-o.cgroup2-mount-hierarchy-rw: "true"
     spec:
+      runtimeClassName: nvidia-userns
       # Root in the seat maps to an unprivileged host UID; capabilities apply only inside it.
       hostUsers: false
       affinity:
