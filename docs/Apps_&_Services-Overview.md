@@ -1215,7 +1215,7 @@
 
 </details>
 
-## Platform Components (50)
+## Platform Components (51)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
@@ -1224,7 +1224,7 @@
 | Vault Operator | zeldas-lullaby | ✅ |
 | Snapshot Controller | fairy-bottle | ✅ |
 | Velero (2 components) | fairy-bottle | ✅ |
-| Gitlab Gitlab Runner | hyrule-castle | ❌ |
+| Gitlab Gitlab Runner | hyrule-castle | ✅ |
 | Mariadb | hyrule-castle | ✅ |
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
@@ -1262,6 +1262,7 @@
 | Ceph Csi (2 components) | gorons-bracelet | ✅ |
 | Cloudnative Pg | gorons-bracelet | ✅ |
 | Csi Driver Smb (3 components) | gorons-bracelet | ✅ |
+| Generic Device Plugin | gorons-bracelet | ✅ |
 | Gorons Bracelet.cephfs.csi.ceph.com (2 components) | gorons-bracelet | ✅ |
 | Gorons Bracelet.rbd.csi.ceph.com (2 components) | gorons-bracelet | ✅ |
 | Gpu Operator (11 components) | gorons-bracelet | ✅ |
@@ -1295,7 +1296,7 @@
 
 **Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
 - Namespace: hyrule-castle
-- Replicas: 0/1
+- Replicas: 1/1
 
 **Mariadb** — StatefulSet — 
 - Namespace: hyrule-castle
@@ -1445,6 +1446,10 @@
 - Namespace: gorons-bracelet
 - Replicas: 12/12
 
+**Generic Device Plugin** — DaemonSet — 0.2.0
+- Namespace: gorons-bracelet
+- Replicas: 1/1
+
 **Gorons Bracelet.cephfs.csi.ceph.com** — Mixed — 
 - Namespace: gorons-bracelet
 - Replicas: 7/7
@@ -1481,7 +1486,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 
 | Workload | Namespace | Status |
 | --- | --- | --- |
-| Steam Headless Marxii | arbitorium-game-streaming | ✅ |
+| Steam Headless | arbitorium-game-streaming | ✅ |
 
 <details>
 <summary>Retired / Graveyard (8)</summary>
