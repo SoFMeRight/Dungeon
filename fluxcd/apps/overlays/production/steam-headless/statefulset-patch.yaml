@@ -27,7 +27,7 @@ spec:
             - name: arbitorium-game-streaming-steam-headless-home
               mountPath: /home/default
             - name: arbitorium-game-streaming-steam-headless-home
-              mountPath: /var/lib/steam-headless/nvidia-compat
+              mountPath: /var/lib/steam-headless
           resources:
             requests:
               cpu: 4000m
