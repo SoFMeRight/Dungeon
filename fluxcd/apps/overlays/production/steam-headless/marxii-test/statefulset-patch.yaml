@@ -33,9 +33,12 @@ spec:
             privileged: false
             # Bubblewrap mounts a fresh /proc; allowed only in a user namespace.
             procMount: Unmasked
-            # Bubblewrap creates nested user namespaces, which the node's AppArmor restricts.
+            # Bubblewrap creates nested user namespaces; the node's AppArmor strips their
+            # capabilities unless the profile grants userns
+            # (ansible/k8s/tuning/apparmor-steam-headless-seat.yaml).
             appArmorProfile:
-              type: Unconfined
+              type: Localhost
+              localhostProfile: steam-headless-seat
             capabilities:
               add:
                 - SYS_ADMIN

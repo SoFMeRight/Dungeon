@@ -1,0 +1,51 @@
+---
+# apparmor-steam-headless-seat.yaml
+# Loads the steam-headless-seat AppArmor profile on the game-streaming seat node.
+#
+# WHY THIS EXISTS:
+# Ubuntu sets kernel.apparmor_restrict_unprivileged_userns=1. An unconfined
+# process with no capabilities in the initial user namespace that creates a user
+# namespace is moved into the unprivileged_userns profile, which denies every
+# capability and the uid_map write. A seat in a user namespace (hostUsers: false)
+# has no initial-namespace capabilities, so Bubblewrap - every Flatpak - fails
+# with "setting up uid map: Permission denied". RuntimeDefault and Unconfined
+# both hit it.
+#
+# A profile that grants `userns` is exempt from the transition. This one is
+# flags=(unconfined) with only that rule: the seat stays exactly as confined as
+# Unconfined, and nested user namespaces keep their capabilities. Every other pod
+# on the node keeps the restriction. Pods select it with
+#   appArmorProfile: {type: Localhost, localhostProfile: steam-headless-seat}
+# and kubelet refuses to start a container whose profile is not loaded.
+#
+# Run via Semaphore or:
+#   ansible-playbook -i inventory k8s/tuning/apparmor-steam-headless-seat.yaml
+
+- name: Load the steam-headless-seat AppArmor profile
+  hosts: "{{ apparmor_seat_group | default('dungeon_worker_004') }}"
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Write the profile
+      ansible.builtin.copy:
+        dest: /etc/apparmor.d/steam-headless-seat
+        mode: "0644"
+        content: |
+          # Managed by dungeon/ansible/k8s/tuning/apparmor-steam-headless-seat.yaml
+          abi <abi/4.0>,
+          include <tunables/global>
+
+          profile steam-headless-seat flags=(unconfined) {
+            userns,
+          }
+      register: _profile
+
+    # apparmor.service loads /etc/apparmor.d at boot; this loads it now.
+    - name: Load or replace the profile in the kernel
+      when: _profile.changed
+      ansible.builtin.command: apparmor_parser -r -W /etc/apparmor.d/steam-headless-seat
+      changed_when: true
+
+    - name: Prove the profile is loaded
+      ansible.builtin.command: grep -qx 'steam-headless-seat (unconfined)' /sys/kernel/security/apparmor/profiles
+      changed_when: false
