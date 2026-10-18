@@ -1212,7 +1212,7 @@
 
 </details>
 
-## Platform Components (50)
+## Platform Components (52)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
@@ -1229,12 +1229,14 @@
 | Phloem Gateway Istio | arylls-lookout | ✅ |
 | Reflector | gerudo-crest | ✅ |
 | Reloader | gerudo-crest | ✅ |
+| Alertmanager | gossip-stone | ✅ |
 | Alloy | lakitu | ✅ |
 | Alloy Syslog | lakitu | ✅ |
 | Graphite Exporter Truenas | gossip-stone | ✅ |
 | Kube State Metrics | gossip-stone | ✅ |
 | Netconsole Collector | lakitu | ✅ |
 | Node Exporter | lakitu | ✅ |
+| Vmalert | gossip-stone | ✅ |
 | Vmauth | gossip-stone | ✅ |
 | Vmselect | gossip-stone | ✅ |
 | Vmstorage | gossip-stone | ✅ |
@@ -1322,6 +1324,10 @@
 - Namespace: gerudo-crest
 - Replicas: 1/1
 
+**Alertmanager** — Deployment — v0.28.1
+- Namespace: gossip-stone
+- Replicas: 1/1
+
 **Alloy** — DaemonSet — 
 - Namespace: lakitu
 - Replicas: 10/10
@@ -1345,6 +1351,10 @@
 **Node Exporter** — DaemonSet — v1.9.1
 - Namespace: lakitu
 - Replicas: 10/10
+
+**Vmalert** — Deployment — v1.97.1
+- Namespace: gossip-stone
+- Replicas: 1/1
 
 **Vmauth** — Deployment — v1.97.1
 - Namespace: gossip-stone
