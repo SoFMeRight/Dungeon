@@ -5,6 +5,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vmalert
+  annotations:
+    # vmalert reads its rule files only at start.
+    configmap.reloader.stakater.com/reload: vmalert-rules
 spec:
   revisionHistoryLimit: 5
   replicas: 1

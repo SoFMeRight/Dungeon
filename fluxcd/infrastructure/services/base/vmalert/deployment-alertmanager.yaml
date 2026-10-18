@@ -4,6 +4,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: alertmanager
+  annotations:
+    configmap.reloader.stakater.com/reload: alertmanager-config
+    secret.reloader.stakater.com/reload: alertmanager-ntfy-token
 spec:
   revisionHistoryLimit: 5
   replicas: 1
