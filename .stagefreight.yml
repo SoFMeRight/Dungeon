@@ -161,6 +161,12 @@ ansible:
         - k8s_worker
         - k8s_master
       path: ansible/k8s/provision-hosts.yml
+    wazuh-agent:
+      converge: true
+      groups:
+        - k8s_master
+        - k8s_worker
+      path: ansible/services/wazuh-agent.yaml
   ssh:
     credentials: DUNGEON
     known_hosts: ansible/known_hosts
