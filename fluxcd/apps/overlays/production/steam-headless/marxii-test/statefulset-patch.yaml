@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: steam-headless
+spec:
+  selector:
+    matchLabels:
+      seat: marxii-test
+  template:
+    metadata:
+      labels:
+        seat: marxii-test
+    spec:
+      # Root in the seat maps to an unprivileged host UID; capabilities apply only inside it.
+      hostUsers: false
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: nvidia.com/gpu.family
+                    operator: In
+                    values:
+                      - maxwell
+      containers:
+        - name: steam-headless
+          image: docker.io/josh5/steam-headless:2.44.20261004.1@sha256:28acbee506844b60fe0a49f1f2a85f4a0a8dbccf8a83db7af73aacbb08d20f74
+          securityContext:
+            privileged: false
+            # Bubblewrap mounts a fresh /proc; allowed only in a user namespace.
+            procMount: Unmasked
+            # Bubblewrap creates nested user namespaces, which the node's AppArmor restricts.
+            appArmorProfile:
+              type: Unconfined
+            capabilities:
+              add:
+                - SYS_ADMIN
+                - SYS_NICE
+                - NET_ADMIN
+                - SYS_PTRACE
+          env:
+            - name: TZ
+              value: "America/Los_Angeles"
+            - name: SUNSHINE_NAME
+              value: "Marxii-test"
+          resources:
+            requests:
+              cpu: 1000m
+              memory: 2Gi
+            limits:
+              cpu: 4000m
+              memory: 8Gi
+              nvidia.com/gpu: 1
+              devic.es/seat-gpu: 1
+              devic.es/uinput: 1
+              devic.es/uhid: 1
+              devic.es/fuse: 1
+  volumeClaimTemplates:
+    - metadata:
+        name: steam-headless-home
+      spec:
+        storageClassName: ceph-rbd
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi

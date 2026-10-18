@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+# TEMPORARY hardening test seat: user namespaces, no privileged, explicit devices from
+# generic-device-plugin. No app/Flatpak sync, no LoadBalancer. Removed once marxii adopts it.
+resources:
+  - ../../../../base/steam-headless-seat
+patches:
+  - path: statefulset-patch.yaml
+    target:
+      kind: StatefulSet
+      name: steam-headless
+  - target:
+      kind: StatefulSet
+      name: steam-headless
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: steam-headless-marxii-test
+      - op: replace
+        path: /spec/serviceName
+        value: steam-headless-marxii-test
+      - op: remove
+        path: /spec/template/spec/initContainers
+  - target:
+      kind: Service
+      name: steam-headless
+    patch: |
+      - op: replace
+        path: /metadata/name
+        value: steam-headless-marxii-test
+      - op: replace
+        path: /spec/type
+        value: ClusterIP
+      - op: add
+        path: /spec/selector/seat
+        value: marxii-test
