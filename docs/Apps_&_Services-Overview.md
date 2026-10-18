@@ -1488,7 +1488,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 
 | Workload | Namespace | Status |
 | --- | --- | --- |
-| Steam Headless | arbitorium-game-streaming | ❌ |
+| Steam Headless | arbitorium-game-streaming | ✅ |
 
 <details>
 <summary>Retired / Graveyard (8)</summary>
