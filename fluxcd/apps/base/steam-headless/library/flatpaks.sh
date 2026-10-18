@@ -10,13 +10,23 @@ set -uo pipefail
 spec=/library/flatpaks.txt
 fp() { flatpak --user --noninteractive "$@"; }
 commit_of() { fp info --show-commit "$1" 2>/dev/null; }
+# Network operations get four attempts, 5s apart, so a transient DNS or mirror failure does not
+# skip an app until the next boot.
+retry() {
+    local n
+    for n in 1 2 3 4; do
+        "$@" && return 0
+        [[ $n -lt 4 ]] && sleep 5
+    done
+    return 1
+}
 declare -A tally=()
 result() {
     tally[$2]=$((${tally[$2]:-0} + 1))
     echo "flatpak: $1 $2${3:+ ($3)}"
 }
 
-if ! fp remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo; then
+if ! retry fp remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo; then
     echo "flatpak: flathub remote unavailable; keeping installed apps"
     exit 0
 fi
@@ -25,16 +35,16 @@ while read -r app want; do
     case "${app}" in '' | '#'*) continue ;; esac
     before="$(commit_of "${app}")"
     if [[ -z "${before}" ]]; then
-        fp install flathub "${app}" >/dev/null || { result "${app}" failed "install"; continue; }
+        retry fp install flathub "${app}" >/dev/null || { result "${app}" failed "install"; continue; }
     fi
     if [[ -n "${want:-}" ]]; then
         if [[ "$(commit_of "${app}")" != "${want}" ]]; then
             fp mask --remove "${app}" >/dev/null 2>&1
-            fp update --commit="${want}" "${app}" >/dev/null || { result "${app}" failed "pin ${want:0:12}"; continue; }
+            retry fp update --commit="${want}" "${app}" >/dev/null || { result "${app}" failed "pin ${want:0:12}"; continue; }
         fi
         fp mask "${app}" >/dev/null 2>&1
     else
-        fp update "${app}" >/dev/null || { result "${app}" failed "update; kept ${before:0:12}"; continue; }
+        retry fp update "${app}" >/dev/null || { result "${app}" failed "update; kept ${before:0:12}"; continue; }
     fi
     after="$(commit_of "${app}")"
     if [[ -z "${before}" ]]; then

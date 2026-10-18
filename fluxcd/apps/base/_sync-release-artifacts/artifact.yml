@@ -34,6 +34,9 @@
           Accept: application/vnd.github+json
         return_content: true
       register: _rel
+      retries: 4
+      delay: 5
+      until: _rel is succeeded
 
     - name: "{{ a.name }}: pick published digest + download url"
       when: _src == 'github-release'
@@ -52,6 +55,9 @@
         url: "{{ _glapi }}/packages?package_type=generic&package_name={{ a.package }}&package_version={{ a.version }}"
         return_content: true
       register: _pkg
+      retries: 4
+      delay: 5
+      until: _pkg is succeeded
 
     - name: "{{ a.name }}: list package files"
       when: _src == 'gitlab-package'
@@ -59,6 +65,9 @@
         url: "{{ _glapi }}/packages/{{ (_pkg.json | selectattr('name', 'equalto', a.package) | first).id }}/package_files?per_page=100"
         return_content: true
       register: _pkgf
+      retries: 4
+      delay: 5
+      until: _pkgf is succeeded
 
     - name: "{{ a.name }}: pick package file digest + download url"
       when: _src == 'gitlab-package'
@@ -114,6 +123,11 @@
             checksum: "{{ _pub if (a.verify | default('github-digest')) != 'none' else omit }}"
             force: true
             mode: "0644"
+          register: _dl
+          retries: 4
+          delay: 5
+          # A digest mismatch is final; only transport failures are retried.
+          until: _dl is succeeded or ('checksum' in (_dl.msg | default('')))
 
         - name: "{{ a.name }}: place the file (raw)"
           when: _layout == 'raw'
