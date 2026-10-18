@@ -42,6 +42,11 @@ spec:
                 - SYS_NICE
                 - NET_ADMIN
                 - SYS_PTRACE
+                # shinputd: cross-credential ownership checks on the virtual input nodes.
+                - DAC_READ_SEARCH
+                # avahi-daemon keeps these after dropping privileges.
+                - NET_RAW
+                - SYS_CHROOT
           env:
             - name: TZ
               value: "America/Los_Angeles"
