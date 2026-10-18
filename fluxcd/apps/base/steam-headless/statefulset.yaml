@@ -132,6 +132,10 @@ spec:
           #    Firefox, Flatpak apps) falls back to llvmpipe. Recreate only the render GPU's own card
           #    node, matched by its sysfs device, once PID 1 has become systemd: after the init's
           #    deletion and before the session's clients pick a renderer.
+          # 3. The toolkit mounts the node's older egl-wayland (1.1.13) ahead of the image's 1.1.22 on
+          #    the library path; KWin 6.7's Wayland server needs the newer one, so native clients
+          #    (plasmashell, Firefox) still fell back to llvmpipe. /etc/egl overrides the platform
+          #    entry to load the image's own egl-wayland by absolute path.
           lifecycle:
             postStart:
               exec:
@@ -158,6 +162,11 @@ spec:
                       mknod -m 0660 "/dev/dri/$name" c "${dev%%:*}" "${dev##*:}"
                       chgrp --reference="$render" "/dev/dri/$name"
                     done
+                    if [ -e /usr/lib64/libnvidia-egl-wayland.so.1 ]; then
+                      mkdir -p /etc/egl/egl_external_platform.d
+                      printf '%s\n' '{"file_format_version":"1.0.0","ICD":{"library_path":"/usr/lib64/libnvidia-egl-wayland.so.1"}}' \
+                        > /etc/egl/egl_external_platform.d/10_nvidia_wayland.json
+                    fi
                     exit 0
           env:
             - name: TZ
