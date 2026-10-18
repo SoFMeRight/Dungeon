@@ -211,3 +211,16 @@ releases:
     layout: tar
     strip: 1
     dest: /home/steamheadless/Applications/openmw
+
+  # Seat tooling
+  - name: rclone
+    repo: rclone/rclone
+    tag: "v{version}"
+    asset: "rclone-v{version}-linux-amd64.zip"
+    # renovate: datasource=github-releases depName=rclone/rclone extractVersion=^v(?<version>.+)$
+    version: "1.75.2"
+    layout: zip
+    subdir: "rclone-v{version}-linux-amd64"
+    include: ["rclone"]
+    executables: ["rclone"]
+    dest: /home/steamheadless/.local/lib/rclone

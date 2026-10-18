@@ -76,3 +76,26 @@ spec:
           except:
             - "fc00::/7"
             - "fe80::/10"
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-steam-headless-seats-to-gringotts-smb
+spec:
+  description: >-
+    A user-namespace seat cannot receive the node's SMB mount (CIFS has no idmapped mounts), so it
+    mounts the games share itself over FUSE (rclone) with the read-only games account. Only
+    gringotts' SMB port is opened in the private ranges.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: steam-headless
+  egress:
+    - toCIDR:
+        - "172.22.150.101/32"
+      toPorts:
+        - ports:
+            - port: "445"
+              protocol: TCP

@@ -60,9 +60,13 @@ spec:
             # can only chown a volume mapped into its namespace.
             - name: steam-library
               mountPath: /mnt/games
-            # TEMPORARY: the SMB games share cannot be idmap-mounted (CIFS); probing everything else.
+            # CIFS cannot be idmap-mounted into a user namespace; the seat mounts the share itself
+            # over FUSE (rclone) with these read-only credentials.
             - mountPath: /mnt/roms
               $patch: delete
+            - name: smb-credentials
+              mountPath: /etc/steam-headless/smb
+              readOnly: true
           resources:
             requests:
               cpu: 1000m
@@ -78,6 +82,10 @@ spec:
       volumes:
         - name: games
           $patch: delete
+        - name: smb-credentials
+          secret:
+            secretName: steam-headless-smb-secret
+            defaultMode: 0400
         - name: steam-library
           emptyDir:
             sizeLimit: 2Gi
