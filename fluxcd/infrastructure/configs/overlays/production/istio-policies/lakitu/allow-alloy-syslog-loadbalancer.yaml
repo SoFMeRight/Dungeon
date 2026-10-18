@@ -1,0 +1,21 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-alloy-syslog-loadbalancer
+spec:
+  selector:
+    matchLabels:
+      app: alloy-syslog
+  action: ALLOW
+  rules:
+    # Syslog over TLS from LAN devices (TrueNAS, Eaton). Cilium CNP owns anti-hairpin;
+    # UDP syslog is not captured by ztunnel and needs no rule here.
+    - from:
+        - source:
+            ipBlocks:
+              - "10.0.0.0/8"
+              - "172.16.0.0/12"
+              - "192.168.0.0/16"
+      to:
+        - operation:
+            ports: ["6514"]

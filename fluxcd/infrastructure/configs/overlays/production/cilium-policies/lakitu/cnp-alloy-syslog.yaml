@@ -19,3 +19,15 @@ spec:
               protocol: UDP
             - port: "5424"
               protocol: UDP
+    # Syslog over TLS rides TCP, so ztunnel captures it and the Istio LB policy also applies.
+    # LAN only; the pod CIDR is excluded so nothing in-cluster hairpins through the VIP.
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.144.0/20"
+      toPorts:
+        - ports:
+            - port: "6514"
+              protocol: TCP

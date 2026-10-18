@@ -46,6 +46,9 @@ spec:
             - name: syslog-rfc5424
               containerPort: 5424
               protocol: UDP
+            - name: syslog-tls
+              containerPort: 6514
+              protocol: TCP
             - name: http
               containerPort: 12345
               protocol: TCP
@@ -74,11 +77,18 @@ spec:
             - name: config
               mountPath: /etc/alloy
               readOnly: true
+            - name: tls
+              mountPath: /etc/alloy/tls
+              readOnly: true
             - name: tmp
               mountPath: /tmp
       volumes:
         - name: config
           configMap:
             name: alloy-syslog-config
+        - name: tls
+          secret:
+            secretName: alloy-syslog-tls
+            defaultMode: 0440
         - name: tmp
           emptyDir: {}

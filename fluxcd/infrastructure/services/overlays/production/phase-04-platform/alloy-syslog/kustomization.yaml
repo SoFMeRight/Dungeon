@@ -5,6 +5,7 @@ namespace: lakitu
 
 resources:
   - ../../../../base/alloy-syslog
+  - certificate.yaml
 
 patches:
   - path: deployment-patch.yaml

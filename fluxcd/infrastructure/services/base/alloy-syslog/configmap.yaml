@@ -1,6 +1,7 @@
 # The estate's syslog intake. Devices that can only speak syslog (pfSense, switches,
-# appliances) send here; every message lands in Loki first, where Grafana and CrowdSec
-# read it like any other log, and a copy is relayed to the Wazuh manager for detection.
+# appliances) send here, over TLS where the device supports it; every message lands in
+# Loki first, where Grafana and CrowdSec read it like any other log, and a copy is relayed
+# to the Wazuh manager for detection.
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -24,6 +25,25 @@ data:
       location = "America/Los_Angeles"
       udp {
         listen_address = "0.0.0.0:5514"
+      }
+      output {
+        logs = [otelcol.processor.attributes.loki_labels.input, otelcol.exporter.syslog.wazuh.input]
+      }
+    }
+
+    // RFC 5425: RFC 5424 over TLS, octet-counted frames on TCP (TrueNAS, Eaton).
+    // UDP above stays for senders that cannot do TLS (pfSense).
+    otelcol.receiver.syslog "rfc5425_tls" {
+      protocol              = "rfc5424"
+      enable_octet_counting = true
+      tcp {
+        listen_address = "0.0.0.0:6514"
+        tls {
+          cert_file = "/etc/alloy/tls/tls.crt"
+          key_file  = "/etc/alloy/tls/tls.key"
+          // Picks up cert-manager renewals without a restart.
+          reload_interval = "1h"
+        }
       }
       output {
         logs = [otelcol.processor.attributes.loki_labels.input, otelcol.exporter.syslog.wazuh.input]

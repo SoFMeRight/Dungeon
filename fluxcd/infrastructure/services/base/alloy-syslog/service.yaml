@@ -17,3 +17,7 @@ spec:
       port: 5424
       targetPort: syslog-rfc5424
       protocol: UDP
+    - name: syslog-tls
+      port: 6514
+      targetPort: syslog-tls
+      protocol: TCP
