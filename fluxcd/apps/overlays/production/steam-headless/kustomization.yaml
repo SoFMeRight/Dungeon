@@ -4,6 +4,23 @@ namespace: arbitorium-game-streaming
 resources:
   - ../../../base/steam-headless
   - smb-volumes.yaml
+configMapGenerator:
+  - name: steam-headless-release-spec
+    files:
+      - releases.yaml
+  - name: steam-headless-library
+    files:
+      - library/systems.txt
+      - library/es_find_rules.xml
+      - library/port-PaperBoat.sh
+      - library/port-Ship_of_Harkinian.sh
+      - library/port-2_Ship_2_Harkinian.sh
+      - library/port-Minecraft.sh
+      - library/port-Heroic_Games_Launcher.sh
+      - library/port-Faugus_Launcher.sh
+images:
+  - name: docker.io/hlhd/ansible
+    newTag: v2.21.6
 patches:
   - path: statefulset-patch.yaml
     target:

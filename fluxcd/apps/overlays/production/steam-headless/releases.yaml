@@ -1,0 +1,124 @@
+releases:
+  # Launchers
+  - name: es-de
+    source: gitlab-package
+    repo: es-de/emulationstation-de
+    package: ES-DE_Stable
+    asset: ES-DE_x64.AppImage
+    # renovate: datasource=gitlab-releases depName=es-de/emulationstation-de extractVersion=^v(?<version>.+)$
+    version: "3.5.0"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/ES-DE_x64.AppImage
+  - name: prismlauncher
+    repo: PrismLauncher/PrismLauncher
+    tag: "{version}"
+    asset: PrismLauncher-Linux-x86_64.AppImage
+    # renovate: datasource=github-releases depName=PrismLauncher/PrismLauncher
+    version: "11.1.1"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/PrismLauncher.AppImage
+  - name: heroic
+    repo: Heroic-Games-Launcher/HeroicGamesLauncher
+    tag: "v{version}"
+    asset: "Heroic-{version}-linux-x86_64.AppImage"
+    # renovate: datasource=github-releases depName=Heroic-Games-Launcher/HeroicGamesLauncher extractVersion=^v(?<version>.+)$
+    version: "2.22.4"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/Heroic.AppImage
+  - name: faugus
+    repo: Faugus/faugus-launcher
+    tag: "{version}"
+    asset_match: '^Faugus-.*-x86_64\.AppImage$'
+    # renovate: datasource=github-releases depName=Faugus/faugus-launcher
+    version: "2.5.0"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/Faugus.AppImage
+
+  # Emulators — dest names match ES-DE's bundled find rules
+  - name: pcsx2
+    repo: PCSX2/pcsx2
+    tag: "v{version}"
+    asset: "pcsx2-v{version}-linux-appimage-x64-Qt.AppImage"
+    # renovate: datasource=github-releases depName=PCSX2/pcsx2 extractVersion=^v(?<version>.+)$
+    version: "2.8.2"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/pcsx2-Qt.AppImage
+  - name: ppsspp
+    repo: hrydgard/ppsspp
+    tag: "v{version}"
+    asset: "PPSSPP-v{version}-anylinux-x86_64.AppImage"
+    # renovate: datasource=github-releases depName=hrydgard/ppsspp extractVersion=^v(?<version>.+)$
+    version: "1.20.4"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/PPSSPP.AppImage
+  - name: melonds
+    repo: melonDS-emu/melonDS
+    tag: "{version}"
+    asset: "melonDS-{version}-appimage-x86_64.zip"
+    # renovate: datasource=github-releases depName=melonDS-emu/melonDS
+    version: "1.1"
+    layout: zip
+    executables: ["*.AppImage"]
+    dest: /home/steamheadless/Applications/melonDS
+  - name: azahar
+    repo: azahar-emu/azahar
+    tag: "{version}"
+    asset: azahar.AppImage
+    # renovate: datasource=github-releases depName=azahar-emu/azahar
+    version: "2126.2"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/azahar.AppImage
+  - name: xemu
+    repo: xemu-project/xemu
+    tag: "v{version}"
+    asset: "xemu-{version}-x86_64.AppImage"
+    # renovate: datasource=github-releases depName=xemu-project/xemu extractVersion=^v(?<version>.+)$
+    version: "0.8.137"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/xemu.AppImage
+  - name: cemu
+    repo: Cemu-Project/Cemu
+    tag: "v{version}"
+    asset: "Cemu-{version}-x86_64.AppImage"
+    # renovate: datasource=github-releases depName=Cemu-Project/Cemu extractVersion=^v(?<version>.+)$
+    version: "2.6"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/Cemu.AppImage
+
+  # Native PC ports — release assets are named by codename, so selected by pattern
+  - name: paperboat
+    repo: HarbourMasters/PaperBoat
+    tag: "{version}"
+    asset_match: '^Paperboat-.*-Linux\.zip$'
+    # renovate: datasource=github-releases depName=HarbourMasters/PaperBoat
+    version: "1.0.3"
+    layout: zip
+    executables: ["Paperboat.AppImage"]
+    dest: /home/steamheadless/Applications/paperboat
+  - name: shipwright
+    repo: HarbourMasters/Shipwright
+    tag: "{version}"
+    asset_match: '^SoH-.*\.appimage$'
+    # renovate: datasource=github-releases depName=HarbourMasters/Shipwright
+    version: "9.3.0"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/SoH.AppImage
+  - name: 2ship
+    repo: 2ship2harkinian/2ship2harkinian
+    tag: "{version}"
+    asset_match: '^2Ship-.*-Linux\.zip$'
+    # renovate: datasource=github-releases depName=2ship2harkinian/2ship2harkinian
+    version: "5.0.1"
+    layout: zip
+    executables: ["2ship.appimage"]
+    dest: /home/steamheadless/Applications/2ship

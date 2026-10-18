@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!-- Overrides ES-DE's bundled rule for emulators the seat installs outside ~/Applications/<name>*.AppImage. -->
+<ruleList>
+    <emulator name="MELONDS">
+        <rule type="staticpath">
+            <entry>~/Applications/melonDS/melonDS*.AppImage</entry>
+        </rule>
+    </emulator>
+</ruleList>

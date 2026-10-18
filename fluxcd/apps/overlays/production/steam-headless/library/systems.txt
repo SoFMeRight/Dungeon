@@ -1,0 +1,7 @@
+# <es-de system> <folder on the Games share>
+n3ds Nintendo_-_3DS
+nds Nintendo_-_DS
+ps2 Sony_-_PS2
+psp Sony_-_PSP
+wiiu Nintendo_-_Wii_U
+xbox Microsoft_-_Xbox

@@ -1,16 +1,25 @@
 ---
-# One release artifact `a`. Supported source: github-release.
+# One release artifact `a`.
+# Sources (a.source):
+#   github-release (default) — a.repo owner/name, a.tag; the asset is a.asset (exact name,
+#     {version} substituted) or the first asset whose name matches the regex a.asset_match.
+#   gitlab-package — a GitLab generic package: a.repo group/project, a.package (package
+#     name), version a.version, file a.asset; digest is the package file's sha256.
 # Selection: layout (raw|tar|zip), strip (tar), subdir, include (globs).
+# a.executables: globs (relative to dest) made executable after placement (tar/zip).
 - name: "reconcile {{ a.name }} {{ a.version }}"
   vars:
-    _tag: "{{ a.tag | replace('{version}', a.version) }}"
-    _asset: "{{ a.asset | replace('{version}', a.version) }}"
+    _src: "{{ a.source | default('github-release') }}"
+    _tag: "{{ (a.tag | default('{version}')) | replace('{version}', a.version) }}"
+    _asset: "{{ (a.asset | default('')) | replace('{version}', a.version) }}"
     _raw: "{{ (a.layout | default('tar')) == 'raw' }}"
     _marker: "{{ (a.dest ~ '.artifact-digest') if (a.layout | default('tar')) == 'raw' else (a.dest ~ '/.artifact-digest') }}"
     _vmark: "{{ (a.dest ~ '.artifact-version') if (a.layout | default('tar')) == 'raw' else (a.dest ~ '/.artifact-version') }}"
     _stage: "/tmp/sra-{{ a.name }}"
+    _glapi: "https://gitlab.com/api/v4/projects/{{ a.repo | replace('/', '%2F') }}"
   block:
     - name: "{{ a.name }}: resolve release metadata"
+      when: _src == 'github-release'
       ansible.builtin.uri:
         url: "https://api.github.com/repos/{{ a.repo }}/releases/tags/{{ _tag }}"
         headers:
@@ -18,17 +27,45 @@
         return_content: true
       register: _rel
 
-    - name: "{{ a.name }}: pick published digest + download url for {{ _asset }}"
+    - name: "{{ a.name }}: pick published digest + download url"
+      when: _src == 'github-release'
+      vars:
+        _cand: >-
+          {{ (_rel.json.assets | selectattr('name', 'match', a.asset_match) | list)
+             if a.asset_match is defined
+             else (_rel.json.assets | selectattr('name', 'equalto', _asset) | list) }}
       ansible.builtin.set_fact:
-        _pub: "{{ _rel.json.assets | selectattr('name', 'equalto', _asset) | selectattr('digest', 'defined') | map(attribute='digest') | list | first | default('') }}"
-        _url: "{{ _rel.json.assets | selectattr('name', 'equalto', _asset) | map(attribute='browser_download_url') | list | first | default('') }}"
+        _pub: "{{ _cand | map(attribute='digest') | select('string') | list | first | default('') }}"
+        _url: "{{ _cand | map(attribute='browser_download_url') | list | first | default('') }}"
+
+    - name: "{{ a.name }}: resolve package {{ a.package | default('') }} {{ a.version }}"
+      when: _src == 'gitlab-package'
+      ansible.builtin.uri:
+        url: "{{ _glapi }}/packages?package_type=generic&package_name={{ a.package }}&package_version={{ a.version }}"
+        return_content: true
+      register: _pkg
+
+    - name: "{{ a.name }}: list package files"
+      when: _src == 'gitlab-package'
+      ansible.builtin.uri:
+        url: "{{ _glapi }}/packages/{{ (_pkg.json | selectattr('name', 'equalto', a.package) | first).id }}/package_files?per_page=100"
+        return_content: true
+      register: _pkgf
+
+    - name: "{{ a.name }}: pick package file digest + download url"
+      when: _src == 'gitlab-package'
+      vars:
+        _sha: "{{ _pkgf.json | selectattr('file_name', 'equalto', _asset) | map(attribute='file_sha256') | select('string') | list | last | default('') }}"
+      ansible.builtin.set_fact:
+        _pub: "{{ ('sha256:' ~ _sha) if _sha | length == 64 else '' }}"
+        _url: "{{ (_glapi ~ '/packages/generic/' ~ a.package ~ '/' ~ a.version ~ '/' ~ _asset) if _sha | length == 64 else '' }}"
 
     - name: "{{ a.name }}: require a published sha256 digest + url"
       ansible.builtin.assert:
         that:
           - "_pub is string and _pub.startswith('sha256:')"
           - "_url | length > 0"
-        fail_msg: "no sha256-digested asset '{{ _asset }}' on release {{ _tag }}"
+        fail_msg: "no sha256-digested asset '{{ a.asset_match | default(_asset) }}' on {{ _src }} {{ _tag }}"
         quiet: true
 
     - name: "{{ a.name }}: read cached digest marker"
@@ -98,6 +135,9 @@
               {% else %}
               cp -R --preserve=mode,timestamps "$root"/. "$dest"/
               {% endif %}
+              {% for g in a.executables | default([]) %}
+              ( cd "$dest" && chmod 0755 {{ g }} )
+              {% endfor %}
 
         - name: "{{ a.name }}: write digest + version markers"
           ansible.builtin.copy:

@@ -1,5 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - ../_sync-release-artifacts
   - serviceaccount.yaml
   - statefulset.yaml
+configMapGenerator:
+  - name: steam-headless-library-script
+    files:
+      - library/library.sh

@@ -30,6 +30,57 @@ spec:
       securityContext:
         seccompProfile:
           type: Unconfined
+      initContainers:
+        # Reconcile the pinned launchers, emulators and ports (release spec) onto the home volume
+        # via the mounted release-sync playbook, then converge the ES-DE library. Neither step
+        # blocks the seat: on failure it boots with whatever is already cached.
+        - name: sync-apps
+          image: docker.io/hlhd/ansible
+          command:
+            - sh
+            - -c
+            - |
+              ansible-playbook /playbook/sync.yml -e @/spec/releases.yaml \
+                || echo "release-sync: reconcile failed; starting with cached apps"
+              sh /library-script/library.sh || echo "library: converge failed; starting with the previous library"
+          env:
+            - name: HOME
+              value: /home/steamheadless
+            - name: ANSIBLE_HOME
+              value: /tmp/ansible
+            - name: ANSIBLE_LOCAL_TEMP
+              value: /tmp/ansible/tmp
+            - name: ANSIBLE_LOCALHOST_WARNING
+              value: "false"
+            - name: ROMS_SRC
+              value: /mnt/roms
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: playbook
+              mountPath: /playbook
+              readOnly: true
+            - name: release-spec
+              mountPath: /spec
+              readOnly: true
+            - name: library-script
+              mountPath: /library-script
+              readOnly: true
+            - name: library
+              mountPath: /library
+              readOnly: true
+            - name: home
+              mountPath: /home/steamheadless
+              subPath: home
+            - name: sync-tmp
+              mountPath: /tmp
       containers:
         - name: steam-headless
           image: PLACEHOLDER_IMAGE
@@ -106,6 +157,21 @@ spec:
           emptyDir:
             medium: Memory
             sizeLimit: 512Mi
+        - name: playbook
+          configMap:
+            name: sync-release-artifacts
+        - name: release-spec
+          configMap:
+            name: steam-headless-release-spec
+        - name: library-script
+          configMap:
+            name: steam-headless-library-script
+        - name: library
+          configMap:
+            name: steam-headless-library
+        - name: sync-tmp
+          emptyDir:
+            sizeLimit: 2Gi
   volumeClaimTemplates:
     - metadata:
         name: home

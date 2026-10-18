@@ -15,6 +15,18 @@ spec:
                     operator: In
                     values:
                       - maxwell
+      initContainers:
+        - name: sync-apps
+          volumeMounts:
+            - name: arbitorium-game-streaming-steam-headless-home
+              mountPath: /home/steamheadless
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 2000m
+              memory: 1Gi
       containers:
         - name: steam-headless
           image: docker.io/josh5/steam-headless:2.44.20261004.1
