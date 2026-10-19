@@ -100,6 +100,14 @@ kubelet_settings:
 # the playbook refuses to run if it is not.
 inhibit_delay_max: 180
 
+# systemd writes a status line to the console (tty0) for every unit it starts or
+# stops when ShowStatus is on — the default without `quiet` on the kernel command
+# line. PID 1 makes that write itself, and a paused console (Scroll Lock / Ctrl+S
+# through the Proxmox console) blocks it indefinitely: on chest-004 PID 1 hung
+# mid-shutdown for 30 minutes, reaping nothing and stopping nothing. Unit status
+# still reaches the journal.
+systemd_show_status: "no"
+
 # How long a node may take to come back Ready after its kubelet is restarted,
 # and how patiently to wait for the unit itself.
 kubelet_ready_timeout: 300s

@@ -170,7 +170,12 @@
           ansible.builtin.command: ceph osd set-group noout {{ ansible_facts['hostname'] }}
           when: host_osds.stdout_lines | length > 0
 
+        # A hypervisor halts every guest in order before it reboots (up to ~610s on
+        # the five-tier host), then runs firmware POST, which on these boards can
+        # run long; the guest-sized default would fail a healthy reboot.
         - ansible.builtin.import_tasks: ../tasks/reboot-if-required.yml
+          vars:
+            reboot_timeout_s: 3600
 
         # Held until its OSDs are back up and PGs clean, so a slow OSD start is
         # never marked out mid-recovery.

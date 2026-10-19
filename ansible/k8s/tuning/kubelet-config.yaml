@@ -195,6 +195,31 @@
         state: restarted
       when: logind_config.changed
 
+    # A shutdown that stalls on a console write holds kubelet's grace period and the
+    # whole drain-wrapped roll with it. zz- sorts last, as above.
+    - name: Ensure the systemd manager drop-in directory exists
+      ansible.builtin.file:
+        path: /etc/systemd/system.conf.d
+        state: directory
+        mode: "0755"
+
+    - name: Keep PID 1's unit status off the console
+      ansible.builtin.copy:
+        dest: /etc/systemd/system.conf.d/zz-console-status.conf
+        mode: "0644"
+        content: |
+          # Managed by ansible: k8s/tuning/kubelet-config.yaml
+          # PID 1 writes unit status to tty0 itself; a paused console blocks it.
+          [Manager]
+          ShowStatus={{ systemd_show_status }}
+      register: manager_config
+
+    # PID 1 reads system.conf only at start; re-executing applies it without a reboot.
+    - name: Re-execute systemd so the console setting takes effect
+      ansible.builtin.systemd:
+        daemon_reexec: true
+      when: manager_config.changed
+
     - name: Apply each pinned setting to the on-disk kubelet config
       ansible.builtin.lineinfile:
         path: /var/lib/kubelet/config.yaml
