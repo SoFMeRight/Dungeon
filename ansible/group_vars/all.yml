@@ -5,6 +5,12 @@
 crio_version: "1.35.10"
 kubernetes_version: "1.35.9"
 
+# Kernel flavour on every k8s node, and the Canonical-signed NVIDIA modules built
+# for it on GPU nodes. The 24.04 HWE line is on 7.0: ceph-csi's kernel RBD and
+# CephFS clients need >= 7.0 to authenticate with aes256k cephx keys.
+k8s_kernel_package: "linux-generic-hwe-24.04"
+k8s_nvidia_modules_package: "linux-modules-nvidia-580-server-generic-hwe-24.04"
+
 # ── Fleet OS-patch wiring ────────────────────────────────────────────────────
 # Environment-specific values the maintenance play reads — override per-inventory
 # (a group_vars file) or per-run (Semaphore extra-vars / ansible-playbook -e).

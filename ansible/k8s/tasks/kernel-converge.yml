@@ -1,0 +1,40 @@
+---
+# Per-host kernel flavour convergence: installs k8s_kernel_package and, on a node
+# with an NVIDIA device, the signed NVIDIA modules built for that flavour, so the
+# GPU driver loads on the first boot of the new kernel. Installs only; the reboot
+# into the new kernel is maintenance/update-hosts.yml's drain-wrapped roll.
+
+- name: Install {{ k8s_kernel_package }}
+  ansible.builtin.apt:
+    name: "{{ k8s_kernel_package }}"
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Look for an NVIDIA device
+  ansible.builtin.shell:
+    cmd: "lspci -n -d 10de: | wc -l"
+  register: kernel_nvidia_pci
+  changed_when: false
+  check_mode: false
+
+- name: Install {{ k8s_nvidia_modules_package }}
+  when: (kernel_nvidia_pci.stdout | trim | int) > 0
+  ansible.builtin.apt:
+    name: "{{ k8s_nvidia_modules_package }}"
+    state: present
+
+- name: Read the newest installed kernel
+  ansible.builtin.shell:
+    cmd: "set -o pipefail; ls /boot/vmlinuz-* | sed 's|^/boot/vmlinuz-||' | sort -V | tail -1"
+    executable: /bin/bash
+  register: kernel_newest
+  changed_when: false
+  check_mode: false
+
+- name: Report the kernel this node boots next
+  ansible.builtin.debug:
+    msg: >-
+      {{ ansible_facts['hostname'] }}: running {{ ansible_facts['kernel'] }},
+      next boot {{ kernel_newest.stdout | trim }}
+      {{ '(reboot pending)' if (kernel_newest.stdout | trim) != ansible_facts['kernel'] else '(current)' }}

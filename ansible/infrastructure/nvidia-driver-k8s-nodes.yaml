@@ -25,9 +25,8 @@
 
   vars:
     # The headless variant. These nodes have no display; the desktop package
-    # pulls X libraries they will never use. dungeon-worker-004 predates this and
-    # runs the desktop `580` packages — working, so left alone, and worth
-    # converging the next time that node is rebuilt rather than now.
+    # pulls X libraries they will never use. Same driver and version as the
+    # desktop `580` packages.
     nvidia_driver_package: nvidia-driver-580-server
 
   tasks:
@@ -78,14 +77,16 @@
           driver_loaded={{ nvidia_driver_loaded | default(false) }}
           secure_boot={{ (secure_boot.stdout | default('n/a')) | trim }}
 
-    - name: Installing the Canonical-signed driver and the headers DKMS needs...
+    - name: Installing the Canonical-signed driver, its modules and the headers DKMS needs...
       # The headers are named for the running kernel deliberately. A DKMS build
       # without them produces exactly the state found on worker-001: source
       # packages present, no module, and nvidia-smi failing with a message about
-      # the driver not being installed.
+      # the driver not being installed. The signed modules package
+      # (group_vars/all.yml) covers the pinned kernel flavour without DKMS.
       ansible.builtin.apt:
         name:
           - "{{ nvidia_driver_package }}"
+          - "{{ k8s_nvidia_modules_package }}"
           - "linux-headers-{{ ansible_kernel }}"
         state: present
         update_cache: true
