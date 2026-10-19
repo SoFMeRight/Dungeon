@@ -30,33 +30,37 @@
       changed_when: false
       failed_when: false
 
-    - name: Restart the mesh dataplane on {{ _drain_node }}
-      ansible.builtin.shell: |
-        set -o pipefail
-        pods=$({{ kubectl_admin }} -n {{ mesh_namespace }} get pods \
-          --field-selector spec.nodeName={{ _drain_node }} -o name | grep -E 'ztunnel|istio-cni' || true)
-        if [ -n "$pods" ]; then
-          echo "$pods" | xargs {{ kubectl_admin }} -n {{ mesh_namespace }} delete --wait=false
-        fi
-      args:
-        executable: /bin/bash
-      when: (istiod_ready.stdout | default('0')) | int > 0
-      delegate_to: "{{ _k8s_delegate }}"
-
-    # Wait via daemonset rollout, NOT `kubectl wait` on pods by node: right after the
+    # istio-cni first, ztunnel after it is rolled out. Every pod sandbox on the node,
+    # ztunnel's included, runs the istio-cni plugin, which authenticates with the
+    # kubeconfig istio-cni-node writes onto the node. After a reboot that token is
+    # rejected (plugin "failed (add): Unauthorized") until the new istio-cni-node pod
+    # rewrites it, so a ztunnel bounced alongside it backs off past the wait below.
+    #
+    # Waits use daemonset rollout, NOT `kubectl wait` on pods by node: right after the
     # bounce the old pods are Terminating but still match a node selector, so a
     # pod-Ready wait latches onto doomed pods and times out (ztunnel/istio-cni linger
     # in Terminating well past 180s on graceful shutdown). rollout status tracks the
     # DS reaching desired/available and ignores the terminating ones.
-    - name: Wait for the mesh dataplane to resync
-      ansible.builtin.command: >-
-        {{ kubectl_admin }} -n {{ mesh_namespace }} rollout status {{ item }} --timeout=180s
+    - name: Restart the mesh dataplane on {{ _drain_node }}, istio-cni then ztunnel
+      ansible.builtin.shell: |
+        set -o pipefail
+        pods=$({{ kubectl_admin }} -n {{ mesh_namespace }} get pods \
+          --field-selector spec.nodeName={{ _drain_node }} -o name | grep -E '{{ item.pod }}' || true)
+        if [ -n "$pods" ]; then
+          echo "$pods" | xargs {{ kubectl_admin }} -n {{ mesh_namespace }} delete --wait=false
+        fi
+        {{ kubectl_admin }} -n {{ mesh_namespace }} rollout status {{ item.ds }} --timeout=180s
+      args:
+        executable: /bin/bash
       loop:
-        - daemonset/ztunnel
-        - daemonset/istio-cni-node
+        - pod: istio-cni
+          ds: daemonset/istio-cni-node
+        - pod: ztunnel
+          ds: daemonset/ztunnel
+      loop_control:
+        label: "{{ item.ds }}"
       when: (istiod_ready.stdout | default('0')) | int > 0
       delegate_to: "{{ _k8s_delegate }}"
-      changed_when: false
 
     - name: Uncordon {{ _drain_node }}
       ansible.builtin.command: "{{ kubectl_admin }} uncordon {{ _drain_node }}"
