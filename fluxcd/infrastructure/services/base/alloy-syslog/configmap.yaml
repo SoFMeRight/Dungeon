@@ -38,6 +38,9 @@ data:
       enable_octet_counting = true
       tcp {
         listen_address = "0.0.0.0:6514"
+        // TrueNAS counts each frame's trailing newline in its octet count; trimming it
+        // would leave the parser one byte short.
+        preserve_trailing_whitespaces = true
         tls {
           cert_file = "/etc/alloy/tls/tls.crt"
           key_file  = "/etc/alloy/tls/tls.key"
