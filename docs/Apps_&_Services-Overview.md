@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 130 healthy · ⚠️ 1 degraded
+✅ 129 healthy · ⚠️ 1 degraded · ❌ 1 down
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -114,7 +114,7 @@
 | Pinchflat | ✅ | 🔒 pinchflat.pcfae.com | [open](https://pinchflat.pcfae.com) |
 | Prowlarr | ✅ | 🔒 prowlarr.pcfae.com | [open](https://prowlarr.pcfae.com) |
 | Py Kms | ✅ | 🔒 kms.pcfae.com | [open](https://kms.pcfae.com) |
-| Pyload Ng | ✅ | 🔒 dl.pcfae.com | [open](https://dl.pcfae.com) |
+| Pyload Ng | ❌ | 🔒 dl.pcfae.com | [open](https://dl.pcfae.com) |
 | Sabnzbd | ✅ | 🔒 sabnzbd.pcfae.com | [open](https://sabnzbd.pcfae.com) |
 | Supermicro License Generator | ✅ | 🔒 smkeygen.pcfae.com | [open](https://smkeygen.pcfae.com) |
 | Thelounge | ✅ | 🔒 thelounge.pcfae.com | [open](https://thelounge.pcfae.com) |
@@ -774,7 +774,7 @@
 
 **Pyload Ng** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/1
 - Hosts: dl.pcfae.com
 - Gateway: phloem-gateway
 
