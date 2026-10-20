@@ -3,6 +3,9 @@ kind: HelmRelease
 metadata:
   name: nextcloud
 spec:
+  # Held until nextcloud-migrate-s3 has moved the restored database onto the bucket; a pod
+  # started earlier would meet local storages with the objectstore configured.
+  suspend: true
   chart:
     spec:
       # renovate: datasource=helm depName=nextcloud registryUrl=https://nextcloud.github.io/helm/

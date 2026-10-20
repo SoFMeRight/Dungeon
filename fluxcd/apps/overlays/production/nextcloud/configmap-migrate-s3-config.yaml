@@ -1,11 +1,11 @@
 # Nextcloud config for the migration Job (NEXTCLOUD_CONFIG_DIR), copied into a
 # writable emptyDir. instanceid, version, datadirectory and apps_paths match the
-# live instance; nothing here points at the live database or bucket.
+# instance; the database, bucket and keys come from the Job's environment.
 # objectstore.config.php is added only after the database rewrite.
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nextcloud-rehearsal-config
+  name: nextcloud-migrate-s3-config
 data:
   config.php: |
     <?php

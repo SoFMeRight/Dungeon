@@ -2,9 +2,11 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: nextcloud-postgres
-  # Kept when the nextcloud overlay moves to optcp-cloud: hibernated, it is the rollback copy.
+  # Restored from the temple-of-time cluster's archive and archiving to the same bucket
+  # and serverName: its WAL starts a new timeline beside the old one, so the plugin's
+  # empty-archive check is skipped.
   annotations:
-    kustomize.toolkit.fluxcd.io/prune: disabled
+    cnpg.io/skipEmptyWalArchiveCheck: "enabled"
 spec:
   # Shutdown has to fit the node's grace budget: 150s total, 30s reserved for
   # critical pods, so 120s for ordinary ones. Postgres does not checkpoint until
@@ -49,9 +51,21 @@ spec:
       max_connections: "200"
 
   bootstrap:
-    initdb:
+    initdb: null
+    recovery:
+      source: origin
       database: nextcloud
       owner: nextcloud
+      secret:
+        name: nextcloud-postgres-credentials
+
+  externalClusters:
+    - name: origin
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: nextcloud-postgres-store
+          serverName: nextcloud-postgres
 
   enableSuperuserAccess: true
 

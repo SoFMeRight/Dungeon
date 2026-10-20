@@ -12,7 +12,6 @@ spec:
         - source:
             principals:
               - "cluster.local/ns/optcp-cloud/sa/nextcloud"
-              - "cluster.local/ns/optcp-cloud/sa/nextcloud-rehearsal"
       to:
         - operation:
             ports: ["8080"]

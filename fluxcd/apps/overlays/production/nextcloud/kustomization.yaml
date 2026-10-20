@@ -9,6 +9,9 @@ resources:
   - cephfs-html-pv.yaml
   - externalsecret-postgres-backup.yaml
   - externalsecret-s3.yaml
+  - configmap-migrate-s3-config.yaml
+  - configmap-migrate-s3.yaml
+  - job-migrate-s3.yaml
 
 patches:
   - path: helmrelease-patch.yaml

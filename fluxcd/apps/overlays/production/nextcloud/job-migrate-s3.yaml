@@ -1,9 +1,9 @@
-# Rehearses the S3 migration against nextcloud-rehearsal-postgres and the
-# nextcloud-rehearsal bucket, reading the live data directory read-only.
+# Moves the restored nextcloud-postgres onto the nextcloud bucket: scan, copy every file to
+# urn:oid:<fileid>, rewrite the storages, read every file back through Nextcloud.
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: nextcloud-rehearsal-migrate
+  name: nextcloud-migrate-s3
   annotations:
     kustomize.toolkit.fluxcd.io/force: "Enabled"
 spec:
@@ -11,13 +11,13 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: "a6a980db438cd6bd"   # sha256 of the two ConfigMaps; a change replaces the Job
+        checksum/config: "061068a0fe8d100d"   # sha256 of the two ConfigMaps; a change replaces the Job
       labels:
-        app: nextcloud-rehearsal
+        app: nextcloud-migrate-s3
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: optcp-cloud.nextcloud-rehearsal.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-cloud.nextcloud.postgres
     spec:
-      serviceAccountName: nextcloud-rehearsal
+      serviceAccountName: nextcloud
       restartPolicy: Never
       securityContext:
         runAsNonRoot: true
@@ -46,30 +46,28 @@ spec:
             - name: NEXTCLOUD_CONFIG_DIR
               value: /config
             - name: DB_HOST
-              value: nextcloud-rehearsal-postgres-rw
+              value: nextcloud-postgres-rw
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: nextcloud-rehearsal-postgres-app
-                  key: username
+                  name: nextcloud-secrets
+                  key: POSTGRES_USER
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: nextcloud-rehearsal-postgres-app
-                  key: password
+                  name: nextcloud-secrets
+                  key: POSTGRES_PASSWORD
             - name: S3_BUCKET
-              value: nextcloud-rehearsal
-            - name: REHEARSAL
-              value: "1"
+              value: nextcloud
             - name: S3_KEY
               valueFrom:
                 secretKeyRef:
-                  name: nextcloud-rehearsal-s3
+                  name: nextcloud-s3
                   key: s3-access-key
             - name: S3_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: nextcloud-rehearsal-s3
+                  name: nextcloud-s3
                   key: s3-secret-key
           securityContext:
             allowPrivilegeEscalation: false
@@ -80,19 +78,15 @@ spec:
           volumeMounts:
             - name: html
               mountPath: /var/www/html
-              readOnly: true
               subPath: html
             - name: html
               mountPath: /var/www/html/data
-              readOnly: true
               subPath: data
             - name: html
               mountPath: /var/www/html/custom_apps
-              readOnly: true
               subPath: custom_apps
             - name: html
               mountPath: /var/www/html/themes
-              readOnly: true
               subPath: themes
             - name: config
               mountPath: /config
@@ -121,30 +115,28 @@ spec:
             - name: NEXTCLOUD_CONFIG_DIR
               value: /config
             - name: DB_HOST
-              value: nextcloud-rehearsal-postgres-rw
+              value: nextcloud-postgres-rw
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: nextcloud-rehearsal-postgres-app
-                  key: username
+                  name: nextcloud-secrets
+                  key: POSTGRES_USER
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: nextcloud-rehearsal-postgres-app
-                  key: password
+                  name: nextcloud-secrets
+                  key: POSTGRES_PASSWORD
             - name: S3_BUCKET
-              value: nextcloud-rehearsal
-            - name: REHEARSAL
-              value: "1"
+              value: nextcloud
             - name: S3_KEY
               valueFrom:
                 secretKeyRef:
-                  name: nextcloud-rehearsal-s3
+                  name: nextcloud-s3
                   key: s3-access-key
             - name: S3_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: nextcloud-rehearsal-s3
+                  name: nextcloud-s3
                   key: s3-secret-key
           securityContext:
             allowPrivilegeEscalation: false
@@ -155,19 +147,15 @@ spec:
           volumeMounts:
             - name: html
               mountPath: /var/www/html
-              readOnly: true
               subPath: html
             - name: html
               mountPath: /var/www/html/data
-              readOnly: true
               subPath: data
             - name: html
               mountPath: /var/www/html/custom_apps
-              readOnly: true
               subPath: custom_apps
             - name: html
               mountPath: /var/www/html/themes
-              readOnly: true
               subPath: themes
             - name: config
               mountPath: /config
@@ -189,15 +177,14 @@ spec:
       volumes:
         - name: html
           persistentVolumeClaim:
-            claimName: nextcloud-rehearsal-html
-            readOnly: true
+            claimName: nextcloud-html
         - name: config
           emptyDir: {}
         - name: config-source
           configMap:
-            name: nextcloud-rehearsal-config
+            name: nextcloud-migrate-s3-config
         - name: migrate
           configMap:
-            name: nextcloud-rehearsal-migrate
+            name: nextcloud-migrate-s3
         - name: tmp
           emptyDir: {}

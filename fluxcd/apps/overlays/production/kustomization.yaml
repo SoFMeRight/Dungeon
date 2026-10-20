@@ -120,7 +120,6 @@ resources:
   - truenas-webui
   - sideporch-camera
   - nextcloud
-  - nextcloud-rehearsal
   # Static Sites
   - fairer-pages
   - astralfocal-site
