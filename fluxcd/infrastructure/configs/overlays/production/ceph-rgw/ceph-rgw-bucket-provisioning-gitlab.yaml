@@ -5,7 +5,6 @@ metadata:
     kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on image bump, not wedge
   name: ceph-rgw-bucket-provisioning-gitlab
 spec:
-  ttlSecondsAfterFinished: 86400
   template:
     metadata:
       labels:

@@ -14,6 +14,9 @@ data:
       echo "  --user          RGW user UID (required)"
       echo "  --display-name  User display name (required)"
       echo "  --buckets       Comma-separated list of buckets to create (required)"
+      echo "  --quota         Comma-separated <bucket>=<max-size> bucket quotas (e.g. nextcloud=500G)"
+      echo "  --versioned     Comma-separated buckets to enable S3 versioning on"
+      echo "  --noncurrent-days  Days to keep noncurrent versions in versioned buckets (lifecycle)"
       echo ""
       echo "Environment variables required:"
       echo "  ACCESS_KEY      S3 access key"
@@ -22,7 +25,7 @@ data:
     }
 
     # Parse arguments with getopt
-    OPTS=$(getopt -o 'h' --long 'user:,display-name:,buckets:,help' -n 'setup.sh' -- "$@")
+    OPTS=$(getopt -o 'h' --long 'user:,display-name:,buckets:,quota:,versioned:,noncurrent-days:,help' -n 'setup.sh' -- "$@")
     if [ $? -ne 0 ]; then
       usage
     fi
@@ -31,6 +34,9 @@ data:
     UID_NAME=""
     DISPLAY_NAME=""
     BUCKETS_CSV=""
+    QUOTA_CSV=""
+    VERSIONED_CSV=""
+    NONCURRENT_DAYS=""
 
     while true; do
       case "$1" in
@@ -44,6 +50,18 @@ data:
           ;;
         --buckets)
           BUCKETS_CSV="$2"
+          shift 2
+          ;;
+        --quota)
+          QUOTA_CSV="$2"
+          shift 2
+          ;;
+        --versioned)
+          VERSIONED_CSV="$2"
+          shift 2
+          ;;
+        --noncurrent-days)
+          NONCURRENT_DAYS="$2"
           shift 2
           ;;
         -h|--help)
@@ -149,6 +167,67 @@ data:
         exit 1
       fi
     done
+
+    # Signed S3 PUT of a bucket subresource (?versioning, ?lifecycle) with an XML body.
+    # Lifecycle requires Content-MD5, and both carry it.
+    put_subresource() {
+      local bucket="$1" sub="$2" body="$3" date md5 sig
+      date="$(date -u '+%a, %d %b %Y %H:%M:%S +0000')"
+      md5="$(printf '%s' "${body}" | openssl md5 -binary | base64)"
+      sig="$(printf '%b' "PUT\n${md5}\napplication/xml\n${date}\n/${bucket}/?${sub}" \
+        | openssl sha1 -hmac "${SECRET_KEY}" -binary | base64)"
+      curl -sf -X PUT "http://${RGW_HOST}/${bucket}/?${sub}" \
+        -H "Host: ${RGW_HOST}" \
+        -H "Date: ${date}" \
+        -H "Content-MD5: ${md5}" \
+        -H "Content-Type: application/xml" \
+        -H "Authorization: AWS ${ACCESS_KEY}:${sig}" \
+        --data-binary "${body}"
+    }
+
+    # Bucket quotas (re-applied every run; RGW keeps the values it is given)
+    if [ -n "$QUOTA_CSV" ]; then
+      echo ""
+      echo "Setting bucket quotas..."
+      IFS=',' read -ra QUOTAS <<< "$QUOTA_CSV"
+      for entry in "${QUOTAS[@]}"; do
+        bucket="${entry%%=*}"
+        size="${entry#*=}"
+        radosgw-admin --name client.dungeon-rgw quota set --quota-scope=bucket \
+          --bucket="${bucket}" --max-size="${size}"
+        radosgw-admin --name client.dungeon-rgw quota enable --quota-scope=bucket \
+          --bucket="${bucket}"
+        echo "  Quota ${size}: ${bucket}"
+      done
+    fi
+
+    # Versioning, then a lifecycle that bounds what versioning keeps
+    if [ -n "$VERSIONED_CSV" ]; then
+      echo ""
+      echo "Enabling versioning..."
+      IFS=',' read -ra VERSIONED <<< "$VERSIONED_CSV"
+      for bucket in "${VERSIONED[@]}"; do
+        if ! put_subresource "${bucket}" versioning \
+          '<VersioningConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Status>Enabled</Status></VersioningConfiguration>'; then
+          echo "  ERROR: failed to enable versioning on ${bucket}"
+          exit 1
+        fi
+        echo "  Versioned: ${bucket}"
+        if [ -n "$NONCURRENT_DAYS" ]; then
+          lifecycle="<LifecycleConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Rule>"
+          lifecycle+="<ID>bound-versions</ID><Filter><Prefix></Prefix></Filter><Status>Enabled</Status>"
+          lifecycle+="<Expiration><ExpiredObjectDeleteMarker>true</ExpiredObjectDeleteMarker></Expiration>"
+          lifecycle+="<NoncurrentVersionExpiration><NoncurrentDays>${NONCURRENT_DAYS}</NoncurrentDays></NoncurrentVersionExpiration>"
+          lifecycle+="<AbortIncompleteMultipartUpload><DaysAfterInitiation>7</DaysAfterInitiation></AbortIncompleteMultipartUpload>"
+          lifecycle+="</Rule></LifecycleConfiguration>"
+          if ! put_subresource "${bucket}" lifecycle "${lifecycle}"; then
+            echo "  ERROR: failed to set the lifecycle on ${bucket}"
+            exit 1
+          fi
+          echo "  Noncurrent versions kept ${NONCURRENT_DAYS} days: ${bucket}"
+        fi
+      done
+    fi
 
     echo ""
     echo "=== RGW Setup Complete: ${UID_NAME} ==="
