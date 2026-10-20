@@ -40,9 +40,10 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
+        # The mesh accepts TCP before Postgres exists, so ask Postgres itself.
         - name: wait-for-db
-          image: docker.io/busybox:1.38
-          command: ["sh", "-c", "until nc -z openproject-postgres-rw 5432; do sleep 2; done"]
+          image: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
+          command: ["sh", "-c", "until pg_isready -q -h openproject-postgres-rw -p 5432; do sleep 2; done"]
           securityContext:
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false

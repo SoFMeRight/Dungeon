@@ -66,8 +66,9 @@ spec:
               mountPath: /seed/log
             - name: nginx-lib
               mountPath: /seed/nginx-lib
+        # The mesh accepts TCP before Postgres exists, so ask Postgres itself.
         - name: wait-for-db
-          image: docker.io/busybox:1.38
+          image: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
           securityContext:
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
@@ -78,7 +79,7 @@ spec:
             - sh
             - -c
             - |
-              until nc -z -v -w5 leantime-postgres-rw 5432; do
+              until pg_isready -h leantime-postgres-rw -p 5432; do
                 echo "Waiting for Postgres..."
                 sleep 5
               done
