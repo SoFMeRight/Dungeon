@@ -113,6 +113,21 @@
       loop_control:
         label: "{{ item.item }}"
 
+    # ES-DE writes es_settings.xml on its first exit; until then there is nothing to converge.
+    - name: check for ES-DE's settings
+      ansible.builtin.stat:
+        path: "{{ home }}/ES-DE/settings/es_settings.xml"
+      register: _esde_settings
+
+    # Keeps ES-DE rendering while a game runs, so switching to it shows the browser instead of
+    # a black window until the game exits.
+    - name: keep ES-DE running while a game is launched
+      when: _esde_settings.stat.exists
+      ansible.builtin.lineinfile:
+        path: "{{ home }}/ES-DE/settings/es_settings.xml"
+        regexp: '^<bool name="RunInBackground" '
+        line: '<bool name="RunInBackground" value="true" />'
+
 - name: give RetroArch a writable controller-profile directory
   hosts: localhost
   connection: local
@@ -169,7 +184,7 @@
     # ext_content_from_game_dirs), so nothing on the share is copied into the seat's NAND.
     # Game folders 1-3 are Eden's own SDMC, UserNAND and SysNAND; these follow from 4.
     eden_share_dirs:
-      - "{{ switch_root }}/_Games"
+      - "{{ switch_root }}/Titles"
       - "{{ switch_root }}/Updates"
       - "{{ switch_root }}/DLC"
     # The firmware's Mii and user-select applets crash under Eden (a 32-bit applet executes an
@@ -241,7 +256,7 @@
     home: "{{ lookup('ansible.builtin.env', 'HOME') }}"
     cemu_config: "{{ home }}/.config/Cemu/settings.xml"
     cemu_game_paths:
-      - "{{ lookup('ansible.builtin.env', 'ROMS_SRC') }}/Nintendo_-_Wii_U/_Games"
+      - "{{ lookup('ansible.builtin.env', 'ROMS_SRC') }}/Nintendo_-_Wii_U/Titles"
     # Cubeb (3) is Cemu's only audio backend on Linux; the default, DirectSound (0), finds no
     # device, and a title can hang at boot without its audio output.
     cemu_audio_api: "3"
@@ -266,6 +281,78 @@
             path: "{{ cemu_config }}"
             xpath: /content/Audio/api
             value: "{{ cemu_audio_api }}"
+
+- name: per-title Xenia settings
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    xenia_data: "{{ lookup('ansible.builtin.env', 'HOME') }}/.local/share/Xenia"
+    # <TitleID>: TOML that Xenia Canary layers over its global config for that title only.
+    xenia_title_configs:
+      # Gears of War: the new XMA decoder outputs silence; the old one plays audio.
+      4D5307D5: |
+        [APU]
+        xma_decoder = "old"
+  tasks:
+    - name: check for Xenia's data folder
+      ansible.builtin.stat:
+        path: "{{ xenia_data }}"
+      register: _xenia_data
+
+    - name: write each title's settings
+      when: _xenia_data.stat.exists
+      block:
+        - name: ensure the per-title config folder
+          ansible.builtin.file:
+            path: "{{ xenia_data }}/config"
+            state: directory
+            mode: "0755"
+
+        - name: write the per-title configs
+          ansible.builtin.copy:
+            dest: "{{ xenia_data }}/config/{{ item.key }}.config.toml"
+            content: "{{ item.value }}"
+            mode: "0644"
+          loop: "{{ xenia_title_configs | dict2items }}"
+          loop_control:
+            label: "{{ item.key }}"
+
+- name: load the ports' texture packs from the games share
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    home: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+    mods_src: "{{ lookup('ansible.builtin.env', 'ROMS_SRC') }}/_Mods"
+    # Each port loads every .o2r in its mods folder; the packs are read in place from the share
+    # (OoT Reloaded 4K alone is 23 GB), so a link replaces any local copy.
+    port_packs:
+      - mods: "{{ home }}/Applications/paperboat/mods"
+        pack: "{{ mods_src }}/Paperboat/paperboat-hd.o2r"
+      - mods: "{{ home }}/.local/share/soh/mods"
+        pack: "{{ mods_src }}/Ship_of_Harkinian/OoT_Reloaded_v11.0.0_4K.o2r"
+      - mods: "{{ home }}/Applications/2ship/mods"
+        pack: "{{ mods_src }}/2_Ship_2_Harkinian/MM_Reloaded_v11.0.3_4K.o2r"
+  tasks:
+    # A port creates its mods folder on its first start; until then there is nothing to link into.
+    - name: check for each port's mods folder
+      ansible.builtin.stat:
+        path: "{{ item.mods }}"
+      loop: "{{ port_packs }}"
+      loop_control:
+        label: "{{ item.mods }}"
+      register: _mods_dirs
+
+    - name: link each pack from the share
+      ansible.builtin.file:
+        src: "{{ item.item.pack }}"
+        dest: "{{ item.item.mods }}/{{ item.item.pack | basename }}"
+        state: link
+        force: true
+      loop: "{{ _mods_dirs.results | selectattr('stat.exists') | list }}"
+      loop_control:
+        label: "{{ item.item.pack | basename }}"
 
 - name: menu entries for the managed apps
   hosts: localhost
