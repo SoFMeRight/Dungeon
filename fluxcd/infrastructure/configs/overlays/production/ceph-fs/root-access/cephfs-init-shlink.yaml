@@ -6,7 +6,6 @@ metadata:
     kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on image bump, not wedge
   name: cephfs-init-shlink
 spec:
-  ttlSecondsAfterFinished: 300
   template:
     spec:
       restartPolicy: OnFailure
