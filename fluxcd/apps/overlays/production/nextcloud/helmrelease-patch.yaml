@@ -113,11 +113,22 @@ spec:
       # Pin Collabora's WOPI CheckFileInfo callback to the in-cluster nextcloud service, so
       # coolwsd reaches nextcloud east-west instead of the public LB (a meshed pod can't
       # hairpin to the gateway LB IP). richdocuments' wopi_callback_url is DB app-config, not
-      # config.php — set it via occ each start (idempotent, self-healing); non-fatal so a
-      # mid-upgrade boot isn't blocked. Browser->Collabora (public_wopi_url) is unaffected.
+      # config.php — set it via occ each start (idempotent, self-healing); non-fatal.
+      # Browser->Collabora (public_wopi_url) is unaffected.
       hooks:
         before-starting: |-
           #!/bin/sh
+          # The entrypoint runs hooks as www-data already (run_as), so occ is called directly.
+          # The entrypoint only upgrades when the image is newer than the code in /var/www/html;
+          # if its occ upgrade fails after the code sync, later starts skip it and the instance
+          # stays on the update page. Finish a pending upgrade here, under the entrypoint's
+          # init lock so replicas run it one at a time; a failure exits non-zero and the pod
+          # restarts and retries.
+          flock /var/www/html/nextcloud-init-sync.lock sh -c '
+            if php /var/www/html/occ status --output=json | grep -q "\"needsDbUpgrade\":true"; then
+              php /var/www/html/occ upgrade --no-interaction
+            fi
+          ' || exit 1
           # These must go through occ, not chart values: wopi_callback_url is DB app-config;
           # trusted_domains is only seeded by the chart at INSTALL time (NEXTCLOUD_TRUSTED_DOMAINS
           # env ignored on upgrades) — index 10 is a reserved slot so it never collides with the
@@ -125,11 +136,9 @@ spec:
           # persisted into config.php: with the OVERWRITEPROTOCOL env removed above, the scheme
           # must come from X-Forwarded-Proto (else internal coolwsd preset URLs come out https and
           # break document loading). All idempotent.
-          su -p www-data -s /bin/sh -c '
-            php /var/www/html/occ config:app:set richdocuments wopi_callback_url --value "http://nextcloud.temple-of-time.svc.cluster.local"
-            php /var/www/html/occ config:system:set trusted_domains 10 --value "nextcloud.temple-of-time.svc.cluster.local"
-            php /var/www/html/occ config:system:delete overwriteprotocol
-          ' || true
+          php /var/www/html/occ config:app:set richdocuments wopi_callback_url --value "http://nextcloud.temple-of-time.svc.cluster.local" || true
+          php /var/www/html/occ config:system:set trusted_domains 10 --value "nextcloud.temple-of-time.svc.cluster.local" || true
+          php /var/www/html/occ config:system:delete overwriteprotocol || true
 
       strategy:
         type: RollingUpdate
