@@ -27,6 +27,7 @@ data:
     <?php
     // The occ commands the migration needs, without occ's server check: that check
     // requires a writable data directory, and this one is mounted read-only.
+    define('OC_CONSOLE', 1);   // as occ does: base.php then skips its server check
     require_once '/var/www/html/lib/base.php';
 
     \OC_App::loadApps();
@@ -45,6 +46,7 @@ data:
   common.php: |
     <?php
     declare(strict_types=1);
+    define('OC_CONSOLE', 1);   // as occ does: base.php then skips its server check
     require_once '/var/www/html/lib/base.php';
 
     function out(string $m): void { fwrite(STDOUT, date('H:i:s ') . $m . "\n"); }
