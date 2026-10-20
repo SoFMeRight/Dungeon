@@ -18,6 +18,8 @@ spec:
         app: leantime
     spec:
       serviceAccountName: leantime
+      # Leantime never calls the Kubernetes API; a compromised pod gets no cluster credential.
+      automountServiceAccountToken: false
       securityContext:
         seccompProfile:
           type: RuntimeDefault
