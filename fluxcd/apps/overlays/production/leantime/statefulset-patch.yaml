@@ -16,6 +16,10 @@ spec:
           env:
             - name: LEAN_APP_URL
               value: "https://plan.optcp.com"
+            - name: LEAN_PRIMARY_COLOR
+              value: "#74ecbe"
+            - name: LEAN_SECONDARY_COLOR
+              value: "#236144"
             - name: LEAN_OIDC_ENABLE
               value: "true"
             - name: LEAN_OIDC_PROVIDER_URL
