@@ -2,6 +2,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: vmauth
+  labels:
+    # Freelens/Lens auto-detect: the Prometheus Operator provider selects the first Service
+    # carrying this label and queries its first port through the apiserver service proxy.
+    operated-prometheus: "true"
 spec:
   selector:
     app: vmauth
