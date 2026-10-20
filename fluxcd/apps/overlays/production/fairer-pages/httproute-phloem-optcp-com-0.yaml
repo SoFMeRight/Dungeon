@@ -16,6 +16,7 @@ spec:
 
     # optcp.com
     - "plan.optcp.com"
+    - "projects.optcp.com"
   rules:
     # Which playlist this domain's error pages draw from. The filter injects a fixed
     # playlist segment; rewriting it here keeps the choice with the domain. Drop this

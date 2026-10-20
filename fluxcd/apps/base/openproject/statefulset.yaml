@@ -1,0 +1,235 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: openproject
+  labels:
+    app: openproject
+spec:
+  revisionHistoryLimit: 5
+  serviceName: openproject
+  # One replica: web and worker share the attachments volume (ReadWriteOnce) inside one pod.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openproject
+  template:
+    metadata:
+      labels:
+        app: openproject
+    spec:
+      serviceAccountName: openproject
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        # Ruby refuses a world-writable TMPDIR without the sticky bit, which an emptyDir lacks.
+        - name: prepare-tmp
+          image: docker.io/openproject/openproject:17.9.2-slim
+          command: ["sh", "-c", "mkdir -p /tmp/ruby && chmod 1777 /tmp/ruby"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+        - name: wait-for-db
+          image: docker.io/busybox:1.38
+          command: ["sh", "-c", "until nc -z openproject-postgres-rw 5432; do sleep 2; done"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+        - name: migrate
+          image: docker.io/openproject/openproject:17.9.2-slim
+          args: ["/app/docker/prod/migrate"]
+          envFrom:
+            - configMapRef:
+                name: openproject-env
+            - secretRef:
+                name: openproject-secret
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: app-tmp
+              mountPath: /app/tmp
+            - name: openproject-data
+              mountPath: /var/openproject/assets
+            - name: initializers
+              mountPath: /app/config/initializers/zz_enterprise_features.rb
+              subPath: enterprise-features.rb
+              readOnly: true
+        - name: seed
+          image: docker.io/openproject/openproject:17.9.2-slim
+          args: ["/app/docker/prod/seeder"]
+          envFrom:
+            - configMapRef:
+                name: openproject-env
+            - secretRef:
+                name: openproject-secret
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: app-tmp
+              mountPath: /app/tmp
+            - name: openproject-data
+              mountPath: /var/openproject/assets
+            - name: initializers
+              mountPath: /app/config/initializers/zz_enterprise_features.rb
+              subPath: enterprise-features.rb
+              readOnly: true
+      containers:
+        - name: web
+          image: docker.io/openproject/openproject:17.9.2-slim
+          args: ["/app/docker/prod/web"]
+          envFrom:
+            - configMapRef:
+                name: openproject-env
+            - secretRef:
+                name: openproject-secret
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: app-tmp
+              mountPath: /app/tmp
+            - name: openproject-data
+              mountPath: /var/openproject/assets
+            - name: initializers
+              mountPath: /app/config/initializers/zz_enterprise_features.rb
+              subPath: enterprise-features.rb
+              readOnly: true
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          # The health check answers 404 to a request addressed to the pod IP, hence the Host.
+          startupProbe:
+            httpGet:
+              path: /health_checks/default
+              port: 8080
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /health_checks/default
+              port: 8080
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            periodSeconds: 15
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health_checks/default
+              port: 8080
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: 100m
+            limits:
+              memory: 2Gi
+              cpu: "2"
+        - name: worker
+          image: docker.io/openproject/openproject:17.9.2-slim
+          args: ["/app/docker/prod/worker"]
+          envFrom:
+            - configMapRef:
+                name: openproject-env
+            - secretRef:
+                name: openproject-secret
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: app-tmp
+              mountPath: /app/tmp
+            - name: openproject-data
+              mountPath: /var/openproject/assets
+            - name: initializers
+              mountPath: /app/config/initializers/zz_enterprise_features.rb
+              subPath: enterprise-features.rb
+              readOnly: true
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 50m
+            limits:
+              memory: 1536Mi
+              cpu: "1"
+        - name: memcached
+          image: docker.io/library/memcached:1.6.45-alpine
+          args: ["-m", "64", "-l", "127.0.0.1"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              memory: 80Mi
+              cpu: 10m
+            limits:
+              memory: 128Mi
+              cpu: 250m
+      volumes:
+        # Node-disk scratch (not tmpfs), each capped.
+        - name: tmp
+          emptyDir:
+            sizeLimit: 1Gi
+        - name: app-tmp
+          emptyDir:
+            sizeLimit: 1Gi
+        - name: initializers
+          configMap:
+            name: openproject-initializers
+  volumeClaimTemplates:
+    - metadata:
+        name: openproject-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi

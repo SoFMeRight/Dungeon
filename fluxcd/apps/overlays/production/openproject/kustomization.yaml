@@ -1,0 +1,31 @@
+namespace: optcp-cloud
+resources:
+  - ../../../base/openproject
+  - httproute.yaml
+configMapGenerator:
+  - name: openproject-env
+    literals:
+      - OPENPROJECT_HOST__NAME=projects.optcp.com
+      - OPENPROJECT_HTTPS=true
+      - OPENPROJECT_HSTS=true
+      - OPENPROJECT_RAILS__CACHE__STORE=memcache
+      - OPENPROJECT_CACHE__MEMCACHE__SERVER=127.0.0.1:11211
+      - OPENPROJECT_ATTACHMENTS__STORAGE__PATH=/var/openproject/assets
+      - OPENPROJECT_SEED__ADMIN__USER__PASSWORD__RESET=false
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_DISPLAY__NAME=PrPlanIT SSO
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_HOST=sso.prplanit.com
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_AUTHORIZATION__ENDPOINT=https://sso.prplanit.com/oauth/v2/authorize
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_TOKEN__ENDPOINT=https://sso.prplanit.com/oauth/v2/token
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_USERINFO__ENDPOINT=https://sso.prplanit.com/oidc/v1/userinfo
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_END__SESSION__ENDPOINT=https://sso.prplanit.com/oidc/v1/end_session
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_SCOPE=[openid,email,profile]
+      - HOME=/tmp
+      - TMPDIR=/tmp/ruby
+patches:
+  - path: postgres-cluster-patch.yaml
+  - path: objectstore-postgres-patch.yaml
+  - path: statefulset-patch.yaml
+  - path: service-openproject-ingress-patch.yaml
+    target:
+      kind: Service
+      name: openproject

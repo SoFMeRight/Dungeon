@@ -4,3 +4,4 @@ namespace: optcp-cloud
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-leantime.yaml
+  - cnp-egress-openproject.yaml

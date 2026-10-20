@@ -43,6 +43,7 @@ resources:
   - invoiceninja
   - kimai
   - leantime
+  - openproject
   - opnform
   - osticket
   # Document & Design

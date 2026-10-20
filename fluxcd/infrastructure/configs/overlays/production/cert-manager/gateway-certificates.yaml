@@ -427,3 +427,15 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "plan.optcp.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: projects-optcp-com-phloem-tls
+spec:
+  secretName: projects-optcp-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "projects.optcp.com"
