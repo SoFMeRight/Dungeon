@@ -49,6 +49,7 @@ spec:
           - appflowy-worker
           - nextcloud-talk-hpb
           - kimai
+          - leantime
           - reactive-resume-chrome
   egress:
     - toEntities:

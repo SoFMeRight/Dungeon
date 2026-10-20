@@ -1,0 +1,18 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: MariaDB
+metadata:
+  name: leantime-mariadb
+spec:
+  podMetadata:
+    labels:
+      policy.prplanit.com/access-class: mariadb
+      policy.prplanit.com/service-scope: temple-of-time.leantime.mariadb
+  storage:
+    size: 5Gi
+    storageClassName: ceph-rbd
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      memory: 1Gi

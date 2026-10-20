@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: leantime
+spec:
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/cap.mariadb: "true"
+        policy.prplanit.com/access-scope-mariadb: temple-of-time.leantime.mariadb
+        policy.prplanit.com/cap.oidc: "true"
+    spec:
+      containers:
+        - name: leantime
+          env:
+            - name: LEAN_APP_URL
+              value: "https://leantime.pcfae.com"
+            - name: LEAN_OIDC_ENABLE
+              value: "true"
+            - name: LEAN_OIDC_PROVIDER_URL
+              value: "https://sso.prplanit.com"
+            - name: LEAN_OIDC_SCOPES
+              value: "openid profile email"
+            - name: LEAN_OIDC_CREATE_USER
+              value: "false"

@@ -42,6 +42,7 @@ resources:
   - frappe-suite
   - invoiceninja
   - kimai
+  - leantime
   - opnform
   - osticket
   # Document & Design

@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: leantime
+  annotations:
+    gatus.home-operations.com/endpoint: |
+      group: "Content & Media (Temple of Time🏛️)"
+spec:
+  parentRefs:
+    - name: phloem-gateway
+      namespace: arylls-lookout
+  hostnames:
+    - "leantime.pcfae.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: leantime
+          port: 8080

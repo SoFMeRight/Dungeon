@@ -1,0 +1,69 @@
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: MariaDB
+metadata:
+  name: leantime-mariadb
+spec:
+  rootPasswordSecretKeyRef:
+    name: leantime-mariadb
+    key: root-password
+
+  database: leantime
+  username: leantime
+  passwordSecretKeyRef:
+    name: leantime-mariadb
+    key: user-password
+
+  image: docker.io/mariadb:12.3.3
+
+  # Full podSecurityContext (this CR field is a REPLACE, not a merge — must
+  # restate the operator's mysql-999 defaults) + seccomp to pre-match the
+  # mutate-pod-hardening injection and avoid the operator's roll-time lock.
+  podSecurityContext:
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
+  # readOnlyRootFilesystem is omitted deliberately: the socket dir /run/mysqld is
+  # on the rootfs (not an operator-mounted volume), so RO would break the socket.
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+  # Single instance on ceph-rbd: Ceph carries durability; one writer means no
+  # split brain or replica drift. Failover is a reschedule onto another node.
+  replicas: 1
+
+  storage:
+    size: PLACEHOLDER_STORAGE_SIZE
+    storageClassName: PLACEHOLDER_STORAGE_CLASS
+
+  service:
+    type: ClusterIP
+
+  connection:
+    secretName: leantime-mariadb-connection
+    secretTemplate:
+      key: dsn
+      databaseKey: database
+      usernameKey: username
+      passwordKey: password
+      hostKey: host
+      portKey: port
+
+  myCnf: |
+    [mariadb]
+    bind-address=*
+    default_storage_engine=InnoDB
+    max_allowed_packet=256M
+
+  resources:
+    requests:
+      cpu: PLACEHOLDER_CPU_REQUEST
+      memory: PLACEHOLDER_MEMORY_REQUEST
+    limits:
+      memory: PLACEHOLDER_MEMORY_LIMIT

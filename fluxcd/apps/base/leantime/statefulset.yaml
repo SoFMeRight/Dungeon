@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: leantime
+  labels:
+    app: leantime
+spec:
+  revisionHistoryLimit: 5
+  serviceName: leantime
+  # One replica: uploads live on a ReadWriteOnce volume and sessions are file-backed.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: leantime
+  template:
+    metadata:
+      labels:
+        app: leantime
+    spec:
+      serviceAccountName: leantime
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: wait-for-db
+          image: docker.io/busybox:1.38
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z -v -w5 leantime-mariadb 3306; do
+                echo "Waiting for MariaDB..."
+                sleep 5
+              done
+      containers:
+        - name: leantime
+          image: docker.io/leantime/leantime:3.12.0
+          # The image starts as root and drops to www-data for nginx/php-fpm, chowning its
+          # writable paths on start. Partial hardening as for kimai: drop ALL, keep the
+          # file-ownership and setuid caps that drop needs, seccomp, no privilege escalation.
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+                - SETUID
+                - SETGID
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: LEAN_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-mariadb-connection
+                  key: host
+            - name: LEAN_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-mariadb-connection
+                  key: port
+            - name: LEAN_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-mariadb-connection
+                  key: username
+            - name: LEAN_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-mariadb-connection
+                  key: password
+            - name: LEAN_DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-mariadb-connection
+                  key: database
+            - name: LEAN_SESSION_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-secret
+                  key: session-password
+            - name: LEAN_APP_URL
+              value: PLACEHOLDER_APP_URL
+            - name: LEAN_SESSION_SECURE
+              value: "true"
+            - name: LEAN_ALLOW_TELEMETRY
+              value: "false"
+            - name: LEAN_OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-secret
+                  key: oidc-client-id
+            - name: LEAN_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: leantime-secret
+                  key: oidc-client-secret
+          volumeMounts:
+            - name: leantime-data
+              mountPath: /var/www/html/userfiles
+              subPath: userfiles
+            - name: leantime-data
+              mountPath: /var/www/html/public/userfiles
+              subPath: public-userfiles
+            - name: logs
+              mountPath: /var/www/html/storage/logs
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+      volumes:
+        - name: logs
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: leantime-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi

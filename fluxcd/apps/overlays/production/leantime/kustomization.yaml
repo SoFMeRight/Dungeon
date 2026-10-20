@@ -1,0 +1,11 @@
+namespace: temple-of-time
+resources:
+  - ../../../base/leantime
+  - httproute.yaml
+patches:
+  - path: mariadb-patch.yaml
+  - path: statefulset-patch.yaml
+  - path: service-leantime-ingress-patch.yaml
+    target:
+      kind: Service
+      name: leantime
