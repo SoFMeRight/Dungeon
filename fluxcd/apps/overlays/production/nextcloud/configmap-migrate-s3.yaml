@@ -142,6 +142,10 @@ data:
     // Every file row must match the disk before anything is copied. REHEARSAL=1 (read-only
     // data, so occ files:scan cannot reconcile the homes) reports rows whose file is gone
     // and leaves them out; a size mismatch still aborts.
+    // A root-storage (appdata) row whose file is gone is reconciled by Nextcloud's own scanner,
+    // as files:scan does for homes: scanFile drops the cache entry of a missing file. Avatars,
+    // previews and calendar icons there are regenerated on demand.
+    $rootScanner = (new \OC\Files\Storage\Local(['datadir' => $datadir]))->getScanner();
     $files = [];
     $problems = [];
     $total = 0;
@@ -150,6 +154,14 @@ data:
         if (getenv('REHEARSAL') === '1') {
           out("rehearsal: no file for {$r['fileid']} {$r['local']}, left out");
           continue;
+        }
+        if ($storages[(int)$r['storage']] === null) {
+          $rootScanner->scanFile($r['path']);
+          $left = (int)$db->executeQuery('SELECT COUNT(*) FROM *PREFIX*filecache WHERE fileid = ?', [(int)$r['fileid']])->fetchOne();
+          if ($left === 0) {
+            out("reconciled: no file for {$r['fileid']} {$r['local']}, cache entry dropped by the scanner");
+            continue;
+          }
         }
         $problems[] = "missing {$r['fileid']} {$r['local']}";
       } elseif (($size = filesize($r['local'])) !== (int)$r['size']) {
