@@ -30,3 +30,4 @@ configMapGenerator:
 images:
   - name: docker.io/hlhd/ansible
     newTag: v2.21.5
+    digest: sha256:ad2c98e954d29deb44b09fc2f0b62c5236abc6446d29b08d3d55fcf75c79ead9

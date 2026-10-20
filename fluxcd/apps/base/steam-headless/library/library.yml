@@ -157,6 +157,116 @@
         regexp: '^joypad_autoconfig_dir = '
         line: 'joypad_autoconfig_dir = "~/.var/app/org.libretro.RetroArch/config/retroarch/autoconfig"'
 
+- name: run Eden's Switch library from the games share
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    home: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+    eden_config: "{{ home }}/.config/eden/qt-config.ini"
+    switch_root: "{{ lookup('ansible.builtin.env', 'ROMS_SRC') }}/Nintendo_-_Switch"
+    # Eden reads updates and DLC found in its game folders in place (Data Storage,
+    # ext_content_from_game_dirs), so nothing on the share is copied into the seat's NAND.
+    # Game folders 1-3 are Eden's own SDMC, UserNAND and SysNAND; these follow from 4.
+    eden_share_dirs:
+      - "{{ switch_root }}/_Games"
+      - "{{ switch_root }}/Updates"
+      - "{{ switch_root }}/DLC"
+    # The firmware's Mii and user-select applets crash under Eden (a 32-bit applet executes an
+    # unmapped address), stalling games such as Mario Kart 8 Deluxe at "select a Mii". Eden's
+    # built-in implementations (HLE, 0) do not depend on them.
+    eden_hle_applets: [mii_edit, player_select]
+  tasks:
+    # Eden writes qt-config.ini on its first start; until then there is nothing to converge.
+    - name: check for Eden's config
+      ansible.builtin.stat:
+        path: "{{ eden_config }}"
+      register: _eden_cfg
+
+    - name: converge Eden's share settings
+      when: _eden_cfg.stat.exists
+      block:
+        - name: read updates and DLC from the game folders
+          ansible.builtin.lineinfile:
+            path: "{{ eden_config }}"
+            regexp: '^ext_content_from_game_dirs='
+            line: 'ext_content_from_game_dirs=true'
+
+        - name: count the game folders
+          ansible.builtin.lineinfile:
+            path: "{{ eden_config }}"
+            regexp: '^Paths\\gamedirs\\size='
+            line: 'Paths\gamedirs\size={{ 3 + eden_share_dirs | length }}'
+
+        - name: add each share folder as a game folder
+          ansible.builtin.lineinfile:
+            path: "{{ eden_config }}"
+            regexp: '^Paths\\gamedirs\\{{ idx + 4 }}\\path='
+            line: 'Paths\gamedirs\{{ idx + 4 }}\path={{ item }}'
+            insertafter: '^Paths\\gamedirs\\'
+          loop: "{{ eden_share_dirs }}"
+          loop_control:
+            index_var: idx
+            label: "{{ idx + 4 }}: {{ item }}"
+
+        - name: scan the share folders flat and show them expanded
+          ansible.builtin.lineinfile:
+            path: "{{ eden_config }}"
+            regexp: '^Paths\\gamedirs\\{{ item.0 + 4 }}\\{{ item.1.key }}='
+            line: 'Paths\gamedirs\{{ item.0 + 4 }}\{{ item.1.key }}={{ item.1.value }}'
+            insertafter: '^Paths\\gamedirs\\{{ item.0 + 4 }}\\path='
+          loop: "{{ range(eden_share_dirs | length) | product([{'key': 'deep_scan', 'value': 'false'}, {'key': 'expanded', 'value': 'true'}]) | list }}"
+          loop_control:
+            label: "{{ item.0 + 4 }}: {{ item.1.key }}"
+
+        - name: mark the applet modes as set rather than default
+          ansible.builtin.lineinfile:
+            path: "{{ eden_config }}"
+            regexp: '^{{ item }}_applet_mode\\default='
+            line: '{{ item }}_applet_mode\default=false'
+          loop: "{{ eden_hle_applets }}"
+
+        - name: use Eden's built-in applets
+          ansible.builtin.lineinfile:
+            path: "{{ eden_config }}"
+            regexp: '^{{ item }}_applet_mode='
+            line: '{{ item }}_applet_mode=0'
+          loop: "{{ eden_hle_applets }}"
+
+- name: run Cemu's Wii U library from the games share
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    home: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+    cemu_config: "{{ home }}/.config/Cemu/settings.xml"
+    cemu_game_paths:
+      - "{{ lookup('ansible.builtin.env', 'ROMS_SRC') }}/Nintendo_-_Wii_U/_Games"
+    # Cubeb (3) is Cemu's only audio backend on Linux; the default, DirectSound (0), finds no
+    # device, and a title can hang at boot without its audio output.
+    cemu_audio_api: "3"
+  tasks:
+    # Cemu writes settings.xml on its first exit; until then there is nothing to converge.
+    - name: check for Cemu's config
+      ansible.builtin.stat:
+        path: "{{ cemu_config }}"
+      register: _cemu_cfg
+
+    - name: converge Cemu's share settings
+      when: _cemu_cfg.stat.exists
+      block:
+        - name: list the share folders as the game paths
+          community.general.xml:
+            path: "{{ cemu_config }}"
+            xpath: /content/GamePaths
+            set_children: "{{ cemu_game_paths | map('community.general.dict_kv', 'Entry') | list }}"
+
+        - name: output audio through Cubeb
+          community.general.xml:
+            path: "{{ cemu_config }}"
+            xpath: /content/Audio/api
+            value: "{{ cemu_audio_api }}"
+
 - name: menu entries for the managed apps
   hosts: localhost
   connection: local
