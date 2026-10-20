@@ -48,6 +48,12 @@ spec:
               cp -a /var/www/html/bootstrap/cache/. /seed/bootstrap-cache/
               cp -a /var/www/html/app/Plugins/. /seed/plugins/
               cp -a /var/lib/nginx/. /seed/nginx-lib/
+              # The mounted Postgres patches are copies of these 3.12.0 files; a new image must
+              # come with new patches (or drop them once upstream fixes the queries).
+              sha256sum -c <<'SUMS'
+              5a72199166463330dac4f0017fd70d89213177268adf84cc904f9dbf1e286e1b  /var/www/html/app/Domain/Reports/Repositories/ReportEngine.php
+              68071c498dc38f213be57483a755e8075431d02231eba74a6d3391e29ce25663  /var/www/html/app/Domain/Goalcanvas/Repositories/Goalcanvas.php
+              SUMS
               mkdir -p /seed/log/nginx /seed/log/supervisor
           volumeMounts:
             - name: storage
@@ -150,6 +156,14 @@ spec:
               mountPath: /run
             - name: tmp
               mountPath: /tmp
+            - name: pg-patches
+              mountPath: /var/www/html/app/Domain/Reports/Repositories/ReportEngine.php
+              subPath: ReportEngine.php
+              readOnly: true
+            - name: pg-patches
+              mountPath: /var/www/html/app/Domain/Goalcanvas/Repositories/Goalcanvas.php
+              subPath: Goalcanvas.php
+              readOnly: true
           readinessProbe:
             tcpSocket:
               port: http
@@ -185,6 +199,9 @@ spec:
         - name: tmp
           emptyDir:
             sizeLimit: 256Mi
+        - name: pg-patches
+          configMap:
+            name: leantime-pg-patches
   volumeClaimTemplates:
     - metadata:
         name: leantime-data
