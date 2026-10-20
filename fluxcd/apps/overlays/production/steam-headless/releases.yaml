@@ -189,7 +189,7 @@ releases:
     tag: "{version}"
     asset_match: '^SoH-.*\.appimage$'
     # renovate: datasource=github-releases depName=HarbourMasters/Shipwright
-    version: "9.3.0"
+    version: "9.3.1"
     layout: raw
     mode: "0755"
     dest: /home/steamheadless/Applications/SoH.AppImage
@@ -202,6 +202,62 @@ releases:
     layout: zip
     executables: ["2ship.appimage"]
     dest: /home/steamheadless/Applications/2ship
+  - name: ghostship
+    repo: HarbourMasters/Ghostship
+    tag: "{version}"
+    asset_match: '^[A-Za-z]+-[A-Za-z]+-Linux\.zip$'
+    # renovate: datasource=github-releases depName=HarbourMasters/Ghostship
+    version: "3.0.0"
+    layout: zip
+    executables: ["ghostship.appimage"]
+    dest: /home/steamheadless/Applications/ghostship
+  - name: spaghettikart
+    repo: HarbourMasters/SpaghettiKart
+    tag: "{version}"
+    asset: "spaghetti-linux.zip"
+    # renovate: datasource=github-releases depName=HarbourMasters/SpaghettiKart
+    version: "1.0.0"
+    layout: zip
+    executables: ["spaghetti.appimage"]
+    dest: /home/steamheadless/Applications/spaghettikart
+  # Starship's v2.0.0 assets predate GitHub's published digests, so the digest is pinned here
+  # (sha256 of the release asset as downloaded 2026-10-20); a version bump needs a new one.
+  - name: starship
+    source: pinned
+    url: https://github.com/HarbourMasters/Starship/releases/download/v{version}/Starship-Barnard-Alfa-Linux.zip
+    sha256: 85dd03d3ad8abd881aa3aa2b49ded336627b44b8ac8333e3c41b5bf7c4336289
+    # renovate: datasource=github-releases depName=HarbourMasters/Starship
+    version: "2.0.0"
+    layout: zip
+    executables: ["starship.appimage"]
+    dest: /home/steamheadless/Applications/starship
+  - name: lighthouse
+    repo: HarbourMasters/Lighthouse
+    tag: "{version}"
+    asset_match: '^Lighthouse-.*-Linux\.zip$'
+    # renovate: datasource=github-releases depName=HarbourMasters/Lighthouse
+    version: "1.1.0"
+    layout: zip
+    executables: ["lighthouse.appimage"]
+    dest: /home/steamheadless/Applications/lighthouse
+  - name: dusklight
+    repo: TwilitRealm/dusklight
+    tag: "v{version}"
+    asset: "Dusklight-v{version}-linux-x86_64.AppImage"
+    # renovate: datasource=github-releases depName=TwilitRealm/dusklight
+    version: "2.0.3"
+    layout: raw
+    mode: "0755"
+    dest: /home/steamheadless/Applications/Dusklight.AppImage
+  - name: bm64recomp
+    repo: RevoSucks/BM64Recomp
+    tag: "v{version}"
+    asset: "BM64Recompiled-AppImage-X64-Release.zip"
+    # renovate: datasource=github-releases depName=RevoSucks/BM64Recomp
+    version: "1.0.0"
+    layout: zip
+    executables: ["BM64Recompiled-x86_64.AppImage"]
+    dest: /home/steamheadless/Applications/bm64recomp
   - name: openmw
     repo: OpenMW/openmw
     tag: "openmw-{version}"

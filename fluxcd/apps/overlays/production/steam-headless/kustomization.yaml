@@ -23,6 +23,12 @@ configMapGenerator:
       - library/port-PaperBoat.sh
       - library/port-Ship_of_Harkinian.sh
       - library/port-2_Ship_2_Harkinian.sh
+      - library/port-Ghostship.sh
+      - library/port-SpaghettiKart.sh
+      - library/port-Starship.sh
+      - library/port-Lighthouse.sh
+      - library/port-Bomberman_64_Recompiled.sh
+      - library/port-Dusklight.sh
       - library/port-Minecraft.sh
       - library/port-Heroic_Games_Launcher.sh
       - library/port-Faugus_Launcher.sh
