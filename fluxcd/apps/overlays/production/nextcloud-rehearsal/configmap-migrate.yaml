@@ -1,0 +1,262 @@
+# Local -> S3 primary storage, in place in the database. Derived from
+# mrAceT/nextcloud-S3-local-S3-migration localtos3.php (c6d26ccc), reduced to the copy
+# and the storage rename: every file of the home and root storages goes to
+# urn:oid:<fileid> through Nextcloud's own S3 client, so file ids (shares, versions,
+# trash, comments, tags) are unchanged. Nothing is deleted on disk or in the bucket.
+# Unrecognised storages or mount providers, and file-cache rows that differ from the
+# disk, abort before anything is written.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nextcloud-rehearsal-migrate
+data:
+  run.sh: |
+    #!/bin/sh
+    set -eu
+    occ() { php /var/www/html/occ "$@"; }
+    occ status
+    occ files:scan --all
+    occ files:scan-app-data
+    php /migrate/migrate.php
+    cp /etc/nextcloud-migrate/objectstore.config.php "$NEXTCLOUD_CONFIG_DIR/"
+    php /migrate/verify.php
+    occ files:object:orphans
+    occ status
+
+  common.php: |
+    <?php
+    declare(strict_types=1);
+    require_once '/var/www/html/lib/base.php';
+
+    function out(string $m): void { fwrite(STDOUT, date('H:i:s ') . $m . "\n"); }
+    function fail(string $m): never { fwrite(STDERR, date('H:i:s ') . "ABORT: $m\n"); exit(1); }
+    function gib(int $b): string { return sprintf('%.2f GiB', $b / 1024 ** 3); }
+
+    // The objectstore arguments, read from the same file the instance is switched to.
+    function objectstore_arguments(): array {
+      $CONFIG = [];
+      include '/etc/nextcloud-migrate/objectstore.config.php';
+      return $CONFIG['objectstore']['arguments'];
+    }
+
+    // Every file row of the given storages with its path on the local disk.
+    function file_rows(\OCP\IDBConnection $db, array $storages, string $datadir): \Generator {
+      $in = implode(',', array_map('intval', array_keys($storages)));
+      $q = $db->executeQuery(
+        "SELECT f.fileid, f.storage, f.path, f.size, m.mimetype FROM *PREFIX*filecache f
+         JOIN *PREFIX*mimetypes m ON m.id = f.mimetype
+         WHERE f.storage IN ($in) AND m.mimetype <> 'httpd/unix-directory' ORDER BY f.fileid");
+      while ($r = $q->fetch()) {
+        $home = $storages[(int)$r['storage']];
+        $r['local'] = $home === null ? "$datadir/{$r['path']}" : "$datadir/$home/{$r['path']}";
+        yield $r;
+      }
+      $q->closeCursor();
+    }
+
+  migrate.php: |
+    <?php
+    require __DIR__ . '/common.php';
+
+    $config = \OC::$server->getSystemConfig();
+    if ($config->getValue('objectstore') !== null) {
+      fail('objectstore is already configured; this runs against the local layout only');
+    }
+    $datadir = rtrim((string)$config->getValue('datadirectory'), '/');
+    $args = objectstore_arguments();
+    $bucket = $args['bucket'];
+    $db = \OC::$server->get(\OCP\IDBConnection::class);
+
+    // Storages: home::<uid> and the root storage move; object:: storages left by an
+    // earlier attempt are removed if they hold no files and no mounts; anything else aborts.
+    $storages = [];   // numeric id => uid, or null for the root storage
+    $stale = [];
+    $byId = [];
+    foreach ($db->executeQuery('SELECT numeric_id, id FROM *PREFIX*storages')->fetchAll() as $r) {
+      $nid = (int)$r['numeric_id'];
+      $byId[$r['id']] = $nid;
+      if (str_starts_with($r['id'], 'home::')) {
+        $storages[$nid] = substr($r['id'], 6);
+      } elseif ($r['id'] === "local::$datadir/") {
+        $storages[$nid] = null;
+      } elseif (str_starts_with($r['id'], 'object::')) {
+        $stale[$nid] = $r['id'];
+      } else {
+        fail("unrecognised storage $nid {$r['id']}");
+      }
+    }
+    if (!in_array(null, $storages, true)) {
+      fail("no root storage local::$datadir/");
+    }
+    foreach ($stale as $nid => $id) {
+      $files = (int)$db->executeQuery(
+        "SELECT COUNT(*) FROM *PREFIX*filecache f JOIN *PREFIX*mimetypes m ON m.id = f.mimetype
+         WHERE f.storage = ? AND m.mimetype <> 'httpd/unix-directory'", [$nid])->fetchOne();
+      $mounts = (int)$db->executeQuery('SELECT COUNT(*) FROM *PREFIX*mounts WHERE storage_id = ?', [$nid])->fetchOne();
+      if ($files > 0 || $mounts > 0) {
+        fail("storage $nid $id holds $files files and $mounts mounts");
+      }
+      out("stale storage $nid $id: no files, no mounts, removed in the rewrite");
+    }
+    $targets = [];
+    foreach ($storages as $nid => $uid) {
+      $targets[$nid] = $uid === null ? "object::store:amazon::$bucket" : "object::user:$uid";
+      if (isset($byId[$targets[$nid]]) && !isset($stale[$byId[$targets[$nid]]])) {
+        fail("{$targets[$nid]} already exists as storage {$byId[$targets[$nid]]}");
+      }
+    }
+    $local = 'OC\Files\Mount\LocalHomeMountProvider';
+    foreach ($db->executeQuery('SELECT DISTINCT mount_provider_class FROM *PREFIX*mounts')->fetchAll(\PDO::FETCH_COLUMN) as $p) {
+      if ($p !== $local) {
+        fail("unrecognised mount provider $p");
+      }
+    }
+
+    // Every file row must match the disk before anything is copied.
+    $files = [];
+    $problems = [];
+    $total = 0;
+    foreach (file_rows($db, $storages, $datadir) as $r) {
+      if (!is_file($r['local'])) {
+        $problems[] = "missing {$r['fileid']} {$r['local']}";
+      } elseif (($size = filesize($r['local'])) !== (int)$r['size']) {
+        $problems[] = "size    {$r['fileid']} {$r['local']} disk=$size cache={$r['size']}";
+      } else {
+        $files[] = [(int)$r['fileid'], $r['local'], $size, $r['mimetype']];
+        $total += $size;
+      }
+    }
+    if ($problems) {
+      fwrite(STDERR, implode("\n", $problems) . "\n");
+      fail(count($problems) . ' file-cache rows do not match the disk');
+    }
+    out(count($files) . ' files, ' . gib($total) . " -> bucket $bucket");
+
+    // Copy. An object already present at the same size is kept, so a rerun resumes.
+    $store = new \OC\Files\ObjectStore\S3($args);
+    $s3 = $store->getConnection();
+    $size_of = function (string $urn) use ($s3, $bucket): ?int {
+      try {
+        return (int)$s3->headObject(['Bucket' => $bucket, 'Key' => $urn])['ContentLength'];
+      } catch (\Aws\S3\Exception\S3Exception $e) {
+        if ($e->getStatusCode() === 404) {
+          return null;
+        }
+        throw $e;
+      }
+    };
+    $start = microtime(true);
+    $n = 0;
+    $bytes = 0;
+    $kept = 0;
+    foreach ($files as [$fid, $path, $size, $mime]) {
+      $urn = "urn:oid:$fid";
+      if ($size_of($urn) === $size) {
+        $kept++;
+      } else {
+        $fh = fopen($path, 'rb');
+        if ($fh === false) {
+          fail("cannot open $path");
+        }
+        $store->writeObject($urn, $fh, $mime);
+        if (is_resource($fh)) {
+          fclose($fh);
+        }
+        if (($got = $size_of($urn)) !== $size) {
+          fail("$urn holds " . var_export($got, true) . " bytes, expected $size ($path)");
+        }
+      }
+      $n++;
+      $bytes += $size;
+      if ($size >= 1024 ** 3 || $n % 500 === 0 || $n === count($files)) {
+        $s = max(microtime(true) - $start, 1);
+        out(sprintf('%d/%d files, %s/%s, %.0f MiB/s', $n, count($files), gib($bytes), gib($total), $bytes / 1048576 / $s));
+      }
+    }
+    out("copied; $kept were already present");
+
+    // Rewrite the storages in one transaction.
+    $db->beginTransaction();
+    try {
+      foreach (array_keys($stale) as $nid) {
+        $db->executeStatement('DELETE FROM *PREFIX*filecache_extended WHERE fileid IN (SELECT fileid FROM *PREFIX*filecache WHERE storage = ?)', [$nid]);
+        $db->executeStatement('DELETE FROM *PREFIX*filecache WHERE storage = ?', [$nid]);
+        $db->executeStatement('DELETE FROM *PREFIX*storages WHERE numeric_id = ?', [$nid]);
+      }
+      foreach ($targets as $nid => $id) {
+        $db->executeStatement('UPDATE *PREFIX*storages SET id = ? WHERE numeric_id = ?', [$id, $nid]);
+        out("storage $nid -> $id");
+      }
+      $m = $db->executeStatement('UPDATE *PREFIX*mounts SET mount_provider_class = ? WHERE mount_provider_class = ?',
+        ['OC\Files\Mount\ObjectHomeMountProvider', $local]);
+      out("$m home mounts -> ObjectHomeMountProvider");
+      $db->commit();
+    } catch (\Throwable $e) {
+      $db->rollBack();
+      throw $e;
+    }
+    out('database rewritten');
+
+  verify.php: |
+    <?php
+    // Run with the objectstore configured: reads every migrated file back through
+    // Nextcloud's filesystem and compares its md5 with the local copy.
+    require __DIR__ . '/common.php';
+
+    $config = \OC::$server->getSystemConfig();
+    if ($config->getValue('objectstore') === null) {
+      fail('objectstore is not configured');
+    }
+    $datadir = rtrim((string)$config->getValue('datadirectory'), '/');
+    $bucket = $config->getValue('objectstore')['arguments']['bucket'];
+    $db = \OC::$server->get(\OCP\IDBConnection::class);
+    $rootFolder = \OC::$server->getRootFolder();
+
+    $storages = [];
+    foreach ($db->executeQuery('SELECT numeric_id, id FROM *PREFIX*storages')->fetchAll() as $r) {
+      if (str_starts_with($r['id'], 'object::user:')) {
+        $storages[(int)$r['numeric_id']] = substr($r['id'], 13);
+      } elseif ($r['id'] === "object::store:amazon::$bucket") {
+        $storages[(int)$r['numeric_id']] = null;
+      } else {
+        fail("unexpected storage {$r['numeric_id']} {$r['id']}");
+      }
+    }
+    foreach (array_filter($storages) as $uid) {
+      $rootFolder->getUserFolder($uid);
+    }
+
+    $md5 = function ($fh): string {
+      $h = hash_init('md5');
+      while (!feof($fh)) {
+        hash_update($h, (string)fread($fh, 8 << 20));
+      }
+      fclose($fh);
+      return hash_final($h);
+    };
+    $bad = [];
+    $n = 0;
+    $bytes = 0;
+    $start = microtime(true);
+    foreach (file_rows($db, $storages, $datadir) as $r) {
+      $uid = $storages[(int)$r['storage']];
+      $node = $rootFolder->get($uid === null ? "/{$r['path']}" : "/$uid/{$r['path']}");
+      if (!$node->getStorage()->instanceOfStorage(\OC\Files\ObjectStore\ObjectStoreStorage::class)) {
+        fail("{$node->getPath()} is not served from the object store");
+      }
+      $remote = $md5($node->fopen('rb'));
+      $disk = $md5(fopen($r['local'], 'rb'));
+      if ($remote !== $disk) {
+        $bad[] = "{$r['fileid']} {$node->getPath()} store=$remote disk=$disk";
+      }
+      $n++;
+      $bytes += (int)$r['size'];
+      if ($r['size'] >= 1024 ** 3 || $n % 500 === 0) {
+        out(sprintf('verified %d files, %s, %.0f MiB/s', $n, gib($bytes), $bytes / 1048576 / max(microtime(true) - $start, 1)));
+      }
+    }
+    if ($bad) {
+      fwrite(STDERR, implode("\n", $bad) . "\n");
+      fail(count($bad) . ' files differ');
+    }
+    out("verified $n files, " . gib($bytes) . ', all identical');

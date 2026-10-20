@@ -13,6 +13,7 @@ resources:
   - allow-loki-to-rgw.yaml
   - allow-renovate-to-rgw.yaml
   - allow-matrix-synapse-to-rgw.yaml
+  - allow-nextcloud-to-rgw.yaml
   - allow-rgw-admin-jobs.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml

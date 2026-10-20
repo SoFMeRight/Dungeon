@@ -7,3 +7,5 @@ resources:
   - allow-gateway-ingress-phloem.yaml
   - allow-leantime-to-leantime-postgres.yaml
   - allow-leantime-postgres-replication.yaml
+  - allow-nextcloud-rehearsal-to-nextcloud-rehearsal-postgres.yaml
+  - allow-nextcloud-rehearsal-postgres-replication.yaml

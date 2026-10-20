@@ -47,8 +47,8 @@ spec:
             - /scripts/setup.sh
             - --user=nextcloud-user
             - --display-name="Nextcloud S3 User"
-            - --buckets=nextcloud,nextcloud-backups
-            - --quota=nextcloud=500G
+            - --buckets=nextcloud,nextcloud-backups,nextcloud-rehearsal
+            - --quota=nextcloud=500G,nextcloud-rehearsal=200G
             - --versioned=nextcloud
             - --noncurrent-days=30
           volumeMounts:

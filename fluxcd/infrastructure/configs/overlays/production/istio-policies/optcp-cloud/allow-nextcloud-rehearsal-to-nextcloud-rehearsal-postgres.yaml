@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-nextcloud-rehearsal-to-nextcloud-rehearsal-postgres
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: nextcloud-rehearsal-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/nextcloud-rehearsal
+      to:
+        - operation:
+            ports: ["5432"]
