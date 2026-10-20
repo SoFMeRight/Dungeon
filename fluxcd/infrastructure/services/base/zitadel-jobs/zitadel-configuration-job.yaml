@@ -14,7 +14,6 @@ metadata:
     kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on change, not wedge
   name: zitadel-configuration
 spec:
-  ttlSecondsAfterFinished: 3600
   backoffLimit: 3
   template:
     metadata:
