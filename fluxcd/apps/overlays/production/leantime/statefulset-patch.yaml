@@ -15,7 +15,7 @@ spec:
         - name: leantime
           env:
             - name: LEAN_APP_URL
-              value: "https://leantime.pcfae.com"
+              value: "https://plan.optcp.com"
             - name: LEAN_OIDC_ENABLE
               value: "true"
             - name: LEAN_OIDC_PROVIDER_URL
