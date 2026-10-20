@@ -217,3 +217,33 @@ data:
               summary: pfSense {{ $labels.bouncer }} has not fetched CrowdSec's blocklist in 30 minutes - banned IPs can reach the forwarded ports
               resolved_title: Firewall blocking again
               resolved: pfSense {{ $labels.bouncer }} is fetching CrowdSec's blocklist again
+
+  services.yaml: |
+    groups:
+      - name: Service Health
+        interval: 1m
+        rules:
+          # Gatus's last result per endpoint (1 healthy, 0 failing). Only the
+          # HTTPRoute endpoints: the svc/ endpoints gatus-sidecar generates from every
+          # Service are reachability checks behind them. A Nextcloud outage sat at 0
+          # here for 35 days once already, with nothing alerting.
+          - alert: EndpointDown
+            expr: gatus_results_endpoint_success{name!~"svc/.*"} == 0
+            for: 30m
+            labels:
+              severity: warning
+            annotations:
+              title: Service down
+              summary: '{{ $labels.name }} ({{ $labels.group }}) has failed its Gatus check for 30 minutes'
+              resolved_title: Service back up
+              resolved: '{{ $labels.name }} ({{ $labels.group }}) is passing its Gatus check again'
+          - alert: EndpointStatusMissing
+            expr: absent(gatus_results_endpoint_success)
+            for: 30m
+            labels:
+              severity: warning
+            annotations:
+              title: Service checks not reported
+              summary: Gatus is not reporting endpoint results, so a service outage would go unnoticed
+              resolved_title: Service checks reported again
+              resolved: Gatus is reporting endpoint results again

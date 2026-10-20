@@ -10,6 +10,10 @@ spec:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: gossip-stone.gatus.postgres
+        policy.prplanit.com/metrics: "true"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
     spec:
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret

@@ -7,6 +7,8 @@ data:
     storage:
       type: postgres
       path: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?sslmode=disable"
+    # /metrics on the web port; vmalert alerts on endpoint results (services.yaml).
+    metrics: true
     ui:
       title: PrecisionPlanIT Status
       header: Service Status
