@@ -1,0 +1,108 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on image or config change, not wedge
+  name: openproject-seeder
+  labels:
+    app: openproject
+    component: seeder
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        app: openproject
+        component: seeder
+    spec:
+      serviceAccountName: openproject
+      automountServiceAccountToken: false
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        # Ruby refuses a world-writable TMPDIR without the sticky bit, which an emptyDir lacks.
+        - name: prepare-tmp
+          image: docker.io/openproject/openproject:17.9.2-slim
+          command: ["sh", "-c", "mkdir -p /tmp/ruby && chmod 1777 /tmp/ruby"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+        # The mesh accepts TCP before Postgres exists, so ask Postgres itself.
+        - name: wait-for-db
+          image: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
+          command: ["sh", "-c", "until pg_isready -q -h openproject-postgres-rw -p 5432; do sleep 2; done"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+        - name: migrate
+          image: docker.io/openproject/openproject:17.9.2-slim
+          args: ["/app/docker/prod/migrate"]
+          envFrom:
+            - configMapRef:
+                name: openproject-env
+            - secretRef:
+                name: openproject-secret
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: app-tmp
+              mountPath: /app/tmp
+            - name: initializers
+              mountPath: /app/config/initializers/zz_enterprise_features.rb
+              subPath: enterprise-features.rb
+              readOnly: true
+      containers:
+        - name: seed
+          image: docker.io/openproject/openproject:17.9.2-slim
+          args: ["/app/docker/prod/seeder"]
+          envFrom:
+            - configMapRef:
+                name: openproject-env
+            - secretRef:
+                name: openproject-secret
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: app-tmp
+              mountPath: /app/tmp
+            - name: initializers
+              mountPath: /app/config/initializers/zz_enterprise_features.rb
+              subPath: enterprise-features.rb
+              readOnly: true
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 1Gi
+        - name: app-tmp
+          emptyDir:
+            sizeLimit: 1Gi
+        - name: initializers
+          configMap:
+            name: openproject-initializers

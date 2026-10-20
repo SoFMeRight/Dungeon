@@ -5,6 +5,7 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-leantime.yaml
   - cnp-egress-openproject.yaml
+  - cnp-openproject-memcached.yaml
   - cnp-egress-nextcloud.yaml
   - cnp-egress-nextcloud-clamav.yaml
   - cnp-egress-nextcloud-postgres.yaml

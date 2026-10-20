@@ -8,7 +8,10 @@ resources:
   - postgres-cluster.yaml
   - scheduledbackup-postgres.yaml
   - externalsecret.yaml
-  - statefulset.yaml
+  - job-seeder.yaml
+  - deployment-web.yaml
+  - deployment-worker.yaml
+  - memcached.yaml
   - service.yaml
 configMapGenerator:
   - name: openproject-initializers

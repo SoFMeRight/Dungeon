@@ -9,8 +9,15 @@ configMapGenerator:
       - OPENPROJECT_HTTPS=true
       - OPENPROJECT_HSTS=true
       - OPENPROJECT_RAILS__CACHE__STORE=memcache
-      - OPENPROJECT_CACHE__MEMCACHE__SERVER=127.0.0.1:11211
-      - OPENPROJECT_ATTACHMENTS__STORAGE__PATH=/var/openproject/assets
+      - OPENPROJECT_CACHE__MEMCACHE__SERVER=openproject-memcached:11211
+      - OPENPROJECT_ATTACHMENTS__STORAGE=fog
+      - OPENPROJECT_FOG_DIRECTORY=openproject
+      - OPENPROJECT_FOG_CREDENTIALS_PROVIDER=AWS
+      - OPENPROJECT_FOG_CREDENTIALS_ENDPOINT=http://ceph-rgw.gorons-bracelet.svc.cluster.local
+      - OPENPROJECT_FOG_CREDENTIALS_PATH__STYLE=true
+      - OPENPROJECT_FOG_CREDENTIALS_REGION=us-east-1
+      - OPENPROJECT_FOG_CREDENTIALS_AWS__SIGNATURE__VERSION=4
+      - OPENPROJECT_DIRECT__UPLOADS=false
       - OPENPROJECT_SEED__ADMIN__USER__PASSWORD__RESET=false
       - OPENPROJECT_OPENID__CONNECT_PRPLANIT_DISPLAY__NAME=PrPlanIT SSO
       - OPENPROJECT_OPENID__CONNECT_PRPLANIT_HOST=sso.prplanit.com
@@ -24,7 +31,9 @@ configMapGenerator:
 patches:
   - path: postgres-cluster-patch.yaml
   - path: objectstore-postgres-patch.yaml
-  - path: statefulset-patch.yaml
+  - path: deployment-web-patch.yaml
+  - path: deployment-worker-patch.yaml
+  - path: job-seeder-patch.yaml
   - path: service-openproject-ingress-patch.yaml
     target:
       kind: Service

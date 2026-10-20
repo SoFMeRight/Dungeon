@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openproject-worker
+  labels:
+    app: openproject
+    component: worker
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openproject
+      component: worker
+  template:
+    metadata:
+      labels:
+        app: openproject
+        component: worker
+    spec:
+      serviceAccountName: openproject
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        # Ruby refuses a world-writable TMPDIR without the sticky bit, which an emptyDir lacks.
+        - name: prepare-tmp
+          image: docker.io/openproject/openproject:17.9.2-slim
+          command: ["sh", "-c", "mkdir -p /tmp/ruby && chmod 1777 /tmp/ruby"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+        # The mesh accepts TCP before Postgres exists, so ask Postgres itself.
+        - name: wait-for-db
+          image: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
+          command: ["sh", "-c", "until pg_isready -q -h openproject-postgres-rw -p 5432; do sleep 2; done"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      containers:
+        - name: worker
+          image: docker.io/openproject/openproject:17.9.2-slim
+          args: ["/app/docker/prod/worker"]
+          envFrom:
+            - configMapRef:
+                name: openproject-env
+            - secretRef:
+                name: openproject-secret
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: app-tmp
+              mountPath: /app/tmp
+            - name: initializers
+              mountPath: /app/config/initializers/zz_enterprise_features.rb
+              subPath: enterprise-features.rb
+              readOnly: true
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 50m
+            limits:
+              memory: 1536Mi
+              cpu: "1"
+      volumes:
+        # Node-disk scratch (not tmpfs), each capped.
+        - name: tmp
+          emptyDir:
+            sizeLimit: 1Gi
+        - name: app-tmp
+          emptyDir:
+            sizeLimit: 1Gi
+        - name: initializers
+          configMap:
+            name: openproject-initializers

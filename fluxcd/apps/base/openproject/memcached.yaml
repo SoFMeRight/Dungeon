@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openproject-memcached
+  labels:
+    app: openproject-memcached
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openproject-memcached
+  template:
+    metadata:
+      labels:
+        app: openproject-memcached
+    spec:
+      serviceAccountName: openproject-memcached
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 11211
+        runAsGroup: 11211
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: memcached
+          image: docker.io/library/memcached:1.6.45-alpine
+          args: ["-m", "64"]
+          ports:
+            - name: memcache
+              containerPort: 11211
+              protocol: TCP
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          readinessProbe:
+            tcpSocket:
+              port: 11211
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: 80Mi
+              cpu: 10m
+            limits:
+              memory: 128Mi
+              cpu: 250m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openproject-memcached
+  labels:
+    app: openproject-memcached
+spec:
+  type: ClusterIP
+  ports:
+    - name: memcache
+      port: 11211
+      targetPort: 11211
+      protocol: TCP
+  selector:
+    app: openproject-memcached

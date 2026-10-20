@@ -1,12 +1,10 @@
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: openproject
+  name: openproject-seeder
 spec:
   template:
     metadata:
       labels:
-        policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: optcp-cloud.openproject.postgres
-        policy.prplanit.com/cap.oidc: "true"

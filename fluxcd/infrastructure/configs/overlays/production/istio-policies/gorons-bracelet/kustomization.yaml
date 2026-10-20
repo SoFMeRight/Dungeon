@@ -10,6 +10,7 @@ resources:
   - allow-webhook-mariadb-operator.yaml
   - allow-harbor-to-rgw.yaml
   - allow-reactive-resume-to-rgw.yaml
+  - allow-openproject-to-rgw.yaml
   - allow-loki-to-rgw.yaml
   - allow-renovate-to-rgw.yaml
   - allow-matrix-synapse-to-rgw.yaml

@@ -10,6 +10,7 @@ resources:
   - allow-openproject-to-openproject-postgres.yaml
   - allow-leantime-postgres-replication.yaml
   - allow-openproject-postgres-replication.yaml
+  - allow-openproject-to-openproject-memcached.yaml
   - allow-nextcloud-collabora-to-nextcloud.yaml
   - allow-nextcloud-postgres-replication.yaml
   - allow-nextcloud-redis-intra-cluster.yaml

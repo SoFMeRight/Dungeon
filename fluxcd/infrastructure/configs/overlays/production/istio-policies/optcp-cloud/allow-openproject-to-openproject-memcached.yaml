@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-openproject-to-openproject-memcached
+spec:
+  selector:
+    matchLabels:
+      app: openproject-memcached
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/openproject
+      to:
+        - operation:
+            ports: ["11211"]

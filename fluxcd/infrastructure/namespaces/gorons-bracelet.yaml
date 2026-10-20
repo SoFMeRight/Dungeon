@@ -3,6 +3,7 @@ kind: Namespace
 metadata:
   name: gorons-bracelet
   labels:
+    tenant: optcp
     istio.io/dataplane-mode: ambient
     pod-security.kubernetes.io/enforce: privileged
     pod-security.kubernetes.io/enforce-version: "latest"

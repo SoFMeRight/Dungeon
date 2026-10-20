@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-openproject-to-memcached
+spec:
+  description: >-
+    Allow the OpenProject web and worker pods to reach openproject-memcached on 11211/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: openproject-memcached
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: openproject
+      toPorts:
+        - ports:
+            - port: "11211"
+              protocol: TCP
