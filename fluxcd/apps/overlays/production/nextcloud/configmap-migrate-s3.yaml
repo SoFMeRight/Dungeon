@@ -70,7 +70,7 @@ data:
     function file_rows(\OCP\IDBConnection $db, array $storages, string $datadir): \Generator {
       $in = implode(',', array_map('intval', array_keys($storages)));
       $q = $db->executeQuery(
-        "SELECT f.fileid, f.storage, f.path, f.size, m.mimetype FROM *PREFIX*filecache f
+        "SELECT f.fileid, f.storage, f.path, f.path_hash, f.size, m.mimetype FROM *PREFIX*filecache f
          JOIN *PREFIX*mimetypes m ON m.id = f.mimetype
          WHERE f.storage IN ($in) AND m.mimetype <> 'httpd/unix-directory' ORDER BY f.fileid");
       while ($r = $q->fetch()) {
@@ -145,7 +145,8 @@ data:
     // A root-storage (appdata) row whose file is gone is removed through Nextcloud's file cache
     // (Cache::remove, what the scanner calls for a missing file; scanFile itself skips these
     // paths at verifyPath without an error), as files:scan does for homes. Avatars,
-    // previews and calendar icons there are regenerated on demand.
+    // previews and calendar icons there are regenerated on demand. A row whose path_hash does not
+    // match its path cannot be found by path at all, so it is removed by fileid.
     $rootCache = (new \OC\Files\Storage\Local(['datadir' => $datadir]))->getCache();
     $files = [];
     $problems = [];
@@ -158,6 +159,13 @@ data:
         }
         $found = null;
         if ($storages[(int)$r['storage']] === null) {
+          if ($r['path_hash'] !== md5($r['path'])) {
+            // path_hash does not match the path: no lookup by path can reach this row.
+            $db->executeStatement('DELETE FROM *PREFIX*filecache_extended WHERE fileid = ?', [(int)$r['fileid']]);
+            $db->executeStatement('DELETE FROM *PREFIX*filecache WHERE fileid = ?', [(int)$r['fileid']]);
+            out("unreachable: no file for {$r['fileid']} {$r['local']}, and its path_hash does not match its path; removed by fileid");
+            continue;
+          }
           $found = $rootCache->get($r['path']) !== false;
           $rootCache->remove($r['path']);
           $left = (int)$db->executeQuery('SELECT COUNT(*) FROM *PREFIX*filecache WHERE fileid = ?', [(int)$r['fileid']])->fetchOne();
