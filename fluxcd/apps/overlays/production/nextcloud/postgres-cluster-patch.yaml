@@ -2,6 +2,9 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: nextcloud-postgres
+  # Kept when the nextcloud overlay moves to optcp-cloud: hibernated, it is the rollback copy.
+  annotations:
+    kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
   # Shutdown has to fit the node's grace budget: 150s total, 30s reserved for
   # critical pods, so 120s for ordinary ones. Postgres does not checkpoint until
