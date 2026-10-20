@@ -26,6 +26,14 @@ data:
         array('path' => '/var/www/html/custom_apps', 'url' => '/custom_apps', 'writable' => false),
       ),
       'appstoreenabled' => false,
+      // Redis as the instance uses it: file events (notify_push) publish to it during the scan.
+      'memcache.distributed' => '\\OC\\Memcache\\Redis',
+      'memcache.locking' => '\\OC\\Memcache\\Redis',
+      'redis' => array(
+        'host' => getenv('REDIS_HOST'),
+        'port' => 6379,
+        'password' => getenv('REDIS_HOST_PASSWORD'),
+      ),
       'log_type' => 'errorlog',
       'loglevel' => 2,
     );

@@ -11,11 +11,13 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: "061068a0fe8d100d"   # sha256 of the two ConfigMaps; a change replaces the Job
+        checksum/config: "fb120810f0172de2"   # sha256 of the two ConfigMaps; a change replaces the Job
       labels:
         app: nextcloud-migrate-s3
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: optcp-cloud.nextcloud.postgres
+        policy.prplanit.com/cap.redis: "true"
+        policy.prplanit.com/access-scope-redis: optcp-cloud.nextcloud.redis
     spec:
       serviceAccountName: nextcloud
       restartPolicy: Never
@@ -57,6 +59,13 @@ spec:
                 secretKeyRef:
                   name: nextcloud-secrets
                   key: POSTGRES_PASSWORD
+            - name: REDIS_HOST
+              value: nextcloud-redis-master
+            - name: REDIS_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secrets
+                  key: REDIS_HOST_PASSWORD
             - name: S3_BUCKET
               value: nextcloud
             - name: S3_KEY
@@ -126,6 +135,13 @@ spec:
                 secretKeyRef:
                   name: nextcloud-secrets
                   key: POSTGRES_PASSWORD
+            - name: REDIS_HOST
+              value: nextcloud-redis-master
+            - name: REDIS_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-secrets
+                  key: REDIS_HOST_PASSWORD
             - name: S3_BUCKET
               value: nextcloud
             - name: S3_KEY
