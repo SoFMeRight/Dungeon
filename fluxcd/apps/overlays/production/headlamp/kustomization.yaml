@@ -14,6 +14,7 @@ images:
     newTag: v0.45.0
   - name: docker.io/hlhd/ansible
     newTag: v2.21.5
+    digest: sha256:9130d35313d7117085b015d2ef6708436377f09ab16dfe4933a76fcc91f2b0f2
 patches:
   - path: statefulset-patch.yaml
     target:

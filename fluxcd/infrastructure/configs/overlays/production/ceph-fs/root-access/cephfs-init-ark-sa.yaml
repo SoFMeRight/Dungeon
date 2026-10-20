@@ -20,7 +20,7 @@ spec:
           type: RuntimeDefault
       initContainers:
         - name: setup-nvme
-          image: ghcr.io/homelabhd/ansible:v2.21.5
+          image: ghcr.io/homelabhd/ansible:v2.21.5@sha256:9130d35313d7117085b015d2ef6708436377f09ab16dfe4933a76fcc91f2b0f2
           command:
             - ansible-playbook
             - /scripts/cephfs-init-rootpaths.yml
@@ -52,7 +52,7 @@ spec:
             - name: tmp
               mountPath: /tmp
         - name: setup-hdd
-          image: ghcr.io/homelabhd/ansible:v2.21.5
+          image: ghcr.io/homelabhd/ansible:v2.21.5@sha256:9130d35313d7117085b015d2ef6708436377f09ab16dfe4933a76fcc91f2b0f2
           command:
             - ansible-playbook
             - /scripts/cephfs-init-rootpaths.yml
@@ -85,7 +85,7 @@ spec:
               mountPath: /tmp
       containers:
         - name: complete
-          image: ghcr.io/homelabhd/ansible:v2.21.5
+          image: ghcr.io/homelabhd/ansible:v2.21.5@sha256:9130d35313d7117085b015d2ef6708436377f09ab16dfe4933a76fcc91f2b0f2
           command:
             - echo
             - "ARK SA CephFS initialization complete"
