@@ -53,6 +53,12 @@ data:
     function fail(string $m): never { fwrite(STDERR, date('H:i:s ') . "ABORT: $m\n"); exit(1); }
     function gib(int $b): string { return sprintf('%.2f GiB', $b / 1024 ** 3); }
 
+    // Nextcloud's handler logs an uncaught error and exits 0; the Job must stop instead.
+    set_exception_handler(function (\Throwable $e): void {
+      fwrite(STDERR, date('H:i:s ') . 'ABORT: ' . $e . "\n");
+      exit(1);
+    });
+
     // The objectstore arguments, read from the same file the instance is switched to.
     function objectstore_arguments(): array {
       $CONFIG = [];
@@ -79,8 +85,8 @@ data:
     <?php
     require __DIR__ . '/common.php';
 
-    $config = \OC::$server->getSystemConfig();
-    if ($config->getValue('objectstore') !== null) {
+    $config = \OC::$server->get(\OC\SystemConfig::class);
+    if ($config->getValue('objectstore', null) !== null) {
       fail('objectstore is already configured; this runs against the local layout only');
     }
     $datadir = rtrim((string)$config->getValue('datadirectory'), '/');
@@ -224,14 +230,14 @@ data:
     // Nextcloud's filesystem and compares its md5 with the local copy.
     require __DIR__ . '/common.php';
 
-    $config = \OC::$server->getSystemConfig();
-    if ($config->getValue('objectstore') === null) {
+    $config = \OC::$server->get(\OC\SystemConfig::class);
+    if ($config->getValue('objectstore', null) === null) {
       fail('objectstore is not configured');
     }
     $datadir = rtrim((string)$config->getValue('datadirectory'), '/');
     $bucket = $config->getValue('objectstore')['arguments']['bucket'];
     $db = \OC::$server->get(\OCP\IDBConnection::class);
-    $rootFolder = \OC::$server->getRootFolder();
+    $rootFolder = \OC::$server->get(\OCP\Files\IRootFolder::class);
 
     $storages = [];
     foreach ($db->executeQuery('SELECT numeric_id, id FROM *PREFIX*storages')->fetchAll() as $r) {

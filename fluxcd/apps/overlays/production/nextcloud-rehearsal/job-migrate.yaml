@@ -11,7 +11,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: "c52858e71ab6efc3"   # sha256 of the two ConfigMaps; a change replaces the Job
+        checksum/config: "078365ab036af5c3"   # sha256 of the two ConfigMaps; a change replaces the Job
       labels:
         app: nextcloud-rehearsal
         policy.prplanit.com/cap.postgres: "true"
