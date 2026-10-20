@@ -106,6 +106,15 @@ spec:
           path "arbitorium/metadata/*" {
             capabilities = ["read", "list"]
           }
+      # Tenant policy (audits/Secret-Storage.md): reads only the optcp mount.
+      - name: external-secrets-optcp
+        rules: |
+          path "optcp/data/*" {
+            capabilities = ["read", "list"]
+          }
+          path "optcp/metadata/*" {
+            capabilities = ["read", "list"]
+          }
       - name: zitadel-provisioner
         rules: |
           path "zeldas-letter/data/apps/zitadel" {
@@ -162,6 +171,11 @@ spec:
             bound_service_account_names: ["external-secrets-vault"]
             bound_service_account_namespaces: ["zeldas-lullaby"]
             policies: ["external-secrets"]
+            ttl: 24h
+          - name: external-secrets-optcp
+            bound_service_account_names: ["external-secrets-vault"]
+            bound_service_account_namespaces: ["zeldas-lullaby"]
+            policies: ["external-secrets-optcp"]
             ttl: 24h
           - name: zitadel-vault-sync
             bound_service_account_names: ["zitadel"]
@@ -229,6 +243,11 @@ spec:
       - path: arbitorium
         type: kv
         description: The house — personal-sensitive, home automation and household amenity secrets
+        options:
+          version: 2
+      - path: optcp
+        type: kv
+        description: OpTCP tenant — infrastructure and services shared by business and home, laid out as apps/<app>/<issuer>
         options:
           version: 2
       # SSH client-cert signer — Boundary brokers short-lived certs for access to

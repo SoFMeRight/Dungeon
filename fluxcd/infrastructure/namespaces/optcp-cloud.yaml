@@ -4,6 +4,7 @@ metadata:
   name: optcp-cloud
   labels:
     name: optcp-cloud
+    tenant: optcp                          # openbao-optcp ClusterSecretStore condition
     cr-pcfae-pull-secret: "enabled"
     docker-io-pull-secret: "enabled"
     istio.io/dataplane-mode: ambient
