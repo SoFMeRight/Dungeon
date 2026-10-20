@@ -47,6 +47,7 @@ spec:
               cp -a /var/www/html/storage/. /seed/storage/
               cp -a /var/www/html/bootstrap/cache/. /seed/bootstrap-cache/
               cp -a /var/www/html/app/Plugins/. /seed/plugins/
+              cp -a /var/lib/nginx/. /seed/nginx-lib/
               mkdir -p /seed/log/nginx /seed/log/supervisor
           volumeMounts:
             - name: storage
@@ -57,6 +58,8 @@ spec:
               mountPath: /seed/plugins
             - name: log
               mountPath: /seed/log
+            - name: nginx-lib
+              mountPath: /seed/nginx-lib
         - name: wait-for-db
           image: docker.io/busybox:1.38
           securityContext:
