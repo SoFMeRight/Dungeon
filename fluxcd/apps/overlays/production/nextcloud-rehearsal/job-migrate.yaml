@@ -11,7 +11,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: "078365ab036af5c3"   # sha256 of the two ConfigMaps; a change replaces the Job
+        checksum/config: "a6a980db438cd6bd"   # sha256 of the two ConfigMaps; a change replaces the Job
       labels:
         app: nextcloud-rehearsal
         policy.prplanit.com/cap.postgres: "true"
@@ -59,6 +59,8 @@ spec:
                   key: password
             - name: S3_BUCKET
               value: nextcloud-rehearsal
+            - name: REHEARSAL
+              value: "1"
             - name: S3_KEY
               valueFrom:
                 secretKeyRef:
@@ -132,6 +134,8 @@ spec:
                   key: password
             - name: S3_BUCKET
               value: nextcloud-rehearsal
+            - name: REHEARSAL
+              value: "1"
             - name: S3_KEY
               valueFrom:
                 secretKeyRef:

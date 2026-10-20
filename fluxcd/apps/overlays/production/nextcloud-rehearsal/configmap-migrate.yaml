@@ -139,12 +139,18 @@ data:
       }
     }
 
-    // Every file row must match the disk before anything is copied.
+    // Every file row must match the disk before anything is copied. REHEARSAL=1 (read-only
+    // data, so occ files:scan cannot reconcile the homes) reports rows whose file is gone
+    // and leaves them out; a size mismatch still aborts.
     $files = [];
     $problems = [];
     $total = 0;
     foreach (file_rows($db, $storages, $datadir) as $r) {
       if (!is_file($r['local'])) {
+        if (getenv('REHEARSAL') === '1') {
+          out("rehearsal: no file for {$r['fileid']} {$r['local']}, left out");
+          continue;
+        }
         $problems[] = "missing {$r['fileid']} {$r['local']}";
       } elseif (($size = filesize($r['local'])) !== (int)$r['size']) {
         $problems[] = "size    {$r['fileid']} {$r['local']} disk=$size cache={$r['size']}";
@@ -266,6 +272,9 @@ data:
     $bytes = 0;
     $start = microtime(true);
     foreach (file_rows($db, $storages, $datadir) as $r) {
+      if (getenv('REHEARSAL') === '1' && !is_file($r['local'])) {
+        continue;
+      }
       $uid = $storages[(int)$r['storage']];
       $node = $rootFolder->get($uid === null ? "/{$r['path']}" : "/$uid/{$r['path']}");
       if (!$node->getStorage()->instanceOfStorage(\OC\Files\ObjectStore\ObjectStoreStorage::class)) {
