@@ -11,8 +11,8 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/temple-of-time/sa/nextcloud-redis
-              - cluster.local/ns/temple-of-time/sa/nextcloud-sentinel
+              - cluster.local/ns/optcp-cloud/sa/nextcloud-redis
+              - cluster.local/ns/optcp-cloud/sa/nextcloud-sentinel
       to:
         - operation:
             ports: ["6379"]
@@ -30,8 +30,8 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/temple-of-time/sa/nextcloud-sentinel
-              - cluster.local/ns/temple-of-time/sa/nextcloud-redis
+              - cluster.local/ns/optcp-cloud/sa/nextcloud-sentinel
+              - cluster.local/ns/optcp-cloud/sa/nextcloud-redis
       to:
         - operation:
             ports: ["26379"]

@@ -11,8 +11,8 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/temple-of-time/sa/nextcloud
-              - cluster.local/ns/temple-of-time/sa/nextcloud-whiteboard
+              - cluster.local/ns/optcp-cloud/sa/nextcloud
+              - cluster.local/ns/optcp-cloud/sa/nextcloud-whiteboard
       to:
         - operation:
             ports: ["6379"]

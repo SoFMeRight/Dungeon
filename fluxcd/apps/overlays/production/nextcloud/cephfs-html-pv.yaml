@@ -13,7 +13,7 @@ spec:
     apiVersion: v1
     kind: PersistentVolumeClaim
     name: nextcloud-html
-    namespace: temple-of-time
+    namespace: optcp-cloud
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
     nodeStageSecretRef:

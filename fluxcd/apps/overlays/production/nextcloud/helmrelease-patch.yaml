@@ -12,9 +12,9 @@ spec:
       policy.prplanit.com/ingress: "true"
       policy.prplanit.com/cap.oidc: "true"
       policy.prplanit.com/cap.postgres: "true"
-      policy.prplanit.com/access-scope-postgres: temple-of-time.nextcloud.postgres
+      policy.prplanit.com/access-scope-postgres: optcp-cloud.nextcloud.postgres
       policy.prplanit.com/cap.redis: "true"
-      policy.prplanit.com/access-scope-redis: temple-of-time.nextcloud.redis
+      policy.prplanit.com/access-scope-redis: optcp-cloud.nextcloud.redis
 
     image:
       # renovate: datasource=docker depName=library/nextcloud
@@ -40,7 +40,7 @@ spec:
         - ncloud.optcp.com
         # In-cluster host Collabora's WOPI callback connects to (wopi_callback_url below);
         # only resolvable/reachable in-mesh, so nextcloud must trust it as a valid domain.
-        - nextcloud.temple-of-time.svc.cluster.local
+        - nextcloud.optcp-cloud.svc.cluster.local
 
       mail:
         enabled: true
@@ -51,6 +51,23 @@ spec:
           secure: tls
           port: 587
           authtype: LOGIN
+
+      # Primary storage on Ceph RGW, path-style over the in-cluster service; the bucket's
+      # key comes from optcp/apps/nextcloud/s3-optcp via the nextcloud-s3 Secret.
+      objectStore:
+        s3:
+          enabled: true
+          host: ceph-rgw.gorons-bracelet.svc.cluster.local
+          ssl: false
+          port: "80"
+          region: us-east-1
+          bucket: nextcloud
+          usePathStyle: true
+          autoCreate: false
+          existingSecret: nextcloud-s3
+          secretKeys:
+            accessKey: s3-access-key
+            secretKey: s3-secret-key
 
       extraEnv:
         - name: TRUSTED_PROXIES
@@ -136,8 +153,8 @@ spec:
           # persisted into config.php: with the OVERWRITEPROTOCOL env removed above, the scheme
           # must come from X-Forwarded-Proto (else internal coolwsd preset URLs come out https and
           # break document loading). All idempotent.
-          php /var/www/html/occ config:app:set richdocuments wopi_callback_url --value "http://nextcloud.temple-of-time.svc.cluster.local" || true
-          php /var/www/html/occ config:system:set trusted_domains 10 --value "nextcloud.temple-of-time.svc.cluster.local" || true
+          php /var/www/html/occ config:app:set richdocuments wopi_callback_url --value "http://nextcloud.optcp-cloud.svc.cluster.local" || true
+          php /var/www/html/occ config:system:set trusted_domains 10 --value "nextcloud.optcp-cloud.svc.cluster.local" || true
           php /var/www/html/occ config:system:delete overwriteprotocol || true
 
       strategy:
@@ -297,7 +314,7 @@ spec:
           # coolwsd validates the WOPISrc host; with wopi_callback_url now pointing at the
           # in-cluster service, that host must be an accepted WOPI host or it self-rejects
           # ("Unauthorized WOPI host").
-          - host: "http://nextcloud.temple-of-time.svc.cluster.local:80"
+          - host: "http://nextcloud.optcp-cloud.svc.cluster.local:80"
         server_name: ncloud.optcp.com
         extra_params: "--o:ssl.enable=false --o:ssl.termination=true"
       securityContext:

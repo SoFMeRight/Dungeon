@@ -84,7 +84,7 @@ spec:
             - "sabnzbd-*"
             - "thelounge-*"
       # temple-of-time — appflowy web/admin (NOT cloud/ai, which are hardened), calibre-web LSIO,
-      # immich, kimai/nextcloud apache + sidecars, linkwarden root, photoprism/plex vendor, DBs.
+      # immich, kimai apache + sidecars, linkwarden root, photoprism/plex vendor, DBs.
       - resources:
           kinds: [Pod]
           namespaces: [temple-of-time]
@@ -95,12 +95,16 @@ spec:
             - "immich-*"
             - "kimai-*"
             - "linkwarden-*"
-            - "nextcloud-*"
             - "open-webui-*"
             - "penpot-frontend-*"
             - "photoprism-*"
             - "plex-*"
             - "shlink-db-*"
+      # optcp-cloud — nextcloud apache + sidecars
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-cloud]
+          names: ["nextcloud-*"]
       # tingle-tuner — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp), apache
       # (hrconvert2). searxng is hardened.
       - resources:

@@ -18,7 +18,7 @@ spec:
               - cluster.local/ns/hyrule-castle/sa/harbor-postgres
               - cluster.local/ns/lost-woods/sa/homarr-postgres
               - cluster.local/ns/temple-of-time/sa/appflowy-postgres
-              - cluster.local/ns/temple-of-time/sa/nextcloud-postgres
+              - cluster.local/ns/optcp-cloud/sa/nextcloud-postgres
               - cluster.local/ns/temple-of-time/sa/open-webui-postgres
               - cluster.local/ns/optcp-cloud/sa/leantime-postgres
               - cluster.local/ns/optcp-cloud/sa/nextcloud-rehearsal-postgres

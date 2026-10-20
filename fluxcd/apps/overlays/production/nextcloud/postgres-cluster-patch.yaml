@@ -35,7 +35,7 @@ spec:
     labels:
       policy.prplanit.com/cnpg: "managed"
       policy.prplanit.com/access-class: postgres
-      policy.prplanit.com/service-scope: temple-of-time.nextcloud.postgres
+      policy.prplanit.com/service-scope: optcp-cloud.nextcloud.postgres
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 

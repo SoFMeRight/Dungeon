@@ -58,5 +58,5 @@ spec:
       # harbor-proxy-cache all hardened directly — no longer excepted here.)
       - resources:
           kinds: [Pod]
-          namespaces: [temple-of-time]
+          namespaces: [optcp-cloud]
           names: ["nextcloud-collabora-*"]

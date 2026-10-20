@@ -81,7 +81,7 @@ spec:
             - "sabnzbd-*"
             - "thelounge-*"
       # temple-of-time — appflowy web/admin (entrypoint sed-writes root-owned /app), calibre-web LSIO,
-      # kimai/nextcloud apache-root(+ their cronjobs/sidecars), linkwarden (deliberately root), plex s6,
+      # kimai apache-root(+ its cronjobs/sidecars), linkwarden (deliberately root), plex s6,
       # shlink-db LSIO mariadb, matrix-turn (STUNner dataplane;
       # inherits root from the shared stunner-hardened Dataplane, which NetBird's :3478 requires.
       # This gateway listens on 3479 and would run unprivileged, but the Dataplane is
@@ -90,7 +90,12 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [temple-of-time]
-          names: ["appflowy-admin-frontend-*", "appflowy-web-*", "calibre-web-*", "kimai-*", "linkwarden-*", "matrix-turn-*", "nextcloud-*", "plex-*", "shlink-db-*"]
+          names: ["appflowy-admin-frontend-*", "appflowy-web-*", "calibre-web-*", "kimai-*", "linkwarden-*", "matrix-turn-*", "plex-*", "shlink-db-*"]
+      # optcp-cloud — nextcloud apache-root (+ its cron/notify-push sidecars, collabora, clamav)
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-cloud]
+          names: ["nextcloud-*"]
       # tingle-tuner — faster-whisper LSIO, hrconvert2 apache-root, stable-diffusion-webui ai-dock root
       - resources:
           kinds: [Pod]

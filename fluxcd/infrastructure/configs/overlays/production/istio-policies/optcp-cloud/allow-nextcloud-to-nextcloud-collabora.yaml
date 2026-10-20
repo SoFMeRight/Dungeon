@@ -12,7 +12,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/temple-of-time/sa/nextcloud
+              - cluster.local/ns/optcp-cloud/sa/nextcloud
       to:
         - operation:
             ports: ["9980"]
