@@ -8,7 +8,7 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.mariadb: "true"
-        policy.prplanit.com/access-scope-mariadb: temple-of-time.leantime.mariadb
+        policy.prplanit.com/access-scope-mariadb: optcp-cloud.leantime.mariadb
         policy.prplanit.com/cap.oidc: "true"
     spec:
       containers:

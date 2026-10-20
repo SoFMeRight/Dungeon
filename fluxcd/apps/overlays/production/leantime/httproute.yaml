@@ -4,7 +4,7 @@ metadata:
   name: leantime
   annotations:
     gatus.home-operations.com/endpoint: |
-      group: "Content & Media (Temple of Time🏛️)"
+      group: "Cloud & Collaboration (OpTCP)"
 spec:
   parentRefs:
     - name: phloem-gateway

@@ -1,4 +1,4 @@
-namespace: temple-of-time
+namespace: optcp-cloud
 resources:
   - ../../../base/leantime
   - httproute.yaml

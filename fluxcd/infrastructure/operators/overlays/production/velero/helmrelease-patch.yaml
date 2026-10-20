@@ -113,6 +113,8 @@ spec:
             - zeldas-lullaby
             # Archival/Content Management & Media Servers
             - temple-of-time
+            # Cloud & collaboration (namespace plan rev1, group Y/Z)
+            - optcp-cloud
             # Discovery & Dashboards
             - lost-woods
             # Monitoring services

@@ -7,6 +7,7 @@ resources:
   - gossip-stone.yaml
   - lost-woods.yaml
   - temple-of-time.yaml
+  - optcp-cloud.yaml
   - fairy-bottle.yaml
   - gorons-bracelet.yaml
   - arylls-lookout.yaml

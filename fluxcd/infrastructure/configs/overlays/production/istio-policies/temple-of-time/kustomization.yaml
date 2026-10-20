@@ -28,7 +28,6 @@ resources:
   - allow-photoprism-to-photoprism-mariadb.yaml
   - allow-ghost-to-ghost-mysql.yaml
   - allow-kimai-to-kimai-mariadb.yaml
-  - allow-leantime-to-leantime-mariadb.yaml
   - allow-joplin-app-to-joplin-postgres.yaml
   - allow-shlink-app-to-shlink-db.yaml
   - allow-shlink-web-client-to-shlink-app.yaml

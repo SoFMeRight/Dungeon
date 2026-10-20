@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/temple-of-time/sa/leantime
+              - cluster.local/ns/optcp-cloud/sa/leantime
       to:
         - operation:
             ports: ["3306"]

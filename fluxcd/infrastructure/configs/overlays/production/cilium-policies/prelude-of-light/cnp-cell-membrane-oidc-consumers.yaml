@@ -27,6 +27,9 @@ spec:
             k8s:io.kubernetes.pod.namespace: temple-of-time
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-cloud
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: pedestal-of-time
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
