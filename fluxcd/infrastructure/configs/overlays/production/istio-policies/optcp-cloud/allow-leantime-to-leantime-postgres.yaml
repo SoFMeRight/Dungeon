@@ -1,11 +1,11 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-leantime-to-leantime-mariadb
+  name: allow-leantime-to-leantime-postgres
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/instance: leantime-mariadb
+      cnpg.io/cluster: leantime-postgres
   action: ALLOW
   rules:
     - from:
@@ -14,4 +14,4 @@ spec:
               - cluster.local/ns/optcp-cloud/sa/leantime
       to:
         - operation:
-            ports: ["3306"]
+            ports: ["5432"]

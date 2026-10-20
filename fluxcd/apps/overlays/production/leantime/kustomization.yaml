@@ -3,7 +3,8 @@ resources:
   - ../../../base/leantime
   - httproute.yaml
 patches:
-  - path: mariadb-patch.yaml
+  - path: postgres-cluster-patch.yaml
+  - path: objectstore-postgres-patch.yaml
   - path: statefulset-patch.yaml
   - path: service-leantime-ingress-patch.yaml
     target:

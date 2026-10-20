@@ -7,8 +7,8 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
-        policy.prplanit.com/cap.mariadb: "true"
-        policy.prplanit.com/access-scope-mariadb: optcp-cloud.leantime.mariadb
+        policy.prplanit.com/cap.postgres: "true"
+        policy.prplanit.com/access-scope-postgres: optcp-cloud.leantime.postgres
         policy.prplanit.com/cap.oidc: "true"
     spec:
       containers:

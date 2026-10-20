@@ -20,15 +20,21 @@ spec:
       serviceAccountName: leantime
       # Leantime never calls the Kubernetes API; a compromised pod gets no cluster credential.
       automountServiceAccountToken: false
+      # The image runs as www-data (uid 1000, group 0 bits mirrored for arbitrary uids).
       securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       initContainers:
-        - name: wait-for-db
-          image: docker.io/busybox:1.38
+        # Read-only root: the image's writable trees are copied into emptyDirs first, so the
+        # mounts below never hide what the image ships (compiled caches, bundled plugins).
+        - name: seed-writable
+          image: docker.io/leantime/leantime:3.12.0
           securityContext:
-            seccompProfile:
-              type: RuntimeDefault
+            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
             capabilities:
               drop:
@@ -37,59 +43,68 @@ spec:
             - sh
             - -c
             - |
-              until nc -z -v -w5 leantime-mariadb 3306; do
-                echo "Waiting for MariaDB..."
+              set -e
+              cp -a /var/www/html/storage/. /seed/storage/
+              cp -a /var/www/html/bootstrap/cache/. /seed/bootstrap-cache/
+              cp -a /var/www/html/app/Plugins/. /seed/plugins/
+              mkdir -p /seed/log/nginx /seed/log/supervisor
+          volumeMounts:
+            - name: storage
+              mountPath: /seed/storage
+            - name: bootstrap-cache
+              mountPath: /seed/bootstrap-cache
+            - name: plugins
+              mountPath: /seed/plugins
+            - name: log
+              mountPath: /seed/log
+        - name: wait-for-db
+          image: docker.io/busybox:1.38
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z -v -w5 leantime-postgres-rw 5432; do
+                echo "Waiting for Postgres..."
                 sleep 5
               done
       containers:
         - name: leantime
           image: docker.io/leantime/leantime:3.12.0
-          # The image starts as root and drops to www-data for nginx/php-fpm, chowning its
-          # writable paths on start. Partial hardening as for kimai: drop ALL, keep the
-          # file-ownership and setuid caps that drop needs, seccomp, no privilege escalation.
           securityContext:
-            seccompProfile:
-              type: RuntimeDefault
+            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
             capabilities:
               drop:
                 - ALL
-              add:
-                - CHOWN
-                - DAC_OVERRIDE
-                - FOWNER
-                - SETUID
-                - SETGID
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
           env:
+            - name: LEAN_DB_DEFAULT_CONNECTION
+              value: pgsql
             - name: LEAN_DB_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: leantime-mariadb-connection
-                  key: host
+              value: leantime-postgres-rw
             - name: LEAN_DB_PORT
-              valueFrom:
-                secretKeyRef:
-                  name: leantime-mariadb-connection
-                  key: port
+              value: "5432"
+            - name: LEAN_DB_DATABASE
+              value: leantime
             - name: LEAN_DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: leantime-mariadb-connection
+                  name: leantime-postgres-credentials
                   key: username
             - name: LEAN_DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: leantime-mariadb-connection
+                  name: leantime-postgres-credentials
                   key: password
-            - name: LEAN_DB_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: leantime-mariadb-connection
-                  key: database
             - name: LEAN_SESSION_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -118,8 +133,20 @@ spec:
             - name: leantime-data
               mountPath: /var/www/html/public/userfiles
               subPath: public-userfiles
-            - name: logs
-              mountPath: /var/www/html/storage/logs
+            - name: storage
+              mountPath: /var/www/html/storage
+            - name: bootstrap-cache
+              mountPath: /var/www/html/bootstrap/cache
+            - name: plugins
+              mountPath: /var/www/html/app/Plugins
+            - name: log
+              mountPath: /var/log
+            - name: nginx-lib
+              mountPath: /var/lib/nginx
+            - name: run
+              mountPath: /run
+            - name: tmp
+              mountPath: /tmp
           readinessProbe:
             tcpSocket:
               port: http
@@ -132,9 +159,29 @@ spec:
             limits:
               cpu: 1000m
               memory: 512Mi
+      # Node-disk scratch (not tmpfs), each capped so logs or caches can never fill a node.
       volumes:
-        - name: logs
-          emptyDir: {}
+        - name: storage
+          emptyDir:
+            sizeLimit: 256Mi
+        - name: bootstrap-cache
+          emptyDir:
+            sizeLimit: 32Mi
+        - name: plugins
+          emptyDir:
+            sizeLimit: 128Mi
+        - name: log
+          emptyDir:
+            sizeLimit: 128Mi
+        - name: nginx-lib
+          emptyDir:
+            sizeLimit: 64Mi
+        - name: run
+          emptyDir:
+            sizeLimit: 8Mi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 256Mi
   volumeClaimTemplates:
     - metadata:
         name: leantime-data

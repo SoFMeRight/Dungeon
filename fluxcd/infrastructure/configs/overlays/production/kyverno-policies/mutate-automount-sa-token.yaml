@@ -78,6 +78,7 @@ spec:
               - nextcloud
               - nextcloud-postgres
               - open-webui-postgres
+              - leantime-postgres
               - training-dummy-postgres
               - bank-vaults-operator
               - external-secrets

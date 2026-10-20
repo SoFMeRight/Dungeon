@@ -5,4 +5,5 @@ resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
   - allow-gateway-ingress-phloem.yaml
-  - allow-leantime-to-leantime-mariadb.yaml
+  - allow-leantime-to-leantime-postgres.yaml
+  - allow-leantime-postgres-replication.yaml

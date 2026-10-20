@@ -373,6 +373,18 @@ configs:
               "List:optcp/dungeon/cnpg/nextcloud/*",
               "Tagging:optcp/dungeon/cnpg/nextcloud/*"
             ]
+          },
+          {
+            "name": "optcp-dungeon-cnpg-leantime",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_LEANTIME_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_LEANTIME_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp-dungeon-cnpg-leantime",
+              "Write:optcp-dungeon-cnpg-leantime",
+              "List:optcp-dungeon-cnpg-leantime",
+              "Tagging:optcp-dungeon-cnpg-leantime"
+            ]
           }
         ]
       }

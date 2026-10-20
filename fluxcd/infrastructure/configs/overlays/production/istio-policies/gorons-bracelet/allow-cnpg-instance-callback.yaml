@@ -20,6 +20,7 @@ spec:
               - cluster.local/ns/temple-of-time/sa/appflowy-postgres
               - cluster.local/ns/temple-of-time/sa/nextcloud-postgres
               - cluster.local/ns/temple-of-time/sa/open-webui-postgres
+              - cluster.local/ns/optcp-cloud/sa/leantime-postgres
               - cluster.local/ns/zeldas-lullaby/sa/netbird-postgres
               - cluster.local/ns/zeldas-lullaby/sa/vaultwarden-postgres
               - cluster.local/ns/zeldas-lullaby/sa/zitadel-postgres

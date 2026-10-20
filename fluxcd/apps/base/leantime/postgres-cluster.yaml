@@ -1,0 +1,28 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: leantime-postgres
+spec:
+  instances: PLACEHOLDER_INSTANCES
+  affinity:
+    podAntiAffinityType: required
+  postgresql:
+    parameters:
+      shared_buffers: "PLACEHOLDER_SHARED_BUFFERS"
+      max_connections: "PLACEHOLDER_MAX_CONNECTIONS"
+      wal_keep_size: "PLACEHOLDER_WAL_KEEP_SIZE"
+      max_slot_wal_keep_size: "PLACEHOLDER_MAX_SLOT_WAL_KEEP_SIZE"
+  bootstrap:
+    initdb:
+      database: leantime
+      owner: leantime
+      secret:
+        name: leantime-postgres-credentials
+  storage:
+    storageClass: PLACEHOLDER_STORAGE_CLASS
+    size: PLACEHOLDER_STORAGE_SIZE
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: leantime-postgres-store
