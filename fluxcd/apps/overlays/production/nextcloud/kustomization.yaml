@@ -8,6 +8,7 @@ resources:
   - httproute.yaml
   - cephfs-html-pv.yaml
   - externalsecret-postgres-backup.yaml
+  - externalsecret-s3.yaml
 
 patches:
   - path: helmrelease-patch.yaml
