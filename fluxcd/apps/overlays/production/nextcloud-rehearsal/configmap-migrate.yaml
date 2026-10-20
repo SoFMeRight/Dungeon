@@ -13,7 +13,7 @@ data:
   run.sh: |
     #!/bin/sh
     set -eu
-    occ() { php /var/www/html/occ "$@"; }
+    occ() { php /migrate/occ.php "$@"; }
     occ status
     occ files:scan --all
     occ files:scan-app-data
@@ -22,6 +22,25 @@ data:
     php /migrate/verify.php
     occ files:object:orphans
     occ status
+
+  occ.php: |
+    <?php
+    // The occ commands the migration needs, without occ's server check: that check
+    // requires a writable data directory, and this one is mounted read-only.
+    require_once '/var/www/html/lib/base.php';
+
+    \OC_App::loadApps();
+    $app = new \Symfony\Component\Console\Application('nextcloud-migrate');
+    $app->setAutoExit(false);
+    foreach ([
+      \OC\Core\Command\Status::class,
+      \OCA\Files\Command\Scan::class,
+      \OCA\Files\Command\ScanAppData::class,
+      \OCA\Files\Command\Object\Orphans::class,
+    ] as $command) {
+      $app->add(\OC::$server->get($command));
+    }
+    exit($app->run());
 
   common.php: |
     <?php

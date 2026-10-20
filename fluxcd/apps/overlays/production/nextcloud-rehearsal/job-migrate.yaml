@@ -10,6 +10,8 @@ spec:
   backoffLimit: 0
   template:
     metadata:
+      annotations:
+        checksum/config: "c936df6ee1fc3301"   # sha256 of the two ConfigMaps; a change replaces the Job
       labels:
         app: nextcloud-rehearsal
         policy.prplanit.com/cap.postgres: "true"
