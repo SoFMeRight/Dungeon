@@ -18,6 +18,7 @@ resources:
   - httproute-cell-membrane-precisionplanit-com-0.yaml
   - httproute-cell-membrane-prplanit-com-0.yaml
   - httproute-cell-membrane-prplanit-com-1.yaml
+  - httproute-phloem-optcp-com-0.yaml
   - httproute-phloem-prplanit-com-0.yaml
   - httproute-cell-membrane-sofmeright-com-0.yaml
   - httproute-cell-membrane-uni2-cc-0.yaml
