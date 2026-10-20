@@ -77,6 +77,19 @@ spec:
             - name: html
               mountPath: /var/www/html
               readOnly: true
+              subPath: html
+            - name: html
+              mountPath: /var/www/html/data
+              readOnly: true
+              subPath: data
+            - name: html
+              mountPath: /var/www/html/custom_apps
+              readOnly: true
+              subPath: custom_apps
+            - name: html
+              mountPath: /var/www/html/themes
+              readOnly: true
+              subPath: themes
             - name: config
               mountPath: /config
             - name: config-source
@@ -137,6 +150,19 @@ spec:
             - name: html
               mountPath: /var/www/html
               readOnly: true
+              subPath: html
+            - name: html
+              mountPath: /var/www/html/data
+              readOnly: true
+              subPath: data
+            - name: html
+              mountPath: /var/www/html/custom_apps
+              readOnly: true
+              subPath: custom_apps
+            - name: html
+              mountPath: /var/www/html/themes
+              readOnly: true
+              subPath: themes
             - name: config
               mountPath: /config
             - name: config-source

@@ -1,4 +1,5 @@
-# The live Nextcloud tree (code, config, data), read-only. The rehearsal reads the
+# The live Nextcloud volume, read-only; the Job mounts its html, data, custom_apps
+# and themes subPaths where the chart does. The rehearsal reads the
 # data directory at the path the database records (local::/var/www/html/data/).
 ---
 apiVersion: v1
