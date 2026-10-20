@@ -10,3 +10,7 @@ resources:
   - statefulset.yaml
   - externalsecret.yaml
   - service.yaml
+configMapGenerator:
+  - name: leantime-language
+    files:
+      - en-US.ini=language-en-US.ini

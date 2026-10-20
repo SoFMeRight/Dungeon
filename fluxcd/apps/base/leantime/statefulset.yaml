@@ -150,6 +150,10 @@ spec:
               mountPath: /run
             - name: tmp
               mountPath: /tmp
+            - name: language
+              mountPath: /var/www/html/custom/Language/en-US.ini
+              subPath: en-US.ini
+              readOnly: true
           readinessProbe:
             tcpSocket:
               port: http
@@ -185,6 +189,9 @@ spec:
         - name: tmp
           emptyDir:
             sizeLimit: 256Mi
+        - name: language
+          configMap:
+            name: leantime-language
   volumeClaimTemplates:
     - metadata:
         name: leantime-data
