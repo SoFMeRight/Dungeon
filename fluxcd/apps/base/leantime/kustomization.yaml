@@ -17,3 +17,13 @@ configMapGenerator:
     files:
       - patches/ReportEngine.php
       - patches/Goalcanvas.php
+  - name: leantime-theme-syseggplant
+    files:
+      - theme-syseggplant/theme.ini
+      - theme-syseggplant/light.css
+      - theme-syseggplant/dark.css
+      - theme-syseggplant/custom.css
+  - name: leantime-branding
+    files:
+      - branding/register.php
+      - branding/monofur.woff2

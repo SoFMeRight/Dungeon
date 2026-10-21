@@ -20,6 +20,10 @@ spec:
               value: "#74ecbe"
             - name: LEAN_SECONDARY_COLOR
               value: "#236144"
+            - name: LEAN_DEFAULT_THEME
+              value: "syseggplant"
+            - name: LEAN_PLUGINS
+              value: "OptcpBranding"
             - name: LEAN_OIDC_ENABLE
               value: "true"
             - name: LEAN_OIDC_PROVIDER_URL

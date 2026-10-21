@@ -1,0 +1,45 @@
+@import url("../../default/css/dark.css");
+
+/* html:root outranks the :root block Leantime writes inline for the chosen colour scheme. */
+html:root {
+  --primary-background: #310937;
+  --secondary-background: #3f1247;
+  --layered-background: #26062b;
+  --light-layered-background: rgba(38, 6, 43, .5);
+  --color-surface-page: #310937;
+  --color-surface-card: #3f1247;
+  --color-surface-inset: rgba(38, 6, 43, .7);
+  --neutral: rgba(116, 236, 190, .08);
+  --solid-neutral: #4a1854;
+  --neutral-background: rgba(38, 6, 43, .7);
+  --col-hover-bg: #4a1854;
+  --col-row-striped: rgba(38, 6, 43, .5);
+  --main-menu-link-hover-bg: #4a1854;
+  --main-border-color: rgba(116, 236, 190, .16);
+  --glass-background: rgba(38, 6, 43, .6);
+  --glass-border: 1px solid rgba(116, 236, 190, .12);
+
+  --primary-font-color: #74ecbe;
+  --secondary-font-color: #c9fbe8;
+  --main-titles-color: #c9fbe8;
+  --lt-color-gray-800: #74ecbe;
+  --color-ink: #c9fbe8;
+  --interactive-icon-color: #74ecbe;
+  --nav-link-color: #74ecbe;
+  --header-nav-link-color: #c9fbe8;
+  --tab-active-color: #c9fbe8;
+  --color-text-link: #74ecbe;
+
+  --accent1: #74ecbe;
+  --accent1-color: #310937;
+  --accent1-hover: #a6f5d8;
+  --accent2: #236144;
+  --accent2-color: #ffffff;
+  --accent2-hover: #2d7a56;
+  --focus-ring-color: #c9fbe8;
+  --main-action-hover-color: #310937;
+  --color-text-on-emphasis: #310937;
+  --header-gradient: linear-gradient(135deg, #26062b 20%, #3f1247 100%);
+  --element-gradient: linear-gradient(135deg, #236144 20%, #2d7a56 100%);
+  --nav-scrim: 0;
+}

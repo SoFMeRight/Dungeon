@@ -1,0 +1,13 @@
+/* Leantime hard-codes #555 on the top-level left-nav links */
+.leftmenu .nav-tabs.nav-stacked a {
+  color: var(--nav-link-color);
+}
+
+/* Sign-in / sign-out panel, in the scheme */
+.row .regLeft {
+  background: var(--layered-background);
+  color: var(--primary-font-color);
+}
+.row .regLeft .welcomeContent h1 {
+  color: var(--main-titles-color);
+}

@@ -1,0 +1,62 @@
+@import url("../../default/css/light.css");
+
+/* html:root outranks the :root block Leantime writes inline for the chosen colour scheme. */
+html:root {
+  --primary-background: #a6e3a1;
+  --secondary-background: #c4efc0;
+  --layered-background: #8fd68a;
+  --light-layered-background: rgba(143, 214, 138, .5);
+  --color-surface-page: #a6e3a1;
+  --color-surface-card: #c4efc0;
+  --color-surface-inset: rgba(143, 214, 138, .6);
+  --neutral: rgba(47, 28, 53, .08);
+  --solid-neutral: #b3e8ae;
+  --neutral-background: rgba(196, 239, 192, .7);
+  --col-hover-bg: #b3e8ae;
+  --col-row-striped: rgba(143, 214, 138, .35);
+  --main-border-color: rgba(47, 28, 53, .18);
+  --glass-background: rgba(196, 239, 192, .6);
+  --glass-border: 1px solid rgba(47, 28, 53, .12);
+
+  --primary-font-color: #2f1c35;
+  --secondary-font-color: #1c0f21;
+  --main-titles-color: #1c0f21;
+  --lt-color-gray-800: #2f1c35;
+  --color-ink: #1c0f21;
+  --interactive-icon-color: #2f1c35;
+  --nav-link-color: #2f1c35;
+  --header-nav-link-color: #c4efc0;
+  --main-menu-link-hover-bg: rgba(47, 28, 53, .08);
+  --main-menu-link-hover-color: #1c0f21;
+  --main-menu-link-active-color: #6b2a7d;
+  --tab-active-color: #1c0f21;
+  --color-text-link: #6b2a7d;
+
+  --accent1: #6b2a7d;
+  --accent1-color: #ffffff;
+  --accent1-hover: #2f1c35;
+  --accent2: #236144;
+  --accent2-color: #ffffff;
+  --accent2-hover: #2d7a56;
+  --focus-ring-color: #6b2a7d;
+  --main-action-hover-color: #ffffff;
+  --color-text-on-emphasis: #ffffff;
+  /* the gradient is the page ground behind everything (nav, hub pages), not just a bar */
+  --header-gradient: linear-gradient(135deg, #a6e3a1 20%, #8fd68a 100%);
+  --element-gradient: linear-gradient(135deg, #236144 20%, #2d7a56 100%);
+  --nav-scrim: 0;
+}
+
+/* The top bar is see-through glass by default, so the green ground bleeds into it. */
+.header {
+  background: #2f1c35;
+}
+.headmenu > li > a.active,
+.headmenu > li > a:hover {
+  background: rgba(196, 239, 192, .14);
+}
+/* project avatar chips sit on the green gradient, so they keep plum type */
+.headerinner .bigProjectSelector .projectAvatar .fa,
+.headmenu .projectselector .projectAvatar .fa {
+  color: #2f1c35;
+}

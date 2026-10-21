@@ -165,6 +165,17 @@ spec:
               mountPath: /var/www/html/app/Domain/Goalcanvas/Repositories/Goalcanvas.php
               subPath: Goalcanvas.php
               readOnly: true
+            - name: theme-syseggplant
+              mountPath: /var/www/html/public/theme/syseggplant
+              readOnly: true
+            - name: branding
+              mountPath: /var/www/html/app/Plugins/OptcpBranding/register.php
+              subPath: register.php
+              readOnly: true
+            - name: branding
+              mountPath: /var/www/html/public/dist/fonts/monofur.woff2
+              subPath: monofur.woff2
+              readOnly: true
           readinessProbe:
             tcpSocket:
               port: http
@@ -203,6 +214,22 @@ spec:
         - name: pg-patches
           configMap:
             name: leantime-pg-patches
+        # A theme is a folder of theme.ini plus css/<mode>.css; ConfigMap keys cannot hold the css/ level.
+        - name: theme-syseggplant
+          configMap:
+            name: leantime-theme-syseggplant
+            items:
+              - key: theme.ini
+                path: theme.ini
+              - key: light.css
+                path: css/light.css
+              - key: dark.css
+                path: css/dark.css
+              - key: custom.css
+                path: css/custom.css
+        - name: branding
+          configMap:
+            name: leantime-branding
   volumeClaimTemplates:
     - metadata:
         name: leantime-data
