@@ -325,6 +325,7 @@
             label: "{{ item.key }}"
 
     # Xenia writes its global config on first launch; until then there is nothing to converge.
+    # Only a differing value is rewritten, keeping the trailing comment Xenia saves on each line.
     - name: check for Xenia's global config
       ansible.builtin.stat:
         path: "{{ xenia_config }}"
@@ -336,14 +337,16 @@
         - name: output audio through SDL
           ansible.builtin.lineinfile:
             path: "{{ xenia_config }}"
-            regexp: '^apu = '
-            line: 'apu = "{{ xenia_apu }}"'
+            regexp: '^apu = (?!"{{ xenia_apu }}"(\s|$))\S+(.*)$'
+            line: 'apu = "{{ xenia_apu }}"\2'
+            backrefs: true
 
         - name: log warnings and errors only
           ansible.builtin.lineinfile:
             path: "{{ xenia_config }}"
-            regexp: '^log_level = '
-            line: 'log_level = {{ xenia_log_level }}'
+            regexp: '^log_level = (?!{{ xenia_log_level }}(\s|$))\S+(.*)$'
+            line: 'log_level = {{ xenia_log_level }}\2'
+            backrefs: true
 
 - name: load the ports' texture packs from the games share
   hosts: localhost
