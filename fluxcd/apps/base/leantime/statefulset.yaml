@@ -176,6 +176,11 @@ spec:
               mountPath: /var/www/html/public/dist/fonts/monofur.woff2
               subPath: monofur.woff2
               readOnly: true
+            # The theme picker card shows /dist/images/background-<theme>.png
+            - name: branding
+              mountPath: /var/www/html/public/dist/images/background-syseggplant.png
+              subPath: background-syseggplant.png
+              readOnly: true
           readinessProbe:
             tcpSocket:
               port: http

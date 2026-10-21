@@ -27,3 +27,4 @@ configMapGenerator:
     files:
       - branding/register.php
       - branding/monofur.woff2
+      - branding/background-syseggplant.png
