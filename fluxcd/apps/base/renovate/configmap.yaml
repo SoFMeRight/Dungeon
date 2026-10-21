@@ -505,6 +505,31 @@ data:
           "commitMessagePrefix": "chore(searxng):"
         },
         {
+          // OpenProject upgrades run one-way migrations and can unseat the enterprise
+          // initializer, so they never automerge and carry the upgrade checklist.
+          "matchPackageNames": ["**/openproject/openproject"],
+          "automerge": false,
+          "labels": ["upgrade-checklist"],
+          "prBodyNotes": [
+            "### ⚠️ OpenProject upgrade: read before merging",
+            "- **Database migrations are one-way.** Confirm a fresh `openproject-postgres` backup completed (CNPG `LastBackupSucceeded=True`) before merging.",
+            "- **Enterprise unlock:** `enterprise-features.rb` hooks `EnterpriseToken`. After the rollout, check that the unlock still reports `mcp_server` (SSO and MCP depend on it).",
+            "- The seeder Job runs `migrate` and `seed` once; watch it complete before relying on the new version."
+          ]
+        },
+        {
+          // Leantime's Postgres patches are checksum-pinned to one release, so a bump
+          // stops the pod at init until the patches are refreshed or dropped.
+          "matchPackageNames": ["**/leantime/leantime"],
+          "automerge": false,
+          "labels": ["upgrade-checklist"],
+          "prBodyNotes": [
+            "### ⚠️ Leantime upgrade: patches are pinned to 3.12.0",
+            "- The init container checks `ReportEngine.php` and `Goalcanvas.php` against 3.12.0 checksums, so this bump **will stop the pod at init** until the patches in `fluxcd/apps/base/leantime/patches/` are refreshed for the new version, or dropped if upstream fixed the Postgres queries.",
+            "- Confirm a fresh `leantime-postgres` backup before merging."
+          ]
+        },
+        {
           // HomeLabHD + PrPlanIT repos: dashboard-approval only, no automerge.
           "matchRepositories": ["HomeLabHD/**", "PrPlanIT/**"],
           "dependencyDashboardApproval": true,
