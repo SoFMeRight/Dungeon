@@ -90,6 +90,10 @@ spec:
               mountPath: /app/config/initializers/zz_enterprise_features.rb
               subPath: enterprise-features.rb
               readOnly: true
+            - name: initializers
+              mountPath: /app/config/initializers/zz_color_themes.rb
+              subPath: color-themes.rb
+              readOnly: true
           ports:
             - name: http
               containerPort: 8080

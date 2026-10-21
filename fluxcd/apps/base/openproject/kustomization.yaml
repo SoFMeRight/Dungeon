@@ -17,3 +17,4 @@ configMapGenerator:
   - name: openproject-initializers
     files:
       - enterprise-features.rb
+      - color-themes.rb
