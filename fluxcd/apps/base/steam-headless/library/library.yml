@@ -288,6 +288,12 @@
   gather_facts: false
   vars:
     xenia_data: "{{ lookup('ansible.builtin.env', 'HOME') }}/.local/share/Xenia"
+    xenia_config: "{{ xenia_data }}/xenia-canary.config.toml"
+    # The ALSA backend stops for good on one PipeWire stream error and the title hangs on its
+    # audio thread; SDL recovers.
+    xenia_apu: "sdl"
+    # Debug (3) floods journald, which drops the user session's PipeWire messages with it.
+    xenia_log_level: "1"
     # <TitleID>: TOML that Xenia Canary layers over its global config for that title only.
     xenia_title_configs:
       # Gears of War: the new XMA decoder outputs silence; the old one plays audio.
@@ -317,6 +323,27 @@
           loop: "{{ xenia_title_configs | dict2items }}"
           loop_control:
             label: "{{ item.key }}"
+
+    # Xenia writes its global config on first launch; until then there is nothing to converge.
+    - name: check for Xenia's global config
+      ansible.builtin.stat:
+        path: "{{ xenia_config }}"
+      register: _xenia_cfg
+
+    - name: converge Xenia's global settings
+      when: _xenia_cfg.stat.exists
+      block:
+        - name: output audio through SDL
+          ansible.builtin.lineinfile:
+            path: "{{ xenia_config }}"
+            regexp: '^apu = '
+            line: 'apu = "{{ xenia_apu }}"'
+
+        - name: log warnings and errors only
+          ansible.builtin.lineinfile:
+            path: "{{ xenia_config }}"
+            regexp: '^log_level = '
+            line: 'log_level = {{ xenia_log_level }}'
 
 - name: load the ports' texture packs from the games share
   hosts: localhost
