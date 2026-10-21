@@ -158,6 +158,15 @@ spec:
           php /var/www/html/occ config:app:set richdocuments wopi_callback_url --value "http://nextcloud.optcp-cloud.svc.cluster.local" || true
           php /var/www/html/occ config:system:set trusted_domains 10 --value "nextcloud.optcp-cloud.svc.cluster.local" || true
           php /var/www/html/occ config:system:delete overwriteprotocol || true
+          # Full-text search: the apps live in custom_apps on the html volume (installed once,
+          # enabled after); the platform and index settings are app-config, set every start.
+          # Document text is indexed in nextcloud-elasticsearch.
+          for app in fulltextsearch fulltextsearch_elasticsearch files_fulltextsearch; do
+            php /var/www/html/occ app:install "$app" >/dev/null 2>&1 || php /var/www/html/occ app:enable "$app" || true
+          done
+          php /var/www/html/occ fulltextsearch:configure '{"search_platform":"OCA\\FullTextSearch_Elasticsearch\\Platform\\ElasticSearchPlatform"}' || true
+          php /var/www/html/occ fulltextsearch_elasticsearch:configure '{"elastic_host":"http://nextcloud-elasticsearch:9200","elastic_index":"nextcloud"}' || true
+          php /var/www/html/occ files_fulltextsearch:configure '{"files_local":"1","files_pdf":"1","files_office":"1"}' || true
 
       strategy:
         type: RollingUpdate

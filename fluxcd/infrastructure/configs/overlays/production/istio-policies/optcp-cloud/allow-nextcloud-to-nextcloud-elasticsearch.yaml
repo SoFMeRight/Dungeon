@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-nextcloud-to-nextcloud-elasticsearch
+spec:
+  selector:
+    matchLabels:
+      app: nextcloud-elasticsearch
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/nextcloud
+      to:
+        - operation:
+            ports: ["9200"]
