@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-wikijs-sops-to-wikijs-sops-postgres
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: wikijs-sops-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/wikijs-sops
+      to:
+        - operation:
+            ports: ["5432"]

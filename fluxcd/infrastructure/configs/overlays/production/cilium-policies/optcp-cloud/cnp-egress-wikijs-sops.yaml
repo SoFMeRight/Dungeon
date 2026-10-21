@@ -1,0 +1,15 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-wikijs-sops-egress
+spec:
+  description: >-
+    Wiki.js SOPs egress: world for outbound mail and integrations, cluster for the
+    hairpin to the IdP (sso.prplanit.com via split-horizon DNS to the gateway).
+  endpointSelector:
+    matchLabels:
+      app: wikijs-sops
+  egress:
+    - toEntities:
+        - world
+        - cluster

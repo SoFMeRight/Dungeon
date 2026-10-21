@@ -80,6 +80,7 @@ spec:
               - open-webui-postgres
               - leantime-postgres
               - openproject-postgres
+              - wikijs-sops-postgres
               - training-dummy-postgres
               - bank-vaults-operator
               - external-secrets

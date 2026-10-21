@@ -1,0 +1,36 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: wikijs-sops-postgres
+spec:
+  smartShutdownTimeout: 10   # fits the node's graceful-shutdown budget
+  stopDelay: 60
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
+  enableSuperuserAccess: true
+  postgresql:
+    parameters:
+      shared_buffers: "128MB"
+      max_connections: "100"
+      wal_keep_size: "64MB"
+      max_slot_wal_keep_size: "160MB"   # 8% of the 2Gi PVC
+  storage:
+    storageClass: ceph-rbd
+    size: 2Gi
+  resources:
+    requests:
+      memory: "256Mi"   # >= shared_buffers
+      cpu: "50m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  inheritedMetadata:
+    annotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9187"
+    labels:
+      policy.prplanit.com/cnpg: "managed"
+      policy.prplanit.com/access-class: postgres
+      policy.prplanit.com/service-scope: optcp-cloud.wikijs-sops.postgres
+      policy.prplanit.com/cap.s3-nas: "true"
+      policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs

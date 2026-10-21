@@ -248,6 +248,8 @@ data:
           answer: 172.22.30.70
         - domain: projects.optcp.com
           answer: 172.22.30.70
+        - domain: sops.optcp.com
+          answer: 172.22.30.70
         - domain: wazuh-manager.prplanit.com
           answer: 172.22.30.119
         - domain: syslog.prplanit.com

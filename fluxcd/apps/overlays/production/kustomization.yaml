@@ -44,6 +44,7 @@ resources:
   - kimai
   - leantime
   - openproject
+  - wikijs-sops
   - opnform
   - osticket
   # Document & Design

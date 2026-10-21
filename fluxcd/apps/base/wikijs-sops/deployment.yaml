@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wikijs-sops
+  labels:
+    app: wikijs-sops
+spec:
+  revisionHistoryLimit: 5
+  # One replica: Wiki.js 2 runs its git sync and scheduler in-process; HA mode is not used.
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: wikijs-sops
+  template:
+    metadata:
+      labels:
+        app: wikijs-sops
+    spec:
+      serviceAccountName: wikijs-sops
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        # ssh refuses a group-readable key, which is what a Secret mount with fsGroup gives.
+        - name: install-git-key
+          image: ghcr.io/requarks/wiki:2.5.315
+          command: ["sh", "-c", "install -m 0600 /git-key/id_ed25519 /ssh/id_ed25519"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: git-key
+              mountPath: /git-key
+              readOnly: true
+            - name: ssh
+              mountPath: /ssh
+        # The mesh accepts TCP before Postgres exists, so ask Postgres itself.
+        - name: wait-for-db
+          image: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
+          command: ["sh", "-c", "until pg_isready -q -h wikijs-sops-postgres-rw -p 5432; do sleep 2; done"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      containers:
+        - name: wikijs
+          image: ghcr.io/requarks/wiki:2.5.315
+          env:
+            - name: DB_TYPE
+              value: postgres
+            - name: DB_HOST
+              value: wikijs-sops-postgres-rw
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: wikijs
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: wikijs-sops-postgres-credentials
+                  key: username
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: wikijs-sops-postgres-credentials
+                  key: password
+            - name: HA_ACTIVE
+              value: "false"
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            periodSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 5
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 20m
+            limits:
+              memory: 1Gi
+              cpu: "1"
+          volumeMounts:
+            # The git storage clone and caches; the repo itself is the durable copy.
+            - name: data
+              mountPath: /wiki/data
+            - name: tmp
+              mountPath: /tmp
+            # Admin -> Storage -> Git: SSH key path /wiki/ssh/id_ed25519.
+            - name: ssh
+              mountPath: /wiki/ssh
+              readOnly: true
+      volumes:
+        - name: data
+          emptyDir:
+            sizeLimit: 2Gi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 256Mi
+        - name: ssh
+          emptyDir:
+            sizeLimit: 1Mi
+        - name: git-key
+          secret:
+            secretName: wikijs-sops-git
+            defaultMode: 0400

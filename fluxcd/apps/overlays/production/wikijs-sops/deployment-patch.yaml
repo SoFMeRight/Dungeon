@@ -1,0 +1,12 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wikijs-sops
+spec:
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/cap.postgres: "true"
+        policy.prplanit.com/access-scope-postgres: optcp-cloud.wikijs-sops.postgres
+        policy.prplanit.com/cap.oidc: "true"

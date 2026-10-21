@@ -397,6 +397,18 @@ configs:
               "List:optcp-dungeon-cnpg-openproject",
               "Tagging:optcp-dungeon-cnpg-openproject"
             ]
+          },
+          {
+            "name": "optcp-dungeon-cnpg-wikijs-sops",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_WIKIJS_SOPS_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_WIKIJS_SOPS_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp-dungeon-cnpg-wikijs-sops",
+              "Write:optcp-dungeon-cnpg-wikijs-sops",
+              "List:optcp-dungeon-cnpg-wikijs-sops",
+              "Tagging:optcp-dungeon-cnpg-wikijs-sops"
+            ]
           }
         ]
       }
