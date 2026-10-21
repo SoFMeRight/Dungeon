@@ -75,10 +75,6 @@ gitops:
         namespaces:
           - temple-of-time
         tier: app
-      - name: "Cloud & Collaboration (OpTCP)"
-        namespaces:
-          - optcp-cloud
-        tier: app
       - name: "Discovery & Dashboards (Lost Woods\U0001F332)"
         namespaces:
           - lost-woods
