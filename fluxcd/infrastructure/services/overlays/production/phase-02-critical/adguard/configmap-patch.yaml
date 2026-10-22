@@ -213,7 +213,7 @@ data:
           answer: 10.40.9.104
         - domain: sso.prplanit.com
           answer: 10.40.9.104
-        - domain: ncloud.optcp.com
+        - domain: cloud.optcp.com
           answer: 10.40.9.104
         - domain: '*.optcp.com'
           answer: 10.40.9.104

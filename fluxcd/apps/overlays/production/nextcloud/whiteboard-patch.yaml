@@ -13,4 +13,4 @@ spec:
           image: ghcr.io/nextcloud-releases/whiteboard:v1.5.9
           env:
             - name: NEXTCLOUD_URL
-              value: "https://ncloud.optcp.com"
+              value: "https://cloud.optcp.com"

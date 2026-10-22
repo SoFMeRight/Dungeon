@@ -18,10 +18,10 @@ spec:
     - "optcp.com"
     - "*.optcp.com"
     - "books.optcp.com"
+    - "cloud.optcp.com"
     - "flix.optcp.com"
     - "jseer.optcp.com"
     - "lwd.optcp.com"
-    - "ncloud.optcp.com"
     - "plex.optcp.com"
   rules:
     # Which playlist this domain's error pages draw from. The filter injects a fixed

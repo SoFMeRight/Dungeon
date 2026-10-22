@@ -8,13 +8,13 @@ metadata:
       conditions:
         - "[STATUS] == 200"
         - "[RESPONSE_TIME] < 5000"
-      url: https://ncloud.optcp.com/login
+      url: https://cloud.optcp.com/login
 spec:
   parentRefs:
     - name: cell-membrane-gateway
       namespace: prelude-of-light
   hostnames:
-    - "ncloud.optcp.com"
+    - "cloud.optcp.com"
   rules:
     - matches:
         - path:

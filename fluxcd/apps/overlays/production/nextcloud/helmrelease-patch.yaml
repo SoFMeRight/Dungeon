@@ -35,9 +35,9 @@ spec:
             topologyKey: kubernetes.io/hostname
 
     nextcloud:
-      host: ncloud.optcp.com
+      host: cloud.optcp.com
       trustedDomains:
-        - ncloud.optcp.com
+        - cloud.optcp.com
         # In-cluster host Collabora's WOPI callback connects to (wopi_callback_url below);
         # only resolvable/reachable in-mesh, so nextcloud must trust it as a valid domain.
         - nextcloud.optcp-cloud.svc.cluster.local
@@ -73,7 +73,7 @@ spec:
         - name: TRUSTED_PROXIES
           value: "192.168.144.0/20"
         - name: OVERWRITECLIURL
-          value: "https://ncloud.optcp.com"
+          value: "https://cloud.optcp.com"
         # The image's mod_remoteip replaces REMOTE_ADDR with the client IP from the gateway's
         # headers, so the gateway never reaches Nextcloud as a trusted proxy and its
         # X-Forwarded-Proto is ignored. https is set for every request not from a pod address
@@ -158,6 +158,12 @@ spec:
           php /var/www/html/occ config:app:set richdocuments wopi_callback_url --value "http://nextcloud.optcp-cloud.svc.cluster.local" || true
           php /var/www/html/occ config:system:set trusted_domains 10 --value "nextcloud.optcp-cloud.svc.cluster.local" || true
           php /var/www/html/occ config:system:delete overwriteprotocol || true
+          # The public host is stored in config.php and app-config at install/setup time, not
+          # read from the chart's host; set it every start so it follows nextcloud.host.
+          php /var/www/html/occ config:system:set trusted_domains 1 --value "cloud.optcp.com" || true
+          php /var/www/html/occ config:app:set notify_push base_endpoint --value "https://cloud.optcp.com/push" || true
+          php /var/www/html/occ config:app:set richdocuments public_wopi_url --value "https://cloud.optcp.com" || true
+          php /var/www/html/occ config:app:set whiteboard collabBackendUrl --value "https://cloud.optcp.com/whiteboard" || true
           # Full-text search: the apps live in custom_apps on the html volume (installed once,
           # enabled after); the platform and index settings are app-config, set every start.
           # Document text is indexed in nextcloud-elasticsearch.
@@ -321,12 +327,12 @@ spec:
         tag: "25.04.10.3.1"
       collabora:
         aliasgroups:
-          - host: "https://ncloud.optcp.com:443"
+          - host: "https://cloud.optcp.com:443"
           # coolwsd validates the WOPISrc host; with wopi_callback_url now pointing at the
           # in-cluster service, that host must be an accepted WOPI host or it self-rejects
           # ("Unauthorized WOPI host").
           - host: "http://nextcloud.optcp-cloud.svc.cluster.local:80"
-        server_name: ncloud.optcp.com
+        server_name: cloud.optcp.com
         extra_params: "--o:ssl.enable=false --o:ssl.termination=true"
       securityContext:
         capabilities:

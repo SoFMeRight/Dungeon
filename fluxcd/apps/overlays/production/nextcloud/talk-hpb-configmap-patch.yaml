@@ -20,7 +20,7 @@ data:
     connectionsperhost = 8
 
     [backend-1]
-    url = https://ncloud.optcp.com
+    url = https://cloud.optcp.com
     secret = PLACEHOLDER_TALK_SECRET
 
     [nats]
