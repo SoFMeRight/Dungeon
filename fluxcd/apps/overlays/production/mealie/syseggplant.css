@@ -175,6 +175,17 @@ html .v-theme--light .v-btn.bg-primary:has(path[d^="M12,15.5A3.5"]) {
   background-color: #852297 !important;
   color: #C4EFC0 !important;
 }
+/* Search filters on phones and tablets: when the row wraps, start every line at the left
+   (Mealie pushes the last items right with ml-auto), with a little more room for taps. */
+@media (max-width: 960px) {
+  html .search-row {
+    justify-content: flex-start !important;
+    gap: 0.75rem !important;
+  }
+  html .search-row > .ml-auto {
+    margin-left: 0 !important;
+  }
+}
 /* Recipe titles: wrap up to three lines instead of truncating to one, a touch smaller. */
 html .v-card .v-card-title,
 html .headerClass {
