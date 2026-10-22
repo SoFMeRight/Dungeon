@@ -120,9 +120,11 @@ These are the mandatory standards for all production workloads.
 
 | ID | Requirement | Target | Notes |
 |----|-------------|--------|-------|
-| IMG-1 | Pinned image tag | Yes | No `:latest` |
-| IMG-2 | Fully qualified name | Yes | Include registry prefix |
+| IMG-1 | Pinned image tag | Release tag (`vX.Y.Z`) | No `:latest` or `:latest-dev`; if the latest release lacks what's needed, cut a new release |
+| IMG-2 | Fully qualified name | Canonical registry | `docker.io/…`, `ghcr.io/…`; never the `cr.pcfae.com` pull-through mirror, which nodes apply transparently |
 | IMG-3 | `imagePullPolicy` | `IfNotPresent` | `Always` only for mutable tags |
+| IMG-4 | First-party registry | `ghcr.io/<org>/…` (prplanit, homelabhd) | docker.io rate-limits in-cluster pulls; a new GHCR package must be made public |
+| IMG-5 | Digest after a same-version rebuild | Updated | A pinned `@sha256:` keeps the old image until changed ([Releasing](https://sops.optcp.com/development/Repository_Onboarding#releasing)) |
 
 ### Timezone (TZ)
 
