@@ -124,7 +124,7 @@ These are the mandatory standards for all production workloads.
 | IMG-2 | Fully qualified name | Canonical registry | `docker.io/…`, `ghcr.io/…`; never the `cr.pcfae.com` pull-through mirror, which nodes apply transparently |
 | IMG-3 | `imagePullPolicy` | `IfNotPresent` | `Always` only for mutable tags |
 | IMG-4 | First-party registry | `ghcr.io/<org>/…` (prplanit, homelabhd) | docker.io rate-limits in-cluster pulls; a new GHCR package must be made public |
-| IMG-5 | Digest after a rebuild | Updated | A pinned `@sha256:` keeps the old image until changed ([Releasing](https://sops.optcp.com/development/Repository_Onboarding#releasing)) |
+| IMG-5 | Digest after a rebuild | Updated | A pinned `@sha256:` keeps running the old image until the digest is changed; update it whenever the tag is rebuilt |
 
 ### Timezone (TZ)
 
