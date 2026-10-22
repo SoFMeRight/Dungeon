@@ -11,6 +11,44 @@ spec:
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: temple-of-time.mealie.postgres
     spec:
+      # SysEggplant theme: serve a copy of the frontend with the theme stylesheet linked into every page.
+      initContainers:
+        - name: theme
+          image: ghcr.io/mealie-recipes/mealie:v3.28.0@sha256:8b02290f4d1806f02acac6f25f6d48a3c965612fda1f8e914d5af533276f8688
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: PYTHONDONTWRITEBYTECODE
+              value: "1"
+          command:
+            - python3
+            - -c
+            - |
+              import glob, importlib.util, os, shutil
+              src = os.path.join(importlib.util.find_spec("mealie").submodule_search_locations[0], "frontend")
+              dst = "/theme/frontend"
+              shutil.copytree(src, dst, dirs_exist_ok=True)
+              for f in ("syseggplant.css", "monof_tt.txt"):
+                  shutil.copy(os.path.join("/theme-files", f), os.path.join(dst, f))
+              tag = '<link rel="stylesheet" href="/syseggplant.css">'
+              pages = 0
+              for page in glob.glob(dst + "/**/*.html", recursive=True):
+                  html = open(page, encoding="utf-8").read()
+                  if tag not in html and "</head>" in html:
+                      open(page, "w", encoding="utf-8").write(html.replace("</head>", tag + "</head>", 1))
+                      pages += 1
+              assert pages, "no pages patched"
+              print(f"theme linked into {pages} pages")
+          volumeMounts:
+            - name: theme
+              mountPath: /theme
+            - name: theme-files
+              mountPath: /theme-files
+              readOnly: true
       containers:
         - name: mealie
           image: ghcr.io/mealie-recipes/mealie:v3.28.0@sha256:8b02290f4d1806f02acac6f25f6d48a3c965612fda1f8e914d5af533276f8688
@@ -23,11 +61,16 @@ spec:
               value: "PrPlanIT.com"
             - name: OIDC_CONFIGURATION_URL
               value: "https://sso.prplanit.com/.well-known/openid-configuration"
+            - name: STATIC_FILES
+              value: /theme/frontend
           volumeMounts:
             - name: mealie-data
               mountPath: /app/data
             - name: tmp
               mountPath: /tmp
+            - name: theme
+              mountPath: /theme
+              readOnly: true
       volumes:
         - name: mealie-data
           persistentVolumeClaim:
@@ -35,3 +78,9 @@ spec:
         # readOnlyRootFilesystem: app data on the PVC; /tmp scratch.
         - name: tmp
           emptyDir: {}
+        - name: theme
+          emptyDir:
+            sizeLimit: 64Mi
+        - name: theme-files
+          configMap:
+            name: mealie-theme

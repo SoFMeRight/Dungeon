@@ -32,3 +32,8 @@ patches:
     target:
       kind: Service
       name: mealie
+configMapGenerator:
+  - name: mealie-theme
+    files:
+      - syseggplant.css
+      - monof_tt.txt

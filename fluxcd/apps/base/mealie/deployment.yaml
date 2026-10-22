@@ -96,33 +96,33 @@ spec:
             - name: POSTGRES_DB
               value: "mealie"
             - name: THEME_DARK_PRIMARY
-              value: "#349722"
+              value: "#74ECBE"
             - name: THEME_LIGHT_PRIMARY
-              value: "#349722"
+              value: "#350A3C"
             - name: THEME_DARK_ACCENT
-              value: "#ad9f11"
+              value: "#74ECBE"
             - name: THEME_LIGHT_ACCENT
-              value: "#ad9f11"
+              value: "#350A3C"
             - name: THEME_DARK_SECONDARY
-              value: "#852297"
+              value: "#FFD1DC"
             - name: THEME_LIGHT_SECONDARY
               value: "#852297"
             - name: THEME_DARK_SUCCESS
-              value: "#006838"
+              value: "#236144"
             - name: THEME_LIGHT_SUCCESS
-              value: "#006838"
+              value: "#236144"
             - name: THEME_DARK_INFO
-              value: "#24cc89"
+              value: "#2D7A56"
             - name: THEME_LIGHT_INFO
-              value: "#24cc89"
+              value: "#2D7A56"
             - name: THEME_DARK_WARNING
-              value: "#ef7d50"
+              value: "#EF7D50"
             - name: THEME_LIGHT_WARNING
-              value: "#ef7d50"
+              value: "#C2410C"
             - name: THEME_DARK_ERROR
-              value: "#310937"
+              value: "#E5484D"
             - name: THEME_LIGHT_ERROR
-              value: "#310937"
+              value: "#C0262D"
             - name: OIDC_AUTH_ENABLED
               value: "True"
             - name: OIDC_SIGNUP_ENABLED
