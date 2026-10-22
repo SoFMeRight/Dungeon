@@ -173,7 +173,7 @@ Kyverno is deployed and actively enforcing, not merely auditing. Key ClusterPoli
 
 | Policy | Action | What it does |
 |--------|--------|--------------|
-| `enforce-pod-hardening` | **Enforce** | Blocks admission of pods violating the five SEC standards: SEC-7 seccompProfile RuntimeDefault/Localhost, SEC-6 drop ALL capabilities, SEC-3 allowPrivilegeEscalation=false, SEC-1/2 runAsNonRoot, SEC-4 readOnlyRootFilesystem — each with a per-workload exemption path |
+| `enforce-pod-hardening` | **Enforce** | Blocks admission of pods violating the five SEC standards: SEC-7 seccompProfile RuntimeDefault/Localhost, SEC-6 drop ALL capabilities, SEC-5 allowPrivilegeEscalation=false, SEC-1/2 runAsNonRoot, SEC-4 readOnlyRootFilesystem — each with a per-workload exemption path |
 | `audit-pod-hardening` | Audit | Same five rules in report-only mode — tracks residual violations among exempted/in-flight workloads (the SEC-4 remediation campaign) |
 | `restrict-default-sa` | **Enforce** | Pods/controllers in ambient-mesh namespaces must set a non-default `serviceAccountName` (mesh identity hygiene) |
 | `gate-breakglass-label` | **Enforce** | Three-gate break-glass: an exemption only holds when kube-system carries `zt.breakglass/active=true` + the workload's label + non-stale; auto-expires stale break-glass |
@@ -188,7 +188,7 @@ Kyverno is deployed and actively enforcing, not merely auditing. Key ClusterPoli
 |---------------|-----------|------------------------------|
 | SEC-7 seccomp RuntimeDefault | ~97% | ▲ from 21% |
 | SEC-6 drop ALL capabilities | ~89% | ▲ from 29% |
-| SEC-3 no privilege escalation | ~85% | ▲ from 26% |
+| SEC-5 no privilege escalation | ~85% | ▲ from 26% |
 | SEC-1/2 run as non-root | ~77% | ▲ from 27% |
 | SEC-4 readOnlyRootFilesystem | ~48% | ▲ from 16% — the active remaining campaign |
 

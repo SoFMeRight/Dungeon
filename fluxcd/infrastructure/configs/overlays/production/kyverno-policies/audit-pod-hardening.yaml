@@ -61,7 +61,7 @@ spec:
                   istio.io/dataplane-mode: ambient
       exclude: *excludeCommon
       validate:
-        message: "SEC-3: allowPrivilegeEscalation must be false on every container."
+        message: "SEC-5: allowPrivilegeEscalation must be false on every container."
         pattern:
           spec:
             containers:

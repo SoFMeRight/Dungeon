@@ -163,7 +163,7 @@ spec:
       # Genuine escalators (sudo / file-cap binaries / privileged) + operator/Helm pods are
       # exempted via the PolicyException exception-pod-hardening-no-privesc (zeldas-lullaby).
       validate:
-        message: "SEC-3: allowPrivilegeEscalation must be false on every container. Exempt a genuine escalator via the no-privesc PolicyException or except-no-privesc label."
+        message: "SEC-5: allowPrivilegeEscalation must be false on every container. Exempt a genuine escalator via the no-privesc PolicyException or except-no-privesc label."
         pattern:
           spec:
             containers:
