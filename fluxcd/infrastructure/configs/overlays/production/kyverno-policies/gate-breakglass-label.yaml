@@ -25,6 +25,7 @@ spec:
                 - lens-of-truth
                 - lost-woods
                 - optcp-cloud
+                - optcp-sibyl-system
                 - pedestal-of-time
                 - shooting-gallery
                 - swift-sail
@@ -80,6 +81,7 @@ spec:
                 - lens-of-truth
                 - lost-woods
                 - optcp-cloud
+                - optcp-sibyl-system
                 - pedestal-of-time
                 - shooting-gallery
                 - swift-sail
@@ -135,6 +137,7 @@ spec:
                 - lens-of-truth
                 - lost-woods
                 - optcp-cloud
+                - optcp-sibyl-system
                 - pedestal-of-time
                 - shooting-gallery
                 - swift-sail

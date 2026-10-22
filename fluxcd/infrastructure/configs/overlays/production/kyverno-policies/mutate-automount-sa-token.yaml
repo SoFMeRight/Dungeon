@@ -81,6 +81,7 @@ spec:
               - leantime-postgres
               - openproject-postgres
               - wikijs-sops-postgres
+              - dependency-track-postgres
               - training-dummy-postgres
               - bank-vaults-operator
               - external-secrets

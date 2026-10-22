@@ -23,3 +23,5 @@ resources:
   - ceph-rgw-bucket-provisioning-reactive-resume.yaml
   - openproject-rgw-credentials-externalsecret.yaml
   - ceph-rgw-bucket-provisioning-openproject.yaml
+  - dependency-track-rgw-credentials-externalsecret.yaml
+  - ceph-rgw-bucket-provisioning-dependency-track.yaml

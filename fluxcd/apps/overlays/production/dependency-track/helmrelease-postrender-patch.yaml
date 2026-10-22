@@ -1,0 +1,10 @@
+- op: add
+  path: /spec/postRenderers/0/kustomize/patches/-
+  value:
+    target:
+      kind: Service
+      name: dependency-track-(api-server|frontend)
+    patch: |-
+      - op: add
+        path: /metadata/labels/policy.prplanit.com~1ingress
+        value: "true"

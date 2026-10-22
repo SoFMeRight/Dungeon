@@ -1,0 +1,7 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: dependency-track
+spec:
+  interval: 1h
+  url: https://dependencytrack.github.io/helm-charts

@@ -1,0 +1,103 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: dependency-track
+spec:
+  releaseName: dependency-track
+  interval: 30m
+  chart:
+    spec:
+      chart: dependency-track
+      version: PLACEHOLDER_CHART_VERSION
+      sourceRef:
+        kind: HelmRepository
+        name: dependency-track
+  install:
+    remediation:
+      retries: 3
+  values:
+    fullnameOverride: dependency-track
+
+    database:
+      jdbcUrl: "jdbc:postgresql://dependency-track-postgres-rw:5432/dtrack?reWriteBatchedInserts=true"
+      existingSecret:
+        name: dependency-track-postgres-credentials
+        usernameKey: username
+        passwordKey: password
+
+    secretManagement:
+      provider: database
+      database:
+        kek:
+          mode: config
+          existingSecret:
+            name: dependency-track-secret
+            key: kek
+
+    fileStorage:
+      provider: s3
+      s3:
+        endpoint: PLACEHOLDER_S3_ENDPOINT
+        region: PLACEHOLDER_S3_REGION
+        bucket: dependency-track
+        credentials:
+          source: static
+          existingSecret:
+            name: dependency-track-secret
+            accessKeyIdKey: accessKeyId
+            secretAccessKeyKey: secretAccessKey
+
+    apiServer:
+      topology: monolith
+      extraEnv:
+        - name: DT_OIDC_ENABLED
+          value: "true"
+        - name: DT_OIDC_ISSUER
+          value: PLACEHOLDER_OIDC_ISSUER
+        - name: DT_OIDC_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: dependency-track-secret
+              key: DT_OIDC_CLIENT_ID
+
+    frontend:
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        runAsNonRoot: true
+        readOnlyRootFilesystem: true
+        seccompProfile:
+          type: RuntimeDefault
+      additionalVolumes:
+        - name: frontend-config
+          secret:
+            secretName: dependency-track-frontend-config
+      additionalVolumeMounts:
+        - name: frontend-config
+          mountPath: /opt/owasp/dependency-track-frontend/static/config.json
+          subPath: config.json
+          readOnly: true
+
+    ingress:
+      enabled: false
+    httpRoute:
+      enabled: false
+
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: dependency-track-frontend
+            patch: |-
+              - op: replace
+                path: /spec/template/spec/serviceAccountName
+                value: dependency-track-frontend
+          - target:
+              kind: Deployment
+            patch: |-
+              - op: add
+                path: /spec/template/spec/volumes/0/emptyDir/sizeLimit
+                value: 256Mi

@@ -1,0 +1,13 @@
+namespace: optcp-sibyl-system
+resources:
+  - ../../../base/dependency-track
+  - externalsecret-frontend-config.yaml
+  - httproute.yaml
+patches:
+  - path: helmrelease-patch.yaml
+  - path: helmrelease-postrender-patch.yaml
+    target:
+      kind: HelmRelease
+      name: dependency-track
+  - path: postgres-cluster-patch.yaml
+  - path: objectstore-postgres-patch.yaml

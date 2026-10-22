@@ -1,0 +1,15 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: dependency-track-postgres-daily
+spec:
+  # Seconds-first cron; a free 10-minute slot outside the 02:00-05:00 velero window.
+  schedule: "0 20 0 * * *"
+  immediate: true
+  backupOwnerReference: self
+  target: prefer-standby
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+  cluster:
+    name: dependency-track-postgres

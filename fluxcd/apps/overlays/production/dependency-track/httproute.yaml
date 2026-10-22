@@ -1,0 +1,28 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: dependency-track
+  annotations:
+    gatus.home-operations.com/endpoint: |
+      group: "Security (OpTCP)"
+spec:
+  parentRefs:
+    - name: phloem-gateway
+      namespace: arylls-lookout
+  hostnames:
+    - "dtrack.optcp.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+      backendRefs:
+        - name: dependency-track-api-server
+          port: 8080
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: dependency-track-frontend
+          port: 8080

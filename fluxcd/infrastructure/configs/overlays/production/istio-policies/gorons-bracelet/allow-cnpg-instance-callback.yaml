@@ -23,6 +23,7 @@ spec:
               - cluster.local/ns/optcp-cloud/sa/leantime-postgres
               - cluster.local/ns/optcp-cloud/sa/openproject-postgres
               - cluster.local/ns/optcp-cloud/sa/wikijs-sops-postgres
+              - cluster.local/ns/optcp-sibyl-system/sa/dependency-track-postgres
               - cluster.local/ns/zeldas-lullaby/sa/netbird-postgres
               - cluster.local/ns/zeldas-lullaby/sa/vaultwarden-postgres
               - cluster.local/ns/zeldas-lullaby/sa/zitadel-postgres

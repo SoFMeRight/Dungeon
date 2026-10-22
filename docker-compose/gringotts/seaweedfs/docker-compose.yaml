@@ -38,7 +38,7 @@ services:
       - source: s3_identities
         target: /etc/seaweedfs/s3.json
         mode: 0444
-    image: chrislusf/seaweedfs:4.47        # pin a version; :latest works but pin it
+    image: chrislusf/seaweedfs:4.48        # pin a version; :latest works but pin it
     ports:
       - ${S3_PORT:-8333}:${S3_PORT:-8333}                 # S3 API — the only port an S3 client needs
       - ${MASTER_PORT:-9333}:${MASTER_PORT:-9333}         # master HTTP + admin API
@@ -114,26 +114,187 @@ configs:
             ]
           },
           {
-            "name": "prplanit-dungeon-velero",
+            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
+            "name": "optcp-dungeon-cnpg-appflowy",
             "credentials": [
-              { "accessKey": "${PRPLANIT_DUNGEON_VELERO_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_VELERO_S3_SECRET_KEY}" }
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_APPFLOWY_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_APPFLOWY_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit-dungeon-velero",
-              "Write:prplanit-dungeon-velero",
-              "List:prplanit-dungeon-velero",
-              "Tagging:prplanit-dungeon-velero"
+              "Read:optcp-dungeon-cnpg-appflowy",
+              "Write:optcp-dungeon-cnpg-appflowy",
+              "List:optcp-dungeon-cnpg-appflowy",
+              "Tagging:optcp-dungeon-cnpg-appflowy",
+              "Read:optcp/dungeon/cnpg/appflowy/*",
+              "Write:optcp/dungeon/cnpg/appflowy/*",
+              "List:optcp/dungeon/cnpg/appflowy/*",
+              "Tagging:optcp/dungeon/cnpg/appflowy/*"
             ]
           },
           {
-            "_comment": "Pre-rename velero bucket, restores only. Read and List only, so the ReadOnly BSL cannot alter it. Remove once its contents age out.",
-            "name": "velero-backups-legacy",
+            "name": "optcp-dungeon-cnpg-dependency-track",
             "credentials": [
-              { "accessKey": "${VELERO_BACKUPS_S3_ACCESS_KEY}", "secretKey": "${VELERO_BACKUPS_S3_SECRET_KEY}" }
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_DEPENDENCY_TRACK_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_DEPENDENCY_TRACK_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:velero-backups",
-              "List:velero-backups"
+              "Read:optcp-dungeon-cnpg-dependency-track",
+              "Write:optcp-dungeon-cnpg-dependency-track",
+              "List:optcp-dungeon-cnpg-dependency-track",
+              "Tagging:optcp-dungeon-cnpg-dependency-track"
+            ]
+          },
+          {
+            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
+            "name": "optcp-dungeon-cnpg-homarr",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_HOMARR_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_HOMARR_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp-dungeon-cnpg-homarr",
+              "Write:optcp-dungeon-cnpg-homarr",
+              "List:optcp-dungeon-cnpg-homarr",
+              "Tagging:optcp-dungeon-cnpg-homarr",
+              "Read:optcp/dungeon/cnpg/homarr/*",
+              "Write:optcp/dungeon/cnpg/homarr/*",
+              "List:optcp/dungeon/cnpg/homarr/*",
+              "Tagging:optcp/dungeon/cnpg/homarr/*"
+            ]
+          },
+          {
+            "name": "optcp-dungeon-cnpg-leantime",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_LEANTIME_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_LEANTIME_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp-dungeon-cnpg-leantime",
+              "Write:optcp-dungeon-cnpg-leantime",
+              "List:optcp-dungeon-cnpg-leantime",
+              "Tagging:optcp-dungeon-cnpg-leantime"
+            ]
+          },
+          {
+            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
+            "name": "optcp-dungeon-cnpg-nextcloud",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp-dungeon-cnpg-nextcloud",
+              "Write:optcp-dungeon-cnpg-nextcloud",
+              "List:optcp-dungeon-cnpg-nextcloud",
+              "Tagging:optcp-dungeon-cnpg-nextcloud",
+              "Read:optcp/dungeon/cnpg/nextcloud/*",
+              "Write:optcp/dungeon/cnpg/nextcloud/*",
+              "List:optcp/dungeon/cnpg/nextcloud/*",
+              "Tagging:optcp/dungeon/cnpg/nextcloud/*"
+            ]
+          },
+          {
+            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
+            "name": "optcp-dungeon-cnpg-open-webui",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_OPEN_WEBUI_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_OPEN_WEBUI_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp-dungeon-cnpg-open-webui",
+              "Write:optcp-dungeon-cnpg-open-webui",
+              "List:optcp-dungeon-cnpg-open-webui",
+              "Tagging:optcp-dungeon-cnpg-open-webui",
+              "Read:optcp/dungeon/cnpg/open-webui/*",
+              "Write:optcp/dungeon/cnpg/open-webui/*",
+              "List:optcp/dungeon/cnpg/open-webui/*",
+              "Tagging:optcp/dungeon/cnpg/open-webui/*"
+            ]
+          },
+          {
+            "name": "optcp-dungeon-cnpg-openproject",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_OPENPROJECT_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_OPENPROJECT_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp-dungeon-cnpg-openproject",
+              "Write:optcp-dungeon-cnpg-openproject",
+              "List:optcp-dungeon-cnpg-openproject",
+              "Tagging:optcp-dungeon-cnpg-openproject"
+            ]
+          },
+          {
+            "name": "optcp-dungeon-cnpg-wikijs-sops",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_WIKIJS_SOPS_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_WIKIJS_SOPS_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp-dungeon-cnpg-wikijs-sops",
+              "Write:optcp-dungeon-cnpg-wikijs-sops",
+              "List:optcp-dungeon-cnpg-wikijs-sops",
+              "Tagging:optcp-dungeon-cnpg-wikijs-sops"
+            ]
+          },
+          {
+            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
+            "name": "outspokekin-dungeon-cnpg-matrix",
+            "credentials": [
+              { "accessKey": "${OUTSPOKEKIN_DUNGEON_CNPG_MATRIX_S3_ACCESS_KEY}", "secretKey": "${OUTSPOKEKIN_DUNGEON_CNPG_MATRIX_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:outspokekin-dungeon-cnpg-matrix",
+              "Write:outspokekin-dungeon-cnpg-matrix",
+              "List:outspokekin-dungeon-cnpg-matrix",
+              "Tagging:outspokekin-dungeon-cnpg-matrix",
+              "Read:outspokekin/dungeon/cnpg/matrix/*",
+              "Write:outspokekin/dungeon/cnpg/matrix/*",
+              "List:outspokekin/dungeon/cnpg/matrix/*",
+              "Tagging:outspokekin/dungeon/cnpg/matrix/*"
+            ]
+          },
+          {
+            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
+            "name": "prplanit-dungeon-cnpg-boundary",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_BOUNDARY_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_BOUNDARY_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit-dungeon-cnpg-boundary",
+              "Write:prplanit-dungeon-cnpg-boundary",
+              "List:prplanit-dungeon-cnpg-boundary",
+              "Tagging:prplanit-dungeon-cnpg-boundary",
+              "Read:prplanit/dungeon/cnpg/boundary/*",
+              "Write:prplanit/dungeon/cnpg/boundary/*",
+              "List:prplanit/dungeon/cnpg/boundary/*",
+              "Tagging:prplanit/dungeon/cnpg/boundary/*"
+            ]
+          },
+          {
+            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
+            "name": "prplanit-dungeon-cnpg-calcom",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_CALCOM_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_CALCOM_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit-dungeon-cnpg-calcom",
+              "Write:prplanit-dungeon-cnpg-calcom",
+              "List:prplanit-dungeon-cnpg-calcom",
+              "Tagging:prplanit-dungeon-cnpg-calcom",
+              "Read:prplanit/dungeon/cnpg/calcom/*",
+              "Write:prplanit/dungeon/cnpg/calcom/*",
+              "List:prplanit/dungeon/cnpg/calcom/*",
+              "Tagging:prplanit/dungeon/cnpg/calcom/*"
+            ]
+          },
+          {
+            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
+            "name": "prplanit-dungeon-cnpg-gatus",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GATUS_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GATUS_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit-dungeon-cnpg-gatus",
+              "Write:prplanit-dungeon-cnpg-gatus",
+              "List:prplanit-dungeon-cnpg-gatus",
+              "Tagging:prplanit-dungeon-cnpg-gatus",
+              "Read:prplanit/dungeon/cnpg/gatus/*",
+              "Write:prplanit/dungeon/cnpg/gatus/*",
+              "List:prplanit/dungeon/cnpg/gatus/*",
+              "Tagging:prplanit/dungeon/cnpg/gatus/*"
             ]
           },
           {
@@ -155,19 +316,36 @@ configs:
           },
           {
             "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
-            "name": "prplanit-dungeon-cnpg-zitadel",
+            "name": "prplanit-dungeon-cnpg-grafana",
             "credentials": [
-              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_ZITADEL_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_ZITADEL_S3_SECRET_KEY}" }
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GRAFANA_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GRAFANA_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit-dungeon-cnpg-zitadel",
-              "Write:prplanit-dungeon-cnpg-zitadel",
-              "List:prplanit-dungeon-cnpg-zitadel",
-              "Tagging:prplanit-dungeon-cnpg-zitadel",
-              "Read:prplanit/dungeon/cnpg/zitadel/*",
-              "Write:prplanit/dungeon/cnpg/zitadel/*",
-              "List:prplanit/dungeon/cnpg/zitadel/*",
-              "Tagging:prplanit/dungeon/cnpg/zitadel/*"
+              "Read:prplanit-dungeon-cnpg-grafana",
+              "Write:prplanit-dungeon-cnpg-grafana",
+              "List:prplanit-dungeon-cnpg-grafana",
+              "Tagging:prplanit-dungeon-cnpg-grafana",
+              "Read:prplanit/dungeon/cnpg/grafana/*",
+              "Write:prplanit/dungeon/cnpg/grafana/*",
+              "List:prplanit/dungeon/cnpg/grafana/*",
+              "Tagging:prplanit/dungeon/cnpg/grafana/*"
+            ]
+          },
+          {
+            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
+            "name": "prplanit-dungeon-cnpg-harbor",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_HARBOR_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_HARBOR_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit-dungeon-cnpg-harbor",
+              "Write:prplanit-dungeon-cnpg-harbor",
+              "List:prplanit-dungeon-cnpg-harbor",
+              "Tagging:prplanit-dungeon-cnpg-harbor",
+              "Read:prplanit/dungeon/cnpg/harbor/*",
+              "Write:prplanit/dungeon/cnpg/harbor/*",
+              "List:prplanit/dungeon/cnpg/harbor/*",
+              "Tagging:prplanit/dungeon/cnpg/harbor/*"
             ]
           },
           {
@@ -206,208 +384,42 @@ configs:
           },
           {
             "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
-            "name": "prplanit-dungeon-cnpg-harbor",
+            "name": "prplanit-dungeon-cnpg-zitadel",
             "credentials": [
-              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_HARBOR_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_HARBOR_S3_SECRET_KEY}" }
+              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_ZITADEL_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_ZITADEL_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit-dungeon-cnpg-harbor",
-              "Write:prplanit-dungeon-cnpg-harbor",
-              "List:prplanit-dungeon-cnpg-harbor",
-              "Tagging:prplanit-dungeon-cnpg-harbor",
-              "Read:prplanit/dungeon/cnpg/harbor/*",
-              "Write:prplanit/dungeon/cnpg/harbor/*",
-              "List:prplanit/dungeon/cnpg/harbor/*",
-              "Tagging:prplanit/dungeon/cnpg/harbor/*"
+              "Read:prplanit-dungeon-cnpg-zitadel",
+              "Write:prplanit-dungeon-cnpg-zitadel",
+              "List:prplanit-dungeon-cnpg-zitadel",
+              "Tagging:prplanit-dungeon-cnpg-zitadel",
+              "Read:prplanit/dungeon/cnpg/zitadel/*",
+              "Write:prplanit/dungeon/cnpg/zitadel/*",
+              "List:prplanit/dungeon/cnpg/zitadel/*",
+              "Tagging:prplanit/dungeon/cnpg/zitadel/*"
             ]
           },
           {
-            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
-            "name": "prplanit-dungeon-cnpg-calcom",
+            "name": "prplanit-dungeon-velero",
             "credentials": [
-              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_CALCOM_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_CALCOM_S3_SECRET_KEY}" }
+              { "accessKey": "${PRPLANIT_DUNGEON_VELERO_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_VELERO_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit-dungeon-cnpg-calcom",
-              "Write:prplanit-dungeon-cnpg-calcom",
-              "List:prplanit-dungeon-cnpg-calcom",
-              "Tagging:prplanit-dungeon-cnpg-calcom",
-              "Read:prplanit/dungeon/cnpg/calcom/*",
-              "Write:prplanit/dungeon/cnpg/calcom/*",
-              "List:prplanit/dungeon/cnpg/calcom/*",
-              "Tagging:prplanit/dungeon/cnpg/calcom/*"
+              "Read:prplanit-dungeon-velero",
+              "Write:prplanit-dungeon-velero",
+              "List:prplanit-dungeon-velero",
+              "Tagging:prplanit-dungeon-velero"
             ]
           },
           {
-            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
-            "name": "prplanit-dungeon-cnpg-boundary",
+            "_comment": "Pre-rename velero bucket, restores only. Read and List only, so the ReadOnly BSL cannot alter it. Remove once its contents age out.",
+            "name": "velero-backups-legacy",
             "credentials": [
-              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_BOUNDARY_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_BOUNDARY_S3_SECRET_KEY}" }
+              { "accessKey": "${VELERO_BACKUPS_S3_ACCESS_KEY}", "secretKey": "${VELERO_BACKUPS_S3_SECRET_KEY}" }
             ],
             "actions": [
-              "Read:prplanit-dungeon-cnpg-boundary",
-              "Write:prplanit-dungeon-cnpg-boundary",
-              "List:prplanit-dungeon-cnpg-boundary",
-              "Tagging:prplanit-dungeon-cnpg-boundary",
-              "Read:prplanit/dungeon/cnpg/boundary/*",
-              "Write:prplanit/dungeon/cnpg/boundary/*",
-              "List:prplanit/dungeon/cnpg/boundary/*",
-              "Tagging:prplanit/dungeon/cnpg/boundary/*"
-            ]
-          },
-          {
-            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
-            "name": "prplanit-dungeon-cnpg-grafana",
-            "credentials": [
-              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GRAFANA_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GRAFANA_S3_SECRET_KEY}" }
-            ],
-            "actions": [
-              "Read:prplanit-dungeon-cnpg-grafana",
-              "Write:prplanit-dungeon-cnpg-grafana",
-              "List:prplanit-dungeon-cnpg-grafana",
-              "Tagging:prplanit-dungeon-cnpg-grafana",
-              "Read:prplanit/dungeon/cnpg/grafana/*",
-              "Write:prplanit/dungeon/cnpg/grafana/*",
-              "List:prplanit/dungeon/cnpg/grafana/*",
-              "Tagging:prplanit/dungeon/cnpg/grafana/*"
-            ]
-          },
-          {
-            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
-            "name": "prplanit-dungeon-cnpg-gatus",
-            "credentials": [
-              { "accessKey": "${PRPLANIT_DUNGEON_CNPG_GATUS_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_CNPG_GATUS_S3_SECRET_KEY}" }
-            ],
-            "actions": [
-              "Read:prplanit-dungeon-cnpg-gatus",
-              "Write:prplanit-dungeon-cnpg-gatus",
-              "List:prplanit-dungeon-cnpg-gatus",
-              "Tagging:prplanit-dungeon-cnpg-gatus",
-              "Read:prplanit/dungeon/cnpg/gatus/*",
-              "Write:prplanit/dungeon/cnpg/gatus/*",
-              "List:prplanit/dungeon/cnpg/gatus/*",
-              "Tagging:prplanit/dungeon/cnpg/gatus/*"
-            ]
-          },
-          {
-            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
-            "name": "optcp-dungeon-cnpg-homarr",
-            "credentials": [
-              { "accessKey": "${OPTCP_DUNGEON_CNPG_HOMARR_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_HOMARR_S3_SECRET_KEY}" }
-            ],
-            "actions": [
-              "Read:optcp-dungeon-cnpg-homarr",
-              "Write:optcp-dungeon-cnpg-homarr",
-              "List:optcp-dungeon-cnpg-homarr",
-              "Tagging:optcp-dungeon-cnpg-homarr",
-              "Read:optcp/dungeon/cnpg/homarr/*",
-              "Write:optcp/dungeon/cnpg/homarr/*",
-              "List:optcp/dungeon/cnpg/homarr/*",
-              "Tagging:optcp/dungeon/cnpg/homarr/*"
-            ]
-          },
-          {
-            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
-            "name": "optcp-dungeon-cnpg-appflowy",
-            "credentials": [
-              { "accessKey": "${OPTCP_DUNGEON_CNPG_APPFLOWY_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_APPFLOWY_S3_SECRET_KEY}" }
-            ],
-            "actions": [
-              "Read:optcp-dungeon-cnpg-appflowy",
-              "Write:optcp-dungeon-cnpg-appflowy",
-              "List:optcp-dungeon-cnpg-appflowy",
-              "Tagging:optcp-dungeon-cnpg-appflowy",
-              "Read:optcp/dungeon/cnpg/appflowy/*",
-              "Write:optcp/dungeon/cnpg/appflowy/*",
-              "List:optcp/dungeon/cnpg/appflowy/*",
-              "Tagging:optcp/dungeon/cnpg/appflowy/*"
-            ]
-          },
-          {
-            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
-            "name": "optcp-dungeon-cnpg-open-webui",
-            "credentials": [
-              { "accessKey": "${OPTCP_DUNGEON_CNPG_OPEN_WEBUI_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_OPEN_WEBUI_S3_SECRET_KEY}" }
-            ],
-            "actions": [
-              "Read:optcp-dungeon-cnpg-open-webui",
-              "Write:optcp-dungeon-cnpg-open-webui",
-              "List:optcp-dungeon-cnpg-open-webui",
-              "Tagging:optcp-dungeon-cnpg-open-webui",
-              "Read:optcp/dungeon/cnpg/open-webui/*",
-              "Write:optcp/dungeon/cnpg/open-webui/*",
-              "List:optcp/dungeon/cnpg/open-webui/*",
-              "Tagging:optcp/dungeon/cnpg/open-webui/*"
-            ]
-          },
-          {
-            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
-            "name": "outspokekin-dungeon-cnpg-matrix",
-            "credentials": [
-              { "accessKey": "${OUTSPOKEKIN_DUNGEON_CNPG_MATRIX_S3_ACCESS_KEY}", "secretKey": "${OUTSPOKEKIN_DUNGEON_CNPG_MATRIX_S3_SECRET_KEY}" }
-            ],
-            "actions": [
-              "Read:outspokekin-dungeon-cnpg-matrix",
-              "Write:outspokekin-dungeon-cnpg-matrix",
-              "List:outspokekin-dungeon-cnpg-matrix",
-              "Tagging:outspokekin-dungeon-cnpg-matrix",
-              "Read:outspokekin/dungeon/cnpg/matrix/*",
-              "Write:outspokekin/dungeon/cnpg/matrix/*",
-              "List:outspokekin/dungeon/cnpg/matrix/*",
-              "Tagging:outspokekin/dungeon/cnpg/matrix/*"
-            ]
-          },
-          {
-            "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
-            "name": "optcp-dungeon-cnpg-nextcloud",
-            "credentials": [
-              { "accessKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_NEXTCLOUD_S3_SECRET_KEY}" }
-            ],
-            "actions": [
-              "Read:optcp-dungeon-cnpg-nextcloud",
-              "Write:optcp-dungeon-cnpg-nextcloud",
-              "List:optcp-dungeon-cnpg-nextcloud",
-              "Tagging:optcp-dungeon-cnpg-nextcloud",
-              "Read:optcp/dungeon/cnpg/nextcloud/*",
-              "Write:optcp/dungeon/cnpg/nextcloud/*",
-              "List:optcp/dungeon/cnpg/nextcloud/*",
-              "Tagging:optcp/dungeon/cnpg/nextcloud/*"
-            ]
-          },
-          {
-            "name": "optcp-dungeon-cnpg-leantime",
-            "credentials": [
-              { "accessKey": "${OPTCP_DUNGEON_CNPG_LEANTIME_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_LEANTIME_S3_SECRET_KEY}" }
-            ],
-            "actions": [
-              "Read:optcp-dungeon-cnpg-leantime",
-              "Write:optcp-dungeon-cnpg-leantime",
-              "List:optcp-dungeon-cnpg-leantime",
-              "Tagging:optcp-dungeon-cnpg-leantime"
-            ]
-          },
-          {
-            "name": "optcp-dungeon-cnpg-openproject",
-            "credentials": [
-              { "accessKey": "${OPTCP_DUNGEON_CNPG_OPENPROJECT_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_OPENPROJECT_S3_SECRET_KEY}" }
-            ],
-            "actions": [
-              "Read:optcp-dungeon-cnpg-openproject",
-              "Write:optcp-dungeon-cnpg-openproject",
-              "List:optcp-dungeon-cnpg-openproject",
-              "Tagging:optcp-dungeon-cnpg-openproject"
-            ]
-          },
-          {
-            "name": "optcp-dungeon-cnpg-wikijs-sops",
-            "credentials": [
-              { "accessKey": "${OPTCP_DUNGEON_CNPG_WIKIJS_SOPS_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_WIKIJS_SOPS_S3_SECRET_KEY}" }
-            ],
-            "actions": [
-              "Read:optcp-dungeon-cnpg-wikijs-sops",
-              "Write:optcp-dungeon-cnpg-wikijs-sops",
-              "List:optcp-dungeon-cnpg-wikijs-sops",
-              "Tagging:optcp-dungeon-cnpg-wikijs-sops"
+              "Read:velero-backups",
+              "List:velero-backups"
             ]
           }
         ]

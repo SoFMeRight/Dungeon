@@ -1,0 +1,55 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: dependency-track
+spec:
+  chart:
+    spec:
+      version: 2.8.0
+  values:
+    fileStorage:
+      s3:
+        endpoint: https://s3.pcfae.com
+        region: us-east-1
+    apiServer:
+      image:
+        tag: 5.2.0
+      podLabels:
+        policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/cap.postgres: "true"
+        policy.prplanit.com/access-scope-postgres: optcp-sibyl-system.dependency-track.postgres
+        policy.prplanit.com/cap.oidc: "true"
+        policy.prplanit.com/cap.s3: "true"
+        policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
+      web:
+        resources:
+          requests:
+            cpu: 500m
+            memory: 2Gi
+          limits:
+            cpu: "2"
+            memory: 2Gi
+      extraEnv:
+        - name: DT_OIDC_ENABLED
+          value: "true"
+        - name: DT_OIDC_ISSUER
+          value: https://sso.prplanit.com
+        - name: DT_OIDC_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: dependency-track-secret
+              key: DT_OIDC_CLIENT_ID
+        - name: DT_OIDC_USERNAME_CLAIM
+          value: preferred_username
+    frontend:
+      image:
+        tag: 5.2.0
+      podLabels:
+        policy.prplanit.com/ingress: "true"
+      resources:
+        requests:
+          cpu: 150m
+          memory: 64Mi
+        limits:
+          cpu: 500m
+          memory: 128Mi

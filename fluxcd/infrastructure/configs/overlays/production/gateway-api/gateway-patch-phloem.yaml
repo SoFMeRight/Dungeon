@@ -112,3 +112,15 @@ spec:
         certificateRefs:
           - kind: Secret
             name: sops-optcp-com-tls
+    - name: https-dtrack-optcp
+      protocol: HTTPS
+      port: 443
+      hostname: "dtrack.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: dtrack-optcp-com-tls

@@ -451,3 +451,15 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "sops.optcp.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: dtrack-optcp-com-phloem-tls
+spec:
+  secretName: dtrack-optcp-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "dtrack.optcp.com"

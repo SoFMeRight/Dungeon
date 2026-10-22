@@ -1,0 +1,73 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-dependency-track-egress
+spec:
+  description: >-
+    Dependency-Track's API server mirrors the vulnerability feeds (GitHub
+    Advisories, OSV, NVD, EPSS, CISA KEV) and reads package metadata from the
+    ecosystem registries. Its OIDC discovery hairpins to sso.prplanit.com via the
+    cell-membrane gateway, and its file storage is s3.pcfae.com via the phloem
+    gateway; neither gateway is meshed, so both need explicit toEndpoints.
+    L7 DNS is required for toFQDNs to match. Postgres rides the mesh.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: dependency-track-api-server
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: prelude-of-light
+            gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: phloem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    # Vulnerability feeds.
+    - toFQDNs:
+        - matchName: "api.github.com"
+        - matchName: "osv-vulnerabilities.storage.googleapis.com"
+        - matchName: "services.nvd.nist.gov"
+        - matchName: "nvd.nist.gov"
+        - matchName: "epss.empiricalsecurity.com"
+        - matchName: "www.cisa.gov"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    # Package registries for the repository metadata analyzers.
+    - toFQDNs:
+        - matchName: "registry.npmjs.org"
+        - matchName: "pypi.org"
+        - matchName: "repo1.maven.org"
+        - matchName: "proxy.golang.org"
+        - matchName: "index.crates.io"
+        - matchName: "rubygems.org"
+        - matchName: "api.nuget.org"
+        - matchName: "repo.packagist.org"
+        - matchName: "hackage.haskell.org"
+        - matchName: "fastapi.metacpan.org"
+        - matchName: "repo.clojars.org"
+        - matchName: "maven.google.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
