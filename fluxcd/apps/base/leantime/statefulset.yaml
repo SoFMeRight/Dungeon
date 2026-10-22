@@ -32,7 +32,7 @@ spec:
         # Read-only root: the image's writable trees are copied into emptyDirs first, so the
         # mounts below never hide what the image ships (compiled caches, bundled plugins).
         - name: seed-writable
-          image: docker.io/leantime/leantime:3.12.0
+          image: docker.io/leantime/leantime:3.12.0@sha256:8e093293224cf48a24cfac7f32631aa5335014a065cd62b8ced4a74e4d548b80
           securityContext:
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
@@ -85,7 +85,7 @@ spec:
               done
       containers:
         - name: leantime
-          image: docker.io/leantime/leantime:3.12.0
+          image: docker.io/leantime/leantime:3.12.0@sha256:8e093293224cf48a24cfac7f32631aa5335014a065cd62b8ced4a74e4d548b80
           securityContext:
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false

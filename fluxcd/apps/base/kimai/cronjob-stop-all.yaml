@@ -54,7 +54,7 @@ spec:
                   mountPath: /scripts
           containers:
             - name: kimai
-              image: docker.io/kimai/kimai2:apache
+              image: docker.io/kimai/kimai2:apache@sha256:0db3af96f0da12c6b74428508d306a8c0e3692d8592300d4849b634c59e2986a
               securityContext:
                 allowPrivilegeEscalation: false
                 capabilities:
