@@ -1,0 +1,2 @@
+# Flux leaves *.png out of the source artifact by default; the theme picker card needs this one.
+!background-syseggplant.png
