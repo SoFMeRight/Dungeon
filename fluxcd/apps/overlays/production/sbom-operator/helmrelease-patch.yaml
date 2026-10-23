@@ -1,0 +1,24 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sbom-operator
+spec:
+  chart:
+    spec:
+      version: 0.46.4
+  values:
+    image:
+      tag: "0.45.4@sha256:e243d43985166ca607f558c6858ef958b67a210c945153823f3fda56dfd70cf7"
+    args:
+      # Dependency-Track project "dungeon"
+      dtrack-default-parent-project: 37a90c44-df07-447f-a849-017fbe3a8d12
+      kubernetes-cluster-id: dungeon
+      # Pull through the Harbor proxy caches, as the nodes do.
+      registry-proxy: docker.io=docker.cr.pcfae.com,ghcr.io=ghcr.cr.pcfae.com,quay.io=quay.cr.pcfae.com,lscr.io=lscr.cr.pcfae.com
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: "1"
+        memory: 2Gi

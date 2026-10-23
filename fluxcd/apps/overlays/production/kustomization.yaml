@@ -5,6 +5,7 @@ resources:
   - 2fauth
   - anubis
   - dependency-track
+  - sbom-operator
   - hasteward
   - netbootxyz
   - netbox

@@ -1,0 +1,72 @@
+# Catalogues every running image with syft and uploads the SBOMs to
+# Dependency-Track. Cron mode only: the real-time informer has an open temp-dir
+# race between concurrent scans (upstream #908).
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sbom-operator
+spec:
+  releaseName: sbom-operator
+  interval: 30m
+  chart:
+    spec:
+      chart: sbom-operator
+      version: PLACEHOLDER_CHART_VERSION
+      sourceRef:
+        kind: HelmRepository
+        name: ckotzbauer
+  install:
+    remediation:
+      retries: 3
+  values:
+    serviceAccount:
+      create: true
+      name: sbom-operator
+
+    args:
+      cron: "0 0 * * * *"
+      targets: dtrack
+      dtrack-base-url: http://dependency-track-api-server:8080
+      dtrack-default-parent-project: PLACEHOLDER_DTRACK_PARENT_PROJECT
+      dtrack-manage-project-active-status: ""
+      kubernetes-cluster-id: PLACEHOLDER_CLUSTER_ID
+      registry-proxy: PLACEHOLDER_REGISTRY_PROXIES
+
+    envVars:
+      - name: SBOM_DTRACK_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: sbom-operator
+            key: dtrackApiKey
+
+  postRenderers:
+    - kustomize:
+        patches:
+          # Reads pods and namespaces; never Secrets. Pod update exists only to
+          # write the scanned-digest annotation, and the
+          # sbom-operator-annotations-only ValidatingAdmissionPolicy rejects
+          # any other change it makes to a pod.
+          - target:
+              kind: ClusterRole
+              name: sbom-operator
+            patch: |-
+              - op: replace
+                path: /rules
+                value:
+                  - apiGroups: [""]
+                    resources: [namespaces]
+                    verbs: [list]
+                  - apiGroups: [""]
+                    resources: [pods]
+                    verbs: [get, list, watch, update]
+          # syft unpacks each image's layers under /tmp.
+          - target:
+              kind: Deployment
+              name: sbom-operator
+            patch: |-
+              - op: add
+                path: /spec/template/spec/volumes/0/emptyDir/sizeLimit
+                value: 1Gi
+              - op: add
+                path: /spec/template/spec/volumes/1/emptyDir/sizeLimit
+                value: 8Gi

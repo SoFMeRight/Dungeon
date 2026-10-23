@@ -1,0 +1,52 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-sbom-operator-egress
+spec:
+  description: >-
+    sbom-operator pulls every running image to catalogue it. docker.io, ghcr.io,
+    quay.io and lscr.io go through the Harbor proxy caches and cr.pcfae.com
+    is Harbor itself, all behind the phloem gateway, which is not meshed. The
+    registries Harbor does not mirror are reached directly, with their blob CDNs
+    and token endpoints. L7 DNS is required for toFQDNs to match. Uploads to
+    Dependency-Track ride the mesh; the API server is allowed cluster-wide.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: sbom-operator
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: phloem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "registry.k8s.io"
+        - matchName: "cdn.registry.k8s.io"
+        - matchName: "registry.gitlab.com"
+        - matchName: "gitlab.com"
+        - matchName: "cdn.registry.gitlab-static.net"
+        - matchName: "nvcr.io"
+        - matchName: "layers.nvcr.io"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

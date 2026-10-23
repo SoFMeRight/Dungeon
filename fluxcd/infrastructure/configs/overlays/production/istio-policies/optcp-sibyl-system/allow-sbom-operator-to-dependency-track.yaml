@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-sbom-operator-to-dependency-track
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dependency-track-api-server
+  action: ALLOW
+  rules:
+    # BOM uploads and project updates from sbom-operator.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-sibyl-system/sa/sbom-operator
+      to:
+        - operation:
+            ports: ["8080"]

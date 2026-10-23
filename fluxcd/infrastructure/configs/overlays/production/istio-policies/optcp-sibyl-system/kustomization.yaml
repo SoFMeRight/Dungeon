@@ -7,3 +7,4 @@ resources:
   - allow-gateway-ingress-phloem.yaml
   - allow-dependency-track-to-dependency-track-postgres.yaml
   - allow-dependency-track-postgres-replication.yaml
+  - allow-sbom-operator-to-dependency-track.yaml

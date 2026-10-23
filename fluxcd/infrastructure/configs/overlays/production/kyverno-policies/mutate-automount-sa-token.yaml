@@ -82,6 +82,7 @@ spec:
               - openproject-postgres
               - wikijs-sops-postgres
               - dependency-track-postgres
+              - sbom-operator
               - training-dummy-postgres
               - bank-vaults-operator
               - external-secrets

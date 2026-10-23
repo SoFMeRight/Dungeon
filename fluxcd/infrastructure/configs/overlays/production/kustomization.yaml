@@ -35,6 +35,7 @@ resources:
   - coredns  # Cluster DNS forward config
   - istio-policies  # Istio AuthorizationPolicies for all meshed namespaces
   - kyverno-policies  # Kyverno ClusterPolicies for SA enforcement and sentinel SA mutation
+  - admission-policies  # Native ValidatingAdmissionPolicies, enforced inside the API server (no webhook to fail open)
   - stagefreight-reconciler  # RBAC for CI OIDC-bound Flux reconciliation
   - redis-sentinel-repair  # Per-namespace pod-delete RBAC for the Sentinel wedge repair job
   - cluster-agent-rbac  # Scoped diagnostics+repair RBAC for agent/operator sessions (retires daily use of the admin cert)

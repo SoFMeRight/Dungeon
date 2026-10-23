@@ -4,3 +4,4 @@ namespace: optcp-sibyl-system
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-dependency-track.yaml
+  - cnp-egress-sbom-operator.yaml

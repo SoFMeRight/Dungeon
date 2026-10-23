@@ -1,0 +1,56 @@
+# sbom-operator needs pod update only to record the digests it has scanned in its
+# own annotations, but RBAC can't grant update for annotations alone: the same
+# verb can change a running pod's image. This policy runs inside the API server,
+# so it can't be down while the API server is up, and it rejects any pod update
+# by sbom-operator that changes anything besides ckotzbauer.sbom-operator.io/*
+# annotations. Retire it, and drop pod update from the ClusterRole, once
+# sbom-operator can dedupe from Dependency-Track instead of pod annotations.
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: sbom-operator-annotations-only
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["UPDATE"]
+        resources: ["pods"]
+  matchConditions:
+    - name: sbom-operator-only
+      expression: >-
+        request.userInfo.username == "system:serviceaccount:optcp-sibyl-system:sbom-operator"
+  variables:
+    - name: prefix
+      expression: "'ckotzbauer.sbom-operator.io/'"
+    - name: oldAnn
+      expression: "has(oldObject.metadata.annotations) ? oldObject.metadata.annotations : {}"
+    - name: newAnn
+      expression: "has(object.metadata.annotations) ? object.metadata.annotations : {}"
+  validations:
+    - expression: object.spec == oldObject.spec
+      message: sbom-operator may not change a pod's spec.
+    - expression: >-
+        (has(object.metadata.labels) ? object.metadata.labels : {}) ==
+        (has(oldObject.metadata.labels) ? oldObject.metadata.labels : {})
+      message: sbom-operator may not change a pod's labels.
+    - expression: >-
+        (has(object.metadata.ownerReferences) ? object.metadata.ownerReferences : []) ==
+        (has(oldObject.metadata.ownerReferences) ? oldObject.metadata.ownerReferences : []) &&
+        (has(object.metadata.finalizers) ? object.metadata.finalizers : []) ==
+        (has(oldObject.metadata.finalizers) ? oldObject.metadata.finalizers : [])
+      message: sbom-operator may not change a pod's owner references or finalizers.
+    - expression: >-
+        variables.newAnn.all(k, k.startsWith(variables.prefix) ||
+          (k in variables.oldAnn && variables.oldAnn[k] == variables.newAnn[k])) &&
+        variables.oldAnn.all(k, k.startsWith(variables.prefix) || k in variables.newAnn)
+      message: sbom-operator may only change its own ckotzbauer.sbom-operator.io/ annotations.
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: sbom-operator-annotations-only
+spec:
+  policyName: sbom-operator-annotations-only
+  validationActions: [Deny]
