@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: linkstack
 spec:
-  replicas: 1
+  replicas: 0
   template:
     metadata:
       labels:
