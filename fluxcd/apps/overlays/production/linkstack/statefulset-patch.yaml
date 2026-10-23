@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: linkstack
 spec:
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:
@@ -25,7 +25,7 @@ spec:
             name: linkstack-apache-config
       initContainers:
         - name: init-htdocs
-          image: docker.io/hlhd/linkstack:v4.8.7-rc
+          image: docker.io/hlhd/linkstack:v4.8.8@sha256:b4b35cc5ad4b68d2378b5d1d0a55aae3c43ff7d5b251d08d49fd14658973195b
           env:
             # Bump with the image. Compared against a marker on the volume, so application
             # code is refreshed exactly once per image rather than on every start.
@@ -85,7 +85,7 @@ spec:
               mountPath: /mnt/htdocs
       containers:
         - name: linkstack
-          image: docker.io/hlhd/linkstack:v4.8.7-rc
+          image: docker.io/hlhd/linkstack:v4.8.8@sha256:b4b35cc5ad4b68d2378b5d1d0a55aae3c43ff7d5b251d08d49fd14658973195b
           ports:
             - containerPort: 8080
               name: http
