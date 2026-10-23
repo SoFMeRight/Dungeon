@@ -103,7 +103,16 @@ spec:
                 value: dependency-track-frontend
           - target:
               kind: Deployment
+              name: dependency-track-frontend
             patch: |-
               - op: add
                 path: /spec/template/spec/volumes/0/emptyDir/sizeLimit
                 value: 256Mi
+          # The vulnerability mirrors stage whole feed archives (NVD, OSV per ecosystem) in /tmp.
+          - target:
+              kind: Deployment
+              name: dependency-track-api-server
+            patch: |-
+              - op: add
+                path: /spec/template/spec/volumes/0/emptyDir/sizeLimit
+                value: 2Gi
