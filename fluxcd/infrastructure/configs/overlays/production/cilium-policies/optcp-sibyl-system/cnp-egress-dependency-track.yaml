@@ -44,11 +44,13 @@ spec:
     # Vulnerability feeds.
     - toFQDNs:
         - matchName: "api.github.com"
-        - matchName: "osv-vulnerabilities.storage.googleapis.com"
+        - matchName: "storage.googleapis.com"
         - matchName: "services.nvd.nist.gov"
         - matchName: "nvd.nist.gov"
         - matchName: "epss.empiricalsecurity.com"
         - matchName: "www.cisa.gov"
+        # ENISA EU KEV feed
+        - matchName: "raw.githubusercontent.com"
       toPorts:
         - ports:
             - port: "443"
