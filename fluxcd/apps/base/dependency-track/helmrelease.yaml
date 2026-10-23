@@ -74,11 +74,17 @@ spec:
         - name: frontend-config
           secret:
             secretName: dependency-track-frontend-config
+        # The entrypoint renders /etc/nginx/templates into conf.d on every start.
+        - name: nginx-conf
+          emptyDir:
+            sizeLimit: 1Mi
       additionalVolumeMounts:
         - name: frontend-config
           mountPath: /opt/owasp/dependency-track-frontend/static/config.json
           subPath: config.json
           readOnly: true
+        - name: nginx-conf
+          mountPath: /etc/nginx/conf.d
 
     ingress:
       enabled: false
