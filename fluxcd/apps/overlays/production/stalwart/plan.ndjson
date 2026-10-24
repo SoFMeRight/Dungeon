@@ -1,4 +1,5 @@
 {"@type":"upsert","object":"Domain","matchOn":["name"],"value":{"dom-optcp":{"name":"optcp.com"}}}
+{"@type":"upsert","object":"Domain","matchOn":["name"],"value":{"dom-precisionplanit":{"name":"precisionplanit.com"}}}
 {"@type":"upsert","object":"Certificate","matchOn":["subjectAlternativeNames"],"value":{"cert-mail":{"subjectAlternativeNames":{"mail.optcp.com":true},"certificate":{"@type":"File","filePath":"/etc/stalwart/tls/tls.crt"},"privateKey":{"@type":"File","filePath":"/etc/stalwart/tls/tls.key"}}}}
 {"@type":"update","object":"SystemSettings","value":{"defaultHostname":"mail.optcp.com","defaultCertificateId":"#cert-mail","defaultDomainId":"#dom-optcp"}}
 {"@type":"update","object":"BlobStore","value":{"@type":"S3","bucket":"stalwart","region":{"@type":"Custom","customEndpoint":"https://s3.pcfae.com","customRegion":"us-east-1"},"accessKey":{"@type":"EnvironmentVariable","variableName":"STALWART_S3_ACCESS_KEY"},"secretKey":{"@type":"EnvironmentVariable","variableName":"STALWART_S3_SECRET_KEY"}}}
@@ -7,3 +8,4 @@
 {"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-submissions":{"name":"submissions","protocol":"smtp","bind":{"[::]:1465":true},"useTls":true,"tlsImplicit":true}}}
 {"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-submission":{"name":"submission","protocol":"smtp","bind":{"[::]:1587":true},"useTls":true}}}
 {"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-imaps":{"name":"imaps","protocol":"imap","bind":{"[::]:1993":true},"useTls":true,"tlsImplicit":true}}}
+{"@type":"upsert","object":"Account","matchOn":["name"],"value":{"acct-kai":{"@type":"User","name":"kai","domainId":"#dom-precisionplanit","description":"Kai H"}}}
