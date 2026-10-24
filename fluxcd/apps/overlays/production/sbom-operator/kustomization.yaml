@@ -3,5 +3,6 @@ kind: Kustomization
 namespace: optcp-sibyl-system
 resources:
   - ../../../base/sbom-operator
+  - externalsecret-registry.yaml
 patches:
   - path: helmrelease-patch.yaml

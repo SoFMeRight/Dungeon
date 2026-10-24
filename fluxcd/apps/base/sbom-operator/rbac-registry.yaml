@@ -1,0 +1,22 @@
+# The only Secret sbom-operator may read: its own registry fallback, by name.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sbom-operator-registry
+rules:
+  - apiGroups: [""]
+    resources: [secrets]
+    resourceNames: [sbom-operator-registry]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sbom-operator-registry
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sbom-operator-registry
+subjects:
+  - kind: ServiceAccount
+    name: sbom-operator

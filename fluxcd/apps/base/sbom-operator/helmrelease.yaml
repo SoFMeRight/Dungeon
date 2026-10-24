@@ -31,6 +31,7 @@ spec:
       dtrack-manage-project-active-status: ""
       kubernetes-cluster-id: PLACEHOLDER_CLUSTER_ID
       registry-proxy: PLACEHOLDER_REGISTRY_PROXIES
+      fallback-pull-secret: sbom-operator-registry
 
     envVars:
       - name: SBOM_DTRACK_API_KEY
@@ -42,7 +43,8 @@ spec:
   postRenderers:
     - kustomize:
         patches:
-          # Reads pods and namespaces; never Secrets. Pod update exists only to
+          # Reads pods and namespaces; no Secrets cluster-wide (its one pull
+          # secret is granted by rbac-registry.yaml). Pod update exists only to
           # write the scanned-digest annotation, and the
           # sbom-operator-annotations-only ValidatingAdmissionPolicy rejects
           # any other change it makes to a pod.
@@ -59,11 +61,16 @@ spec:
                   - apiGroups: [""]
                     resources: [pods]
                     verbs: [get, list, watch, update]
-          # syft unpacks each image's layers under /tmp.
+          # syft unpacks each image's layers under /tmp. The fallback pull
+          # secret is read once at startup, so a rotation restarts the pod.
           - target:
               kind: Deployment
               name: sbom-operator
             patch: |-
+              - op: add
+                path: /metadata/annotations
+                value:
+                  secret.reloader.stakater.com/reload: sbom-operator-registry
               - op: add
                 path: /spec/template/spec/volumes/0/emptyDir/sizeLimit
                 value: 1Gi
