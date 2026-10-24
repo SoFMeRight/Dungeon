@@ -4,9 +4,7 @@ metadata:
   name: allow-dependency-track-to-ntfy
 spec:
   description: >-
-    Allow Dependency-Track's API server (optcp-sibyl-system) to reach ntfy on
-    80/TCP for its vulnerability alerts via the internal service, avoiding the
-    hairpin to a gateway VIP.
+    Dependency-Track's API server publishes vulnerability alerts to ntfy.
   enableDefaultDeny:
     ingress: false
     egress: false

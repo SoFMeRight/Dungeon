@@ -25,14 +25,12 @@ spec:
 
     args:
       cron: "0 0 * * * *"
-      # Dependency-Track only accepts CycloneDX; the default is syft's own JSON.
+      # Dependency-Track accepts only CycloneDX.
       format: cyclonedxjson
       targets: dtrack
       dtrack-base-url: http://dependency-track-api-server:8080
       dtrack-default-parent-project: PLACEHOLDER_DTRACK_PARENT_PROJECT
-      # Off: it deactivates every other version of an image on each upload, so
-      # concurrent versions (postgres 13 and 15) hide one another. With it off,
-      # sbom-operator's default deletes a project once no pod runs its digest.
+      # Off: it deactivates every other version of an image, running or not.
       dtrack-manage-project-active-status: "false"
       kubernetes-cluster-id: PLACEHOLDER_CLUSTER_ID
       registry-proxy: PLACEHOLDER_REGISTRY_PROXIES
@@ -48,11 +46,8 @@ spec:
   postRenderers:
     - kustomize:
         patches:
-          # Reads pods and namespaces; no Secrets cluster-wide (its one pull
-          # secret is granted by rbac-registry.yaml). Pod update exists only to
-          # write the scanned-digest annotation, and the
-          # sbom-operator-annotations-only ValidatingAdmissionPolicy rejects
-          # any other change it makes to a pod.
+          # Pod update only writes the scanned-digest annotation; the
+          # sbom-operator-annotations-only ValidatingAdmissionPolicy rejects anything else.
           - target:
               kind: ClusterRole
               name: sbom-operator
@@ -66,8 +61,7 @@ spec:
                   - apiGroups: [""]
                     resources: [pods]
                     verbs: [get, list, watch, update]
-          # syft unpacks each image's layers under /tmp. The fallback pull
-          # secret is read once at startup, so a rotation restarts the pod.
+          # The fallback pull secret is read only at startup.
           - target:
               kind: Deployment
               name: sbom-operator

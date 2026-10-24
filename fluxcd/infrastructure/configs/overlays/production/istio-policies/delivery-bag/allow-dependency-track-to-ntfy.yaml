@@ -8,8 +8,7 @@ spec:
       app.kubernetes.io/name: ntfy
   action: ALLOW
   rules:
-    # Dependency-Track vulnerability alerts. ntfy runs non-root on container port
-    # 8080 (Service 80->8080); istio ambient enforces on the workload port.
+    # Ambient enforces the container port (Service 80 -> 8080).
     - from:
         - source:
             principals:
