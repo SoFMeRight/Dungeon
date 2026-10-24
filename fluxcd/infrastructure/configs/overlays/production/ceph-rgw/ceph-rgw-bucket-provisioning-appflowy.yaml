@@ -22,7 +22,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: setup
-          image: quay.io/ceph/ceph:v19
+          image: quay.io/ceph/ceph:v19.2.7@sha256:3fc0a79f1c671f0e75be24ba77a4ab32227e5ea080e16dfc0840a1dc6c30bf7e
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
