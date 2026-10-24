@@ -25,6 +25,8 @@ spec:
 
     args:
       cron: "0 0 * * * *"
+      # Dependency-Track only accepts CycloneDX; the default is syft's own JSON.
+      format: cyclonedxjson
       targets: dtrack
       dtrack-base-url: http://dependency-track-api-server:8080
       dtrack-default-parent-project: PLACEHOLDER_DTRACK_PARENT_PROJECT

@@ -15,10 +15,12 @@ spec:
       kubernetes-cluster-id: dungeon
       # Pull through the Harbor proxy caches, as the nodes do.
       registry-proxy: docker.io=docker.cr.pcfae.com,ghcr.io=ghcr.cr.pcfae.com,quay.io=quay.cr.pcfae.com,lscr.io=lscr.cr.pcfae.com
+    # syft holds an image's whole file catalogue in memory; the GitLab images
+    # exceeded 2Gi.
     resources:
       requests:
         cpu: 200m
-        memory: 512Mi
+        memory: 1Gi
       limits:
         cpu: "1"
-        memory: 2Gi
+        memory: 6Gi
