@@ -6,4 +6,5 @@ resources:
   - cnp-phloem-gateway.yaml
   - cnp-phloem-gateway-from-netbird-router.yaml
   - cnp-phloem-gateway-from-renovate.yaml
+  - cnp-phloem-gateway-from-sbom-operator.yaml
   - cnp-egress-phloem-gateway.yaml

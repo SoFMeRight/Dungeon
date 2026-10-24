@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-phloem-gateway-from-sbom-operator
+spec:
+  description: >-
+    Allow sbom-operator (optcp-sibyl-system/app.kubernetes.io/name=sbom-operator)
+    to reach phloem-gateway on :443. The gateway's LAN rule admits RFC1918 but
+    excepts the pod CIDR to prevent identity bypass via the LB IP; sbom-operator
+    pulls every running image through cr.pcfae.com and the *.cr.pcfae.com proxy
+    caches, so it needs this explicit identity-based allow. Mirrors
+    allow-phloem-gateway-from-renovate.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: phloem-gateway
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-sibyl-system
+            app.kubernetes.io/name: sbom-operator
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
