@@ -11,7 +11,7 @@ spec:
   enableSuperuserAccess: true
   postgresql:
     parameters:
-      shared_buffers: "128MB"
+      shared_buffers: "512MB"
       max_connections: "100"
       wal_keep_size: "64MB"
       max_slot_wal_keep_size: "800MB"   # 8% of the 10Gi PVC
@@ -20,11 +20,11 @@ spec:
     size: 10Gi
   resources:
     requests:
-      memory: "256Mi"   # >= shared_buffers
-      cpu: "50m"
+      memory: "1Gi"   # >= shared_buffers
+      cpu: "250m"
     limits:
-      memory: "512Mi"
-      cpu: "500m"
+      memory: "2Gi"
+      cpu: "2"
   inheritedMetadata:
     annotations:
       prometheus.io/scrape: "true"
