@@ -63,6 +63,11 @@ spec:
             secretKeyRef:
               name: dependency-track-secret
               key: DT_SECRET_GITHUB_TOKEN
+        - name: DT_SECRET_NTFY_AUTH
+          valueFrom:
+            secretKeyRef:
+              name: dependency-track-secret
+              key: DT_SECRET_NTFY_AUTH
 
     frontend:
       securityContext:

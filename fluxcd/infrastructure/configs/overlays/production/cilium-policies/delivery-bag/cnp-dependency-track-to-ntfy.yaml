@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-dependency-track-to-ntfy
+spec:
+  description: >-
+    Allow Dependency-Track's API server (optcp-sibyl-system) to reach ntfy on
+    80/TCP for its vulnerability alerts via the internal service, avoiding the
+    hairpin to a gateway VIP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: ntfy
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-sibyl-system
+            app.kubernetes.io/name: dependency-track-api-server
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP

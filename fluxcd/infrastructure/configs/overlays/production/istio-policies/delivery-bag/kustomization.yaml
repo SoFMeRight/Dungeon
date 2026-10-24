@@ -9,6 +9,7 @@ resources:
   - allow-alertmanager-to-ntfy.yaml
   - allow-gatus-to-ntfy.yaml
   - allow-frigate-to-ntfy.yaml
+  - allow-dependency-track-to-ntfy.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml

@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-dependency-track-to-ntfy
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ntfy
+  action: ALLOW
+  rules:
+    # Dependency-Track vulnerability alerts. ntfy runs non-root on container port
+    # 8080 (Service 80->8080); istio ambient enforces on the workload port.
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-sibyl-system/sa/dependency-track
+      to:
+        - operation:
+            ports: ["8080"]

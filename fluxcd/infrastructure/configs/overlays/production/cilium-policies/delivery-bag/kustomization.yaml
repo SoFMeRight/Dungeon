@@ -8,3 +8,4 @@ resources:
   - cnp-alertmanager-to-ntfy.yaml
   - cnp-gatus-to-ntfy.yaml
   - cnp-frigate-to-ntfy.yaml
+  - cnp-dependency-track-to-ntfy.yaml
