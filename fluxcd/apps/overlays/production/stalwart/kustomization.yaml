@@ -10,8 +10,6 @@ configMapGenerator:
     literals:
       - STALWART_PUBLIC_URL=https://mail-admin.optcp.com
       - STALWART_HOSTNAME=mail.optcp.com
-      # Bootstrap: the apply Job writes the plan through the recovery listener. Remove once applied.
-      - STALWART_RECOVERY_MODE=true
   - name: stalwart-config
     files:
       - config.json
