@@ -40,6 +40,9 @@ spec:
               - matchPattern: "*"
     - toFQDNs:
         - matchName: "registry.k8s.io"
+        # registry.k8s.io redirects manifests to the nearest Artifact Registry
+        # region; blobs go to cdn.registry.k8s.io.
+        - matchName: "us-west1-docker.pkg.dev"
         - matchName: "cdn.registry.k8s.io"
         - matchName: "registry.gitlab.com"
         - matchName: "gitlab.com"
