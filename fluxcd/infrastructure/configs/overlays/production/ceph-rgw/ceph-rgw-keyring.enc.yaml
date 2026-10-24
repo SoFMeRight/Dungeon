@@ -5,19 +5,19 @@ metadata:
     namespace: gorons-bracelet
 type: Opaque
 stringData:
-    keyring: ENC[AES256_GCM,data:Aj2u4I2Ato4zyp2iFB/6tzjci3x/xyQAjL3P61oRbkPlOj0FJ/wBgdZwjPkDb6IHBRNHfdS6SMFfepBkjqAeqUr8XnvojrOC,iv:Hi3D0103/lsax0QnliSajOMyw5ZxHoIgVHdUoG7YzUI=,tag:etif8ZZVMRsJy0euX2iUww==,type:str]
+    keyring: ENC[AES256_GCM,data:PnhSYgM7nNuTJcWIqM3Ftk+buPRoFui+CdvFox2SWuctXfRzEPvaX6kNZyxeWKtUqsRgjziv40TBSmHp0xXqUYuO0HXm85235kPsmia94GBtLMwz/nGsQ59DFNI=,iv:KXqpCNpYaMXLs5Sh5diGv+6Io1IXNfJgzW+DD3tGJfM=,tag:X33i0VdXR0+S0+5iqp5DrA==,type:str]
 sops:
     age:
         - recipient: age1y8vegwlhcdgerrtn5947j5lcsswcu0zz6ukhs0hvvhsp79sa99nsn82dkr
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAwblpMRHR6N3lWVjU3Uzd3
-            MEIxQlNTYXZJQ3dwUWg1UG9wWlJNY2c4VmlRClB4TDJNWGVYZDBXeHppV1VjUDZR
-            ZmxhMXlOdm5XTUtEL0Y5VHZscDl2SGsKLS0tIGs2K2lkaHBHV0F6NC9ML2lJQ3lX
-            WlY1emYzSUdrS05FK1lLcGFMTlU5Q1kKpxHUM6VC1GyqHORScGJgSyLnPDACysVr
-            FMDglvyO8R9XTo1PRlfMNdS+YYvRt9v8uWp9gtreDT78/8nsmXmPTA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBVS2MzeEdHcHV0emE3UlRU
+            NnBBKzlxdzFBQ2VLdGJBcjhpOGpWMTNubDJVCmZ4bTFvNnZNYko0NHV2MkFFODhV
+            QnBBclc3cllJVzhGRjVtQno1MXhXRVUKLS0tIFg2T25FTXZOdEVSV0dFZmsyNTFD
+            ak81NWsvUlRLWk1PaDhsUkNaQmMzMDAKgezJGET6R2EpocrpDv1W6JfBC9N76nYl
+            HbuaHzqe3YGi+kimty7gfPtJbSnjVxCG7cimyENW44CdLm4+z6YYkg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-10-01T07:46:59Z"
-    mac: ENC[AES256_GCM,data:8yFhw9Ob4FWjXQd9y8cGfiUToTzfnBoPmu3xmo29CMqpbYF7PlTsuGzRDZeJ7496reNfWjwjAJn6YfbtyXkVV1CPn4c7TB5SZM6uktfLZXWKqEZ8hep+2Viu6mAwTpdRndWUQYJJbq7JKo0Q5GH41bUcbEl+F6WZjZTaKha2BuY=,iv:raiUPD44C3V0oiIw2xpOJJLygPmjbV93sJLn3u3mEs0=,tag:qPhLs5zwCYX0v+Ib/R0K5A==,type:str]
+    lastmodified: "2026-10-24T12:44:38Z"
+    mac: ENC[AES256_GCM,data:oSPS4tqjwh5kEH+czrLx9eIsOxnpBQ2z0vMCBUshbv0lwSMyqojhEV7WVc8yi6euGsHwsZS+DNSUdXOU8BOvW18FUb5bsJD1nuO9b43lC2H7cd76Pqh+8gsRn1FrGQeIWZkx0vSfmRTfDR56jzcdPdJvb1dCxPmyQyFoXnyg2jA=,iv:XGullH3Ejl6hFk0IzchkVLVEcHrLdnzBUhAXVuCOtBk=,tag:sMtBBwiPvF+58hsuHjH4EQ==,type:str]
     encrypted_regex: ^(data|stringData)$
     version: 3.10.2
