@@ -140,7 +140,7 @@ spec:
             - name: SITE_NAME
               value: "prplanit"
             - name: SITE_DOMAIN
-              value: "hq.pcfae.com"
+              value: "hq.prplanit.com"
             - name: ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
