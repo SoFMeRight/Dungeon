@@ -26,7 +26,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: minecraft
-          image: docker.io/itzg/minecraft-server:java25
+          image: docker.io/itzg/minecraft-server:java25@sha256:0222a05b5bdf82e0d5fc91920d89f02d0df77b6ee51a3c08d748b3864a418524
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

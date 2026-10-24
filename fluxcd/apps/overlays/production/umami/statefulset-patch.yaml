@@ -14,7 +14,7 @@ spec:
           image: docker.io/library/postgres:18-alpine
       containers:
         - name: umami
-          image: ghcr.io/umami-software/umami:postgresql-latest
+          image: ghcr.io/umami-software/umami:postgresql-latest@sha256:e69d1a7932e9dab0fc523edc7be1f3a53f3c261f57856fc2167ae74a8fc022e8
           securityContext:
             readOnlyRootFilesystem: true
           volumeMounts:
