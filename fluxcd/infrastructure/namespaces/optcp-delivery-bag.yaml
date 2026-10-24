@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: optcp-delivery-bag
+  labels:
+    name: optcp-delivery-bag
+    tenant: optcp                          # openbao-optcp ClusterSecretStore condition
+    cr-pcfae-pull-secret: "enabled"
+    docker-io-pull-secret: "enabled"
+    istio.io/dataplane-mode: ambient
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/enforce-version: "latest"
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/audit-version: "latest"
+    pod-security.kubernetes.io/warn: baseline
+    pod-security.kubernetes.io/warn-version: "latest"

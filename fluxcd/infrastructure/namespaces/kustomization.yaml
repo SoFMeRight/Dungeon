@@ -8,6 +8,7 @@ resources:
   - lost-woods.yaml
   - temple-of-time.yaml
   - optcp-cloud.yaml
+  - optcp-delivery-bag.yaml
   - optcp-sibyl-system.yaml
   - fairy-bottle.yaml
   - gorons-bracelet.yaml

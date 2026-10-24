@@ -112,6 +112,18 @@ spec:
         certificateRefs:
           - kind: Secret
             name: projects-optcp-com-tls
+    - name: https-mail-admin-optcp
+      protocol: HTTPS
+      port: 443
+      hostname: "mail-admin.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: mail-admin-optcp-com-tls
     - name: https-sops-optcp
       protocol: HTTPS
       port: 443

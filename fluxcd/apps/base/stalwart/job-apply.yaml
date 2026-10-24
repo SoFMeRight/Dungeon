@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: stalwart-apply
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on change, not wedge
+spec:
+  backoffLimit: 20
+  template:
+    metadata:
+      labels:
+        app: stalwart-apply
+    spec:
+      serviceAccountName: stalwart
+      automountServiceAccountToken: false
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2000
+        runAsGroup: 2000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: apply
+          image: PLACEHOLDER_CLI_IMAGE
+          args: ["apply", "--file", "/plan/plan.ndjson"]
+          env:
+            - name: STALWART_URL
+              value: http://stalwart:8080
+            - name: STALWART_USER
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-secret
+                  key: STALWART_USER
+            - name: STALWART_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-secret
+                  key: STALWART_PASSWORD
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: plan
+              mountPath: /plan
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: plan
+          configMap:
+            name: stalwart-plan
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi

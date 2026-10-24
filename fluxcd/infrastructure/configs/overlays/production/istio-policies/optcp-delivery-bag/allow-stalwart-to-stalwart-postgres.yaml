@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-stalwart-to-stalwart-postgres
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: stalwart-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-delivery-bag/sa/stalwart
+      to:
+        - operation:
+            ports: ["5432"]

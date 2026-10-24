@@ -1,0 +1,15 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-stalwart-mail-loadbalancer
+spec:
+  selector:
+    matchLabels:
+      app: stalwart
+  action: ALLOW
+  rules:
+    # Mail arrives from other MTAs and clients, whose source IPs are unpredictable.
+    # Istio ambient enforces on the workload ports behind the Service mapping.
+    - to:
+        - operation:
+            ports: ["2525", "1465", "1587", "1993"]

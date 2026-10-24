@@ -1,0 +1,8 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: stalwart-postgres-store
+spec:
+  configuration:
+    destinationPath: s3://optcp-dungeon-cnpg-stalwart
+    endpointURL: http://172.22.150.101:8333

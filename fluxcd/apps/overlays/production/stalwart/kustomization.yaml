@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-delivery-bag
+resources:
+  - ../../../base/stalwart
+  - certificate.yaml
+  - httproute.yaml
+configMapGenerator:
+  - name: stalwart-env
+    literals:
+      - STALWART_PUBLIC_URL=https://mail-admin.optcp.com
+      - STALWART_HOSTNAME=mail.optcp.com
+      # Bootstrap: the apply Job writes the plan through the recovery listener. Remove once applied.
+      - STALWART_RECOVERY_MODE=true
+  - name: stalwart-config
+    files:
+      - config.json
+  - name: stalwart-plan
+    files:
+      - plan.ndjson
+patches:
+  - path: postgres-cluster-patch.yaml
+  - path: objectstore-postgres-patch.yaml
+  - path: deployment-patch.yaml
+  - path: job-apply-patch.yaml
+  - path: service-mail-patch.yaml

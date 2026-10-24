@@ -1,0 +1,28 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: stalwart-postgres-store
+spec:
+  retentionPolicy: "30d"
+  configuration:
+    destinationPath: PLACEHOLDER_DESTINATION_PATH
+    endpointURL: PLACEHOLDER_ENDPOINT_URL
+    s3Credentials:
+      accessKeyId:
+        name: stalwart-postgres-backup-s3
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: stalwart-postgres-backup-s3
+        key: SECRET_ACCESS_KEY
+    wal:
+      compression: gzip
+    data:
+      compression: gzip
+  instanceSidecarConfiguration:
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 50m
+      limits:
+        memory: 512Mi
+        cpu: 500m

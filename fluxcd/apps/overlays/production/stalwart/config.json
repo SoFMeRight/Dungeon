@@ -1,0 +1,11 @@
+{
+  "@type": "PostgreSql",
+  "host": "stalwart-postgres-rw",
+  "port": 5432,
+  "database": "stalwart",
+  "authUsername": "stalwart",
+  "authSecret": {
+    "@type": "EnvironmentVariable",
+    "variableName": "STALWART_DB_PASSWORD"
+  }
+}

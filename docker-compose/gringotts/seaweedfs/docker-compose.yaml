@@ -218,6 +218,18 @@ configs:
             ]
           },
           {
+            "name": "optcp-dungeon-cnpg-stalwart",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_CNPG_STALWART_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_STALWART_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp-dungeon-cnpg-stalwart",
+              "Write:optcp-dungeon-cnpg-stalwart",
+              "List:optcp-dungeon-cnpg-stalwart",
+              "Tagging:optcp-dungeon-cnpg-stalwart"
+            ]
+          },
+          {
             "name": "optcp-dungeon-cnpg-wikijs-sops",
             "credentials": [
               { "accessKey": "${OPTCP_DUNGEON_CNPG_WIKIJS_SOPS_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_CNPG_WIKIJS_SOPS_S3_SECRET_KEY}" }

@@ -46,6 +46,7 @@ resources:
   - kimai
   - leantime
   - openproject
+  - stalwart
   - wikijs-sops
   - opnform
   - osticket

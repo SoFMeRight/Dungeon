@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stalwart
+spec:
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/cap.postgres: "true"
+        policy.prplanit.com/access-scope-postgres: optcp-delivery-bag.stalwart.postgres
+        policy.prplanit.com/cap.s3: "true"
+        policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
+        policy.prplanit.com/cap.oidc: "true"
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
+      containers:
+        - name: stalwart
+          image: docker.io/stalwartlabs/stalwart:v0.16.27
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 100m
+            limits:
+              memory: 2Gi
+              cpu: "2"

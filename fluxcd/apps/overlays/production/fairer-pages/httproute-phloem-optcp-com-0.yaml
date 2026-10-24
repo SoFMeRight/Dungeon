@@ -17,6 +17,7 @@ spec:
     # optcp.com
     - "plan.optcp.com"
     - "projects.optcp.com"
+    - "mail-admin.optcp.com"
     - "sops.optcp.com"
     - "dtrack.optcp.com"
   rules:

@@ -1,0 +1,9 @@
+{"@type":"upsert","object":"Certificate","matchOn":["subjectAlternativeNames"],"value":{"cert-mail":{"subjectAlternativeNames":["mail.optcp.com"],"certificate":{"@type":"File","filePath":"/etc/stalwart/tls/tls.crt"},"privateKey":{"@type":"File","filePath":"/etc/stalwart/tls/tls.key"}}}}
+{"@type":"update","object":"SystemSettings","value":{"defaultHostname":"mail.optcp.com","defaultCertificateId":"#cert-mail"}}
+{"@type":"update","object":"BlobStore","value":{"@type":"S3","bucket":"stalwart","region":{"@type":"Custom","customEndpoint":"https://s3.pcfae.com","customRegion":"us-east-1"},"accessKey":{"@type":"EnvironmentVariable","variableName":"STALWART_S3_ACCESS_KEY"},"secretKey":{"@type":"EnvironmentVariable","variableName":"STALWART_S3_SECRET_KEY"}}}
+{"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-http":{"name":"http","protocol":"http","bind":["[::]:8080"],"useTls":false}}}
+{"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-smtp":{"name":"smtp","protocol":"smtp","bind":["[::]:2525"],"useTls":true}}}
+{"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-submissions":{"name":"submissions","protocol":"smtp","bind":["[::]:1465"],"useTls":true,"tlsImplicit":true}}}
+{"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-submission":{"name":"submission","protocol":"smtp","bind":["[::]:1587"],"useTls":true}}}
+{"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-imaps":{"name":"imaps","protocol":"imap","bind":["[::]:1993"],"useTls":true,"tlsImplicit":true}}}
+{"@type":"upsert","object":"Domain","matchOn":["name"],"value":{"dom-optcp":{"name":"optcp.com"}}}

@@ -1,0 +1,58 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-stalwart
+spec:
+  description: >-
+    Stalwart: LAN-only mail ingress on 172.22.30.103 until a port forward is added, plus the
+    apply Job reaching the management API. Egress to world for outbound mail and cluster for
+    the hairpin to s3.pcfae.com and the IdP.
+  endpointSelector:
+    matchLabels:
+      app: stalwart
+  ingress:
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.144.0/20"
+      toPorts:
+        - ports:
+            - port: "2525"
+              protocol: TCP
+            - port: "1465"
+              protocol: TCP
+            - port: "1587"
+              protocol: TCP
+            - port: "1993"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            app: stalwart-apply
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+  egress:
+    - toEntities:
+        - world
+        - cluster
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-stalwart-apply
+spec:
+  description: Stalwart apply Job reaching the management API.
+  endpointSelector:
+    matchLabels:
+      app: stalwart-apply
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app: stalwart
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP

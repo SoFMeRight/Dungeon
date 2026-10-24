@@ -35,6 +35,7 @@ resources:
   - hyrule-castle
   - temple-of-time
   - optcp-cloud
+  - optcp-delivery-bag
   - optcp-sibyl-system
   # lakitu: netconsole collector ingress only (no contract CNPs here)
   - lakitu

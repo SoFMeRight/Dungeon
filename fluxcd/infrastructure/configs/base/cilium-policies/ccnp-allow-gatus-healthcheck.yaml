@@ -36,15 +36,21 @@ spec:
               protocol: TCP
             - port: "853"
               protocol: TCP
+            - port: "1465"
+              protocol: TCP
             - port: "1514"
               protocol: TCP
             - port: "1515"
+              protocol: TCP
+            - port: "1587"
               protocol: TCP
             - port: "1688"
               protocol: TCP
             - port: "1935"
               protocol: TCP
             - port: "1984"
+              protocol: TCP
+            - port: "1993"
               protocol: TCP
             - port: "2112"
               protocol: TCP
@@ -98,13 +104,13 @@ spec:
               protocol: TCP
             - port: "6060"
               protocol: TCP
+        - ports:
             - port: "6379"
               protocol: TCP
             - port: "6789"
               protocol: TCP
             - port: "6887"
               protocol: TCP
-        - ports:
             - port: "7007"
               protocol: TCP
             - port: "7575"
@@ -179,13 +185,13 @@ spec:
               protocol: TCP
             - port: "8779"
               protocol: TCP
+        - ports:
             - port: "8780"
               protocol: TCP
             - port: "8787"
               protocol: TCP
             - port: "8843"
               protocol: TCP
-        - ports:
             - port: "8880"
               protocol: TCP
             - port: "8888"
@@ -260,5 +266,6 @@ spec:
               protocol: TCP
             - port: "35566"
               protocol: TCP
+        - ports:
             - port: "55000"
               protocol: TCP

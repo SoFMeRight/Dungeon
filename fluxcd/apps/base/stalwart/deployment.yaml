@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stalwart
+  labels:
+    app: stalwart
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: stalwart
+  template:
+    metadata:
+      labels:
+        app: stalwart
+    spec:
+      serviceAccountName: stalwart
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2000
+        runAsGroup: 2000
+        fsGroup: 2000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        # The mesh accepts TCP before Postgres exists, so ask Postgres itself.
+        - name: wait-for-db
+          image: PLACEHOLDER_POSTGRES_IMAGE
+          command: ["sh", "-c", "until pg_isready -q -h stalwart-postgres-rw -p 5432; do sleep 2; done"]
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      containers:
+        - name: stalwart
+          image: PLACEHOLDER_IMAGE
+          args: ["--config", "/etc/stalwart/config.json"]
+          envFrom:
+            - secretRef:
+                name: stalwart-secret
+            - configMapRef:
+                name: stalwart-env
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: smtp
+              containerPort: 2525
+            - name: submissions
+              containerPort: 1465
+            - name: submission
+              containerPort: 1587
+            - name: imaps
+              containerPort: 1993
+          startupProbe:
+            httpGet:
+              path: /healthz/live
+              port: 8080
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 8080
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: 8080
+            periodSeconds: 30
+            failureThreshold: 5
+          volumeMounts:
+            - name: config
+              mountPath: /etc/stalwart/config.json
+              subPath: config.json
+              readOnly: true
+            - name: tls
+              mountPath: /etc/stalwart/tls
+              readOnly: true
+            - name: data
+              mountPath: /var/lib/stalwart
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: config
+          configMap:
+            name: stalwart-config
+        - name: tls
+          secret:
+            secretName: stalwart-tls
+        - name: data
+          emptyDir:
+            sizeLimit: 1Gi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 256Mi
