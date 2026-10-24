@@ -30,7 +30,10 @@ spec:
       targets: dtrack
       dtrack-base-url: http://dependency-track-api-server:8080
       dtrack-default-parent-project: PLACEHOLDER_DTRACK_PARENT_PROJECT
-      dtrack-manage-project-active-status: ""
+      # Off: it deactivates every other version of an image on each upload, so
+      # concurrent versions (postgres 13 and 15) hide one another. With it off,
+      # sbom-operator's default deletes a project once no pod runs its digest.
+      dtrack-manage-project-active-status: "false"
       kubernetes-cluster-id: PLACEHOLDER_CLUSTER_ID
       registry-proxy: PLACEHOLDER_REGISTRY_PROXIES
       fallback-pull-secret: sbom-operator-registry
