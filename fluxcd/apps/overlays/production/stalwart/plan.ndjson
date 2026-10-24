@@ -1,4 +1,5 @@
 {"@type":"upsert","object":"Domain","matchOn":["name"],"value":{"dom-optcp":{"name":"optcp.com"}}}
+{"@type":"update","object":"SystemSettings","value":{"defaultCertificateId":null}}
 {"@type":"destroy","object":"Certificate"}
 {"@type":"upsert","object":"Certificate","matchOn":["subjectAlternativeNames"],"value":{"cert-mail":{"subjectAlternativeNames":{"mail.optcp.com":true},"certificate":{"@type":"File","filePath":"/etc/stalwart/tls/tls.crt"},"privateKey":{"@type":"File","filePath":"/etc/stalwart/tls/tls.key"}}}}
 {"@type":"update","object":"SystemSettings","value":{"defaultHostname":"mail.optcp.com","defaultCertificateId":"#cert-mail","defaultDomainId":"#dom-optcp"}}
