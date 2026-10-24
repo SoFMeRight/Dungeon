@@ -1,0 +1,59 @@
+# HASteward backup prune — apply retention to the restic snapshots of one cluster.
+# Type and retention are HASteward's own flags, passed after `--`; run with --dry-run first.
+#   ../jobs/run.sh backup-prune -c <cluster> -n <namespace> -- -t diverged --keep-last 3 --dry-run
+# Vars: ENGINE CLUSTER NAMESPACE IMAGE PULL_POLICY EXTRA_ARGS — filled by run.sh.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: hasteward-backup-prune-${CLUSTER}-
+  namespace: fairy-bottle
+  labels:
+    app.kubernetes.io/name: hasteward
+    hasteward.prplanit.com/verb: backup-prune
+    hasteward.prplanit.com/target: ${CLUSTER}
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hasteward
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: hasteward
+      restartPolicy: Never
+      containers:
+        - name: hasteward
+          image: ${IMAGE}
+          # run.sh resolves the tag to a digest before substituting it here, so
+          # IfNotPresent cannot serve stale code: there is nothing newer that a re-pull
+          # could find. When the registry is unreachable it substitutes the bare tag
+          # instead, and this policy is what lets the node's cached layer still run.
+          imagePullPolicy: ${PULL_POLICY}
+          args: ["backup", "prune", "${EXTRA_ARGS}"]
+          env:
+            - name: HASTEWARD_ENGINE
+              value: "${ENGINE}"
+            - name: HASTEWARD_CLUSTER
+              value: "${CLUSTER}"
+            - name: HASTEWARD_NAMESPACE
+              value: "${NAMESPACE}"
+            - name: HASTEWARD_BACKUPS_PATH
+              value: /backups
+            - name: RESTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hasteward-restic
+                  key: password
+          volumeMounts:
+            - name: backups
+              mountPath: /backups
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: backups
+          persistentVolumeClaim:
+            claimName: hasteward-backups
+        - name: tmp
+          emptyDir: {}

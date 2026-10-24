@@ -1,0 +1,59 @@
+# HASteward backup list — read-only listing of the restic snapshots HASteward holds for a
+# cluster: scheduled backups, diverged captures, and repair escrows.
+#   ../jobs/run.sh backup-list -c <cluster> -n <namespace> [-- <backup list flags>]
+# Vars: ENGINE CLUSTER NAMESPACE IMAGE PULL_POLICY EXTRA_ARGS — filled by run.sh.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: hasteward-backup-list-${CLUSTER}-
+  namespace: fairy-bottle
+  labels:
+    app.kubernetes.io/name: hasteward
+    hasteward.prplanit.com/verb: backup-list
+    hasteward.prplanit.com/target: ${CLUSTER}
+spec:
+  ttlSecondsAfterFinished: 86400
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hasteward
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      serviceAccountName: hasteward
+      restartPolicy: Never
+      containers:
+        - name: hasteward
+          image: ${IMAGE}
+          # run.sh resolves the tag to a digest before substituting it here, so
+          # IfNotPresent cannot serve stale code: there is nothing newer that a re-pull
+          # could find. When the registry is unreachable it substitutes the bare tag
+          # instead, and this policy is what lets the node's cached layer still run.
+          imagePullPolicy: ${PULL_POLICY}
+          args: ["backup", "list", "${EXTRA_ARGS}"]
+          env:
+            - name: HASTEWARD_ENGINE
+              value: "${ENGINE}"
+            - name: HASTEWARD_CLUSTER
+              value: "${CLUSTER}"
+            - name: HASTEWARD_NAMESPACE
+              value: "${NAMESPACE}"
+            - name: HASTEWARD_BACKUPS_PATH
+              value: /backups
+            - name: RESTIC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hasteward-restic
+                  key: password
+          volumeMounts:
+            - name: backups
+              mountPath: /backups
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: backups
+          persistentVolumeClaim:
+            claimName: hasteward-backups
+        - name: tmp
+          emptyDir: {}

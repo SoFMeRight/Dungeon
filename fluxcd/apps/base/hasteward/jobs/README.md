@@ -21,11 +21,18 @@ purpose — they are operational runbooks applied on demand, never reconciled.
 
 # Promote the authority when it is not the primary (leader-not-primary / diverged).
 ./run.sh promote          -c some-postgres       -n some-ns        -i 3
+
+# List the restic snapshots HASteward holds for a cluster (backups, diverged, escrow).
+./run.sh backup-list      -c some-postgres       -n some-ns
+
+# Apply retention; HASteward's own flags go after --. Dry-run first.
+./run.sh backup-prune     -c some-postgres       -n some-ns -- -t diverged --keep-last 3 --dry-run
 ```
 
 Flags: `-c` cluster (required), `-n` namespace (required), `-i` instance, `-e` engine
 (`cnpg` default, or `galera`), `--image` (default `docker.io/prplanit/hasteward:latest-dev`),
-`-f`/`--force` (`repair` and `promote` only).
+`-f`/`--force` (`repair` and `promote` only), `--` then HASteward flags (`backup-list` and
+`backup-prune` only).
 
 ### Which image actually ran
 
@@ -78,6 +85,8 @@ kubectl -n fairy-bottle logs -f job/<printed-name>
 | `deadlock-recover` | `prune-wal --deadlock-recover -i N` | VolumeSnapshot | In-place WAL replay+recycle for a disk-full-DEADLOCKED instance, then settles the primary (cancels a stuck failover). No PVC growth. |
 | `repair` | `repair -i N` | restic | Re-clone/heal an unhealthy instance from the primary. Accepts `-f`. |
 | `promote` | `repair -i N --promote` | restic | Rebuild-around-authority when the authority is not the primary. `--dry-run` first (edit args). Accepts `-f`. |
+| `backup-list` | `backup list` | — | Read-only. The cluster's restic snapshots with type and age. |
+| `backup-prune` | `backup prune` | — | Retention over `backup` / `diverged` snapshots (`-t`, `--keep-*`), or `-t escrow` VolumeSnapshots. All `--keep-*` at 0 keeps everything. |
 
 `deadlock-recover` escrows via a CSI VolumeSnapshot (no backups PVC needed); `repair` /
 `promote` escrow to the restic repo on the `hasteward-backups` PVC using `RESTIC_PASSWORD`

@@ -18,7 +18,7 @@
 set -euo pipefail
 
 VERB="${1:-}"
-[ -n "$VERB" ] || { echo "usage: run.sh <verb> -c <cluster> -n <namespace> [-i <instance>] [-e <engine>] [--image <ref>] [-f|--force]"; exit 2; }
+[ -n "$VERB" ] || { echo "usage: run.sh <verb> -c <cluster> -n <namespace> [-i <instance>] [-e <engine>] [--image <ref>] [-f|--force] [-- <hasteward flags>]"; exit 2; }
 shift
 
 ENGINE=cnpg
@@ -27,6 +27,7 @@ IMAGE="docker.io/prplanit/hasteward:latest-dev"
 CLUSTER=""
 NAMESPACE=""
 FORCE=""
+EXTRA_ARGS=""
 while [ $# -gt 0 ]; do
   case "$1" in
     -c) CLUSTER="$2"; shift 2 ;;
@@ -35,6 +36,15 @@ while [ $# -gt 0 ]; do
     -e) ENGINE="$2"; shift 2 ;;
     --image) IMAGE="$2"; shift 2 ;;
     -f|--force) FORCE=true; shift ;;
+    # Everything after -- goes to HASteward verbatim, for verbs whose own flags carry the
+    # policy (backup-prune: -t, --keep-*, --dry-run). The template holds one quoted slot,
+    # "${EXTRA_ARGS}", so it stays valid YAML; the items are joined into it with '", "'.
+    --) shift
+        for a in "$@"; do
+          a="${a//\\/\\\\}"; a="${a//\"/\\\"}"
+          EXTRA_ARGS="${EXTRA_ARGS:+$EXTRA_ARGS\", \"}$a"
+        done
+        break ;;
     *) echo "unknown arg: $1" >&2; exit 2 ;;
   esac
 done
@@ -54,6 +64,10 @@ if grep -q '\${INSTANCE}' "$TEMPLATE" && [ -z "$INSTANCE" ]; then
 fi
 if [ -n "$FORCE" ] && ! grep -q '\${FORCE}' "$TEMPLATE"; then
   echo "verb '$VERB' does not accept --force" >&2
+  exit 2
+fi
+if [ -n "$EXTRA_ARGS" ] && ! grep -q '\${EXTRA_ARGS}' "$TEMPLATE"; then
+  echo "verb '$VERB' does not accept arguments after --" >&2
   exit 2
 fi
 
@@ -162,7 +176,11 @@ else
   echo "         Verify before trusting a result: kubectl -n fairy-bottle get job/<name> -o jsonpath='{.spec.template.spec.containers[0].image}'" >&2
 fi
 
-export ENGINE CLUSTER NAMESPACE INSTANCE IMAGE FORCE PULL_POLICY
+export ENGINE CLUSTER NAMESPACE INSTANCE IMAGE FORCE PULL_POLICY EXTRA_ARGS
 # create (not apply): generateName gives each run a unique Job name, so repeated runs never
 # collide and the history is auditable until ttlSecondsAfterFinished reaps it.
-envsubst '${ENGINE} ${CLUSTER} ${NAMESPACE} ${INSTANCE} ${IMAGE} ${FORCE} ${PULL_POLICY}' < "$TEMPLATE" | kubectl create -f -
+# No arguments after -- drops the slot entirely rather than passing HASteward an empty one.
+if [ -n "$EXTRA_ARGS" ]; then RENDERED="$(cat "$TEMPLATE")"; else RENDERED="$(sed 's/, "\${EXTRA_ARGS}"//' "$TEMPLATE")"; fi
+printf '%s\n' "$RENDERED" \
+  | envsubst '${ENGINE} ${CLUSTER} ${NAMESPACE} ${INSTANCE} ${IMAGE} ${FORCE} ${PULL_POLICY} ${EXTRA_ARGS}' \
+  | kubectl create -f -
