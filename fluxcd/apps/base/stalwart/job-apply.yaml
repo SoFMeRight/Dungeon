@@ -25,6 +25,8 @@ spec:
           image: PLACEHOLDER_CLI_IMAGE
           args: ["apply", "--file", "/plan/plan.ndjson"]
           env:
+            - name: HOME
+              value: /tmp
             - name: STALWART_URL
               value: http://stalwart:8080
             - name: STALWART_USER

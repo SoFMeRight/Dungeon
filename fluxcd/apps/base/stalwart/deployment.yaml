@@ -51,6 +51,9 @@ spec:
             capabilities:
               drop:
                 - ALL
+              # The image's binary carries a file capability for low ports; exec fails without it.
+              add:
+                - NET_BIND_SERVICE
           ports:
             - name: http
               containerPort: 8080
