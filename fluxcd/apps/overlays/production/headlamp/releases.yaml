@@ -9,3 +9,53 @@ releases:
     layout: tar
     strip: 1
     dest: /plugins/flux
+  - name: cert-manager
+    repo: headlamp-k8s/plugins
+    tag: "cert-manager-{version}"
+    asset: "headlamp-k8s-cert-manager-{version}.tar.gz"
+    # renovate: datasource=github-releases depName=headlamp-k8s/plugins extractVersion=^cert-manager-(?<version>.+)$
+    version: "0.1.1"
+    verify: github-digest
+    layout: tar
+    strip: 1
+    dest: /plugins/cert-manager
+  - name: kyverno
+    repo: headlamp-k8s/plugins
+    tag: "kyverno-{version}"
+    asset: "headlamp-k8s-kyverno-{version}.tar.gz"
+    # renovate: datasource=github-releases depName=headlamp-k8s/plugins extractVersion=^kyverno-(?<version>.+)$
+    version: "0.1.0"
+    verify: github-digest
+    layout: tar
+    strip: 1
+    dest: /plugins/kyverno
+  - name: prometheus
+    repo: headlamp-k8s/plugins
+    tag: "prometheus-{version}"
+    asset: "prometheus-{version}.tar.gz"
+    # renovate: datasource=github-releases depName=headlamp-k8s/plugins extractVersion=^prometheus-(?<version>.+)$
+    version: "0.9.1"
+    verify: github-digest
+    layout: tar
+    strip: 1
+    dest: /plugins/prometheus
+  - name: app-catalog
+    repo: headlamp-k8s/plugins
+    tag: "app-catalog-{version}"
+    asset: "app-catalog-{version}.tar.gz"
+    # renovate: datasource=github-releases depName=headlamp-k8s/plugins extractVersion=^app-catalog-(?<version>.+)$
+    version: "0.9.1"
+    verify: github-digest
+    layout: tar
+    strip: 1
+    dest: /plugins/app-catalog
+  - name: cnpg
+    repo: cloudnative-pg/cnpg-headlamp-plugin
+    tag: "v{version}"
+    asset: "cnpg-headlamp-plugin-{version}.tar.gz"
+    # renovate: datasource=github-releases depName=cloudnative-pg/cnpg-headlamp-plugin extractVersion=^v(?<version>.+)$
+    version: "0.1.6"
+    verify: github-digest
+    layout: tar
+    strip: 1
+    dest: /plugins/cnpg-headlamp-plugin
