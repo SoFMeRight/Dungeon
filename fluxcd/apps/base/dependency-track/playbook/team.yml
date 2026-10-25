@@ -1,0 +1,34 @@
+---
+- name: Read teams
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/team"
+  register: dt_teams
+
+- name: Create team {{ team.name }}
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/team"
+    method: PUT
+    body:
+      name: "{{ team.name }}"
+    status_code: [201]
+  register: dt_team_created
+  when: dt_teams.json | selectattr('name', '==', team.name) | length == 0
+  changed_when: true
+
+- name: Select team {{ team.name }}
+  ansible.builtin.set_fact:
+    dt_team: >-
+      {{ dt_team_created.json if dt_team_created is not skipped
+         else dt_teams.json | selectattr('name', '==', team.name) | first }}
+
+# Replaces the team's permissions with the declared list.
+- name: Set permissions of {{ team.name }}
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/permission/team"
+    method: PUT
+    body:
+      team: "{{ dt_team.uuid }}"
+      permissions: "{{ team.permissions }}"
+    status_code: [200, 304]
+  when: dt_team.permissions | default([]) | map(attribute='name') | sort != team.permissions | sort
+  changed_when: true

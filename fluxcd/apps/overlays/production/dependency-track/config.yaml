@@ -1,0 +1,92 @@
+---
+dependency_track:
+  # svc:dependency-track-config is this Job: Dependency-Track cannot seed it,
+  # so it is created once with ACCESS_MANAGEMENT and its key filed in OpenBao.
+  teams:
+    - name: svc:dependency-track-config
+      permissions: [ACCESS_MANAGEMENT, POLICY_MANAGEMENT, SYSTEM_CONFIGURATION]
+    - name: svc:sbom-operator
+      permissions: [BOM_UPLOAD, PORTFOLIO_MANAGEMENT, PROJECT_CREATION_UPLOAD, VIEW_PORTFOLIO]
+
+  config_properties:
+    - group: general
+      name: base.url
+      value: https://dtrack.optcp.com
+
+  # Secret-ref fields name a DT_SECRET_<name> secret, never its value.
+  extensions:
+    - point: vuln-data-source
+      name: nvd
+      config:
+        enabled: true
+    - point: vuln-data-source
+      name: osv
+      config:
+        enabled: true
+        ecosystems: [Alpine, Debian, Ubuntu, Go, npm, PyPI, Maven, NuGet, Packagist, crates.io, RubyGems]
+    - point: vuln-data-source
+      name: github
+      config:
+        enabled: true
+        apiToken: GITHUB_TOKEN
+    - point: kev-data-source
+      name: cisa
+      config:
+        enabled: true
+    - point: kev-data-source
+      name: enisa
+      config:
+        enabled: true
+
+  policies:
+    - name: Known exploited vulnerabilities
+      operator: ANY
+      violation_state: FAIL
+      conditions:
+        - subject: EXPRESSION
+          operator: MATCHES
+          value: vulns.exists(v, v.is_kev)
+          violation_type: SECURITY
+
+  publishers:
+    - name: ntfy Prod-Alert
+      description: "ntfy Arbitorium-Prod-Alert (priority 5): known-exploited vulnerabilities running"
+      template: /playbook/ntfy.peb
+      topic: Arbitorium-Prod-Alert
+      priority: 5
+    - name: ntfy Prod-Warn
+      description: "ntfy Arbitorium-Prod-Warn (priority 4): weekly digest and feed or SBOM failures"
+      template: /playbook/ntfy.peb
+      topic: Arbitorium-Prod-Warn
+      priority: 4
+
+  rule_publisher_config:
+    destinationUrl: http://ntfy.delivery-bag.svc.cluster.local/
+    authHeaderName: Authorization
+    authHeaderValue: NTFY_AUTH
+
+  rules:
+    - name: Known-exploited vulnerability running
+      scope: PORTFOLIO
+      level: INFORMATIONAL
+      publisher: ntfy Prod-Alert
+      notify_on: [POLICY_VIOLATION]
+      filter: subject.policy_violation.condition.policy.name == "Known exploited vulnerabilities"
+    - name: Weekly vulnerability digest
+      scope: PORTFOLIO
+      level: INFORMATIONAL
+      publisher: ntfy Prod-Warn
+      notify_on: [NEW_VULNERABILITIES_SUMMARY]
+      filter: '"CRITICAL" in subject.overview.new_vulnerabilities_count_by_severity || "HIGH" in subject.overview.new_vulnerabilities_count_by_severity'
+      # UTC
+      schedule_cron: "0 16 * * 1"
+    - name: Vulnerability feed or analyzer failure
+      scope: SYSTEM
+      level: ERROR
+      publisher: ntfy Prod-Warn
+      notify_on: [ANALYZER, DATASOURCE_MIRRORING]
+    - name: SBOM rejected
+      scope: PORTFOLIO
+      level: INFORMATIONAL
+      publisher: ntfy Prod-Warn
+      notify_on: [BOM_PROCESSING_FAILED, BOM_VALIDATION_FAILED]

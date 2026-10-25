@@ -1,0 +1,96 @@
+---
+- name: Apply Dependency-Track configuration
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - /config/config.yaml
+  vars:
+    dt_api: "{{ lookup('ansible.builtin.env', 'DT_URL') }}/api"
+  module_defaults:
+    ansible.builtin.uri:
+      headers:
+        X-Api-Key: "{{ lookup('ansible.builtin.env', 'DT_API_KEY') }}"
+      body_format: json
+      return_content: true
+  tasks:
+    - name: Wait for the API server
+      ansible.builtin.uri:
+        url: "{{ dt_api }}/version"
+      register: dt_version
+      until: dt_version.status == 200
+      retries: 30
+      delay: 10
+
+    - name: Apply teams
+      ansible.builtin.include_tasks: team.yml
+      loop: "{{ dependency_track.teams }}"
+      loop_control:
+        loop_var: team
+        label: "{{ team.name }}"
+
+    - name: Read config properties
+      ansible.builtin.uri:
+        url: "{{ dt_api }}/v1/configProperty"
+      register: dt_properties
+
+    - name: Set config properties
+      ansible.builtin.uri:
+        url: "{{ dt_api }}/v1/configProperty"
+        method: POST
+        body:
+          groupName: "{{ item.group }}"
+          propertyName: "{{ item.name }}"
+          propertyValue: "{{ item.value }}"
+      loop: "{{ dependency_track.config_properties }}"
+      loop_control:
+        label: "{{ item.group }}/{{ item.name }}"
+      when: >-
+        dt_properties.json
+        | selectattr('groupName', '==', item.group)
+        | selectattr('propertyName', '==', item.name)
+        | map(attribute='propertyValue') | first | default(none) != item.value
+      changed_when: true
+
+    - name: Read extension configs
+      ansible.builtin.uri:
+        url: "{{ dt_api }}/v2/extension-points/{{ item.point }}/extensions/{{ item.name }}/config"
+      loop: "{{ dependency_track.extensions }}"
+      loop_control:
+        label: "{{ item.point }}/{{ item.name }}"
+      register: dt_extensions
+
+    # Declared fields only; the rest keeps its default.
+    - name: Set extension configs
+      ansible.builtin.uri:
+        url: "{{ dt_api }}/v2/extension-points/{{ item.item.point }}/extensions/{{ item.item.name }}/config"
+        method: PUT
+        body:
+          config: "{{ item.json.config | default({}, true) | combine(item.item.config) }}"
+        status_code: [204, 304]
+      loop: "{{ dt_extensions.results }}"
+      loop_control:
+        label: "{{ item.item.point }}/{{ item.item.name }}"
+      when: item.json.config | default({}, true) | combine(item.item.config) != item.json.config
+      changed_when: true
+
+    - name: Apply policies
+      ansible.builtin.include_tasks: policy.yml
+      loop: "{{ dependency_track.policies }}"
+      loop_control:
+        loop_var: policy
+        label: "{{ policy.name }}"
+
+    - name: Apply publishers
+      ansible.builtin.include_tasks: publisher.yml
+      loop: "{{ dependency_track.publishers }}"
+      loop_control:
+        loop_var: publisher
+        label: "{{ publisher.name }}"
+
+    - name: Apply notification rules
+      ansible.builtin.include_tasks: rule.yml
+      loop: "{{ dependency_track.rules }}"
+      loop_control:
+        loop_var: rule
+        label: "{{ rule.name }}"

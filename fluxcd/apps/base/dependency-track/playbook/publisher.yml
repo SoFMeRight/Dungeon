@@ -1,0 +1,38 @@
+---
+- name: Read publishers
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/notification/publisher"
+  register: dt_publishers
+
+- name: Render publisher {{ publisher.name }}
+  ansible.builtin.set_fact:
+    dt_publisher_current: "{{ dt_publishers.json | selectattr('name', '==', publisher.name) | first | default({}) }}"
+    dt_publisher_desired:
+      name: "{{ publisher.name }}"
+      description: "{{ publisher.description }}"
+      extensionName: webhook
+      templateMimeType: application/json
+      defaultPublisher: false
+      template: >-
+        {{ lookup('ansible.builtin.file', publisher.template)
+           | regex_replace('set topic = "TOPIC"', 'set topic = "' ~ publisher.topic ~ '"')
+           | regex_replace('set priority = 0', 'set priority = ' ~ publisher.priority) }}
+
+- name: Create publisher {{ publisher.name }}
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/notification/publisher"
+    method: PUT
+    body: "{{ dt_publisher_desired }}"
+    status_code: [200, 201]
+  when: dt_publisher_current == {}
+  changed_when: true
+
+- name: Update publisher {{ publisher.name }}
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/notification/publisher"
+    method: POST
+    body: "{{ dt_publisher_current | combine(dt_publisher_desired) }}"
+  when:
+    - dt_publisher_current != {}
+    - dt_publisher_current | combine(dt_publisher_desired) != dt_publisher_current
+  changed_when: true

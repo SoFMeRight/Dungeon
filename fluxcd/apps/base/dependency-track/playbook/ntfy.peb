@@ -1,0 +1,33 @@
+{#- ntfy JSON publish to the server root; apply.yml fills in TOPIC and priority per publisher. -#}
+{%- set topic = "TOPIC" -%}
+{%- set priority = 0 -%}
+{%- if notification.group == "GROUP_POLICY_VIOLATION" -%}
+  {%- set title = "Known-exploited vulnerability running: " ~ subject.project.name -%}
+  {%- set message = subject.component.name ~ (subject.component.version is empty ? "" : " " ~ subject.component.version) ~ " in " ~ subject.project.name ~ (subject.project.version is empty ? "" : " " ~ subject.project.version) ~ " matches policy " ~ subject.policyViolation.condition.policy.name ~ "." -%}
+  {%- set click = baseUrl ~ "/projects/" ~ subject.project.uuid ~ "/policyViolations" -%}
+  {%- set tags = "rotating_light" -%}
+{%- elseif notification.group == "GROUP_NEW_VULNERABILITIES_SUMMARY" -%}
+  {%- set counts = subject.overview.newVulnerabilitiesCountBySeverityMap -%}
+  {%- set title = "Weekly vulnerability digest" -%}
+  {%- set message = (subject.overview.newVulnerabilitiesCount) ~ (subject.overview.newVulnerabilitiesCount == 1 ? " new vulnerability in " : " new vulnerabilities in ") ~ (subject.overview.affectedProjectsCount) ~ (subject.overview.affectedProjectsCount == 1 ? " image: " : " images: ") ~ (counts["CRITICAL"] | default(0)) ~ " critical, " ~ (counts["HIGH"] | default(0)) ~ " high, " ~ (counts["MEDIUM"] | default(0)) ~ " medium, " ~ (counts["LOW"] | default(0)) ~ " low." -%}
+  {%- set click = baseUrl ~ "/vulnerabilities" -%}
+  {%- set tags = "calendar" -%}
+{%- elseif notification.group == "GROUP_BOM_PROCESSING_FAILED" or notification.group == "GROUP_BOM_VALIDATION_FAILED" -%}
+  {%- set title = "Dependency-Track rejected an SBOM: " ~ subject.project.name -%}
+  {%- set message = notification.content -%}
+  {%- set click = baseUrl ~ "/projects/" ~ subject.project.uuid -%}
+  {%- set tags = "warning" -%}
+{%- else -%}
+  {%- set title = "Dependency-Track: " ~ notification.title -%}
+  {%- set message = notification.content -%}
+  {%- set click = baseUrl -%}
+  {%- set tags = "warning" -%}
+{%- endif -%}
+{
+  "topic": "{{ topic }}",
+  "priority": {{ priority }},
+  "title": "{{ title | escape(strategy="json") }}",
+  "message": "{{ message | escape(strategy="json") }}",
+  "tags": ["{{ tags }}"],
+  "click": "{{ click | escape(strategy="json") }}"
+}

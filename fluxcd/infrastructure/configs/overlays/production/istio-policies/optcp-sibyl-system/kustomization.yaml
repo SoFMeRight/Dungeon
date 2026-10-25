@@ -8,3 +8,4 @@ resources:
   - allow-dependency-track-to-dependency-track-postgres.yaml
   - allow-dependency-track-postgres-replication.yaml
   - allow-sbom-operator-to-dependency-track.yaml
+  - allow-dependency-track-config-to-dependency-track.yaml

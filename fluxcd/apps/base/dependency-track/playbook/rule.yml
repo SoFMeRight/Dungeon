@@ -1,0 +1,67 @@
+---
+- name: Read publishers and rules
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/notification/{{ item }}"
+  loop: [publisher, rule]
+  register: dt_lists
+
+- name: Select publisher and rule {{ rule.name }}
+  ansible.builtin.set_fact:
+    dt_rule_publisher: "{{ dt_lists.results[0].json | selectattr('name', '==', rule.publisher) | first }}"
+    dt_rule_current: "{{ dt_lists.results[1].json | selectattr('name', '==', rule.name) | first | default({}) }}"
+
+# Scheduled rules are created disabled; the update below enables them.
+- name: Create rule {{ rule.name }}
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/notification/rule{{ '/scheduled' if rule.schedule_cron is defined else '' }}"
+    method: PUT
+    body:
+      name: "{{ rule.name }}"
+      scope: "{{ rule.scope }}"
+      level: "{{ rule.level }}"
+      publisher:
+        uuid: "{{ dt_rule_publisher.uuid }}"
+    status_code: [200, 201]
+  register: dt_rule_created
+  when: dt_rule_current == {}
+  changed_when: true
+
+- name: Compare rule {{ rule.name }}
+  ansible.builtin.set_fact:
+    dt_rule_current: "{{ dt_rule_created.json if dt_rule_created is not skipped else dt_rule_current }}"
+    dt_rule_desired: >-
+      {{ {
+           'notificationLevel': rule.level,
+           'notifyOn': rule.notify_on | sort,
+           'filterExpression': rule.filter | default(none),
+           'enabled': true,
+           'logSuccessfulPublish': true,
+           'publisherConfig': dependency_track.rule_publisher_config,
+           'publisher': dt_rule_publisher.uuid,
+         } | combine({
+           'scheduleCron': rule.schedule_cron,
+           'scheduleSkipUnchanged': true,
+         } if rule.schedule_cron is defined else {}) }}
+
+- name: Normalize rule {{ rule.name }}
+  ansible.builtin.set_fact:
+    dt_rule_seen: >-
+      {{ dt_rule_current | dict2items | selectattr('key', 'in', dt_rule_desired.keys() | list) | items2dict
+         | combine({
+             'filterExpression': dt_rule_current.filterExpression | default(none),
+             'notifyOn': dt_rule_current.notifyOn | default([]) | sort,
+             'publisherConfig': dt_rule_current.publisherConfig | default('{}', true) | from_json,
+             'publisher': dt_rule_current.publisher.uuid | default(''),
+           }) }}
+
+- name: Update rule {{ rule.name }}
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/notification/rule"
+    method: POST
+    body: >-
+      {{ dt_rule_current | combine(dt_rule_desired) | combine({
+           'publisherConfig': dependency_track.rule_publisher_config | to_json,
+           'publisher': dt_rule_publisher,
+         }) }}
+  when: dt_rule_seen != dt_rule_desired
+  changed_when: true

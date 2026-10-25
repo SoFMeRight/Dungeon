@@ -1,0 +1,63 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dependency-track-config
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on change, not wedge
+spec:
+  backoffLimit: 20
+  template:
+    metadata:
+      labels:
+        app: dependency-track-config
+    spec:
+      serviceAccountName: dependency-track-config
+      automountServiceAccountToken: false
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2000
+        runAsGroup: 2000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: config
+          image: PLACEHOLDER_ANSIBLE_IMAGE
+          command: ["ansible-playbook", "/playbook/apply.yml"]
+          env:
+            - name: HOME
+              value: /tmp
+            - name: ANSIBLE_LOCAL_TEMP
+              value: /tmp/.ansible
+            - name: DT_URL
+              value: http://dependency-track-api-server:8080
+            - name: DT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dependency-track-config
+                  key: DT_API_KEY
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: playbook
+              mountPath: /playbook
+              readOnly: true
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: playbook
+          configMap:
+            name: dependency-track-config-playbook
+        - name: config
+          configMap:
+            name: dependency-track-config
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi

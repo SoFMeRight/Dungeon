@@ -1,0 +1,71 @@
+---
+- name: Read policies
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/policy?pageSize=1000"
+  register: dt_policies
+
+- name: Create policy {{ policy.name }}
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/policy"
+    method: PUT
+    body:
+      name: "{{ policy.name }}"
+      operator: "{{ policy.operator }}"
+      violationState: "{{ policy.violation_state }}"
+    status_code: [200, 201]
+  register: dt_policy_created
+  when: dt_policies.json | selectattr('name', '==', policy.name) | length == 0
+  changed_when: true
+
+- name: Select policy {{ policy.name }}
+  ansible.builtin.set_fact:
+    dt_policy: >-
+      {{ dt_policy_created.json if dt_policy_created is not skipped
+         else dt_policies.json | selectattr('name', '==', policy.name) | first }}
+
+- name: Update policy {{ policy.name }}
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/policy"
+    method: POST
+    body: "{{ dt_policy | combine({'operator': policy.operator, 'violationState': policy.violation_state}) }}"
+  when: dt_policy.operator != policy.operator or dt_policy.violationState != policy.violation_state
+  changed_when: true
+
+- name: Add conditions to {{ policy.name }}
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/policy/{{ dt_policy.uuid }}/condition"
+    method: PUT
+    body:
+      subject: "{{ item.subject }}"
+      operator: "{{ item.operator }}"
+      value: "{{ item.value }}"
+      violationType: "{{ item.violation_type }}"
+    status_code: [200, 201]
+  loop: "{{ policy.conditions }}"
+  loop_control:
+    label: "{{ item.subject }} {{ item.operator }} {{ item.value }}"
+  when: >-
+    dt_policy.policyConditions | default([])
+    | selectattr('subject', '==', item.subject)
+    | selectattr('operator', '==', item.operator)
+    | selectattr('value', '==', item.value)
+    | selectattr('violationType', '==', item.violation_type)
+    | length == 0
+  changed_when: true
+
+- name: Remove undeclared conditions from {{ policy.name }}
+  ansible.builtin.uri:
+    url: "{{ dt_api }}/v1/policy/condition/{{ item.uuid }}"
+    method: DELETE
+    status_code: [200, 204]
+  loop: "{{ dt_policy.policyConditions | default([]) }}"
+  loop_control:
+    label: "{{ item.subject }} {{ item.operator }} {{ item.value }}"
+  when: >-
+    policy.conditions
+    | selectattr('subject', '==', item.subject)
+    | selectattr('operator', '==', item.operator)
+    | selectattr('value', '==', item.value)
+    | selectattr('violation_type', '==', item.violationType)
+    | length == 0
+  changed_when: true
