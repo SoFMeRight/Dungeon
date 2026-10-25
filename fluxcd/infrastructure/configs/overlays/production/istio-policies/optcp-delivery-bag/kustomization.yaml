@@ -8,4 +8,4 @@ resources:
   - allow-stalwart-to-stalwart-postgres.yaml
   - allow-stalwart-postgres-replication.yaml
   - allow-stalwart-mail-loadbalancer.yaml
-  - allow-stalwart-apply-to-stalwart.yaml
+  - allow-stalwart-configuration-to-stalwart.yaml

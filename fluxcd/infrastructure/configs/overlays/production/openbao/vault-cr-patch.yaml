@@ -123,8 +123,8 @@ spec:
           path "zeldas-letter/metadata/apps/zitadel" {
             capabilities = ["read", "list"]
           }
-      # dependency-track-config issues Dependency-Track keys; it writes them, never reads.
-      - name: dependency-track-config
+      # dependency-track-configuration issues Dependency-Track keys; it writes them, never reads.
+      - name: dependency-track-configuration
         rules: |
           path "optcp/data/apps/+/dependency-track" {
             capabilities = ["create", "update"]
@@ -184,14 +184,14 @@ spec:
             policies: ["external-secrets-optcp"]
             ttl: 24h
           - name: zitadel-vault-sync
-            bound_service_account_names: ["zitadel"]
+            bound_service_account_names: ["zitadel-configuration"]
             bound_service_account_namespaces: ["zeldas-lullaby"]
             policies: ["zitadel-provisioner"]
             ttl: 1h
-          - name: dependency-track-config
-            bound_service_account_names: ["dependency-track-config"]
+          - name: dependency-track-configuration
+            bound_service_account_names: ["dependency-track-configuration"]
             bound_service_account_namespaces: ["optcp-sibyl-system"]
-            policies: ["dependency-track-config"]
+            policies: ["dependency-track-configuration"]
             ttl: 1h
           # Boundary controller obtains a periodic, renewable, orphan token via its SA
           # (no hand-minted token) for its vault credential store -> ssh-client-signer.

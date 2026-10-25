@@ -92,6 +92,7 @@ spec:
               - openbao
               - vaultwarden-postgres
               - zitadel
+              - zitadel-configuration
               - zitadel-postgres
       mutate:
         patchStrategicMerge:

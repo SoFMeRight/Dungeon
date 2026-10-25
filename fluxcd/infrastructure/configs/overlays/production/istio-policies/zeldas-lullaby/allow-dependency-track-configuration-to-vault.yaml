@@ -1,17 +1,17 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-stalwart-apply-to-stalwart
+  name: allow-dependency-track-configuration-to-vault
 spec:
   selector:
     matchLabels:
-      app: stalwart
+      app.kubernetes.io/name: vault
   action: ALLOW
   rules:
     - from:
         - source:
             principals:
-              - cluster.local/ns/optcp-delivery-bag/sa/stalwart
+              - cluster.local/ns/optcp-sibyl-system/sa/dependency-track-configuration
       to:
         - operation:
-            ports: ["8080"]
+            ports: ["8200"]

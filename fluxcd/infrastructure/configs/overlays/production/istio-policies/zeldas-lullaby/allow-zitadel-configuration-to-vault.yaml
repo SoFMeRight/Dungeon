@@ -1,7 +1,9 @@
+# The zitadel-configuration Job writes Zitadel's generated credentials to OpenBao at
+# zeldas-letter/apps/zitadel; external-secrets reads them back.
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-dependency-track-config-to-vault
+  name: allow-zitadel-configuration-to-vault
 spec:
   selector:
     matchLabels:
@@ -11,7 +13,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/optcp-sibyl-system/sa/dependency-track-config
+              - cluster.local/ns/zeldas-lullaby/sa/zitadel-configuration
       to:
         - operation:
             ports: ["8200"]
