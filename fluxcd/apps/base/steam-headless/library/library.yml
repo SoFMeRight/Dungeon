@@ -282,6 +282,60 @@
             xpath: /content/Audio/api
             value: "{{ cemu_audio_api }}"
 
+- name: keep the Wind Waker HD recomp's data on CephFS-HDD, not the home volume
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    home: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+    # The recomp's toolchain, built game, saves and shader caches are large and would fill the
+    # capacity-bound home PVC. The recomp honours XDG_DATA_HOME/XDG_CONFIG_HOME, but the menu's
+    # desktop entry launches the AppImage directly without them, so its default ~/.local/share/wwhd
+    # and ~/.config/wwhd are symlinked onto the writable CephFS-HDD volume instead — holding for
+    # every launch path (ES-DE port, menu, or direct). Runs only where the recomp is installed.
+    wwhd_xdg_dirs:
+      - { link: "{{ home }}/.local/share/wwhd", target: /mnt/recomp-hdd/data/wwhd }
+      - { link: "{{ home }}/.config/wwhd", target: /mnt/recomp-hdd/config/wwhd }
+  tasks:
+    - name: check the recomp is installed on this seat
+      ansible.builtin.stat:
+        path: "{{ home }}/Applications/WindWakerHD.AppImage"
+      register: _wwhd_app
+
+    - name: redirect the recomp's XDG dirs to CephFS-HDD
+      when: _wwhd_app.stat.exists
+      block:
+        - name: inspect the current XDG dirs
+          ansible.builtin.stat:
+            path: "{{ item.link }}"
+            follow: false
+          loop: "{{ wwhd_xdg_dirs }}"
+          register: _wwhd_now
+          loop_control:
+            label: "{{ item.link }}"
+
+        # A real directory (e.g. a failed first run that wrote to the home volume) must go before
+        # it can become a symlink; an existing symlink is left for the link task to refresh.
+        - name: clear any real directory left on the home volume
+          ansible.builtin.file:
+            path: "{{ item.item.link }}"
+            state: absent
+          loop: "{{ _wwhd_now.results }}"
+          when: item.stat.exists and item.stat.isdir and not item.stat.islnk
+          loop_control:
+            label: "{{ item.item.link }}"
+
+        - name: symlink each XDG dir onto CephFS-HDD
+          ansible.builtin.file:
+            src: "{{ item.target }}"
+            dest: "{{ item.link }}"
+            state: link
+            force: true
+            follow: false
+          loop: "{{ wwhd_xdg_dirs }}"
+          loop_control:
+            label: "{{ item.link }} -> {{ item.target }}"
+
 - name: per-title Xenia settings
   hosts: localhost
   connection: local
