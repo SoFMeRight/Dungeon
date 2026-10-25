@@ -1,0 +1,14 @@
+# Writable CephFS-HDD volume for the WWHD recomp's state (built game, extracted files, saves,
+# settings, shader caches), kept off the capacity-bound home PVC. The port launcher points the
+# recomp's XDG_DATA_HOME/XDG_CONFIG_HOME here. Mounted read-write at /mnt/recomp-hdd.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: steam-headless-recomp-hdd
+spec:
+  storageClassName: cephfs-hdd
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 20Gi

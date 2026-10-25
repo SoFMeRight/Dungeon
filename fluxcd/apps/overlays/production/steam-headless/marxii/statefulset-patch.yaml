@@ -62,6 +62,9 @@ spec:
             - name: games-hdd
               mountPath: /mnt/games-hdd
               readOnly: true
+            # Writable CephFS-HDD for the WWHD recomp's state (XDG dirs), off the home PVC.
+            - name: recomp-hdd
+              mountPath: /mnt/recomp-hdd
           resources:
             requests:
               cpu: 4000m
@@ -75,6 +78,9 @@ spec:
           persistentVolumeClaim:
             claimName: steam-headless-games-hdd
             readOnly: true
+        - name: recomp-hdd
+          persistentVolumeClaim:
+            claimName: steam-headless-recomp-hdd
   volumeClaimTemplates:
     - metadata:
         name: steam-headless-home

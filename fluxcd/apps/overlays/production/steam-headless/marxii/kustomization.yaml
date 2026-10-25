@@ -5,6 +5,7 @@ kind: Kustomization
 resources:
   - ../../../../base/steam-headless-seat
   - games-hdd-pvc.yaml
+  - recomp-hdd-pvc.yaml
 patches:
   - path: statefulset-patch.yaml
     target:

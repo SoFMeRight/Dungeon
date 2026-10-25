@@ -28,6 +28,7 @@ configMapGenerator:
       - library/port-Starship.sh
       - library/port-Lighthouse.sh
       - library/port-Bomberman_64_Recompiled.sh
+      - library/port-Wind_Waker_HD_Recompiled.sh
       - library/port-Dusklight.sh
       - library/port-Minecraft.sh
       - library/port-Heroic_Games_Launcher.sh
