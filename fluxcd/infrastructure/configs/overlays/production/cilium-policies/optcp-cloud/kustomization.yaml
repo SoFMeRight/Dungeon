@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: optcp-cloud
 resources:
   - cnp-default-deny-ingress.yaml
-  - cnp-egress-leantime.yaml
   - cnp-egress-openproject.yaml
   - cnp-egress-wikijs-sops.yaml
   - cnp-openproject-memcached.yaml

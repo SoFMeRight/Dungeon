@@ -78,7 +78,6 @@ spec:
               - nextcloud
               - nextcloud-postgres
               - open-webui-postgres
-              - leantime-postgres
               - openproject-postgres
               - wikijs-sops-postgres
               - dependency-track-postgres

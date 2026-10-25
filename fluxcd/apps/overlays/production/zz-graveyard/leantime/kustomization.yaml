@@ -1,6 +1,6 @@
 namespace: optcp-cloud
 resources:
-  - ../../../base/leantime
+  - ../../../../base/zz-graveyard/leantime
   - httproute.yaml
 patches:
   - path: postgres-cluster-patch.yaml

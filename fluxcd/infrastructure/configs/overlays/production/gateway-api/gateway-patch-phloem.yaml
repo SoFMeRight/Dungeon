@@ -88,18 +88,6 @@ spec:
         certificateRefs:
           - kind: Secret
             name: hq-prplanit-com-tls
-    - name: https-plan-optcp
-      protocol: HTTPS
-      port: 443
-      hostname: "plan.optcp.com"
-      allowedRoutes:
-        namespaces:
-          from: All
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - kind: Secret
-            name: plan-optcp-com-tls
     - name: https-projects-optcp
       protocol: HTTPS
       port: 443

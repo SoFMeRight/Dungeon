@@ -426,20 +426,8 @@ spec:
   dnsNames:
     - "hq.prplanit.com"
 ---
-# plan.optcp.com on phloem: the first internal optcp.com name, so a certificate for the one
-# name rather than a copy of cell-membrane's public *.optcp.com wildcard key.
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: plan-optcp-com-phloem-tls
-spec:
-  secretName: plan-optcp-com-tls
-  issuerRef:
-    name: letsencrypt-production
-    kind: ClusterIssuer
-  dnsNames:
-    - "plan.optcp.com"
----
+# Internal optcp.com names on phloem get a certificate per name rather than a copy of
+# cell-membrane's public *.optcp.com wildcard key.
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:

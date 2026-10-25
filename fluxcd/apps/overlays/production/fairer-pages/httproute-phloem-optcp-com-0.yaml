@@ -15,7 +15,6 @@ spec:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 
     # optcp.com
-    - "plan.optcp.com"
     - "projects.optcp.com"
     - "mail-admin.optcp.com"
     - "sops.optcp.com"

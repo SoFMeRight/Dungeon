@@ -44,7 +44,6 @@ resources:
   - frappe-suite
   - invoiceninja
   - kimai
-  - leantime
   - openproject
   - stalwart
   - wikijs-sops
