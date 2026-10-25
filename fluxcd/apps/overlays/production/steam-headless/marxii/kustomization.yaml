@@ -4,6 +4,7 @@ kind: Kustomization
 # sub-overlay with its own name, seat label, IP/sharing key and Sunshine name.
 resources:
   - ../../../../base/steam-headless-seat
+  - games-hdd-pvc.yaml
 patches:
   - path: statefulset-patch.yaml
     target:

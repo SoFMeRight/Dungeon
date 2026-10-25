@@ -1,0 +1,14 @@
+# CephFS-HDD test volume for the "marxii" seat: a capacity-tier (HDD) read path for premium
+# emulated titles, so playability off cephfs-hdd can be measured against the gringotts share.
+# Populated out-of-band by a one-off copy Job; mounted read-only into the seat at /mnt/games-hdd.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: steam-headless-games-hdd
+spec:
+  storageClassName: cephfs-hdd
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi

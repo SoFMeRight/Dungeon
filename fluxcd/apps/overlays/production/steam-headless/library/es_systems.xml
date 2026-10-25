@@ -5,7 +5,7 @@
     <system>
         <name>switch</name>
         <fullname>Nintendo Switch</fullname>
-        <path>%ROMPATH%/switch</path>
+        <path>/mnt/games-hdd/Nintendo_-_Switch</path>
         <extension>.nca .NCA .nro .NRO .nso .NSO .nsp .NSP .xci .XCI</extension>
         <command label="Eden (Standalone)">%EMULATOR_EDEN% -f -g %ROM%</command>
         <command label="Ryujinx (Standalone)">%EMULATOR_RYUJINX% %ROM%</command>
