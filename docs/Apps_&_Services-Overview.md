@@ -1306,7 +1306,7 @@
 | Hubble Relay | kube-system | ✅ |
 | Kube Vip | kube-system | ✅ |
 | Metrics Server | kube-system | ✅ |
-| Kyverno Admission Controller (4 components) | mr-resetti | ✅ |
+| Kyverno Admission Controller (4 components) | mr-resetti | ⚠️ |
 | Xylem Gateway Istio | pedestal-of-time | ✅ |
 | Cell Membrane Gateway Istio | prelude-of-light | ✅ |
 | Cert Manager (3 components) | king-of-red-lions | ✅ |
@@ -1315,7 +1315,7 @@
 | Istiod | king-of-red-lions | ✅ |
 | Netbird Router Dungeon | farores-wind | ✅ |
 | Stunner (2 components) | king-of-red-lions | ✅ |
-| Ztunnel | king-of-red-lions | ✅ |
+| Ztunnel | king-of-red-lions | ⚠️ |
 | Ceph Csi (2 components) | gorons-bracelet | ✅ |
 | Cloudnative Pg | gorons-bracelet | ✅ |
 | Csi Driver Smb (3 components) | gorons-bracelet | ✅ |
@@ -1454,7 +1454,7 @@
 
 **Kyverno Admission Controller** — Deployment — 3.9.1
 - Namespace: mr-resetti
-- Replicas: 5/5
+- Replicas: 4/5
 
 **Xylem Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
 - Namespace: pedestal-of-time
@@ -1490,7 +1490,7 @@
 
 **Ztunnel** — DaemonSet — 1.31.2
 - Namespace: king-of-red-lions
-- Replicas: 10/10
+- Replicas: 9/10
 
 **Ceph Csi** — Deployment — 
 - Namespace: gorons-bracelet
