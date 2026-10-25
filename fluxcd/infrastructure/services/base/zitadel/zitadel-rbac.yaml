@@ -22,23 +22,10 @@ rules:
   - apiGroups: ["apps"]
     resources: ["statefulsets"]
     verbs: ["get"]
-  # Lets the configuration Job roll the flatroles Deployment after (re)writing its signing
-  # key, so the pods pick up SIGNING_KEY (Reloader is reloadOnCreate=false, so a freshly
-  # created key-Secret does not auto-restart it).
-  - apiGroups: ["apps"]
-    resources: ["deployments"]
-    verbs: ["get", "patch"]
-    resourceNames: ["zitadel-flatroles"]
   # For service account token creation (K8s auth)
   - apiGroups: [""]
     resources: ["serviceaccounts/token"]
     verbs: ["create"]
-  # Lets provisioning Jobs self-configure the Zitadel endpoint from its own HTTPRoute
-  # (external domain + backend service/port) instead of baking instance literals.
-  - apiGroups: ["gateway.networking.k8s.io"]
-    resources: ["httproutes"]
-    verbs: ["get"]
-    resourceNames: ["zitadel"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding

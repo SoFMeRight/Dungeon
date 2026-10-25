@@ -10,6 +10,7 @@ kind: Kustomization
 resources:
   - zitadel-initjob.yaml
   - zitadel-setupjob.yaml
+  - zitadel-configuration-rbac.yaml
   - zitadel-configuration-job.yaml
 
 # The configuration Job runs this Ansible playbook, mounted from a ConfigMap.

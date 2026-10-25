@@ -1,0 +1,38 @@
+# The zitadel-configuration Job's own identity, apart from Zitadel's: it reads the admin PAT and
+# the HTTPRoute, waits on the signing-key Secret and rolls flatroles after rewriting it.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: zitadel-configuration
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: zitadel-configuration
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+    resourceNames: ["zitadel-k8s-admin-sa", "zitadel-flatroles-signing"]
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["httproutes"]
+    verbs: ["get"]
+    resourceNames: ["zitadel"]
+  # Reloader is reloadOnCreate=false, so a freshly created key-Secret does not restart
+  # flatroles on its own.
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "patch"]
+    resourceNames: ["zitadel-flatroles"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: zitadel-configuration
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: zitadel-configuration
+subjects:
+  - kind: ServiceAccount
+    name: zitadel-configuration

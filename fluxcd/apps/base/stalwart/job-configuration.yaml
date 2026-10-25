@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: stalwart-apply
+  name: stalwart-configuration
   annotations:
     kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on change, not wedge
 spec:
@@ -9,9 +9,9 @@ spec:
   template:
     metadata:
       labels:
-        app: stalwart-apply
+        app: stalwart-configuration
     spec:
-      serviceAccountName: stalwart
+      serviceAccountName: stalwart-configuration
       automountServiceAccountToken: false
       restartPolicy: OnFailure
       securityContext:
@@ -21,7 +21,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: apply
+        - name: configuration
           image: PLACEHOLDER_CLI_IMAGE
           args: ["apply", "--file", "/plan/plan.ndjson"]
           env:

@@ -1,7 +1,7 @@
 # The ONE post-bootstrap configuration Job: everything declarative that happens to a
 # running Zitadel via its admin API or Vault lives here as an ensure-state step, so a
 # config change is a push (Flux force-replaces the Job) and a fresh bootstrap converges
-# identically. The logic is an Ansible playbook (configuration-playbook.yml, mounted from
+# identically. The logic is an Ansible playbook (zitadel-configuration.yml, mounted from
 # a ConfigMap) run on the HomeLabHD ansible image; its steps: (1) admin-SA PAT -> Vault,
 # (2) instance features, (3) kubernetes OIDC project/roles/app + clientId -> Vault, (4)
 # flatRoles Actions-v2 target + signing key -> Vault, executions, retire v1. Add future
@@ -20,7 +20,7 @@ spec:
       labels:
         app.kubernetes.io/name: zitadel-configuration
     spec:
-      serviceAccountName: zitadel
+      serviceAccountName: zitadel-configuration
       restartPolicy: OnFailure
       securityContext:
         runAsNonRoot: true

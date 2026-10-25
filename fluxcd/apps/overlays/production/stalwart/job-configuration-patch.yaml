@@ -1,12 +1,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: stalwart-apply
+  name: stalwart-configuration
 spec:
   template:
     spec:
       containers:
-        - name: apply
+        - name: configuration
           image: docker.io/stalwartlabs/cli:1.0.13
           resources:
             requests:

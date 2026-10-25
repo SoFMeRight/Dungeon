@@ -14,9 +14,22 @@ spec:
       initContainers:
         - name: wait-for-bootstrap
           image: docker.io/alpine/k8s:1.37.1
+          resources:
+            requests:
+              memory: 16Mi
+              cpu: 10m
+            limits:
+              memory: 64Mi
       containers:
         - name: configure
           image: ghcr.io/homelabhd/ansible:v2.21.5@sha256:9130d35313d7117085b015d2ef6708436377f09ab16dfe4933a76fcc91f2b0f2
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 10m
+            limits:
+              memory: 256Mi
+              cpu: 500m
           env:
             - name: PROJECT_NAME
               value: Container Orchestration

@@ -11,4 +11,4 @@ resources:
   - deployment.yaml
   - service.yaml
   - service-mail.yaml
-  - job-apply.yaml
+  - job-configuration.yaml

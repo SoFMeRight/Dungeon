@@ -20,5 +20,5 @@ patches:
   - path: postgres-cluster-patch.yaml
   - path: objectstore-postgres-patch.yaml
   - path: deployment-patch.yaml
-  - path: job-apply-patch.yaml
+  - path: job-configuration-patch.yaml
   - path: service-mail-patch.yaml
