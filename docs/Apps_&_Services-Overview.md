@@ -1306,7 +1306,7 @@
 | Hubble Relay | kube-system | ✅ |
 | Kube Vip | kube-system | ✅ |
 | Metrics Server | kube-system | ✅ |
-| Kyverno Admission Controller (4 components) | mr-resetti | ⚠️ |
+| Kyverno Admission Controller (4 components) | mr-resetti | ✅ |
 | Xylem Gateway Istio | pedestal-of-time | ✅ |
 | Cell Membrane Gateway Istio | prelude-of-light | ✅ |
 | Cert Manager (3 components) | king-of-red-lions | ✅ |
@@ -1454,7 +1454,7 @@
 
 **Kyverno Admission Controller** — Deployment — 3.9.1
 - Namespace: mr-resetti
-- Replicas: 4/5
+- Replicas: 5/5
 
 **Xylem Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
 - Namespace: pedestal-of-time
