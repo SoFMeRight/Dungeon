@@ -4,9 +4,9 @@
 > Generated from live Kubernetes state
 > Cluster: dungeon
 
-## Apps & Services (131)
+## Apps & Services (136)
 
-✅ 129 healthy · ⚠️ 1 degraded · ❌ 1 down
+✅ 134 healthy · ⚠️ 2 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -37,13 +37,22 @@
 | Bagisto (2 components) | ✅ | 🔒 bagisto.pcfae.com | [open](https://bagisto.pcfae.com) |
 | Bookstack (2 components) | ✅ | 🌐 kb.precisionplanit.com | [open](https://kb.precisionplanit.com) |
 | Calcom | ✅ | 🌐 cal.prplanit.com | [open](https://cal.prplanit.com) |
-| Frappe Suite (9 components) | ✅ | 🔒 hq.pcfae.com | [open](https://hq.pcfae.com) |
+| Frappe Suite (9 components) | ✅ | 🔒 hq.prplanit.com | [open](https://hq.prplanit.com) |
 | Gitlab (11 components) | ✅ | 🌐 git.prplanit.com | [open](https://git.prplanit.com) |
 | Harbor (6 components) | ✅ | 🔒 cr.pcfae.com | [open](https://cr.pcfae.com) |
 | Harbor Proxy Cache Proxy | ✅ | 🔒 docker.cr.pcfae.com | [open](https://docker.cr.pcfae.com) |
 | Invoiceninja (3 components) | ✅ | ❓ invoice.pcfae.com | [open](https://invoice.pcfae.com) |
 | Opnform (7 components) | ✅ | 🌐 form.prplanit.com | [open](https://form.prplanit.com) |
 | Osticket App | ✅ | ❓ support.pcfae.com | [open](https://support.pcfae.com) |
+
+### Cloud & Collaboration (OpTCP)
+
+| App | Status | Exposure | Links |
+| --- | --- | --- | --- |
+| Leantime | ✅ | 🔒 plan.optcp.com | [open](https://plan.optcp.com) |
+| Nextcloud (9 components) | ✅ | 🌐 cloud.optcp.com | [open](https://cloud.optcp.com) |
+| Openproject (3 components) | ✅ | 🔒 projects.optcp.com | [open](https://projects.optcp.com) |
+| Wikijs Sops | ✅ | 🔒 sops.optcp.com | [open](https://sops.optcp.com) |
 
 ### Cluster Infrastructure (Kube System⚙️)
 
@@ -64,9 +73,8 @@
 | Kimai (2 components) | ✅ | 🔒 kimai.pcfae.com | [open](https://kimai.pcfae.com) |
 | Linkwarden (3 components) | ✅ | ❓ bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
 | Mealie (2 components) | ✅ | ❓ meals.yesimvegan.com | [open](https://meals.yesimvegan.com) |
-| Nextcloud (9 components) | ✅ | 🌐 ncloud.optcp.com | [open](https://ncloud.optcp.com) |
 | Open (3 components) | ✅ | 🔒 ai.pcfae.com | [open](https://ai.pcfae.com) |
-| Penpot (5 components) | ✅ | ❓ design.pcfae.com | [open](https://design.pcfae.com) |
+| Penpot (5 components) | ⚠️ | ❓ design.pcfae.com | [open](https://design.pcfae.com) |
 | Photoprism (2 components) | ✅ | 🔒 photos.pcfae.com | [open](https://photos.pcfae.com) |
 | Plex | ✅ | 🌐 plex.optcp.com | [open](https://plex.optcp.com) |
 | Reactive Resume (3 components) | ✅ | 🌐 resume.sofmeright.com | [open](https://resume.sofmeright.com) |
@@ -114,7 +122,7 @@
 | Pinchflat | ✅ | 🔒 pinchflat.pcfae.com | [open](https://pinchflat.pcfae.com) |
 | Prowlarr | ✅ | 🔒 prowlarr.pcfae.com | [open](https://prowlarr.pcfae.com) |
 | Py Kms | ✅ | 🔒 kms.pcfae.com | [open](https://kms.pcfae.com) |
-| Pyload Ng | ❌ | 🔒 dl.pcfae.com | [open](https://dl.pcfae.com) |
+| Pyload Ng | ✅ | 🔒 dl.pcfae.com | [open](https://dl.pcfae.com) |
 | Sabnzbd | ✅ | 🔒 sabnzbd.pcfae.com | [open](https://sabnzbd.pcfae.com) |
 | Supermicro License Generator | ✅ | 🔒 smkeygen.pcfae.com | [open](https://smkeygen.pcfae.com) |
 | Thelounge | ✅ | 🔒 thelounge.pcfae.com | [open](https://thelounge.pcfae.com) |
@@ -134,6 +142,12 @@
 | --- | --- | --- | --- |
 | Pbs Cluster Proxy | ✅ | 🔒 pbs.pcfae.com | [open](https://pbs.pcfae.com) |
 | Pve Cluster Proxy | ✅ | 🔒 pve.pcfae.com | [open](https://pve.pcfae.com) |
+
+### Mail (OpTCP)
+
+| App | Status | Exposure | Links |
+| --- | --- | --- | --- |
+| Stalwart | ✅ | 🔒 mail-admin.optcp.com | [open](https://mail-admin.optcp.com) |
 
 ### Notifications (Delivery Bag📬)
 
@@ -212,6 +226,12 @@
 | Wazuh (3 components) | ✅ | 🔒 siem.prplanit.com | [open](https://siem.prplanit.com) |
 | Zigbee2mqtt | ✅ | ❓ z2m.arbitorium.com | [open](https://z2m.arbitorium.com) |
 
+### Security (OpTCP)
+
+| App | Status | Exposure | Links |
+| --- | --- | --- | --- |
+| Dependency Track Api Server (2 components) | ✅ | 🔒 dtrack.optcp.com | [open](https://dtrack.optcp.com) |
+
 ### Social (Temple of Time⏳)
 
 | App | Status | Exposure | Links |
@@ -286,7 +306,7 @@
 - Hosts: ansible.pcfae.com
 - Gateway: phloem-gateway
 
-**Twofauth** — StatefulSet — 8.0.2
+**Twofauth** — StatefulSet — 8.0.3
 - Namespace: zeldas-lullaby
 - Replicas: 1/1
 - Hosts: 2fa.pcfae.com
@@ -344,7 +364,7 @@
   - bagisto-demo (StatefulSet)
   - bagisto-demo-db (StatefulSet, database)
 
-**Bookstack — 2 components** — StatefulSet — 25.12.20251224
+**Bookstack — 2 components** — StatefulSet — 26.09.2
 - Namespace: hyrule-castle
 - Replicas: 1/1
 - Hosts: kb.precisionplanit.com
@@ -362,7 +382,7 @@
 **Frappe Suite — 9 components** — Mixed — 
 - Namespace: hyrule-castle
 - Replicas: 9/9
-- Hosts: hq.pcfae.com
+- Hosts: hq.prplanit.com
 - Gateway: phloem-gateway
 - Components:
   - frappe-suite-frontend (Deployment)
@@ -441,6 +461,44 @@
 - Replicas: 3/3
 - Hosts: support.pcfae.com, support.prplanit.com
 - Gateway: cell-membrane-gateway
+
+**Leantime** — StatefulSet — 3.12.0
+- Namespace: optcp-cloud
+- Replicas: 1/1
+- Hosts: plan.optcp.com
+- Gateway: phloem-gateway
+
+**Nextcloud — 9 components** — Deployment — 
+- Namespace: optcp-cloud
+- Replicas: 5/5
+- Hosts: cloud.optcp.com
+- Gateway: cell-membrane-gateway
+- Components:
+  - nextcloud (Deployment)
+  - nextcloud-collabora (Deployment)
+  - nextcloud-imaginary (Deployment)
+  - nextcloud-clamav (StatefulSet, security)
+  - nextcloud-elasticsearch (StatefulSet, search)
+  - nextcloud-redis (StatefulSet, cache)
+  - nextcloud-sentinel-sentinel (StatefulSet, cache)
+  - nextcloud-talk-hpb (Deployment, extension)
+  - nextcloud-whiteboard (Deployment, extension)
+
+**Openproject — 3 components** — Deployment — 
+- Namespace: optcp-cloud
+- Replicas: 4/4
+- Hosts: projects.optcp.com
+- Gateway: phloem-gateway
+- Components:
+  - openproject-memcached (Deployment, cache)
+  - openproject-web (Deployment)
+  - openproject-worker (Deployment)
+
+**Wikijs Sops** — Deployment — 2.5.315
+- Namespace: optcp-cloud
+- Replicas: 1/1
+- Hosts: sops.optcp.com
+- Gateway: phloem-gateway
 
 **Hubble Ui** — Deployment — 
 - Namespace: kube-system
@@ -527,22 +585,6 @@
   - mealie (StatefulSet)
   - mealie-postgres (StatefulSet, database)
 
-**Nextcloud — 9 components** — Deployment — 
-- Namespace: temple-of-time
-- Replicas: 5/5
-- Hosts: ncloud.optcp.com
-- Gateway: cell-membrane-gateway
-- Components:
-  - nextcloud (Deployment)
-  - nextcloud-collabora (Deployment)
-  - nextcloud-imaginary (Deployment)
-  - nextcloud-clamav (StatefulSet, security)
-  - nextcloud-elasticsearch (StatefulSet, search)
-  - nextcloud-redis (StatefulSet, cache)
-  - nextcloud-sentinel-sentinel (StatefulSet, cache)
-  - nextcloud-talk-hpb (Deployment, extension)
-  - nextcloud-whiteboard (Deployment, extension)
-
 **Open — 3 components** — StatefulSet — 
 - Namespace: temple-of-time
 - Replicas: 9/9
@@ -555,7 +597,7 @@
 
 **Penpot — 5 components** — StatefulSet — 
 - Namespace: temple-of-time
-- Replicas: 5/5
+- Replicas: 4/5
 - Hosts: design.pcfae.com, penpot.prplanit.com
 - Gateway: cell-membrane-gateway
 - Components:
@@ -623,7 +665,7 @@
 - Hosts: ipleek.com, www.ipleek.com
 - Gateway: cell-membrane-gateway
 
-**Librespeed Speedtest** — Deployment — 6.3.0-alpine
+**Librespeed Speedtest** — Deployment — 6.3.1-alpine
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: speedtester.pcfae.com
@@ -774,7 +816,7 @@
 
 **Pyload Ng** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 0/1
+- Replicas: 1/1
 - Hosts: dl.pcfae.com
 - Gateway: phloem-gateway
 
@@ -832,6 +874,12 @@
 - Namespace: gossip-stone
 - Replicas: 2/2
 - Hosts: pve.pcfae.com
+- Gateway: phloem-gateway
+
+**Stalwart** — Deployment — v0.16.27
+- Namespace: optcp-delivery-bag
+- Replicas: 1/1
+- Hosts: mail-admin.optcp.com
 - Gateway: phloem-gateway
 
 **Ntfy** — StatefulSet — v2.29.0
@@ -930,7 +978,7 @@
 - Hosts: flux.pcfae.com
 - Gateway: phloem-gateway
 
-**Linkstack — 2 components** — StatefulSet — v4.8.7-rc
+**Linkstack — 2 components** — StatefulSet — v4.8.8
 - Namespace: kokiri-forest
 - Replicas: 1/1
 - Hosts: bio.outspokekin.com, bio.sofmeright.com, bio.uni2.cc
@@ -1102,6 +1150,15 @@
 - Hosts: z2m.arbitorium.com, z2m.pcfae.com
 - Gateway: cell-membrane-gateway
 
+**Dependency Track Api Server — 2 components** — Deployment — 5.2.0
+- Namespace: optcp-sibyl-system
+- Replicas: 2/2
+- Hosts: dtrack.optcp.com
+- Gateway: phloem-gateway
+- Components:
+  - dependency-track-api-server (Deployment)
+  - dependency-track-frontend (Deployment)
+
 **Hubzilla — 3 components** — Mixed — 
 - Namespace: temple-of-time
 - Replicas: 4/4
@@ -1126,7 +1183,7 @@
   - matrix-turn (Deployment)
   - matrix-wellknown (Deployment)
 
-**Ceph Rgw** — StatefulSet — v19
+**Ceph Rgw** — StatefulSet — v19.2.7
 - Namespace: gorons-bracelet
 - Replicas: 2/2
 - Hosts: s3.pcfae.com
@@ -1147,7 +1204,7 @@
 **Fairer Pages** — Deployment — v0.0.14
 - Namespace: tingle-tuner
 - Replicas: 3/3
-- Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.outspokekin.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, 2fa.pcfae.com, ai.pcfae.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, bitwarden.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, chat.outspokekin.com, code.pcfae.com, convertx.pcfae.com, cr.pcfae.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, docker.cr.pcfae.com, dolibarr.prplanit.com, draw.pcfae.com, erpnext.prplanit.com, fairer-pages.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, ghcr.cr.pcfae.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, hass.arbitorium.com, hass.pcfae.com, homelabhelpdesk.com, hosts.pcfae.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, joplin.pcfae.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, livekit.outspokekin.com, ls.sofmeright.com, lscr.cr.pcfae.com, lubelogger.pcfae.com, lwd.optcp.com, mail.pcfae.com, mail.precisionplanit.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, mazanoke.pcfae.com, meals.yesimvegan.com, monica.pcfae.com, ncloud.optcp.com, netalertx.pcfae.com, netbird.prplanit.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, optcp.com, orangehrm.prplanit.com, outspokekin.com, overseer.pcfae.com, paperless.pcfae.com, pbx.pcfae.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, prowlarr.pcfae.com, prplanit.com, qbitt.pcfae.com, quay.cr.pcfae.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.pcfae.com, search.pcfae.com, sh.pcfae.com, sh.uni2.cc, shiplog.pcfae.com, shlink.pcfae.com, siem.prplanit.com, smkeygen.pcfae.com, social.outspokekin.com, sofmeright.com, sonarr.pcfae.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.prplanit.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.pcfae.com, trmm.prplanit.com, uni2.cc, uptime.pcfae.com, uptime.sofmeright.com, vault.pcfae.com, vw.prplanit.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.pcfae.com
+- Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.outspokekin.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, 2fa.pcfae.com, ai.pcfae.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, bitwarden.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, chat.outspokekin.com, cloud.optcp.com, code.pcfae.com, convertx.pcfae.com, cr.pcfae.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, docker.cr.pcfae.com, dolibarr.prplanit.com, draw.pcfae.com, dtrack.optcp.com, erpnext.prplanit.com, fairer-pages.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, ghcr.cr.pcfae.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, hass.arbitorium.com, hass.pcfae.com, homelabhelpdesk.com, hosts.pcfae.com, hq.prplanit.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, joplin.pcfae.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, livekit.outspokekin.com, ls.sofmeright.com, lscr.cr.pcfae.com, lubelogger.pcfae.com, lwd.optcp.com, mail-admin.optcp.com, mail.pcfae.com, mail.precisionplanit.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, mazanoke.pcfae.com, meals.yesimvegan.com, monica.pcfae.com, netalertx.pcfae.com, netbird.prplanit.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, optcp.com, orangehrm.prplanit.com, outspokekin.com, overseer.pcfae.com, paperless.pcfae.com, pbx.pcfae.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plan.optcp.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, projects.optcp.com, prowlarr.pcfae.com, prplanit.com, qbitt.pcfae.com, quay.cr.pcfae.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.pcfae.com, search.pcfae.com, sh.pcfae.com, sh.uni2.cc, shiplog.pcfae.com, shlink.pcfae.com, siem.prplanit.com, smkeygen.pcfae.com, social.outspokekin.com, sofmeright.com, sonarr.pcfae.com, sops.optcp.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.prplanit.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.pcfae.com, trmm.prplanit.com, uni2.cc, uptime.pcfae.com, uptime.sofmeright.com, vault.pcfae.com, vw.prplanit.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.pcfae.com
 - Gateway: cell-membrane-gateway
 
 **Faster Whisper** — StatefulSet — gpu
@@ -1215,7 +1272,7 @@
 
 </details>
 
-## Platform Components (51)
+## Platform Components (52)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
@@ -1224,7 +1281,7 @@
 | Vault Operator | zeldas-lullaby | ✅ |
 | Snapshot Controller | fairy-bottle | ✅ |
 | Velero (2 components) | fairy-bottle | ✅ |
-| Gitlab Gitlab Runner | hyrule-castle | ❌ |
+| Gitlab Gitlab Runner | hyrule-castle | ✅ |
 | Mariadb | hyrule-castle | ✅ |
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
@@ -1270,6 +1327,7 @@
 | Plugin Barman Cloud | gorons-bracelet | ✅ |
 | Rbd Toolbox | gorons-bracelet | ✅ |
 | Redis Operator | gorons-bracelet | ✅ |
+| Sbom Operator | optcp-sibyl-system | ✅ |
 
 <details>
 <summary>Platform details</summary>
@@ -1296,7 +1354,7 @@
 
 **Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
 - Namespace: hyrule-castle
-- Replicas: 0/1
+- Replicas: 1/1
 
 **Mariadb** — StatefulSet — 
 - Namespace: hyrule-castle
@@ -1478,6 +1536,10 @@
 - Namespace: gorons-bracelet
 - Replicas: 1/1
 
+**Sbom Operator** — Deployment — 0.45.4
+- Namespace: optcp-sibyl-system
+- Replicas: 1/1
+
 </details>
 
 ## Unclassified (1)
@@ -1489,12 +1551,13 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Steam Headless | arbitorium-game-streaming | ✅ |
 
 <details>
-<summary>Retired / Graveyard (8)</summary>
+<summary>Retired / Graveyard (9)</summary>
 
 | Name | Namespace | Reason |
 | --- | --- | --- |
 | code-server | tingle-tuner | missing since 2026-08-02 |
 | dolibarr | hyrule-castle | missing since 2026-10-12 |
+| emulatorjs | shooting-gallery | missing since 2026-10-18 |
 | erpnext | hyrule-castle | missing since 2026-10-12 |
 | filebrowser | tingle-tuner | missing since 2026-08-02 |
 | netbird-coturn | zeldas-lullaby | missing since 2026-03-30 |
