@@ -252,11 +252,14 @@ releases:
   - name: bm64recomp
     repo: RevoSucks/BM64Recomp
     tag: "v{version}"
-    asset: "BM64Recompiled-AppImage-X64-Release.zip"
+    # The AppImage build crashes on load ("Failed to preload executable"); use the plain Linux
+    # release, which wraps the binary + assets in a .tar.gz inside the release .zip.
+    asset: "BM64Recompiled-Linux-X64-Release.zip"
     # renovate: datasource=github-releases depName=RevoSucks/BM64Recomp
     version: "1.0.0"
     layout: zip
-    executables: ["BM64Recompiled-x86_64.AppImage"]
+    inner_tar: "BM64Recompiled.tar.gz"
+    executables: ["BM64Recompiled"]
     dest: /home/steamheadless/Applications/bm64recomp
   # Recompilation: ships only the engine; imports the operator's extracted Wii U WWHD title
   # (code/content/meta) once on first run, then runs native — reads the dump, not the games share.

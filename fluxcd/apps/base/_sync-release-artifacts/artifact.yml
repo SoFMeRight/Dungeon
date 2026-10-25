@@ -13,6 +13,8 @@
 #   raw   the file itself to a.dest, a.mode (default 0644).
 #   tar   the image's tar (gzip/xz/bzip2 detected); a.strip leading path components.
 #   zip   the image's unzip.
+#   a.inner_tar — an archive that wraps a single inner tarball (e.g. a release .zip containing a
+#     .tar.gz): the one entry matching this glob is extracted and its contents become the payload.
 #   a.subdir ({version} substituted) selects a directory inside the archive; a.include basename globs at its top level
 #   (default: everything); a.executables basename globs anywhere under a.dest made 0755.
 - name: "reconcile {{ a.name }} {{ a.version }}"
@@ -148,7 +150,9 @@
           when: _layout in ['tar', 'zip']
           vars:
             _work: "{{ _stage }}/x"
-            _root: "{{ _work ~ (('/' ~ (a.subdir | replace('{version}', a.version))) if a.subdir is defined else '') }}"
+            # inner_tar unwraps a tarball nested in the archive; its contents become the root.
+            _base: "{{ (_work ~ '/.unwrapped') if a.inner_tar is defined else _work }}"
+            _root: "{{ _base ~ (('/' ~ (a.subdir | replace('{version}', a.version))) if a.subdir is defined else '') }}"
           block:
             # strip unwraps leading directory levels; GNU tar does it at extraction, and
             # zip archives carry no such option.
@@ -172,6 +176,31 @@
                      if _layout == 'tar'
                      else ['unzip', '-q', '-o', _stage ~ '/asset', '-d', _work] }}
               changed_when: true
+            # A release archive that wraps a single inner tarball (e.g. a .zip containing a
+            # .tar.gz): extract that one tarball so its contents — not the tarball — are placed.
+            - name: "{{ a.name }}: unwrap the inner tarball"
+              when: a.inner_tar is defined
+              block:
+                - name: "{{ a.name }}: find the inner tarball"
+                  ansible.builtin.find:
+                    paths: "{{ _work }}"
+                    patterns: "{{ a.inner_tar }}"
+                    recurse: false
+                  register: _inner
+                - name: "{{ a.name }}: require exactly one inner tarball"
+                  ansible.builtin.assert:
+                    that: "_inner.files | length == 1"
+                    fail_msg: "inner_tar '{{ a.inner_tar }}' matched {{ _inner.files | length }} entries"
+                    quiet: true
+                - name: "{{ a.name }}: create the unwrap dir"
+                  ansible.builtin.file:
+                    path: "{{ _base }}"
+                    state: directory
+                    mode: "0755"
+                - name: "{{ a.name }}: extract the inner tarball"
+                  ansible.builtin.command:
+                    argv: ['tar', '-xf', '{{ _inner.files[0].path }}', '-C', '{{ _base }}']
+                  changed_when: true
             - name: "{{ a.name }}: reset {{ a.dest }}"
               ansible.builtin.file:
                 path: "{{ a.dest }}"
