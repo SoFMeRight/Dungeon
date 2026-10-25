@@ -15,6 +15,13 @@ spec:
       containers:
         # Main Frigate container
         - name: frigate
+          resources:
+            requests:
+              cpu: 575m
+              memory: 10659Mi
+            limits:
+              cpu: 2222m
+              memory: 10659Mi
           image: ghcr.io/blakeblackshear/frigate:0.18.0-tensorrt@sha256:82d7475ba7e5f950911bd9d06f2392de96881f39eeacd78824a526dde9b5cad9
         # Notification sidecar - polls Frigate API, sends to ntfy
         - name: frigate-notify

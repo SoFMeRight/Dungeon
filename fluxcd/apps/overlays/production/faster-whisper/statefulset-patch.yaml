@@ -3,13 +3,24 @@ kind: StatefulSet
 metadata:
   name: faster-whisper
 spec:
-  volumeClaimTemplates:
-  - metadata:
-      name: config
+  template:
     spec:
-      accessModes:
-      - ReadWriteOnce
-      storageClassName: ceph-rbd
-      resources:
-        requests:
-          storage: 10Gi
+      containers:
+        - name: faster-whisper
+          resources:
+            requests:
+              cpu: 3m
+              memory: 2763Mi
+            limits:
+              cpu: 1115m
+              memory: 2763Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-rbd
+        resources:
+          requests:
+            storage: 10Gi

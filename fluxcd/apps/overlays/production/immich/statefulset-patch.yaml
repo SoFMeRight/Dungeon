@@ -53,6 +53,13 @@ spec:
               mountPath: /var/lib/postgresql/data
       containers:
         - name: immich-server
+          resources:
+            requests:
+              cpu: 4m
+              memory: 1077Mi
+            limits:
+              cpu: 787m
+              memory: 1077Mi
           securityContext:
             readOnlyRootFilesystem: true
           volumeMounts:
@@ -61,6 +68,13 @@ spec:
             - name: tmp-server
               mountPath: /tmp
         - name: immich-machine-learning
+          resources:
+            requests:
+              cpu: 4m
+              memory: 458Mi
+            limits:
+              cpu: 129m
+              memory: 458Mi
           securityContext:
             readOnlyRootFilesystem: true
           volumeMounts:
@@ -69,9 +83,24 @@ spec:
             - name: tmp-ml
               mountPath: /tmp
         - name: postgres
+          resources:
+            requests:
+              cpu: 2m
+              memory: 172Mi
+            limits:
+              cpu: 48m
+              memory: 172Mi
           volumeMounts:
             - name: postgres
               mountPath: /var/lib/postgresql/data
+        - name: redis
+          resources:
+            requests:
+              cpu: 5m
+              memory: 32Mi
+            limits:
+              cpu: 40m
+              memory: 32Mi
       volumes:
         # readOnlyRootFilesystem: uploads/cache on PVCs; per-container /tmp scratch (ffmpeg/ml).
         - name: tmp-server

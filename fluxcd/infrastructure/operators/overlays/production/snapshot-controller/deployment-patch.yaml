@@ -7,8 +7,15 @@ spec:
   template:
     spec:
       containers:
-      - name: snapshot-controller
-        image: registry.k8s.io/sig-storage/snapshot-controller:v8.6.0
-        args:
-          - "--leader-election=true"
-          - "--leader-election-namespace=fairy-bottle"
+        - name: snapshot-controller
+          image: registry.k8s.io/sig-storage/snapshot-controller:v8.6.0
+          resources:
+            requests:
+              cpu: 11m
+              memory: 94Mi
+            limits:
+              cpu: 387m
+              memory: 94Mi
+          args:
+            - "--leader-election=true"
+            - "--leader-election-namespace=fairy-bottle"

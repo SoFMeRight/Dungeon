@@ -11,6 +11,14 @@ spec:
       sourceRef:
         namespace: hyrule-castle
   values:
+    gitlab-runner:
+      resources:
+        requests:
+          cpu: 28m
+          memory: 115Mi
+        limits:
+          cpu: 157m
+          memory: 115Mi
     global:
       common:
         labels:

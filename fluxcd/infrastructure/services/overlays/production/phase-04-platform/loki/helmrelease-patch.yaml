@@ -36,6 +36,13 @@ spec:
         - name: cr-pcfae-admin-pull-secret
         - name: docker-io-pull-secret
     sidecar:
+      resources:
+        requests:
+          cpu: 2m
+          memory: 117Mi
+        limits:
+          cpu: 383m
+          memory: 117Mi
       image:
         repository: docker.io/kiwigrid/k8s-sidecar
         tag: 2.14.1

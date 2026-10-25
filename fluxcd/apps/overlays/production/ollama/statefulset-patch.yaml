@@ -7,6 +7,16 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
+    spec:
+      containers:
+        - name: ollama
+          resources:
+            requests:
+              cpu: 2m
+              memory: 1144Mi
+            limits:
+              cpu: 178m
+              memory: 1144Mi
   volumeClaimTemplates:
     - metadata:
         name: data

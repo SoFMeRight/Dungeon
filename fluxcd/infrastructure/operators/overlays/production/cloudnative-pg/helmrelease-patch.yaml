@@ -5,6 +5,13 @@ metadata:
 spec:
   targetNamespace: gorons-bracelet
   values:
+    resources:
+      requests:
+        cpu: 89m
+        memory: 289Mi
+      limits:
+        cpu: 453m
+        memory: 289Mi
     podLabels:
       policy.prplanit.com/cnpg: "managed"
       policy.prplanit.com/metrics: "true"

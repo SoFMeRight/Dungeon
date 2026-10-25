@@ -13,6 +13,13 @@ spec:
       containers:
         - name: redis
           image: docker.io/library/redis:8.10-alpine
+          resources:
+            requests:
+              cpu: 17m
+              memory: 74Mi
+            limits:
+              cpu: 179m
+              memory: 74Mi
   volumeClaimTemplates:
     - metadata:
         name: data

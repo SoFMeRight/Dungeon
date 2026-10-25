@@ -207,6 +207,13 @@ spec:
       extraSidecarContainers:
         - name: notify-push
           image: docker.io/icewind1991/notify_push:1.4.1
+          resources:
+            requests:
+              cpu: 2m
+              memory: 17Mi
+            limits:
+              cpu: 102m
+              memory: 17Mi
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
@@ -278,6 +285,13 @@ spec:
       type: sidecar
       # Cron sidecar runs the same image (cron.php, no :80 bind) — same minimal caps minus NET_BIND_SERVICE.
       sidecar:
+        resources:
+          requests:
+            cpu: 4m
+            memory: 95Mi
+          limits:
+            cpu: 339m
+            memory: 95Mi
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -314,6 +328,13 @@ spec:
     collabora:
       enabled: true
       fullnameOverride: nextcloud-collabora
+      resources:
+        requests:
+          cpu: 5m
+          memory: 641Mi
+        limits:
+          cpu: 96m
+          memory: 641Mi
       podLabels:
         policy.prplanit.com/ingress: "true"
       image:
@@ -347,6 +368,13 @@ spec:
 
     imaginary:
       enabled: true
+      resources:
+        requests:
+          cpu: 2m
+          memory: 13Mi
+        limits:
+          cpu: 94m
+          memory: 13Mi
       # h2non/imaginary (Go) already runs as uid 1000 — full non-root.
       securityContext:
         runAsNonRoot: true

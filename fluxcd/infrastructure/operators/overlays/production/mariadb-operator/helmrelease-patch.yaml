@@ -5,14 +5,35 @@ metadata:
 spec:
   targetNamespace: gorons-bracelet
   values:
+    resources:
+      requests:
+        cpu: 21m
+        memory: 479Mi
+      limits:
+        cpu: 492m
+        memory: 479Mi
     podAnnotations:
       prometheus.io/scrape: "true"
       prometheus.io/port: "8080"
     webhook:
+      resources:
+        requests:
+          cpu: 3m
+          memory: 67Mi
+        limits:
+          cpu: 39m
+          memory: 67Mi
       podAnnotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
     certController:
+      resources:
+        requests:
+          cpu: 4m
+          memory: 124Mi
+        limits:
+          cpu: 50m
+          memory: 124Mi
       podAnnotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"

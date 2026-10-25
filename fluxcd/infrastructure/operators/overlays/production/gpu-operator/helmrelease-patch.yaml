@@ -36,6 +36,13 @@ spec:
 
     # Toolkit node selector
     toolkit:
+      resources:
+        requests:
+          cpu: 2m
+          memory: 54Mi
+        limits:
+          cpu: 14m
+          memory: 54Mi
       nodeSelector:
         nvidia.com/gpu.present: "true"
       env:
@@ -48,6 +55,13 @@ spec:
     # Profiles sized by GPU capability - more powerful = more slices
     devicePlugin:
       enabled: true
+      resources:
+        requests:
+          cpu: 2m
+          memory: 54Mi
+        limits:
+          cpu: 110m
+          memory: 54Mi
       nodeSelector:
         nvidia.com/gpu.present: "true"
       config:
@@ -106,6 +120,13 @@ spec:
 
     # DCGM exporter node selector
     dcgmExporter:
+      resources:
+        requests:
+          cpu: 31m
+          memory: 563Mi
+        limits:
+          cpu: 83m
+          memory: 563Mi
       nodeSelector:
         nvidia.com/gpu.present: "true"
       podAnnotations:
@@ -114,6 +135,13 @@ spec:
 
     # GPU Feature Discovery node selector
     gfd:
+      resources:
+        requests:
+          cpu: 3m
+          memory: 72Mi
+        limits:
+          cpu: 57m
+          memory: 72Mi
       nodeSelector:
         nvidia.com/gpu.present: "true"
 
@@ -124,3 +152,10 @@ spec:
     # Node status exporter
     nodeStatusExporter:
       enabled: true
+      resources:
+        requests:
+          cpu: 2m
+          memory: 86Mi
+        limits:
+          cpu: 29m
+          memory: 86Mi

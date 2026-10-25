@@ -7,6 +7,16 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
+    spec:
+      containers:
+        - name: netbootxyz
+          resources:
+            requests:
+              cpu: 2m
+              memory: 153Mi
+            limits:
+              cpu: 39m
+              memory: 153Mi
   volumeClaimTemplates:
     - metadata:
         name: config

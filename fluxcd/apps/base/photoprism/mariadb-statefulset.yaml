@@ -24,6 +24,13 @@ spec:
       containers:
         - name: mariadb
           image: docker.io/mariadb:11
+          resources:
+            requests:
+              cpu: 2m
+              memory: 311Mi
+            limits:
+              cpu: 359m
+              memory: 311Mi
           args:
             - --innodb-buffer-pool-size=512M
             - --transaction-isolation=READ-COMMITTED

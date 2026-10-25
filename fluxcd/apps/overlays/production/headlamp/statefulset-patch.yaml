@@ -27,6 +27,13 @@ spec:
               memory: 256Mi
       containers:
         - name: headlamp
+          resources:
+            requests:
+              cpu: 2m
+              memory: 106Mi
+            limits:
+              cpu: 100m
+              memory: 106Mi
           env:
             - name: HOME
               value: /tmp

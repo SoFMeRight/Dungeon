@@ -10,6 +10,15 @@ spec:
     spec:
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
+      containers:
+        - name: nutify
+          resources:
+            requests:
+              cpu: 25m
+              memory: 238Mi
+            limits:
+              cpu: 195m
+              memory: 238Mi
   volumeClaimTemplates:
     - metadata:
         name: gossip-stone-nutify-logs

@@ -19,3 +19,12 @@ spec:
       memory: 512Mi
     limits:
       memory: 2Gi
+  galera:
+    agent:
+      resources:
+        requests:
+          cpu: 3m
+          memory: 36Mi
+        limits:
+          cpu: 718m
+          memory: 36Mi

@@ -18,6 +18,13 @@ spec:
           emptyDir: {}
       containers:
         - name: libretranslate
+          resources:
+            requests:
+              cpu: 2m
+              memory: 880Mi
+            limits:
+              cpu: 113m
+              memory: 880Mi
           env:
             - name: HOME
               value: /home/libretranslate
