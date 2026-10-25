@@ -1281,7 +1281,7 @@
 | Vault Operator | zeldas-lullaby | ✅ |
 | Snapshot Controller | fairy-bottle | ✅ |
 | Velero (2 components) | fairy-bottle | ✅ |
-| Gitlab Gitlab Runner | hyrule-castle | ✅ |
+| Gitlab Gitlab Runner | hyrule-castle | ❌ |
 | Mariadb | hyrule-castle | ✅ |
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
@@ -1315,7 +1315,7 @@
 | Istiod | king-of-red-lions | ✅ |
 | Netbird Router Dungeon | farores-wind | ✅ |
 | Stunner (2 components) | king-of-red-lions | ✅ |
-| Ztunnel | king-of-red-lions | ⚠️ |
+| Ztunnel | king-of-red-lions | ✅ |
 | Ceph Csi (2 components) | gorons-bracelet | ✅ |
 | Cloudnative Pg | gorons-bracelet | ✅ |
 | Csi Driver Smb (3 components) | gorons-bracelet | ✅ |
@@ -1354,7 +1354,7 @@
 
 **Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
 - Namespace: hyrule-castle
-- Replicas: 1/1
+- Replicas: 0/1
 
 **Mariadb** — StatefulSet — 
 - Namespace: hyrule-castle
@@ -1490,7 +1490,7 @@
 
 **Ztunnel** — DaemonSet — 1.31.2
 - Namespace: king-of-red-lions
-- Replicas: 9/10
+- Replicas: 10/10
 
 **Ceph Csi** — Deployment — 
 - Namespace: gorons-bracelet
