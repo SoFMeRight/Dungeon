@@ -53,6 +53,10 @@ spec:
               value: "America/Los_Angeles"
             - name: SUNSHINE_NAME
               value: "Marxii"
+            # This seat's audio is PipeWire; SDL apps that default to raw ALSA (e.g. BM64Recomp)
+            # fatally fail to open a device. Route SDL through the PipeWire-pulse bridge.
+            - name: SDL_AUDIODRIVER
+              value: "pulseaudio"
           volumeMounts:
             - name: steam-headless-home
               mountPath: /home/steamheadless
