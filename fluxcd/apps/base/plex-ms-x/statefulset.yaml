@@ -95,7 +95,7 @@ spec:
               mountPath: /media/Photos
           resources:
             requests:
-              memory: 2Gi
+              memory: 658Mi
               cpu: 25m
               nvidia.com/gpu: 1
             limits:

@@ -15,7 +15,7 @@ spec:
               memory: 2Gi
             requests:
               cpu: 100m
-              memory: 512Mi
+              memory: 41Mi
           volumeMounts:
             - name: temple-of-time-linkwarden-meilisearch-data
               mountPath: /meili_data
