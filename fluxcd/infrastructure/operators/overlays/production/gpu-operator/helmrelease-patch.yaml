@@ -148,6 +148,15 @@ spec:
     # Validator - disabled in production (CDI mode doesn't require validation)
     validator:
       enabled: false
+      # Also applies to the *-validation init containers: they run briefly and a 15s scrape rarely
+      # catches them (driver-validation seen at ~8.6Mi), so memory gets headroom over the peak.
+      resources:
+        requests:
+          cpu: 2m
+          memory: 32Mi
+        limits:
+          cpu: 10m
+          memory: 32Mi
 
     # Node status exporter
     nodeStatusExporter:

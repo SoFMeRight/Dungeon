@@ -1,0 +1,103 @@
+# Resources for the Ceph CSI sidecars. The Driver CRs were created by Rook (ceph-csi-operator
+# renders the ctrlplugin/nodeplugin workloads from them); Rook 1.21 no longer takes CSI resource
+# settings, so they are set here. ssa: Merge applies only these fields and leaves Rook's
+# plugin/liveness values and the rest of the spec alone; prune: disabled keeps the drivers if
+# this file is ever removed. Values from 30d usage (2026-10-25): request = p50 x 1.2, CPU limit =
+# 1-minute peak x 1.25, memory = peak x 1.15.
+apiVersion: csi.ceph.io/v1
+kind: Driver
+metadata:
+  name: gorons-bracelet.rbd.csi.ceph.com
+  namespace: gorons-bracelet
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: Merge
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  controllerPlugin:
+    resources:
+      attacher:
+        requests:
+          cpu: 4m
+          memory: 86Mi
+        limits:
+          cpu: 222m
+          memory: 86Mi
+      provisioner:
+        requests:
+          cpu: 15m
+          memory: 104Mi
+        limits:
+          cpu: 208m
+          memory: 104Mi
+      resizer:
+        requests:
+          cpu: 10m
+          memory: 80Mi
+        limits:
+          cpu: 466m
+          memory: 80Mi
+      snapshotter:
+        requests:
+          cpu: 3m
+          memory: 74Mi
+        limits:
+          cpu: 214m
+          memory: 74Mi
+  nodePlugin:
+    resources:
+      registrar:
+        requests:
+          cpu: 2m
+          memory: 27Mi
+        limits:
+          cpu: 387m
+          memory: 27Mi
+---
+apiVersion: csi.ceph.io/v1
+kind: Driver
+metadata:
+  name: gorons-bracelet.cephfs.csi.ceph.com
+  namespace: gorons-bracelet
+  annotations:
+    kustomize.toolkit.fluxcd.io/ssa: Merge
+    kustomize.toolkit.fluxcd.io/prune: disabled
+spec:
+  controllerPlugin:
+    resources:
+      attacher:
+        requests:
+          cpu: 4m
+          memory: 77Mi
+        limits:
+          cpu: 628m
+          memory: 77Mi
+      provisioner:
+        requests:
+          cpu: 16m
+          memory: 101Mi
+        limits:
+          cpu: 312m
+          memory: 101Mi
+      resizer:
+        requests:
+          cpu: 9m
+          memory: 74Mi
+        limits:
+          cpu: 386m
+          memory: 74Mi
+      snapshotter:
+        requests:
+          cpu: 3m
+          memory: 79Mi
+        limits:
+          cpu: 335m
+          memory: 79Mi
+  nodePlugin:
+    resources:
+      registrar:
+        requests:
+          cpu: 2m
+          memory: 27Mi
+        limits:
+          cpu: 257m
+          memory: 27Mi

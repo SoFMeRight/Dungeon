@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - ../../../base/ceph-rook-ceph
   - csi-operator-rbac.yaml
+  - csi-driver-resources.yaml
 patches:
   - path: helmrelease-patch.yaml
   - target:
