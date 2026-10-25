@@ -1281,7 +1281,7 @@
 | Vault Operator | zeldas-lullaby | ✅ |
 | Snapshot Controller | fairy-bottle | ✅ |
 | Velero (2 components) | fairy-bottle | ✅ |
-| Gitlab Gitlab Runner | hyrule-castle | ✅ |
+| Gitlab Gitlab Runner | hyrule-castle | ❌ |
 | Mariadb | hyrule-castle | ✅ |
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
@@ -1354,7 +1354,7 @@
 
 **Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
 - Namespace: hyrule-castle
-- Replicas: 1/1
+- Replicas: 0/1
 
 **Mariadb** — StatefulSet — 
 - Namespace: hyrule-castle
