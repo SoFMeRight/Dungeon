@@ -8,7 +8,6 @@ spaghettikart|SpaghettiKart (Mario Kart 64)|spaghettikart/spaghetti.appimage|Gam
 starship|Starship (Star Fox 64)|starship/starship.appimage|Game;
 lighthouse|Lighthouse (Banjo-Kazooie)|lighthouse/lighthouse.appimage|Game;
 bm64recomp|Bomberman 64 Recompiled|bm64recomp/BM64Recompiled-x86_64.AppImage|Game;
-wwhdrecomp|The Wind Waker HD (Recompiled)|WindWakerHD.AppImage|Game;
 dusklight|Dusklight (Twilight Princess)|Dusklight.AppImage|Game;
 openmw|OpenMW Launcher (Morrowind)|openmw/openmw-launcher|Game;
 prismlauncher|Minecraft (Prism Launcher)|PrismLauncher.AppImage|Game;
