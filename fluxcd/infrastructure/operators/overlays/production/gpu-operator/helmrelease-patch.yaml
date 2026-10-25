@@ -25,9 +25,12 @@ spec:
         - key: node.cilium.io/agent-not-ready
           operator: Exists
           effect: NoSchedule
-      # Use OnDelete update strategy to prevent automatic driver pod restarts
-      # Driver pods will only update when manually deleted
-      updateStrategy: OnDelete
+      # RollingUpdate, one node at a time. OnDelete was set to keep driver pods from restarting,
+      # but the driver is host-installed (driver.enabled: false). Under OnDelete every values
+      # change left the DaemonSets stale, the ClusterPolicy stayed notReady and Helm timed out.
+      updateStrategy: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: "1"
 
     # Driver configuration for production
     # Using host-installed drivers - no containerized driver configuration needed
