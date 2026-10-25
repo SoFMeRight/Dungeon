@@ -10,10 +10,10 @@ resources:
   - objectstore-postgres.yaml
   - postgres-cluster.yaml
   - scheduledbackup-postgres.yaml
-  - externalsecret-config.yaml
-  - job-config.yaml
+  - externalsecret-configuration.yaml
+  - job-configuration.yaml
 configMapGenerator:
-  - name: dependency-track-config-playbook
+  - name: dependency-track-configuration-playbook
     files:
       - playbook/apply.yml
       - playbook/policy.yml

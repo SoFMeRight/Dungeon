@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: dependency-track-config
+  name: dependency-track-configuration
   annotations:
     kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on change, not wedge
 spec:
@@ -9,9 +9,9 @@ spec:
   template:
     metadata:
       labels:
-        app: dependency-track-config
+        app: dependency-track-configuration
     spec:
-      serviceAccountName: dependency-track-config
+      serviceAccountName: dependency-track-configuration
       # Its token is the OpenBao Kubernetes login; the ServiceAccount has no RBAC.
       automountServiceAccountToken: true
       restartPolicy: OnFailure
@@ -22,7 +22,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       containers:
-        - name: config
+        - name: configuration
           image: PLACEHOLDER_ANSIBLE_IMAGE
           command: ["ansible-playbook", "/playbook/apply.yml"]
           env:
@@ -33,11 +33,11 @@ spec:
             - name: DT_URL
               value: http://dependency-track-api-server:8080
             - name: BAO_ROLE
-              value: dependency-track-config
+              value: dependency-track-configuration
             - name: DT_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: dependency-track-config
+                  name: dependency-track-configuration
                   key: DT_API_KEY
           securityContext:
             readOnlyRootFilesystem: true
@@ -49,18 +49,18 @@ spec:
             - name: playbook
               mountPath: /playbook
               readOnly: true
-            - name: config
-              mountPath: /config
+            - name: configuration
+              mountPath: /configuration
               readOnly: true
             - name: tmp
               mountPath: /tmp
       volumes:
         - name: playbook
           configMap:
-            name: dependency-track-config-playbook
-        - name: config
+            name: dependency-track-configuration-playbook
+        - name: configuration
           configMap:
-            name: dependency-track-config
+            name: dependency-track-configuration
         - name: tmp
           emptyDir:
             sizeLimit: 64Mi

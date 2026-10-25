@@ -4,9 +4,9 @@ resources:
   - externalsecret-frontend-config.yaml
   - httproute.yaml
 configMapGenerator:
-  - name: dependency-track-config
+  - name: dependency-track-configuration
     files:
-      - config.yaml
+      - configuration.yaml
 patches:
   - path: helmrelease-patch.yaml
   - path: helmrelease-postrender-patch.yaml
@@ -15,4 +15,4 @@ patches:
       name: dependency-track
   - path: postgres-cluster-patch.yaml
   - path: objectstore-postgres-patch.yaml
-  - path: job-config-patch.yaml
+  - path: job-configuration-patch.yaml

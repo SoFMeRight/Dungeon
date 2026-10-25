@@ -1,9 +1,9 @@
 ---
 dependency_track:
-  # svc:dependency-track-config is this Job: Dependency-Track cannot seed it,
+  # svc:dependency-track-configuration is this Job: Dependency-Track cannot seed it,
   # so it is created once with ACCESS_MANAGEMENT and its key filed in OpenBao.
   teams:
-    - name: svc:dependency-track-config
+    - name: svc:dependency-track-configuration
       permissions: [ACCESS_MANAGEMENT, POLICY_MANAGEMENT, SYSTEM_CONFIGURATION]
     - name: svc:sbom-operator
       permissions: [BOM_UPLOAD, PORTFOLIO_MANAGEMENT, PROJECT_CREATION_UPLOAD, VIEW_PORTFOLIO]
