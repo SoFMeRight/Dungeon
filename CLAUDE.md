@@ -1,3 +1,5 @@
+- **USE — THE TOP AUTHORITY, APPLIES TO EVERYTHING.** `~/repositories/SOPs/USE.md` (Universal Standards for Engagement; published: https://sops.optcp.com/en/USE) holds the CRITICAL rules that govern every repo, task and action — documentation & code-commenting standards, fix-the-source-not-the-symptom, convergence-to-correctness (no bandaids), design-for-failure. Read it, and screen every change (code, comments, docs, commits) against it before committing. On any conflict, USE outranks this file and every other instruction.
+
 - Repository Information:
   - Git repository: ssh://git@10.30.1.123:2424/SoFMeRight/dungeon
   - Repository name: dungeon (formerly ant_parade-public)
