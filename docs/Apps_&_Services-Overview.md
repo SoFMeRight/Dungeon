@@ -6,7 +6,7 @@
 
 ## Apps & Services (136)
 
-✅ 134 healthy · ⚠️ 2 degraded
+✅ 133 healthy · ⚠️ 3 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -219,7 +219,7 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Crowdsec (4 components) | ✅ | 🔒 crowdsec-lapi.pcfae.com | [open](https://crowdsec-lapi.pcfae.com) |
+| Crowdsec (4 components) | ⚠️ | 🔒 crowdsec-lapi.pcfae.com | [open](https://crowdsec-lapi.pcfae.com) |
 | Frigate | ✅ | 🔒 nvr.pcfae.com | [open](https://nvr.pcfae.com) |
 | Home Assistant | ✅ | ❓ hass.arbitorium.com | [open](https://hass.arbitorium.com) |
 | Mosquitto | ✅ | 🏠 |  |
@@ -840,7 +840,7 @@
 
 **Ark — 4 components** — Mixed — 
 - Namespace: shooting-gallery
-- Replicas: 3/4
+- Replicas: 2/4
 - Components:
   - ark-sa-tmc-admin-list-server (Deployment)
   - ark-sa-tmc-theisland (StatefulSet)
@@ -1109,7 +1109,7 @@
 
 **Crowdsec — 4 components** — Mixed — 
 - Namespace: lens-of-truth
-- Replicas: 4/4
+- Replicas: 3/4
 - Hosts: crowdsec-lapi.pcfae.com, crowdsec.pcfae.com
 - Gateway: phloem-gateway
 - Components:
@@ -1376,7 +1376,7 @@
 - Namespace: arylls-lookout
 - Replicas: 1/1
 
-**Reflector** — Deployment — 10.0.65
+**Reflector** — Deployment — 10.0.67
 - Namespace: gerudo-crest
 - Replicas: 1/1
 
