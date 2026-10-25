@@ -4,6 +4,7 @@ resources:
   - ../../../base/ceph-rook-ceph
   - csi-operator-rbac.yaml
   - csi-driver-resources.yaml
+  - rbd-toolbox.yaml
 patches:
   - path: helmrelease-patch.yaml
   - target:

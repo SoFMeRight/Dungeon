@@ -1,0 +1,45 @@
+# Ceph toolbox for the disaster scripts (bash/disaster/ceph, ansible/k8s/rbd-rook-migrat*).
+# Was hand-applied with kubectl; codified unchanged apart from resources. Values from 30d usage
+# (2026-10-25): request = p50 x 1.2, CPU limit = 1-minute peak x 1.25, memory = peak x 1.15.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rbd-toolbox
+  namespace: gorons-bracelet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rbd-toolbox
+  template:
+    metadata:
+      labels:
+        app: rbd-toolbox
+    spec:
+      containers:
+        - name: rbd
+          image: quay.io/ceph/ceph:v19.2.7@sha256:3fc0a79f1c671f0e75be24ba77a4ab32227e5ea080e16dfc0840a1dc6c30bf7e
+          command:
+            - sleep
+            - infinity
+          env:
+            - name: CEPH_ARGS
+              value: --id dungeon-provisioner
+          resources:
+            requests:
+              cpu: 2m
+              memory: 79Mi
+            limits:
+              cpu: 1117m
+              memory: 79Mi
+          volumeMounts:
+            - name: ceph-config
+              mountPath: /etc/ceph
+      volumes:
+        - name: ceph-config
+          projected:
+            sources:
+              - configMap:
+                  name: ceph-config
+              - secret:
+                  name: rbd-toolbox-keyring
