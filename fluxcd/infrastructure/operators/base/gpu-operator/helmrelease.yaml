@@ -4,6 +4,9 @@ metadata:
   name: gpu-operator
 spec:
   interval: 30m
+  # Helm waits for the ClusterPolicy, which is ready only once every GPU DaemonSet has rolled
+  # (one node at a time); the 5m default times out mid-roll and rolls the release back.
+  timeout: 20m
   chart:
     spec:
       chart: gpu-operator
