@@ -5,19 +5,19 @@ metadata:
     namespace: gorons-bracelet
 type: Opaque
 stringData:
-    keyring: ENC[AES256_GCM,data:PnhSYgM7nNuTJcWIqM3Ftk+buPRoFui+CdvFox2SWuctXfRzEPvaX6kNZyxeWKtUqsRgjziv40TBSmHp0xXqUYuO0HXm85235kPsmia94GBtLMwz/nGsQ59DFNI=,iv:KXqpCNpYaMXLs5Sh5diGv+6Io1IXNfJgzW+DD3tGJfM=,tag:X33i0VdXR0+S0+5iqp5DrA==,type:str]
+    keyring: ENC[AES256_GCM,data:EjBMfp3dPTzjJvcr2h4W2jJtFnPF4WZNz0SMLMFDU0bOb4ESPK18As72ranaYru255UYnqKE/ybH1Vl7LOJE/5xMi3I1xvkWG2eP3cUTNqmQWUIvs8Nolt5j4/I=,iv:rUITWJnH5GAC4S9yBCNRNx7OjfjLr7Oz0iCrggLnqPc=,tag:rnJyDtpGgFH7OSObI9YeeQ==,type:str]
 sops:
     age:
-        - recipient: age1y8vegwlhcdgerrtn5947j5lcsswcu0zz6ukhs0hvvhsp79sa99nsn82dkr
-          enc: |
+        - enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBVS2MzeEdHcHV0emE3UlRU
-            NnBBKzlxdzFBQ2VLdGJBcjhpOGpWMTNubDJVCmZ4bTFvNnZNYko0NHV2MkFFODhV
-            QnBBclc3cllJVzhGRjVtQno1MXhXRVUKLS0tIFg2T25FTXZOdEVSV0dFZmsyNTFD
-            ak81NWsvUlRLWk1PaDhsUkNaQmMzMDAKgezJGET6R2EpocrpDv1W6JfBC9N76nYl
-            HbuaHzqe3YGi+kimty7gfPtJbSnjVxCG7cimyENW44CdLm4+z6YYkg==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBiZVhTZVk0Y1FXWmRIWWZu
+            OTZTWEhwQ0p5eE9TcWlYV29ZbFpFRGQ1SUhFCjJjditUVi82WjRyNFo5R09BNTFB
+            SGRMV0JwQnVZT0R6RHlyRUR4cHlLNHcKLS0tIGtLVlhFaHVBMW9tWHFsQm1oUGhN
+            VFc3cUlTUFpmYUhzUnhjTTRNb003LzAKh/3VHsPS1O5olBSSazxarglLGnNMOGrS
+            W+0c2vOC4dSdUYGX7HHhouSvMI5qLsV7h0c3qo2DFAis086aGD1hDQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-10-24T12:44:38Z"
-    mac: ENC[AES256_GCM,data:oSPS4tqjwh5kEH+czrLx9eIsOxnpBQ2z0vMCBUshbv0lwSMyqojhEV7WVc8yi6euGsHwsZS+DNSUdXOU8BOvW18FUb5bsJD1nuO9b43lC2H7cd76Pqh+8gsRn1FrGQeIWZkx0vSfmRTfDR56jzcdPdJvb1dCxPmyQyFoXnyg2jA=,iv:XGullH3Ejl6hFk0IzchkVLVEcHrLdnzBUhAXVuCOtBk=,tag:sMtBBwiPvF+58hsuHjH4EQ==,type:str]
+          recipient: age1y8vegwlhcdgerrtn5947j5lcsswcu0zz6ukhs0hvvhsp79sa99nsn82dkr
     encrypted_regex: ^(data|stringData)$
-    version: 3.10.2
+    lastmodified: "2026-10-25T12:31:51Z"
+    mac: ENC[AES256_GCM,data:Fiif7Sntp/ui31P2Re/K4mWYboRUFsfCEQgbN6JE1erIYEezGeQ0QQIOiI8MwU7NgOqKPpai85RP5c4NCb6gJnwZORo8MpEE4z3E6c7SbPruhrUKuqgHAINGAapYkeSuR75hJRtj1af47pOKtE2HXizUbQJXHyOTdUMrJ267rY8=,iv:689ShET7rFZOG9gP8adCnInslMBEvYj76ZQ4wfhIQ4U=,tag:MYhM4RMnjmkNXbAOcWNgbQ==,type:str]
+    version: 3.13.3
