@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sbom-operator-scratch
+spec:
+  resources:
+    requests:
+      # syft unpacks one whole image here at a time.
+      storage: 32Gi
+  storageClassName: ceph-rbd-hdd
