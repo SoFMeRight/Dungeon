@@ -334,7 +334,7 @@ spec:
           memory: 641Mi
         limits:
           # Startup is CPU-bound: at 96m it sat pinned at the limit and failed its startup probe.
-          cpu: 2000m
+          cpu: 150m
           memory: 641Mi
       podLabels:
         policy.prplanit.com/ingress: "true"
