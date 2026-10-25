@@ -64,6 +64,9 @@ spec:
               value: "27015"
             - name: PLAYERS
               value: "8"
+            # Max base camps a guild may hold (game default 4, vanilla max 10).
+            - name: BASE_CAMP_MAX_NUM_IN_GUILD
+              value: "6"
             - name: SERVER_NAME
               value: "Master-Chiefers"
             - name: SERVER_DESCRIPTION
