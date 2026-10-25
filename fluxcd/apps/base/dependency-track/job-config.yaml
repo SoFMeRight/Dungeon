@@ -12,7 +12,8 @@ spec:
         app: dependency-track-config
     spec:
       serviceAccountName: dependency-track-config
-      automountServiceAccountToken: false
+      # Its token is the OpenBao Kubernetes login; the ServiceAccount has no RBAC.
+      automountServiceAccountToken: true
       restartPolicy: OnFailure
       securityContext:
         runAsNonRoot: true
@@ -31,6 +32,8 @@ spec:
               value: /tmp/.ansible
             - name: DT_URL
               value: http://dependency-track-api-server:8080
+            - name: BAO_ROLE
+              value: dependency-track-config
             - name: DT_API_KEY
               valueFrom:
                 secretKeyRef:

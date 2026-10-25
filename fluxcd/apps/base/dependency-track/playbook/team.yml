@@ -32,3 +32,56 @@
     status_code: [200, 304]
   when: dt_team.permissions | default([]) | map(attribute='name') | sort != team.permissions | sort
   changed_when: true
+
+# A team with a key_path gets one key, minted here and written to OpenBao, never read
+# back: issuers write, they do not read. Team keys never expire; deleting the key in
+# Dependency-Track rotates it on the next run.
+- name: Issue the key of {{ team.name }}
+  when:
+    - team.key_path is defined
+    - dt_team.apiKeys | default([]) | length == 0
+  block:
+    - name: Log in to OpenBao
+      ansible.builtin.uri:
+        url: "{{ bao_addr }}/v1/auth/kubernetes/login"
+        method: POST
+        headers: {}
+        body:
+          role: "{{ bao_role }}"
+          jwt: "{{ lookup('ansible.builtin.file', '/var/run/secrets/kubernetes.io/serviceaccount/token') }}"
+      register: dt_bao_login
+      no_log: true
+
+    - name: Mint the key of {{ team.name }}
+      ansible.builtin.uri:
+        url: "{{ dt_api }}/v1/team/{{ dt_team.uuid }}/key"
+        method: PUT
+        status_code: [201]
+      register: dt_team_key
+      no_log: true
+      changed_when: true
+
+    - name: Write the key of {{ team.name }} to {{ team.key_path }}
+      ansible.builtin.uri:
+        url: "{{ bao_addr }}/v1/{{ team.key_path }}"
+        method: POST
+        headers:
+          X-Vault-Token: "{{ dt_bao_login.json.auth.client_token }}"
+        body:
+          data:
+            API_KEY: "{{ dt_team_key.json.key }}"
+      no_log: true
+      changed_when: true
+  rescue:
+    # A key that never reached OpenBao is deleted, so the next run mints again.
+    - name: Delete the unfiled key of {{ team.name }}
+      ansible.builtin.uri:
+        url: "{{ dt_api }}/v1/team/key/{{ dt_team_key.json.publicId }}"
+        method: DELETE
+        status_code: [204]
+      when: dt_team_key.json is defined
+      changed_when: true
+
+    - name: Fail the run
+      ansible.builtin.fail:
+        msg: "Issuing the key of {{ team.name }} failed at: {{ ansible_failed_task.name }}"

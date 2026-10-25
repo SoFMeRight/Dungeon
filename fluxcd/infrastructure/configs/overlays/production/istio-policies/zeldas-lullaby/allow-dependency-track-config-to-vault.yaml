@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-dependency-track-config-to-vault
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vault
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-sibyl-system/sa/dependency-track-config
+      to:
+        - operation:
+            ports: ["8200"]

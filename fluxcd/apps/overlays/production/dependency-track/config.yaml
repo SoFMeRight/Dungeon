@@ -7,6 +7,7 @@ dependency_track:
       permissions: [ACCESS_MANAGEMENT, POLICY_MANAGEMENT, SYSTEM_CONFIGURATION]
     - name: svc:sbom-operator
       permissions: [BOM_UPLOAD, PORTFOLIO_MANAGEMENT, PROJECT_CREATION_UPLOAD, VIEW_PORTFOLIO]
+      key_path: optcp/data/apps/sbom-operator/dependency-track
 
   config_properties:
     - group: general

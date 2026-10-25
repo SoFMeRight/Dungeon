@@ -7,6 +7,8 @@
     - /config/config.yaml
   vars:
     dt_api: "{{ lookup('ansible.builtin.env', 'DT_URL') }}/api"
+    bao_addr: "{{ lookup('ansible.builtin.env', 'BAO_ADDR') }}"
+    bao_role: "{{ lookup('ansible.builtin.env', 'BAO_ROLE') }}"
   module_defaults:
     ansible.builtin.uri:
       headers:

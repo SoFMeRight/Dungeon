@@ -68,7 +68,7 @@ spec:
                   - apiGroups: [""]
                     resources: [pods]
                     verbs: [get, list, watch, update]
-          # The fallback pull secret is read only at startup.
+          # The fallback pull secret and the Dependency-Track key are read only at startup.
           - target:
               kind: Deployment
               name: sbom-operator
@@ -76,7 +76,7 @@ spec:
               - op: add
                 path: /metadata/annotations
                 value:
-                  secret.reloader.stakater.com/reload: sbom-operator-registry
+                  secret.reloader.stakater.com/reload: sbom-operator-registry,sbom-operator
               - op: add
                 path: /spec/template/spec/volumes/0/emptyDir/sizeLimit
                 value: 1Gi
