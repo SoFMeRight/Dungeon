@@ -11,7 +11,8 @@ metadata:
   name: boundary-oidc-setup
   namespace: hookshot
 spec:
-  ttlSecondsAfterFinished: 300
+  # An hour: sbom-operator scans hourly and must see the finished pod.
+  ttlSecondsAfterFinished: 3600
   backoffLimit: 1
   template:
     spec:
