@@ -4,17 +4,3 @@ resources:
   - ../../../base/istio-meshmedic
 patches:
   - path: daemonset-patch.yaml
-  # The control plane runs istio-meshmedic-control-plane (built from this overlay).
-  - target:
-      kind: DaemonSet
-      name: istio-meshmedic
-    patch: |-
-      - op: add
-        path: /spec/template/spec/affinity
-        value:
-          nodeAffinity:
-            requiredDuringSchedulingIgnoredDuringExecution:
-              nodeSelectorTerms:
-                - matchExpressions:
-                    - key: node-role.kubernetes.io/control-plane
-                      operator: DoesNotExist
