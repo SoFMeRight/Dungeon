@@ -23,14 +23,27 @@ spec:
       retries: 5
   values:
     fullnameOverride: "csi-smb"
+    # Off the control plane: the controller is an ordinary controller, and no pod there mounts
+    # SMB volumes. The workers carry no taints, so nothing needs tolerating.
     controller:
       replicas: 1
-      tolerations:
-        - key: "node-role.kubernetes.io/control-plane"
-          operator: "Exists"
-          effect: "NoSchedule"
+      tolerations: []
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
     node:
-      tolerations:
-        - operator: "Exists"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
+    linux:
+      tolerations: []
     storageClass:
       create: false  # We'll create our own storage classes

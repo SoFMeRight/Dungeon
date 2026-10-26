@@ -5,10 +5,40 @@ metadata:
 spec:
   values:
     # Prometheus scraping for operator
+    # Controllers stay off the control plane. The chart defaults tolerate the control-plane taint
+    # and even prefer those nodes; the control plane is for control-plane components only.
     operator:
       podAnnotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8080"
+      tolerations: []
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
+    node-feature-discovery:
+      master:
+        tolerations: []
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: node-role.kubernetes.io/control-plane
+                      operator: DoesNotExist
+      # The worker only feeds GPU scheduling, and the control-plane nodes have no GPUs.
+      worker:
+        tolerations: []
+        affinity:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: node-role.kubernetes.io/control-plane
+                      operator: DoesNotExist
     # Enable CDI as default mode
     cdi:
       enabled: true
