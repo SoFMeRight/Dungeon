@@ -109,7 +109,7 @@ spec:
                 sleep 5
               done
         - name: run-migrations
-          image: docker.io/kimai/kimai2:apache@sha256:0db3af96f0da12c6b74428508d306a8c0e3692d8592300d4849b634c59e2986a
+          image: docker.io/kimai/kimai2:apache@sha256:19b34043e7631b122c5e5aca27c3f3caa0bb37d2bce1478342c666bcdfe84f48
           # apache-root (master root → setuid workers www-data 33, entrypoint chowns Symfony var).
           # Partial hardening: drop ALL + file-perm/setuid caps + seccomp (:8001 unprivileged).
           securityContext:
@@ -147,7 +147,7 @@ spec:
               mountPath: /env-config
               readOnly: true
         - name: create-admin-user
-          image: docker.io/kimai/kimai2:apache@sha256:0db3af96f0da12c6b74428508d306a8c0e3692d8592300d4849b634c59e2986a
+          image: docker.io/kimai/kimai2:apache@sha256:19b34043e7631b122c5e5aca27c3f3caa0bb37d2bce1478342c666bcdfe84f48
           # apache-root (master root → setuid workers www-data 33, entrypoint chowns Symfony var).
           # Partial hardening: drop ALL + file-perm/setuid caps + seccomp (:8001 unprivileged).
           securityContext:
@@ -207,7 +207,7 @@ spec:
               readOnly: true
       containers:
         - name: kimai
-          image: docker.io/kimai/kimai2:apache@sha256:0db3af96f0da12c6b74428508d306a8c0e3692d8592300d4849b634c59e2986a
+          image: docker.io/kimai/kimai2:apache@sha256:19b34043e7631b122c5e5aca27c3f3caa0bb37d2bce1478342c666bcdfe84f48
           # apache-root (master root → setuid workers www-data 33, entrypoint chowns Symfony var).
           # Partial hardening: drop ALL + file-perm/setuid caps + seccomp (:8001 unprivileged).
           securityContext:

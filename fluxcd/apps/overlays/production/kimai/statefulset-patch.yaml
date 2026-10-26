@@ -12,7 +12,7 @@ spec:
     spec:
       containers:
         - name: kimai
-          image: docker.io/kimai/kimai2:apache@sha256:0db3af96f0da12c6b74428508d306a8c0e3692d8592300d4849b634c59e2986a
+          image: docker.io/kimai/kimai2:apache@sha256:19b34043e7631b122c5e5aca27c3f3caa0bb37d2bce1478342c666bcdfe84f48
           env:
             - name: TRUSTED_HOSTS
               value: "localhost|127.0.0.1|kimai|kimai.pcfae.com"
