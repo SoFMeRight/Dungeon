@@ -6,7 +6,7 @@
 
 ## Apps & Services (135)
 
-✅ 133 healthy · ⚠️ 2 degraded
+✅ 132 healthy · ⚠️ 3 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -38,7 +38,7 @@
 | Bookstack (2 components) | ✅ | 🌐 kb.precisionplanit.com | [open](https://kb.precisionplanit.com) |
 | Calcom | ✅ | 🌐 cal.prplanit.com | [open](https://cal.prplanit.com) |
 | Frappe Suite (9 components) | ✅ | 🔒 hq.prplanit.com | [open](https://hq.prplanit.com) |
-| Gitlab (11 components) | ✅ | 🌐 git.prplanit.com | [open](https://git.prplanit.com) |
+| Gitlab (11 components) | ⚠️ | 🌐 git.prplanit.com | [open](https://git.prplanit.com) |
 | Harbor (6 components) | ✅ | 🔒 cr.pcfae.com | [open](https://cr.pcfae.com) |
 | Harbor Proxy Cache Proxy | ✅ | 🔒 docker.cr.pcfae.com | [open](https://docker.cr.pcfae.com) |
 | Invoiceninja (3 components) | ✅ | ❓ invoice.pcfae.com | [open](https://invoice.pcfae.com) |
@@ -396,7 +396,7 @@
 
 **Gitlab — 11 components** — Mixed — v19.4.1
 - Namespace: hyrule-castle
-- Replicas: 22/22
+- Replicas: 20/22
 - Hosts: git.prplanit.com
 - Gateway: cell-membrane-gateway
 - Components:
