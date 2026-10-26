@@ -18,6 +18,7 @@ spec:
     podAnnotations:
       prometheus.io/scrape: "true"
       prometheus.io/port: "3000"
+      backup.velero.io/backup-volumes-excludes: grafana-plugins-shared
 
     # HA configuration
     replicas: 3

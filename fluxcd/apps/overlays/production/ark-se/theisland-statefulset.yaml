@@ -16,6 +16,8 @@ spec:
         # arkmanager needs the full cap set (root/sudo perm fixups + crontab) — can't drop ALL
         # capabilities, so except out of the enforce-pod-hardening drop-caps rule. Still audited.
         policy.prplanit.com/except-drop-caps: "true"
+      annotations:
+        backup.velero.io/backup-volumes-excludes: shooting-gallery-ark-se-tmc-theisland-serverfiles
     spec:
       serviceAccountName: ark-se-tmc-theisland
       enableServiceLinks: false

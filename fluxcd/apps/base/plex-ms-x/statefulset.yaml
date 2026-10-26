@@ -13,6 +13,8 @@ spec:
     metadata:
       labels:
         app: plex-ms-x
+      annotations:
+        backup.velero.io/backup-volumes-excludes: transcode
     spec:
       serviceAccountName: plex-ms-x
       runtimeClassName: nvidia

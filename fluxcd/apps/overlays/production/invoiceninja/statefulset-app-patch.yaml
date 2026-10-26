@@ -11,6 +11,8 @@ spec:
         policy.prplanit.com/access-scope-mariadb: hyrule-castle.invoiceninja.mariadb
         policy.prplanit.com/cap.redis: "true"
         policy.prplanit.com/access-scope-redis: hyrule-castle.invoiceninja.redis
+      annotations:
+        backup.velero.io/backup-volumes-excludes: hyrule-castle-invoiceninja-app-cache
     spec:
       securityContext:
         fsGroup: 82

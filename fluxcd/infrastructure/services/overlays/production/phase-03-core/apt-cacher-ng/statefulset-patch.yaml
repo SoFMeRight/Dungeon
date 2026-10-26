@@ -8,6 +8,8 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
+      annotations:
+        backup.velero.io/backup-volumes-excludes: hyrule-castle-apt-cacher-ng-cache,hyrule-castle-apt-cacher-ng-logs
     spec:
       initContainers:
         - name: init

@@ -13,6 +13,8 @@ spec:
     metadata:
       labels:
         app: stable-diffusion-webui
+      annotations:
+        backup.velero.io/backup-volumes-excludes: output
     spec:
       serviceAccountName: stable-diffusion-webui
       # Models/outputs on the /data PVC mount (fsGroup-writable). GPU is runtime/cgroup-based,

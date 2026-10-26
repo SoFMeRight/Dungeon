@@ -101,10 +101,10 @@ spec:
           # File-level backups, so volume contents are captured independently
           # of Ceph and its snapshots.
           defaultVolumesToFsBackup: true
+          snapshotVolumes: false
           # Only Ceph (rbd/cephfs) volumes are backed up; NAS CIFS/SMB
-          # (smb.csi.k8s.io) is skipped robustly by driver — see the
-          # velero-volume-policy ConfigMap. This replaces the fragile,
-          # incomplete per-PVC-name blocklist in excludedResources below.
+          # (smb.csi.k8s.io) is skipped by driver -- see the velero-volume-policy
+          # ConfigMap.
           resourcePolicy:
             kind: configmap
             name: velero-volume-policy
@@ -150,94 +150,4 @@ spec:
           excludedResources:
             - events
             - events.events.k8s.io
-            - persistentvolumes/plex-media-movies
-            - persistentvolumes/plex-media-tv
-            - persistentvolumes/plex-media-music
-            - persistentvolumes/plex-media-photos
-            - persistentvolumes/jellyfin-media-movies
-            - persistentvolumes/jellyfin-media-tv
-            - persistentvolumes/jellyfin-media-music
-            - persistentvolumes/jellyfin-media-photos
-            - persistentvolumes/photoprism-import
-            - persistentvolumes/photoprism-originals
-            - persistentvolumes/calibre-web-books
-            - persistentvolumeclaims/plex-media-movies
-            - persistentvolumeclaims/plex-media-tv
-            - persistentvolumeclaims/plex-media-music
-            - persistentvolumeclaims/plex-media-photos
-            - persistentvolumeclaims/jellyfin-media-movies
-            - persistentvolumeclaims/jellyfin-media-tv
-            - persistentvolumeclaims/jellyfin-media-music
-            - persistentvolumeclaims/jellyfin-media-photos
-            - persistentvolumeclaims/photoprism-import
-            - persistentvolumeclaims/photoprism-originals
-            - persistentvolumeclaims/calibre-web-books-pvc
-            # Plex transcoding cache
-            - persistentvolumeclaims/transcode-plex-0
-            - persistentvolumeclaims/temple-of-time-plex-transcode-plex-0
-            # Jellyfin metadata cache
-            - persistentvolumeclaims/temple-of-time-jellyfin-cache-jellyfin-0
-            # APT cacher logs and cache
-            - persistentvolumeclaims/hyrule-castle-apt-cacher-ng-logs-apt-cacher-ng-0
-            - persistentvolumeclaims/hyrule-castle-apt-cacher-ng-cache-apt-cacher-ng-0
-            # InvoiceNinja application cache
-            - persistentvolumeclaims/hyrule-castle-invoiceninja-app-cache-invoiceninja-app-0
-            # Gluetun VPN temporary files
-            - persistentvolumeclaims/swift-sail-gluetun-primary-gluetun-tmp-gluetun-primary-0
-            - persistentvolumeclaims/swift-sail-gluetun-primary-gluetun-tmp-qbittorrent-0
-            - persistentvolumeclaims/swift-sail-qbittorrent-gluetun-tmp-qbittorrent-0
-            # Arr apps media libraries (50Ti+ each - too large to backup)
-            - persistentvolumeclaims/radarr-movies
-            - persistentvolumeclaims/sonarr-tv-shows
-            - persistentvolumeclaims/lidarr-music
-            - persistentvolumeclaims/readarr-books
-            - persistentvolumeclaims/bazarr-movies
-            - persistentvolumeclaims/bazarr-tv-shows
-            - persistentvolumeclaims/pinchflat-downloads
-            - persistentvolumeclaims/pyload-ng-downloads
-            # Downloader working directories
-            - persistentvolumeclaims/swift-sail-qbittorrent-downloads-qbittorrent-0
-            - persistentvolumeclaims/swift-sail-gluetun-primary-downloads-gluetun-primary-0
-            - persistentvolumeclaims/swift-sail-gluetun-primary-downloads-qbittorrent-0
-            - persistentvolumeclaims/downloads-radarr-0
-            - persistentvolumeclaims/downloads-sonarr-0
-            # Immich photo library
-            - persistentvolumeclaims/library-immich-0
-            - persistentvolumeclaims/temple-of-time-immich-library-immich-0
-            # Plex MS-X media and transcode (pedestal-of-time)
-            - persistentvolumeclaims/plex-ms-x-media-movies
-            - persistentvolumeclaims/plex-ms-x-media-photos
-            - persistentvolumeclaims/kai-plex-ms-x-transcode
-            # AI/ML output and models
-            - persistentvolumeclaims/output-stable-diffusion-webui-0
-            # Frigate NVR storage
-            - persistentvolumeclaims/storage-frigate-0
-            # ARK server binaries and game files (NOT save data)
-            - persistentvolumeclaims/ark-sa-serverfiles-pvc
-            - persistentvolumeclaims/shooting-gallery-ark-se-tmc-theisland-serverfiles-ark-se-tmc-theisland-0
-            # CephFS infrastructure mounts (handled by external backup)
-            - persistentvolumeclaims/cephfs-root-temp-pvc
-            - persistentvolumeclaims/gorons-bracelet-cephfs-root
-            - persistentvolumeclaims/gossip-stone-grafana-plugins
-            # Download and scratch volumes. Transient by definition and
-            # re-acquirable; the app CONFIG beside them is kept.
-            - persistentvolumeclaims/swift-sail-qbittorrent-downloads
-            - persistentvolumeclaims/downloads-sabnzbd-0
-            - persistentvolumeclaims/incomplete-sabnzbd-0
-            - persistentvolumeclaims/downloads-readarr-0
-            # Metrics and log stores. These already ship to their own object
-            # storage, and what belongs in a PVC here is local WAL and cache.
-            # A copy in a backup bucket is not queryable, so it is not worth the
-            # nightly churn -- keep this data retrievable in its own system.
-            - persistentvolumeclaims/storage-vmstorage-0
-            - persistentvolumeclaims/storage-vmstorage-1
-            - persistentvolumeclaims/storage-vmstorage-2
-            - persistentvolumeclaims/storage-loki-0
-            - persistentvolumeclaims/storage-loki-1
-            - persistentvolumeclaims/storage-loki-2
-            - persistentvolumeclaims/data-thanos-receive-0
-            - persistentvolumeclaims/data-thanos-receive-1
-            - persistentvolumeclaims/data-thanos-receive-2
           storageLocation: default
-          volumeSnapshotLocations:
-            - default
