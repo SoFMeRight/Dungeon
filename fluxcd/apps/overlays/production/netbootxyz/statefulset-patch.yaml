@@ -15,7 +15,7 @@ spec:
               cpu: 2m
               memory: 153Mi
             limits:
-              cpu: 39m
+              cpu: 78m
               memory: 153Mi
   volumeClaimTemplates:
     - metadata:

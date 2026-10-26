@@ -17,7 +17,7 @@ spec:
           cpu: 28m
           memory: 115Mi
         limits:
-          cpu: 157m
+          cpu: 314m
           memory: 115Mi
     global:
       common:

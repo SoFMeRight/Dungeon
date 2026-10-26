@@ -32,7 +32,7 @@ spec:
               cpu: 2m
               memory: 106Mi
             limits:
-              cpu: 100m
+              cpu: 200m
               memory: 106Mi
           env:
             - name: HOME
