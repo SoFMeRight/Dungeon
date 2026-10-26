@@ -17,15 +17,10 @@ spec:
     - name: istio-base
     - name: istio-cni
     - name: istiod
-  chart:
-    spec:
-      chart: ztunnel
-      version: "1.31.2"
-      sourceRef:
-        kind: HelmRepository
-        name: istio
-        namespace: flux-system
-      interval: 12h
+  chartRef:
+    kind: HelmChart
+    name: ztunnel
+    namespace: flux-system
   values:
     # ztunnel is the core of Ambient mode
     # Handles L4 mTLS between pods

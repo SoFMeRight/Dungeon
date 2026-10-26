@@ -6,3 +6,4 @@ resources:
   - helmrelease-istiod.yaml
   - helmrelease-cni.yaml
   - helmrelease-ztunnel.yaml
+  - helmchart-ztunnel.yaml

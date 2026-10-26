@@ -11,15 +11,10 @@ spec:
   releaseName: alloy-control-plane
   targetNamespace: lakitu
   interval: 30m
-  chart:
-    spec:
-      chart: alloy
-      version: "1.13.1"
-      sourceRef:
-        kind: HelmRepository
-        name: grafana
-        namespace: flux-system
-      interval: 12h
+  chartRef:
+    kind: HelmChart
+    name: alloy
+    namespace: flux-system
   postRenderers:
     - kustomize:
         patches:

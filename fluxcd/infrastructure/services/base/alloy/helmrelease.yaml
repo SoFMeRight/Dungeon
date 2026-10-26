@@ -6,15 +6,10 @@ spec:
   releaseName: alloy
   targetNamespace: PLACEHOLDER_NAMESPACE
   interval: 30m
-  chart:
-    spec:
-      chart: alloy
-      version: "1.13.1"
-      sourceRef:
-        kind: HelmRepository
-        name: grafana
-        namespace: flux-system
-      interval: 12h
+  chartRef:
+    kind: HelmChart
+    name: alloy
+    namespace: flux-system
   values:
     fullnameOverride: "alloy"
 

@@ -1,0 +1,16 @@
+# The alloy chart, shared by the alloy and alloy-control-plane HelmReleases through chartRef.
+# One version for both instances. Bump the version here only. It lives outside alloy/ because that
+# overlay sets namespace: lakitu, and a HelmChart must sit in its HelmRepository's namespace.
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmChart
+metadata:
+  name: alloy
+  namespace: flux-system
+spec:
+  chart: alloy
+  version: "1.13.1"
+  sourceRef:
+    kind: HelmRepository
+    name: grafana
+  interval: 12h
+  reconcileStrategy: ChartVersion
