@@ -7,7 +7,7 @@ resources:
   - allow-cnpg-instance-callback.yaml
   - allow-webhook-cnpg.yaml
   - allow-cnpg-to-barman-plugin.yaml
-  - allow-csi-addons-to-rbd-ctrlplugin.yaml
+  - allow-csi-addons-to-rbd-sidecars.yaml
   - allow-webhook-mariadb-operator.yaml
   - allow-harbor-to-rgw.yaml
   - allow-reactive-resume-to-rgw.yaml

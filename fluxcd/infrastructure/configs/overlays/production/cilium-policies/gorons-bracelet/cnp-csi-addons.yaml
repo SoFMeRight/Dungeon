@@ -5,9 +5,8 @@ metadata:
 spec:
   description: >-
     The CSI-Addons controller runs reclaim-space through the RBD driver's
-    csi-addons sidecars: the ctrlplugin's on 9070 and each nodeplugin's on
-    9071. The nodeplugins are hostNetwork, so they are reached on the node
-    address.
+    csi-addons sidecars: the ctrlplugin's on 9070 and the per-node
+    nodeplugin-csi-addons pods' on 9071.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -22,9 +21,9 @@ spec:
         - ports:
             - port: "9070"
               protocol: TCP
-    - toEntities:
-        - host
-        - remote-node
+    - toEndpoints:
+        - matchLabels:
+            app: gorons-bracelet.rbd.csi.ceph.com-nodeplugin-csi-addons
       toPorts:
         - ports:
             - port: "9071"
@@ -51,4 +50,27 @@ spec:
       toPorts:
         - ports:
             - port: "9070"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-rbd-nodeplugin-csi-addons
+spec:
+  description: >-
+    Allow the CSI-Addons controller to reach each node's RBD csi-addons
+    sidecar on 9071.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: gorons-bracelet.rbd.csi.ceph.com-nodeplugin-csi-addons
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: csi-addons
+      toPorts:
+        - ports:
+            - port: "9071"
               protocol: TCP

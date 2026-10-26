@@ -232,6 +232,12 @@ rules:
       - serviceaccounts/token
     verbs:
       - create
+  - apiGroups:
+      - authentication.k8s.io
+    resources:
+      - tokenreviews
+    verbs:
+      - create
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
@@ -410,6 +416,12 @@ rules:
       - ''
     resources:
       - serviceaccounts/token
+    verbs:
+      - create
+  - apiGroups:
+      - authentication.k8s.io
+    resources:
+      - tokenreviews
     verbs:
       - create
   - apiGroups:
