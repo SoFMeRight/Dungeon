@@ -6,7 +6,7 @@
 
 ## Apps & Services (135)
 
-✅ 132 healthy · ⚠️ 3 degraded
+✅ 133 healthy · ⚠️ 2 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -38,7 +38,7 @@
 | Bookstack (2 components) | ✅ | 🌐 kb.precisionplanit.com | [open](https://kb.precisionplanit.com) |
 | Calcom | ✅ | 🌐 cal.prplanit.com | [open](https://cal.prplanit.com) |
 | Frappe Suite (9 components) | ✅ | 🔒 hq.prplanit.com | [open](https://hq.prplanit.com) |
-| Gitlab (11 components) | ⚠️ | 🌐 git.prplanit.com | [open](https://git.prplanit.com) |
+| Gitlab (11 components) | ✅ | 🌐 git.prplanit.com | [open](https://git.prplanit.com) |
 | Harbor (6 components) | ✅ | 🔒 cr.pcfae.com | [open](https://cr.pcfae.com) |
 | Harbor Proxy Cache Proxy | ✅ | 🔒 docker.cr.pcfae.com | [open](https://docker.cr.pcfae.com) |
 | Invoiceninja (3 components) | ✅ | ❓ invoice.pcfae.com | [open](https://invoice.pcfae.com) |
@@ -396,7 +396,7 @@
 
 **Gitlab — 11 components** — Mixed — v19.4.1
 - Namespace: hyrule-castle
-- Replicas: 20/22
+- Replicas: 22/22
 - Hosts: git.prplanit.com
 - Gateway: cell-membrane-gateway
 - Components:
@@ -1265,7 +1265,7 @@
 
 </details>
 
-## Platform Components (52)
+## Platform Components (55)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
@@ -1283,11 +1283,12 @@
 | Reflector | gerudo-crest | ✅ |
 | Reloader | gerudo-crest | ✅ |
 | Alloy | lakitu | ✅ |
+| Alloy | lakitu | ✅ |
 | Alloy Syslog | lakitu | ✅ |
 | Graphite Exporter Truenas | gossip-stone | ✅ |
 | Kube State Metrics | gossip-stone | ✅ |
 | Netconsole Collector | lakitu | ✅ |
-| Node Exporter | lakitu | ✅ |
+| Node (2 components) | lakitu | ✅ |
 | Vmauth | gossip-stone | ✅ |
 | Vmselect | gossip-stone | ✅ |
 | Vmstorage | gossip-stone | ✅ |
@@ -1303,18 +1304,20 @@
 | Xylem Gateway Istio | pedestal-of-time | ✅ |
 | Cell Membrane Gateway Istio | prelude-of-light | ✅ |
 | Cert Manager (3 components) | king-of-red-lions | ✅ |
+| Istio (2 components) | king-of-red-lions | ✅ |
 | Istio Cni | king-of-red-lions | ✅ |
-| Istio Meshmedic | king-of-red-lions | ✅ |
 | Istiod | king-of-red-lions | ✅ |
 | Netbird Router Dungeon | farores-wind | ✅ |
 | Stunner (2 components) | king-of-red-lions | ✅ |
 | Ztunnel | king-of-red-lions | ✅ |
+| Ztunnel | king-of-red-lions | ✅ |
 | Ceph Csi (2 components) | gorons-bracelet | ✅ |
 | Cloudnative Pg | gorons-bracelet | ✅ |
+| Csi Addons | gorons-bracelet | ✅ |
 | Csi Driver Smb (3 components) | gorons-bracelet | ✅ |
 | Generic Device Plugin | gorons-bracelet | ✅ |
 | Gorons Bracelet.cephfs.csi.ceph.com (2 components) | gorons-bracelet | ✅ |
-| Gorons Bracelet.rbd.csi.ceph.com (2 components) | gorons-bracelet | ✅ |
+| Gorons Bracelet.rbd.csi.ceph.com (3 components) | gorons-bracelet | ✅ |
 | Gpu Operator (11 components) | gorons-bracelet | ✅ |
 | Mariadb Operator (3 components) | gorons-bracelet | ✅ |
 | Plugin Barman Cloud | gorons-bracelet | ✅ |
@@ -1379,7 +1382,11 @@
 
 **Alloy** — DaemonSet — 
 - Namespace: lakitu
-- Replicas: 10/10
+- Replicas: 5/5
+
+**Alloy** — DaemonSet — 
+- Namespace: lakitu
+- Replicas: 5/5
 
 **Alloy Syslog** — Deployment — v1.20.1
 - Namespace: lakitu
@@ -1397,7 +1404,7 @@
 - Namespace: lakitu
 - Replicas: 1/1
 
-**Node Exporter** — DaemonSet — v1.9.1
+**Node** — DaemonSet — v1.9.1
 - Namespace: lakitu
 - Replicas: 10/10
 
@@ -1461,11 +1468,11 @@
 - Namespace: king-of-red-lions
 - Replicas: 3/3
 
-**Istio Cni** — DaemonSet — 1.31.2
+**Istio** — DaemonSet — v0.0.2
 - Namespace: king-of-red-lions
 - Replicas: 10/10
 
-**Istio Meshmedic** — DaemonSet — v0.0.2
+**Istio Cni** — DaemonSet — 1.31.2
 - Namespace: king-of-red-lions
 - Replicas: 10/10
 
@@ -1483,7 +1490,11 @@
 
 **Ztunnel** — DaemonSet — 1.31.2
 - Namespace: king-of-red-lions
-- Replicas: 10/10
+- Replicas: 5/5
+
+**Ztunnel** — DaemonSet — 1.31.2
+- Namespace: king-of-red-lions
+- Replicas: 5/5
 
 **Ceph Csi** — Deployment — 
 - Namespace: gorons-bracelet
@@ -1493,9 +1504,13 @@
 - Namespace: gorons-bracelet
 - Replicas: 1/1
 
+**Csi Addons** — Deployment — v0.15.1
+- Namespace: gorons-bracelet
+- Replicas: 1/1
+
 **Csi Driver Smb** — Mixed — 1.20.3
 - Namespace: gorons-bracelet
-- Replicas: 12/12
+- Replicas: 7/7
 
 **Generic Device Plugin** — DaemonSet — 0.2.0
 - Namespace: gorons-bracelet
@@ -1507,11 +1522,11 @@
 
 **Gorons Bracelet.rbd.csi.ceph.com** — Mixed — 
 - Namespace: gorons-bracelet
-- Replicas: 7/7
+- Replicas: 12/12
 
 **Gpu Operator** — Mixed — v26.7.0
 - Namespace: gorons-bracelet
-- Replicas: 25/25
+- Replicas: 20/20
 
 **Mariadb Operator** — Deployment — 26.10.1
 - Namespace: gorons-bracelet
