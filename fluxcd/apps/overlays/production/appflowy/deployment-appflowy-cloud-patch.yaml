@@ -23,4 +23,4 @@ spec:
               cpu: "50m"   # right-sized 2026-07: p95 ~2m (was 500m)
             limits:
               memory: "2Gi"
-              cpu: "1000m"
+              cpu: 131m

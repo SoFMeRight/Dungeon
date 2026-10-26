@@ -38,7 +38,7 @@ spec:
               cpu: 50m
               memory: 128Mi
             limits:
-              cpu: 500m
+              cpu: 69m
               memory: 512Mi
       volumes:
         # readOnlyRootFilesystem: beszel writes runtime temp to /tmp (data is on the PVC).

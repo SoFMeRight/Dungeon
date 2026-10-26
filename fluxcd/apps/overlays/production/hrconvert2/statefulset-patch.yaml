@@ -21,7 +21,7 @@ spec:
               # runs Apache + PHP and spins up headless LibreOffice, which needs headroom. CPU
               # limit left at 500m (it was never the cause). TODO: right-size the memory limit
               # down toward observed steady-state once it's been healthy for a bit.
-              cpu: "500m"
+              cpu: 248m
               memory: "1Gi"
           volumeMounts:
             - name: tingle-tuner-hrconvert2-config

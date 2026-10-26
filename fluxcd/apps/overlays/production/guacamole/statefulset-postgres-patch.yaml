@@ -42,7 +42,7 @@ spec:
               cpu: "10m"
               memory: "512Mi"
             limits:
-              cpu: "1000m"
+              cpu: 285m
               memory: "2Gi"
       volumes:
         - name: postgres-run

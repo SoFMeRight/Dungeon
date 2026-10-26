@@ -59,7 +59,7 @@ spec:
               cpu: 50m
               memory: 64Mi
             limits:
-              cpu: 500m
+              cpu: 296m
               memory: 256Mi
       volumes:
         - name: nginx-config

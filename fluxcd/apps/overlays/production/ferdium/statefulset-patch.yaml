@@ -24,7 +24,7 @@ spec:
               cpu: 100m
               memory: 512Mi
             limits:
-              cpu: 2000m
+              cpu: 636m
               memory: 2Gi
           volumeMounts:
             - name: lost-woods-ferdium-config

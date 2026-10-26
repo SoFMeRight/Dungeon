@@ -40,7 +40,7 @@ spec:
               cpu: "90m"
               memory: "1Gi"
             limits:
-              cpu: "2000m"
+              cpu: 619m
               memory: "4Gi"
       volumes:
         - name: mysql-run

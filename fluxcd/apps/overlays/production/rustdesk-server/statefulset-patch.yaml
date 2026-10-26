@@ -22,7 +22,7 @@ spec:
               cpu: 10m
               memory: 64Mi
             limits:
-              cpu: 500m
+              cpu: 163m
               memory: 256Mi
           volumeMounts:
             - name: tmp
@@ -36,7 +36,7 @@ spec:
               cpu: 10m
               memory: 64Mi
             limits:
-              cpu: 500m
+              cpu: 109m
               memory: 256Mi
           volumeMounts:
             - name: tmp

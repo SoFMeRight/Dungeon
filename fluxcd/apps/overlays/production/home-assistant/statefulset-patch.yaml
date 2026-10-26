@@ -91,5 +91,5 @@ spec:
               cpu: 100m
               memory: 256Mi
             limits:
-              cpu: "2"
+              cpu: 1329m
               memory: 1Gi

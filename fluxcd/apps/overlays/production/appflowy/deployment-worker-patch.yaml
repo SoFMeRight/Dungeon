@@ -33,7 +33,7 @@ spec:
               cpu: "30m"   # right-sized 2026-07: p95 ~8m (was 250m)
             limits:
               memory: "1Gi"
-              cpu: "500m"
+              cpu: 439m
           volumeMounts:
             - name: tmp
               mountPath: /tmp

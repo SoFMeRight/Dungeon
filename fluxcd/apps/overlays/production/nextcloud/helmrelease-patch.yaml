@@ -322,7 +322,7 @@ spec:
         cpu: 50m
         memory: 512Mi
       limits:
-        cpu: 2
+        cpu: 1540m
         memory: 2Gi
 
     collabora:

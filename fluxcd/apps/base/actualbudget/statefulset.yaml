@@ -85,7 +85,7 @@ spec:
               cpu: 100m
             limits:
               memory: 512Mi
-              cpu: 500m
+              cpu: 296m
   volumeClaimTemplates:
     - metadata:
         name: data

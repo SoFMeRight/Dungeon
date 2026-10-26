@@ -37,7 +37,7 @@ spec:
               cpu: "75m"
               memory: "512Mi"
             limits:
-              cpu: "1000m"
+              cpu: 646m
               memory: "2Gi"
       volumes:
         - name: mongo-init

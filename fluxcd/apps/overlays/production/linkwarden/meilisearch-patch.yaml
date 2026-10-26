@@ -11,7 +11,7 @@ spec:
           image: docker.io/getmeili/meilisearch:v1.54.3
           resources:
             limits:
-              cpu: "1"
+              cpu: 372m
               memory: 2Gi
             requests:
               cpu: 100m

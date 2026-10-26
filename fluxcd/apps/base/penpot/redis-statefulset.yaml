@@ -29,7 +29,7 @@ spec:
               cpu: "50m"
             limits:
               memory: "256Mi"
-              cpu: "200m"
+              cpu: 88m
   volumeClaimTemplates:
     - metadata:
         name: temple-of-time-penpot-redis-data

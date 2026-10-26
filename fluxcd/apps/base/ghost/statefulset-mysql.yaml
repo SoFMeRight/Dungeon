@@ -47,7 +47,7 @@ spec:
               cpu: 35m
             limits:
               memory: 2Gi
-              cpu: 1000m
+              cpu: 333m
   volumeClaimTemplates:
     - metadata:
         name: mysql-data

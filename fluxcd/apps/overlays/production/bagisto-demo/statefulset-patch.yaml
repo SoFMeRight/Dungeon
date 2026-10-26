@@ -35,7 +35,7 @@ spec:
               cpu: 100m
               memory: 512Mi
             limits:
-              cpu: 2000m
+              cpu: 279m
               memory: 2Gi
           volumeMounts:
             - name: hyrule-castle-bagisto-demo-app
