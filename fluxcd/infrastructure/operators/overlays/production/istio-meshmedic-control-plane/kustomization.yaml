@@ -1,0 +1,51 @@
+# istio-meshmedic on the control-plane nodes, built from the main overlay so it carries the same
+# image and arguments. Only the DaemonSet is emitted: it runs as the main ServiceAccount, and
+# the SA/RBAC are dropped here so the root build holds one copy of each and nothing cross-wires.
+# The main DaemonSet has no CPU limit (it peaks at 568m on the workers); on the control plane it
+# peaks at 24m (30d, 15s), so this instance is bounded at 36m (x1.5).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../istio-meshmedic
+patches:
+  - patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: istio-meshmedic
+        namespace: king-of-red-lions
+  - patch: |-
+      $patch: delete
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: istio-meshmedic
+  - patch: |-
+      $patch: delete
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: istio-meshmedic
+  - target:
+      kind: DaemonSet
+      name: istio-meshmedic
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: istio-meshmedic-control-plane
+      - op: remove
+        path: /spec/template/spec/affinity
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          node-role.kubernetes.io/control-plane: ""
+      - op: replace
+        path: /spec/template/spec/tolerations
+        value:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule
+      - op: add
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: "36m"

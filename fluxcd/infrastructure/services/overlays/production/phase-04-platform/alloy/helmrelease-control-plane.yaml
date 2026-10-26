@@ -71,8 +71,16 @@ spec:
           cpu: 100m
           memory: 256Mi
         limits:
-          cpu: 620m      # 30d 15s peak on the control plane 413m x 1.5
+          cpu: 537m      # 30d 15s peak on the control plane 413m x 1.3
           memory: 2Gi
+    configReloader:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+        limits:
+          cpu: 10m       # 30d 15s peak 0.5m
+          memory: 50Mi
     controller:
       type: 'daemonset'
       hostNetwork: true

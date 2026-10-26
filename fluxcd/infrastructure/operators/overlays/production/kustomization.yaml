@@ -15,6 +15,7 @@ resources:
   - ./generic-device-plugin
   - ./istio
   - ./istio-meshmedic
+  - ./istio-meshmedic-control-plane
   - ./mariadb-operator-crds
   - ./mariadb-operator
   - ./redis-operator

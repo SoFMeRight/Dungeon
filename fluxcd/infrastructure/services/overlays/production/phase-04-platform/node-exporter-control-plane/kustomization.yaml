@@ -1,0 +1,33 @@
+# node-exporter on the control-plane nodes, built from the main overlay so it carries the same
+# image and settings. Only the DaemonSet is emitted: it runs as the main ServiceAccount, and the
+# SA is dropped here so the root build holds one copy and nothing cross-wires.
+# The workers need its 250m CPU limit (they throttle at it); on the control plane it peaks at 7m
+# (30d, 15s), so this instance is bounded at 10m.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../node-exporter
+patches:
+  - patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        name: node-exporter
+        namespace: lakitu
+  - target:
+      kind: DaemonSet
+      name: node-exporter
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: node-exporter-control-plane
+      - op: remove
+        path: /spec/template/spec/affinity
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          node-role.kubernetes.io/control-plane: ""
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: "10m"
