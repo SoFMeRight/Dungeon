@@ -5,6 +5,7 @@ namespace: lakitu
 
 resources:
   - ../../../../base/alloy
+  - helmrelease-control-plane.yaml
 
 patches:
   - path: config-patch.yaml

@@ -49,6 +49,14 @@ spec:
           cpu: "3"
           memory: 2Gi
     controller:
+      # The control-plane nodes run alloy-control-plane (helmrelease-control-plane.yaml).
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       tolerations:

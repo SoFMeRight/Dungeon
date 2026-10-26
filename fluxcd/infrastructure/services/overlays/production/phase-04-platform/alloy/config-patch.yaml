@@ -686,6 +686,14 @@ data:
         replacement  = "coredns"
         target_label = "job"
       }
+
+      // Cluster-wide target: alloy-control-plane sets ALLOY_CLUSTERWIDE_TARGETS="^$" so
+      // only the clustered main alloy scrapes it (no double collection).
+      rule {
+        action        = "keep"
+        source_labels = ["__address__"]
+        regex         = coalesce(env("ALLOY_CLUSTERWIDE_TARGETS"), ".+")
+      }
     }
 
     prometheus.scrape "coredns" {
@@ -732,6 +740,14 @@ data:
         source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_name"]
         target_label  = "app"
       }
+
+      // Cluster-wide target: alloy-control-plane sets ALLOY_CLUSTERWIDE_TARGETS="^$" so
+      // only the clustered main alloy scrapes it (no double collection).
+      rule {
+        action        = "keep"
+        source_labels = ["__address__"]
+        regex         = coalesce(env("ALLOY_CLUSTERWIDE_TARGETS"), ".+")
+      }
     }
 
     prometheus.scrape "kubernetes_services" {
@@ -770,6 +786,14 @@ data:
         target_label = "job"
         replacement  = "proxmox-pve-exporter"
       }
+
+      // Cluster-wide target: alloy-control-plane sets ALLOY_CLUSTERWIDE_TARGETS="^$" so
+      // only the clustered main alloy scrapes it (no double collection).
+      rule {
+        action        = "keep"
+        source_labels = ["__address__"]
+        regex         = coalesce(env("ALLOY_CLUSTERWIDE_TARGETS"), ".+")
+      }
     }
 
     prometheus.scrape "pve_exporter" {
@@ -806,6 +830,14 @@ data:
       rule {
         target_label = "job"
         replacement  = "proxmox-pbs-exporter"
+      }
+
+      // Cluster-wide target: alloy-control-plane sets ALLOY_CLUSTERWIDE_TARGETS="^$" so
+      // only the clustered main alloy scrapes it (no double collection).
+      rule {
+        action        = "keep"
+        source_labels = ["__address__"]
+        regex         = coalesce(env("ALLOY_CLUSTERWIDE_TARGETS"), ".+")
       }
     }
 

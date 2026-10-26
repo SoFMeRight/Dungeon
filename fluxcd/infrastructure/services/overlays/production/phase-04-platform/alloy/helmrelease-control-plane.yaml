@@ -1,0 +1,97 @@
+# alloy on the control-plane nodes only. A DaemonSet has one pod template, and the workers need
+# alloy's 3-core CPU limit (30d 15s peak 2.8 cores), while on the control plane it peaks at 413m.
+# This instance gives the control plane its own limit, so the map nodes' CPU limits fit their capacity.
+# Same chart, config, auth and mounts as the main alloy. Clustering is off, and the cluster-wide
+# scrapes are dropped through ALLOY_CLUSTERWIDE_TARGETS, so the main alloy keeps owning them.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: alloy-control-plane
+spec:
+  releaseName: alloy-control-plane
+  targetNamespace: lakitu
+  interval: 30m
+  chart:
+    spec:
+      chart: alloy
+      version: "1.13.1"
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: flux-system
+      interval: 12h
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: DaemonSet
+              name: alloy-control-plane
+            patch: |
+              apiVersion: apps/v1
+              kind: DaemonSet
+              metadata:
+                name: alloy-control-plane
+              spec:
+                template:
+                  metadata:
+                    labels:
+                      policy.prplanit.com/metrics: "true"
+  values:
+    fullnameOverride: "alloy-control-plane"
+    image:
+      registry: docker.io
+      repository: grafana/alloy
+      tag: "v1.20.1"
+    alloy:
+      extraAnnotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "12345"
+      configMap:
+        create: false
+        name: "alloy-config"
+      clustering:
+        enabled: false
+      extraEnv:
+        - name: VM_AUTH_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: alloy-ingest-auth
+              key: username
+        - name: ALLOY_CLUSTERWIDE_TARGETS
+          value: "^$"
+      mounts:
+        varlog: true
+        dockercontainers: false
+        extra:
+          - name: vm-auth
+            mountPath: /run/secrets
+            readOnly: true
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: 620m      # 30d 15s peak on the control plane 413m x 1.5
+          memory: 2Gi
+    controller:
+      type: 'daemonset'
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      volumes:
+        extra:
+          - name: vm-auth
+            secret:
+              secretName: alloy-ingest-auth
+              items:
+                - key: password
+                  path: vm_password
+    serviceAccount:
+      create: true
+    rbac:
+      create: true
