@@ -42,7 +42,7 @@ spec:
               value: "5055"
           resources:
             requests:
-              cpu: 100m
+              cpu: 8m
               memory: 256Mi
             limits:
               cpu: 500m

@@ -43,8 +43,8 @@ spec:
               value: "1000"
           resources:
             requests:
-              cpu: 200m
-              memory: 512Mi
+              cpu: 3m
+              memory: 259Mi
             limits:
               cpu: 1000m
               memory: 1Gi
@@ -95,8 +95,8 @@ spec:
               value: "60s"
           resources:
             requests:
-              cpu: 50m
-              memory: 128Mi
+              cpu: 2m
+              memory: 125Mi
             limits:
               cpu: 200m
               memory: 256Mi

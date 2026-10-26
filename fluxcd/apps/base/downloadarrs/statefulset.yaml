@@ -198,8 +198,8 @@ spec:
               name: cross-seed
           resources:
             requests:
-              cpu: 50m
-              memory: 256Mi
+              cpu: 27m
+              memory: 114Mi
             limits:
               cpu: 500m
               memory: 512Mi
@@ -240,7 +240,7 @@ spec:
               mountPath: /media/timecapsule/Media/Download/__qbittorrent
           resources:
             requests:
-              cpu: 150m
+              cpu: 100m
               memory: 3Gi
             limits:
               cpu: "2"
@@ -298,7 +298,7 @@ spec:
               mountPath: /app/health
           resources:
             requests:
-              cpu: 10m
+              cpu: 2m
               memory: 64Mi
             limits:
               cpu: 200m
@@ -409,7 +409,7 @@ spec:
               subPath: zz-lidarr
           resources:
             requests:
-              cpu: 100m
+              cpu: 4m
               memory: 512Mi
             limits:
               cpu: "1"
@@ -446,7 +446,7 @@ spec:
               subPath: zz-readarr
           resources:
             requests:
-              cpu: 100m
+              cpu: 4m
               memory: 512Mi
             limits:
               cpu: "1"
@@ -476,8 +476,8 @@ spec:
               readOnly: true
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 2m
+              memory: 214Mi
             limits:
               cpu: "1"
               memory: 1Gi

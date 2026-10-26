@@ -24,8 +24,8 @@ spec:
           image: docker.io/eclipse-mosquitto:2.1.2-alpine
           resources:
             requests:
-              cpu: 10m
-              memory: 32Mi
+              cpu: 2m
+              memory: 10Mi
             limits:
               cpu: 53m
               memory: 128Mi

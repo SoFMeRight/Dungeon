@@ -31,8 +31,8 @@ spec:
               value: "Etc/UTC"
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 2m
+              memory: 144Mi
             limits:
               cpu: 429m
               memory: 512Mi

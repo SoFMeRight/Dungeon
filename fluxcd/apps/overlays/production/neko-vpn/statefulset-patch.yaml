@@ -50,7 +50,7 @@ spec:
           image: ghcr.io/m1k1o/neko/vivaldi:3.1.6
           resources:
             requests:
-              cpu: "102m"
+              cpu: 6m
               memory: "586Mi"
             limits:
               cpu: "500m"

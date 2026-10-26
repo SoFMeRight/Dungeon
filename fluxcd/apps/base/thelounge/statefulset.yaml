@@ -40,7 +40,7 @@ spec:
               value: "PLACEHOLDER_TIMEZONE"
           resources:
             requests:
-              cpu: 50m
+              cpu: 2m
               memory: 128Mi
             limits:
               cpu: 200m
@@ -90,8 +90,8 @@ spec:
               value: "60s"
           resources:
             requests:
-              cpu: 50m
-              memory: 128Mi
+              cpu: 2m
+              memory: 104Mi
             limits:
               cpu: 200m
               memory: 256Mi

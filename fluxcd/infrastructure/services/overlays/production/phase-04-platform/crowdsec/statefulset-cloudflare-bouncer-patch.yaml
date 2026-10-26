@@ -41,8 +41,8 @@ spec:
               mountPath: /etc/crowdsec/bouncers
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: 2m
+              memory: 24Mi
             limits:
               cpu: 100m
               memory: "256Mi"

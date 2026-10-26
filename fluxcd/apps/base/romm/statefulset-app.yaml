@@ -73,7 +73,7 @@ spec:
               mountPath: /romm/library
           resources:
             requests:
-              cpu: 75m
+              cpu: 47m
               memory: 512Mi
             limits:
               cpu: 2000m

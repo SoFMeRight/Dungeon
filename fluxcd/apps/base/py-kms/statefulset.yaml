@@ -51,8 +51,8 @@ spec:
               mountPath: /home/py-kms/db
           resources:
             requests:
-              cpu: 50m
-              memory: 128Mi
+              cpu: 3m
+              memory: 92Mi
             limits:
               cpu: 409m
               memory: 512Mi

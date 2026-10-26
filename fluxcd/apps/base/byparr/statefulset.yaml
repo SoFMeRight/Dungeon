@@ -36,8 +36,8 @@ spec:
               value: "INFO"
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 4m
+              memory: 136Mi
             limits:
               cpu: 207m
               memory: 512Mi
@@ -82,8 +82,8 @@ spec:
               value: "60s"
           resources:
             requests:
-              cpu: 50m
-              memory: 128Mi
+              cpu: 2m
+              memory: 109Mi
             limits:
               cpu: 200m
               memory: 256Mi

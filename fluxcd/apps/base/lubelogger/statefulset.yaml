@@ -70,8 +70,8 @@ spec:
               mountPath: /App/log
           resources:
             requests:
-              memory: 256Mi
-              cpu: 100m
+              memory: 171Mi
+              cpu: 2m
             limits:
               memory: 512Mi
               cpu: 500m
