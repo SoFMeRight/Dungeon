@@ -213,7 +213,7 @@ spec:
               cpu: 200m
               memory: 512Mi
             limits:
-              cpu: 601m
+              cpu: 458m
               memory: 2Gi
       volumes:
         - name: storage
