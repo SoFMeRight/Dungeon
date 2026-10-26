@@ -1,0 +1,64 @@
+# ztunnel on the control-plane nodes only. A DaemonSet has one pod template, and the workers need
+# ztunnel's 1000m CPU limit (they run at it), while on the control plane it peaks at 33m
+# (30d, 15s). This instance gives the control plane its own limit, so the map nodes' CPU limits fit
+# their capacity. The main ztunnel release keeps off the control plane (affinity in kustomization.yaml).
+#
+# Same chart version and settings as the main release. The DaemonSet runs as the main release's
+# ServiceAccount "ztunnel", because istiod only issues workload certificates to
+# CA_TRUSTED_NODE_ACCOUNTS=king-of-red-lions/ztunnel. resourceScope: namespace leaves the
+# cluster-scoped objects to the main release.
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ztunnel-control-plane
+spec:
+  releaseName: ztunnel-control-plane
+  targetNamespace: king-of-red-lions
+  interval: 30m
+  timeout: 20m
+  install:
+    timeout: 20m
+  upgrade:
+    timeout: 20m
+  dependsOn:
+    - name: istio-base
+    - name: istio-cni
+    - name: istiod
+  chart:
+    spec:
+      chart: ztunnel
+      version: "1.31.2"
+      sourceRef:
+        kind: HelmRepository
+        name: istio
+        namespace: flux-system
+      interval: 12h
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: DaemonSet
+              name: ztunnel-control-plane
+            patch: |
+              - op: replace
+                path: /spec/template/spec/serviceAccountName
+                value: ztunnel
+  values:
+    resourceName: ztunnel-control-plane
+    resourceScope: namespace
+    hub: docker.io/istio
+    variant: distroless
+    imagePullSecrets:
+      - docker-io-pull-secret
+    global:
+      istioNamespace: king-of-red-lions
+    nodeSelector:
+      node-role.kubernetes.io/control-plane: ""
+    resources:
+      requests:
+        cpu: 12m        # 1-minute p99 on the control plane
+        memory: 128Mi
+      limits:
+        cpu: 50m        # 30d 15s peak on the control plane 33m x 1.5
+        memory: 768Mi
+    logLevel: info
