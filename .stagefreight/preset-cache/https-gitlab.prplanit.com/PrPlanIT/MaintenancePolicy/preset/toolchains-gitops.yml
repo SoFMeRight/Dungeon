@@ -1,0 +1,7 @@
+# The tools a gitops repo runs to render, validate and reconcile its manifests.
+toolchains:
+  want:
+    kubectl: "x"
+    flux: "x"
+    kustomize: "x"
+    kubeconform: "x"
