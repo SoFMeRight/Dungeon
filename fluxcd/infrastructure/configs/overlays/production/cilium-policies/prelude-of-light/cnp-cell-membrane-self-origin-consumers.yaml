@@ -24,6 +24,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: hyrule-castle
             policy.prplanit.com/cap.self-origin: "true"
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: hookshot
+            policy.prplanit.com/cap.self-origin: "true"
       toPorts:
         - ports:
             - port: "443"

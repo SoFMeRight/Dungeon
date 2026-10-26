@@ -4,6 +4,10 @@ metadata:
   name: tactical-meshcentral
 spec:
   template:
+    metadata:
+      labels:
+        # MeshCentral calls its own public hostname (certUrl) through the gateway.
+        policy.prplanit.com/cap.self-origin: "true"
     spec:
       automountServiceAccountToken: false
       securityContext:
@@ -15,6 +19,13 @@ spec:
           type: RuntimeDefault
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
+      # ndots 2: meshc.prplanit.com resolves as an absolute name first. With the default 5 the
+      # resolver tries meshc.prplanit.com.prplanit.internal first, and pfSense intermittently
+      # answers that with SERVFAIL, which glibc reports as EAI_AGAIN instead of moving on.
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "2"
       initContainers:
         - name: wait-for-mongodb
           image: docker.io/mongo:4.4
