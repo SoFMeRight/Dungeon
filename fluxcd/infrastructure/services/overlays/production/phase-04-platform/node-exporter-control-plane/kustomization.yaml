@@ -22,6 +22,19 @@ patches:
       - op: replace
         path: /metadata/name
         value: node-exporter-control-plane
+      # Its own app label and selector, so the main DaemonSet's selector (app: node-exporter) does
+      # not match these pods and vice versa. A selector is immutable, so Flux recreates the
+      # DaemonSet when it changes.
+      - op: add
+        path: /metadata/annotations
+        value:
+          kustomize.toolkit.fluxcd.io/force: enabled
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: node-exporter-control-plane
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: node-exporter-control-plane
       - op: remove
         path: /spec/template/spec/affinity
       - op: add

@@ -34,6 +34,19 @@ patches:
       - op: replace
         path: /metadata/name
         value: istio-meshmedic-control-plane
+      # Its own app label and selector, so the main DaemonSet's selector (app: istio-meshmedic) does
+      # not match these pods and vice versa. A selector is immutable, so Flux recreates the
+      # DaemonSet when it changes.
+      - op: add
+        path: /metadata/annotations
+        value:
+          kustomize.toolkit.fluxcd.io/force: enabled
+      - op: replace
+        path: /spec/selector/matchLabels/app
+        value: istio-meshmedic-control-plane
+      - op: replace
+        path: /spec/template/metadata/labels/app
+        value: istio-meshmedic-control-plane
       - op: remove
         path: /spec/template/spec/affinity
       - op: add

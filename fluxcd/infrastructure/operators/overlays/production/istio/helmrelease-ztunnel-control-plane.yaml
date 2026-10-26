@@ -38,13 +38,24 @@ spec:
         patches:
           - target:
               kind: DaemonSet
-              name: ztunnel-control-plane
+              name: ztunnel-cp
             patch: |
               - op: replace
                 path: /spec/template/spec/serviceAccountName
                 value: ztunnel
+              # Its own app label and selector: the chart hard-codes app: ztunnel, which
+              # overlaps the main ztunnel DaemonSet's selector. The Cilium policies and the
+              # ztunnel-denied alert match both labels.
+              - op: replace
+                path: /spec/selector/matchLabels/app
+                value: ztunnel-control-plane
+              - op: replace
+                path: /spec/template/metadata/labels/app
+                value: ztunnel-control-plane
   values:
-    resourceName: ztunnel-control-plane
+    # The DaemonSet is ztunnel-cp: the selector change needs a new object (selectors are
+    # immutable), and Helm replaces it in one upgrade.
+    resourceName: ztunnel-cp
     resourceScope: namespace
     hub: docker.io/istio
     variant: distroless
