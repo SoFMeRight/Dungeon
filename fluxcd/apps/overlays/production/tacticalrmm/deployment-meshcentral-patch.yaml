@@ -46,32 +46,6 @@ spec:
             readOnlyRootFilesystem: true
             capabilities:
               drop: [ALL]
-        - name: inject-tls-cert
-          image: docker.io/alpine/k8s:1.37.1
-          command:
-            - sh
-            - -c
-            - |
-              echo "Injecting TLS cert into meshcentral-data..."
-              cp /tls/tls.crt /meshdata/webserver-cert-public.crt
-              cp /tls/tls.key /meshdata/webserver-cert-private.key
-              chmod 644 /meshdata/webserver-cert-public.crt
-              chmod 600 /meshdata/webserver-cert-private.key
-              echo "TLS cert injected successfully"
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            runAsNonRoot: true
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: [ALL]
-          volumeMounts:
-            - name: meshcentral-tls
-              mountPath: /tls
-              readOnly: true
-            - name: meshcentral-data
-              mountPath: /meshdata
       containers:
         # readOnlyRootFilesystem EXCEPTION: this container's startup command cp's newer
         # MeshAgent binaries into /home/node/app/node_modules/meshcentral/agents (a rootfs
@@ -99,7 +73,10 @@ spec:
               rm -rf /tmp/package /tmp/meshcentral.tgz
 
               # Patch entrypoint:
-              # 1. Remove certUrl (we inject certs directly via init container)
+              # 1. Replace the upstream certUrl (tactical-nginx's internal TLS port; here nginx
+              #    serves plain HTTP behind the gateway) with the public hostname, so MeshCentral
+              #    loads the certificate the gateway presents and advertises its hash to agents.
+              #    No private key is copied in, and gateway renewals are picked up at startup.
               # 2. Inject debug flags into config.json after generation, before node starts
               cat > /tmp/inject-debug.js << 'JSEOF'
               const f = "/home/node/app/meshcentral-data/config.json";
@@ -107,6 +84,9 @@ spec:
               c.settings.debug = "relay,agent,peer";
               c.settings.tlsOffload = true;
               c.settings.agentPong = 28;
+              c.domains = c.domains || {};
+              c.domains[""] = c.domains[""] || {};
+              c.domains[""].certUrl = "https://" + process.env.MESH_HOST + ":443/";
               require("fs").writeFileSync(f, JSON.stringify(c, null, 2));
               JSEOF
               sed '/"certUrl"/d' /entrypoint.sh \
@@ -139,6 +119,3 @@ spec:
         - name: meshcentral-data
           persistentVolumeClaim:
             claimName: hookshot-meshcentral-data-pvc
-        - name: meshcentral-tls
-          secret:
-            secretName: tacticalrmm-meshcentral-tls

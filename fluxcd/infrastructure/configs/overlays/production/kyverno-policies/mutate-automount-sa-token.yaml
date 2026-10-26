@@ -63,7 +63,6 @@ spec:
               - loki
               - weave-gitops
               - boundary-postgres
-              - tacticalrmm-tls-reader
               - calcom-postgres
               - gitlab-certmanager-issuer
               - gitlab-gitlab-runner

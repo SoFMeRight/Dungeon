@@ -28,10 +28,6 @@ resources:
   - service-nginx.yaml
   # Secrets
   - externalsecret.yaml
-  - externalsecret-tls.yaml
-  - secretstore-kubernetes.yaml
-  # RBAC (cross-namespace TLS cert access)
-  - rbac-tls-reader.yaml
   # ConfigMaps
   - configmap-nginx-entrypoint.yaml
   - configmap-init-wrapper.yaml

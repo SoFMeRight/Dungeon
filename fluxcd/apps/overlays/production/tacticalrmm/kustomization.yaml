@@ -11,23 +11,6 @@ patches:
     target:
       kind: ExternalSecret
       name: tacticalrmm-secrets
-  - path: externalsecret-tls-patch.yaml
-    target:
-      kind: ExternalSecret
-      name: tacticalrmm-meshcentral-tls
-  # SecretStore (kubernetes provider for TLS cert mirroring)
-  - path: secretstore-kubernetes-patch.yaml
-    target:
-      kind: SecretStore
-      name: kubernetes-hyrule-castle
-  # RBAC (resourceNames patch — namespace corrected via replacements below)
-  - target:
-      kind: Role
-      name: tacticalrmm-tls-reader
-    patch: |-
-      - op: replace
-        path: /rules/0/resourceNames
-        value: ["prplanit-com-tls"]
   # Database StatefulSets
   - path: statefulset-postgres-patch.yaml
     target:
@@ -83,37 +66,3 @@ patches:
     target:
       kind: Service
       name: tactical-nginx
-
-# Replacements run after the namespace transformer, so they can correct the
-# RBAC namespace from hookshot → hyrule-castle. Both values are derived from
-# existing resources (no magic strings).
-replacements:
-  # Role/RoleBinding namespace: derived from SecretStore.remoteNamespace
-  - source:
-      kind: SecretStore
-      name: kubernetes-hyrule-castle
-      fieldPath: spec.provider.kubernetes.remoteNamespace
-    targets:
-      - select:
-          kind: Role
-          name: tacticalrmm-tls-reader
-        fieldPaths:
-          - metadata.namespace
-      - select:
-          kind: RoleBinding
-          name: tacticalrmm-tls-reader
-        fieldPaths:
-          - metadata.namespace
-  # RoleBinding subject namespace must point to hookshot (where the SA lives).
-  # The namespace transformer doesn't touch placeholder strings in subjects,
-  # so we derive it from the ServiceAccount's actual namespace.
-  - source:
-      kind: ServiceAccount
-      name: tacticalrmm-tls-reader
-      fieldPath: metadata.namespace
-    targets:
-      - select:
-          kind: RoleBinding
-          name: tacticalrmm-tls-reader
-        fieldPaths:
-          - subjects.0.namespace
