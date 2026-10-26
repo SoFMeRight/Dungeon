@@ -349,7 +349,7 @@ spec:
                     datasourceUid: loki
                     model:
                       refId: A
-                      expr: 'sum(count_over_time({app="ztunnel"} |= "denied" != "handling RBAC" [5m]))'
+                      expr: 'sum(count_over_time({app=~"ztunnel|ztunnel-control-plane"} |= "denied" != "handling RBAC" [5m]))'
                       queryType: instant
                       intervalMs: 1000
                       maxDataPoints: 43200

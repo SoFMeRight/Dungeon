@@ -33,10 +33,14 @@ spec:
     # HBONE from ztunnel (king-of-red-lions — not ambient-labelled).
     # Needed for cross-node HBONE where Cilium may see ztunnel as
     # the source identity on the destination node's ingress path.
+    # ztunnel runs as two DaemonSets: ztunnel (workers) and ztunnel-control-plane.
     - fromEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: king-of-red-lions
-            app: ztunnel
+          matchExpressions:
+            - key: app
+              operator: In
+              values: [ztunnel, ztunnel-control-plane]
       toPorts:
         - ports:
             - port: "15008"

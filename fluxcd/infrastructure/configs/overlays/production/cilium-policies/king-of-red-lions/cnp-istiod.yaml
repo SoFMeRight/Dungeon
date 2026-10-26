@@ -17,9 +17,12 @@ spec:
       app: istiod
   ingress:
     # ztunnel xDS — all ztunnel pods connect for workload config
+    # ztunnel runs as two DaemonSets: ztunnel (workers) and ztunnel-control-plane.
     - fromEndpoints:
-        - matchLabels:
-            app: ztunnel
+        - matchExpressions:
+            - key: app
+              operator: In
+              values: [ztunnel, ztunnel-control-plane]
       toPorts:
         - ports:
             - port: "15012"
