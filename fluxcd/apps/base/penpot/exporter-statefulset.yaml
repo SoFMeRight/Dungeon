@@ -29,8 +29,8 @@ spec:
                   key: secret_key
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "100m"
+              memory: 211Mi
+              cpu: 2m
             limits:
               memory: "512Mi"
               cpu: 342m

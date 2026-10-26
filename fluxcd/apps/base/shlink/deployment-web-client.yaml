@@ -38,8 +38,8 @@ spec:
               mountPath: /usr/share/nginx/html/conf.d/
           resources:
             requests:
-              cpu: 50m
-              memory: 64Mi
+              cpu: 2m
+              memory: 19Mi
             limits:
               cpu: 200m
               memory: 256Mi

@@ -69,7 +69,7 @@ spec:
                   key: initial-api-key
           resources:
             requests:
-              cpu: 100m
+              cpu: 2m
               memory: 256Mi
             limits:
               cpu: 1000m

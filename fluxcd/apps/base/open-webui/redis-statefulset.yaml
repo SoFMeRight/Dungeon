@@ -86,8 +86,8 @@ spec:
               mountPath: /etc/redis
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: 12m
+              memory: 21Mi
             limits:
               cpu: 268m
               memory: 256Mi

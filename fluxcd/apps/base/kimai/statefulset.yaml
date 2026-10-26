@@ -252,8 +252,8 @@ spec:
               mountPath: /opt/kimai/var/cache
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 2m
+              memory: 183Mi
             limits:
               cpu: 351m
               memory: 512Mi

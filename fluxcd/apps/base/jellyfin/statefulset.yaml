@@ -61,7 +61,7 @@ spec:
               mountPath: /media/Photos
           resources:
             requests:
-              cpu: 100m
+              cpu: 3m
               memory: 1536Mi
             limits:
               cpu: 4

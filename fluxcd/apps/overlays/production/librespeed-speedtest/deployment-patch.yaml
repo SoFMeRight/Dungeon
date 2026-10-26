@@ -16,8 +16,8 @@ spec:
           image: ghcr.io/librespeed/speedtest:6.3.1-alpine
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: 2m
+              memory: 65Mi
             limits:
               cpu: 500m
               memory: 512Mi

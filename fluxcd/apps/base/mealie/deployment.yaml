@@ -154,8 +154,8 @@ spec:
               mountPath: /app/data
           resources:
             requests:
-              memory: "512Mi"
-              cpu: "100m"
+              memory: 418Mi
+              cpu: 6m
             limits:
               memory: "1Gi"
               cpu: "1000m"

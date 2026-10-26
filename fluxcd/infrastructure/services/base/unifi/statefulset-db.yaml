@@ -62,7 +62,7 @@ spec:
               subPath: init-mongo.sh
           resources:
             requests:
-              cpu: 100m
+              cpu: 15m
               memory: 256Mi
             limits:
               cpu: 462m

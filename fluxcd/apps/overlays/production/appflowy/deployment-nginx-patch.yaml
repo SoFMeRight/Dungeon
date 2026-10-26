@@ -19,8 +19,8 @@ spec:
               readOnly: true
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "20m"   # right-sized 2026-07: p95 ~0-3m (was 250m)
+              memory: 11Mi
+              cpu: 2m   # right-sized 2026-07: p95 ~0-3m (was 250m)
             limits:
               memory: "512Mi"
               cpu: "500m"
