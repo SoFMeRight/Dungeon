@@ -44,8 +44,8 @@ spec:
               value: "tactical-meshcentral.hookshot.svc.cluster.local"
           resources:
             requests:
-              cpu: "100m"
-              memory: "128Mi"
+              cpu: 2m
+              memory: 52Mi
             limits:
               cpu: "500m"
               memory: "512Mi"

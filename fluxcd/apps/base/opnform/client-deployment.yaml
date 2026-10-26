@@ -75,8 +75,8 @@ spec:
             timeoutSeconds: 10
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 59m
+              memory: 175Mi
             limits:
               cpu: 1000m
               memory: 1Gi

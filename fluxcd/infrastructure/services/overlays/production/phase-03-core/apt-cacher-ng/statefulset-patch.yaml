@@ -26,7 +26,7 @@ spec:
               cpu: 39m
             requests:
               memory: 16Mi
-              cpu: "10m"
+              cpu: 2m
           volumeMounts:
             - name: hyrule-castle-apt-cacher-ng-cache
               mountPath: /var/cache/apt-cacher-ng

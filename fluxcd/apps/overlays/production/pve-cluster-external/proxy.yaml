@@ -107,7 +107,7 @@ spec:
               mountPath: /var/cache/nginx
           resources:
             requests:
-              cpu: 10m
+              cpu: 2m
               memory: 16Mi
             limits:
               cpu: 100m
@@ -247,7 +247,7 @@ spec:
               mountPath: /var/cache/nginx
           resources:
             requests:
-              cpu: 10m
+              cpu: 2m
               memory: 16Mi
             limits:
               cpu: 100m

@@ -161,7 +161,7 @@ spec:
               value: "tactical-nats"
           resources:
             requests:
-              cpu: "115m"
+              cpu: 26m
               memory: "512Mi"
             limits:
               cpu: "1000m"

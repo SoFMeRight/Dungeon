@@ -69,8 +69,8 @@ spec:
               #   mountPath: /dev/ptp0
           resources:
             requests:
-              memory: "16Mi"
-              cpu: "10m"
+              memory: 3Mi
+              cpu: 2m
             limits:
               memory: "64Mi"
               cpu: "100m"
@@ -102,8 +102,8 @@ spec:
               name: health
           resources:
             requests:
-              cpu: 5m
-              memory: 8Mi
+              cpu: 2m
+              memory: 3Mi
             limits:
               cpu: 20m
               memory: 16Mi

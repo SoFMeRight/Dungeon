@@ -63,7 +63,7 @@ spec:
               mountPath: /home/frappe/frappe-bench/logs
           resources:
             requests:
-              cpu: "10m"
+              cpu: 3m
               memory: "128Mi"
             limits:
               cpu: "1000m"

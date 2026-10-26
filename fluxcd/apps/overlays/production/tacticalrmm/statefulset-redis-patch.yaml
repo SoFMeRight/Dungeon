@@ -39,8 +39,8 @@ spec:
               drop: [ALL]
           resources:
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: 6m
+              memory: 83Mi
             limits:
               cpu: 283m
               memory: "1Gi"

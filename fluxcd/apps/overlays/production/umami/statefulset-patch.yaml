@@ -24,7 +24,7 @@ spec:
               mountPath: /tmp
           resources:
             requests:
-              cpu: 100m
+              cpu: 5m
               memory: 256Mi
             limits:
               cpu: 694m
@@ -66,8 +66,8 @@ spec:
               mountPath: /var/lib/postgresql/data
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 7m
+              memory: 64Mi
             limits:
               cpu: 110m
               memory: 512Mi

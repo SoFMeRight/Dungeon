@@ -144,7 +144,7 @@ spec:
               subPath: functions.php
           resources:
             requests:
-              cpu: 100m
+              cpu: 5m
               memory: 256Mi
             limits:
               cpu: 1000m

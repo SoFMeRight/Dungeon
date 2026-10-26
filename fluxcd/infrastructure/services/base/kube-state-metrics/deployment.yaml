@@ -74,7 +74,7 @@ spec:
           # missing object, so the security rules fire on nothing at all.
           resources:
             requests:
-              cpu: 50m
+              cpu: 38m
               memory: 192Mi
             limits:
               cpu: 500m

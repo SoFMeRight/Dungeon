@@ -82,7 +82,7 @@ spec:
               value: "America/Los_Angeles"
           resources:
             requests:
-              cpu: 100m
+              cpu: 23m
               memory: 256Mi
             limits:
               cpu: 500m

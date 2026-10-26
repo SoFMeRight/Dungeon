@@ -85,8 +85,8 @@ spec:
               mountPath: /opt/adguardhome/conf
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "100m"
+              memory: 144Mi
+              cpu: 2m
             limits:
               memory: "512Mi"
               cpu: 422m

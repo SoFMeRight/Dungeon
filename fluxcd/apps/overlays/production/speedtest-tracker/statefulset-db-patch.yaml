@@ -37,8 +37,8 @@ spec:
               value: /var/lib/postgresql/data/pgdata
           resources:
             requests:
-              cpu: 100m
-              memory: 128Mi
+              cpu: 25m
+              memory: 79Mi
             limits:
               cpu: 500m
               memory: 256Mi
