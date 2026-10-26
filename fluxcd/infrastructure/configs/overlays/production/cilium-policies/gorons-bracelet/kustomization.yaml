@@ -6,3 +6,4 @@ resources:
   - cnp-ceph-rgw.yaml
   - cnp-ceph-egress.yaml
   - cnp-operators.yaml
+  - cnp-csi-addons.yaml

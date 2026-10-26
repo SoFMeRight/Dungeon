@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - ./bank-vaults
   - ./ceph-rook-ceph
+  - ./csi-addons
   - ./cert-manager
   - ./gateway-api-crds
   - ./cilium

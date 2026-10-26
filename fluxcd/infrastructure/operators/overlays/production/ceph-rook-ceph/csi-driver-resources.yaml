@@ -13,8 +13,16 @@ metadata:
     kustomize.toolkit.fluxcd.io/ssa: Merge
     kustomize.toolkit.fluxcd.io/prune: disabled
 spec:
+  deployCsiAddons: true
   controllerPlugin:
     resources:
+      addons:
+        requests:
+          cpu: 5m
+          memory: 32Mi
+        limits:
+          cpu: 100m
+          memory: 64Mi
       attacher:
         requests:
           cpu: 4m
@@ -45,6 +53,13 @@ spec:
           memory: 74Mi
   nodePlugin:
     resources:
+      addons:
+        requests:
+          cpu: 5m
+          memory: 32Mi
+        limits:
+          cpu: 100m
+          memory: 64Mi
       registrar:
         requests:
           cpu: 2m

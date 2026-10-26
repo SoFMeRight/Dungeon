@@ -12,6 +12,7 @@ kind: StorageClass
 metadata:
   name: ceph-rbd
   annotations:
+    reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
     storageclass.kubernetes.io/is-default-class: "true"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
 parameters:
@@ -34,6 +35,8 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: ceph-rbd-hdd
+  annotations:
+    reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
 parameters:
   clusterID: "0985467c-d8f3-4483-b27f-f0a512397ec2"
@@ -55,6 +58,8 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: ceph-rbd-templated
+  annotations:
+    reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
 parameters:
   clusterID: "0985467c-d8f3-4483-b27f-f0a512397ec2"
@@ -82,6 +87,7 @@ kind: StorageClass
 metadata:
   name: ceph-rbd-delete
   annotations:
+    reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
     storageclass.kubernetes.io/is-default-class: "false"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
 parameters:
@@ -105,6 +111,8 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: ceph-rbd-retain
+  annotations:
+    reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
 parameters:
   clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
@@ -127,6 +135,8 @@ apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
   name: ceph-rbd-static
+  annotations:
+    reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
 parameters:
   clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
