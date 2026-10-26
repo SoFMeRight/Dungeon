@@ -10,6 +10,7 @@ resources:
   - ./kube-state-metrics
   - ./loki
   - ./node-exporter
+  - ./node-exporter-control-plane
   - ./victoria-metrics
   - ./netbird
   - ./netbird-router

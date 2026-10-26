@@ -1,0 +1,28 @@
+# istio-meshmedic on the control-plane nodes, built from the main overlay so it carries the same
+# image and arguments. The main DaemonSet has no CPU limit (it peaks at 568m on the workers);
+# on the control plane it peaks at 24m (30d, 15s), so this instance is bounded at 36m (x1.5).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../istio-meshmedic
+nameSuffix: -control-plane
+patches:
+  - target:
+      kind: DaemonSet
+      name: istio-meshmedic
+    patch: |-
+      - op: remove
+        path: /spec/template/spec/affinity
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          node-role.kubernetes.io/control-plane: ""
+      - op: replace
+        path: /spec/template/spec/tolerations
+        value:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule
+      - op: add
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: "36m"
