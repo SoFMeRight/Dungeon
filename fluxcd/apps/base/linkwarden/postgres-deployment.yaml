@@ -40,7 +40,7 @@ spec:
               cpu: 9m
             limits:
               memory: "512Mi"
-              cpu: 209m
+              cpu: 161m
           livenessProbe:
             exec:
               command:
