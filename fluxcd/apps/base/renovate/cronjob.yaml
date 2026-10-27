@@ -14,6 +14,8 @@ spec:
           labels:
             app: renovate
             policy.prplanit.com/cap.s3: "true"
+            policy.prplanit.com/cap.redis: "true"
+            policy.prplanit.com/access-scope-redis: hyrule-castle.renovate.redis
             policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
         spec:
           restartPolicy: Never
@@ -61,19 +63,20 @@ spec:
                 # PrPlanIT). Every repo gets a Dependency Dashboard on Renovate's own
                 # schedule, independent of whether it builds -- so dormant / less-active
                 # projects' dep drift is still visible (the point: the in-CI deps engine
-                # only fires when a project actually builds). The dungeon monorepo runs in
-                # its own job (cronjob-dungeon.yaml): it is committed to all day, so a pass
-                # here was aborted as "repository-changed" every run.
+                # only fires when a project actually builds).
+                # Dungeon runs alone in cronjob-dungeon.yaml.
                 - name: RENOVATE_AUTODISCOVER_FILTER
                   value: "HomeLabHD/**,PrPlanIT/**"
                 - name: LOG_LEVEL
                   value: "info"
                 - name: RENOVATE_CONFIG_FILE
                   value: "/config/renovate.json5"
-                # Persistent base directory: the package cache (registry lookups)
-                # survives between runs instead of every run starting cold.
+                # Package cache shared by every Renovate job.
+                - name: RENOVATE_REDIS_URL
+                  value: "redis://renovate-redis:6379"
+                # Size-limited working directory (clones, per-run files).
                 - name: RENOVATE_BASE_DIR
-                  value: "/cache"
+                  value: "/work"
                 # S3 repository cache (Ceph RGW via s3.optcp.com) — stops the
                 # ephemeral cronjob cold-scanning all ~2400 deps every run.
                 - name: RENOVATE_REPOSITORY_CACHE
@@ -105,8 +108,8 @@ spec:
                 - name: config
                   mountPath: /config
                   readOnly: true
-                - name: cache
-                  mountPath: /cache
+                - name: work
+                  mountPath: /work
               resources:
                 requests:
                   cpu: PLACEHOLDER_CPU_REQUEST
@@ -118,6 +121,6 @@ spec:
             - name: config
               configMap:
                 name: renovate-config
-            - name: cache
-              persistentVolumeClaim:
-                claimName: renovate-cache
+            - name: work
+              emptyDir:
+                sizeLimit: 2Gi

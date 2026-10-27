@@ -546,11 +546,7 @@ data:
       "prConcurrentLimit": 0,
       "prHourlyLimit": 0
     }
-  # Runs Renovate on one busy repository until a pass completes. Renovate aborts a
-  # repository whose base branch moves mid-pass ("repository-changed") and saves
-  # nothing, so on a repo that is committed to all day it never finishes. Each retry
-  # starts warm (repository cache, package cache, persisted clone) and fits between
-  # commits. Exhausting the attempts fails the Job, so a starved repo is visible.
+  # Re-runs Renovate while its base branch moved mid-pass; fails after RENOVATE_ATTEMPTS.
   run-until-done.sh: |
     #!/bin/sh
     set -u

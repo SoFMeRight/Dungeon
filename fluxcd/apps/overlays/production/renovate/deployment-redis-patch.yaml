@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: renovate-redis
+spec:
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/access-class: redis
+        policy.prplanit.com/service-scope: hyrule-castle.renovate.redis
+    spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: redis
+          image: docker.io/redis:8.10-alpine
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            # Headroom above maxmemory 256mb for Redis's own overhead.
+            requests:
+              cpu: 10m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 384Mi

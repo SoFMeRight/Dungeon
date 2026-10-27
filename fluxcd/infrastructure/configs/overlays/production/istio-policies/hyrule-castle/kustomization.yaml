@@ -42,6 +42,7 @@ resources:
   - allow-gitlab-praefect-to-gitaly.yaml
   - allow-gitlab-to-gitlab-praefect.yaml
   - allow-apt-cacher-ng-loadbalancer.yaml
+  - allow-renovate-to-renovate-redis.yaml
   - allow-webhook-gitlab-certmanager.yaml
   - allow-harbor-proxy-cache-to-harbor.yaml
   - allow-gateway-ingress-xylem.yaml

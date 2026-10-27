@@ -1,0 +1,52 @@
+# Renovate's package cache: memory only, bounded by maxmemory; keys expire on Renovate's TTLs.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: renovate-redis
+spec:
+  revisionHistoryLimit: 5
+  replicas: 1
+  selector:
+    matchLabels:
+      app: renovate-redis
+  template:
+    metadata:
+      labels:
+        app: renovate-redis
+    spec:
+      serviceAccountName: renovate-redis
+      containers:
+        - name: redis
+          image: PLACEHOLDER_REDIS_IMAGE
+          args:
+            - redis-server
+            - --save
+            - ""
+            - --appendonly
+            - "no"
+            - --stop-writes-on-bgsave-error
+            - "no"
+            - --maxmemory
+            - 256mb
+            - --maxmemory-policy
+            - allkeys-lru
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - containerPort: 6379
+              name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: renovate-redis
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+      name: redis
+  selector:
+    app: renovate-redis

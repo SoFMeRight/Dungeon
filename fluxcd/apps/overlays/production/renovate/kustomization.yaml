@@ -12,4 +12,7 @@ patches:
     target:
       kind: CronJob
       name: renovate-dungeon
-  - path: storage-patch.yaml
+  - path: deployment-redis-patch.yaml
+    target:
+      kind: Deployment
+      name: renovate-redis
