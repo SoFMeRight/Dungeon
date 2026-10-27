@@ -91,7 +91,7 @@ spec:
     cleanupController:
       resources:
         limits:
-          cpu: 490m
+          cpu: 630m
       image:
         registry: ghcr.io
         repository: kyverno/cleanup-controller

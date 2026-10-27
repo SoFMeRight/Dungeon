@@ -16,7 +16,7 @@ spec:
           cpu: 10m
           memory: 32Mi
         limits:
-          cpu: 1010m
+          cpu: 520m
           memory: 48Mi
     loki:
       podAnnotations:
@@ -62,7 +62,7 @@ spec:
           cpu: 500m
           memory: 850Mi
         limits:
-          cpu: 1880m
+          cpu: 1580m
           memory: 1536Mi
       persistence:
         enabled: true
@@ -83,7 +83,7 @@ spec:
           cpu: 10m
           memory: 16Mi
         limits:
-          cpu: 710m
+          cpu: 380m
           memory: 32Mi
     write:
       replicas: 0

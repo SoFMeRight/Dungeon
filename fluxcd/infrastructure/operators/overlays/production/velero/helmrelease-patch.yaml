@@ -63,7 +63,7 @@ spec:
           cpu: 100m
         limits:
           memory: 1Gi
-          cpu: 1540m
+          cpu: 1020m
 
     resources:
       requests:
@@ -74,7 +74,7 @@ spec:
         # snapshots, which needs more than 512Mi. The request stays low
         # because the server is idle between runs.
         memory: 1Gi
-        cpu: 1080m
+        cpu: 1090m
 
     schedules:
       daily-backup:

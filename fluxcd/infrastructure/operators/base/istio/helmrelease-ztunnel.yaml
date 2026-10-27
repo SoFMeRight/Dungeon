@@ -41,7 +41,7 @@ spec:
         cpu: 100m
         memory: 128Mi
       limits:
-        cpu: 1850m
+        cpu: 1500m
         memory: 768Mi
 
     # Enable debug logging initially for troubleshooting

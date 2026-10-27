@@ -46,12 +46,12 @@ spec:
           cpu: 100m
           memory: 256Mi
         limits:
-          cpu: "6130m"
+          cpu: "4570m"
           memory: 2Gi
     configReloader:
       resources:
         limits:
-          cpu: 1570m
+          cpu: 840m
           memory: 112Mi
     controller:
       # The control-plane nodes run alloy-control-plane (helmrelease-control-plane.yaml).

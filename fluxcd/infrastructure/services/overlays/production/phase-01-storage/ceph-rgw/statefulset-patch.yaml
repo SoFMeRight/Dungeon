@@ -30,7 +30,7 @@ spec:
               cpu: 28m
             limits:
               memory: 1056Mi
-              cpu: 3760m
+              cpu: 2380m
   volumeClaimTemplates:
     - metadata:
         name: rgw-data

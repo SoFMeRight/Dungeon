@@ -19,7 +19,7 @@ patches:
         value: "64Mi"
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/cpu
-        value: "1400m"
+        value: "830m"
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/memory
         value: "180Mi"

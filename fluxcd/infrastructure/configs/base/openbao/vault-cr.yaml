@@ -61,21 +61,21 @@ spec:
         cpu: "150m"
       limits:
         memory: "384Mi"
-        cpu: "3900m"
+        cpu: "2450m"
     bankVaults:
       requests:
         memory: "64Mi"
         cpu: "2m"
       limits:
         memory: "128Mi"
-        cpu: "1280m"
+        cpu: "810m"
     prometheusExporter:
       requests:
         memory: "16Mi"
         cpu: "2m"
       limits:
         memory: "32Mi"
-        cpu: "2940m"
+        cpu: "1480m"
 
   # Service configuration - disabled during initialization
   serviceRegistrationEnabled: false

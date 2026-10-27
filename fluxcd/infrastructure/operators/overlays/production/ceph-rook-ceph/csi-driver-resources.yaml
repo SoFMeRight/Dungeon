@@ -31,7 +31,7 @@ spec:
           cpu: 5m
           memory: 32Mi
         limits:
-          cpu: 1430m
+          cpu: 770m
           memory: 64Mi
       attacher:
         requests:
@@ -45,7 +45,7 @@ spec:
           cpu: 15m
           memory: 104Mi
         limits:
-          cpu: 1320m
+          cpu: 870m
           memory: 104Mi
       resizer:
         requests:
@@ -68,7 +68,7 @@ spec:
           cpu: 11m
           memory: 204Mi
         limits:
-          cpu: 3960m
+          cpu: 2700m
           memory: 256Mi
       liveness:
         requests:
@@ -82,7 +82,7 @@ spec:
           cpu: 5m
           memory: 32Mi
         limits:
-          cpu: 1320m
+          cpu: 710m
           memory: 64Mi
       registrar:
         requests:
