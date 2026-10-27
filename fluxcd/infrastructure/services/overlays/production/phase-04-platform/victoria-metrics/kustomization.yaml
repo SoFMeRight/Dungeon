@@ -12,9 +12,10 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/0/image
         value: docker.io/victoriametrics/vmstorage:v1.97.1-cluster
+      # CPU request from 7d usage (2026-10-27): p99 279m.
       - op: replace
         path: /spec/template/spec/containers/0/resources/requests/cpu
-        value: "500m"
+        value: "300m"
       - op: replace
         path: /spec/template/spec/containers/0/resources/requests/memory
         value: "2Gi"
