@@ -91,8 +91,40 @@ spec:
     hostRouting: true
 
     # Hubble UI service configuration
+    envoy:
+      resources:
+        requests:
+          cpu: 23m
+          memory: 75Mi
+        limits:
+          cpu: 466m
+          memory: 75Mi
     hubble:
+      relay:
+        resources:
+          requests:
+            cpu: 3m
+            memory: 76Mi
+          limits:
+            cpu: 76m
+            memory: 76Mi
       ui:
+        backend:
+          resources:
+            requests:
+              cpu: 2m
+              memory: 71Mi
+            limits:
+              cpu: 105m
+              memory: 71Mi
+        frontend:
+          resources:
+            requests:
+              cpu: 2m
+              memory: 23Mi
+            limits:
+              cpu: 30m
+              memory: 23Mi
         podLabels:
           policy.prplanit.com/ingress: "true"
         service:
