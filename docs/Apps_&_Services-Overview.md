@@ -6,7 +6,7 @@
 
 ## Apps & Services (135)
 
-✅ 133 healthy · ⚠️ 2 degraded
+✅ 134 healthy · ⚠️ 1 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -73,7 +73,7 @@
 | Linkwarden (3 components) | ✅ | ❓ bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
 | Mealie (2 components) | ✅ | ❓ meals.yesimvegan.com | [open](https://meals.yesimvegan.com) |
 | Open (3 components) | ✅ | 🔒 ai.pcfae.com | [open](https://ai.pcfae.com) |
-| Penpot (5 components) | ⚠️ | ❓ design.pcfae.com | [open](https://design.pcfae.com) |
+| Penpot (5 components) | ✅ | ❓ design.pcfae.com | [open](https://design.pcfae.com) |
 | Photoprism (2 components) | ✅ | 🔒 photos.pcfae.com | [open](https://photos.pcfae.com) |
 | Plex | ✅ | 🌐 plex.optcp.com | [open](https://plex.optcp.com) |
 | Reactive Resume (3 components) | ✅ | 🌐 resume.sofmeright.com | [open](https://resume.sofmeright.com) |
@@ -242,7 +242,7 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Ceph Rgw | ✅ | 🔒 s3.pcfae.com | [open](https://s3.pcfae.com) |
+| Ceph Rgw | ✅ | 🔒 s3.optcp.com | [open](https://s3.optcp.com) |
 
 ### Tools & Utilities (Tingle Tuner🔧)
 
@@ -590,7 +590,7 @@
 
 **Penpot — 5 components** — StatefulSet — 
 - Namespace: temple-of-time
-- Replicas: 4/5
+- Replicas: 5/5
 - Hosts: design.pcfae.com, penpot.prplanit.com
 - Gateway: cell-membrane-gateway
 - Components:
@@ -1179,7 +1179,7 @@
 **Ceph Rgw** — StatefulSet — v19.2.7
 - Namespace: gorons-bracelet
 - Replicas: 2/2
-- Hosts: s3.pcfae.com
+- Hosts: s3.optcp.com
 - Gateway: phloem-gateway
 
 **Convertx** — StatefulSet — v0.19.0
@@ -1346,7 +1346,7 @@
 
 **Velero** — Mixed — 1.18.2
 - Namespace: fairy-bottle
-- Replicas: 11/11
+- Replicas: 6/6
 
 **Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
 - Namespace: hyrule-castle
@@ -1372,7 +1372,7 @@
 - Namespace: arylls-lookout
 - Replicas: 1/1
 
-**Reflector** — Deployment — 10.0.67
+**Reflector** — Deployment — 10.0.68
 - Namespace: gerudo-crest
 - Replicas: 1/1
 
@@ -1559,7 +1559,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Steam Headless | arbitorium-game-streaming | ✅ |
 
 <details>
-<summary>Retired / Graveyard (9)</summary>
+<summary>Retired / Graveyard (10)</summary>
 
 | Name | Namespace | Reason |
 | --- | --- | --- |
@@ -1568,6 +1568,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | emulatorjs | shooting-gallery | missing since 2026-10-18 |
 | erpnext | hyrule-castle | missing since 2026-10-12 |
 | filebrowser | tingle-tuner | missing since 2026-08-02 |
+| leantime | optcp-cloud | missing since 2026-10-25 |
 | netbird-coturn | zeldas-lullaby | missing since 2026-03-30 |
 | orangehrm | hyrule-castle | missing since 2026-08-26 |
 | reactive-resume-minio | temple-of-time | missing since 2026-03-30 |
