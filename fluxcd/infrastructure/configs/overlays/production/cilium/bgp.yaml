@@ -9,21 +9,36 @@ spec:
     - name: instance-64538
       localASN: 64538
       peers:
+        # IPv4 sessions to the pfSense CARP pair (v4 LoadBalancerIP routes).
         - name: peer-64521
           peerASN: 64521
           peerAddress: 172.22.144.21
           peerConfigRef:
-            name: peer-config
+            name: peer-config-v4
         - name: peer-64523
           peerASN: 64523
           peerAddress: 172.22.144.23
           peerConfigRef:
-            name: peer-config
+            name: peer-config-v4
+        # IPv6 sessions to the same routers' DUNGEON v6 addresses (v6 LoadBalancerIP
+        # routes with native v6 nexthops). A separate session per family is required:
+        # Cilium emits a v4-mapped nexthop for v6 routes over a v4 session, which FRR
+        # cannot resolve, so v6 VIPs must be advertised over a real v6 session.
+        - name: peer-64521-v6
+          peerASN: 64521
+          peerAddress: fc00:f1:ada:1043:1ac3::b
+          peerConfigRef:
+            name: peer-config-v6
+        - name: peer-64523-v6
+          peerASN: 64523
+          peerAddress: fc00:f1:ada:1043:1ac3::c
+          peerConfigRef:
+            name: peer-config-v6
 ---
 apiVersion: cilium.io/v2
 kind: CiliumBGPPeerConfig
 metadata:
-  name: peer-config
+  name: peer-config-v4
 spec:
   families:
     - afi: ipv4
@@ -31,6 +46,17 @@ spec:
       advertisements:
         matchLabels:
           advertise: bgp
+  timers:
+    connectRetryTimeSeconds: 30
+    holdTimeSeconds: 90
+    keepAliveTimeSeconds: 30
+---
+apiVersion: cilium.io/v2
+kind: CiliumBGPPeerConfig
+metadata:
+  name: peer-config-v6
+spec:
+  families:
     - afi: ipv6
       safi: unicast
       advertisements:
