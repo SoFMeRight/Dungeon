@@ -6,7 +6,7 @@
 # (2026-10-25): request = p50 x 1.2, CPU limit = 1-minute peak x 1.25, memory = peak x 1.15.
 # plugin and liveness (2026-10-27): CPU request = 30d p50 x 1.2 with a 10m floor for the plugin
 # and 5m for liveness, CPU limit = 7d 15-second peak x 1.5 with a 50m floor, memory request =
-# 30d peak x 1.15. Their memory limits stay at Rook's 1Gi and 256Mi.
+# 30d peak x 1.15, memory limit = max(30d peak x 1.3, peak + 64Mi).
 apiVersion: csi.ceph.io/v1
 kind: Driver
 metadata:
@@ -25,14 +25,14 @@ spec:
           memory: 57Mi
         limits:
           cpu: 815m
-          memory: 1Gi
+          memory: 128Mi
       liveness:
         requests:
           cpu: 5m
           memory: 22Mi
         limits:
           cpu: 50m
-          memory: 256Mi
+          memory: 96Mi
       addons:
         requests:
           cpu: 5m
@@ -76,14 +76,14 @@ spec:
           memory: 204Mi
         limits:
           cpu: 1427m
-          memory: 1Gi
+          memory: 256Mi
       liveness:
         requests:
           cpu: 5m
           memory: 48Mi
         limits:
           cpu: 186m
-          memory: 256Mi
+          memory: 112Mi
       addons:
         requests:
           cpu: 5m
@@ -116,14 +116,14 @@ spec:
           memory: 63Mi
         limits:
           cpu: 809m
-          memory: 1Gi
+          memory: 128Mi
       liveness:
         requests:
           cpu: 5m
           memory: 24Mi
         limits:
           cpu: 942m
-          memory: 256Mi
+          memory: 96Mi
       attacher:
         requests:
           cpu: 4m
@@ -160,14 +160,14 @@ spec:
           memory: 120Mi
         limits:
           cpu: 461m
-          memory: 1Gi
+          memory: 176Mi
       liveness:
         requests:
           cpu: 5m
           memory: 53Mi
         limits:
           cpu: 271m
-          memory: 256Mi
+          memory: 112Mi
       registrar:
         requests:
           cpu: 2m

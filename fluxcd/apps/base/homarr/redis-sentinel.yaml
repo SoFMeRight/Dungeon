@@ -38,7 +38,7 @@ spec:
         memory: 64Mi
       limits:
         cpu: 200m
-        memory: 128Mi
+        memory: 96Mi
   redisSentinelConfig:
     redisReplicationName: homarr-redis
     masterGroupName: homarr-redis

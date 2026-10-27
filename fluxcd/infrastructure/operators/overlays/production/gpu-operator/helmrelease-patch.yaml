@@ -20,7 +20,15 @@ spec:
                   - key: node-role.kubernetes.io/control-plane
                     operator: DoesNotExist
     node-feature-discovery:
+      # Memory limits from 30d usage (2026-10-27), peak x 1.3 or peak + 64Mi; requests are the
+      # chart's defaults.
       master:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            memory: 160Mi
         tolerations: []
         affinity:
           nodeAffinity:
@@ -31,6 +39,12 @@ spec:
                       operator: DoesNotExist
       # The worker only feeds GPU scheduling, and the control-plane nodes have no GPUs.
       worker:
+        resources:
+          requests:
+            cpu: 5m
+            memory: 64Mi
+          limits:
+            memory: 128Mi
         tolerations: []
         affinity:
           nodeAffinity:
@@ -39,6 +53,13 @@ spec:
                 - matchExpressions:
                     - key: node-role.kubernetes.io/control-plane
                       operator: DoesNotExist
+      gc:
+        resources:
+          requests:
+            cpu: 10m
+            memory: 128Mi
+          limits:
+            memory: 128Mi
     # Enable CDI as default mode
     cdi:
       enabled: true

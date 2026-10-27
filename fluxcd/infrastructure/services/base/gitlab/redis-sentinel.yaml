@@ -38,7 +38,7 @@ spec:
         memory: 64Mi
       limits:
         cpu: 200m
-        memory: 128Mi
+        memory: 80Mi
   redisSentinelConfig:
     redisReplicationName: gitlab-redis
     masterGroupName: gitlab-redis

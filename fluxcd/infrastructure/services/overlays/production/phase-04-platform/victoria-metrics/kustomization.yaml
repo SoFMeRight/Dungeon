@@ -51,7 +51,7 @@ patches:
         value: "1"
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/memory
-        value: "2Gi"
+        value: "544Mi"
       - op: add
         path: /spec/template/metadata/labels/policy.prplanit.com~1ingress
         value: "true"

@@ -100,7 +100,7 @@ spec:
               cpu: "60m"
               memory: "320Mi"
             limits:
-              memory: "1Gi"
+              memory: "320Mi"
       volumes:
         - name: smarty
           emptyDir: {}

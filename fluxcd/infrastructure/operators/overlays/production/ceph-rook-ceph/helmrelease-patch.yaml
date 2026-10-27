@@ -13,7 +13,7 @@ spec:
       enableCSIHostNetwork: true
     resources:
       limits:
-        memory: 512Mi
+        memory: 368Mi
       requests:
         cpu: 100m
         memory: 128Mi
