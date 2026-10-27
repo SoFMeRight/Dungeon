@@ -46,7 +46,7 @@ spec:
             # Declared public S3 endpoint domain(s), comma-separated. The internal service
             # host is derived from RGW_ENDPOINT and always kept — only the public bit is env.
             - name: RGW_HOSTNAMES
-              value: s3.pcfae.com
+              value: s3.pcfae.com,s3.optcp.com
           command:
             - /bin/bash
             - -c

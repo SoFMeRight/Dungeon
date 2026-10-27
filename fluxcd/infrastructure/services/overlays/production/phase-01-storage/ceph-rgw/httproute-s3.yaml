@@ -15,6 +15,7 @@ spec:
       namespace: arylls-lookout
   hostnames:
     - "s3.pcfae.com"
+    - "s3.optcp.com"
   rules:
     - matches:
         - path:

@@ -250,6 +250,8 @@ data:
           answer: 172.22.30.70
         - domain: dtrack.optcp.com
           answer: 172.22.30.70
+        - domain: s3.optcp.com
+          answer: 172.22.30.70
         - domain: wazuh-manager.prplanit.com
           answer: 172.22.30.119
         - domain: syslog.prplanit.com

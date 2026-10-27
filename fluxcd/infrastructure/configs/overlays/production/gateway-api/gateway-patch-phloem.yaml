@@ -136,3 +136,15 @@ spec:
         certificateRefs:
           - kind: Secret
             name: dtrack-optcp-com-tls
+    - name: https-s3-optcp
+      protocol: HTTPS
+      port: 443
+      hostname: "s3.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: s3-optcp-com-tls
