@@ -32,14 +32,10 @@ spec:
   # No barmanObjectStore: a throwaway sim needs no off-cluster backups; WAL recycles via
   # checkpoints. The disk-full scenario is induced directly (fill the PVC), not via a
   # broken WAL archive.
-  # Keep GOMAXPROCS in step with the CPU limit.
-  env:
-    - name: GOMAXPROCS
-      value: "1"
   resources:
     requests:
       cpu: 50m
       memory: 128Mi
     limits:
-      cpu: 250m
+      cpu: 1080m
       memory: 160Mi
