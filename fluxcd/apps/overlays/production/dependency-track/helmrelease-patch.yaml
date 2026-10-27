@@ -9,7 +9,7 @@ spec:
   values:
     fileStorage:
       s3:
-        endpoint: https://s3.pcfae.com
+        endpoint: https://s3.optcp.com
         region: us-east-1
     apiServer:
       image:

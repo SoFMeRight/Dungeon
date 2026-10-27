@@ -7,7 +7,7 @@ spec:
     Dependency-Track's API server mirrors the vulnerability feeds (GitHub
     Advisories, OSV, NVD, EPSS, CISA KEV) and reads package metadata from the
     ecosystem registries. Its OIDC discovery hairpins to sso.prplanit.com via the
-    cell-membrane gateway, and its file storage is s3.pcfae.com via the phloem
+    cell-membrane gateway, and its file storage is s3.optcp.com via the phloem
     gateway; neither gateway is meshed, so both need explicit toEndpoints.
     L7 DNS is required for toFQDNs to match. Postgres rides the mesh.
   enableDefaultDeny:

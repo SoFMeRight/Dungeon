@@ -25,8 +25,8 @@ data:
 
   # Production S3 (Ceph RGW - use MinIO mode for S3 compatibility)
   APPFLOWY_S3_USE_MINIO: "true"
-  APPFLOWY_S3_MINIO_URL: "https://s3.pcfae.com"
+  APPFLOWY_S3_MINIO_URL: "https://s3.optcp.com"
   APPFLOWY_S3_BUCKET: "appflowy-files"
   APPFLOWY_S3_CREATE_BUCKET: "false"
   AI_APPFLOWY_BUCKET_NAME: "appflowy-files"
-  AI_MINIO_URL: "https://s3.pcfae.com"
+  AI_MINIO_URL: "https://s3.optcp.com"

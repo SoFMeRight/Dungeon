@@ -29,7 +29,7 @@ metadata:
   name: allow-ceph-rgw-cluster
 spec:
   description: >-
-    Allow phloem-gateway (TLS termination for s3.pcfae.com) and cap.ceph
+    Allow phloem-gateway (TLS termination for s3.optcp.com) and cap.ceph
     admin jobs to reach raw RGW on port 8080.
   enableDefaultDeny:
     ingress: false

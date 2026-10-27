@@ -5,7 +5,7 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Storage (Goron's Bracelet💪)"
-      url: https://s3.pcfae.com/
+      url: https://s3.optcp.com/
       interval: 60s
       conditions:
         - "[STATUS] == any(200, 403)"
@@ -14,7 +14,6 @@ spec:
     - name: phloem-gateway
       namespace: arylls-lookout
   hostnames:
-    - "s3.pcfae.com"
     - "s3.optcp.com"
   rules:
     - matches:

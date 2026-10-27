@@ -68,14 +68,14 @@ spec:
                   value: "info"
                 - name: RENOVATE_CONFIG_FILE
                   value: "/config/renovate.json5"
-                # S3 repository cache (Ceph RGW via s3.pcfae.com) — stops the
+                # S3 repository cache (Ceph RGW via s3.optcp.com) — stops the
                 # ephemeral cronjob cold-scanning all ~2400 deps every run.
                 - name: RENOVATE_REPOSITORY_CACHE
                   value: "enabled"
                 - name: RENOVATE_REPOSITORY_CACHE_TYPE
                   value: "s3://renovate-cache"
                 # In-cluster clients reach ceph-rgw via its ClusterIP service, NOT
-                # the external s3.pcfae.com endpoint — that resolves to a LoadBalancer
+                # the external s3.optcp.com endpoint — that resolves to a LoadBalancer
                 # IP and hairpins under Cilium DSR, which failed the repo-cache reads
                 # (ECONNRESET/timeout). This is the same address every other in-cluster
                 # S3 consumer (loki, cnpg barman, the ceph-rgw-bucket-provisioning jobs) uses.

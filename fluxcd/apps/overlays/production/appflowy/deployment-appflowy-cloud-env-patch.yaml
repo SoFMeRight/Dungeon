@@ -43,7 +43,7 @@ spec:
             - name: APPFLOWY_S3_USE_MINIO
               value: "true"
             - name: APPFLOWY_S3_MINIO_URL
-              value: "https://s3.pcfae.com"
+              value: "https://s3.optcp.com"
             - name: APPFLOWY_S3_BUCKET
               value: "appflowy-files"
             - name: APPFLOWY_S3_REGION

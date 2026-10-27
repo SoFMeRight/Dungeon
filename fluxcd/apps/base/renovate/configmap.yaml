@@ -32,7 +32,7 @@ data:
       // separately via RENOVATE_HOST_RULES; hostRules merge per matchHost.
       "hostRules": [
         { "matchHost": "gitlab.prplanit.com", "allowInternal": true },
-        { "matchHost": "s3.pcfae.com", "allowInternal": true },
+        { "matchHost": "s3.optcp.com", "allowInternal": true },
         { "matchHost": "cr.pcfae.com", "allowInternal": true },
         { "matchHost": "docker.cr.pcfae.com", "allowInternal": true }
       ],
@@ -525,7 +525,8 @@ data:
           "labels": ["upgrade-checklist"],
           "prBodyNotes": [
             "### ⚠️ Leantime upgrade: patches are pinned to 3.12.0",
-            "- The init container checks `ReportEngine.php` and `Goalcanvas.php` against 3.12.0 checksums, so this bump **will stop the pod at init** until the patches in `fluxcd/apps/base/leantime/patches/` are refreshed for the new version, or dropped if upstream fixed the Postgres queries.",
+            "- The init container checks `ReportEngine.php` and `Goalcanvas.php` against 3.12.0 checksums, so this bump **will stop the pod at init**",
+            "  until the patches in `fluxcd/apps/base/leantime/patches/` are refreshed for the new version, or dropped if upstream fixed the Postgres queries.",
             "- Confirm a fresh `leantime-postgres` backup before merging."
           ]
         },
