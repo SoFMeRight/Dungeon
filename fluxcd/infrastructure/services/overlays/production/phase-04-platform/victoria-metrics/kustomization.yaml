@@ -22,9 +22,11 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/cpu
         value: "2"
+      # Memory limit from 30d usage (2026-10-27): working-set peak 4047Mi (RSS 2850Mi) against
+      # the previous 4Gi; peak x 1.15.
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/memory
-        value: "4Gi"
+        value: "5Gi"
       - op: replace
         path: /spec/volumeClaimTemplates/0/spec/storageClassName
         value: "ceph-rbd-hdd"
