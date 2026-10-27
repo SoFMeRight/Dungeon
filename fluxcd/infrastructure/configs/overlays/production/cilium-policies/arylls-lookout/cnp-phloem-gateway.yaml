@@ -4,11 +4,12 @@ metadata:
   name: allow-phloem-gateway-lan
 spec:
   description: >-
-    VPN-internal ingress to phloem-gateway (172.22.30.70). No WAN port forward —
-    pfSense forwards .70 to the VPN subnets only (cell-membrane is the sole public
-    gateway; xylem stays LAN/operator-VPN). RFC1918 allowed minus pod CIDR to
-    prevent identity bypass via LB IP. pfSense owns which RFC1918 segment (VPN vs
-    LAN) can actually reach this IP.
+    VPN-internal ingress to phloem-gateway (172.22.30.70 / fc00:f1:ada:30::70). No
+    WAN port forward — pfSense forwards .70 to the VPN subnets only (cell-membrane
+    is the sole public gateway; xylem stays LAN/operator-VPN). RFC1918 and the site
+    IPv6 ULA (fc00:f1::/32) allowed, each minus its pod CIDR to prevent identity
+    bypass via the LB IP. pfSense owns which segment (VPN vs LAN) can actually
+    reach this IP.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -22,6 +23,9 @@ spec:
         - cidr: "192.168.0.0/16"
           except:
             - "192.168.144.0/20"
+        - cidr: "fc00:f1::/32"
+          except:
+            - "fc00:f1:0ca4:15a0::/56"
       toPorts:
         - ports:
             - port: "80"
