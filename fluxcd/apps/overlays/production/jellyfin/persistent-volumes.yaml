@@ -11,6 +11,8 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
+  mountOptions:
+    - discard
   csi:
     driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
@@ -36,6 +38,8 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ceph-rbd-static
+  mountOptions:
+    - discard
   csi:
     driver: gorons-bracelet.rbd.csi.ceph.com
     fsType: ext4
