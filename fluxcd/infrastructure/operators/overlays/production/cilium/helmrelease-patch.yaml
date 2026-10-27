@@ -35,14 +35,16 @@ spec:
       acceleration: native
       algorithm: maglev
       serviceTopology: true
-      # DSR dispatch 'geneve' + tunnelProtocol 'geneve' (below) are a REQUIRED PAIR:
-      # Cilium fatally rejects geneve DSR dispatch unless tunnelProtocol is also
-      # geneve ("Node Port 'dsr' mode with 'geneve' dispatch requires geneve tunnel
-      # protocol"). Geneve dispatch is needed for IPv6 LoadBalancer DSR — 'opt'
-      # relies on an IPv6 Destination Option that gets dropped in-path, so v6 VIPs
-      # never complete. routingMode stays native (pod traffic unchanged); geneve is
-      # used only to encapsulate the DSR dispatch. MTU covered by PLPMTUD blackhole.
-      dsrDispatch: geneve
+      # DSR dispatch mode. 'opt' is the lowest-overhead dispatch and the correct one
+      # for this cluster: native routing + dual-stack + XDP acceleration, on a fabric
+      # we own end to end. It carries the service VIP:port in an IPv4 IP-Option /
+      # IPv6 Destination-Option header — both XDP-safe, so IPv6 LB DSR works under
+      # acceleration: native (geneve has NO XDP code path for IPv6 DSR, so it would
+      # break cross-node v6 dispatch here). 'geneve'/'ipip' exist only for underlays
+      # that strip IP options (public cloud) or for overlay routingMode — neither
+      # applies to us — and geneve adds ~50B encap that cuts the MTU for jumbo-frame
+      # (Ceph) traffic. If a fabric ever dropped the option, the fallback is geneve.
+      dsrDispatch: opt
 
     # NodePort configuration for eBPF
     nodePort:
@@ -68,10 +70,10 @@ spec:
     # Also configure routing mode explicitly
     routingMode: native
 
-    # Tunnel protocol disabled - using opt-based DSR dispatch (no encapsulation)
-    # geneve (paired with loadBalancer.dsrDispatch: geneve above) — NOT a switch to
-    # overlay routing; routingMode stays native. Required for IPv6 LB DSR dispatch.
-    tunnelProtocol: geneve
+    # No tunnel: routingMode is native and 'opt' DSR dispatch adds no encapsulation,
+    # so no tunnel protocol is needed. (Only geneve DSR dispatch would force this to
+    # 'geneve'; we use opt.)
+    tunnelProtocol: ""
 
     # L2 announcements disabled - using BGP instead
     l2announcements:
