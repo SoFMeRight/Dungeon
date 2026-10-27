@@ -1,34 +1,35 @@
 services:
-    gitlab:
-        image: 'gitlab/gitlab-ce:latest'
-        container_name: gitlab
-        restart: always
-        hostname: 'gitlab.prplanit.com'
-        environment:
-            GITLAB_OMNIBUS_CONFIG: |
-                external_url 'https://gitlab.prplanit.com'
-                gitlab_rails['gitlab_shell_ssh_port'] = 22
-                letsencrypt['enabled'] = false
-                nginx['enable'] = true
-                nginx['listen_port'] = 8017
-                nginx['listen_https'] = false
-        ports:
-            - '8017:8017'
-            - '2424:22'
-        volumes:
-            - '/mnt/app_data/Server/_docker_stack/gitlab/config:/etc/gitlab'
-            - '/mnt/app_data/Server/_docker_stack/gitlab/logs:/var/log/gitlab'
-            - '/mnt/app_data/Server/_docker_stack/gitlab/data:/var/opt/gitlab'
-        secrets:
-          - gitlab_root_password
-        #labels:
-          #labels-regex: "^.+"
-          #log_driver: "loki"
-          #log_opt:
-            #loki-batch-size:"400"
-            #loki-url:"http://localhost:3100/loki/api/v1/push"
-            #max-size:"10m"
-            #max-file:"3"
+  gitlab:
+    # Pinned, never latest: Renovate can only propose (security) releases for a versioned tag.
+    image: 'gitlab/gitlab-ce:19.5.1-ce.0'
+    container_name: gitlab
+    restart: always
+    hostname: 'gitlab.prplanit.com'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.prplanit.com'
+        gitlab_rails['gitlab_shell_ssh_port'] = 22
+        letsencrypt['enabled'] = false
+        nginx['enable'] = true
+        nginx['listen_port'] = 8017
+        nginx['listen_https'] = false
+    ports:
+      - '8017:8017'
+      - '2424:22'
+    volumes:
+      - '/mnt/app_data/Server/_docker_stack/gitlab/config:/etc/gitlab'
+      - '/mnt/app_data/Server/_docker_stack/gitlab/logs:/var/log/gitlab'
+      - '/mnt/app_data/Server/_docker_stack/gitlab/data:/var/opt/gitlab'
+    # labels:
+    #   labels-regex: "^.+"
+    #   log_driver: "loki"
+    #   log_opt:
+    #     loki-batch-size: "400"
+    #     loki-url: "http://localhost:3100/loki/api/v1/push"
+    #     max-size: "10m"
+    #     max-file: "3"
+    secrets:
+      - gitlab_root_password
 
 secrets:
   gitlab_root_password:
