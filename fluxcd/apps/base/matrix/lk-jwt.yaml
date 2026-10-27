@@ -63,3 +63,4 @@ spec:
               memory: "32Mi"
             limits:
               memory: "80Mi"
+              cpu: 383m

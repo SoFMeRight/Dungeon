@@ -64,6 +64,7 @@ spec:
               memory: "32Mi"
             limits:
               memory: "96Mi"
+              cpu: 100m
       volumes:
         - name: config
           configMap:

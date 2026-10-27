@@ -67,6 +67,7 @@ spec:
               memory: "256Mi"
             limits:
               memory: "288Mi"
+              cpu: 115m
       volumes:
         - name: run
           emptyDir: {}

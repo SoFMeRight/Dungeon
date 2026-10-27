@@ -160,6 +160,7 @@ spec:
               memory: "256Mi"
             limits:
               memory: "256Mi"
+              cpu: 301m
       volumes:
         - name: webroot
           emptyDir: {}

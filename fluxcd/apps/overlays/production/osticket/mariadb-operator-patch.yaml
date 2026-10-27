@@ -20,6 +20,7 @@ spec:
       memory: 512Mi
     limits:
       memory: 800Mi
+      cpu: 542m
   galera:
     agent:
       resources:

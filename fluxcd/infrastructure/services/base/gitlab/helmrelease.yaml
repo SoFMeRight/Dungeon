@@ -124,6 +124,11 @@ spec:
           limits:
             cpu: 4000m
             memory: 4Gi
+        workhorse:
+          resources:
+            limits:
+              cpu: 506m
+              memory: 192Mi
 
       # Sidekiq - HA
       sidekiq:
@@ -147,13 +152,44 @@ spec:
             cpu: 500m
             memory: 144Mi
 
+      gitaly:
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 704Mi
+      praefect:
+        resources:
+          limits:
+            cpu: 638m
+            memory: 224Mi
+      kas:
+        resources:
+          limits:
+            cpu: 748m
+            memory: 256Mi
+      gitlab-exporter:
+        resources:
+          limits:
+            cpu: 100m
+            memory: 112Mi
+
       # Toolbox (for backups, etc)
       toolbox:
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 2Gi
         backups:
           objectStorage:
             config:
               secret: gitlab-s3-storage
               key: connection
+
+    registry:
+      resources:
+        limits:
+          cpu: 305m
+          memory: 144Mi
 
     # Disable components we don't need
     nginx-ingress:

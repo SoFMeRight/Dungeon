@@ -94,6 +94,7 @@ spec:
               memory: 256Mi
             limits:
               memory: 512Mi
+              cpu: 781m
       volumes:
         - name: template
           configMap:
