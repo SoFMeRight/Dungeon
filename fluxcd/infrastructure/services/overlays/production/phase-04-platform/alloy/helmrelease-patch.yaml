@@ -47,7 +47,7 @@ spec:
           memory: 256Mi
         limits:
           cpu: "4570m"
-          memory: 2Gi
+          memory: 2112Mi
     configReloader:
       resources:
         limits:

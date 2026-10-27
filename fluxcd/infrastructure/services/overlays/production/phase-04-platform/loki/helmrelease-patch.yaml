@@ -63,7 +63,7 @@ spec:
           memory: 850Mi
         limits:
           cpu: 1580m
-          memory: 1536Mi
+          memory: 1968Mi
       persistence:
         enabled: true
         size: 4Gi
