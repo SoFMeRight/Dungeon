@@ -17,7 +17,6 @@ spec:
     # pcfae.com
     - "pcfae.com"
     - "*.pcfae.com"
-    - "2fa.pcfae.com"
     - "ai.pcfae.com"
     - "anime.pcfae.com"
     - "anubis.pcfae.com"

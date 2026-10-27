@@ -6,3 +6,4 @@ metadata:
 spec:
   blocks:
     - cidr: 172.22.30.0/24
+    - cidr: fc00:f1:ada:30::/64

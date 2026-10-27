@@ -3,7 +3,7 @@ kind: Gateway
 metadata:
   name: phloem-gateway
   annotations:
-    lbipam.cilium.io/ips: "172.22.30.70"
+    lbipam.cilium.io/ips: "172.22.30.70,fc00:f1:ada:30::70"
     lbipam.cilium.io/sharing-key: "arylls-lookout"
     lbipam.cilium.io/sharing-cross-namespace: "*"
     service.cilium.io/loadbalancer-mode: "dsr"
@@ -148,3 +148,15 @@ spec:
         certificateRefs:
           - kind: Secret
             name: s3-optcp-com-tls
+    - name: https-2fa-optcp
+      protocol: HTTPS
+      port: 443
+      hostname: "2fa.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: twofauth-optcp-com-tls

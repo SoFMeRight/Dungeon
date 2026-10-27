@@ -487,3 +487,15 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "s3.optcp.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: twofauth-optcp-com-phloem-tls
+spec:
+  secretName: twofauth-optcp-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "2fa.optcp.com"
