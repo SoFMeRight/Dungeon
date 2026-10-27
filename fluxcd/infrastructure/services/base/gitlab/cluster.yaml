@@ -47,7 +47,7 @@ spec:
       memory: "1Gi"
       cpu: "100m"
     limits:
-      memory: "2Gi"
+      memory: "1024Mi"
       cpu: "2000m"
   # Archive to the NAS object store. destinationPath and endpointURL are supplied
   # by the environment overlay: the path carries the cluster name and the endpoint

@@ -18,7 +18,7 @@ spec:
       memory: "256Mi"
       cpu: "100m"
     limits:
-      memory: "768Mi"
+      memory: "576Mi"
       cpu: "1000m"
 
   instances: 3

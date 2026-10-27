@@ -19,7 +19,7 @@ spec:
               memory: 512Mi
             limits:
               cpu: 2000m
-              memory: 2Gi
+              memory: 1424Mi
       volumes:
         - name: wazuh-manager-conf
           configMap:

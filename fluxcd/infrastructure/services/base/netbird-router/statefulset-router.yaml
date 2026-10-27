@@ -67,7 +67,7 @@ spec:
               memory: "64Mi"
               cpu: 3m
             limits:
-              memory: "256Mi"
+              memory: "144Mi"
               cpu: "500m"
   volumeClaimTemplates:
     - metadata:

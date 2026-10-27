@@ -48,8 +48,8 @@ spec:
               cpu: 50m
               memory: 512Mi
             limits:
-              cpu: "1.2"
-              memory: 1536Mi
+              cpu: "625m"
+              memory: 768Mi
   volumeClaimTemplates:
     - metadata:
         name: delivery-bag-ntfy-data

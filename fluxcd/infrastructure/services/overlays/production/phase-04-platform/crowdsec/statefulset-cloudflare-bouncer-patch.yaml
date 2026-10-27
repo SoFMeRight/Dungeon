@@ -45,7 +45,7 @@ spec:
               memory: 24Mi
             limits:
               cpu: 100m
-              memory: "256Mi"
+              memory: "96Mi"
       volumes:
         - name: bouncer-config-template
           configMap:

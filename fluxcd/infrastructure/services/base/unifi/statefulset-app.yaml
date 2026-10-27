@@ -90,7 +90,7 @@ spec:
               memory: 1Gi
             limits:
               cpu: 2000m
-              memory: 2Gi
+              memory: 1456Mi
           # UniFi wedges silently: if the web context fails to init (e.g. mongo unreachable at
           # startup) tomcat keeps listening on 8443 and /status returns HTTP 200 with {"up":false}
           # forever, so a status-code probe never catches it. Probe the /status BODY for up:true.

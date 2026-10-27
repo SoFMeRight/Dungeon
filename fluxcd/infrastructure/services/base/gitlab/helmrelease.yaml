@@ -145,7 +145,7 @@ spec:
             memory: 77Mi
           limits:
             cpu: 500m
-            memory: 256Mi
+            memory: 144Mi
 
       # Toolbox (for backups, etc)
       toolbox:

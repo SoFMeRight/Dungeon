@@ -39,7 +39,7 @@ spec:
               cpu: 2m
             limits:
               memory: "128Mi"
-              cpu: "200m"
+              cpu: "100m"
       volumes:
         - name: config
           secret:

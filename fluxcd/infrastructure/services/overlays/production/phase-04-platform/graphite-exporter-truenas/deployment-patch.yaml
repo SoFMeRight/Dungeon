@@ -23,4 +23,4 @@ spec:
               memory: 31Mi
             limits:
               cpu: 200m
-              memory: 128Mi
+              memory: 96Mi

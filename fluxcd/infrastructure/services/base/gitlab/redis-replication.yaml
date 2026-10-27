@@ -29,7 +29,7 @@ spec:
         memory: 256Mi
       limits:
         cpu: 425m
-        memory: 512Mi
+        memory: 256Mi
   storage:
     volumeClaimTemplate:
       spec:

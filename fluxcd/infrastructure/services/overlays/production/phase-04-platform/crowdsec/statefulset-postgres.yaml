@@ -84,7 +84,7 @@ spec:
               memory: 256Mi
               cpu: 34m
             limits:
-              memory: 1Gi
+              memory: 512Mi
               cpu: 500m
       volumes:
         - name: postgres-run

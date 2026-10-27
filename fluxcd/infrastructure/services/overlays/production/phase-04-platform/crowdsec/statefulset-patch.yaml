@@ -133,7 +133,7 @@ spec:
               memory: 321Mi
             limits:
               cpu: "1000m"
-              memory: "2Gi"
+              memory: "368Mi"
       volumes:
         - name: config-local
           secret:

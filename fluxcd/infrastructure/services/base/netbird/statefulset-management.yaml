@@ -260,8 +260,8 @@ spec:
               memory: "128Mi"
               cpu: "10m"
             limits:
-              memory: "512Mi"
-              cpu: "1000m"
+              memory: "144Mi"
+              cpu: "545m"
       volumes:
         - name: generated-config
           emptyDir: {}
