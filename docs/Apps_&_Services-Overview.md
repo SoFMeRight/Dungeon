@@ -394,7 +394,7 @@
   - frappe-suite-sites (StatefulSet)
   - frappe-suite-websocket (Deployment)
 
-**Gitlab — 11 components** — Mixed — v19.4.1
+**Gitlab — 11 components** — Mixed — v19.4.3
 - Namespace: hyrule-castle
 - Replicas: 22/22
 - Hosts: git.prplanit.com
