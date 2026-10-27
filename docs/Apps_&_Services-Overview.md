@@ -1265,7 +1265,7 @@
 
 </details>
 
-## Platform Components (55)
+## Platform Components (56)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
@@ -1276,6 +1276,7 @@
 | Velero (2 components) | fairy-bottle | ✅ |
 | Gitlab Gitlab Runner | hyrule-castle | ❌ |
 | Mariadb | hyrule-castle | ✅ |
+| Renovate Redis | hyrule-castle | ✅ |
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
 | Cloudflare Ddns | compass | ✅ |
@@ -1356,6 +1357,10 @@
 - Namespace: hyrule-castle
 - Replicas: 3/3
 
+**Renovate Redis** — Deployment — 8.10-alpine
+- Namespace: hyrule-castle
+- Replicas: 1/1
+
 **Adguardhome Sync** — Deployment — 0.9.4
 - Namespace: compass
 - Replicas: 1/1
@@ -1376,7 +1381,7 @@
 - Namespace: gerudo-crest
 - Replicas: 1/1
 
-**Reloader** — Deployment — v1.4.22
+**Reloader** — Deployment — v1.4.23
 - Namespace: gerudo-crest
 - Replicas: 1/1
 
