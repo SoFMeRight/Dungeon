@@ -18,7 +18,6 @@ patches:
       kind: ConfigMap
       name: searxng-settings
   - path: deployment-patch.yaml
-  - path: storage-patch.yaml
   - target:
       kind: PersistentVolumeClaim
       name: searxng-data
@@ -27,6 +26,15 @@ patches:
       kind: PersistentVolumeClaim
       metadata:
         name: searxng-data
+      $patch: delete
+  - target:
+      kind: PersistentVolumeClaim
+      name: searxng-redis-data
+    patch: |-
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: searxng-redis-data
       $patch: delete
   - path: service-searxng-ingress-patch.yaml
     target:
