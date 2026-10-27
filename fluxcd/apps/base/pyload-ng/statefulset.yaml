@@ -47,7 +47,7 @@ spec:
               memory: 121Mi
             limits:
               cpu: 502m
-              memory: 1Gi
+              memory: 176Mi
           volumeMounts:
             - name: config
               mountPath: /config
@@ -97,7 +97,7 @@ spec:
               memory: 123Mi
             limits:
               cpu: 200m
-              memory: 256Mi
+              memory: 176Mi
       volumes:
         - name: downloads
           persistentVolumeClaim:

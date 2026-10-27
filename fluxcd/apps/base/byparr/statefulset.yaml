@@ -40,7 +40,7 @@ spec:
               memory: 136Mi
             limits:
               cpu: 207m
-              memory: 512Mi
+              memory: 192Mi
           volumeMounts:
             - name: screenshots
               mountPath: /app/screenshots
@@ -86,7 +86,7 @@ spec:
               memory: 109Mi
             limits:
               cpu: 200m
-              memory: 256Mi
+              memory: 160Mi
   volumeClaimTemplates:
     - metadata:
         name: screenshots

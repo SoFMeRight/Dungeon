@@ -73,7 +73,7 @@ spec:
               memory: 171Mi
               cpu: 2m
             limits:
-              memory: 512Mi
+              memory: 224Mi
               cpu: 500m
       volumes:
         - name: translations

@@ -94,7 +94,7 @@ spec:
               memory: 128Mi
             limits:
               cpu: 55m
-              memory: 256Mi
+              memory: 160Mi
   volumeClaimTemplates:
     - metadata:
         name: config

@@ -44,7 +44,7 @@ spec:
               memory: 128Mi
             limits:
               cpu: 200m
-              memory: 256Mi
+              memory: 192Mi
           volumeMounts:
             # LSIO thelounge persists to /config (the official image's THELOUNGE_HOME=/var/opt/thelounge
             # is not used here) — the PVC must land on /config or all state stays on ephemeral overlayfs.
@@ -94,7 +94,7 @@ spec:
               memory: 104Mi
             limits:
               cpu: 200m
-              memory: 256Mi
+              memory: 160Mi
   volumeClaimTemplates:
     - metadata:
         name: config

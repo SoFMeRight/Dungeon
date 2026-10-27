@@ -55,7 +55,7 @@ spec:
               memory: 92Mi
             limits:
               cpu: 409m
-              memory: 512Mi
+              memory: 144Mi
   volumeClaimTemplates:
     - metadata:
         name: swift-sail-py-kms-db

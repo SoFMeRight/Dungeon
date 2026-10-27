@@ -69,7 +69,7 @@ spec:
               memory: 256Mi
             limits:
               cpu: 1000m
-              memory: 2Gi
+              memory: 1024Mi
       volumes:
         - $patch: replace
         - name: data

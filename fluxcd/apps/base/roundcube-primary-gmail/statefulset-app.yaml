@@ -63,7 +63,7 @@ spec:
               memory: 79Mi
               cpu: 2m
             limits:
-              memory: 512Mi
+              memory: 144Mi
               cpu: 100m
         - name: nginx
           image: docker.io/nginxinc/nginx-unprivileged:1.31-alpine
@@ -88,7 +88,7 @@ spec:
               memory: 32Mi
               cpu: 10m
             limits:
-              memory: 128Mi
+              memory: 96Mi
               cpu: 11m
       volumes:
         - name: nginx-config

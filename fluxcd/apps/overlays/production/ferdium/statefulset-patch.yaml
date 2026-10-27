@@ -25,7 +25,7 @@ spec:
               memory: 512Mi
             limits:
               cpu: 636m
-              memory: 2Gi
+              memory: 1200Mi
           volumeMounts:
             - name: lost-woods-ferdium-config
               mountPath: /config

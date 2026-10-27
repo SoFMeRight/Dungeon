@@ -115,8 +115,8 @@ spec:
               memory: 512Mi
               cpu: 10m
             limits:
-              memory: 1Gi
-              cpu: 590m
+              memory: 512Mi
+              cpu: 142m
       volumes:
         - name: nginx-config
           configMap:

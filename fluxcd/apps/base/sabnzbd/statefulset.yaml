@@ -80,7 +80,7 @@ spec:
               memory: 130Mi
             limits:
               cpu: 167m
-              memory: 2Gi
+              memory: 192Mi
           volumeMounts:
             - name: config
               mountPath: /config
@@ -132,7 +132,7 @@ spec:
               memory: 87Mi
             limits:
               cpu: 100m
-              memory: 256Mi
+              memory: 160Mi
   volumeClaimTemplates:
     - metadata:
         name: config

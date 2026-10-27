@@ -202,7 +202,7 @@ spec:
               memory: 114Mi
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 176Mi
 
         # qBittorrent - full downloads access
         - name: qbittorrent
@@ -243,7 +243,7 @@ spec:
               cpu: 100m
               memory: 3Gi
             limits:
-              cpu: "2"
+              cpu: "726m"
               memory: 4Gi
 
         # Keeps qBittorrent's listen port equal to the port gluetun holds from the VPN.
@@ -301,7 +301,7 @@ spec:
               cpu: 2m
               memory: 64Mi
             limits:
-              cpu: 200m
+              cpu: 100m
               memory: 128Mi
 
         # Radarr - only zz-radarr subpath
@@ -339,7 +339,7 @@ spec:
               memory: 512Mi
             limits:
               cpu: "1"
-              memory: 1Gi
+              memory: 816Mi
 
         # Sonarr - only zz-sonarr subpath
         - name: sonarr
@@ -480,7 +480,7 @@ spec:
               memory: 214Mi
             limits:
               cpu: "1"
-              memory: 1Gi
+              memory: 256Mi
 
       volumes:
         # Gluetun

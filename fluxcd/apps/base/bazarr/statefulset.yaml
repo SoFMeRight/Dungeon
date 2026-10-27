@@ -47,7 +47,7 @@ spec:
               memory: 259Mi
             limits:
               cpu: 1000m
-              memory: 1Gi
+              memory: 304Mi
           volumeMounts:
             - name: config
               mountPath: /config
@@ -99,7 +99,7 @@ spec:
               memory: 125Mi
             limits:
               cpu: 200m
-              memory: 256Mi
+              memory: 176Mi
       volumes:
         - name: movies
           persistentVolumeClaim:
