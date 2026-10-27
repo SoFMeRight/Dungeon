@@ -35,9 +35,13 @@ spec:
       acceleration: native
       algorithm: maglev
       serviceTopology: true
-      # DSR dispatch mode - 'opt' uses IP options instead of Geneve
-      # encapsulation, avoiding MTU overhead that drops large TCP segments
-      dsrDispatch: opt
+      # DSR dispatch mode. 'geneve' (not 'opt') so IPv6 LoadBalancer VIPs work:
+      # 'opt' encodes the service in an IPv6 Destination Option that gets dropped
+      # in-path (ext-header / GRO), so v6 DSR never completes its handshake while
+      # v4 is fine. Geneve encapsulates the dispatch for both families. The MTU
+      # overhead that previously dropped large TCP segments is absorbed by
+      # packetization-layer-pmtud-mode: blackhole (RFC 8899 PLPMTUD).
+      dsrDispatch: geneve
 
     # NodePort configuration for eBPF
     nodePort:
