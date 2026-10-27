@@ -26,7 +26,7 @@ spec:
             memory: 128Mi
           limits:
             memory: 160Mi
-            cpu: 100m
+            cpu: 950m
         tolerations: []
         affinity:
           nodeAffinity:
@@ -216,5 +216,5 @@ spec:
           cpu: 2m
           memory: 86Mi
         limits:
-          cpu: 58m
+          cpu: 880m
           memory: 86Mi

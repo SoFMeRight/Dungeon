@@ -44,13 +44,16 @@ spec:
       existingSecret: velero-minio-credentials
 
     nodeAgent:
-      # The agent has to exist on every node velero might back a pod up from,
-      # so it tolerates the control-plane taint. A pod on a node with no agent
-      # is an error, not a skip.
-      tolerations:
-        - key: node-role.kubernetes.io/control-plane
-          operator: Exists
-          effect: NoSchedule
+      # Kept off the control plane. A pod with an fs-backup volume on a node without an agent
+      # fails the backup, so pods there exclude their volumes (backup-volumes-excludes).
+      tolerations: []
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/control-plane
+                    operator: DoesNotExist
       podVolumePath: /var/lib/kubelet/pods
       privileged: false
       keepLatestMaintenanceJobs: 3
@@ -60,7 +63,7 @@ spec:
           cpu: 100m
         limits:
           memory: 1Gi
-          cpu: 500m
+          cpu: 1540m
 
     resources:
       requests:
@@ -71,7 +74,7 @@ spec:
         # snapshots, which needs more than 512Mi. The request stays low
         # because the server is idle between runs.
         memory: 1Gi
-        cpu: 500m
+        cpu: 1080m
 
     schedules:
       daily-backup:
