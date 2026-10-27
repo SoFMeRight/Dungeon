@@ -74,15 +74,24 @@ spec:
         image:
           registry: ghcr.io
           repository: kyverno/kyverno
+        resources:
+          limits:
+            cpu: 1104m
       initContainer:
         image:
           registry: ghcr.io
           repository: kyverno/kyvernopre
     backgroundController:
+      resources:
+        limits:
+          cpu: 658m
       image:
         registry: ghcr.io
         repository: kyverno/background-controller
     cleanupController:
+      resources:
+        limits:
+          cpu: 100m
       image:
         registry: ghcr.io
         repository: kyverno/cleanup-controller
@@ -90,6 +99,9 @@ spec:
       podAnnotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "8000"
+      resources:
+        limits:
+          cpu: 2835m
       image:
         registry: ghcr.io
         repository: kyverno/reports-controller

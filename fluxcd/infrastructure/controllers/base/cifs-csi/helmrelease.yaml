@@ -26,6 +26,19 @@ spec:
     # Kept off the control plane.
     controller:
       replicas: 1
+      resources:
+        csiProvisioner:
+          limits:
+            cpu: 100m
+        csiResizer:
+          limits:
+            cpu: 100m
+        livenessProbe:
+          limits:
+            cpu: 100m
+        smb:
+          limits:
+            cpu: 100m
       tolerations: []
       affinity:
         nodeAffinity:
@@ -44,5 +57,15 @@ spec:
                     operator: DoesNotExist
     linux:
       tolerations: []
+      resources:
+        livenessProbe:
+          limits:
+            cpu: 983m
+        nodeDriverRegistrar:
+          limits:
+            cpu: 245m
+        smb:
+          limits:
+            cpu: 176m
     storageClass:
       create: false  # We'll create our own storage classes

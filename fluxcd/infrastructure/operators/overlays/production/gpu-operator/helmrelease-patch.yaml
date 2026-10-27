@@ -26,6 +26,7 @@ spec:
             memory: 128Mi
           limits:
             memory: 160Mi
+            cpu: 100m
         tolerations: []
         affinity:
           nodeAffinity:
@@ -41,6 +42,7 @@ spec:
             memory: 64Mi
           limits:
             memory: 128Mi
+            cpu: 464m
         tolerations: []
         affinity:
           nodeAffinity:
@@ -56,6 +58,7 @@ spec:
             memory: 128Mi
           limits:
             memory: 128Mi
+            cpu: 513m
     # Enable CDI as default mode
     cdi:
       enabled: true

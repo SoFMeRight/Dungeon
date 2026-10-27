@@ -57,6 +57,6 @@ spec:
         cpu: 12m        # 1-minute p99 on the control plane
         memory: 128Mi
       limits:
-        cpu: 50m        # 30d 15s peak on the control plane 33m x 1.5
+        cpu: 50m
         memory: 768Mi
     logLevel: info
