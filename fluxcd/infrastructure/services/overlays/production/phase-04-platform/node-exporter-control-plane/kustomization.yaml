@@ -39,4 +39,4 @@ patches:
           node-role.kubernetes.io/control-plane: ""
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/cpu
-        value: "10m"
+        value: "502m"
