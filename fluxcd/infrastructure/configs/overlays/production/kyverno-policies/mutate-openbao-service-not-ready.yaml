@@ -1,0 +1,30 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: mutate-openbao-service-not-ready
+  annotations:
+    policies.kyverno.io/title: Mutate OpenBao Service Not-Ready Addresses
+    policies.kyverno.io/description: >-
+      The bank-vaults operator creates the openbao Service without publishNotReadyAddresses,
+      and the Vault CRD has no field for it. A sealed node never reports ready, so on a cold
+      start (every node sealed) the Service has no endpoints and the configurer, which calls
+      http://openbao:8200, can never initialize or unseal. This sets the field on CREATE and
+      on UPDATE, so an operator rewrite or a Service created during a webhook blip is corrected
+      on the next update. Safe on UPDATE: unlike a pod securityContext the field is mutable.
+      failurePolicy: Ignore because Kyverno shares this namespace (zeldas-lullaby).
+spec:
+  background: false
+  failurePolicy: Ignore
+  rules:
+    - name: openbao-service-publish-not-ready
+      match:
+        any:
+          - resources:
+              kinds: [Service]
+              operations: [CREATE, UPDATE]
+              namespaces: [zeldas-lullaby]
+              names: [openbao]
+      mutate:
+        patchStrategicMerge:
+          spec:
+            publishNotReadyAddresses: true

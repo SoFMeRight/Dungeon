@@ -18,5 +18,6 @@ resources:
   - exception-pod-hardening-gitlab-selfsign.yaml
   - mutate-velero-maintenance-hardening.yaml
   - mutate-vault-sidecar-hardening.yaml
+  - mutate-openbao-service-not-ready.yaml
   - mutate-smb-pv-mount-options.yaml
   - generate-cnpg-peer-authz.yaml

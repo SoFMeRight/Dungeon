@@ -1,150 +1,35 @@
-# Vault Setup Guide
+# OpenBao
 
-## Architecture
+OpenBao runs as a three-node raft cluster in `zeldas-lullaby`, managed by the bank-vaults operator from the `Vault` CR `openbao`: `../../../base/openbao/vault-cr.yaml`, patched by `vault-cr-patch.yaml` here.
 
-This implements a three-layer secret management approach:
-- **Layer 1**: Age-encrypted SOPS for Vault unseal keys
-- **Layer 2**: Vault for centralized secret management
-- **Layer 3**: External Secrets Operator to sync secrets to Kubernetes
+## How it starts
 
-## Initial Setup
+- The operator creates the StatefulSet `openbao` and the configurer `openbao-configurer`. On first start the configurer initializes raft and unseals every node with the Shamir shares in the Secret `openbao-unseal-keys` (SOPS-encrypted here as `openbao-unseal-keys.enc.yaml`; keys `vault-unseal-N` and `vault-root`).
+- The configurer applies `externalConfig` in `vault-cr-patch.yaml`: policies, auth methods and mounts.
+- Followers join the leader through `retry_join`.
 
-### 1. Deploy Vault
+## A cold start depends on
 
-The Vault deployment will be created by Flux. After deployment:
+A cold start is every node sealed at once. Three settings keep it from deadlocking:
 
-```bash
-# Port-forward to access Vault
-kubectl port-forward -n vault svc/vault 8200:8200
+- **The sealed-tolerant liveness probe** (`vaultContainerSpec.livenessProbe` in `vault-cr-patch.yaml`). The default probe returns 503 while sealed and kills the pod before it can be unsealed.
+- **`publishNotReadyAddresses: true` on the Service `openbao`**, set by the Kyverno policy `mutate-openbao-service-not-ready`. A sealed node never reports ready; without it the configurer finds no endpoint at `http://openbao:8200`.
+- **The istio policy `allow-vault-to-vault`** (`istio-policies/zeldas-lullaby/`), which allows 8200 (bootstrap and configurer) and 8201 (raft) between the OpenBao pods.
 
-# Or access via LoadBalancer
-# http://172.22.30.102:8200
-```
+## Restoring from a raft snapshot
 
-### 2. Initialize Vault
+When the configurer can't initialize (no raft data left), bootstrap by hand and restore:
 
-```bash
-# Initialize Vault (do this only once!)
-kubectl exec -n vault vault-0 -- vault operator init \
-  -key-shares=5 \
-  -key-threshold=3
+1. Initialize raft on `openbao-0` through a localhost exec: `bao operator init`. Keep its temporary key.
+2. Unseal `openbao-0` with the temporary key.
+3. Copy the snapshot into `/vault/data` on `openbao-0`, then `bao operator raft snapshot restore -force /vault/data/<snapshot>`.
+4. Put the original Shamir shares back into the Secret `openbao-unseal-keys` (from `openbao-unseal-keys.enc.yaml`).
+5. Unseal every node with the original shares; the followers join on their own.
 
-# Save the output! You'll get:
-# - 5 unseal keys
-# - 1 root token
-```
+## Names bank-vaults fixes
 
-### 3. Store Unseal Keys in SOPS
+Whatever the CR is called: pod labels `app.kubernetes.io/name: vault` (raft) and `vault-configurator`, mounts `/vault/{data,config}`, the injected `vault-config` volume. Selectors use these names. `envsConfig` reaches the bank-vaults wrapper, not the openbao process; container env goes in `vaultContainerSpec.env`.
 
-Edit the openbao-unseal-keys.enc.yaml file with the keys from initialization:
+## Consuming secrets
 
-```bash
-# Edit the file
-vim openbao-unseal-keys.enc.yaml
-
-# Encrypt with SOPS
-sops --encrypt --in-place openbao-unseal-keys.enc.yaml
-```
-
-### 4. Unseal Vault
-
-```bash
-# Unseal Vault (need 3 of the 5 keys)
-kubectl exec -n vault vault-0 -- vault operator unseal <unseal-key-1>
-kubectl exec -n vault vault-0 -- vault operator unseal <unseal-key-2>
-kubectl exec -n vault vault-0 -- vault operator unseal <unseal-key-3>
-```
-
-### 5. Configure Vault
-
-```bash
-# Login with root token
-export VAULT_TOKEN=<root-token>
-export VAULT_ADDR=http://localhost:8200
-
-# Enable KV secrets engine
-vault secrets enable -path=secret kv-v2
-
-# Create a policy for External Secrets
-vault policy write external-secrets - <<EOF
-path "secret/data/*" {
-  capabilities = ["read", "list"]
-}
-EOF
-
-# Create token for External Secrets
-vault token create -policy=external-secrets -ttl=87600h
-```
-
-### 6. Configure External Secrets
-
-Create the token secret for External Secrets:
-
-```bash
-kubectl create secret generic vault-token \
-  -n external-secrets \
-  --from-literal=token=<token-from-step-5>
-```
-
-### 7. Apply ClusterSecretStore
-
-```bash
-kubectl apply -f clustersecretstore.yaml
-```
-
-## Usage
-
-### Creating Secrets in Vault
-
-```bash
-# Create a secret in Vault
-vault kv put secret/database \
-  username=myuser \
-  password=mypassword
-```
-
-### Consuming Secrets in Kubernetes
-
-Create an ExternalSecret resource:
-
-```yaml
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-  name: my-app-secret
-  namespace: my-namespace
-spec:
-  secretStoreRef:
-    name: vault-backend
-    kind: ClusterSecretStore
-  target:
-    name: my-app-secret
-  data:
-  - secretKey: db-password
-    remoteRef:
-      key: secret/data/database
-      property: password
-```
-
-## Auto-Unsealing (Future Enhancement)
-
-For production, consider implementing auto-unsealing using:
-- AWS KMS
-- Azure Key Vault
-- Google Cloud KMS
-- Transit Secrets Engine
-
-## Backup
-
-Always backup:
-1. The SOPS-encrypted unseal keys
-2. Vault's persistent data (PVC)
-3. Your age keys for SOPS
-
-## Security Best Practices
-
-1. Never commit unencrypted unseal keys or root tokens
-2. Use separate tokens with minimal permissions for applications
-3. Enable audit logging in Vault
-4. Regularly rotate tokens
-5. Use Kubernetes auth method instead of token auth for production
+One `ClusterSecretStore` per tenant (`clustersecretstore-*.yaml`), each bound to its own mount through Kubernetes auth. An app reads through an `ExternalSecret`; `example-externalsecret.yaml` is the template.
