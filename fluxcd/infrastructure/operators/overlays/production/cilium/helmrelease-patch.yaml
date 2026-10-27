@@ -59,7 +59,11 @@ spec:
     # Native routing (no masquerade) for pod network - this is the key!
     # Traffic within this CIDR uses eBPF native routing without any NAT
     ipv4NativeRoutingCIDR: "192.168.144.0/20"
-    ipv6NativeRoutingCIDR: "fc00:f1:d759:3053:a573::/64"
+    # MUST contain the real IPv6 pod CIDR, or v6 pod/DSR traffic is masqueraded
+    # (enable-ipv6-masquerade: true) and LoadBalancer DSR replies lose the VIP src,
+    # breaking all v6 LB VIPs while v4 works. Pods live in fc00:f1:ca4:15xx::; the
+    # old fc00:f1:d759::/64 value matched nothing. This is the documented Pod CIDR.
+    ipv6NativeRoutingCIDR: "fc00:f1:0ca4:15a0::/56"
 
     # Also configure routing mode explicitly
     routingMode: native
