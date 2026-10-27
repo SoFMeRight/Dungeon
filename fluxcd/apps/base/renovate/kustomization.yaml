@@ -6,3 +6,5 @@ resources:
   - externalsecret.yaml
   - externalsecret-rgw.yaml
   - cronjob.yaml
+  - cronjob-dungeon.yaml
+  - pvc-cache.yaml

@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: renovate-dungeon
+spec:
+  # Hourly: with warm caches a pass takes minutes, and security releases for
+  # anything in dungeon are proposed within the hour.
+  schedule: "20 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            # Group-owns the cache volume so the non-root container can write it.
+            fsGroup: 1000
+          containers:
+            - name: renovate
+              image: ghcr.io/renovatebot/renovate:44
+              env:
+                - name: RENOVATE_ENDPOINT
+                  value: "https://gitlab.prplanit.com/api/v4"
+                # V8 soft heap ceiling. The cold-cache run crashed with "JavaScript
+                # heap out of memory" once docker.io discovery started working; this
+                # caps the heap at 3GB explicitly (rather than relying on Node's
+                # cgroup auto-detection), sitting under the 4Gi container limit with
+                # ~1Gi left for off-heap.
+                - name: NODE_OPTIONS
+                  value: "--max-old-space-size=3072"
+              resources:
+                requests:
+                  cpu: 250m
+                  memory: 512Mi
+                limits:
+                  # 4Gi container ceiling holds the 3GB heap plus off-heap; lets a
+                  # cold run complete and warm the caches, after which steady-state
+                  # usage stays near the 512Mi request. CPU: a 500m ceiling throttled
+                  # dependency extraction and stretched every pass; 2 cores lets a
+                  # pass finish quickly.
+                  cpu: "2"
+                  memory: 4Gi

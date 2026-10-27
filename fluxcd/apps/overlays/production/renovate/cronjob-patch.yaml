@@ -11,6 +11,8 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
+            # Group-owns the cache volume so the non-root container can write it.
+            fsGroup: 1000
           containers:
             - name: renovate
               image: ghcr.io/renovatebot/renovate:44
@@ -26,12 +28,13 @@ spec:
                   value: "--max-old-space-size=3072"
               resources:
                 requests:
-                  cpu: 100m
+                  cpu: 250m
                   memory: 512Mi
                 limits:
-                  # Limit raised only (requests + CPU unchanged): 4Gi container
-                  # ceiling to hold the 3GB heap plus off-heap; lets a cold run
-                  # complete and warm the S3 cache, after which steady-state usage
-                  # stays near the 512Mi request.
-                  cpu: 500m
+                  # 4Gi container ceiling holds the 3GB heap plus off-heap; lets a
+                  # cold run complete and warm the caches, after which steady-state
+                  # usage stays near the 512Mi request. CPU: a 500m ceiling throttled
+                  # dependency extraction and stretched every pass; 2 cores lets a
+                  # pass finish quickly.
+                  cpu: "2"
                   memory: 4Gi

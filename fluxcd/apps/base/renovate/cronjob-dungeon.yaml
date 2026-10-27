@@ -1,0 +1,125 @@
+# Renovate for the dungeon GitOps monorepo alone. Dungeon is committed to all day and
+# Renovate aborts a repository whose base branch moves during its pass, so in the shared
+# autodiscover job it never completed (its repository cache last saved 2026-10-12, while
+# GitLab security releases went unproposed). Here it runs often, starts warm from its own
+# persisted clone and package cache, and retries straight away until a pass completes
+# (run-until-done.sh in renovate-config).
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: renovate-dungeon
+spec:
+  schedule: "PLACEHOLDER_SCHEDULE"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: renovate
+            policy.prplanit.com/cap.s3: "true"
+            policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
+        spec:
+          restartPolicy: Never
+          serviceAccountName: renovate
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: renovate
+              image: PLACEHOLDER_IMAGE
+              # The image entrypoint prepares the toolchain environment, then runs these.
+              args: ["sh", "/config/run-until-done.sh", "SoFMeRight/dungeon"]
+              # No readOnlyRootFilesystem: renovate's containerbase installs language toolchains at
+              # runtime (v2-install-tool.sh writes /opt/containerbase) — a read-only rootfs FATALs
+              # "Initialize tools all failed". Ceiling = non-root + seccomp + drop-ALL + no-privesc.
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              env:
+                - name: RENOVATE_PLATFORM
+                  value: "gitlab"
+                - name: RENOVATE_ENDPOINT
+                  value: "PLACEHOLDER_GITLAB_ENDPOINT"
+                - name: RENOVATE_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: renovate-gitlab
+                      key: token
+                - name: GITHUB_COM_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: renovate-gitlab
+                      key: github_token
+                - name: RENOVATE_HOST_RULES
+                  valueFrom:
+                    secretKeyRef:
+                      name: renovate-gitlab
+                      key: host_rules
+                - name: RENOVATE_AUTODISCOVER
+                  value: "false"
+                - name: RENOVATE_GIT_AUTHOR
+                  value: "Renovate Bot <renovate@precisionplanit.com>"
+                - name: LOG_LEVEL
+                  value: "info"
+                - name: RENOVATE_CONFIG_FILE
+                  value: "/config/renovate.json5"
+                # Persistent base directory: the package cache (registry lookups)
+                # survives between runs instead of every run starting cold.
+                - name: RENOVATE_BASE_DIR
+                  value: "/cache"
+                # Keep the clone between runs: a retry fetches only new commits.
+                - name: RENOVATE_PERSIST_REPO_DATA
+                  value: "true"
+                # S3 repository cache (Ceph RGW via s3.optcp.com) — stops the
+                # ephemeral cronjob cold-scanning all ~2400 deps every run.
+                - name: RENOVATE_REPOSITORY_CACHE
+                  value: "enabled"
+                - name: RENOVATE_REPOSITORY_CACHE_TYPE
+                  value: "s3://renovate-cache"
+                # In-cluster clients reach ceph-rgw via its ClusterIP service, NOT
+                # the external s3.optcp.com endpoint — that resolves to a LoadBalancer
+                # IP and hairpins under Cilium DSR, which failed the repo-cache reads
+                # (ECONNRESET/timeout). This is the same address every other in-cluster
+                # S3 consumer (loki, cnpg barman, the ceph-rgw-bucket-provisioning jobs) uses.
+                - name: RENOVATE_S3_ENDPOINT
+                  value: "http://ceph-rgw.gorons-bracelet.svc.cluster.local"
+                - name: RENOVATE_S3_PATH_STYLE
+                  value: "true"
+                - name: AWS_REGION
+                  value: "default"
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: renovate-rgw-credentials
+                      key: s3_access_key
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: renovate-rgw-credentials
+                      key: s3_secret_key
+              volumeMounts:
+                - name: config
+                  mountPath: /config
+                  readOnly: true
+                - name: cache
+                  mountPath: /cache
+              resources:
+                requests:
+                  cpu: PLACEHOLDER_CPU_REQUEST
+                  memory: PLACEHOLDER_MEMORY_REQUEST
+                limits:
+                  cpu: PLACEHOLDER_CPU_LIMIT
+                  memory: PLACEHOLDER_MEMORY_LIMIT
+          volumes:
+            - name: config
+              configMap:
+                name: renovate-config
+            - name: cache
+              persistentVolumeClaim:
+                claimName: renovate-dungeon-cache

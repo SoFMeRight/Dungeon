@@ -8,3 +8,8 @@ patches:
     target:
       kind: CronJob
       name: renovate
+  - path: cronjob-dungeon-patch.yaml
+    target:
+      kind: CronJob
+      name: renovate-dungeon
+  - path: storage-patch.yaml
