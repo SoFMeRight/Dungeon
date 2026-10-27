@@ -72,6 +72,48 @@ data:
               resolved_title: Deployment status reported again
               resolved: Flux resource status is being reported again
 
+  renovate.yaml: |
+    groups:
+      - name: Renovate Health
+        interval: 5m
+        rules:
+          # Hours since each Renovate CronJob last succeeded, falling back to its creation
+          # time when it never has.
+          - alert: RenovateDungeonStale
+            expr: |
+              (time() - max by (namespace, cronjob) (kube_cronjob_status_last_successful_time{namespace="hyrule-castle", cronjob="renovate-dungeon"}
+                or kube_cronjob_created{namespace="hyrule-castle", cronjob="renovate-dungeon"})) / 3600 > 3
+            for: 15m
+            labels:
+              severity: warning
+            annotations:
+              title: Renovate stale on dungeon
+              summary: Renovate has not completed a pass on dungeon in over 3 hours, so dependency and security updates are not being proposed
+              resolved_title: Renovate current on dungeon
+              resolved: Renovate completed a pass on dungeon again
+          - alert: RenovateStale
+            expr: |
+              (time() - max by (namespace, cronjob) (kube_cronjob_status_last_successful_time{namespace="hyrule-castle", cronjob="renovate"}
+                or kube_cronjob_created{namespace="hyrule-castle", cronjob="renovate"})) / 3600 > 13
+            for: 15m
+            labels:
+              severity: warning
+            annotations:
+              title: Renovate stale
+              summary: Renovate has not completed a run over the HomeLabHD and PrPlanIT repositories in over 13 hours
+              resolved_title: Renovate current
+              resolved: Renovate completed a run over the HomeLabHD and PrPlanIT repositories again
+          - alert: RenovateStatusMissing
+            expr: absent(kube_cronjob_info{namespace="hyrule-castle", cronjob="renovate-dungeon"})
+            for: 1h
+            labels:
+              severity: warning
+            annotations:
+              title: Renovate status not reported
+              summary: The renovate-dungeon CronJob is not being reported, so a stalled Renovate would go unnoticed
+              resolved_title: Renovate status reported again
+              resolved: The renovate-dungeon CronJob is being reported again
+
   security.yaml: |
     groups:
       - name: Security Guardrails
