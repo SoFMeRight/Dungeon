@@ -17,6 +17,14 @@ spec:
       containers:
         - name: frontend
           image: PLACEHOLDER_IMAGE
+          # The image's worker_processes auto follows host cores, and every worker preallocates
+          # its connection table. The entrypoint renders nginx.conf, then runs these args.
+          args:
+            - bash
+            - -c
+            - >-
+              sed -i -E 's/^([[:space:]]*)worker_processes[[:space:]]+auto;/\1worker_processes 2;/' /etc/nginx/nginx.conf
+              && exec nginx -g 'daemon off;'
           ports:
             - containerPort: 8080
               name: http
