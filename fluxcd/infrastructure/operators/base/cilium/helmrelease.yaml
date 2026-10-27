@@ -9,6 +9,11 @@ spec:
     crds: Create
   upgrade:
     crds: CreateReplace
+    # Do not gate the Helm upgrade on a full DaemonSet roll. Cilium rolls node by
+    # node; waiting for fleet readiness times out and triggers remediation rollback,
+    # which can revert a just-applied config mid-roll (and strand the agents). The
+    # agent reconciles config on its own; Helm needn't block on it.
+    disableWait: true
   chart:
     spec:
       chart: cilium
