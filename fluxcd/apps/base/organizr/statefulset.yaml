@@ -22,7 +22,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: organizr
-          image: ghcr.io/organizr/organizr@sha256:a3451b1ef949c7d02fe304ec5964cc621d29e2236c0bf755c24a96d2af36a0b8
+          image: ghcr.io/organizr/organizr@sha256:703de7b15e3ca0046c9bcfee03c72539f74acc5e26929f2911aa1af2be8ebb01
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
