@@ -61,7 +61,7 @@ spec:
               memory: 36Mi
             limits:
               cpu: 210m
-              memory: 512Mi
+              memory: 96Mi
   volumeClaimTemplates:
     - metadata:
         name: redis-data

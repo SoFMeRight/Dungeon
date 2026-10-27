@@ -73,8 +73,8 @@ spec:
               cpu: 2m
               memory: 172Mi
             limits:
-              cpu: 372m
-              memory: 512Mi
+              cpu: 296m
+              memory: 224Mi
   volumeClaimTemplates:
     - metadata:
         name: PLACEHOLDER_NAMESPACE-bookstack-db-data

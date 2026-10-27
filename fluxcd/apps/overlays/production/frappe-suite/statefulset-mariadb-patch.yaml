@@ -46,7 +46,7 @@ spec:
               memory: "1Gi"
             limits:
               cpu: 481m
-              memory: "4Gi"
+              memory: "1024Mi"
       volumes:
         - name: mysql-run
           emptyDir: {}

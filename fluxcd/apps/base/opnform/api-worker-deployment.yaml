@@ -94,7 +94,7 @@ spec:
               memory: 256Mi
             limits:
               cpu: 100m
-              memory: 1Gi
+              memory: 256Mi
       volumes:
         - name: storage
           persistentVolumeClaim:

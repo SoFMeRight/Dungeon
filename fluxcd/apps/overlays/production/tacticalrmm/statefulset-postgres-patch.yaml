@@ -35,8 +35,8 @@ spec:
               cpu: "30m"
               memory: "512Mi"
             limits:
-              cpu: 433m
-              memory: "2Gi"
+              cpu: 362m
+              memory: "512Mi"
       volumes:
         - name: postgres-run
           emptyDir: {}

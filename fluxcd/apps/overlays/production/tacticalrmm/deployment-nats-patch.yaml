@@ -54,7 +54,7 @@ spec:
               memory: "128Mi"
             limits:
               cpu: 357m
-              memory: "512Mi"
+              memory: "128Mi"
       volumes:
         - $patch: replace
         - name: tactical-data

@@ -36,7 +36,7 @@ spec:
               memory: 512Mi
             limits:
               cpu: 279m
-              memory: 2Gi
+              memory: 768Mi
           volumeMounts:
             - name: hyrule-castle-bagisto-demo-app
               mountPath: /var/www/html

@@ -35,8 +35,8 @@ spec:
               cpu: 7m
               memory: 39Mi
             limits:
-              cpu: 345m
-              memory: "1Gi"
+              cpu: 100m
+              memory: "112Mi"
   volumeClaimTemplates:
     - metadata:
         name: hyrule-castle-invoiceninja-redis-data

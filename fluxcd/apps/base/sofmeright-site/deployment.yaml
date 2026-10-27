@@ -44,7 +44,7 @@ spec:
               memory: "64Mi"
               cpu: "10m"
             limits:
-              memory: "128Mi"
+              memory: "96Mi"
               cpu: 34m
       volumes:
         - name: tmp

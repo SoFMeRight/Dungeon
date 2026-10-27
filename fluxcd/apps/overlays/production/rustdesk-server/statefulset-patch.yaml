@@ -22,8 +22,8 @@ spec:
               cpu: 2m
               memory: 12Mi
             limits:
-              cpu: 163m
-              memory: 256Mi
+              cpu: 100m
+              memory: 80Mi
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -37,7 +37,7 @@ spec:
               memory: 5Mi
             limits:
               cpu: 109m
-              memory: 256Mi
+              memory: 80Mi
           volumeMounts:
             - name: tmp
               mountPath: /tmp

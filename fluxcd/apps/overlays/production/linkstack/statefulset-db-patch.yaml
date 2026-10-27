@@ -34,8 +34,8 @@ spec:
               cpu: 2m
               memory: 144Mi
             limits:
-              cpu: 429m
-              memory: 512Mi
+              cpu: 223m
+              memory: 192Mi
           volumeMounts:
             - name: kokiri-forest-linkstack-mariadb
               mountPath: /var/lib/mysql

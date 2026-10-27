@@ -171,8 +171,8 @@ spec:
               cpu: 6m
               memory: 512Mi
             limits:
-              cpu: 1629m
-              memory: 2Gi
+              cpu: 979m
+              memory: 912Mi
           volumeMounts:
             - name: apache-config
               mountPath: /etc/apache2/httpd.conf

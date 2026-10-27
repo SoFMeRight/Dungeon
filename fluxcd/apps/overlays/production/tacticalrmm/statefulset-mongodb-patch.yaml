@@ -37,8 +37,8 @@ spec:
               cpu: "75m"
               memory: "512Mi"
             limits:
-              cpu: 646m
-              memory: "2Gi"
+              cpu: 487m
+              memory: "512Mi"
       volumes:
         - name: mongo-init
           persistentVolumeClaim:

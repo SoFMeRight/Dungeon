@@ -14,8 +14,8 @@ spec:
               cpu: 2m
               memory: "64Mi"
             limits:
-              cpu: "500m"
-              memory: "512Mi"
+              cpu: "223m"
+              memory: "256Mi"
       volumes:
         - name: sites-data
           persistentVolumeClaim:

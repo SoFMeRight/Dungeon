@@ -214,7 +214,7 @@ spec:
               memory: 512Mi
             limits:
               cpu: 530m
-              memory: 2Gi
+              memory: 512Mi
       volumes:
         - name: storage
           persistentVolumeClaim:

@@ -43,7 +43,7 @@ spec:
               memory: 83Mi
             limits:
               cpu: 283m
-              memory: "1Gi"
+              memory: "144Mi"
       volumes:
         - name: redis-init
           persistentVolumeClaim:

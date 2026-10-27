@@ -86,7 +86,7 @@ spec:
               memory: 256Mi
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 352Mi
           volumeMounts:
             - name: gossip-stone-speedtest-tracker-config
               mountPath: /config

@@ -46,8 +46,8 @@ spec:
               cpu: 2m
               memory: 27Mi
             limits:
-              cpu: "500m"
-              memory: "512Mi"
+              cpu: "100m"
+              memory: "96Mi"
       volumes:
         - $patch: replace
         - name: tactical-data

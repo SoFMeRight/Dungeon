@@ -36,7 +36,7 @@ spec:
               memory: 37Mi
             limits:
               cpu: 100m
-              memory: "1Gi"
+              memory: "96Mi"
   volumeClaimTemplates:
     - metadata:
         name: hyrule-castle-frappe-suite-redis-queue-data

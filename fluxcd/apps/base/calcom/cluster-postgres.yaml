@@ -44,7 +44,7 @@ spec:
       memory: "512Mi"
       cpu: "95m"
     limits:
-      memory: "1Gi"
+      memory: "512Mi"
       cpu: "1000m"
   # Archiving is done by the barman-cloud plugin, configured in the ObjectStore of
   # the same name. isWALArchiver makes this plugin the one that ships WAL; exactly
