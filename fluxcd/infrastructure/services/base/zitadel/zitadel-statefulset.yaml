@@ -129,7 +129,7 @@ spec:
               cpu: 23m
             limits:
               memory: "256Mi"
-              cpu: "200m"
+              cpu: "2010m"
           livenessProbe:
             httpGet:
               path: /debug/healthz
