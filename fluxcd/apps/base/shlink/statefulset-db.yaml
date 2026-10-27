@@ -62,8 +62,8 @@ spec:
               cpu: 2m
               memory: 143Mi
             limits:
-              cpu: 404m
-              memory: 1Gi
+              cpu: 276m
+              memory: 192Mi
   volumeClaimTemplates:
     - metadata:
         name: temple-of-time-shlink-mysql

@@ -65,7 +65,7 @@ spec:
               memory: "1Gi"
             limits:
               cpu: 1514m
-              memory: "4Gi"
+              memory: "1472Mi"
   volumeClaimTemplates:
     - metadata:
         name: temple-of-time-open-webui-data

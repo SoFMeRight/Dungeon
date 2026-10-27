@@ -19,7 +19,7 @@ spec:
       memory: "384Mi"
       cpu: "100m"
     limits:
-      memory: "1Gi"
+      memory: "576Mi"
       cpu: "500m"
 
   inheritedMetadata:

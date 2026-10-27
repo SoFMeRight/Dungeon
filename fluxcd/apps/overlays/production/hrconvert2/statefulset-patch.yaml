@@ -22,7 +22,7 @@ spec:
               # limit left at 500m (it was never the cause). TODO: right-size the memory limit
               # down toward observed steady-state once it's been healthy for a bit.
               cpu: 248m
-              memory: "1Gi"
+              memory: "256Mi"
           volumeMounts:
             - name: tingle-tuner-hrconvert2-config
               mountPath: /var/www/html/HRProprietary/HRConvert2/config.php

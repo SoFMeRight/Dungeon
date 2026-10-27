@@ -110,7 +110,7 @@ spec:
               memory: 15Mi
             limits:
               cpu: 200m
-              memory: 128Mi
+              memory: 80Mi
           livenessProbe:
             tcpSocket:
               port: sentinel

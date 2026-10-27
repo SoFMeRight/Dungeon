@@ -16,7 +16,7 @@ spec:
               memory: 93Mi
             limits:
               cpu: 177m
-              memory: 1Gi
+              memory: 160Mi
           volumeMounts:
             - name: tmp
               mountPath: /tmp

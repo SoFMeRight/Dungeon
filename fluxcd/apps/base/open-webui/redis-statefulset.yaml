@@ -90,7 +90,7 @@ spec:
               memory: 21Mi
             limits:
               cpu: 268m
-              memory: 256Mi
+              memory: 96Mi
           livenessProbe:
             tcpSocket:
               port: redis

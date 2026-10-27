@@ -31,8 +31,8 @@ spec:
               memory: "512Mi"
               cpu: "35m"
             limits:
-              memory: "1Gi"
-              cpu: 158m
+              memory: "512Mi"
+              cpu: 100m
           # readOnlyRootFilesystem: Redis writes its RDB snapshot to /data (server dir);
           # without a writable mount here bgsave fails, Redis goes read-only
           # (stop-writes-on-bgsave-error) and all writes — incl. login session caching — 500.

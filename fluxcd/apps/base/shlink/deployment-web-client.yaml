@@ -41,8 +41,8 @@ spec:
               cpu: 2m
               memory: 19Mi
             limits:
-              cpu: 200m
-              memory: 256Mi
+              cpu: 100m
+              memory: 96Mi
       volumes:
         - name: web-config
           persistentVolumeClaim:

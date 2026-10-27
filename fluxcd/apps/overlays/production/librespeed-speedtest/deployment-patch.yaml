@@ -19,8 +19,8 @@ spec:
               cpu: 2m
               memory: 65Mi
             limits:
-              cpu: 500m
-              memory: 512Mi
+              cpu: 100m
+              memory: 128Mi
           envFrom:
             - configMapRef:
                 name: librespeed-speedtest-config

@@ -255,8 +255,8 @@ spec:
               cpu: 2m
               memory: 183Mi
             limits:
-              cpu: 351m
-              memory: 512Mi
+              cpu: 248m
+              memory: 224Mi
   volumeClaimTemplates:
     - metadata:
         name: kimai-data

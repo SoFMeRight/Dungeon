@@ -18,7 +18,7 @@ spec:
       memory: "768Mi"
       cpu: "100m"
     limits:
-      memory: "1536Mi"
+      memory: "768Mi"
       cpu: "1000m"
 
   # Labels on the Cluster object stay on the Cluster; only inheritedMetadata reaches the

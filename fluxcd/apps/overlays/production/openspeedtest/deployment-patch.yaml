@@ -31,7 +31,7 @@ spec:
               memory: 128Mi
             limits:
               cpu: 100m
-              memory: 512Mi
+              memory: 128Mi
           envFrom:
             - configMapRef:
                 name: openspeedtest-config

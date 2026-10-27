@@ -22,8 +22,8 @@ spec:
               memory: 11Mi
               cpu: 2m   # right-sized 2026-07: p95 ~0-3m (was 250m)
             limits:
-              memory: "512Mi"
-              cpu: "500m"
+              memory: "80Mi"
+              cpu: "425m"
       volumes:
         - name: nginx-config
           configMap:
