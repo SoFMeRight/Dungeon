@@ -45,10 +45,12 @@ spec:
               value: /root/.cache/ms-playwright
           # Only the memory LIMIT was the problem: archival's headless Chromium render
           # spikes past the base 1Gi and OOMKills (exit 137). Override just that field;
-          # requests + CPU limit are inherited from base unchanged.
+          # requests + CPU limit are inherited from base unchanged. 1.5Gi (2026-10-27): the
+          # 30d working-set peak with archival running is 561Mi, leaving ~950Mi for render
+          # spikes, about the size of the one that broke 1Gi.
           resources:
             limits:
-              memory: "2Gi"
+              memory: "1536Mi"
           volumeMounts:
             - name: data
               mountPath: /data/data
