@@ -19,8 +19,6 @@ spec:
   values:
     redisOperator:
       replicas: 2
-    # Requests from 7d usage (2026-10-27): CPU p99 49m, memory peak 39Mi. The limits are the
-    # chart's defaults.
     resources:
       requests:
         cpu: 60m

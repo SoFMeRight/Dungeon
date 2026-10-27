@@ -1,8 +1,6 @@
-# alloy on the control-plane nodes only. A DaemonSet has one pod template, and the workers need
-# alloy's 3-core CPU limit (30d 15s peak 2.8 cores), while on the control plane it peaks at 413m.
-# This instance gives the control plane its own limit, so the map nodes' CPU limits fit their capacity.
-# Same chart, config, auth and mounts as the main alloy. Clustering is off, and the cluster-wide
-# scrapes are dropped through ALLOY_CLUSTERWIDE_TARGETS, so the main alloy keeps owning them.
+# alloy on the control-plane nodes, with its own CPU limit; same chart, config, auth and mounts as
+# the main alloy. Clustering is off, and ALLOY_CLUSTERWIDE_TARGETS drops the cluster-wide scrapes,
+# which the main alloy owns.
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:

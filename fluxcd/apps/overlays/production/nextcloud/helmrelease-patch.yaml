@@ -333,7 +333,7 @@ spec:
           cpu: 5m
           memory: 641Mi
         limits:
-          # Startup is CPU-bound: at 96m it sat pinned at the limit and failed its startup probe.
+          # Startup is CPU-bound; a lower limit fails the startup probe.
           cpu: 150m
           memory: 641Mi
       podLabels:

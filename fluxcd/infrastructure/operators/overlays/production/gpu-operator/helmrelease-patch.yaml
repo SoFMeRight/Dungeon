@@ -5,8 +5,7 @@ metadata:
 spec:
   values:
     # Prometheus scraping for operator
-    # Controllers stay off the control plane. The chart defaults tolerate the control-plane taint
-    # and even prefer those nodes; the control plane is for control-plane components only.
+    # Kept off the control plane; the chart defaults tolerate and prefer it.
     operator:
       podAnnotations:
         prometheus.io/scrape: "true"
@@ -20,8 +19,6 @@ spec:
                   - key: node-role.kubernetes.io/control-plane
                     operator: DoesNotExist
     node-feature-discovery:
-      # Memory limits from 30d usage (2026-10-27), peak x 1.3 or peak + 64Mi; requests are the
-      # chart's defaults.
       master:
         resources:
           requests:
@@ -37,7 +34,6 @@ spec:
                 - matchExpressions:
                     - key: node-role.kubernetes.io/control-plane
                       operator: DoesNotExist
-      # The worker only feeds GPU scheduling, and the control-plane nodes have no GPUs.
       worker:
         resources:
           requests:
@@ -76,9 +72,7 @@ spec:
         - key: node.cilium.io/agent-not-ready
           operator: Exists
           effect: NoSchedule
-      # RollingUpdate, one node at a time. OnDelete was set to keep driver pods from restarting,
-      # but the driver is host-installed (driver.enabled: false). Under OnDelete every values
-      # change left the DaemonSets stale, the ClusterPolicy stayed notReady and Helm timed out.
+      # Not OnDelete: that leaves the DaemonSets stale after a values change and Helm times out.
       updateStrategy: RollingUpdate
       rollingUpdate:
         maxUnavailable: "1"
@@ -202,8 +196,7 @@ spec:
     # Validator - disabled in production (CDI mode doesn't require validation)
     validator:
       enabled: false
-      # Also applies to the *-validation init containers: they run briefly and a 15s scrape rarely
-      # catches them (driver-validation seen at ~8.6Mi), so memory gets headroom over the peak.
+      # Also applies to the *-validation init containers.
       resources:
         requests:
           cpu: 2m

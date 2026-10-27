@@ -1,8 +1,6 @@
-# node-exporter on the control-plane nodes, built from the main overlay so it carries the same
-# image and settings. Only the DaemonSet is emitted: it runs as the main ServiceAccount, and the
-# SA is dropped here so the root build holds one copy and nothing cross-wires.
-# The workers need its 250m CPU limit (they throttle at it); on the control plane it peaks at 7m
-# (30d, 15s), so this instance is bounded at 10m.
+# node-exporter on the control-plane nodes, with its own CPU limit, built from the main overlay.
+# Only the DaemonSet is emitted: it runs as the main ServiceAccount, and a second SA copy in the
+# root build would cross-wire the bindings.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
@@ -22,9 +20,7 @@ patches:
       - op: replace
         path: /metadata/name
         value: node-exporter-control-plane
-      # Its own app label and selector, so the main DaemonSet's selector (app: node-exporter) does
-      # not match these pods and vice versa. A selector is immutable, so Flux recreates the
-      # DaemonSet when it changes.
+      # Own app label and selector, distinct from the main DaemonSet's (app: node-exporter).
       - op: add
         path: /metadata/annotations
         value:

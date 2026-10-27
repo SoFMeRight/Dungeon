@@ -1,6 +1,4 @@
-# The ztunnel chart, shared by the ztunnel and ztunnel-control-plane HelmReleases through chartRef.
-# One version for both: ztunnel-control-plane runs as the main release's ServiceAccount, so the two
-# must never run different chart versions. Bump the version here only.
+# Shared by the ztunnel and ztunnel-control-plane HelmReleases; bump the version here only.
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmChart
 metadata:

@@ -41,7 +41,6 @@ spec:
       max_wal_size: "4GB"
       max_slot_wal_keep_size: "1600MB"
 
-  # CPU request from 7d usage (2026-10-27): postgres p99 86m.
   resources:
     requests:
       memory: "1Gi"

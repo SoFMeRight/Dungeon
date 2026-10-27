@@ -17,7 +17,7 @@ spec:
       app: istiod
   ingress:
     # ztunnel xDS — all ztunnel pods connect for workload config
-    # ztunnel runs as two DaemonSets: ztunnel (workers) and ztunnel-control-plane.
+    # Matches both ztunnel DaemonSets: ztunnel and ztunnel-cp.
     - fromEndpoints:
         - matchExpressions:
             - key: app

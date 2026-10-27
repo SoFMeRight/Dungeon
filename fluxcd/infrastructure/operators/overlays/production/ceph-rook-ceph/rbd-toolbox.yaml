@@ -1,6 +1,4 @@
 # Ceph toolbox for the disaster scripts (bash/disaster/ceph, ansible/k8s/rbd-rook-migrat*).
-# Was hand-applied with kubectl; codified unchanged apart from resources. Values from 30d usage
-# (2026-10-25): request = p50 x 1.2, CPU limit = 1-minute peak x 1.25, memory = peak x 1.15.
 apiVersion: apps/v1
 kind: Deployment
 metadata:

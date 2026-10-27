@@ -19,9 +19,7 @@ spec:
           type: RuntimeDefault
       imagePullSecrets:
         - name: cr-pcfae-admin-pull-secret
-      # ndots 2: meshc.prplanit.com resolves as an absolute name first. With the default 5 the
-      # resolver tries meshc.prplanit.com.prplanit.internal first, and pfSense intermittently
-      # answers that with SERVFAIL, which glibc reports as EAI_AGAIN instead of moving on.
+      # ndots 2: meshc.prplanit.com resolves as an absolute name before any search domain.
       dnsConfig:
         options:
           - name: ndots
@@ -73,10 +71,7 @@ spec:
               rm -rf /tmp/package /tmp/meshcentral.tgz
 
               # Patch entrypoint:
-              # 1. Replace the upstream certUrl (tactical-nginx's internal TLS port; here nginx
-              #    serves plain HTTP behind the gateway) with the public hostname, so MeshCentral
-              #    loads the certificate the gateway presents and advertises its hash to agents.
-              #    No private key is copied in, and gateway renewals are picked up at startup.
+              # 1. Point certUrl at the public hostname, so agents get the gateway certificate's hash
               # 2. Inject debug flags into config.json after generation, before node starts
               cat > /tmp/inject-debug.js << 'JSEOF'
               const f = "/home/node/app/meshcentral-data/config.json";

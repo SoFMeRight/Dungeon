@@ -17,8 +17,7 @@ spec:
         - name: frigate
           resources:
             requests:
-              # 575m (p50 x 1.2) does not fit: frigate is pinned to dungeon-chest-001 (GPU compute 7+),
-              # which has ~324m unreserved CPU. Bursts to the limit as before.
+              # Must fit dungeon-chest-001's free CPU: frigate is pinned there.
               cpu: 300m
               memory: 10659Mi
             limits:

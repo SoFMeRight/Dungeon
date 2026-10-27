@@ -23,8 +23,7 @@ spec:
       retries: 5
   values:
     fullnameOverride: "csi-smb"
-    # Off the control plane: the controller is an ordinary controller, and no pod there mounts
-    # SMB volumes. The workers carry no taints, so nothing needs tolerating.
+    # Kept off the control plane.
     controller:
       replicas: 1
       tolerations: []
