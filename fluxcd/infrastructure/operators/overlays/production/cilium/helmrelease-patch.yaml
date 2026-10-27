@@ -35,13 +35,14 @@ spec:
       acceleration: native
       algorithm: maglev
       serviceTopology: true
-      # DSR dispatch mode. Stays 'opt'. 'geneve' is required for IPv6 LB DSR, but
-      # Cilium fatally rejects geneve DSR dispatch unless tunnelProtocol is ALSO
-      # 'geneve' ("Node Port 'dsr' mode with 'geneve' dispatch requires geneve
-      # tunnel protocol") — we run routingMode native / tunnel vxlan, so flipping
-      # dsrDispatch alone crashloops every agent on boot. Enabling v6 LB DSR is a
-      # PAIRED change (dsrDispatch: geneve + tunnelProtocol: geneve) for a window.
-      dsrDispatch: opt
+      # DSR dispatch 'geneve' + tunnelProtocol 'geneve' (below) are a REQUIRED PAIR:
+      # Cilium fatally rejects geneve DSR dispatch unless tunnelProtocol is also
+      # geneve ("Node Port 'dsr' mode with 'geneve' dispatch requires geneve tunnel
+      # protocol"). Geneve dispatch is needed for IPv6 LoadBalancer DSR — 'opt'
+      # relies on an IPv6 Destination Option that gets dropped in-path, so v6 VIPs
+      # never complete. routingMode stays native (pod traffic unchanged); geneve is
+      # used only to encapsulate the DSR dispatch. MTU covered by PLPMTUD blackhole.
+      dsrDispatch: geneve
 
     # NodePort configuration for eBPF
     nodePort:
@@ -64,7 +65,9 @@ spec:
     routingMode: native
 
     # Tunnel protocol disabled - using opt-based DSR dispatch (no encapsulation)
-    tunnelProtocol: ""
+    # geneve (paired with loadBalancer.dsrDispatch: geneve above) — NOT a switch to
+    # overlay routing; routingMode stays native. Required for IPv6 LB DSR dispatch.
+    tunnelProtocol: geneve
 
     # L2 announcements disabled - using BGP instead
     l2announcements:
