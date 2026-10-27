@@ -55,6 +55,11 @@ spec:
       # Ambient mode requires privileged CNI
       privileged: true
 
+      resources:
+        limits:
+          cpu: 1000m
+          memory: 224Mi
+
       # Ambient mode configuration
       ambient:
         enabled: true

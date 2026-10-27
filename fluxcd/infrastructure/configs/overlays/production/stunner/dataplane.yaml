@@ -15,6 +15,13 @@ spec:
   args: ["-w", "--udp-thread-num=16", "--log-format=text"]
   dataplaneResource: Deployment
   replicas: 1
+  resources:
+    requests:
+      cpu: 250m
+      memory: 20M
+    limits:
+      cpu: 500m
+      memory: 20M
   # Long grace: relayed sessions drain onto the outgoing pod rather than being cut, which
   # is what makes a dataplane rollout survivable for live calls and VPN peers.
   terminationGracePeriodSeconds: 3600
