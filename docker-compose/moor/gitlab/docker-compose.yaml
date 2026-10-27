@@ -1,6 +1,6 @@
 services:
   gitlab:
-    # Pinned, never latest: Renovate can only propose (security) releases for a versioned tag.
+    # A versioned tag, never latest: Renovate tracks only versions.
     image: 'gitlab/gitlab-ce:19.5.1-ce.0'
     container_name: gitlab
     restart: always
