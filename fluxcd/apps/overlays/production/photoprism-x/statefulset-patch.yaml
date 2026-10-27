@@ -23,7 +23,7 @@ spec:
               cpu: 2m
               memory: 2557Mi
             limits:
-              cpu: 1405m
+              cpu: 461m
               memory: 2557Mi
           env:
             - name: PHOTOPRISM_DISABLE_TLS

@@ -41,7 +41,7 @@ spec:
             cpu: 100m
             memory: 128Mi
           limits:
-            cpu: 2000m
+            cpu: 1145m
             memory: 1280Mi
 
     # Pilot (istiod) configuration

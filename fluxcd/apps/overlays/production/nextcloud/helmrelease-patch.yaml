@@ -212,7 +212,7 @@ spec:
               cpu: 2m
               memory: 17Mi
             limits:
-              cpu: 204m
+              cpu: 162m
               memory: 17Mi
           securityContext:
             runAsNonRoot: true
@@ -374,7 +374,7 @@ spec:
           cpu: 2m
           memory: 13Mi
         limits:
-          cpu: 188m
+          cpu: 112m
           memory: 13Mi
       # h2non/imaginary (Go) already runs as uid 1000 — full non-root.
       securityContext:

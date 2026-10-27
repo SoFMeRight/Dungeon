@@ -10,7 +10,7 @@ spec:
         cpu: 21m
         memory: 479Mi
       limits:
-        cpu: 492m
+        cpu: 349m
         memory: 479Mi
     podAnnotations:
       prometheus.io/scrape: "true"

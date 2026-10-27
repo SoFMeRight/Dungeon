@@ -102,7 +102,7 @@ spec:
               nvidia.com/gpu: 1
             limits:
               memory: 8Gi
-              cpu: 4000m
+              cpu: 985m
               nvidia.com/gpu: 1
       volumes:
         - name: media-movies

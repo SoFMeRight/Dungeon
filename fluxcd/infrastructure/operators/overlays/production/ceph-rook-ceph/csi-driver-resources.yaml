@@ -45,7 +45,7 @@ spec:
           cpu: 4m
           memory: 86Mi
         limits:
-          cpu: 222m
+          cpu: 126m
           memory: 86Mi
       provisioner:
         requests:
@@ -59,7 +59,7 @@ spec:
           cpu: 10m
           memory: 80Mi
         limits:
-          cpu: 466m
+          cpu: 100m
           memory: 80Mi
       snapshotter:
         requests:
@@ -96,7 +96,7 @@ spec:
           cpu: 2m
           memory: 27Mi
         limits:
-          cpu: 387m
+          cpu: 233m
           memory: 27Mi
 ---
 apiVersion: csi.ceph.io/v1
@@ -129,7 +129,7 @@ spec:
           cpu: 4m
           memory: 77Mi
         limits:
-          cpu: 628m
+          cpu: 235m
           memory: 77Mi
       provisioner:
         requests:

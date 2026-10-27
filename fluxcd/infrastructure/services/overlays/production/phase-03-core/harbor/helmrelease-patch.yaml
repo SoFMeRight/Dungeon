@@ -31,7 +31,7 @@ spec:
           cpu: 2m
           memory: 28Mi
         limits:
-          cpu: 245m
+          cpu: 182m
           memory: 28Mi
       image:
         repository: docker.io/goharbor/harbor-portal
@@ -96,7 +96,7 @@ spec:
             cpu: 2m
             memory: 41Mi
           limits:
-            cpu: 414m
+            cpu: 196m
             memory: 41Mi
         image:
           repository: docker.io/goharbor/harbor-registryctl
@@ -113,7 +113,7 @@ spec:
           cpu: 23m
           memory: 134Mi
         limits:
-          cpu: 364m
+          cpu: 252m
           memory: 134Mi
       podLabels:
         policy.prplanit.com/ingress: "true"
