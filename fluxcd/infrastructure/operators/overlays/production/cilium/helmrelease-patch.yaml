@@ -35,13 +35,13 @@ spec:
       acceleration: native
       algorithm: maglev
       serviceTopology: true
-      # DSR dispatch mode. 'geneve' (not 'opt') so IPv6 LoadBalancer VIPs work:
-      # 'opt' encodes the service in an IPv6 Destination Option that gets dropped
-      # in-path (ext-header / GRO), so v6 DSR never completes its handshake while
-      # v4 is fine. Geneve encapsulates the dispatch for both families. The MTU
-      # overhead that previously dropped large TCP segments is absorbed by
-      # packetization-layer-pmtud-mode: blackhole (RFC 8899 PLPMTUD).
-      dsrDispatch: geneve
+      # DSR dispatch mode. Stays 'opt'. 'geneve' is required for IPv6 LB DSR, but
+      # Cilium fatally rejects geneve DSR dispatch unless tunnelProtocol is ALSO
+      # 'geneve' ("Node Port 'dsr' mode with 'geneve' dispatch requires geneve
+      # tunnel protocol") — we run routingMode native / tunnel vxlan, so flipping
+      # dsrDispatch alone crashloops every agent on boot. Enabling v6 LB DSR is a
+      # PAIRED change (dsrDispatch: geneve + tunnelProtocol: geneve) for a window.
+      dsrDispatch: opt
 
     # NodePort configuration for eBPF
     nodePort:
@@ -91,40 +91,8 @@ spec:
     hostRouting: true
 
     # Hubble UI service configuration
-    envoy:
-      resources:
-        requests:
-          cpu: 23m
-          memory: 75Mi
-        limits:
-          cpu: 466m
-          memory: 75Mi
     hubble:
-      relay:
-        resources:
-          requests:
-            cpu: 3m
-            memory: 76Mi
-          limits:
-            cpu: 76m
-            memory: 76Mi
       ui:
-        backend:
-          resources:
-            requests:
-              cpu: 2m
-              memory: 71Mi
-            limits:
-              cpu: 105m
-              memory: 71Mi
-        frontend:
-          resources:
-            requests:
-              cpu: 2m
-              memory: 23Mi
-            limits:
-              cpu: 30m
-              memory: 23Mi
         podLabels:
           policy.prplanit.com/ingress: "true"
         service:
