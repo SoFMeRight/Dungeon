@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: snapshot-controller
-          image: registry.k8s.io/sig-storage/snapshot-controller:v8.6.0
+          image: registry.k8s.io/sig-storage/snapshot-controller:v8.7.0
           resources:
             requests:
               cpu: 11m
