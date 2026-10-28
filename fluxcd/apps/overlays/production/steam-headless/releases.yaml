@@ -236,7 +236,7 @@ releases:
     tag: "{version}"
     asset_match: '^Lighthouse-.*-Linux\.zip$'
     # renovate: datasource=github-releases depName=HarbourMasters/Lighthouse
-    version: "1.1.0"
+    version: "1.2.1"
     layout: zip
     executables: ["lighthouse.appimage"]
     dest: /home/steamheadless/Applications/lighthouse
