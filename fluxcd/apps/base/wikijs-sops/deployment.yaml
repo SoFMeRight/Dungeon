@@ -30,7 +30,7 @@ spec:
       initContainers:
         # ssh refuses a group-readable key, which is what a Secret mount with fsGroup gives.
         - name: install-git-key
-          image: ghcr.io/requarks/wiki:2.5.315
+          image: ghcr.io/requarks/wiki:2.5.317
           command: ["sh", "-c", "install -m 0600 /git-key/id_ed25519 /ssh/id_ed25519"]
           securityContext:
             readOnlyRootFilesystem: true
@@ -56,7 +56,7 @@ spec:
                 - ALL
       containers:
         - name: wikijs
-          image: ghcr.io/requarks/wiki:2.5.315
+          image: ghcr.io/requarks/wiki:2.5.317
           env:
             - name: DB_TYPE
               value: postgres
