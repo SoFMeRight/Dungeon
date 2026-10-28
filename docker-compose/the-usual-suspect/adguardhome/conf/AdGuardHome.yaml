@@ -2,8 +2,15 @@ http:
   pprof:
     port: 6060
     enabled: false
+  doh:
+    routes:
+      - GET /dns-query
+      - POST /dns-query
+      - GET /dns-query/{ClientID}
+      - POST /dns-query/{ClientID}
+    insecure_enabled: false
   address: 0.0.0.0:80
-  session_ttl: 720h
+  session_ttl: 30d
 users:
   - name: kai
     password: $2a$10$uFwxmbIOsBr0tv9I4k/A..JFYYEnfNIZzEOUDQ9F5YOZg0m/oUyiW
@@ -15,25 +22,33 @@ theme: auto
 dns:
   bind_hosts:
     - 0.0.0.0
+    - '::'
   port: 53
   anonymize_client_ip: false
   ratelimit: 20
   ratelimit_subnet_len_ipv4: 24
   ratelimit_subnet_len_ipv6: 56
-  ratelimit_whitelist: []
+  ratelimit_whitelist:
+    - 172.22.144.150
+    - 172.22.144.151
+    - 172.22.144.152
+    - 172.22.144.153
+    - 172.22.144.154
+    - 172.22.144.170
+    - 172.22.144.171
+    - 172.22.144.172
+    - 172.22.144.173
+    - 172.22.144.174
   refuse_any: true
   upstream_dns:
-    - '[/prplanit.internal/]172.22.22.22'
-    - 172.22.22.22
-    - https://cloudflare-dns.com/dns-query
-    - https://dns.google/dns-query
+    - '[/prplanit.internal/]10.0.0.22'
+    - 10.0.0.22
   upstream_dns_file: ""
   bootstrap_dns:
     - 9.9.9.10
     - 149.112.112.10
-    - 2620:fe::10
-    - 2620:fe::fe:10
-  fallback_dns: []
+  fallback_dns:
+    - 10.0.0.22
   upstream_mode: load_balance
   fastest_timeout: 1s
   allowed_clients: []
@@ -45,12 +60,15 @@ dns:
   trusted_proxies:
     - 127.0.0.0/8
     - ::1/128
+  cache_enabled: true
   cache_size: 4194304
   cache_ttl_min: 0
   cache_ttl_max: 0
   cache_optimistic: false
+  cache_optimistic_answer_ttl: 30s
+  cache_optimistic_max_age: 12h
   bogus_nxdomain: []
-  aaaa_disabled: false
+  aaaa_disabled: true
   enable_dnssec: false
   edns_client_subnet:
     custom_ip: ""
@@ -61,17 +79,19 @@ dns:
   ipset: []
   ipset_file: ""
   bootstrap_prefer_ipv6: false
-  upstream_timeout: 10s
+  upstream_timeout: 3s
   private_networks: []
   use_private_ptr_resolvers: true
   local_ptr_upstreams:
-    - 172.22.22.22
+    - 10.0.0.22
   use_dns64: false
   dns64_prefixes: []
   serve_http3: false
   use_http3_upstreams: false
   serve_plain_dns: true
   hostsfile_enabled: true
+  pending_requests:
+    enabled: true
 tls:
   enabled: false
   server_name: ""
@@ -81,7 +101,6 @@ tls:
   port_dns_over_quic: 853
   port_dnscrypt: 0
   dnscrypt_config_file: ""
-  allow_unencrypted_doh: false
   certificate_chain: ""
   private_key: ""
   certificate_path: ""
@@ -90,15 +109,17 @@ tls:
 querylog:
   dir_path: ""
   ignored: []
-  interval: 2160h
+  interval: 30d
   size_memory: 1000
   enabled: true
+  ignored_enabled: false
   file_enabled: true
 statistics:
   dir_path: ""
   ignored: []
-  interval: 24h
+  interval: 1d
   enabled: true
+  ignored_enabled: false
 filters:
   - enabled: true
     url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt
@@ -108,6 +129,10 @@ filters:
     url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_2.txt
     name: AdAway Default Blocklist
     id: 2
+  - enabled: true
+    url: https://raw.githubusercontent.com/Ruddernation-Designs/Adobe-URL-Block-List/refs/heads/master/hosts
+    name: Adobe Blocklist
+    id: 1763345095
 whitelist_filters: []
 user_rules:
   - '||_VLMCS._tcp.ad.prplanit.com^$dnsrewrite=NOERROR;SRV;0 0 1688 pirates-wdda'
@@ -115,6 +140,9 @@ user_rules:
   - '||_ceph-mon._tcp.prplanit.internal^$dnsrewrite=NOERROR;SRV; 10 60 6789 Avocado'
   - '||_ceph-mon._tcp.prplanit.internal^$dnsrewrite=NOERROR;SRV; 10 60 6789 Bamboo'
   - '||_ceph-mon._tcp.prplanit.internal^$dnsrewrite=NOERROR;SRV; 10 60 6789 Cosmos'
+  - '||v10.events.data.microsoft.com^$important'
+  - '||settings-win.data.microsoft.com^$important'
+  - ""
 dhcp:
   enabled: false
   interface_name: ""
@@ -153,50 +181,234 @@ filtering:
   parental_block_host: family-block.dns.adguard.com
   safebrowsing_block_host: standard-block.dns.adguard.com
   rewrites:
-    - domain: avocado.prplanit.internal
-      answer: 172.22.22.3
-    - domain: bamboo.prplanit.internal
-      answer: 172.22.22.4
-    - domain: cosmos.prplanit.internal
-      answer: 172.22.22.5
-    - domain: dragonfruit.prplanit.internal
-      answer: 172.22.22.6
-    - domain: eggplant.prplanit.internal
-      answer: 172.22.22.7
-    - domain: priscilla.prplanit.internal
-      answer: 172.22.181.51
     - domain: helden.prplanit.internal
       answer: helden.dana.chus.tech
+      enabled: true
     - domain: helden
       answer: helden.dana.chus.tech
+      enabled: true
+    - domain: avocado.prplanit.internal
+      answer: 172.22.22.3
+      enabled: true
+    - domain: bamboo.prplanit.internal
+      answer: 172.22.22.4
+      enabled: true
+    - domain: cosmos.prplanit.internal
+      answer: 172.22.22.5
+      enabled: true
+    - domain: dragonfruit.prplanit.internal
+      answer: 172.22.22.6
+      enabled: true
+    - domain: eggplant.prplanit.internal
+      answer: 172.22.22.7
+      enabled: true
+    - domain: priscilla.prplanit.internal
+      answer: 172.22.181.51
+      enabled: true
     - domain: shield_regenerator.prplanit.internal
-      answer: 172.22.22.23
+      answer: 10.24.7.23
+      enabled: true
     - domain: shield_generator.prplanit.internal
-      answer: 172.22.22.21
-    - domain: pcfae.com
-      answer: 10.24.96.9
-    - domain: '*.pcfae.com'
-      answer: 10.24.96.9
-    - domain: mail.ntfy.prplanit.com
-      answer: moor.prplanit.internal
-    - domain: ad.prplanit.com
-      answer: 10.13.37.1
+      answer: 10.24.7.21
+      enabled: true
     - domain: monitoring.prplanit.internal
       answer: lighthouse.prplanit.internal
+      enabled: true
     - domain: monitoring
       answer: lighthouse.prplanit.internal
+      enabled: true
     - domain: ntp.prplanit.internal
-      answer: the-usual-suspect.prplanit.internal
+      answer: 172.22.30.122
+      enabled: true
     - domain: ntp
-      answer: the-usual-suspect.prplanit.internal
+      answer: 172.22.30.122
+      enabled: true
+    - domain: dns
+      answer: The-Usual-Suspect.prplanit.internal
+      enabled: true
     - domain: dns.prplanit.internal
       answer: The-Usual-Suspect.prplanit.internal
-    - domain: dns2.prplanit.internal
-      answer: homing-pigeon.prplanit.internal
+      enabled: true
     - domain: dns1.prplanit.internal
       answer: the-usual-suspect.prplanit.internal
+      enabled: true
+    - domain: dns2
+      answer: homing-pigeon.prplanit.internal
+      enabled: true
+    - domain: dns2.prplanit.internal
+      answer: homing-pigeon.prplanit.internal
+      enabled: true
+    - domain: shields.prplanit.internal
+      answer: 10.24.7.22
+      enabled: true
+    - domain: arbitorium.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: '*.arbitorium.com'
+      answer: 172.22.30.71
+      enabled: true
+    - domain: astralfocal.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: etherealclique.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: homelabhelpdesk.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: ipleek.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: kai-hamilton.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: operationtimecapsule.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: enamorafoto.operationtimecapsule.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: optcp.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: '*.optcp.com'
+      answer: 172.22.30.71
+      enabled: true
+    - domain: 2fa.optcp.com
+      answer: 172.22.30.70
+      enabled: true
+    - domain: 2fa.optcp.com
+      answer: fc00:f1:ada:30::70
+      enabled: true
+    - domain: dtrack.optcp.com
+      answer: 172.22.30.70
+      enabled: true
+    - domain: mail.optcp.com
+      answer: 172.22.30.103
+      enabled: true
+    - domain: mail-admin.optcp.com
+      answer: 172.22.30.70
+      enabled: true
+    - domain: plan.optcp.com
+      answer: 172.22.30.70
+      enabled: true
+    - domain: projects.optcp.com
+      answer: 172.22.30.70
+      enabled: true
+    - domain: s3.optcp.com
+      answer: 172.22.30.70
+      enabled: true
+    - domain: sops.optcp.com
+      answer: 172.22.30.70
+      enabled: true
+    - domain: outspokekin.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: '*.outspokekin.com'
+      answer: 172.22.30.71
+      enabled: true
+    - domain: pcfae.com
+      answer: 172.22.30.70
+      enabled: true
+    - domain: '*.pcfae.com'
+      answer: 172.22.30.70
+      enabled: true
+    - domain: ansible.pcfae.com
+      answer: 10.24.96.9
+      enabled: true
+    - domain: dns.pcfae.com
+      answer: 10.24.96.9
+      enabled: true
+    - domain: dns2.pcfae.com
+      answer: 10.24.96.9
+      enabled: true
+    - domain: harbormaster.pcfae.com
+      answer: 10.24.96.9
+      enabled: true
+    - domain: moor.pcfae.com
+      answer: 10.24.96.9
+      enabled: true
+    - domain: fotos.pcfae.com
+      answer: 172.22.30.69
+      enabled: true
+    - domain: plexx.pcfae.com
+      answer: 172.22.30.69
+      enabled: true
+    - domain: whisparr.pcfae.com
+      answer: 172.22.30.69
+      enabled: true
+    - domain: z2m.pcfae.com
+      answer: 172.22.30.69
+      enabled: true
+    - domain: precisionplanit.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: '*.precisionplanit.com'
+      answer: 172.22.30.71
+      enabled: true
+    - domain: mail.precisionplanit.com
+      answer: 10.40.9.104
+      enabled: true
+    - domain: prplanit.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: '*.prplanit.com'
+      answer: 172.22.30.71
+      enabled: true
+    - domain: ad.prplanit.com
+      answer: 10.13.37.1
+      enabled: true
+    - domain: bw.prplanit.com
+      answer: 10.40.9.104
+      enabled: true
+    - domain: gitlab.prplanit.com
+      answer: 10.40.9.104
+      enabled: true
+    - domain: hasteward.prplanit.com
+      answer: hasteward.pages.dev
+      enabled: true
+    - domain: hq.prplanit.com
+      answer: 172.22.30.70
+      enabled: true
+    - domain: mail.ntfy.prplanit.com
+      answer: moor.prplanit.internal
+      enabled: true
+    - domain: rd.prplanit.com
+      answer: 172.22.30.8
+      enabled: true
+    - domain: siem.prplanit.com
+      answer: 172.22.30.70
+      enabled: true
+    - domain: stagefreight.prplanit.com
+      answer: stagefreight.pages.dev
+      enabled: true
+    - domain: syslog.prplanit.com
+      answer: 172.22.30.240
+      enabled: true
+    - domain: turn.prplanit.com
+      answer: 172.22.30.86
+      enabled: true
+    - domain: wazuh-manager.prplanit.com
+      answer: 172.22.30.119
+      enabled: true
+    - domain: '*.sofmeright.com'
+      answer: 172.22.30.71
+      enabled: true
+    - domain: uni2.cc
+      answer: 172.22.30.71
+      enabled: true
+    - domain: '*.uni2.cc'
+      answer: 172.22.30.71
+      enabled: true
+    - domain: yesimvegan.com
+      answer: 172.22.30.71
+      enabled: true
+    - domain: '*.yesimvegan.com'
+      answer: 172.22.30.71
+      enabled: true
   safe_fs_patterns:
     - /opt/adguardhome/work/userfilters/*
+  max_http_size: 256MB
   safebrowsing_cache_size: 1048576
   safesearch_cache_size: 1048576
   parental_cache_size: 1048576
@@ -204,6 +416,7 @@ filtering:
   filters_update_interval: 24
   blocked_response_ttl: 10
   filtering_enabled: true
+  rewrites_enabled: true
   parental_enabled: false
   safebrowsing_enabled: false
   protection_enabled: true
@@ -228,4 +441,4 @@ os:
   group: ""
   user: ""
   rlimit_nofile: 0
-schema_version: 29
+schema_version: 34
