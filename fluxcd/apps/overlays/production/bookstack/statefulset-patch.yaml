@@ -10,10 +10,10 @@ spec:
     spec:
       initContainers:
         - name: wait-for-db
-          image: docker.io/linuxserver/bookstack:26.09.20260929
+          image: docker.io/linuxserver/bookstack:26.09.2
       containers:
         - name: bookstack
-          image: docker.io/linuxserver/bookstack:26.09.20260929
+          image: docker.io/linuxserver/bookstack:26.09.2
           volumeMounts:
             - $patch: replace
             - name: hyrule-castle-bookstack-config
