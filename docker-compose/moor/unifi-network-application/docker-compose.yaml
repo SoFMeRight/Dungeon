@@ -1,12 +1,11 @@
----
 services:
 
   unifi-network-application:
     image: lscr.io/linuxserver/unifi-network-application:latest
     container_name: unifi-network-application
     depends_on:
-      #generate_init-mongo:
-        #condition: service_completed_successfully
+      # generate_init-mongo:
+      # condition: service_completed_successfully
       unifi-db:
         condition: service_started
     env_file: stack.env
@@ -20,9 +19,9 @@ services:
       - MONGO_PORT=27017
       - MONGO_DBNAME=unifi
       - MONGO_AUTHSOURCE=unifi
-      - MEM_LIMIT=1024 #optional
-      - MEM_STARTUP=1024 #optional
-      #- MONGO_TLS= #optional
+      - MEM_LIMIT=1024 # optional
+      - MEM_STARTUP=1024 # optional
+    # - MONGO_TLS= # optional
     volumes:
       - /mnt/app_data/Server/_docker_stack/unifi-network-application/data:/config
     ports:
@@ -30,19 +29,19 @@ services:
       - 3478:3478/udp
       - 10001:10001/udp
       - 8080:8080
-      - 1900:1900/udp #optional
-      - 8843:8843 #optional
-      - 8880:8880 #optional
-      - 6789:6789 #optional
-      - 5514:5514/udp #optional
+      - 1900:1900/udp # optional
+      - 8843:8843 # optional
+      - 8880:8880 # optional
+      - 6789:6789 # optional
+      - 5514:5514/udp # optional
     restart: always
 
   unifi-db:
     image: docker.io/mongo:7.0.15
     container_name: unifi-db
-    #depends_on:
-      #generate_init-mongo:
-        #condition: service_completed_successfully
+    # depends_on:
+    # generate_init-mongo:
+    # condition: service_completed_successfully
     env_file: stack.env
     environment:
       - MONGO_INITDB_ROOT_USERNAME=$MONGO_ROOT_NAME

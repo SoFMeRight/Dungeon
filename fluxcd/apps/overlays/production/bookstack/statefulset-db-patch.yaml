@@ -6,25 +6,25 @@ spec:
   template:
     spec:
       containers:
-      - name: mariadb
-        image: docker.io/linuxserver/mariadb:11.8.9
-        volumeMounts:
-        - name: hyrule-castle-bookstack-db-data
-          mountPath: /config
-        env:
-        - name: PUID
-          value: "1000"
-        - name: PGID
-          value: "1000"
-        - name: TZ
-          value: "America/Los_Angeles"
+        - name: mariadb
+          image: docker.io/linuxserver/mariadb:11.8.9
+          volumeMounts:
+            - name: hyrule-castle-bookstack-db-data
+              mountPath: /config
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "America/Los_Angeles"
   volumeClaimTemplates:
-  - metadata:
-      name: hyrule-castle-bookstack-db-data
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      storageClassName: ceph-rbd
-      resources:
-        requests:
-          storage: 5Gi
+    - metadata:
+        name: hyrule-castle-bookstack-db-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-rbd
+        resources:
+          requests:
+            storage: 5Gi

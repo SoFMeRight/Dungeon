@@ -1,10 +1,9 @@
----
 services:
   ferdium:
     image: lscr.io/linuxserver/ferdium:latest
     container_name: ferdium
     security_opt:
-      - seccomp:unconfined #optional
+      - seccomp:unconfined # optional
     environment:
       - PUID=1000
       - PGID=1000

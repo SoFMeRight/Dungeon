@@ -16,17 +16,17 @@ services:
     environment:
       - POSTGRES_DB=netbox
       - POSTGRES_USER=netbox
-    #labels: &logging
-      #labels-regex: "^.+"
-      #log_driver: "loki"
-      #log_opt:
-        #loki-batch-size:"400"
-        #loki-url:"http://localhost:3100/loki/api/v1/push"
-        #max-size:"10m"
-        #max-file:"3"
+  # labels: &logging
+  # labels-regex: "^.+"
+  # log_driver: "loki"
+  # log_opt:
+  # loki-batch-size:"400"
+  # loki-url:"http://localhost:3100/loki/api/v1/push"
+  # max-size:"10m"
+  # max-file:"3"
 
   netbox-redis:
-    #labels: *logging
+    # labels: *logging
     image: redis:7-alpine
     user: 1026:100
     command: redis-server
@@ -39,7 +39,7 @@ services:
       - /mnt/app_data/Server/_docker_stack/netbox/redis:/data
 
   netbox-server:
-    #labels: *logging
+    # labels: *logging
     image: lscr.io/linuxserver/netbox:latest
     container_name: netbox_server
     hostname: netbox-server

@@ -1,4 +1,3 @@
----
 services:
   faster-whisper:
     image: lscr.io/linuxserver/faster-whisper:gpu
@@ -7,9 +6,9 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      - WHISPER_BEAM=1 #optional
-      - WHISPER_LANG=en #optional
-      - WHISPER_MODEL=turbo #tiny-int8
+      - WHISPER_BEAM=1 # optional
+      - WHISPER_LANG=en # optional
+      - WHISPER_MODEL=turbo # tiny-int8
     volumes:
       - /opt/docker/faster-whisper/data:/config
     ports:

@@ -1,4 +1,3 @@
----
 services:
   calibre-web:
     image: lscr.io/linuxserver/calibre-web:latest
@@ -7,15 +6,15 @@ services:
       - TZ=Etc/UTC
       - PUID=8083
       - PGID=1000
-      #- DOCKER_MODS=linuxserver/mods:universal-calibre #optional
-      #- OAUTHLIB_RELAX_TOKEN_SCOPE=1 #optional
+    # - DOCKER_MODS=linuxserver/mods:universal-calibre # optional
+    # - OAUTHLIB_RELAX_TOKEN_SCOPE=1 # optional
     volumes:
       - /mnt/app_data/Server/calibre_web/config:/config
       - media_books:/books
     ports:
       - 8083:8083
     restart: unless-stopped
-    logging: &logging
+    logging:
       driver: loki
       options:
         loki-batch-size: "400"
