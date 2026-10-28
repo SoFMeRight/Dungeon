@@ -47,6 +47,13 @@ spec:
     # Pilot (istiod) configuration
     # Note: profile: ambient already sets prometheus.io/scrape and prometheus.io/port annotations
     pilot:
+      # Dual-stack: the cluster, nodes, and gateway Services are all IPv4+IPv6, so
+      # istiod programs dual-stack listeners (Envoy binds :: as an additional address
+      # on dual-stack Services) and ztunnel handles v6 in ambient. Required for IPv6
+      # LoadBalancer VIPs to actually serve — the Cilium datapath delivers the v6 SYN,
+      # but single-stack Envoy/ztunnel only listened on v4. PreferDualStack (not
+      # Require) so istiod's own Service never hard-fails if a family is unavailable.
+      ipFamilyPolicy: PreferDualStack
       env:
         # Enable Gateway API support
         PILOT_ENABLE_GATEWAY_API: "true"
@@ -55,6 +62,9 @@ spec:
         # 1.31 flips this default to true; holding 1.30 behaviour until adopted
         # deliberately, since it lets EDS advertise not-ready endpoints.
         PILOT_AUTO_SEND_UNHEALTHY_ENDPOINTS: "false"
+        # istiod side of dual-stack (paired with proxyMetadata.ISTIO_DUAL_STACK below,
+        # which propagates it to every proxy — gateways and ztunnel).
+        ISTIO_DUAL_STACK: "true"
 
     # Global mesh configuration
     meshConfig:
@@ -63,6 +73,9 @@ spec:
       defaultConfig:
         proxyMetadata:
           ISTIO_META_DNS_CAPTURE: "true"
+          # Propagates dual-stack to every proxy (gateways + ztunnel) so they bind
+          # and route IPv6 as well as IPv4. Paired with pilot.env.ISTIO_DUAL_STACK.
+          ISTIO_DUAL_STACK: "true"
       # SSO ext-authz provider: oauth2-proxy (Zitadel OIDC). Referenced by
       # CUSTOM AuthorizationPolicies to gate hosts behind an SSO login and
       # inject the identity/roles headers used by per-tier authZ.
