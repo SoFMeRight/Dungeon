@@ -267,17 +267,17 @@ data:
           "versioning": "regex:^(?<major>\\d{4})\\.(?<minor>\\d{1,2})\\.(?<patch>\\d{1,2})"
         },
         {
+          // LinuxServer images track <version>-ls<rebuild>: every rebuild is an update; a prefix (nightly-, develop-, gpu-) is its own channel.
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/linuxserver/**"],
+          "versioning": "regex:^(?<compatibility>[a-z]+-)?v?(?<major>\\d+)\\.(?<minor>\\d+)(?:\\.(?<patch>\\d+))?(?:\\.(?<build>\\d+))?(?:-r\\d+|_v[\\d.]+)?-ls(?<revision>\\d+)$"
+        },
+        {
           // LinuxServer projectsend uses version-r<N>; order by the r-number so it keeps
           // getting real updates instead of being stuck (or mis-ordered).
           "matchDatasources": ["docker"],
           "matchPackageNames": ["**/linuxserver/projectsend"],
           "versioning": "regex:^version-r(?<major>\\d+)$"
-        },
-        {
-          // LinuxServer date-stamped tags (x.y.YYYYMMDD) outrank real versions numerically; never select them.
-          "matchDatasources": ["docker"],
-          "matchPackageNames": ["**/linuxserver/**"],
-          "allowedVersions": "!/\\.\\d{8}$/"
         },
         {
           // Rolling/bespoke tags with NO orderable version (latest, nightly, gpu, stable,
@@ -288,7 +288,7 @@ data:
           // push those tags deliberately.)
           "matchDatasources": ["docker"],
           "matchPackageNames": [
-            "**/faster-whisper", "**/pihole", "**/py-kms", "**/umami", "**/whiteboard",
+            "**/pihole", "**/py-kms", "**/umami", "**/whiteboard",
             "**/nextcloud-spreed-signaling", "**/vlmcsd", "**/asa_server", "**/arkserver",
             "**/anirra", "**/minecraft-server", "**/tikiwiki"
           ],
@@ -315,13 +315,6 @@ data:
           "matchDatasources": ["docker"],
           "matchPackageNames": ["**/frigate"],
           "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-tensorrt$"
-        },
-        {
-          // LinuxServer kasm is <semver>-ls<build>; track both the semver and the ls build
-          // so it follows the LSIO rebuilds instead of sitting frozen on a digest.
-          "matchDatasources": ["docker"],
-          "matchPackageNames": ["**/kasm"],
-          "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-ls(?<build>\\d+)$"
         },
         {
           // hotio whisparr pins to the v2 release channel (v2-v<semver>); stay on v2 and
