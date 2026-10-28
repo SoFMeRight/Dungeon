@@ -80,7 +80,7 @@ releases:
     tag: "v{version}"
     asset: "xemu-{version}-x86_64.AppImage"
     # renovate: datasource=github-releases depName=xemu-project/xemu extractVersion=^v(?<version>.+)$
-    version: "0.8.137"
+    version: "0.8.139"
     layout: raw
     mode: "0755"
     dest: /home/steamheadless/Applications/xemu.AppImage
