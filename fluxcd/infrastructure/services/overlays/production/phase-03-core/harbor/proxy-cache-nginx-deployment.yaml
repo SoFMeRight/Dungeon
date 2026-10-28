@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: openresty
-          image: docker.io/openresty/openresty:1.31.1.1-alpine
+          image: docker.io/openresty/openresty:1.31.8.1-alpine
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
