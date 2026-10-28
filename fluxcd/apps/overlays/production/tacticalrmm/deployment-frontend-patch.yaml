@@ -36,7 +36,7 @@ spec:
         # the stock nginx init edits /etc/nginx/conf.d in place — rootfs writes that cannot be
         # emptyDir'd without erasing baked content. Needs an image rebuild to relocate them.
         - name: frontend
-          image: docker.io/tacticalrmm/tactical-frontend:1.5.2
+          image: docker.io/tacticalrmm/tactical-frontend:1.6.1
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
