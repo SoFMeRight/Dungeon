@@ -11,7 +11,7 @@ configMapGenerator:
       - releases.yaml
 images:
   - name: ghcr.io/headlamp-k8s/headlamp
-    newTag: v0.45.0
+    newTag: v0.46.0
   - name: docker.io/hlhd/ansible
     newTag: v2.21.5
     digest: sha256:9130d35313d7117085b015d2ef6708436377f09ab16dfe4933a76fcc91f2b0f2
