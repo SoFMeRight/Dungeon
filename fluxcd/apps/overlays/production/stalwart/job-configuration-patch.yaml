@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: configuration
-          image: docker.io/stalwartlabs/cli:1.0.13
+          image: docker.io/stalwartlabs/cli:1.0.14
           resources:
             requests:
               memory: 32Mi
