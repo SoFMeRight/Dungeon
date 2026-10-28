@@ -6,7 +6,7 @@ metadata:
   namespace: flux-system
 spec:
   chart: ztunnel
-  version: "1.31.2"
+  version: "1.31.3"
   sourceRef:
     kind: HelmRepository
     name: istio
