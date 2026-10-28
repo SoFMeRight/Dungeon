@@ -65,7 +65,7 @@ spec:
               cpu: "2000m"
               memory: "1024Mi"
         - name: nginx
-          image: docker.io/nginx:1.31.5-alpine
+          image: docker.io/nginx:1.31.8-alpine
           # Full mount set (this list replaces the base's): full nginx.conf + server block via subPath,
           # /tmp emptyDir for pid/temp (read-only rootfs), and the app public/storage read-only.
           volumeMounts:
