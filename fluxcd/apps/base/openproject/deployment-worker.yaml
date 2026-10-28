@@ -43,7 +43,7 @@ spec:
               mountPath: /tmp
         # The mesh accepts TCP before Postgres exists, so ask Postgres itself.
         - name: wait-for-db
-          image: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
+          image: ghcr.io/cloudnative-pg/postgresql:18.6-system-trixie
           command: ["sh", "-c", "until pg_isready -q -h openproject-postgres-rw -p 5432; do sleep 2; done"]
           securityContext:
             readOnlyRootFilesystem: true
