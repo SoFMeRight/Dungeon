@@ -274,6 +274,12 @@ data:
           "versioning": "regex:^version-r(?<major>\\d+)$"
         },
         {
+          // LinuxServer date-stamped tags (x.y.YYYYMMDD) outrank real versions numerically; never select them.
+          "matchDatasources": ["docker"],
+          "matchPackageNames": ["**/linuxserver/**"],
+          "allowedVersions": "!/\\.\\d{8}$/"
+        },
+        {
           // Rolling/bespoke tags with NO orderable version (latest, nightly, gpu, stable,
           // channel names, svn revisions, build hashes). Renovate can't semver these, so
           // pin the digest: immutable + forward-only digest tracking when the tag moves,
