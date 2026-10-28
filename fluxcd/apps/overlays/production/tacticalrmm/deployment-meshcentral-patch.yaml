@@ -50,7 +50,7 @@ spec:
         # path) and rewrites the entrypoint in place — both need a writable rootfs. Cannot
         # enable ro-rootfs without reworking the agent-replacement approach.
         - name: meshcentral
-          image: docker.io/tacticalrmm/tactical-meshcentral:1.5.2
+          image: docker.io/tacticalrmm/tactical-meshcentral:1.6.1
           command:
             - bash
             - -c

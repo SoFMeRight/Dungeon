@@ -43,7 +43,7 @@ spec:
         # config_watcher.sh into /usr/local/bin (a rootfs binary dir) at startup — cannot be
         # emptyDir'd without hiding the image's binaries. Needs an image rebuild to relocate it.
         - name: nats
-          image: docker.io/tacticalrmm/tactical-nats:1.5.2
+          image: docker.io/tacticalrmm/tactical-nats:1.6.1
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
