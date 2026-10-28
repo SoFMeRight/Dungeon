@@ -1,6 +1,6 @@
 services:
   adguardhome-sync:
-    image: lscr.io/linuxserver/adguardhome-sync:latest
+    image: lscr.io/linuxserver/adguardhome-sync:v0.9.5-ls180
     container_name: adguardhome-sync
     environment:
       - PUID=1000

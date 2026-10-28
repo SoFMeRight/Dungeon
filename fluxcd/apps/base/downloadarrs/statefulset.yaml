@@ -206,7 +206,7 @@ spec:
 
         # qBittorrent - full downloads access
         - name: qbittorrent
-          image: docker.io/linuxserver/qbittorrent:5.3.0
+          image: docker.io/linuxserver/qbittorrent:5.3.0_v2.1.2-ls485
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -306,7 +306,7 @@ spec:
 
         # Radarr - only zz-radarr subpath
         - name: radarr
-          image: docker.io/linuxserver/radarr:6.4.4
+          image: docker.io/linuxserver/radarr:6.4.4.10685-ls324
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -343,7 +343,7 @@ spec:
 
         # Sonarr - only zz-sonarr subpath
         - name: sonarr
-          image: docker.io/linuxserver/sonarr:4.0.20
+          image: docker.io/linuxserver/sonarr:4.0.20.3014-ls329
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -380,7 +380,7 @@ spec:
 
         # Lidarr
         - name: lidarr
-          image: docker.io/linuxserver/lidarr:3.1.6
+          image: docker.io/linuxserver/lidarr:3.1.6.5079-ls46
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:

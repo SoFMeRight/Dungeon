@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: mariadb
-          image: docker.io/linuxserver/mariadb:11.8.9
+          image: docker.io/linuxserver/mariadb:11.8.9-r0-ls238
           volumeMounts:
             - name: hyrule-castle-bookstack-db-data
               mountPath: /config

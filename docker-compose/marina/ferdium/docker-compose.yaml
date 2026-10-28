@@ -1,6 +1,6 @@
 services:
   ferdium:
-    image: lscr.io/linuxserver/ferdium:latest
+    image: lscr.io/linuxserver/ferdium:v7.2.3-ls165
     container_name: ferdium
     security_opt:
       - seccomp:unconfined # optional

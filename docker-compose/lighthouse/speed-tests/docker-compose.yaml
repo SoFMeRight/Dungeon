@@ -39,7 +39,7 @@ services:
       - speedtest-tracker-db_secret.env
       - speedtest-tracker_secret.env
       - speedtest-tracker.env
-    image: lscr.io/linuxserver/speedtest-tracker:latest
+    image: lscr.io/linuxserver/speedtest-tracker:v1.15.1-ls178
     ports:
       - 8080:80
       - 8443:443
