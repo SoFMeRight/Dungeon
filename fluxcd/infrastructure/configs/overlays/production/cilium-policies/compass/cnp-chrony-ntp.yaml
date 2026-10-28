@@ -18,6 +18,9 @@ spec:
         - cidr: "192.168.0.0/16"
           except:
             - "192.168.144.0/20"
+        - cidr: "fc00:f1::/32"
+          except:
+            - "fc00:f1:0ca4:15a0::/56"
       toPorts:
         - ports:
             - port: "123"

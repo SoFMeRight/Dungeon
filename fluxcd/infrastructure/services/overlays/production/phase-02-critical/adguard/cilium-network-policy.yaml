@@ -41,6 +41,7 @@ spec:
         - 192.168.0.0/16    # RFC1918 private network
         - 172.16.0.0/12     # RFC1918 private network
         - 10.0.0.0/8        # RFC1918 private network
+        - fc00:f1::/32      # site IPv6 ULA (v6 DNS clients)
       toPorts:
         - ports:
             - port: "53"

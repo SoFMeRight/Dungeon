@@ -1,6 +1,8 @@
+# Dual-stack VIP: v4 + v6 on the shared compass VIP so AdGuard answers DNS over
+# both families (IPv6 DNS). The v6 matches the v4 host-suffix (.122 -> ::122).
 - op: add
   path: /metadata/annotations/lbipam.cilium.io~1ips
-  value: "172.22.30.122"
+  value: "172.22.30.122,fc00:f1:ada:30::122"
 - op: replace
   path: /metadata/annotations/lbipam.cilium.io~1sharing-key
   value: "compass"
@@ -10,6 +12,14 @@
 - op: add
   path: /spec/externalTrafficPolicy
   value: "Local"
+- op: add
+  path: /spec/ipFamilyPolicy
+  value: PreferDualStack
+- op: add
+  path: /spec/ipFamilies
+  value:
+    - IPv4
+    - IPv6
 - op: add
   path: /metadata/annotations/gatus.home-operations.com~1endpoint
   value: |

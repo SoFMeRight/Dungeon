@@ -1,6 +1,15 @@
+# Dual-stack VIP on the shared compass VIP (.122 + ::122) so apt-cache answers over v6.
 - op: add
   path: /metadata/annotations
   value:
-    lbipam.cilium.io/ips: "172.22.30.122"
+    lbipam.cilium.io/ips: "172.22.30.122,fc00:f1:ada:30::122"
     lbipam.cilium.io/sharing-key: "compass"
     lbipam.cilium.io/sharing-cross-namespace: "*"
+- op: add
+  path: /spec/ipFamilyPolicy
+  value: PreferDualStack
+- op: add
+  path: /spec/ipFamilies
+  value:
+    - IPv4
+    - IPv6
