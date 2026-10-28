@@ -454,7 +454,7 @@ spec:
 
         # Cross-seed
         - name: cross-seed
-          image: docker.io/crossseed/cross-seed:6.13.7
+          image: docker.io/crossseed/cross-seed:6.13.9
           securityContext:
             runAsNonRoot: true
             runAsUser: 1000
