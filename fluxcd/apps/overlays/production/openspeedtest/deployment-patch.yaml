@@ -13,7 +13,7 @@ spec:
         runAsGroup: 101
       containers:
         - name: openspeedtest
-          image: docker.io/openspeedtest/latest:v2.0.6
+          image: docker.io/openspeedtest/latest:v2.0.8
           securityContext:
             readOnlyRootFilesystem: true
           volumeMounts:
