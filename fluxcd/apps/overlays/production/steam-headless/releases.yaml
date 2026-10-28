@@ -33,7 +33,7 @@ releases:
     tag: "{version}"
     asset_match: '^Faugus-.*-x86_64\.AppImage$'
     # renovate: datasource=github-releases depName=Faugus/faugus-launcher
-    version: "2.5.0"
+    version: "2.5.4"
     layout: raw
     mode: "0755"
     dest: /home/steamheadless/Applications/Faugus.AppImage
