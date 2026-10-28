@@ -9,10 +9,10 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       initContainers:
         - name: stage-secure-config
-          image: docker.io/wazuh/wazuh-indexer:4.14.8
+          image: docker.io/wazuh/wazuh-indexer:4.14.9
       containers:
         - name: wazuh-indexer
-          image: docker.io/wazuh/wazuh-indexer:4.14.8
+          image: docker.io/wazuh/wazuh-indexer:4.14.9
           envFrom: []
           resources:
             requests:
