@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: alloy
-          image: docker.io/grafana/alloy:v1.20.1
+          image: docker.io/grafana/alloy:v1.21.2
           env:
             - name: LOKI_PUSH_URL
               value: http://loki.gossip-stone.svc.cluster.local:3100/loki/api/v1/push
