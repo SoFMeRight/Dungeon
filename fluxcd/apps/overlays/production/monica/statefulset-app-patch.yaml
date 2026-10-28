@@ -11,12 +11,12 @@ spec:
     spec:
       initContainers:
         - name: copy-app
-          image: docker.io/monica:4.1.2-fpm-alpine@sha256:d261c611c7dd4f51d448f7e0c40d492d1fbf3c22cfadd2b0f1a1a92bc1406797
+          image: docker.io/monica:4.1.2-fpm-alpine@sha256:1e1ffe44af268b5a1d670d697efc196416eb562af7e85da37b825f24c7dad3b8
       containers:
         - name: nginx
           image: docker.io/nginx:1.31.8-alpine
         - name: monica
-          image: docker.io/monica:4.1.2-fpm-alpine@sha256:d261c611c7dd4f51d448f7e0c40d492d1fbf3c22cfadd2b0f1a1a92bc1406797
+          image: docker.io/monica:4.1.2-fpm-alpine@sha256:1e1ffe44af268b5a1d670d697efc196416eb562af7e85da37b825f24c7dad3b8
           env:
             - name: APP_URL
               value: "https://monica.pcfae.com"
