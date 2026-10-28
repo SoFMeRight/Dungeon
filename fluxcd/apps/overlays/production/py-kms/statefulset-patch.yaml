@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: py-kms
-          image: ghcr.io/py-kms-organization/py-kms:python3-next
+          image: ghcr.io/py-kms-organization/py-kms:python3-next@sha256:26822b3d3655666f8bc421f7e3d7a04e55372e083c3a86a4a36a1df265c80a48
           securityContext:
             readOnlyRootFilesystem: true
           env:
