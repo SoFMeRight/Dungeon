@@ -21,7 +21,7 @@ spec:
   chart:
     spec:
       chart: gitlab
-      version: "10.5.1"  # GitLab 19.4.3 — security patch release; 19.4 < next required stop 19.5
+      version: "10.5.4"  # GitLab 19.4.3 — security patch release; 19.4 < next required stop 19.5
       sourceRef:
         kind: HelmRepository
         name: gitlab
