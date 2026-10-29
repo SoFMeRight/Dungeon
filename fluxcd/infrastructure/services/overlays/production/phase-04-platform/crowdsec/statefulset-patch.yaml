@@ -19,7 +19,7 @@ spec:
         # (exit 0) so it can never block or crashloop crowdsec. Re-runs on every pod start, which
         # is when fresh Vault values arrive — so it re-converges to the declared state.
         - name: pfsense-registrar
-          image: ghcr.io/crowdsecurity/crowdsec:v1.8.1
+          image: ghcr.io/crowdsecurity/crowdsec:v1.8.2
           command:
             - sh
             - -c
@@ -103,7 +103,7 @@ spec:
               memory: "128Mi"
       containers:
         - name: crowdsec
-          image: ghcr.io/crowdsecurity/crowdsec:v1.8.1
+          image: ghcr.io/crowdsecurity/crowdsec:v1.8.2
           env:
             - name: CUSTOM_HOSTNAME
               value: "dungeon-k8s"
