@@ -1,6 +1,6 @@
 services:
   emulatorjs:
-    image: lscr.io/linuxserver/emulatorjs:1.9.2-ls173
+    image: lscr.io/linuxserver/emulatorjs:latest
     container_name: emulatorjs
     environment:
       - PUID=1000

@@ -1,7 +1,7 @@
 services:
 
   unifi-network-application:
-    image: lscr.io/linuxserver/unifi-network-application:10.6.109-ls152
+    image: lscr.io/linuxserver/unifi-network-application:latest
     container_name: unifi-network-application
     depends_on:
       # generate_init-mongo:

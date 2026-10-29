@@ -40,7 +40,7 @@ services:
 
   netbox-server:
     # labels: *logging
-    image: lscr.io/linuxserver/netbox:v4.7.4-ls388
+    image: lscr.io/linuxserver/netbox:latest
     container_name: netbox_server
     hostname: netbox-server
     env_file: stack.env

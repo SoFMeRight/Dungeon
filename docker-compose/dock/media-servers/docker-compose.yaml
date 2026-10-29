@@ -8,7 +8,7 @@ services:
       - PGID=1000
     # - DOCKER_MODS=linuxserver/mods:universal-calibre # optional
     # - OAUTHLIB_RELAX_TOKEN_SCOPE=1 # optional
-    image: lscr.io/linuxserver/calibre-web:0.6.27-ls407
+    image: lscr.io/linuxserver/calibre-web:latest
     ports:
       - 8083:8083
     restart: always

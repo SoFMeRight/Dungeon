@@ -1,6 +1,6 @@
 services:
   faster-whisper:
-    image: lscr.io/linuxserver/faster-whisper:gpu-v3.8.1-ls73
+    image: lscr.io/linuxserver/faster-whisper:gpu
     container_name: faster-whisper
     environment:
       - PUID=1000
