@@ -77,20 +77,8 @@ data:
       - name: Renovate Health
         interval: 5m
         rules:
-          # Hours since each Renovate CronJob last succeeded, falling back to its creation
-          # time when it never has.
-          - alert: RenovateDungeonStale
-            expr: |
-              (time() - max by (namespace, cronjob) (kube_cronjob_status_last_successful_time{namespace="hyrule-castle", cronjob="renovate-dungeon"}
-                or kube_cronjob_created{namespace="hyrule-castle", cronjob="renovate-dungeon"})) / 3600 > 3
-            for: 15m
-            labels:
-              severity: warning
-            annotations:
-              title: Renovate stale on dungeon
-              summary: Renovate has not completed a pass on dungeon in over 3 hours, so dependency and security updates are not being proposed
-              resolved_title: Renovate current on dungeon
-              resolved: Renovate completed a pass on dungeon again
+          # Hours since the Renovate CronJob last succeeded (it fails when any repository did not
+          # finish), falling back to its creation time when it never has.
           - alert: RenovateStale
             expr: |
               (time() - max by (namespace, cronjob) (kube_cronjob_status_last_successful_time{namespace="hyrule-castle", cronjob="renovate"}
@@ -100,19 +88,19 @@ data:
               severity: warning
             annotations:
               title: Renovate stale
-              summary: Renovate has not completed a run over the HomeLabHD and PrPlanIT repositories in over 13 hours
+              summary: Renovate has not completed every repository in over 13 hours, so dependency and security updates are not being proposed
               resolved_title: Renovate current
-              resolved: Renovate completed a run over the HomeLabHD and PrPlanIT repositories again
+              resolved: Renovate completed every repository again
           - alert: RenovateStatusMissing
-            expr: absent(kube_cronjob_info{namespace="hyrule-castle", cronjob="renovate-dungeon"})
+            expr: absent(kube_cronjob_info{namespace="hyrule-castle", cronjob="renovate"})
             for: 1h
             labels:
               severity: warning
             annotations:
               title: Renovate status not reported
-              summary: The renovate-dungeon CronJob is not being reported, so a stalled Renovate would go unnoticed
+              summary: The renovate CronJob is not being reported, so a stalled Renovate would go unnoticed
               resolved_title: Renovate status reported again
-              resolved: The renovate-dungeon CronJob is being reported again
+              resolved: The renovate CronJob is being reported again
 
   security.yaml: |
     groups:
