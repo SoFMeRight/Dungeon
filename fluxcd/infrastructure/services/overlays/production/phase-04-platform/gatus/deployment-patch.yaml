@@ -22,7 +22,7 @@ spec:
           image: docker.io/library/busybox:1.38
       containers:
         - name: gatus
-          image: ghcr.io/twin/gatus:v5.37.0
+          image: ghcr.io/twin/gatus:v5.38.0
           env:
             - name: NTFY_TOKEN
               valueFrom:
