@@ -9,6 +9,7 @@ spec:
   failedJobsHistoryLimit: 3
   jobTemplate:
     spec:
+      backoffLimit: 0
       template:
         metadata:
           labels:
@@ -27,6 +28,8 @@ spec:
           containers:
             - name: renovate
               image: PLACEHOLDER_IMAGE
+              # The image entrypoint sets up the toolchain environment, then runs these.
+              args: ["sh", "/config/run-renovate.sh"]
               # No readOnlyRootFilesystem: renovate's containerbase installs language toolchains at
               # runtime (v2-install-tool.sh writes /opt/containerbase) — a read-only rootfs FATALs
               # "Initialize tools all failed". Ceiling = non-root + seccomp + drop-ALL + no-privesc.
@@ -63,10 +66,9 @@ spec:
                 # PrPlanIT). Every repo gets a Dependency Dashboard on Renovate's own
                 # schedule, independent of whether it builds -- so dormant / less-active
                 # projects' dep drift is still visible (the point: the in-CI deps engine
-                # only fires when a project actually builds).
-                # Dungeon runs alone in cronjob-dungeon.yaml.
+                # only fires when a project actually builds). Plus the dungeon GitOps monorepo.
                 - name: RENOVATE_AUTODISCOVER_FILTER
-                  value: "HomeLabHD/**,PrPlanIT/**"
+                  value: "HomeLabHD/**,PrPlanIT/**,SoFMeRight/dungeon"
                 - name: LOG_LEVEL
                   value: "info"
                 - name: RENOVATE_CONFIG_FILE

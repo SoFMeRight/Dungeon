@@ -6,5 +6,4 @@ resources:
   - externalsecret.yaml
   - externalsecret-rgw.yaml
   - cronjob.yaml
-  - cronjob-dungeon.yaml
   - deployment-redis.yaml

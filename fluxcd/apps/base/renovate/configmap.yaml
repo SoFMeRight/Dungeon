@@ -545,23 +545,17 @@ data:
       "prConcurrentLimit": 0,
       "prHourlyLimit": 0
     }
-  # Re-runs Renovate while its base branch moved mid-pass; fails after RENOVATE_ATTEMPTS.
-  run-until-done.sh: |
+  # Resets the repository cache on the Sunday 00 UTC run; fails the Job when a repository did not finish.
+  run-renovate.sh: |
     #!/bin/sh
     set -u
-    attempts="${RENOVATE_ATTEMPTS:-6}"
+    [ "$(date -u +%u%H)" = "700" ] && export RENOVATE_REPOSITORY_CACHE=reset
     log="$(mktemp)"
-    i=1
-    while :; do
-      renovate "$@" >"$log" 2>&1
-      rc=$?
-      cat "$log"
-      [ "$rc" -eq 0 ] || exit "$rc"
-      grep -q 'repository-changed' "$log" || exit 0
-      if [ "$i" -ge "$attempts" ]; then
-        echo "run-until-done: base branch still moving after $attempts attempts" >&2
-        exit 1
-      fi
-      i=$((i + 1))
-      echo "run-until-done: base branch moved during the pass; attempt $i of $attempts" >&2
-    done
+    rcfile="$(mktemp)"
+    { renovate "$@"; echo $? >"$rcfile"; } 2>&1 | tee "$log"
+    rc="$(cat "$rcfile")"
+    [ "$rc" -eq 0 ] || exit "$rc"
+    if grep -q -E '"result": "(repository-changed|external-host-error|unknown-error)"' "$log"; then
+      echo "run-renovate: a repository did not finish" >&2
+      exit 1
+    fi

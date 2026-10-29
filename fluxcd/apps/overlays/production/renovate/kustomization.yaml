@@ -8,10 +8,6 @@ patches:
     target:
       kind: CronJob
       name: renovate
-  - path: cronjob-dungeon-patch.yaml
-    target:
-      kind: CronJob
-      name: renovate-dungeon
   - path: deployment-redis-patch.yaml
     target:
       kind: Deployment
