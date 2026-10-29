@@ -268,7 +268,7 @@ releases:
     tag: "v{version}"
     asset: "WindWakerHD-v{version}-linux-x86_64.AppImage"
     # renovate: datasource=github-releases depName=ZeldaWWHDRecomp/ZeldaWWHDRecomp extractVersion=^v(?<version>.+)$
-    version: "0.4.0"
+    version: "0.5.0"
     layout: raw
     mode: "0755"
     dest: /home/steamheadless/Applications/WindWakerHD.AppImage
