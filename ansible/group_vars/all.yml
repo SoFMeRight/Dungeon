@@ -3,7 +3,7 @@
 # bumps auto-PR within the minor; a minor bump is a deliberate, approved move in
 # lockstep with the cluster's kubernetes minor).
 crio_version: "1.35.10"
-kubernetes_version: "1.35.9"
+kubernetes_version: "1.35.10"
 
 # Kernel flavour on every k8s node, and the Canonical-signed NVIDIA modules built
 # for it on GPU nodes. The 24.04 HWE line is on 7.0: ceph-csi's kernel RBD and
