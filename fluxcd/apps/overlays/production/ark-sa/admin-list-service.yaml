@@ -225,6 +225,7 @@ metadata:
   annotations:
     lbipam.cilium.io/ips: "172.22.30.231"
     lbipam.cilium.io/sharing-key: "shooting-gallery"
+    lbipam.cilium.io/sharing-cross-namespace: "*"
 spec:
   type: LoadBalancer
   selector:
