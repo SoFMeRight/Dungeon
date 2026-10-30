@@ -272,6 +272,18 @@ releases:
     layout: raw
     mode: "0755"
     dest: /home/steamheadless/Applications/WindWakerHD.AppImage
+  # Recompilation: ships the source + setup; the port launcher copies it to CephFS-HDD and builds
+  # the game there from the operator's own PS2 disc (rac-rs-features fork: widescreen, mods).
+  - name: racrs
+    repo: DeSynkro/rac-rs-features
+    tag: "rac-rs-features-{version}"
+    asset: "rac-rs-features-{version}.zip"
+    # renovate: datasource=github-releases depName=DeSynkro/rac-rs-features extractVersion=^rac-rs-features-(?<version>.+)$
+    version: "0.4.1"
+    layout: zip
+    subdir: rac-rs-features
+    executables: ["*.sh"]
+    dest: /home/steamheadless/Applications/rac-rs
   - name: openmw
     repo: OpenMW/openmw
     tag: "openmw-{version}"

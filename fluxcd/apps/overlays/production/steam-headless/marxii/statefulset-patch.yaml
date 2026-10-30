@@ -66,7 +66,7 @@ spec:
             - name: games-hdd
               mountPath: /mnt/games-hdd
               readOnly: true
-            # Writable CephFS-HDD for the WWHD recomp's state (XDG dirs), off the home PVC.
+            # Writable CephFS-HDD for the recomps' state (WWHD's XDG dirs, rac-rs's build), off the home PVC.
             - name: recomp-hdd
               mountPath: /mnt/recomp-hdd
           resources:
