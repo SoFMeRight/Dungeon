@@ -35,6 +35,11 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
+            # RuntimeDefault plus futex_waitv, so Proton gets fsync instead of
+            # wineserver round trips (ansible/k8s/tuning/seccomp-proton-fsync.yaml).
+            seccompProfile:
+              type: Localhost
+              localhostProfile: profiles/proton-fsync.json
           ports:
             - containerPort: 15637
               name: query
