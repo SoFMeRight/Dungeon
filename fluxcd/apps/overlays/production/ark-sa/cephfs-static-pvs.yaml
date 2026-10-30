@@ -9,6 +9,11 @@ spec:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: ark-sa-serverfiles-pvc
+    namespace: optcp-shooting-gallery
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
     nodeStageSecretRef:
@@ -44,6 +49,11 @@ spec:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: ark-sa-cluster-pvc
+    namespace: optcp-shooting-gallery
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
     nodeStageSecretRef:
@@ -79,6 +89,11 @@ spec:
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: ark-sa-steamapps-pvc
+    namespace: optcp-shooting-gallery
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
     nodeStageSecretRef:
