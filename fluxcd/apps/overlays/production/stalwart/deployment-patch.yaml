@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: stalwart
 spec:
-  # Stopped for the final stalwart-migrate run; 1.0 starts with the cutover commit.
-  replicas: 0
   template:
     metadata:
       labels:
@@ -14,13 +12,21 @@ spec:
         policy.prplanit.com/cap.s3: "true"
         policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
         policy.prplanit.com/cap.oidc: "true"
+        policy.prplanit.com/cap.redis: "true"
+        policy.prplanit.com/access-scope-redis: optcp-delivery-bag.stalwart.redis
     spec:
       initContainers:
         - name: wait-for-db
           image: ghcr.io/cloudnative-pg/postgresql:18.6-system-trixie
       containers:
         - name: stalwart
-          image: docker.io/stalwartlabs/stalwart:v0.16.27
+          image: docker.io/stalwartlabs/stalwart:v1.0.1
+          env:
+            - name: STALWART_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-redis-password
+                  key: password
           resources:
             requests:
               memory: 256Mi
@@ -28,3 +34,7 @@ spec:
             limits:
               memory: 2Gi
               cpu: 310m
+      volumes:
+        - name: config
+          configMap:
+            name: stalwart-config-v1
