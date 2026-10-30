@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-osticket-egress
+spec:
+  description: >-
+    osTicket reaches mail servers (SMTP/IMAP) and webhook integrations, an
+    open-ended external set, so world+cluster is granted; the DB and the mesh
+    ride the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - osticket-app
+          - osticket-cron
+  egress:
+    - toEntities:
+        - world
+        - cluster

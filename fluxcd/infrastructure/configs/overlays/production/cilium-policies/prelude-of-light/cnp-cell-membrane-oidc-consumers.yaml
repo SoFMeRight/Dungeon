@@ -33,6 +33,9 @@ spec:
             k8s:io.kubernetes.pod.namespace: optcp-sibyl-system
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: prplanit
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: pedestal-of-time
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:

@@ -4,3 +4,7 @@ namespace: prplanit
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-cell-membrane.yaml
+  - allow-gateway-ingress-phloem.yaml
+  - allow-osticket-app-to-osticket-mariadb.yaml
+  - allow-osticket-mariadb-galera.yaml

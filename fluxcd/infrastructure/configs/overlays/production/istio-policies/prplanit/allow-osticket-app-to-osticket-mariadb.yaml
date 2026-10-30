@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hyrule-castle/sa/osticket-app
+              - cluster.local/ns/prplanit/sa/osticket-app
       to:
         - operation:
             ports: ["3306"]

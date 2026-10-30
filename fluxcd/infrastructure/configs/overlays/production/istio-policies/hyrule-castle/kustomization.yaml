@@ -35,8 +35,6 @@ resources:
   - allow-calcom-postgres-replication.yaml
   - allow-gitlab-postgresql-replication.yaml
   - allow-harbor-postgres-replication.yaml
-  - allow-osticket-app-to-osticket-mariadb.yaml
-  - allow-osticket-mariadb-galera.yaml
   - allow-gitlab-redis-intra-cluster.yaml
   - allow-harbor-redis-intra-cluster.yaml
   - allow-gitlab-praefect-to-gitaly.yaml

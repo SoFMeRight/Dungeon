@@ -30,7 +30,7 @@ spec:
           kinds: [Pod]
           namespaces: [hookshot]
           names: ["tactical-*"]
-      # hyrule-castle — apt-cacher/bagisto/invoiceninja/osticket apache+root, bookstack LSIO,
+      # hyrule-castle — apt-cacher/bagisto/invoiceninja apache+root, bookstack LSIO,
       # frappe-suite (writes /home/frappe + sites), gitlab + harbor Helm charts, opnform-client node,
       # renovate (containerbase installs toolchains at runtime).
       - resources:
@@ -44,8 +44,12 @@ spec:
             - "gitlab-*"
             - "harbor-*"
             - "invoiceninja-app-*"
-            - "osticket-*"
             - "renovate-*"
+      # prplanit — osticket apache+root.
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit]
+          names: ["osticket-*"]
       - resources:
           kinds: [Pod]
           namespaces: [kokiri-forest]
