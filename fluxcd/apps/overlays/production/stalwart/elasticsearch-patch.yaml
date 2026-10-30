@@ -11,6 +11,9 @@ spec:
           env:
             - name: ES_JAVA_OPTS
               value: "-Xms1g -Xmx1g"
+            # Per-document bulk rejections are only reported at debug level.
+            - name: logger.org.elasticsearch.action.bulk
+              value: DEBUG
           resources:
             requests:
               cpu: 35m
