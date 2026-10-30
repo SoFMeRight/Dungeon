@@ -8,7 +8,7 @@ metadata:
     lbipam.cilium.io/sharing-cross-namespace: "*"
     gatus.home-operations.com/endpoint: |
       group: "Game Servers (Shooting Gallery🎯)"
-      url: http://ark-sa-tmc-valguero.shooting-gallery.svc.cluster.local:8080/healthz
+      url: http://ark-sa-tmc-valguero.optcp-shooting-gallery.svc.cluster.local:8081/healthz
       interval: 30s
       conditions:
         - "[STATUS] == 200"
@@ -38,7 +38,8 @@ spec:
       targetPort: 8780
       protocol: UDP
       name: valguero-query
-    - port: 8080
+    # 8081 on the shared IP: theisland holds 8080 there. The pod still serves health on 8080.
+    - port: 8081
       targetPort: 8080
       protocol: TCP
       name: valguero-health

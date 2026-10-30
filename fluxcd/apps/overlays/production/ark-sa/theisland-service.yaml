@@ -8,7 +8,7 @@ metadata:
     lbipam.cilium.io/sharing-cross-namespace: "*"
     gatus.home-operations.com/endpoint: |
       group: "Game Servers (Shooting Gallery🎯)"
-      url: http://ark-sa-tmc-theisland.shooting-gallery.svc.cluster.local:8080/healthz
+      url: http://ark-sa-tmc-theisland.optcp-shooting-gallery.svc.cluster.local:8080/healthz
       interval: 30s
       conditions:
         - "[STATUS] == 200"
