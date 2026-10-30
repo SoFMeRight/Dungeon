@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: stalwart
 spec:
+  # Stopped for the final stalwart-migrate run; 1.0 starts with the cutover commit.
+  replicas: 0
   template:
     metadata:
       labels:
