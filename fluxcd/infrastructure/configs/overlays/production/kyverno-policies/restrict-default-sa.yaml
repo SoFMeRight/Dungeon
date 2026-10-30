@@ -33,6 +33,7 @@ spec:
                 - optcp-sibyl-system
                 - pedestal-of-time
                 - prplanit
+                - prplanit-support
                 - shooting-gallery
                 - optcp-shooting-gallery
                 - swift-sail
@@ -83,6 +84,7 @@ spec:
                 - optcp-sibyl-system
                 - pedestal-of-time
                 - prplanit
+                - prplanit-support
                 - shooting-gallery
                 - optcp-shooting-gallery
                 - swift-sail

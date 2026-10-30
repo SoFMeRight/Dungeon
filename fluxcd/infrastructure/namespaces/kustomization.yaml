@@ -12,6 +12,7 @@ resources:
   - optcp-shooting-gallery.yaml
   - optcp-sibyl-system.yaml
   - prplanit.yaml
+  - prplanit-support.yaml
   - fairy-bottle.yaml
   - gorons-bracelet.yaml
   - arylls-lookout.yaml

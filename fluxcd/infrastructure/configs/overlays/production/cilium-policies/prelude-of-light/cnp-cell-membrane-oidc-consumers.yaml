@@ -36,6 +36,9 @@ spec:
             k8s:io.kubernetes.pod.namespace: prplanit
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: prplanit-support
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: pedestal-of-time
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:

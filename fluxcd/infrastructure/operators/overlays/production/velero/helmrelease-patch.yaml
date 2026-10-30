@@ -116,6 +116,8 @@ spec:
             - hyrule-castle
             # PrPlanIT client-facing business apps (namespace plan, group A)
             - prplanit
+            # PrPlanIT support (namespace plan, group A)
+            - prplanit-support
             # Routing & Gateway infrastructure
             - king-of-red-lions
             # RDP/remote control services
