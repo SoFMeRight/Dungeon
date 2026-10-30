@@ -12,8 +12,6 @@ configMapGenerator:
     literals:
       - STALWART_PUBLIC_URL=https://mail-admin.optcp.com
       - STALWART_HOSTNAME=mail.optcp.com
-      # Stores are read only at startup: the plan sets them while recovery mode holds the index queue.
-      - STALWART_RECOVERY_MODE=true
   - name: stalwart-config
     files:
       - config.json
