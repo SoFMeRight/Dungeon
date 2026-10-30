@@ -117,7 +117,7 @@ releases:
     tag: "v.{version}"
     asset: "shadps4-linux-sdl-{version}.zip"
     # renovate: datasource=github-releases depName=shadps4-emu/shadPS4 extractVersion=^v\.(?<version>.+)$
-    version: "0.20.0"
+    version: "0.21.0"
     layout: zip
     executables: ["Shadps4-sdl.AppImage"]
     dest: /home/steamheadless/Applications/shadps4
