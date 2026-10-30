@@ -27,6 +27,7 @@ spec:
                 - optcp-cloud
                 - optcp-sibyl-system
                 - pedestal-of-time
+                - prplanit
                 - shooting-gallery
                 - optcp-shooting-gallery
                 - swift-sail
@@ -84,6 +85,7 @@ spec:
                 - optcp-cloud
                 - optcp-sibyl-system
                 - pedestal-of-time
+                - prplanit
                 - shooting-gallery
                 - optcp-shooting-gallery
                 - swift-sail
@@ -141,6 +143,7 @@ spec:
                 - optcp-cloud
                 - optcp-sibyl-system
                 - pedestal-of-time
+                - prplanit
                 - shooting-gallery
                 - optcp-shooting-gallery
                 - swift-sail

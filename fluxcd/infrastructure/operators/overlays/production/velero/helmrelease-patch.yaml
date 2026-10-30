@@ -114,6 +114,8 @@ spec:
             - kokiri-forest
             # Gateway for business/work services (GitLab!)
             - hyrule-castle
+            # PrPlanIT client-facing business apps (namespace plan, group A)
+            - prplanit
             # Routing & Gateway infrastructure
             - king-of-red-lions
             # RDP/remote control services

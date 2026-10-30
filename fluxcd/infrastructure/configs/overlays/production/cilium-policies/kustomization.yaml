@@ -38,5 +38,6 @@ resources:
   - optcp-delivery-bag
   - optcp-shooting-gallery
   - optcp-sibyl-system
+  - prplanit
   # lakitu: netconsole collector ingress only (no contract CNPs here)
   - lakitu
