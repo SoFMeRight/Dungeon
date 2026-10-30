@@ -65,7 +65,7 @@ spec:
               cpu: 15m
               memory: 256Mi
             limits:
-              cpu: 462m
+              cpu: 1000m
               memory: 336Mi
       volumes:
         - name: init-mongo
