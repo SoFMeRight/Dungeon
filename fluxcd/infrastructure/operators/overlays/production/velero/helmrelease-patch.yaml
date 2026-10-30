@@ -107,6 +107,7 @@ spec:
             - lens-of-truth
             # Game servers
             - shooting-gallery
+            - optcp-shooting-gallery
             # Gateway for internal-only services
             - arylls-lookout
             # Gateway for personal/public services

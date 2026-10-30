@@ -1,0 +1,6 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-shooting-gallery
+resources:
+  - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml

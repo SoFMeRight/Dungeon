@@ -34,6 +34,7 @@ spec:
                 - optcp-sibyl-system
                 - pedestal-of-time
                 - shooting-gallery
+                - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
@@ -100,6 +101,7 @@ spec:
                 - optcp-sibyl-system
                 - pedestal-of-time
                 - shooting-gallery
+                - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
@@ -170,6 +172,7 @@ spec:
                 - optcp-sibyl-system
                 - pedestal-of-time
                 - shooting-gallery
+                - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
@@ -239,6 +242,7 @@ spec:
                 - optcp-sibyl-system
                 - pedestal-of-time
                 - shooting-gallery
+                - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner

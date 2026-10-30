@@ -9,6 +9,7 @@ resources:
   - temple-of-time.yaml
   - optcp-cloud.yaml
   - optcp-delivery-bag.yaml
+  - optcp-shooting-gallery.yaml
   - optcp-sibyl-system.yaml
   - fairy-bottle.yaml
   - gorons-bracelet.yaml
