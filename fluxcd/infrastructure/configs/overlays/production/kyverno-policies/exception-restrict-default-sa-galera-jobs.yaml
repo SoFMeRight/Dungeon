@@ -1,0 +1,26 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: restrict-default-sa-galera-jobs
+  namespace: mr-resetti
+  annotations:
+    policies.kyverno.io/description: >-
+      mariadb-operator builds its Galera init and recovery Jobs without the MariaDB's
+      ServiceAccount (withServiceAccount(false) in pkg/builder), so they always run as
+      default. Remove once the operator honours spec.serviceAccountName for them.
+spec:
+  exceptions:
+    - policyName: restrict-default-sa
+      ruleNames:
+        - restrict-default-sa-pods
+        - restrict-default-sa-controllers
+  match:
+    any:
+      - resources:
+          kinds: [Job]
+          namespaces: [prplanit]
+          names: ["osticket-mariadb-init", "osticket-mariadb-*-recovery"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit]
+          names: ["osticket-mariadb-init-*", "osticket-mariadb-*-recovery-*"]
