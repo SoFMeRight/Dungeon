@@ -115,6 +115,15 @@ spec:
           path "optcp/metadata/*" {
             capabilities = ["read", "list"]
           }
+      # Tenant policy (audits/Secret-Storage.md): reads only the prplanit mount.
+      - name: external-secrets-prplanit
+        rules: |
+          path "prplanit/data/*" {
+            capabilities = ["read", "list"]
+          }
+          path "prplanit/metadata/*" {
+            capabilities = ["read", "list"]
+          }
       - name: zitadel-provisioner
         rules: |
           path "zeldas-letter/data/apps/zitadel" {
@@ -182,6 +191,11 @@ spec:
             bound_service_account_names: ["external-secrets-vault"]
             bound_service_account_namespaces: ["zeldas-lullaby"]
             policies: ["external-secrets-optcp"]
+            ttl: 24h
+          - name: external-secrets-prplanit
+            bound_service_account_names: ["external-secrets-vault"]
+            bound_service_account_namespaces: ["zeldas-lullaby"]
+            policies: ["external-secrets-prplanit"]
             ttl: 24h
           - name: zitadel-vault-sync
             bound_service_account_names: ["zitadel-configuration"]
@@ -259,6 +273,11 @@ spec:
       - path: optcp
         type: kv
         description: OpTCP tenant — infrastructure and services shared by business and home, laid out as apps/<app>/<issuer>
+        options:
+          version: 2
+      - path: prplanit
+        type: kv
+        description: Precision Plan IT
         options:
           version: 2
       # SSH client-cert signer — Boundary brokers short-lived certs for access to
