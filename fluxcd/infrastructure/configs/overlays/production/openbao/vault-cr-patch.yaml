@@ -257,7 +257,10 @@ spec:
           version: 2
       - path: outspokekin
         type: kv
-        description: Outspoke Kin fediverse identity — hub, homeserver and auth secrets
+        description: Secrets for the OutspokeKin private social platform
+        # Sent on every reconcile; the top-level description is used only at creation.
+        config:
+          description: Secrets for the OutspokeKin private social platform
         options:
           version: 2
       - path: pedestal-of-time
@@ -267,17 +270,26 @@ spec:
           version: 2
       - path: arbitorium
         type: kv
-        description: The house — personal-sensitive, home automation and household amenity secrets
+        description: "Household secrets: personal, home automation and game streaming"
+        # Sent on every reconcile; the top-level description is used only at creation.
+        config:
+          description: "Household secrets: personal, home automation and game streaming"
         options:
           version: 2
       - path: optcp
         type: kv
-        description: OpTCP tenant — infrastructure and services shared by business and home, laid out as apps/<app>/<issuer>
+        description: Platform and shared-cloud secrets for the OpTCP operation
+        # Sent on every reconcile; the top-level description is used only at creation.
+        config:
+          description: Platform and shared-cloud secrets for the OpTCP operation
         options:
           version: 2
       - path: prplanit
         type: kv
-        description: Precision Plan IT
+        description: Business secrets for PrPlanIT's client-facing and staff apps
+        # Sent on every reconcile; the top-level description is used only at creation.
+        config:
+          description: Business secrets for PrPlanIT's client-facing and staff apps
         options:
           version: 2
       # SSH client-cert signer — Boundary brokers short-lived certs for access to
