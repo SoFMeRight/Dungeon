@@ -59,7 +59,7 @@ spec:
               cpu: 2m
             limits:
               memory: 64Mi
-              cpu: 20m
+              cpu: 724m
 
         # Semaphore UI
         - name: semaphore

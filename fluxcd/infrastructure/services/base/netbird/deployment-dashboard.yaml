@@ -80,7 +80,7 @@ spec:
               cpu: "2m"
             limits:
               memory: "48Mi"
-              cpu: "10m"
+              cpu: "514m"
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/http.d/default.conf

@@ -13,7 +13,7 @@ spec:
       cpu: "100m"
     limits:
       memory: "512Mi"
-      cpu: "500m"
+      cpu: "1016m"
 
   inheritedMetadata:
     # Alloy finds scrape targets from these annotations on the pod, not from a
