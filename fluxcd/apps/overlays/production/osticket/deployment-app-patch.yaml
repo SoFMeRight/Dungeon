@@ -22,7 +22,7 @@ spec:
           # nginx real_ip + entrypoint TRUSTED_PROXIES. Tag kept for readability/Renovate;
           # the digest forces the rollout to adopt this exact build (the tag alone wouldn't
           # re-pull a cached image). Renovate tracks digest updates as the tag is rebuilt.
-          image: ghcr.io/homelabhd/osticket:v1.18.4@sha256:9b07493e96c848db37b52473b975b04faffdde9d93079ed6cacaa9cbab942bd2
+          image: ghcr.io/homelabhd/osticket:v1.18.4@sha256:a156cada6b9f6d2955b25c8a64bbe70ed1493473f6442d04796bd70e38cce257
           env:
             # Trust the in-cluster mesh/gateway so nginx real_ip takes the client
             # from X-Real-Ip (injected by envoyfilter-osticket-realip-*) — makes
