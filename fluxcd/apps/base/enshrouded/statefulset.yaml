@@ -31,13 +31,14 @@ spec:
       # Lets the server finish its world save on SIGTERM.
       terminationGracePeriodSeconds: 120
       initContainers:
-        # The server reads enshrouded_server.json from its install dir on the data volume. A
-        # subPath file mount over it fails (move_mount EINVAL), so the file is a symlink to the
-        # mounted Secret, which also lets a changed password reach the next start.
-        - name: link-config
+        # The server reads enshrouded_server.json from its install dir and rewrites it at start,
+        # stopping if it cannot, so the rendered Secret is copied over it on every start: the
+        # Secret stays the source and the server gets a file it can write.
+        - name: copy-config
           image: docker.io/sknnr/enshrouded-dedicated-server:proton-v2.4.0
           imagePullPolicy: IfNotPresent
-          command: ["ln", "-sfn", "/home/steam/config/enshrouded_server.json", "/home/steam/enshrouded/enshrouded_server.json"]
+          # rm first: the earlier layout left a symlink into the read-only mount here.
+          command: ["sh", "-c", "rm -f /home/steam/enshrouded/enshrouded_server.json && install -m 0640 /home/steam/config/enshrouded_server.json /home/steam/enshrouded/enshrouded_server.json"]
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -45,6 +46,9 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /home/steam/enshrouded
+            - name: config
+              mountPath: /home/steam/config
+              readOnly: true
       containers:
         - name: enshrouded
           image: docker.io/sknnr/enshrouded-dedicated-server:proton-v2.4.0
@@ -71,9 +75,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /home/steam/enshrouded
-            - name: config
-              mountPath: /home/steam/config
-              readOnly: true
           resources:
             requests:
               cpu: "2"
