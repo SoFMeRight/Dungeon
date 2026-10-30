@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-stalwart-migrate-egress
+spec:
+  description: >-
+    stalwart-migrate reads the shared blob store at s3.optcp.com, which resolves to the
+    phloem gateway (not meshed). Postgres rides the contract CCNP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: stalwart-migrate
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: phloem-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

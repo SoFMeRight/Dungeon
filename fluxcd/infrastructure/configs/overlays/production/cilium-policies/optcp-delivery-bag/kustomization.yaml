@@ -4,3 +4,4 @@ namespace: optcp-delivery-bag
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-stalwart.yaml
+  - cnp-stalwart-migrate.yaml
