@@ -79,7 +79,7 @@ spec:
               memory: "36Mi"
               cpu: "2m"
             limits:
-              memory: "48Mi"
+              memory: "96Mi"
               cpu: "514m"
           volumeMounts:
             - name: nginx-config
