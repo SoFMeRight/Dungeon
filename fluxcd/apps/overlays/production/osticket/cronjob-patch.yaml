@@ -3,7 +3,6 @@ kind: CronJob
 metadata:
   name: osticket-cron
 spec:
-  suspend: true
   jobTemplate:
     spec:
       template:
