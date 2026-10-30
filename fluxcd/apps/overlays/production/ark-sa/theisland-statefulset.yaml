@@ -14,10 +14,11 @@ spec:
         app: ark-sa-tmc-theisland
         policy.prplanit.com/probe: "true"
       annotations:
-        # Reinstallable ASA server binaries + Steam download cache (both SteamCMD-restorable).
+        # Reinstallable ASA server binaries + Steam download cache (both SteamCMD-restorable), and
+        # the Proton prefix, rebuilt on every start.
         # Kept out of Velero fs-backup; the saved/ volume holds the irreplaceable world state
         # and stays backed up.
-        backup.velero.io/backup-volumes-excludes: serverfiles,steamapps
+        backup.velero.io/backup-volumes-excludes: serverfiles,steamapps,compatdata
     spec:
       serviceAccountName: ark-sa-tmc-theisland
       enableServiceLinks: false
@@ -48,7 +49,8 @@ spec:
           command: ["/bin/bash", "-c"]
           args:
             - |
-              # Nuke corrupted Proton prefix so proton rebuilds it properly with WINED3D
+              # Nuke corrupted Proton prefix so proton rebuilds it properly with WINED3D. The prefix
+              # is this pod's own emptyDir (compatdata below), so this never touches the other map's.
               rm -rf /home/pok/.steam/steam/steamapps/compatdata/2430930
               python3 /health/health-server.py &
               exec /home/pok/scripts/init.sh
@@ -138,9 +140,16 @@ spec:
               mountPath: /home/pok/arkserver/ShooterGame/Saved/clusters
             - name: steamapps
               mountPath: /home/pok/.steam/steam/steamapps
+            # Each map gets its own Proton prefix: on the shared steamapps volume, one map's start
+            # wiped the prefix the other was running from, and the server died before logging.
+            - name: compatdata
+              mountPath: /home/pok/.steam/steam/steamapps/compatdata
             - name: health-proxy
               mountPath: /health
       volumes:
+        - name: compatdata
+          emptyDir:
+            sizeLimit: 4Gi
         - name: health-proxy
           configMap:
             name: ark-health-proxy
