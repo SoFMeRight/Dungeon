@@ -1,0 +1,62 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: osticket-backup-verify
+spec:
+  schedule: "15 7 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: 3600
+      template:
+        spec:
+          serviceAccountName: osticket-backup-verify
+          restartPolicy: Never
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: verify
+              image: ghcr.io/homelabhd/ansible:v2.21.5@sha256:9130d35313d7117085b015d2ef6708436377f09ab16dfe4933a76fcc91f2b0f2
+              command:
+                - ansible-playbook
+                - /playbooks/mariadb-backup-verify.yml
+                - -e
+                - "@/playbooks/vars.yml"
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+              env:
+                - name: HOME
+                  value: /tmp
+                - name: ANSIBLE_LOCAL_TEMP
+                  value: /tmp/.ansible
+                - name: ANSIBLE_REMOTE_TMP
+                  value: /tmp/.ansible
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 128Mi
+                limits:
+                  memory: 512Mi
+              volumeMounts:
+                - name: playbooks
+                  mountPath: /playbooks
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: playbooks
+              configMap:
+                name: osticket-backup-verify
+            - name: tmp
+              emptyDir: {}

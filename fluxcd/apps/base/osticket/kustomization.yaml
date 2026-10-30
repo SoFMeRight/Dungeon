@@ -7,3 +7,8 @@ resources:
   - cronjob.yaml
   - service.yaml
   - externalsecret.yaml
+  - externalsecret-backup.yaml
+  - backup-mariadb.yaml
+  - configmap-backup-verify.yaml
+  - cronjob-backup-verify.yaml
+  - rbac-backup-verify.yaml

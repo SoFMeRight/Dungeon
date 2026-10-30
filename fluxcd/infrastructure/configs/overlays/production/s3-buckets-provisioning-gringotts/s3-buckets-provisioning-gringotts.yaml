@@ -60,7 +60,7 @@ spec:
             # alone, so a prefix-scoped identity can archive but never restore.
             # The three original buckets stay for the CNPG archives written before
             # the split, until those age past their lock.
-            - --buckets=optcp,optcp-dungeon-cnpg-appflowy,optcp-dungeon-cnpg-dependency-track,optcp-dungeon-cnpg-homarr,optcp-dungeon-cnpg-nextcloud,optcp-dungeon-cnpg-open-webui,optcp-dungeon-cnpg-openproject,optcp-dungeon-cnpg-stalwart,optcp-dungeon-cnpg-wikijs-sops,outspokekin,outspokekin-dungeon-cnpg-matrix,prplanit,prplanit-dungeon-cnpg-boundary,prplanit-dungeon-cnpg-calcom,prplanit-dungeon-cnpg-gatus,prplanit-dungeon-cnpg-gitlab,prplanit-dungeon-cnpg-grafana,prplanit-dungeon-cnpg-harbor,prplanit-dungeon-cnpg-netbird,prplanit-dungeon-cnpg-vaultwarden,prplanit-dungeon-cnpg-zitadel,prplanit-dungeon-velero
+            - --buckets=optcp,optcp-dungeon-cnpg-appflowy,optcp-dungeon-cnpg-dependency-track,optcp-dungeon-cnpg-homarr,optcp-dungeon-cnpg-nextcloud,optcp-dungeon-cnpg-open-webui,optcp-dungeon-cnpg-openproject,optcp-dungeon-cnpg-stalwart,optcp-dungeon-cnpg-wikijs-sops,outspokekin,outspokekin-dungeon-cnpg-matrix,prplanit,prplanit-dungeon-cnpg-boundary,prplanit-dungeon-cnpg-calcom,prplanit-dungeon-cnpg-gatus,prplanit-dungeon-cnpg-gitlab,prplanit-dungeon-cnpg-grafana,prplanit-dungeon-cnpg-harbor,prplanit-dungeon-cnpg-netbird,prplanit-dungeon-cnpg-vaultwarden,prplanit-dungeon-cnpg-zitadel,prplanit-dungeon-mariadb-osticket,prplanit-dungeon-velero
             - --retention-days=29
             - --noncurrent-days=7
             - --abort-mpu-days=7

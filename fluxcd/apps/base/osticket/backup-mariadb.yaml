@@ -1,0 +1,129 @@
+# Retention stays above the bucket's 29-day object lock so pruning never hits a locked copy.
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Backup
+metadata:
+  name: osticket-mariadb-backup-frequent
+spec:
+  mariaDbRef:
+    name: osticket-mariadb
+  schedule:
+    cron: "30 0,6,12,18 * * *"
+  maxRetention: 720h
+  compression: gzip
+  serviceAccountName: osticket-mariadb-backup
+  podMetadata:
+    labels:
+      policy.prplanit.com/cap.s3-nas: "true"
+      policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
+      policy.prplanit.com/cap.mariadb: "true"
+      policy.prplanit.com/access-scope-mariadb: prplanit.osticket.mariadb
+  podSecurityContext:
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  storage:
+    s3:
+      bucket: PLACEHOLDER_BUCKET
+      prefix: frequent
+      endpoint: PLACEHOLDER_S3_ENDPOINT
+      region: us-east-1
+      accessKeyIdSecretKeyRef:
+        name: osticket-mariadb-backup-s3
+        key: ACCESS_KEY_ID
+      secretAccessKeySecretKeyRef:
+        name: osticket-mariadb-backup-s3
+        key: SECRET_ACCESS_KEY
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Backup
+metadata:
+  name: osticket-mariadb-backup-weekly
+spec:
+  mariaDbRef:
+    name: osticket-mariadb
+  schedule:
+    cron: "45 12 * * 0"
+  maxRetention: 4392h
+  compression: gzip
+  serviceAccountName: osticket-mariadb-backup
+  podMetadata:
+    labels:
+      policy.prplanit.com/cap.s3-nas: "true"
+      policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
+      policy.prplanit.com/cap.mariadb: "true"
+      policy.prplanit.com/access-scope-mariadb: prplanit.osticket.mariadb
+  podSecurityContext:
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  storage:
+    s3:
+      bucket: PLACEHOLDER_BUCKET
+      prefix: weekly
+      endpoint: PLACEHOLDER_S3_ENDPOINT
+      region: us-east-1
+      accessKeyIdSecretKeyRef:
+        name: osticket-mariadb-backup-s3
+        key: ACCESS_KEY_ID
+      secretAccessKeySecretKeyRef:
+        name: osticket-mariadb-backup-s3
+        key: SECRET_ACCESS_KEY
+---
+apiVersion: k8s.mariadb.com/v1alpha1
+kind: Backup
+metadata:
+  name: osticket-mariadb-backup-monthly
+spec:
+  mariaDbRef:
+    name: osticket-mariadb
+  schedule:
+    cron: "50 12 1 * *"
+  maxRetention: 8784h
+  compression: gzip
+  serviceAccountName: osticket-mariadb-backup
+  podMetadata:
+    labels:
+      policy.prplanit.com/cap.s3-nas: "true"
+      policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
+      policy.prplanit.com/cap.mariadb: "true"
+      policy.prplanit.com/access-scope-mariadb: prplanit.osticket.mariadb
+  podSecurityContext:
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  storage:
+    s3:
+      bucket: PLACEHOLDER_BUCKET
+      prefix: monthly
+      endpoint: PLACEHOLDER_S3_ENDPOINT
+      region: us-east-1
+      accessKeyIdSecretKeyRef:
+        name: osticket-mariadb-backup-s3
+        key: ACCESS_KEY_ID
+      secretAccessKeySecretKeyRef:
+        name: osticket-mariadb-backup-s3
+        key: SECRET_ACCESS_KEY

@@ -1,0 +1,41 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: osticket-backup-verify
+rules:
+  - apiGroups: [k8s.mariadb.com]
+    resources: [mariadbs, backups]
+    verbs: [get, list, watch]
+  - apiGroups: [k8s.mariadb.com]
+    resources: [mariadbs, restores]
+    verbs: [create]
+  - apiGroups: [k8s.mariadb.com]
+    resources: [mariadbs, restores]
+    resourceNames: [osticket-mariadb-verify]
+    verbs: [get, list, watch, patch, delete]
+  - apiGroups: [k8s.mariadb.com]
+    resources: [restores]
+    verbs: [list, watch]
+  - apiGroups: [""]
+    resources: [pods/exec]
+    resourceNames: [osticket-mariadb-verify-0]
+    verbs: [get, create]
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [create]
+  - apiGroups: [""]
+    resources: [configmaps]
+    resourceNames: [osticket-backup-verify-state]
+    verbs: [get, list, patch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: osticket-backup-verify
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: osticket-backup-verify
+subjects:
+  - kind: ServiceAccount
+    name: osticket-backup-verify

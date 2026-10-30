@@ -6,6 +6,10 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Business Apps (Hyrule Castle🏰)"
+      conditions:
+        - "[STATUS] == any(200, 302)"
+        - "[BODY] != pat(*Support Ticket System Offline*)"
+        - "[RESPONSE_TIME] < 5000"
 spec:
   parentRefs:
     - name: cell-membrane-gateway

@@ -44,6 +44,46 @@ data:
               summary: No Postgres cluster is reporting its backup status, so missed backups would go unnoticed
               resolved_title: Backup status reported again
               resolved: Postgres clusters are reporting their backup status again
+          # Each MariaDB backup tier allows two missed runs before alerting.
+          - alert: MariaDBBackupMissing
+            expr: |
+              (time() - max by (namespace, cronjob) (kube_cronjob_status_last_successful_time{cronjob=~".+-mariadb-backup-frequent"}
+                or kube_cronjob_created{cronjob=~".+-mariadb-backup-frequent"})) / 3600 > 13
+              or (time() - max by (namespace, cronjob) (kube_cronjob_status_last_successful_time{cronjob=~".+-mariadb-backup-weekly"}
+                or kube_cronjob_created{cronjob=~".+-mariadb-backup-weekly"})) / 3600 > 348
+              or (time() - max by (namespace, cronjob) (kube_cronjob_status_last_successful_time{cronjob=~".+-mariadb-backup-monthly"}
+                or kube_cronjob_created{cronjob=~".+-mariadb-backup-monthly"})) / 3600 > 1512
+            for: 1h
+            labels:
+              severity: warning
+            annotations:
+              title: MariaDB backup missing
+              summary: MariaDB backup {{ $labels.namespace }}/{{ $labels.cronjob }} has missed two scheduled runs
+              resolved_title: MariaDB backup restored
+              resolved: MariaDB backup {{ $labels.namespace }}/{{ $labels.cronjob }} completed again
+          # Verification restores the newest backup daily and fails on a missing or emptied key table.
+          - alert: MariaDBBackupUnverified
+            expr: |
+              (time() - max by (namespace, cronjob) (kube_cronjob_status_last_successful_time{cronjob=~".+-backup-verify"}
+                or kube_cronjob_created{cronjob=~".+-backup-verify"})) / 3600 > 26
+            for: 1h
+            labels:
+              severity: critical
+            annotations:
+              title: MariaDB backup unverified
+              summary: "{{ $labels.namespace }}/{{ $labels.cronjob }} has not verified a backup in over 26 hours: the newest backup failed to restore or lost key-table rows"
+              resolved_title: MariaDB backup verified
+              resolved: "{{ $labels.namespace }}/{{ $labels.cronjob }} verified a backup again"
+          - alert: MariaDBBackupStatusMissing
+            expr: absent(kube_cronjob_info{cronjob=~".+-mariadb-backup-frequent"})
+            for: 1h
+            labels:
+              severity: warning
+            annotations:
+              title: MariaDB backup status not reported
+              summary: No MariaDB backup CronJob is being reported, so missed backups would go unnoticed
+              resolved_title: MariaDB backup status reported again
+              resolved: MariaDB backup CronJobs are being reported again
 
   flux.yaml: |
     groups:

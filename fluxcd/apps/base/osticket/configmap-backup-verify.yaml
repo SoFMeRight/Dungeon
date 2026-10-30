@@ -1,0 +1,161 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: osticket-backup-verify
+data:
+  vars.yml: |
+    source: osticket-mariadb
+    verify_name: osticket-mariadb-verify
+    restore_service_account: osticket-mariadb-restore
+    state_configmap: osticket-backup-verify-state
+    s3_secret: osticket-mariadb-backup-s3
+    s3_prefix: frequent
+    key_tables:
+      - osticket.ost_config
+      - osticket.ost_staff
+      - osticket.ost_user
+      - osticket.ost_ticket
+      - osticket.ost_thread_entry
+  mariadb-backup-verify.yml: |
+    # Fails when the newest backup does not restore, a key table is missing, or a key table
+    # lost more than max_drop of its rows since the last verified backup.
+    - name: Verify the newest MariaDB backup
+      hosts: localhost
+      gather_facts: false
+      vars:
+        ns: "{{ lookup('file', '/var/run/secrets/kubernetes.io/serviceaccount/namespace') }}"
+        max_drop: 0.5
+      tasks:
+        - name: Read the source MariaDB and its frequent Backup
+          kubernetes.core.k8s_info:
+            api_version: k8s.mariadb.com/v1alpha1
+            kind: "{{ item.kind }}"
+            namespace: "{{ ns }}"
+            name: "{{ item.name }}"
+          loop:
+            - { kind: MariaDB, name: "{{ source }}" }
+            - { kind: Backup, name: "{{ source }}-backup-{{ s3_prefix }}" }
+          register: sources
+          failed_when: sources.resources | length != 1
+
+        - name: Verify inside a throwaway MariaDB
+          vars:
+            src: "{{ sources.results[0].resources[0] }}"
+            s3: "{{ sources.results[1].resources[0].spec.storage.s3 }}"
+          block:
+            - name: Remove a leftover throwaway MariaDB
+              kubernetes.core.k8s:
+                state: absent
+                api_version: k8s.mariadb.com/v1alpha1
+                kind: MariaDB
+                namespace: "{{ ns }}"
+                name: "{{ verify_name }}"
+                wait: true
+                wait_timeout: 300
+
+            - name: Create the throwaway MariaDB
+              kubernetes.core.k8s:
+                state: present
+                wait: true
+                wait_condition: { type: Ready, status: "True" }
+                wait_timeout: 600
+                definition:
+                  apiVersion: k8s.mariadb.com/v1alpha1
+                  kind: MariaDB
+                  metadata:
+                    name: "{{ verify_name }}"
+                    namespace: "{{ ns }}"
+                  spec:
+                    image: "{{ src.spec.image }}"
+                    rootPasswordSecretKeyRef: "{{ src.spec.rootPasswordSecretKeyRef }}"
+                    replicas: 1
+                    storage:
+                      ephemeral: true
+                    podMetadata:
+                      labels:
+                        policy.prplanit.com/access-class: mariadb
+                        policy.prplanit.com/service-scope: "{{ ns }}.{{ verify_name }}"
+                    podSecurityContext: "{{ src.spec.podSecurityContext | default({}) }}"
+                    securityContext: "{{ src.spec.securityContext | default({}) }}"
+
+            - name: Restore the newest backup into it
+              kubernetes.core.k8s:
+                state: present
+                wait: true
+                wait_condition: { type: Complete, status: "True" }
+                wait_timeout: 1800
+                definition:
+                  apiVersion: k8s.mariadb.com/v1alpha1
+                  kind: Restore
+                  metadata:
+                    name: "{{ verify_name }}"
+                    namespace: "{{ ns }}"
+                  spec:
+                    mariaDbRef:
+                      name: "{{ verify_name }}"
+                    s3: "{{ s3 }}"
+                    serviceAccountName: "{{ restore_service_account }}"
+                    podMetadata:
+                      labels:
+                        policy.prplanit.com/cap.s3-nas: "true"
+                        policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
+                        policy.prplanit.com/cap.mariadb: "true"
+                        policy.prplanit.com/access-scope-mariadb: "{{ ns }}.{{ verify_name }}"
+                    podSecurityContext: "{{ src.spec.podSecurityContext | default({}) }}"
+                    securityContext: "{{ src.spec.securityContext | default({}) }}"
+                    backoffLimit: 0
+
+            - name: Count rows in the key tables
+              kubernetes.core.k8s_exec:
+                namespace: "{{ ns }}"
+                pod: "{{ verify_name }}-0"
+                container: mariadb
+                command: >-
+                  sh -c 'MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb -uroot -N -B -e "SELECT COUNT(*) FROM {{ item }}"'
+              loop: "{{ key_tables }}"
+              register: counted
+              failed_when: counted.rc != 0 or not (counted.stdout | trim is match('^[0-9]+$'))
+
+            - name: Read the last verified counts
+              kubernetes.core.k8s_info:
+                api_version: v1
+                kind: ConfigMap
+                namespace: "{{ ns }}"
+                name: "{{ state_configmap }}"
+              register: state
+
+            - name: Compare against the last verified backup
+              vars:
+                current: "{{ dict(key_tables | zip(counted.results | map(attribute='stdout') | map('trim') | map('int'))) }}"
+                previous: "{{ (state.resources[0].data.counts | default('{}')) | from_json if state.resources else {} }}"
+              block:
+                - name: Every key table is present and kept at least half its rows
+                  ansible.builtin.assert:
+                    that:
+                      - item in current
+                      - (current[item] | int) >= ((previous[item] | default(0) | int) * (1 - max_drop))
+                    fail_msg: "{{ item }}: {{ current[item] | default('missing') }} rows, last verified {{ previous[item] | default('none') }}"
+                    quiet: true
+                  loop: "{{ key_tables }}"
+
+                - name: Record these counts as the last verified
+                  kubernetes.core.k8s:
+                    state: present
+                    definition:
+                      apiVersion: v1
+                      kind: ConfigMap
+                      metadata:
+                        name: "{{ state_configmap }}"
+                        namespace: "{{ ns }}"
+                      data:
+                        counts: "{{ current | to_json }}"
+                        verified: "{{ now(utc=true).isoformat() }}"
+          always:
+            - name: Remove the throwaway MariaDB and its Restore
+              kubernetes.core.k8s:
+                state: absent
+                api_version: k8s.mariadb.com/v1alpha1
+                kind: "{{ item }}"
+                namespace: "{{ ns }}"
+                name: "{{ verify_name }}"
+              loop: [Restore, MariaDB]

@@ -400,6 +400,18 @@ configs:
             ]
           },
           {
+            "name": "prplanit-dungeon-mariadb-osticket",
+            "credentials": [
+              { "accessKey": "${PRPLANIT_DUNGEON_MARIADB_OSTICKET_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_MARIADB_OSTICKET_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:prplanit-dungeon-mariadb-osticket",
+              "Write:prplanit-dungeon-mariadb-osticket",
+              "List:prplanit-dungeon-mariadb-osticket",
+              "Tagging:prplanit-dungeon-mariadb-osticket"
+            ]
+          },
+          {
             "name": "prplanit-dungeon-velero",
             "credentials": [
               { "accessKey": "${PRPLANIT_DUNGEON_VELERO_S3_ACCESS_KEY}", "secretKey": "${PRPLANIT_DUNGEON_VELERO_S3_SECRET_KEY}" }

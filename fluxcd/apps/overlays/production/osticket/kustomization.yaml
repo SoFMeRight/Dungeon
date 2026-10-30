@@ -17,6 +17,11 @@ patches:
       kind: Service
       name: osticket-app
   - path: externalsecret-patch.yaml
+  - path: externalsecret-backup-patch.yaml
+  - path: backup-mariadb-patch.yaml
+    target:
+      kind: Backup
+      name: osticket-mariadb-backup-.*
   - path: service-osticket-app-ingress-patch.yaml
     target:
       kind: Service

@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-osticket-mariadb-restore-to-osticket-mariadb-verify
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: osticket-mariadb-verify
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/prplanit/sa/osticket-mariadb-restore
+      to:
+        - operation:
+            ports: ["3306"]

@@ -7,4 +7,6 @@ resources:
   - allow-gateway-ingress-cell-membrane.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-osticket-app-to-osticket-mariadb.yaml
+  - allow-osticket-mariadb-backup-to-osticket-mariadb.yaml
   - allow-osticket-mariadb-galera.yaml
+  - allow-osticket-mariadb-restore-to-osticket-mariadb-verify.yaml

@@ -70,6 +70,7 @@ spec:
               - gitlab-praefect-db-init
               - harbor-postgres
               - osticket-mariadb
+              - osticket-backup-verify
               - homarr-postgres
               - appflowy-postgres
               - kimai
