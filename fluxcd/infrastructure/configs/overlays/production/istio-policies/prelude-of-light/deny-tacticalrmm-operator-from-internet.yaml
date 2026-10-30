@@ -1,0 +1,36 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: deny-tacticalrmm-operator-from-internet
+spec:
+  # Selected on the gateway, not the workload: hookshot is ambient with no waypoint, so a
+  # path rule on the pod would never be consulted.
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  action: DENY
+  # From the internet, Tactical RMM serves only what its agents use. The dashboard, its API
+  # and MeshCentral's web UI answer private sources only (LAN, VPN, in-cluster monitoring).
+  rules:
+    - from:
+        - source:
+            notIpBlocks: ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "100.64.0.0/10", "fc00::/7"]
+      to:
+        - operation:
+            hosts: ["trmm.prplanit.com", "trmm.prplanit.com:443"]
+    # Agents: REST check-ins and installs under /api/v3, and the NATS command channel.
+    - from:
+        - source:
+            notIpBlocks: ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "100.64.0.0/10", "fc00::/7"]
+      to:
+        - operation:
+            hosts: ["trmm-api.prplanit.com", "trmm-api.prplanit.com:443"]
+            notPaths: ["/api/v3/*", "/natsws", "/natsws/*"]
+    # Mesh agents: the agent channel, the remote-session relay, and the agent installer.
+    - from:
+        - source:
+            notIpBlocks: ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "100.64.0.0/10", "fc00::/7"]
+      to:
+        - operation:
+            hosts: ["meshc.prplanit.com", "meshc.prplanit.com:443"]
+            notPaths: ["/agent.ashx", "/meshrelay.ashx", "/meshagents", "/meshsettings"]
