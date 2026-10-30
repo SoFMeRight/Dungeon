@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: enshrouded
+  annotations:
+    # The server reads its config only at start.
+    secret.reloader.stakater.com/reload: enshrouded-secret
 spec:
   revisionHistoryLimit: 5
   serviceName: enshrouded
@@ -45,20 +48,18 @@ spec:
               name: query
               protocol: UDP
           env:
-            - name: SERVER_NAME
-              value: "Master-Chiefers"
-            - name: PORT
-              value: "15637"
-            - name: SERVER_SLOTS
-              value: "16"
-          envFrom:
-            - secretRef:
-                name: enshrouded-secret
+            # Use the mounted config as is; vault-secret.yaml holds it.
+            - name: EXTERNAL_CONFIG
+              value: "1"
           # The whole server dir: the SteamCMD install (updated on every start), config and saves.
           # The entrypoint exits when the query port closes, so no probes are needed.
           volumeMounts:
             - name: data
               mountPath: /home/steam/enshrouded
+            - name: config
+              mountPath: /home/steam/enshrouded/enshrouded_server.json
+              subPath: enshrouded_server.json
+              readOnly: true
           resources:
             requests:
               cpu: "2"
@@ -66,6 +67,11 @@ spec:
             limits:
               cpu: "4"
               memory: 12Gi
+      volumes:
+        - name: config
+          secret:
+            secretName: enshrouded-secret
+            defaultMode: 0440
   volumeClaimTemplates:
     - metadata:
         name: data
