@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: enshrouded
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        # HDD-backed Ceph RBD: the world runs from RAM; disk is the SteamCMD install +
+        # periodic saves, so HDD is fine and frees NVMe.
+        storageClassName: ceph-rbd-hdd
+        resources:
+          requests:
+            storage: 20Gi

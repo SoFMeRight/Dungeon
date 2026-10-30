@@ -63,10 +63,12 @@ resources:
   # Games
   - ark-sa
   - ark-se
+  - enshrouded
   - minecraft-optcp
   - palworld
   - romm
   - steam-headless
+  - valheim
   # Media
   - calibre-web
   - hubzilla

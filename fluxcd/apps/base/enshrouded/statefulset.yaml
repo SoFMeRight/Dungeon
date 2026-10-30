@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: enshrouded
+spec:
+  revisionHistoryLimit: 5
+  serviceName: enshrouded
+  replicas: 1
+  selector:
+    matchLabels:
+      app: enshrouded
+  template:
+    metadata:
+      labels:
+        app: enshrouded
+        # enforce-pod-hardening exemption: SteamCMD and the Proton prefix write under
+        # /home/steam/steamcmd in the image, so no RO rootfs.
+        policy.prplanit.com/except-ro-rootfs: "true"
+    spec:
+      serviceAccountName: enshrouded
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10000
+        runAsGroup: 10000
+        fsGroup: 10000
+        seccompProfile:
+          type: RuntimeDefault
+      # Lets the server finish its world save on SIGTERM.
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: enshrouded
+          image: docker.io/sknnr/enshrouded-dedicated-server:proton-v2.4.0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          ports:
+            - containerPort: 15637
+              name: query
+              protocol: UDP
+          env:
+            - name: SERVER_NAME
+              value: "Master-Chiefers"
+            - name: PORT
+              value: "15637"
+            - name: SERVER_SLOTS
+              value: "16"
+          envFrom:
+            - secretRef:
+                name: enshrouded-secret
+          # The whole server dir: the SteamCMD install (updated on every start), config and saves.
+          # The entrypoint exits when the query port closes, so no probes are needed.
+          volumeMounts:
+            - name: data
+              mountPath: /home/steam/enshrouded
+          resources:
+            requests:
+              cpu: "2"
+              memory: 6Gi
+            limits:
+              cpu: "4"
+              memory: 12Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: 20Gi

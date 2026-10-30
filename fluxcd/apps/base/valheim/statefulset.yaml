@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: valheim
+spec:
+  revisionHistoryLimit: 5
+  serviceName: valheim
+  replicas: 1
+  selector:
+    matchLabels:
+      app: valheim
+  template:
+    metadata:
+      labels:
+        app: valheim
+        # enforce-pod-hardening exemptions: supervisord starts as root to install via SteamCMD
+        # and chown, then runs the server as PUID/PGID, and writes outside its volumes.
+        policy.prplanit.com/except-non-root: "true"
+        policy.prplanit.com/except-ro-rootfs: "true"
+    spec:
+      serviceAccountName: valheim
+      securityContext:
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      # Lets the server finish its world save on SIGTERM.
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: valheim
+          image: ghcr.io/community-valheim-tools/valheim-server:1.4.1
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            # The root phase: chown (CHOWN, FOWNER), writing into steam-owned dirs (DAC_OVERRIDE),
+            # dropping to PUID/PGID (SETUID/SETGID), and signalling the server (KILL).
+            capabilities:
+              drop: ["ALL"]
+              add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "SETUID", "SETGID", "KILL"]
+          ports:
+            - containerPort: 2456
+              name: game
+              protocol: UDP
+            - containerPort: 2457
+              name: query
+              protocol: UDP
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: SERVER_NAME
+              value: "Master-Chiefers"
+            - name: WORLD_NAME
+              value: "Dedicated"
+            # private/password server — not listed in the public server browser
+            - name: SERVER_PUBLIC
+              value: "false"
+            - name: TZ
+              value: Etc/UTC
+          envFrom:
+            - secretRef:
+                name: valheim-secret
+          volumeMounts:
+            # /config holds the worlds and their backups; /opt/valheim the SteamCMD install.
+            - name: data
+              mountPath: /config
+              subPath: config
+            - name: data
+              mountPath: /opt/valheim
+              subPath: server
+          resources:
+            requests:
+              cpu: "1"
+              memory: 4Gi
+            limits:
+              cpu: "4"
+              memory: 8Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: 10Gi

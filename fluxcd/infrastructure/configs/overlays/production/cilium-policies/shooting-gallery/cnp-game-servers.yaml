@@ -171,3 +171,51 @@ spec:
               protocol: UDP
             - port: "27015"
               protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-valheim-public
+spec:
+  description: >-
+    Public (internet-facing) ingress to valheim (172.22.30.231) on the game + Steam query
+    ports — friends connect in over the WAN (pfSense forwards 2456-2457 udp). The server is
+    password-protected. Real client IPs preserved (no SNAT), BGP shortest path.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: valheim
+  ingress:
+    - fromCIDRSet:
+        - cidr: "0.0.0.0/0"
+      toPorts:
+        - ports:
+            - port: "2456"
+              protocol: UDP
+            - port: "2457"
+              protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-enshrouded-public
+spec:
+  description: >-
+    Public (internet-facing) ingress to enshrouded (172.22.30.231) on its query port, which
+    carries the game too — friends connect in over the WAN (pfSense forwards 15637 udp). The
+    server is password-protected. Real client IPs preserved (no SNAT), BGP shortest path.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: enshrouded
+  ingress:
+    - fromCIDRSet:
+        - cidr: "0.0.0.0/0"
+      toPorts:
+        - ports:
+            - port: "15637"
+              protocol: UDP

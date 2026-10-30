@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-enshrouded-egress
+spec:
+  description: >-
+    The server installs and updates itself via SteamCMD — Steam's CDN/content servers are an
+    open-ended external set that can't be allowlisted, the same as Palworld. Documented broad
+    world+cluster egress; the game-listen ports are inbound and covered by cnp-game-servers.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: enshrouded
+  egress:
+    - toEntities:
+        - world
+        - cluster
