@@ -52,6 +52,15 @@ spec:
               # Nuke corrupted Proton prefix so proton rebuilds it properly with WINED3D. The prefix
               # is this pod's own emptyDir (compatdata below), so this never touches the other map's.
               rm -rf /home/pok/.steam/steam/steamapps/compatdata/2430930
+              # The site's public IP, as cloudflare-ddns publishes it, resolved at every start so a WAN
+              # change is picked up on the next restart (ARK's own detection gets it wrong behind NAT).
+              # Unresolved, the IP args are left out and ARK falls back to detecting it.
+              PUBLIC_IP=$(getent ahostsv4 "$PUBLIC_IP_HOST" | awk 'NR==1{print $1}')
+              if [ -n "$PUBLIC_IP" ]; then
+                export PUBLIC_IP CUSTOM_SERVER_ARGS="$CUSTOM_SERVER_ARGS -PublicIPForEpic=$PUBLIC_IP -ServerIP=$PUBLIC_IP"
+              else
+                echo "PUBLIC_IP: $PUBLIC_IP_HOST did not resolve, leaving the IP to ARK" >&2
+              fi
               python3 /health/health-server.py &
               exec /home/pok/scripts/init.sh
           ports:
@@ -111,11 +120,10 @@ spec:
               value: "24"
             - name: BATTLEEYE
               value: "FALSE"
-            - name: PUBLIC_IP
-              valueFrom:
-                secretKeyRef:
-                  name: ark-asa-admin
-                  key: public-ip
+            # A DNS-only (grey) cloudflare-ddns record: proxied names resolve to Cloudflare, and
+            # in-cluster to the LAN.
+            - name: PUBLIC_IP_HOST
+              value: mc.operationtimecapsule.com
             - name: SDL_VIDEODRIVER
               value: x11
             - name: DISPLAY
@@ -123,7 +131,7 @@ spec:
             - name: PROTON_USE_WINED3D
               value: "1"
             - name: CUSTOM_SERVER_ARGS
-              value: "-ServerPlatform=ALL -PublicIPForEpic=71.24.190.218 -ServerIP=71.24.190.218 -OverrideOfficialDifficulty=5.0"
+              value: "-ServerPlatform=ALL -OverrideOfficialDifficulty=5.0"
           resources:
             limits:
               cpu: "1.5"
