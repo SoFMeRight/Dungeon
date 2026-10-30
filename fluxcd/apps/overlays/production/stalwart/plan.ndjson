@@ -5,6 +5,7 @@
 {"@type":"update","object":"BlobStore","value":{"@type":"S3","bucket":"stalwart","region":{"@type":"Custom","url":"https://s3.optcp.com","region":"us-east-1"},"accessKeyId":{"@type":"EnvironmentVariable","variableName":"STALWART_S3_ACCESS_KEY"},"secretKey":{"@type":"EnvironmentVariable","variableName":"STALWART_S3_SECRET_KEY"}}}
 {"@type":"update","object":"InMemoryStore","value":{"@type":"RedisSentinel","urls":{"redis://stalwart-sentinel-sentinel-0.stalwart-sentinel-sentinel-headless:26379":true,"redis://stalwart-sentinel-sentinel-1.stalwart-sentinel-sentinel-headless:26379":true,"redis://stalwart-sentinel-sentinel-2.stalwart-sentinel-sentinel-headless:26379":true},"serviceName":"stalwart-redis","authSecret":{"@type":"EnvironmentVariable","variableName":"STALWART_REDIS_PASSWORD"},"sentinelSecret":{"@type":"EnvironmentVariable","variableName":"STALWART_REDIS_PASSWORD"}}}
 {"@type":"update","object":"SearchStore","value":{"@type":"ElasticSearch","url":"http://stalwart-elasticsearch:9200","numShards":1,"numReplicas":0}}
+{"@type":"update","object":"Search","value":{"indexBatchSize":10}}
 {"@type":"update","object":"Http","value":{"clientIpSource":"xForwardedFor","forwardedHops":1}}
 {"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-http":{"name":"http","protocol":"http","bind":{"[::]:8080":true},"useTls":false}}}
 {"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-smtp":{"name":"smtp","protocol":"smtp","bind":{"[::]:2525":true},"useTls":true}}}
@@ -14,5 +15,5 @@
 {"@type":"upsert","object":"Account","matchOn":["name"],"value":{"acct-kai":{"@type":"User","name":"kai","domainId":"#dom-precisionplanit","description":"Kai H"}}}
 {"@type":"destroy","object":"Tracer","value":{}}
 {"@type":"create","object":"Tracer","value":{"tr-console":{"@type":"Stdout","level":"debug","events":{"http.x-forwarded-missing":true},"eventsPolicy":"exclude"}}}
-{"@type":"create","object":"Task","value":{"reindex-v3":{"@type":"StoreMaintenance","maintenanceType":"reindexAccounts","status":{"@type":"Pending","due":"2026-10-30T13:20:00Z"}}}}
+{"@type":"create","object":"Task","value":{"reindex-v4":{"@type":"StoreMaintenance","maintenanceType":"reindexAccounts","status":{"@type":"Pending","due":"2026-10-30T13:55:00Z"}}}}
 {"@type":"create","object":"Action","value":{"act-update-apps":{"@type":"UpdateApps"}}}

@@ -11,9 +11,10 @@ spec:
           env:
             - name: ES_JAVA_OPTS
               value: "-Xms1g -Xmx1g"
-            # Per-document bulk rejections are only reported at debug level.
-            - name: logger.org.elasticsearch.action.bulk
-              value: DEBUG
+            # Stalwart sends whole search batches in one bulk request; the default 10% of heap
+            # rejects them, and Stalwart cannot see per-document rejections.
+            - name: indexing_pressure.memory.limit
+              value: "25%"
           resources:
             requests:
               cpu: 35m
