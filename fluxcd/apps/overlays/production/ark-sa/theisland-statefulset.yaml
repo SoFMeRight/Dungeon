@@ -132,7 +132,7 @@ spec:
           volumeMounts:
             - name: serverfiles
               mountPath: /home/pok/arkserver
-            - name: shooting-gallery-ark-sa-tmc-theisland-saved
+            - name: saved
               mountPath: /home/pok/arkserver/ShooterGame/Saved
             - name: cluster
               mountPath: /home/pok/arkserver/ShooterGame/Saved/clusters
@@ -156,7 +156,7 @@ spec:
             claimName: ark-sa-steamapps-pvc
   volumeClaimTemplates:
     - metadata:
-        name: shooting-gallery-ark-sa-tmc-theisland-saved
+        name: saved
       spec:
         accessModes:
           - ReadWriteOnce

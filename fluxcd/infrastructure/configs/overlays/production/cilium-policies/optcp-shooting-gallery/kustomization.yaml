@@ -4,5 +4,6 @@ namespace: optcp-shooting-gallery
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-game-servers.yaml
+  - cnp-egress-ark-sa.yaml
   - cnp-egress-enshrouded.yaml
   - cnp-egress-valheim.yaml

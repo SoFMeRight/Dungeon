@@ -45,3 +45,94 @@ spec:
         - ports:
             - port: "15637"
               protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-ark-sa-tmc-theisland-lan
+spec:
+  description: >-
+    LAN-only ingress to ark-sa-tmc-theisland (172.22.30.231).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: ark-sa-tmc-theisland
+  ingress:
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.144.0/20"
+      toPorts:
+        - ports:
+            - port: "8777"
+              protocol: UDP
+            - port: "8777"
+              protocol: TCP
+            - port: "28020"
+              protocol: TCP
+            - port: "8778"
+              protocol: UDP
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-ark-sa-tmc-valguero-lan
+spec:
+  description: >-
+    LAN-only ingress to ark-sa-tmc-valguero (172.22.30.231).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: ark-sa-tmc-valguero
+  ingress:
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.144.0/20"
+      toPorts:
+        - ports:
+            - port: "8779"
+              protocol: UDP
+            - port: "8779"
+              protocol: TCP
+            - port: "28021"
+              protocol: TCP
+            - port: "8780"
+              protocol: UDP
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-ark-sa-tmc-admin-list-server-lan
+spec:
+  description: >-
+    LAN-only ingress to ark-sa-tmc-admin-list-server (172.22.30.231).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: ark-sa-tmc-admin-list-server
+  ingress:
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.144.0/20"
+      toPorts:
+        - ports:
+            - port: "28019"
+              protocol: TCP

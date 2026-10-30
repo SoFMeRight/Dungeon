@@ -4,3 +4,4 @@ namespace: optcp-shooting-gallery
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-ark-sa-loadbalancer.yaml

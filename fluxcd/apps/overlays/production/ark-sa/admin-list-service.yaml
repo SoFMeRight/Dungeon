@@ -6,7 +6,7 @@ metadata:
 spec:
   refreshInterval: 30s
   secretStoreRef:
-    name: openbao-operationtimecapsule
+    name: openbao-optcp
     kind: ClusterSecretStore
   target:
     name: ark-sa-tmc-admin-list-source
@@ -14,8 +14,8 @@ spec:
   data:
     - secretKey: AdminListURL
       remoteRef:
-        key: apps/ark-sa-tmc
-        property: AdminListURL
+        key: apps/ark-sa/app
+        property: SERVER_ADMIN_LIST
 ---
 apiVersion: v1
 kind: ConfigMap
