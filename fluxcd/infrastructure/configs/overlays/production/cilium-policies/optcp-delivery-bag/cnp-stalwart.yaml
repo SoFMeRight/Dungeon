@@ -56,3 +56,45 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-stalwart-sentinel
+spec:
+  description: >-
+    Stalwart and the Redis replicas reaching the sentinels; the redis-contract CCNP covers only
+    the data port.
+  endpointSelector:
+    matchLabels:
+      app: stalwart-sentinel-sentinel
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: stalwart
+        - matchLabels:
+            app: stalwart-redis
+        - matchLabels:
+            app: stalwart-sentinel-sentinel
+      toPorts:
+        - ports:
+            - port: "26379"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-stalwart-elasticsearch
+spec:
+  description: Stalwart's full-text search store, reachable by Stalwart only.
+  endpointSelector:
+    matchLabels:
+      app: stalwart-elasticsearch
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: stalwart
+      toPorts:
+        - ports:
+            - port: "9200"
+              protocol: TCP

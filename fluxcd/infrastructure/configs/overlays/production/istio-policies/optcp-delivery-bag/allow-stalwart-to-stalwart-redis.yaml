@@ -1,0 +1,36 @@
+# Stalwart asks the sentinels for the current master, then talks to it.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-stalwart-to-stalwart-redis
+spec:
+  selector:
+    matchLabels:
+      app: stalwart-redis
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-delivery-bag/sa/stalwart
+      to:
+        - operation:
+            ports: ["6379"]
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-stalwart-to-stalwart-sentinel
+spec:
+  selector:
+    matchLabels:
+      app: stalwart-sentinel-sentinel
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-delivery-bag/sa/stalwart
+      to:
+        - operation:
+            ports: ["26379"]

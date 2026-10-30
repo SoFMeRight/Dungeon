@@ -11,4 +11,10 @@ resources:
   - deployment.yaml
   - service.yaml
   - service-mail.yaml
+  - externalsecret-redis.yaml
+  - redis-configmap.yaml
+  - redis-replication.yaml
+  - redis-sentinel.yaml
+  - elasticsearch-statefulset.yaml
+  - elasticsearch-service.yaml
   - job-configuration.yaml

@@ -1,0 +1,12 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: stalwart-redis
+spec:
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: ceph-rbd-hdd
+        resources:
+          requests:
+            storage: 1Gi

@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stalwart-elasticsearch
+  labels:
+    app: stalwart-elasticsearch
+spec:
+  serviceName: stalwart-elasticsearch
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stalwart-elasticsearch
+  template:
+    metadata:
+      labels:
+        app: stalwart-elasticsearch
+    spec:
+      serviceAccountName: stalwart-elasticsearch
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      # No privileged sysctl init: the nodes already set vm.max_map_count above ES's minimum,
+      # and single-node ES skips that bootstrap check.
+      containers:
+        - name: elasticsearch
+          image: PLACEHOLDER_IMAGE
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: http
+              containerPort: 9200
+              protocol: TCP
+          env:
+            - name: discovery.type
+              value: single-node
+            # Reachable only by Stalwart, through its own mesh identity.
+            - name: xpack.security.enabled
+              value: "false"
+            - name: ES_JAVA_OPTS
+              value: PLACEHOLDER_JAVA_OPTS
+          volumeMounts:
+            - name: data
+              mountPath: /usr/share/elasticsearch/data
+          readinessProbe:
+            httpGet:
+              path: /_cluster/health?local=true
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /_cluster/health?local=true
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: PLACEHOLDER_STORAGE_SIZE

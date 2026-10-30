@@ -1,0 +1,37 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-stalwart-redis-intra-cluster
+spec:
+  selector:
+    matchLabels:
+      app: stalwart-redis
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-delivery-bag/sa/stalwart-redis
+              - cluster.local/ns/optcp-delivery-bag/sa/stalwart-sentinel
+      to:
+        - operation:
+            ports: ["6379"]
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-stalwart-sentinel-intra-cluster
+spec:
+  selector:
+    matchLabels:
+      app: stalwart-sentinel-sentinel
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-delivery-bag/sa/stalwart-sentinel
+              - cluster.local/ns/optcp-delivery-bag/sa/stalwart-redis
+      to:
+        - operation:
+            ports: ["26379"]

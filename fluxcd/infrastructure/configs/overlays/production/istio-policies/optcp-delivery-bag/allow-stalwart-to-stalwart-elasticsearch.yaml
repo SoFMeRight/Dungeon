@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-stalwart-to-stalwart-elasticsearch
+spec:
+  selector:
+    matchLabels:
+      app: stalwart-elasticsearch
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-delivery-bag/sa/stalwart
+      to:
+        - operation:
+            ports: ["9200"]

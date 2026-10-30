@@ -100,6 +100,12 @@ spec:
             - "photoprism-*"
             - "plex-*"
             - "shlink-db-*"
+      # optcp-delivery-bag — opstree redis/sentinel render their config at start; elasticsearch
+      # writes its keystore under the install dir.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-delivery-bag]
+          names: ["stalwart-redis-*", "stalwart-sentinel-*", "stalwart-elasticsearch-*"]
       # optcp-cloud — nextcloud apache + sidecars
       - resources:
           kinds: [Pod]

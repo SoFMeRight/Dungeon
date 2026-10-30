@@ -10,3 +10,6 @@ resources:
   - allow-stalwart-postgres-replication.yaml
   - allow-stalwart-mail-loadbalancer.yaml
   - allow-stalwart-configuration-to-stalwart.yaml
+  - allow-stalwart-redis-intra-cluster.yaml
+  - allow-stalwart-to-stalwart-redis.yaml
+  - allow-stalwart-to-stalwart-elasticsearch.yaml

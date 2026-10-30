@@ -1,0 +1,52 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisSentinel
+metadata:
+  name: stalwart-sentinel
+spec:
+  clusterSize: 3
+  serviceAccountName: stalwart-sentinel
+  # One sentinel per node, so a single node loss cannot take two of the three quorum votes.
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app: stalwart-sentinel-sentinel
+          topologyKey: kubernetes.io/hostname
+  podSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  kubernetesConfig:
+    image: quay.io/opstree/redis-sentinel:v7.4.11
+    imagePullPolicy: IfNotPresent
+    redisSecret:
+      name: stalwart-redis-password
+      key: password
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
+  redisSentinelConfig:
+    redisReplicationName: stalwart-redis
+    masterGroupName: stalwart-redis
+    redisPort: "6379"
+    quorum: "2"
+    parallelSyncs: "1"
+    failoverTimeout: "180000"
+    downAfterMilliseconds: "30000"
+    redisReplicationPassword:
+      secretKeyRef:
+        name: stalwart-redis-password
+        key: password

@@ -1,0 +1,43 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: stalwart-redis
+spec:
+  clusterSize: 3
+  serviceAccountName: stalwart-redis
+  podSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v7.4.11
+    imagePullPolicy: IfNotPresent
+    redisSecret:
+      name: stalwart-redis-password
+      key: password
+    resources:
+      requests:
+        cpu: 20m
+        memory: 64Mi
+      limits:
+        cpu: 500m
+        memory: 256Mi
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: PLACEHOLDER_STORAGE_SIZE
+  redisConfig:
+    additionalRedisConfig: stalwart-redis-config

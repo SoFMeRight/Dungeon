@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: stalwart-elasticsearch
+  labels:
+    app: stalwart-elasticsearch
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 9200
+      targetPort: http
+      protocol: TCP
+  selector:
+    app: stalwart-elasticsearch

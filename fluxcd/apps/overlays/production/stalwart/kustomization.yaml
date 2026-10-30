@@ -27,3 +27,5 @@ patches:
   - path: deployment-patch.yaml
   - path: job-configuration-patch.yaml
   - path: service-mail-patch.yaml
+  - path: redis-replication-patch.yaml
+  - path: elasticsearch-patch.yaml
