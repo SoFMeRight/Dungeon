@@ -23,7 +23,7 @@ spec:
         cpu: 100m
         memory: 200Mi
       limits:
-        cpu: 500m
+        cpu: 1742m
         memory: 208Mi
 
     # High availability with multiple replicas

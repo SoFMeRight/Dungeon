@@ -32,7 +32,7 @@ spec:
             cpu: 100m
         csiResizer:
           limits:
-            cpu: 100m
+            cpu: 565m
         livenessProbe:
           limits:
             cpu: 100m

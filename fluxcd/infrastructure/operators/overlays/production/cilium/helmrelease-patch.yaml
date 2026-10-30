@@ -106,7 +106,7 @@ spec:
           cpu: 23m
           memory: 75Mi
         limits:
-          cpu: 466m
+          cpu: 3410m
           memory: 75Mi
     hubble:
       relay:

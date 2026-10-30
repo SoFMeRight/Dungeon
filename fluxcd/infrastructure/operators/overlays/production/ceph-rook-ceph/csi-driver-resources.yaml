@@ -38,7 +38,7 @@ spec:
           cpu: 4m
           memory: 86Mi
         limits:
-          cpu: 126m
+          cpu: 1247m
           memory: 86Mi
       provisioner:
         requests:
@@ -52,7 +52,7 @@ spec:
           cpu: 10m
           memory: 80Mi
         limits:
-          cpu: 100m
+          cpu: 1171m
           memory: 80Mi
       snapshotter:
         requests:
@@ -129,7 +129,7 @@ spec:
           cpu: 16m
           memory: 101Mi
         limits:
-          cpu: 312m
+          cpu: 633m
           memory: 101Mi
       resizer:
         requests:

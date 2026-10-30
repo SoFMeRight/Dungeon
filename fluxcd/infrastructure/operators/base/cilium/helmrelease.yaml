@@ -38,7 +38,7 @@ spec:
         cpu: 700m
         memory: 2Gi
       limits:
-        cpu: 3530m
+        cpu: 3758m
         memory: 3Gi
 
     ipam:

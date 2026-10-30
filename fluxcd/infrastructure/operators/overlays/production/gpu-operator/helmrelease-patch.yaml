@@ -26,7 +26,7 @@ spec:
             memory: 128Mi
           limits:
             memory: 160Mi
-            cpu: 530m
+            cpu: 315m
         tolerations: []
         affinity:
           nodeAffinity:
@@ -42,7 +42,7 @@ spec:
             memory: 64Mi
           limits:
             memory: 128Mi
-            cpu: 464m
+            cpu: 824m
         tolerations: []
         affinity:
           nodeAffinity:
@@ -176,7 +176,7 @@ spec:
           cpu: 31m
           memory: 563Mi
         limits:
-          cpu: 83m
+          cpu: 462m
           memory: 563Mi
       nodeSelector:
         nvidia.com/gpu.present: "true"
@@ -191,7 +191,7 @@ spec:
           cpu: 3m
           memory: 72Mi
         limits:
-          cpu: 114m
+          cpu: 490m
           memory: 72Mi
       nodeSelector:
         nvidia.com/gpu.present: "true"
@@ -216,5 +216,5 @@ spec:
           cpu: 2m
           memory: 86Mi
         limits:
-          cpu: 470m
+          cpu: 271m
           memory: 86Mi

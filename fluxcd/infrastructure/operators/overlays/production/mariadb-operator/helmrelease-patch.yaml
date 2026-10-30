@@ -10,7 +10,7 @@ spec:
         cpu: 21m
         memory: 479Mi
       limits:
-        cpu: 349m
+        cpu: 1249m
         memory: 479Mi
     podAnnotations:
       prometheus.io/scrape: "true"
@@ -21,7 +21,7 @@ spec:
           cpu: 3m
           memory: 67Mi
         limits:
-          cpu: 78m
+          cpu: 422m
           memory: 67Mi
       podAnnotations:
         prometheus.io/scrape: "true"
@@ -32,7 +32,7 @@ spec:
           cpu: 4m
           memory: 124Mi
         limits:
-          cpu: 100m
+          cpu: 585m
           memory: 124Mi
       podAnnotations:
         prometheus.io/scrape: "true"
