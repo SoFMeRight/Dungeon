@@ -3,5 +3,3 @@ kind: Kustomization
 namespace: prplanit
 resources:
   - cnp-default-deny-ingress.yaml
-  - cnp-egress-osticket.yaml
-  - cnp-galera-replication.yaml

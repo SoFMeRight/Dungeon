@@ -3,13 +3,14 @@ kind: CronJob
 metadata:
   name: osticket-cron
 spec:
+  suspend: true
   jobTemplate:
     spec:
       template:
         metadata:
           labels:
             policy.prplanit.com/cap.mariadb: "true"
-            policy.prplanit.com/access-scope-mariadb: prplanit.osticket.mariadb
+            policy.prplanit.com/access-scope-mariadb: prplanit-support.osticket.mariadb
         spec:
           imagePullSecrets:
             - name: cr-pcfae-admin-pull-secret

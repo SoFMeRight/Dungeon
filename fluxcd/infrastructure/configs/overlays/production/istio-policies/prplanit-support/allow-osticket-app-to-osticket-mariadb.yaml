@@ -1,7 +1,7 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-osticket-mariadb-backup-to-osticket-mariadb
+  name: allow-osticket-app-to-osticket-mariadb
 spec:
   selector:
     matchLabels:
@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/prplanit/sa/osticket-mariadb-backup
+              - cluster.local/ns/prplanit-support/sa/osticket-app
       to:
         - operation:
             ports: ["3306"]

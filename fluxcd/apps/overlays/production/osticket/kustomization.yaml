@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: prplanit
+namespace: prplanit-support
 
 resources:
   - ../../../base/osticket
@@ -18,6 +18,13 @@ patches:
       name: osticket-app
   - path: externalsecret-patch.yaml
   - path: externalsecret-backup-patch.yaml
+  - target:
+      kind: CronJob
+      name: osticket-backup-verify
+    patch: |-
+      - op: add
+        path: /spec/suspend
+        value: true
   - path: backup-mariadb-patch.yaml
     target:
       kind: Backup

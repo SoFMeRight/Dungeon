@@ -45,10 +45,10 @@ spec:
             - "harbor-*"
             - "invoiceninja-app-*"
             - "renovate-*"
-      # prplanit — osticket apache+root.
+      # prplanit-support — osticket apache+root.
       - resources:
           kinds: [Pod]
-          namespaces: [prplanit]
+          namespaces: [prplanit-support]
           names: ["osticket-*"]
       - resources:
           kinds: [Pod]

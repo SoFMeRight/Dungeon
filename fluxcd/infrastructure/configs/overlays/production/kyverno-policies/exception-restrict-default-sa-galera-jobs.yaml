@@ -18,9 +18,9 @@ spec:
     any:
       - resources:
           kinds: [Job]
-          namespaces: [prplanit]
+          namespaces: [prplanit-support]
           names: ["osticket-mariadb-init", "osticket-mariadb-*-recovery"]
       - resources:
           kinds: [Pod]
-          namespaces: [prplanit]
+          namespaces: [prplanit-support]
           names: ["osticket-mariadb-init-*", "osticket-mariadb-*-recovery-*"]

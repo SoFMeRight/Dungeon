@@ -16,7 +16,7 @@ spec:
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
       policy.prplanit.com/cap.mariadb: "true"
-      policy.prplanit.com/access-scope-mariadb: prplanit.osticket.mariadb
+      policy.prplanit.com/access-scope-mariadb: prplanit-support.osticket.mariadb
   podSecurityContext:
     runAsUser: 999
     runAsGroup: 999
@@ -59,7 +59,7 @@ spec:
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
       policy.prplanit.com/cap.mariadb: "true"
-      policy.prplanit.com/access-scope-mariadb: prplanit.osticket.mariadb
+      policy.prplanit.com/access-scope-mariadb: prplanit-support.osticket.mariadb
   podSecurityContext:
     runAsUser: 999
     runAsGroup: 999
@@ -102,7 +102,7 @@ spec:
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
       policy.prplanit.com/cap.mariadb: "true"
-      policy.prplanit.com/access-scope-mariadb: prplanit.osticket.mariadb
+      policy.prplanit.com/access-scope-mariadb: prplanit-support.osticket.mariadb
   podSecurityContext:
     runAsUser: 999
     runAsGroup: 999
