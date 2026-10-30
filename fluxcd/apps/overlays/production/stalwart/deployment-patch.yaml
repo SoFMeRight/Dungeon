@@ -5,6 +5,9 @@ metadata:
 spec:
   template:
     metadata:
+      annotations:
+        # Stores and tracers are read only at startup.
+        kubectl.kubernetes.io/restartedAt: "2026-10-30T09:30:00Z"
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
