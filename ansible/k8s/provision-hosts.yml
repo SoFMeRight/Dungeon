@@ -5,6 +5,9 @@
 # reconcile. Workers roll first, then control-plane, one node at a time; a
 # failed node stops the play before the next node is touched.
 #
+# After the workers converge, re-renders the proton-fsync seccomp profile from
+# their new runtime (tuning/seccomp-proton-fsync.yaml).
+#
 # Then installs the pinned kernel flavour (k8s_kernel_package) on every node,
 # without rebooting; maintenance/update-hosts.yml boots it inside a drain.
 
@@ -14,6 +17,10 @@
   become: true
   tasks:
     - ansible.builtin.import_tasks: tasks/crio-converge.yml
+
+# The proton-fsync seccomp profile is CRI-O's default plus one syscall, so it
+# is re-rendered from the runtime just converged.
+- ansible.builtin.import_playbook: tuning/seccomp-proton-fsync.yaml
 
 - name: Converge cri-o on control-plane
   hosts: k8s_master

@@ -1,0 +1,89 @@
+---
+# seccomp-proton-fsync.yaml
+# Writes the proton-fsync seccomp profile on every worker: CRI-O's own default
+# profile with futex_waitv moved from deny to allow, and nothing else changed.
+#
+# WHY THIS EXISTS:
+# Windows-only game servers (Enshrouded, ARK SA) run under Proton. Wine
+# synchronises threads through wineserver unless it has fsync (futex_waitv) or
+# ntsync (/dev/ntsync). CRI-O's default profile denies futex_waitv with EPERM
+# (go.podman.io/common lists it beside futex_wait and futex_wake; Docker's
+# default allows it), so Wine logs "using server-side synchronization" and a
+# lock-heavy server spends its tick in round trips to wineserver: Enshrouded
+# ran 165 ms ticks and players rubber-banded.
+#
+# WHY RENDERED, NOT COPIED:
+# A Localhost profile replaces the default rather than extending it, so a copy
+# would keep allowing whatever a later CRI-O stops allowing. CRI-O builds its
+# default in code (go.podman.io/common plus its own clone, clone3 and unshare
+# rules) and ships no file, so this reads the profile CRI-O itself rendered
+# into the node's running containers that hold no capabilities, requires them
+# all to agree, and moves only futex_waitv. Rules CRI-O grants per capability
+# are already resolved away in that render, so a container with capabilities
+# gets a stricter profile than RuntimeDefault, never a looser one; select it
+# per container, on the drop-ALL game container only.
+# provision-hosts.yml runs this after every cri-o converge.
+#
+# Pods select it with
+#   seccompProfile: {type: Localhost, localhostProfile: profiles/proton-fsync.json}
+# and kubelet refuses to start a container whose profile file is missing.
+#
+# Run via Semaphore or:
+#   ansible-playbook -i inventory k8s/tuning/seccomp-proton-fsync.yaml
+
+- name: Write the proton-fsync seccomp profile
+  hosts: "{{ seccomp_proton_group | default('k8s_worker') }}"
+  become: true
+  gather_facts: false
+  tasks:
+    # defaultErrnoRet 38 (ENOSYS) is CRI-O's default; a container already on
+    # this profile allows futex_waitv and is skipped. A container that exits
+    # mid-read is skipped too.
+    - name: Read the default profile CRI-O renders for containers without capabilities
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: |
+          set -euo pipefail
+          for f in /run/crun/*/config.json; do
+            jq -c 'select(.linux.seccomp.defaultErrnoRet == 38
+                     and ((.process.capabilities.bounding // []) | length) == 0
+                     and ([.linux.seccomp.syscalls[] | select(.action == "SCMP_ACT_ERRNO") | .names[]]
+                          | index("futex_waitv")))
+                   | .linux.seccomp' "$f" 2>/dev/null || true
+          done | sort -u
+      register: _rendered
+      changed_when: false
+      check_mode: false
+
+    - name: Require exactly one agreed default profile
+      ansible.builtin.assert:
+        that: _rendered.stdout_lines | length == 1
+        fail_msg: >-
+          expected every capability-less RuntimeDefault container on
+          {{ inventory_hostname }} to carry one CRI-O default profile, found
+          {{ _rendered.stdout_lines | length }}
+
+    - name: Move futex_waitv from deny to allow
+      ansible.builtin.command:
+        argv:
+          - jq
+          - >-
+            .syscalls |= (map(if .action == "SCMP_ACT_ERRNO" then .names -= ["futex_waitv"] else . end)
+                          | map(select(.names | length > 0)))
+            | .syscalls += [{"names": ["futex_waitv"], "action": "SCMP_ACT_ALLOW"}]
+        stdin: "{{ _rendered.stdout }}"
+      register: _profile
+      changed_when: false
+      check_mode: false
+
+    - name: Create the kubelet seccomp profile directory
+      ansible.builtin.file:
+        path: /var/lib/kubelet/seccomp/profiles
+        state: directory
+        mode: "0755"
+
+    - name: Write the profile
+      ansible.builtin.copy:
+        dest: /var/lib/kubelet/seccomp/profiles/proton-fsync.json
+        content: "{{ _profile.stdout | from_json | to_nice_json(indent=2) }}\n"
+        mode: "0644"
