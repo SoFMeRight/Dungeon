@@ -13,6 +13,6 @@
 {"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-imaps":{"name":"imaps","protocol":"imap","bind":{"[::]:1993":true},"useTls":true,"implicitTls":true}}}
 {"@type":"upsert","object":"Account","matchOn":["name"],"value":{"acct-kai":{"@type":"User","name":"kai","domainId":"#dom-precisionplanit","description":"Kai H"}}}
 {"@type":"destroy","object":"Tracer","value":{}}
-{"@type":"create","object":"Tracer","value":{"tr-console":{"@type":"Stdout","level":"info","events":{"http.x-forwarded-missing":true},"eventsPolicy":"exclude"}}}
+{"@type":"create","object":"Tracer","value":{"tr-console":{"@type":"Stdout","level":"debug","events":{"http.x-forwarded-missing":true},"eventsPolicy":"exclude"}}}
 {"@type":"create","object":"Task","value":{"reindex-v1":{"@type":"StoreMaintenance","maintenanceType":"reindexAccounts","status":{"@type":"Pending","due":"2026-10-30T00:00:00Z"}}}}
 {"@type":"create","object":"Action","value":{"act-update-apps":{"@type":"UpdateApps"}}}
