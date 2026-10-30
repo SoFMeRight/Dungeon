@@ -114,8 +114,6 @@ spec:
             - kokiri-forest
             # Gateway for business/work services (GitLab!)
             - hyrule-castle
-            # PrPlanIT client-facing business apps (namespace plan, group A)
-            - prplanit
             # PrPlanIT support (namespace plan, group A)
             - prplanit-support
             # Routing & Gateway infrastructure

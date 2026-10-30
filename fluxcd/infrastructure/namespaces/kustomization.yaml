@@ -11,7 +11,6 @@ resources:
   - optcp-delivery-bag.yaml
   - optcp-shooting-gallery.yaml
   - optcp-sibyl-system.yaml
-  - prplanit.yaml
   - prplanit-support.yaml
   - fairy-bottle.yaml
   - gorons-bracelet.yaml
