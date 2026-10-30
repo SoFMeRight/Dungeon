@@ -1,0 +1,95 @@
+# Workspace for the one-time 0.16 -> 1.0 migration: an idle pod the operator execs into to run
+# stalwart-migrate (prepare needs an interactive terminal). Removed once 1.0 is verified.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: stalwart-migrate
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: stalwart-migrate
+  labels:
+    app: stalwart-migrate
+spec:
+  replicas: 1
+  serviceName: stalwart-migrate
+  selector:
+    matchLabels:
+      app: stalwart-migrate
+  template:
+    metadata:
+      labels:
+        app: stalwart-migrate
+        policy.prplanit.com/cap.postgres: "true"
+        policy.prplanit.com/access-scope-postgres: optcp-delivery-bag.stalwart.postgres
+        policy.prplanit.com/cap.s3: "true"
+        policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
+    spec:
+      serviceAccountName: stalwart-migrate
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 2000
+        runAsGroup: 2000
+        fsGroup: 2000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: migrate
+          image: ghcr.io/stalwartlabs/stalwart-migrate:1.0.0
+          command: ["sleep", "infinity"]
+          # Same credentials the 0.16 server resolves from its config: DB password and S3 keys.
+          envFrom:
+            - secretRef:
+                name: stalwart-secret
+          env:
+            - name: STALWART_MIGRATE_STATE
+              value: /var/lib/stalwart-migrate
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 10m
+            limits:
+              memory: 1Gi
+              cpu: "1"
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: source-config
+              mountPath: /etc/stalwart/config.json
+              subPath: config.json
+              readOnly: true
+            - name: target-config
+              mountPath: /etc/stalwart-v1/config.json
+              subPath: config.json
+              readOnly: true
+            - name: state
+              mountPath: /var/lib/stalwart-migrate
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: source-config
+          configMap:
+            name: stalwart-config
+        - name: target-config
+          configMap:
+            name: stalwart-config-v1
+        - name: tmp
+          emptyDir:
+            sizeLimit: 256Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: state
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-rbd-hdd
+        resources:
+          requests:
+            storage: 1Gi

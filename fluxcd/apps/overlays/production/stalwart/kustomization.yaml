@@ -5,6 +5,8 @@ resources:
   - ../../../base/stalwart
   - certificate.yaml
   - httproute.yaml
+  - postgres-database-v1.yaml
+  - migrate.yaml
 configMapGenerator:
   - name: stalwart-env
     literals:
@@ -13,6 +15,9 @@ configMapGenerator:
   - name: stalwart-config
     files:
       - config.json
+  - name: stalwart-config-v1
+    files:
+      - config.json=config-v1.json
   - name: stalwart-plan
     files:
       - plan.ndjson

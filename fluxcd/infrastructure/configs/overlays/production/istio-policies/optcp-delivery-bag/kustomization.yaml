@@ -6,6 +6,7 @@ resources:
   - allow-intra-breakglass.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-stalwart-to-stalwart-postgres.yaml
+  - allow-stalwart-migrate-to-stalwart-postgres.yaml
   - allow-stalwart-postgres-replication.yaml
   - allow-stalwart-mail-loadbalancer.yaml
   - allow-stalwart-configuration-to-stalwart.yaml

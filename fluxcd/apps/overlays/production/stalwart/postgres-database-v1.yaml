@@ -1,0 +1,12 @@
+# Stalwart 1.0's data store. 1.0 cannot open the 0.16 store, so stalwart-migrate copies into
+# this empty database; the 0.16 database stays untouched as the rollback.
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: stalwart-v1
+spec:
+  cluster:
+    name: stalwart-postgres
+  name: stalwart_v1
+  owner: stalwart
+  encoding: UTF8
