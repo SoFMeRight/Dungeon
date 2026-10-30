@@ -257,10 +257,10 @@ spec:
           version: 2
       - path: outspokekin
         type: kv
-        description: Secrets for the OutspokeKin private social platform
+        description: OutspokeKin Social
         # Sent on every reconcile; the top-level description is used only at creation.
         config:
-          description: Secrets for the OutspokeKin private social platform
+          description: OutspokeKin Social
         options:
           version: 2
       - path: pedestal-of-time
@@ -270,26 +270,26 @@ spec:
           version: 2
       - path: arbitorium
         type: kv
-        description: "Household secrets: personal, home automation and game streaming"
+        description: Ad Arbitorium Site
         # Sent on every reconcile; the top-level description is used only at creation.
         config:
-          description: "Household secrets: personal, home automation and game streaming"
+          description: Ad Arbitorium Site
         options:
           version: 2
       - path: optcp
         type: kv
-        description: Platform and shared-cloud secrets for the OpTCP operation
+        description: "Operation: Time Capsule"
         # Sent on every reconcile; the top-level description is used only at creation.
         config:
-          description: Platform and shared-cloud secrets for the OpTCP operation
+          description: "Operation: Time Capsule"
         options:
           version: 2
       - path: prplanit
         type: kv
-        description: Business secrets for PrPlanIT's client-facing and staff apps
+        description: Precision Plan IT
         # Sent on every reconcile; the top-level description is used only at creation.
         config:
-          description: Business secrets for PrPlanIT's client-facing and staff apps
+          description: Precision Plan IT
         options:
           version: 2
       # SSH client-cert signer — Boundary brokers short-lived certs for access to
