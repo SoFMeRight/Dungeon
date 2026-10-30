@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: osticket-app
 spec:
-  replicas: 0
   template:
     metadata:
       labels:
