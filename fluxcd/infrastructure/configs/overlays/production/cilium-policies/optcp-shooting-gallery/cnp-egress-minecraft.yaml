@@ -8,7 +8,8 @@ spec:
     start, pulls the vanilla base + metadata from Mojang, and (online-mode on)
     validates players against Mojang/Microsoft session/auth services at runtime.
     Plugins live on the PVC, but Paper downloads the libraries they declare from
-    Maven Central at start (BentoBox does not load without it). Allow toFQDNs those hosts on
+    Maven Central at start (BentoBox does not load without it), and the plugins come from
+    Modrinth. Allow toFQDNs those hosts on
     443/TCP, with L7 DNS. Its listen port 35566 is inbound (public).
   enableDefaultDeny:
     ingress: false
@@ -41,6 +42,9 @@ spec:
         - matchPattern: "*.mojang.com"
         - matchName: "api.minecraftservices.com"
         - matchName: "repo.maven.apache.org"
+        # Plugin downloads at start (MODRINTH_PROJECTS) and the plugins' update checks.
+        - matchName: "api.modrinth.com"
+        - matchName: "cdn.modrinth.com"
         - matchPattern: "*.minecraft.net"
       toPorts:
         - ports:

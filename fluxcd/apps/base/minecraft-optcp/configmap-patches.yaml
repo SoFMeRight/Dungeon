@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: minecraft-patches
+data:
+  # Applied to the plugin configs on the volume at every start (PATCH_DEFINITIONS).
+  # Chat shows the LuckPerms prefix, then the player name.
+  essentials-chat.json: |
+    {
+      "file": "/data/plugins/Essentials/config.yml",
+      "ops": [
+        {"$set": {"path": "$.chat.format", "value": "{PREFIX}{USERNAME}&r: {MESSAGE}"}}
+      ]
+    }

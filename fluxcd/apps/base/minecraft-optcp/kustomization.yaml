@@ -4,3 +4,4 @@ resources:
   - statefulset.yaml
   - service.yaml
   - serviceaccount.yaml
+  - configmap-patches.yaml

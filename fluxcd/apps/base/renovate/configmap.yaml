@@ -538,7 +538,8 @@ data:
           "prBodyNotes": [
             "### ⚠️ Minecraft upgrade: the world converts one way",
             "- Snapshot the world volume (`data-minecraft-0`) before merging; the first start on the new version rewrites the world.",
-            "- Check every plugin has a build for the new version, WorldEdit and WorldGuard first; a plugin without one is disabled at start."
+            "- The Modrinth plugins (MODRINTH_PROJECTS) follow VERSION, and a start fails before the world loads if one has no build for it: check each has one.",
+            "- Jobs, CMILib and the BentoBox addons stay on the volume: check each supports the new version and update them by hand first."
           ]
         },
         {

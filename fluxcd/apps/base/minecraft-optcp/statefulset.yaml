@@ -42,7 +42,49 @@ spec:
               value: PAPER
             # renovate: datasource=custom.paper depName=paper
             - name: VERSION
-              value: "1.21.4"
+              value: "1.21.11"
+            # Plugins are fetched from Modrinth at every start: the newest release build tagged
+            # for VERSION (chestshop has only a beta for 1.21.11). A project with no build for
+            # VERSION fails the start before the world loads, so nothing runs mismatched.
+            - name: MODRINTH_PROJECTS
+              value: |
+                advancedteleport
+                bentobox
+                chestshop:beta
+                coreprotect
+                essentialsx
+                essentialsx-chat-module
+                griefprevention
+                luckperms
+                multiverse-core
+                multiverse-portals
+                perworldplugins
+                playerkits-2
+                resource-world
+                thizzyz-tree-feller
+                vaultunlocked
+                worldedit
+                worldguard
+            # Clears the jars directly in plugins/ before the downloads, so plugins/ holds exactly
+            # the list above. Jobs and CMILib (Spigot only, no version tags to match on) stay on
+            # the volume as they are, and so do the BentoBox addons in plugins/BentoBox/addons/
+            # (BentoBox loads addons only from there); those are updated by hand.
+            - name: REMOVE_OLD_MODS
+              value: "TRUE"
+            - name: REMOVE_OLD_MODS_INCLUDE
+              value: "*.jar"
+            - name: REMOVE_OLD_MODS_EXCLUDE
+              value: "Jobs*.jar,CMILib*.jar"
+            - name: REMOVE_OLD_MODS_DEPTH
+              value: "1"
+            # The EssentialsX Chat format (patches/essentials-chat.json).
+            - name: PATCH_DEFINITIONS
+              value: /patches
+            # Half the players in bed skips the night in the overworld (vanilla's own rule; other
+            # worlds keep vanilla's 100%).
+            - name: RCON_CMDS_STARTUP
+              value: |-
+                gamerule players_sleeping_percentage 50
             - name: EULA
               value: "TRUE"
             - name: SERVER_PORT
@@ -60,6 +102,9 @@ spec:
             # on the (now read-only) rootfs — the JVM writes hsperfdata + jar/temp extraction there.
             - name: tmp
               mountPath: /tmp
+            - name: patches
+              mountPath: /patches
+              readOnly: true
           stdin: true
           tty: true
           # Chunk generation and loading run on the CPU; at a 500m limit the server was throttled
@@ -74,6 +119,9 @@ spec:
       volumes:
         - name: tmp
           emptyDir: {}
+        - name: patches
+          configMap:
+            name: minecraft-patches
   volumeClaimTemplates:
     - metadata:
         name: data
