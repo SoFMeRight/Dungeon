@@ -56,6 +56,10 @@ spec:
             policy.prplanit.com/cap.s3: "true"
             policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-staff-suite
+            policy.prplanit.com/cap.s3: "true"
+            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-sibyl-system
             policy.prplanit.com/cap.s3: "true"
             policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
