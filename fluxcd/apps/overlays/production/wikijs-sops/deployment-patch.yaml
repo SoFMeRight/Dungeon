@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: wikijs-sops
 spec:
+  replicas: 0
   template:
     metadata:
       labels:
