@@ -8,3 +8,4 @@ resources:
   - cnp-egress-palworld.yaml
   - cnp-egress-enshrouded.yaml
   - cnp-egress-valheim.yaml
+  - cnp-egress-minecraft.yaml

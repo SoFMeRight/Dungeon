@@ -8,7 +8,7 @@ spec:
     Ingress: game servers use LAN-only LB CNPs; RoMM DB via cnp-romm-db;
     CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, ingress-gw.
     Egress: per-app cnp-egress-* grant the ARK SE server (world — SteamCMD/
-    Workshop/Epic) and minecraft (toFQDNs); romm and romm-db are DNS + mesh-only (romm->romm-db rides HBONE).
+    Workshop/Epic); romm and romm-db are DNS + mesh-only (romm->romm-db rides HBONE).
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true

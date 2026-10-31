@@ -32,26 +32,3 @@ spec:
               protocol: TCP
             - port: "8080"
               protocol: TCP
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: allow-minecraft-public
-spec:
-  description: >-
-    Public (internet-facing) ingress to minecraft (172.22.30.231) on the game
-    port — world-reachable server. Real client IPs are preserved (no SNAT) and
-    traffic keeps the BGP shortest path.
-  enableDefaultDeny:
-    ingress: false
-    egress: false
-  endpointSelector:
-    matchLabels:
-      app: minecraft
-  ingress:
-    - fromCIDRSet:
-        - cidr: "0.0.0.0/0"
-      toPorts:
-        - ports:
-            - port: "35566"
-              protocol: TCP

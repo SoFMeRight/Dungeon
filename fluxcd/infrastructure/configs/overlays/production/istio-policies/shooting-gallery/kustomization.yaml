@@ -8,4 +8,3 @@ resources:
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-ark-se-loadbalancer.yaml
-  - allow-minecraft-loadbalancer.yaml
