@@ -14,8 +14,8 @@
 {"@type":"upsert","object":"NetworkListener","matchOn":["name"],"value":{"ln-imaps":{"name":"imaps","protocol":"imap","bind":{"[::]:1993":true},"useTls":true,"implicitTls":true}}}
 {"@type":"upsert","object":"Account","matchOn":["name"],"value":{"acct-kai":{"@type":"User","name":"kai","domainId":"#dom-precisionplanit","description":"Kai H","roles":{"@type":"Admin"}}}}
 {"@type":"upsert","object":"OAuthClient","matchOn":["clientId"],"value":{"oc-webui":{"clientId":"@STALWART_OIDC_CLIENT_ID@","description":"Stalwart WebUI (Zitadel)","firstParty":true,"redirectUris":{"https://mail-admin.optcp.com/admin/oauth/callback":true,"https://mail-admin.optcp.com/account/oauth/callback":true}}}}
-{"@type":"upsert","object":"OAuthClient","matchOn":["clientId"],"value":{"oc-bulwark":{"clientId":"@BULWARK_OIDC_CLIENT_ID@","description":"Bulwark webmail (Zitadel)","firstParty":true,"redirectUris":{"https://mail.optcp.com/en/auth/callback":true},"postLogoutRedirectUris":{"https://mail.optcp.com/en/login":true}}}}
-{"@type":"upsert","object":"Directory","matchOn":["description"],"value":{"dir-zitadel":{"@type":"Oidc","description":"Zitadel","issuerUrl":"https://sso.prplanit.com","claimUsername":"preferred_username","usernameDomain":"precisionplanit.com","claimName":"name","acceptedAudiences":{"@STALWART_OIDC_CLIENT_ID@":true,"@BULWARK_OIDC_CLIENT_ID@":true}}}}
+{"@type":"destroy","object":"OAuthClient","value":{"clientId":"@BULWARK_OIDC_CLIENT_ID@"}}
+{"@type":"upsert","object":"Directory","matchOn":["description"],"value":{"dir-zitadel":{"@type":"Oidc","description":"Zitadel","issuerUrl":"https://sso.prplanit.com","claimUsername":"preferred_username","usernameDomain":"precisionplanit.com","claimName":"name","unscopedTokens":"interoperable","acceptedAudiences":{"@STALWART_OIDC_CLIENT_ID@":true,"@BULWARK_OIDC_CLIENT_ID@":true}}}}
 {"@type":"update","object":"Application","id":"jla00lb1aaab","value":{"oauthClientId":"@STALWART_OIDC_CLIENT_ID@"}}
 {"@type":"update","object":"Authentication","value":{"directoryId":"#dir-zitadel"}}
 {"@type":"destroy","object":"Tracer","value":{}}
