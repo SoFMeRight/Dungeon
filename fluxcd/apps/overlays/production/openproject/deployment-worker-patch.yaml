@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: openproject-worker
 spec:
+  replicas: 0
   template:
     metadata:
       labels:
