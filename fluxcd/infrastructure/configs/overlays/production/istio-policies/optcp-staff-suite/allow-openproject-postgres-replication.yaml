@@ -1,7 +1,7 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-openproject-to-openproject-postgres
+  name: allow-openproject-postgres-replication
 spec:
   selector:
     matchLabels:
@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/optcp-cloud/sa/openproject
+              - cluster.local/ns/optcp-staff-suite/sa/openproject-postgres
       to:
         - operation:
-            ports: ["5432"]
+            ports: ["5432", "8000"]

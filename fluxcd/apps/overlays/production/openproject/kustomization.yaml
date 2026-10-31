@@ -1,4 +1,4 @@
-namespace: optcp-cloud
+namespace: optcp-staff-suite
 resources:
   - ../../../base/openproject
   - httproute.yaml
@@ -38,3 +38,4 @@ patches:
     target:
       kind: Service
       name: openproject
+  - path: hold-for-move-patch.yaml

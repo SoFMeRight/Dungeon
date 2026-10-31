@@ -4,3 +4,7 @@ namespace: optcp-staff-suite
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-phloem.yaml
+  - allow-openproject-postgres-replication.yaml
+  - allow-openproject-to-openproject-memcached.yaml
+  - allow-openproject-to-openproject-postgres.yaml
