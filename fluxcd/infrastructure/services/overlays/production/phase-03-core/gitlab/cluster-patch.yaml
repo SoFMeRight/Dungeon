@@ -3,6 +3,7 @@ kind: Cluster
 metadata:
   name: gitlab-postgresql
 spec:
+  instances: 1
   # Shutdown has to fit the node's grace budget: 150s total, 30s reserved for
   # critical pods, so 120s for ordinary ones. Postgres does not checkpoint until
   # the smart phase stops waiting for clients to disconnect, so a long smart
