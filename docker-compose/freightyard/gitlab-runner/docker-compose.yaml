@@ -101,8 +101,6 @@ services:
       - --tlscacert=/certs/ca/cert.pem
       - --tlscert=/certs/server/cert.pem
       - --tlskey=/certs/server/key.pem
-      - --oci-worker-gc=true
-      - --oci-worker-gc-keepstorage=12000
     volumes:
       - buildkitd-state:/var/lib/buildkit
       - /opt/docker/gitlab-runner/stagefreight:/stagefreight
@@ -138,6 +136,7 @@ services:
         if [ ! -f /etc/gitlab-runner/config.toml ]; then
           echo "Config does not exist, registering runner..."
           gitlab-runner register \
+            --docker-disable-cache=true \
             --docker-dns=10.0.0.1 \
             --docker-dns=10.0.0.2 \
             --docker-dns=172.22.30.122 \
@@ -147,10 +146,9 @@ services:
             --docker-image=alpine:latest \
             --docker-network-mode=stagefreight \
             --docker-privileged=false \
-            --docker-volumes=/cache \
-            --docker-volumes=/opt/docker/gitlab-runner/stagefreight:/stagefreight \
             --docker-volumes=/opt/docker/gitlab-runner/buildkitd-certs/client:/buildkit-certs:ro \
             --docker-volumes=/opt/docker/gitlab-runner/certs/client:/certs/client:ro \
+            --docker-volumes=/opt/docker/gitlab-runner/stagefreight:/stagefreight \
             --env=DOCKER_CERT_PATH=/certs/client \
             --env=DOCKER_HOST=tcp://dind:2376 \
             --env=DOCKER_TLS_VERIFY=1 \
@@ -168,6 +166,10 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /opt/docker/gitlab-runner/config:/etc/gitlab-runner:z
+    # The image declares VOLUME /home/gitlab-runner; unmounted, every recreate leaves
+    # an anonymous volume behind. The docker executor keeps nothing there.
+    tmpfs:
+      - /home/gitlab-runner
     networks:
       - stagefreight
 
@@ -182,6 +184,10 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /opt/docker/gitlab-runner/config:/etc/gitlab-runner:z
+    # The image declares VOLUME /home/gitlab-runner; unmounted, every recreate leaves
+    # an anonymous volume behind. The docker executor keeps nothing there.
+    tmpfs:
+      - /home/gitlab-runner
     healthcheck:
       test: ["CMD", "gitlab-runner", "list"]
       interval: 30s
@@ -211,6 +217,35 @@ configs:
         mirrors = [${REGISTRY_MIRROR_QUAY:+"${REGISTRY_MIRROR_QUAY}"}]
       [registry."lscr.io"]
         mirrors = [${REGISTRY_MIRROR_LSCR:+"${REGISTRY_MIRROR_LSCR}"}]
+
+      # Pruning order: easily-rebuilt classes past 512MB, then anything unused for 7
+      # days, then unshared, then everything — holding the cache under 12GB and the
+      # disk at 10GB free, never below a 2GB floor.
+      [worker.oci]
+        gc = true
+
+        # Contexts, checkouts, cache mounts: highest churn, cheapest to rebuild.
+        [[worker.oci.gcpolicy]]
+          filters = ["type==source.local", "type==source.git.checkout", "type==exec.cachemount"]
+          keepDuration = "24h"
+          maxUsedSpace = "512MB"
+
+        [[worker.oci.gcpolicy]]
+          keepDuration = "168h"
+          reservedSpace = "2GB"
+          maxUsedSpace = "12GB"
+          minFreeSpace = "10GB"
+
+        [[worker.oci.gcpolicy]]
+          reservedSpace = "2GB"
+          maxUsedSpace = "12GB"
+          minFreeSpace = "10GB"
+
+        [[worker.oci.gcpolicy]]
+          all = true
+          reservedSpace = "2GB"
+          maxUsedSpace = "12GB"
+          minFreeSpace = "10GB"
 
 networks:
   stagefreight:
