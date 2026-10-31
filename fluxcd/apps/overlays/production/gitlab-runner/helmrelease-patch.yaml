@@ -1,0 +1,10 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gitlab-runner
+spec:
+  chart:
+    spec:
+      version: "0.94.2"  # runner 19.5.2; server is 19.5.3
+  values:
+    gitlabUrl: https://gitlab.prplanit.com/

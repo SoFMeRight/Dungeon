@@ -11,14 +11,9 @@ spec:
       sourceRef:
         namespace: optcp-supply-chain
   values:
+    # CI runs on the standalone runner in optcp-ci-runners, not a chart-bundled one.
     gitlab-runner:
-      resources:
-        requests:
-          cpu: 28m
-          memory: 115Mi
-        limits:
-          cpu: 314m
-          memory: 115Mi
+      install: false
     global:
       initialRootPassword:
         secret: gitlab-initial-root-password

@@ -1,0 +1,40 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-gitlab-runner-egress
+spec:
+  description: >-
+    The runner manager polls gitlab.prplanit.com (outside the cluster) for jobs;
+    job pods clone from it and pull dependencies from the internet. Both get
+    world only: a job runs whatever code a pipeline names, so it gets no path to
+    in-cluster workloads. DNS and kube-apiserver (the manager creating job pods)
+    ride the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - gitlab-runner
+  egress:
+    - toEntities:
+        - world
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-ci-job-egress
+spec:
+  description: >-
+    CI job pods (labelled by the runner's pod_labels) reach the internet only.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      policy.prplanit.com/ci-job: "true"
+  egress:
+    - toEntities:
+        - world

@@ -1,0 +1,118 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gitlab-runner
+spec:
+  releaseName: gitlab-runner
+  interval: 30m
+  chart:
+    spec:
+      chart: gitlab-runner
+      version: PLACEHOLDER_CHART_VERSION
+      sourceRef:
+        kind: HelmRepository
+        name: gitlab
+  install:
+    remediation:
+      retries: 3
+  values:
+    gitlabUrl: PLACEHOLDER_GITLAB_URL
+    concurrent: 4
+    checkInterval: 10
+    rbac:
+      create: true
+      # Only what the Kubernetes executor needs to run a job pod in its own namespace.
+      rules:
+        - resources: ["pods"]
+          verbs: ["create", "delete", "get", "list", "watch"]
+        - resources: ["pods/attach", "pods/exec"]
+          verbs: ["create", "patch", "delete", "get"]
+        - resources: ["pods/log"]
+          verbs: ["get"]
+        - resources: ["secrets"]
+          verbs: ["create", "delete", "get", "update"]
+        - resources: ["configmaps"]
+          verbs: ["create", "delete", "get", "update"]
+        - resources: ["events"]
+          verbs: ["list", "watch"]
+    serviceAccount:
+      create: true
+    runners:
+      secret: gitlab-runner
+      config: |
+        [[runners]]
+          [runners.kubernetes]
+            namespace = "{{ .Release.Namespace }}"
+            image = "alpine:3.22"
+            service_account = "gitlab-runner-jobs"
+            automount_service_account_token = false
+            poll_timeout = 600
+            cpu_request = "100m"
+            memory_request = "256Mi"
+            memory_limit = "2Gi"
+            helper_cpu_request = "50m"
+            helper_memory_request = "64Mi"
+            helper_memory_limit = "256Mi"
+            # Job pods: non-root, read-only rootfs, no capabilities, no escalation.
+            # A job that needs a writable path gets an emptyDir, never a looser pod.
+            [runners.kubernetes.pod_security_context]
+              run_as_non_root = true
+              run_as_user = 1000
+              run_as_group = 1000
+              fs_group = 1000
+            [runners.kubernetes.build_container_security_context]
+              allow_privilege_escalation = false
+              read_only_root_filesystem = true
+              privileged = false
+              [runners.kubernetes.build_container_security_context.capabilities]
+                drop = ["ALL"]
+            [runners.kubernetes.helper_container_security_context]
+              allow_privilege_escalation = false
+              read_only_root_filesystem = true
+              privileged = false
+              [runners.kubernetes.helper_container_security_context.capabilities]
+                drop = ["ALL"]
+            [runners.kubernetes.service_container_security_context]
+              allow_privilege_escalation = false
+              read_only_root_filesystem = true
+              privileged = false
+              [runners.kubernetes.service_container_security_context.capabilities]
+                drop = ["ALL"]
+            [runners.kubernetes.init_permissions_container_security_context]
+              allow_privilege_escalation = false
+              read_only_root_filesystem = true
+              privileged = false
+              [runners.kubernetes.init_permissions_container_security_context.capabilities]
+                drop = ["ALL"]
+            [[runners.kubernetes.volumes.empty_dir]]
+              name = "tmp"
+              mount_path = "/tmp"
+            [[runners.kubernetes.volumes.empty_dir]]
+              name = "home"
+              mount_path = "/home/runner"
+            [runners.kubernetes.pod_labels]
+              "policy.prplanit.com/ci-job" = "true"
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      privileged: false
+      capabilities:
+        drop: ["ALL"]
+    podSecurityContext:
+      runAsUser: 100
+      runAsGroup: 65533
+      fsGroup: 65533
+    volumeMounts:
+      - name: tmp
+        mountPath: /tmp
+    volumes:
+      - name: tmp
+        emptyDir: {}
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi

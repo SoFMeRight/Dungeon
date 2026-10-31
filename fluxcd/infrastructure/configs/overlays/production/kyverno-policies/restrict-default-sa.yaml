@@ -29,6 +29,7 @@ spec:
                 - kokiri-forest
                 - lens-of-truth
                 - lost-woods
+                - optcp-ci-runners
                 - optcp-cloud
                 - optcp-sibyl-system
                 - optcp-staff-suite
@@ -81,6 +82,7 @@ spec:
                 - kokiri-forest
                 - lens-of-truth
                 - lost-woods
+                - optcp-ci-runners
                 - optcp-cloud
                 - optcp-sibyl-system
                 - optcp-staff-suite

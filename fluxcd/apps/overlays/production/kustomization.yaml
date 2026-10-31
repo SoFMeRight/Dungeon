@@ -6,6 +6,7 @@ resources:
   - anubis
   - dependency-track
   - sbom-operator
+  - gitlab-runner
   - hasteward
   - netbootxyz
   - netbox

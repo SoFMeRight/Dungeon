@@ -16,6 +16,7 @@ resources:
   - lens-of-truth/
   - lost-woods/
   - mr-resetti/
+  - optcp-ci-runners/
   - optcp-cloud/
   - optcp-delivery-bag/
   - optcp-shooting-gallery/

@@ -4,9 +4,9 @@ metadata:
   name: allow-external-apps-egress
 spec:
   description: >-
-    GitLab reaches open-ended external sets as core function (CI runner jobs,
-    repo mirrors, package/registry pulls, webhooks, email) via
-    webservice/sidekiq/runner/kas/registry/toolbox/migrations. That set cannot
+    GitLab reaches open-ended external sets as core function (repo mirrors,
+    package/registry pulls, webhooks, email) via
+    webservice/sidekiq/kas/registry/toolbox/migrations. That set cannot
     be allowlisted, so world+cluster is granted; DBs and the mesh ride the
     universal CCNP baseline.
   enableDefaultDeny:
@@ -19,7 +19,6 @@ spec:
         values:
           - webservice
           - sidekiq
-          - gitlab-gitlab-runner
           - kas
           - registry
           - toolbox

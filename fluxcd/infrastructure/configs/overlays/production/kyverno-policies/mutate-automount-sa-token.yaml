@@ -65,9 +65,9 @@ spec:
               - boundary-postgres
               - calcom-postgres
               - gitlab-certmanager-issuer
-              - gitlab-gitlab-runner
               - gitlab-postgresql
               - gitlab-praefect-db-init
+              - gitlab-runner
               - harbor-postgres
               - osticket-mariadb
               - osticket-backup-verify
