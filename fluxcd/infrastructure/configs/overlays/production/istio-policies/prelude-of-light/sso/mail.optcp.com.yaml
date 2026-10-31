@@ -7,6 +7,9 @@
 #   authz (DENY)          → deny unless the injected role is in `admits` below
 # notPaths /oauth2/* : the oauth2-proxy sign-in/callback/static paths must bypass the gate
 #   (served by the oauth2-proxy-signin-cell-membrane HTTPRoute: mail.optcp.com/oauth2/*).
+# notPaths JMAP  : /.well-known/jmap and /jmap/* are routed to Stalwart, which requires a Zitadel
+#   bearer token or an app password on every request. Bulwark's server also calls them from
+#   inside the cluster with the user's token and no oauth2-proxy cookie. The web UI stays SSO'd.
 # Tiers (widen by adding roles to notValues; operator is the floor):
 #   operator-only : [operator]   admin: [operator,admin]   trusted: [operator,admin,trusted]
 apiVersion: security.istio.io/v1
@@ -28,6 +31,9 @@ spec:
               - mail.optcp.com:443
             notPaths:
               - /oauth2/*
+              - /.well-known/jmap
+              - /jmap
+              - /jmap/*
 ---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
@@ -46,6 +52,9 @@ spec:
               - mail.optcp.com:443
             notPaths:
               - /oauth2/*
+              - /.well-known/jmap
+              - /jmap
+              - /jmap/*
       when:
         - key: request.headers[x-auth-request-groups]
           notValues:

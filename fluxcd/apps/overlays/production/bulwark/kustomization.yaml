@@ -7,9 +7,11 @@ resources:
 configMapGenerator:
   - name: bulwark-env
     literals:
-      - JMAP_SERVER_URL=http://stalwart:8080
+      - JMAP_SERVER_URL=https://mail.optcp.com
       - OAUTH_ENABLED=true
       - OAUTH_ONLY=true
+      # SSO is the only way in, so skip the sign-in button and go straight to Zitadel.
+      - AUTO_SSO_ENABLED=true
       - OAUTH_ISSUER_URL=https://sso.prplanit.com
       # sso.prplanit.com resolves to the gateway's in-cluster address, which the SSRF guard otherwise refuses.
       - OAUTH_ALLOW_PRIVATE_ENDPOINTS=true

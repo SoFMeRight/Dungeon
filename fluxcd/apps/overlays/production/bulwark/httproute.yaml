@@ -12,6 +12,18 @@ spec:
   hostnames:
     - "mail.optcp.com"
   rules:
+    # Bulwark's browser client speaks JMAP straight to the server URL; serving it on this origin
+    # keeps the Stalwart admin host internal.
+    - matches:
+        - path:
+            type: Exact
+            value: /.well-known/jmap
+        - path:
+            type: PathPrefix
+            value: /jmap
+      backendRefs:
+        - name: stalwart
+          port: 8080
     - matches:
         - path:
             type: PathPrefix
