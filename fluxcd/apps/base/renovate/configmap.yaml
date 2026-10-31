@@ -526,13 +526,15 @@ data:
           "commitMessagePrefix": "chore(searxng):"
         },
         {
-          // Paper: releases only (the API also lists -pre, -rc and -rc-N builds). A Minecraft
-          // version upgrade rewrites the world on first start and can't be rolled back, and
-          // plugins that hook server internals stop loading until they have a matching build,
-          // so every bump carries the upgrade checklist.
+          // Paper: releases only (the API also lists -pre, -rc and -rc-N builds). Any Minecraft
+          // version change, patch or major, rewrites the world on first start and can't be
+          // rolled back, and plugins that hook server internals stop loading until they have a
+          // matching build. So no update opens an MR on its own: it waits on the dependency
+          // dashboard until someone requests it there, and then carries the upgrade checklist.
           "matchDatasources": ["custom.paper"],
           "versioning": "loose",
           "allowedVersions": "/^\\d+\\.\\d+(\\.\\d+)?$/",
+          "dependencyDashboardApproval": true,
           "automerge": false,
           "labels": ["upgrade-checklist"],
           "prBodyNotes": [
