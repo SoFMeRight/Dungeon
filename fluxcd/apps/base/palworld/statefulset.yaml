@@ -73,9 +73,9 @@ spec:
               value: "A private server hosted by SoFMeRight!"
             - name: MULTITHREADING
               value: "true"
-            # private/password server — not listed on the public Steam community browser
+            # Listed on the Steam community server browser (query port 27015); joining still needs the server password
             - name: COMMUNITY
-              value: "false"
+              value: "true"
             - name: RCON_ENABLED
               value: "true"
             - name: RCON_PORT
