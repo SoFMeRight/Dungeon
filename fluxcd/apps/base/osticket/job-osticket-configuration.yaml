@@ -1,0 +1,94 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: osticket-configuration
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      serviceAccountName: osticket-configuration
+      restartPolicy: Never
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: configure
+          image: ghcr.io/homelabhd/ansible:v2.21.5@sha256:9130d35313d7117085b015d2ef6708436377f09ab16dfe4933a76fcc91f2b0f2
+          command:
+            - ansible-playbook
+            - /playbook/osticket-configuration.yml
+            - -e
+            - "@/settings/settings.yml"
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          env:
+            - name: HOME
+              value: /tmp
+            - name: ANSIBLE_LOCAL_TEMP
+              value: /tmp/.ansible
+            - name: ANSIBLE_REMOTE_TMP
+              value: /tmp/.ansible
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 384Mi
+          volumeMounts:
+            - name: playbook
+              mountPath: /playbook
+              readOnly: true
+            - name: settings
+              mountPath: /settings
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: playbook
+          configMap:
+            name: osticket-configuration-playbook
+        - name: settings
+          configMap:
+            name: osticket-configuration-settings
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: osticket-configuration
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: osticket-configuration
+rules:
+  - apiGroups: [k8s.mariadb.com]
+    resources: [mariadbs]
+    resourceNames: [osticket-mariadb]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [pods/exec]
+    resourceNames: [osticket-mariadb-0, osticket-mariadb-1, osticket-mariadb-2]
+    verbs: [get, create]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: osticket-configuration
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: osticket-configuration
+subjects:
+  - kind: ServiceAccount
+    name: osticket-configuration

@@ -26,3 +26,7 @@ patches:
     target:
       kind: Service
       name: osticket-app
+configMapGenerator:
+  - name: osticket-configuration-settings
+    files:
+      - settings.yml=osticket-settings.yml

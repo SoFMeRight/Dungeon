@@ -1,0 +1,37 @@
+# Sets the osTicket settings declared in settings.yml, and only those; fails on a setting
+# that does not exist rather than creating it.
+- name: osTicket configuration
+  hosts: localhost
+  gather_facts: false
+  vars:
+    ns: "{{ lookup('file', '/var/run/secrets/kubernetes.io/serviceaccount/namespace') }}"
+  tasks:
+    - name: Find the MariaDB primary
+      kubernetes.core.k8s_info:
+        api_version: k8s.mariadb.com/v1alpha1
+        kind: MariaDB
+        namespace: "{{ ns }}"
+        name: osticket-mariadb
+      register: db
+      failed_when: (db.resources | length) != 1 or not db.resources[0].status.currentPrimary
+
+    - name: Apply each declared setting
+      vars:
+        q: "{{ item.value | replace(\"'\", \"''\") }}"
+        sql: >-
+          SELECT COUNT(*) INTO @n FROM ost_config WHERE namespace='{{ item.namespace }}' AND `key`='{{ item.key }}';
+          UPDATE ost_config SET value='{{ q }}', updated=NOW()
+            WHERE namespace='{{ item.namespace }}' AND `key`='{{ item.key }}' AND value <> '{{ q }}';
+          SELECT @n, ROW_COUNT();
+      kubernetes.core.k8s_exec:
+        namespace: "{{ ns }}"
+        pod: "{{ db.resources[0].status.currentPrimary }}"
+        container: mariadb
+        command: >-
+          sh -c 'echo {{ sql | b64encode }} | base64 -d | MYSQL_PWD="$MARIADB_ROOT_PASSWORD" mariadb -uroot -N osticket'
+      loop: "{{ osticket_settings }}"
+      loop_control:
+        label: "{{ item.namespace }}/{{ item.key }}"
+      register: applied
+      changed_when: (applied.stdout | trim).split() | last | int > 0
+      failed_when: applied.rc != 0 or (applied.stdout | trim).split() | first | int != 1

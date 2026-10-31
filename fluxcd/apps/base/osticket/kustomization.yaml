@@ -12,3 +12,8 @@ resources:
   - configmap-backup-verify.yaml
   - cronjob-backup-verify.yaml
   - rbac-backup-verify.yaml
+  - job-osticket-configuration.yaml
+configMapGenerator:
+  - name: osticket-configuration-playbook
+    files:
+      - osticket-configuration.yml

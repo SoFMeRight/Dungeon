@@ -71,6 +71,7 @@ spec:
               - harbor-postgres
               - osticket-mariadb
               - osticket-backup-verify
+              - osticket-configuration
               - homarr-postgres
               - appflowy-postgres
               - kimai
