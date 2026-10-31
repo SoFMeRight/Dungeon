@@ -19,4 +19,4 @@
 {"@type":"update","object":"Application","id":"jla00lb1aaab","value":{"oauthClientId":"@STALWART_OIDC_CLIENT_ID@"}}
 {"@type":"update","object":"Authentication","value":{"directoryId":"#dir-zitadel"}}
 {"@type":"destroy","object":"Tracer","value":{}}
-{"@type":"create","object":"Tracer","value":{"tr-console":{"@type":"Stdout","level":"debug","events":{"http.x-forwarded-missing":true},"eventsPolicy":"exclude"}}}
+{"@type":"create","object":"Tracer","value":{"tr-console":{"@type":"Stdout","level":"info","events":{"http.x-forwarded-missing":true},"eventsPolicy":"exclude"}}}
