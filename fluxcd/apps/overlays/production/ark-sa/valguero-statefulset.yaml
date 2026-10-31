@@ -52,14 +52,17 @@ spec:
               # Nuke corrupted Proton prefix so proton rebuilds it properly with WINED3D. The prefix
               # is this pod's own emptyDir (compatdata below), so this never touches the other map's.
               rm -rf /home/pok/.steam/steam/steamapps/compatdata/2430930
-              # The site's public IP, as cloudflare-ddns publishes it, resolved at every start so a WAN
-              # change is picked up on the next restart (ARK's own detection gets it wrong behind NAT).
-              # Unresolved, the IP args are left out and ARK falls back to detecting it.
-              PUBLIC_IP=$(getent ahostsv4 "$PUBLIC_IP_HOST" | awk 'NR==1{print $1}')
-              if [ -n "$PUBLIC_IP" ]; then
+              # PUBLIC_IP (SERVER_PUBLIC_IP in Vault, optional) is the address Epic lists the server at:
+              # set it for a static IP, or to "epic" to leave it to ARK. Unset, it is detected at every
+              # start the way cloudflare-ddns does (Cloudflare's trace), so a WAN change is picked up on
+              # the next restart; if that fails too, it is left to ARK.
+              if [ -z "$PUBLIC_IP" ]; then
+                PUBLIC_IP=$(curl -fsS --max-time 10 https://1.1.1.1/cdn-cgi/trace | sed -n 's/^ip=//p')
+              fi
+              if [ -n "$PUBLIC_IP" ] && [ "$PUBLIC_IP" != epic ]; then
                 export PUBLIC_IP CUSTOM_SERVER_ARGS="$CUSTOM_SERVER_ARGS -PublicIPForEpic=$PUBLIC_IP -ServerIP=$PUBLIC_IP"
               else
-                echo "PUBLIC_IP: $PUBLIC_IP_HOST did not resolve, leaving the IP to ARK" >&2
+                echo "PUBLIC_IP: not set or detected, leaving the public IP to ARK" >&2
               fi
               python3 /health/health-server.py &
               exec /home/pok/scripts/init.sh
@@ -120,10 +123,12 @@ spec:
               value: "24"
             - name: BATTLEEYE
               value: "FALSE"
-            # A DNS-only (grey) cloudflare-ddns record: proxied names resolve to Cloudflare, and
-            # in-cluster to the LAN.
-            - name: PUBLIC_IP_HOST
-              value: mc.operationtimecapsule.com
+            - name: PUBLIC_IP
+              valueFrom:
+                secretKeyRef:
+                  name: ark-asa-admin
+                  key: SERVER_PUBLIC_IP
+                  optional: true
             - name: SDL_VIDEODRIVER
               value: x11
             - name: DISPLAY
