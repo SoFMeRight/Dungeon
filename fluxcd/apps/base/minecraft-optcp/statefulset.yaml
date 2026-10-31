@@ -42,7 +42,7 @@ spec:
               value: PAPER
             # renovate: datasource=custom.paper depName=paper
             - name: VERSION
-              value: "1.21.11"
+              value: "26.3"
             # Plugins are fetched from Modrinth at every start: the newest release build tagged
             # for VERSION (chestshop has only a beta for 1.21.11). A project with no build for
             # VERSION fails the start before the world loads, so nothing runs mismatched.
