@@ -176,6 +176,36 @@ spec:
           path "zeldas-letter/data/apps/boundary-dungeon-pedestal" {
             capabilities = ["read"]
           }
+      # StageFreight image/attestation signing — one policy per tenant (a GitLab
+      # group = a credential/identity scope, the same boundary Vault already draws
+      # for KV with external-secrets-optcp vs -prplanit). Each grants sign +
+      # read-public-key on ONLY its own cosign-signer key, so a compromised runner
+      # in one group can never sign for another. CI can never export, rotate, or
+      # delete a key; verifiers embed the public half offline and never call Vault.
+      - name: stagefreight-cosign-homelabhd
+        rules: |
+          path "cosign-signer/sign/homelabhd" {
+            capabilities = ["create", "update"]
+          }
+          path "cosign-signer/keys/homelabhd" {
+            capabilities = ["read"]
+          }
+      - name: stagefreight-cosign-prplanit
+        rules: |
+          path "cosign-signer/sign/prplanit" {
+            capabilities = ["create", "update"]
+          }
+          path "cosign-signer/keys/prplanit" {
+            capabilities = ["read"]
+          }
+      - name: stagefreight-cosign-sofmeright
+        rules: |
+          path "cosign-signer/sign/sofmeright" {
+            capabilities = ["create", "update"]
+          }
+          path "cosign-signer/keys/sofmeright" {
+            capabilities = ["read"]
+          }
     auth:
       - type: kubernetes
         config:
@@ -234,6 +264,49 @@ spec:
               - offline_access
             bound_claims:
               roles: "Admin"
+      # GitLab CI workload identity -> Vault. StageFreight pipelines present the
+      # STAGEFREIGHT_OIDC id_token (aud: stagefreight) and exchange it here for a
+      # short-lived token. No static secret and no Kubernetes SA token (build jobs
+      # run with automount disabled) — signing is bound to the CI job's own OIDC
+      # identity. One role per tenant: each is pinned to its GitLab group via
+      # project_path and carries ONLY that tenant's cosign policy, so a token
+      # minted in another group cannot assume it.
+      - type: jwt
+        path: gitlab-ci
+        config:
+          oidc_discovery_url: https://gitlab.prplanit.com
+          bound_issuer: https://gitlab.prplanit.com
+        roles:
+          - name: stagefreight-cosign-homelabhd
+            role_type: jwt
+            user_claim: project_path
+            bound_audiences: ["stagefreight"]
+            bound_claims_type: glob
+            bound_claims:
+              project_path: "HomeLabHD/*"
+            token_policies: ["stagefreight-cosign-homelabhd"]
+            token_ttl: 10m
+            token_type: service
+          - name: stagefreight-cosign-prplanit
+            role_type: jwt
+            user_claim: project_path
+            bound_audiences: ["stagefreight"]
+            bound_claims_type: glob
+            bound_claims:
+              project_path: "PrPlanIT/*"
+            token_policies: ["stagefreight-cosign-prplanit"]
+            token_ttl: 10m
+            token_type: service
+          - name: stagefreight-cosign-sofmeright
+            role_type: jwt
+            user_claim: project_path
+            bound_audiences: ["stagefreight"]
+            bound_claims_type: glob
+            bound_claims:
+              project_path: "SoFMeRight/*"
+            token_policies: ["stagefreight-cosign-sofmeright"]
+            token_ttl: 10m
+            token_type: service
     secrets:
       - path: operationtimecapsule
         type: kv
@@ -318,3 +391,29 @@ spec:
                 permit-pty: ""
               ttl: "5m0s"
               max_ttl: "30m0s"
+      # Cosign image/attestation signer. ECDSA keys generated once inside OpenBao,
+      # non-exportable — they sign via cosign-signer/sign/<tenant> and never leave
+      # the vault, the same custody model as ssh-client-signer's CA above. One key
+      # per tenant (GitLab group) so a compromise in one group cannot forge
+      # another's signatures. Verifiers embed each public key
+      # (cosign-signer/keys/<tenant>) as an offline trust anchor; nothing calls
+      # Vault at verify time. The purpose-named mount (not the cosign default
+      # "transit") requires TRANSIT_SECRET_ENGINE_PATH=cosign-signer in the signer
+      # env, which StageFreight forwards for the kms class.
+      - path: cosign-signer
+        type: transit
+        description: Cosign image/attestation signer (per-tenant transit keys)
+        configuration:
+          keys:
+            - name: homelabhd
+              type: "ecdsa-p256"
+              exportable: "false"
+              allow_plaintext_backup: "false"
+            - name: prplanit
+              type: "ecdsa-p256"
+              exportable: "false"
+              allow_plaintext_backup: "false"
+            - name: sofmeright
+              type: "ecdsa-p256"
+              exportable: "false"
+              allow_plaintext_backup: "false"
