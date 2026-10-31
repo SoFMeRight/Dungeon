@@ -20,6 +20,9 @@ spec:
           cpu: 314m
           memory: 115Mi
     global:
+      initialRootPassword:
+        secret: gitlab-initial-root-password
+        key: password
       common:
         labels:
           policy.prplanit.com/ingress: "true"
@@ -165,9 +168,9 @@ spec:
           port: 5432
           database: praefect
           username: praefect
-          password:
-            secret: gitlab-praefect-credentials
-            key: password
+        dbSecret:
+          secret: gitlab-praefect-credentials
+          key: password
 
     # Use Ceph RBD for all persistent volumes
     gitaly:
