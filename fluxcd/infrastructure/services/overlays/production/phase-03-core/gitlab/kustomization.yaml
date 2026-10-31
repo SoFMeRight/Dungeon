@@ -50,4 +50,3 @@ patches:
     target:
       kind: ExternalSecret
       name: gitlab-redis-password
-  - path: hold-for-move-patch.yaml
