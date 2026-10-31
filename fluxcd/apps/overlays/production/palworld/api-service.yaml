@@ -5,7 +5,7 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Game Servers (Shooting Gallery🎯)"
-      url: http://palworld-api.shooting-gallery.svc.cluster.local:8080/v1/api/info
+      url: http://palworld-api.optcp-shooting-gallery.svc.cluster.local:8080/v1/api/info
       interval: 60s
       conditions:
         - "[STATUS] == 401"

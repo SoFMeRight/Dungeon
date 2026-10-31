@@ -9,5 +9,4 @@ resources:
   # romm-db is DNS/mesh-only (no allow needed).
   - cnp-egress-ark-se.yaml
   - cnp-egress-minecraft.yaml
-  - cnp-egress-palworld.yaml
   - cnp-egress-romm.yaml
