@@ -95,6 +95,10 @@ spec:
               value: 9G
             - name: USE_AIKAR_FLAGS
               value: "true"
+            # The Paper/Bukkit/Spigot configs already exist on the volume; the image would
+            # otherwise fetch defaults from raw.githubusercontent.com at every start.
+            - name: SKIP_DOWNLOAD_DEFAULTS
+              value: "true"
           volumeMounts:
             - name: data
               mountPath: /data

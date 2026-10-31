@@ -12,3 +12,18 @@ data:
         {"$set": {"path": "$.chat.format", "value": "{PREFIX}{USERNAME}&r: {MESSAGE}"}}
       ]
     }
+  # Plugin versions come from GitOps (MODRINTH_PROJECTS, or the jar kept on the volume), so the
+  # plugins' own update checks are off; egress denies them anyway. CMILib's AutoUpdate would
+  # also replace its own jar.
+  update-checks.json: |
+    {
+      "patches": [
+        {"file": "/data/plugins/CMILib/config.yml", "ops": [{"$set": {"path": "$.AutoUpdate", "value": false}}]},
+        {"file": "/data/plugins/AdvancedTeleport/config.yml", "ops": [{"$set": {"path": "$['check-for-updates']", "value": false}}]},
+        {"file": "/data/plugins/Essentials/config.yml", "ops": [{"$set": {"path": "$['update-check']", "value": false}}]},
+        {"file": "/data/plugins/CoreProtect/config.yml", "ops": [{"$set": {"path": "$['check-updates']", "value": false}}]},
+        {"file": "/data/plugins/Vault/config.yml", "ops": [{"$set": {"path": "$['update-check']", "value": false}}]},
+        {"file": "/data/plugins/ChestShop/config.yml", "ops": [{"$set": {"path": "$.TURN_OFF_DEV_UPDATE_NOTIFIER", "value": true}}]},
+        {"file": "/data/plugins/PlayerKits/config.yml", "ops": [{"$set": {"path": "$.Config.update_notify", "value": false}}]}
+      ]
+    }
