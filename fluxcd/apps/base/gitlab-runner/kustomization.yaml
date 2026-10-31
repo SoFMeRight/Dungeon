@@ -5,3 +5,5 @@ resources:
   - repository.yaml
   - helmrelease.yaml
   - externalsecret.yaml
+  - buildkitd-certificates.yaml
+  - buildkitd.yaml

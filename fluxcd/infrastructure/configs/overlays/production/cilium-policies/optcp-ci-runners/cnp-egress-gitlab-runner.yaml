@@ -28,7 +28,8 @@ metadata:
   name: allow-ci-job-egress
 spec:
   description: >-
-    CI job pods (labelled by the runner's pod_labels) reach the internet only.
+    CI job pods (labelled by the runner's pod_labels) reach the internet and,
+    inside the cluster, only buildkitd for image builds.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -38,3 +39,10 @@ spec:
   egress:
     - toEntities:
         - world
+    - toEndpoints:
+        - matchLabels:
+            app: buildkitd
+      toPorts:
+        - ports:
+            - port: "1234"
+              protocol: TCP

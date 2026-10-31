@@ -41,6 +41,13 @@ spec:
       secret: gitlab-runner
       config: |
         [[runners]]
+          # Image builds go to the rootless buildkitd beside the runner; StageFreight reads
+          # BUILDKIT_HOST and the client certs at /buildkit-certs. HOME is an emptyDir, so
+          # buildx state works with a read-only rootfs.
+          environment = [
+            "BUILDKIT_HOST=tcp://buildkitd.{{ .Release.Namespace }}.svc:1234",
+            "HOME=/home/runner",
+          ]
           [runners.kubernetes]
             namespace = "{{ .Release.Namespace }}"
             image = "alpine:3.22"
@@ -90,6 +97,14 @@ spec:
             [[runners.kubernetes.volumes.empty_dir]]
               name = "home"
               mount_path = "/home/runner"
+            [[runners.kubernetes.volumes.secret]]
+              name = "buildkit-client-tls"
+              mount_path = "/buildkit-certs"
+              read_only = true
+              [runners.kubernetes.volumes.secret.items]
+                "ca.crt" = "ca.pem"
+                "tls.crt" = "cert.pem"
+                "tls.key" = "key.pem"
             [runners.kubernetes.pod_labels]
               "policy.prplanit.com/ci-job" = "true"
     securityContext:

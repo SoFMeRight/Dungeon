@@ -1,0 +1,92 @@
+---
+# seccomp-buildkitd.yaml
+# Writes the buildkitd seccomp profile on every worker: CRI-O's own default
+# profile with namespace creation allowed, and nothing else changed.
+#
+# WHY THIS EXISTS:
+# Rootless BuildKit (optcp-ci-runners/buildkitd) creates its own user namespace
+# and, per build step, mount and UTS namespaces inside it. CRI-O's default denies
+# clone with any CLONE_NEW* flag (EPERM), and does not allow unshare,
+# sethostname or setdomainname, so rootlesskit fails with "fork/exec
+# /proc/self/exe: operation not permitted". mount, umount2, pivot_root and setns
+# are already allowed. The kernel still gates each of these by capability, and
+# buildkitd holds capabilities only inside the user namespace it created.
+#
+# WHY RENDERED, NOT COPIED:
+# Same method as seccomp-proton-fsync.yaml: a Localhost profile replaces the
+# default rather than extending it, so this reads the profile CRI-O itself
+# rendered into the node's capability-less default containers, requires them
+# all to agree, and changes only the namespace rules.
+# provision-hosts.yml runs this after every cri-o converge.
+#
+# The pod selects it with
+#   seccompProfile: {type: Localhost, localhostProfile: profiles/buildkitd.json}
+# and kubelet refuses to start a container whose profile file is missing.
+#
+# Run via Semaphore or:
+#   ansible-playbook -i inventory k8s/tuning/seccomp-buildkitd.yaml
+
+- name: Write the buildkitd seccomp profile
+  hosts: "{{ seccomp_buildkitd_group | default('k8s_worker') }}"
+  become: true
+  gather_facts: false
+  tasks:
+    # defaultErrnoRet 38 (ENOSYS) is CRI-O's default; a container on a Localhost
+    # profile (proton-fsync allows futex_waitv, buildkitd allows unshare) is
+    # skipped. A container that exits mid-read is skipped too.
+    - name: Read the default profile CRI-O renders for containers without capabilities
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: |
+          set -euo pipefail
+          for f in /run/crun/*/config.json; do
+            jq -c 'select(.linux.seccomp.defaultErrnoRet == 38
+                     and ((.process.capabilities.bounding // []) | length) == 0
+                     and ([.linux.seccomp.syscalls[] | select(.action == "SCMP_ACT_ERRNO") | .names[]]
+                          | index("futex_waitv"))
+                     and (([.linux.seccomp.syscalls[] | select(.action == "SCMP_ACT_ALLOW") | .names[]]
+                          | index("unshare")) | not))
+                   | .linux.seccomp' "$f" 2>/dev/null || true
+          done | sort -u
+      register: _rendered
+      changed_when: false
+      check_mode: false
+
+    - name: Require exactly one agreed default profile
+      ansible.builtin.assert:
+        that: _rendered.stdout_lines | length == 1
+        fail_msg: >-
+          expected every capability-less RuntimeDefault container on
+          {{ inventory_hostname }} to carry one CRI-O default profile, found
+          {{ _rendered.stdout_lines | length }}
+
+    # Drops CRI-O's two flag-conditioned clone rules (allow without CLONE_NEW*,
+    # EPERM with any) and allows the namespace syscalls outright.
+    - name: Allow namespace creation
+      ansible.builtin.command:
+        argv:
+          - jq
+          - >-
+            .syscalls |= (map(select(.names != ["clone"]))
+                          | map(if .action == "SCMP_ACT_ERRNO"
+                                then .names -= ["unshare", "sethostname", "setdomainname"]
+                                else . end)
+                          | map(select(.names | length > 0)))
+            | .syscalls += [{"names": ["clone", "unshare", "sethostname", "setdomainname"],
+                             "action": "SCMP_ACT_ALLOW"}]
+        stdin: "{{ _rendered.stdout }}"
+      register: _profile
+      changed_when: false
+      check_mode: false
+
+    - name: Create the kubelet seccomp profile directory
+      ansible.builtin.file:
+        path: /var/lib/kubelet/seccomp/profiles
+        state: directory
+        mode: "0755"
+
+    - name: Write the profile
+      ansible.builtin.copy:
+        dest: /var/lib/kubelet/seccomp/profiles/buildkitd.json
+        content: "{{ _profile.stdout | from_json | to_nice_json(indent=2) }}\n"
+        mode: "0644"

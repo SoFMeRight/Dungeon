@@ -1,0 +1,50 @@
+---
+# apparmor-buildkitd.yaml
+# Loads the buildkitd AppArmor profile on every worker.
+#
+# WHY THIS EXISTS:
+# Rootless BuildKit (optcp-ci-runners/buildkitd, uid 1000, no initial-namespace
+# capabilities) builds inside a user namespace it creates itself. Ubuntu sets
+# kernel.apparmor_restrict_unprivileged_userns=1, which moves such a process into
+# the unprivileged_userns profile and denies the uid_map write: rootlesskit fails
+# with "fork/exec /proc/self/exe: permission denied". RuntimeDefault and
+# Unconfined both hit it (tested 2026-10-31).
+#
+# A profile that grants `userns` is exempt from the transition. This one is
+# flags=(unconfined) with only that rule, the same shape as steam-headless-seat:
+# buildkitd is as confined as Unconfined, and every other pod on the node keeps
+# the restriction. The pod selects it with
+#   appArmorProfile: {type: Localhost, localhostProfile: buildkitd}
+# and kubelet refuses to start a container whose profile is not loaded.
+#
+# Run via Semaphore or:
+#   ansible-playbook -i inventory k8s/tuning/apparmor-buildkitd.yaml
+
+- name: Load the buildkitd AppArmor profile
+  hosts: "{{ apparmor_buildkitd_group | default('k8s_worker') }}"
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Write the profile
+      ansible.builtin.copy:
+        dest: /etc/apparmor.d/buildkitd
+        mode: "0644"
+        content: |
+          # Managed by dungeon/ansible/k8s/tuning/apparmor-buildkitd.yaml
+          abi <abi/4.0>,
+          include <tunables/global>
+
+          profile buildkitd flags=(unconfined) {
+            userns,
+          }
+      register: _profile
+
+    # apparmor.service loads /etc/apparmor.d at boot; this loads it now.
+    - name: Load or replace the profile in the kernel
+      when: _profile.changed
+      ansible.builtin.command: apparmor_parser -r -W /etc/apparmor.d/buildkitd
+      changed_when: true
+
+    - name: Prove the profile is loaded
+      ansible.builtin.command: grep -qx 'buildkitd (unconfined)' /sys/kernel/security/apparmor/profiles
+      changed_when: false

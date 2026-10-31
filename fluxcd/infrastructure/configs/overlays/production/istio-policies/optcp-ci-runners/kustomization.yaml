@@ -4,3 +4,4 @@ namespace: optcp-ci-runners
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-ci-jobs-to-buildkitd.yaml

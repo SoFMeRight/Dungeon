@@ -1,0 +1,73 @@
+# BuildKit's own PKI: a self-signed CA signs the buildkitd server cert and the client
+# cert CI jobs mount at /buildkit-certs. Nothing outside this namespace trusts it.
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: buildkit-selfsigned
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: buildkit-ca
+spec:
+  isCA: true
+  commonName: buildkit-ca
+  secretName: buildkit-ca-tls
+  duration: 87600h # 10y
+  renewBefore: 8760h # 1y
+  privateKey:
+    algorithm: ECDSA
+    size: 384
+  issuerRef:
+    name: buildkit-selfsigned
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: buildkit-ca
+spec:
+  ca:
+    secretName: buildkit-ca-tls
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: buildkitd
+spec:
+  secretName: buildkitd-tls
+  duration: 8760h # 1y
+  renewBefore: 720h # 30d
+  commonName: buildkitd
+  dnsNames:
+    - buildkitd
+    - buildkitd.optcp-ci-runners.svc
+    - buildkitd.optcp-ci-runners.svc.cluster.local
+    - localhost
+  ipAddresses: ["127.0.0.1"]
+  usages: ["server auth", "digital signature"]
+  privateKey:
+    algorithm: ECDSA
+    size: 384
+  issuerRef:
+    name: buildkit-ca
+    kind: Issuer
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: buildkit-client
+spec:
+  secretName: buildkit-client-tls
+  duration: 8760h # 1y
+  renewBefore: 720h # 30d
+  commonName: buildkit-client
+  usages: ["client auth", "digital signature"]
+  privateKey:
+    algorithm: ECDSA
+    size: 384
+  issuerRef:
+    name: buildkit-ca
+    kind: Issuer

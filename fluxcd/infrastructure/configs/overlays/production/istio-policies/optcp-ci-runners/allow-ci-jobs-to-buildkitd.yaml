@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ci-jobs-to-buildkitd
+spec:
+  selector:
+    matchLabels:
+      app: buildkitd
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-ci-runners/sa/gitlab-runner-jobs
+      to:
+        - operation:
+            ports: ["1234"]
