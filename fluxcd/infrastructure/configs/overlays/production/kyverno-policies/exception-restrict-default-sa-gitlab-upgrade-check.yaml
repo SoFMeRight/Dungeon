@@ -1,0 +1,27 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: restrict-default-sa-gitlab-upgrade-check
+  namespace: mr-resetti
+  annotations:
+    policies.kyverno.io/description: >-
+      The GitLab chart's pre-upgrade upgrade-check hook Job has no serviceAccountName
+      value (templates/upgrade_check_hook.yaml), so it always runs as default. It is the
+      guard against skipping a required upgrade stop, so it stays enabled. Remove once
+      the chart lets it take a ServiceAccount.
+spec:
+  exceptions:
+    - policyName: restrict-default-sa
+      ruleNames:
+        - restrict-default-sa-pods
+        - restrict-default-sa-controllers
+  match:
+    any:
+      - resources:
+          kinds: [Job]
+          namespaces: [optcp-supply-chain]
+          names: ["gitlab-gitlab-upgrade-check"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-supply-chain]
+          names: ["gitlab-gitlab-upgrade-check-*"]
