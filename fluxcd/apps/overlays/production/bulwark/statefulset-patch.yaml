@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: bulwark
-          image: ghcr.io/bulwarkmail/webmail:1.18.0
+          image: ghcr.io/bulwarkmail/webmail:1.19.0
           resources:
             requests:
               memory: 192Mi
