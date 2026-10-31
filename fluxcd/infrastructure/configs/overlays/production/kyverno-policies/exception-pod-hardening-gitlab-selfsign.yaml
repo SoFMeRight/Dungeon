@@ -5,7 +5,7 @@ metadata:
   namespace: mr-resetti
   annotations:
     policies.kyverno.io/description: >-
-      GitLab chart shared-secrets self-sign cert job (cfssl-self-sign, hyrule-castle).
+      GitLab chart shared-secrets self-sign cert job (cfssl-self-sign, optcp-supply-chain).
       This ephemeral bootstrap hook generates GitLab's internal self-signed certs and
       exits. Its pod cannot be hardened: the chart's self-sign template ignores
       shared-secrets.securityContext / containerSecurityContext (verified — a fresh
