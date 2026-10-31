@@ -1,32 +1,8 @@
 $patch: delete
 apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
-metadata:
-  name: gitlab-postgresql
----
-$patch: delete
-apiVersion: postgresql.cnpg.io/v1
-kind: Database
-metadata:
-  name: gitlab-db
----
-$patch: delete
-apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
   name: gitlab-postgres-daily
----
-$patch: delete
-apiVersion: redis.redis.opstreelabs.in/v1beta2
-kind: RedisReplication
-metadata:
-  name: gitlab-redis
----
-$patch: delete
-apiVersion: redis.redis.opstreelabs.in/v1beta2
-kind: RedisSentinel
-metadata:
-  name: gitlab-sentinel
 ---
 $patch: delete
 apiVersion: batch/v1
