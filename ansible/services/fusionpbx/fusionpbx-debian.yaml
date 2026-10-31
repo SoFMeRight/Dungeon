@@ -30,6 +30,11 @@
     # much higher so legitimately held calls (little/no RTP) are not clipped.
     fusionpbx_rtp_timeout_sec: 300
     fusionpbx_rtp_hold_timeout_sec: 1800
+    # RTP media port range (switch.conf.xml). FreeSWITCH's default is 16384-32768, which
+    # overlaps the Steam game ports (27000+) forwarded on the same WAN IP. 16384-26999 is
+    # ~2,600 concurrent bridged audio calls. The firewall's RTP forward must match it.
+    fusionpbx_rtp_start_port: 16384
+    fusionpbx_rtp_end_port: 26999
 
   tasks:
 
@@ -287,7 +292,7 @@
       # localnet.auto only covers the PBX's own subnet, so a phone on a different private
       # VLAN is treated as remote and handed the public ext-rtp-ip -> its audio never
       # reaches FS. rfc1918 treats every private-range peer as local -> it's given the
-      # local IP and RTP flows. (Off-subnet phones still need inter-VLAN 16384-32768/udp.)
+      # local IP and RTP flows. (Off-subnet phones still need inter-VLAN RTP/udp, fusionpbx_rtp_*_port.)
       ansible.builtin.command:
         argv:
           - psql
@@ -472,6 +477,24 @@
       no_log: true
       notify: Rescan FreeSWITCH external gateways
 
+    # The stock file ships the params commented out (FreeSWITCH's default range); the regexp
+    # matches them commented or not, and a missing param goes in under <settings>.
+    - name: FusionPBX | converge the RTP port range in switch.conf.xml
+      ansible.builtin.lineinfile:
+        path: /etc/freeswitch/autoload_configs/switch.conf.xml
+        regexp: '^\s*(<!--\s*)?<param name="{{ item.name }}"'
+        line: '    <param name="{{ item.name }}" value="{{ item.value }}"/>'
+        insertafter: '<settings>'
+        backup: true
+      loop:
+        - name: rtp-start-port
+          value: "{{ fusionpbx_rtp_start_port }}"
+        - name: rtp-end-port
+          value: "{{ fusionpbx_rtp_end_port }}"
+      loop_control:
+        label: "{{ item.name }}"
+      notify: Restart FreeSWITCH
+
     # Reruns the ext-IP convergence above on a systemd timer, so a dynamic-WAN
     # rotation self-heals between playbook runs. Writes + restart happen only when
     # the detected IP differs from what is stored.
@@ -561,3 +584,10 @@
         rm -f /var/cache/fusionpbx/* ;
         fs_cli -x 'reloadxml' ;
         fs_cli -x 'sofia profile external rescan'
+
+    # The RTP port range is read only at FreeSWITCH start; reloadxml doesn't apply it.
+    # Drops calls in progress.
+    - name: Restart FreeSWITCH
+      ansible.builtin.systemd:
+        name: freeswitch
+        state: restarted
