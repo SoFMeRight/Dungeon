@@ -45,7 +45,7 @@ spec:
       initContainers:
         # Ruby refuses a world-writable TMPDIR without the sticky bit, which an emptyDir lacks.
         - name: prepare-tmp
-          image: docker.io/openproject/openproject:17.9.4-slim
+          image: docker.io/openproject/openproject:17.9.6-slim
           command: ["sh", "-c", "mkdir -p /tmp/ruby && chmod 1777 /tmp/ruby"]
           securityContext:
             readOnlyRootFilesystem: true
@@ -68,7 +68,7 @@ spec:
                 - ALL
       containers:
         - name: web
-          image: docker.io/openproject/openproject:17.9.4-slim
+          image: docker.io/openproject/openproject:17.9.6-slim
           args: ["/app/docker/prod/web"]
           envFrom:
             - configMapRef:
