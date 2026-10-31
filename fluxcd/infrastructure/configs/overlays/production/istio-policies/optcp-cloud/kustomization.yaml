@@ -6,8 +6,6 @@ resources:
   - allow-intra-breakglass.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
-  - allow-wikijs-sops-to-wikijs-sops-postgres.yaml
-  - allow-wikijs-sops-postgres-replication.yaml
   - allow-nextcloud-collabora-to-nextcloud.yaml
   - allow-nextcloud-postgres-replication.yaml
   - allow-nextcloud-redis-intra-cluster.yaml

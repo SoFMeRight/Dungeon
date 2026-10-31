@@ -1,4 +1,4 @@
-namespace: optcp-cloud
+namespace: optcp-staff-suite
 resources:
   - ../../../base/wikijs-sops
   - httproute.yaml
@@ -10,3 +10,4 @@ patches:
     target:
       kind: Service
       name: wikijs-sops
+  - path: hold-for-move-patch.yaml

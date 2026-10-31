@@ -1,7 +1,7 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-wikijs-sops-postgres-replication
+  name: allow-wikijs-sops-to-wikijs-sops-postgres
 spec:
   selector:
     matchLabels:
@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/optcp-cloud/sa/wikijs-sops-postgres
+              - cluster.local/ns/optcp-staff-suite/sa/wikijs-sops
       to:
         - operation:
-            ports: ["5432", "8000"]
+            ports: ["5432"]

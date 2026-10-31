@@ -9,5 +9,5 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: optcp-cloud.wikijs-sops.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-staff-suite.wikijs-sops.postgres
         policy.prplanit.com/cap.oidc: "true"

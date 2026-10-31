@@ -8,3 +8,5 @@ resources:
   - allow-openproject-postgres-replication.yaml
   - allow-openproject-to-openproject-memcached.yaml
   - allow-openproject-to-openproject-postgres.yaml
+  - allow-wikijs-sops-postgres-replication.yaml
+  - allow-wikijs-sops-to-wikijs-sops-postgres.yaml

@@ -5,3 +5,4 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-openproject.yaml
   - cnp-openproject-memcached.yaml
+  - cnp-egress-wikijs-sops.yaml
