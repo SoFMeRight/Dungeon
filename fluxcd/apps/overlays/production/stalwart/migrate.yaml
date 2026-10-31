@@ -38,7 +38,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: migrate
-          image: ghcr.io/stalwartlabs/stalwart-migrate:1.0.0
+          image: ghcr.io/stalwartlabs/stalwart-migrate:1.0.4
           command: ["sleep", "infinity"]
           # Same credentials the 0.16 server resolves from its config: DB password and S3 keys.
           envFrom:
