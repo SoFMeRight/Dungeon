@@ -1,11 +1,5 @@
 $patch: delete
 apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
-metadata:
-  name: openproject-postgres
----
-$patch: delete
-apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
   name: openproject-postgres-daily
