@@ -15,7 +15,7 @@ spec:
     - secretKey: AdminListURL
       remoteRef:
         key: apps/ark-sa/app
-        property: SERVER_ADMIN_LIST
+        property: ADMIN_LIST
 ---
 apiVersion: v1
 kind: ConfigMap

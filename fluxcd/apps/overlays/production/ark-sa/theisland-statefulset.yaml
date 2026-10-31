@@ -52,7 +52,7 @@ spec:
               # Nuke corrupted Proton prefix so proton rebuilds it properly with WINED3D. The prefix
               # is this pod's own emptyDir (compatdata below), so this never touches the other map's.
               rm -rf /home/pok/.steam/steam/steamapps/compatdata/2430930
-              # PUBLIC_IP (SERVER_PUBLIC_IP in Vault, optional) is the address Epic lists the server at:
+              # PUBLIC_IP (PUBLIC_IP in Vault, optional) is the address Epic lists the server at:
               # set it for a static IP, or to "epic" to leave it to ARK. Unset, it is detected at every
               # start the way cloudflare-ddns does (Cloudflare's trace), so a WAN change is picked up on
               # the next restart; if that fails too, it is left to ARK.
@@ -127,7 +127,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: ark-asa-admin
-                  key: SERVER_PUBLIC_IP
+                  key: PUBLIC_IP
                   optional: true
             - name: SDL_VIDEODRIVER
               value: x11
