@@ -38,4 +38,3 @@ patches:
     target:
       kind: Service
       name: openproject
-  - path: hold-for-move-patch.yaml

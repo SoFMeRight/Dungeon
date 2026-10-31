@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: openproject-web
 spec:
-  replicas: 0
   template:
     metadata:
       labels:
