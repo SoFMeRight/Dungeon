@@ -15,7 +15,19 @@ spec:
       containers:
         - name: calibre-web
           image: docker.io/linuxserver/calibre-web:0.6.27-ls407
+          env:
+            - name: REGISTRATION_MAIL_TEMPLATE
+              value: /etc/calibre-web/registration-mail.txt
+            - name: REGISTRATION_MAIL_SUBJECT
+              value: Your OPTCP eBook Library account is registered
+          volumeMounts:
+            - name: registration-mail
+              mountPath: /etc/calibre-web
+              readOnly: true
       volumes:
+        - name: registration-mail
+          configMap:
+            name: calibre-web-registration-mail
         - name: config
           persistentVolumeClaim:
             claimName: optcp-calibre-web-config

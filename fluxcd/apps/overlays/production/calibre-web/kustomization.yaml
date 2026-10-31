@@ -9,6 +9,7 @@ resources:
   - persistent-volume-claims.yaml
   - httproute.yaml
   - httproute-xylem.yaml
+  - configmap-registration-mail.yaml
 
 patches:
   - path: deployment-patch.yaml

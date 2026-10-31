@@ -39,3 +39,36 @@ data:
     ln -sf "${SRC}" "/opt/kepubify/${LINK_NAME}"
 
     echo "[custom-init] kepubify-symlink: ${LINK_NAME} -> ${SRC} (config/bin + opt/kepubify)"
+  # Registration email from a template: when REGISTRATION_MAIL_TEMPLATE names a file, its text
+  # is the body with {name} and {password} filled in, and REGISTRATION_MAIL_SUBJECT (optional)
+  # the subject. Unset, the stock email is sent. Leaves helper.py untouched if upstream changed it.
+  20-registration-mail.sh: |
+    #!/bin/bash
+    set -u
+    python3 - <<'PY'
+    import re, sys
+    path = "/app/calibre-web/cps/helper.py"
+    marker = "# registration-mail template"
+    src = open(path, encoding="utf-8").read()
+    if marker in src:
+        print("[custom-init] registration-mail: already patched"); sys.exit(0)
+    m = re.search(r"(def send_registration_mail\(e_mail, user_name, default_password, resend=False, locale=None\):\n)"
+                  r"((?:    .*\n)+?)(    WorkerThread\.add\(None, TaskEmail\()", src)
+    if not m or "subject = " not in m.group(2):
+        print("[custom-init] registration-mail: send_registration_mail changed upstream; left unpatched"); sys.exit(0)
+    stock = "".join("    " + l + "\n" if l else "\n" for l in m.group(2).rstrip("\n").split("\n"))
+    body = (
+        "    template = os.environ.get(\"REGISTRATION_MAIL_TEMPLATE\")  " + marker + "\n"
+        "    if template and os.path.isfile(template):\n"
+        "        with open(template, encoding=\"utf-8\") as f:\n"
+        "            txt = f.read().replace(\"{name}\", user_name).replace(\"{password}\", default_password)\n"
+        "        txt = txt.replace(\"\\r\\n\", \"\\n\").replace(\"\\n\", \"\\r\\n\")\n"
+        "        subject = os.environ.get(\"REGISTRATION_MAIL_SUBJECT\") or _('Get Started with Calibre-Web')\n"
+        "    else:\n" + stock
+    )
+    src = src[:m.start(2)] + body + src[m.end(2):]
+    if "\nimport os\n" not in src and "\nimport os," not in src:
+        src = "import os\n" + src
+    open(path, "w", encoding="utf-8").write(src)
+    print("[custom-init] registration-mail: patched send_registration_mail")
+    PY

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: calibre-web-registration-mail
+data:
+  # {name} and {password} are filled in by Calibre-Web.
+  registration-mail.txt: |
+    Hi {name},
+
+    Your OPTCP eBook Library account is now registered with us, we hope you will find a nice read!
+
+    To browse the Library, visit https://books.optcp.com
+
+    It is recommended to save the link we provide above or hold on to this email for future reference.
+
+    Your temporary login information:
+
+    Username: {name}
+    Password: {password}
+
+    Please change your password after you sign in.
+
+    If you have any questions or concerns, feel free to send us a message!
+
+    Operation: Time Capsule (OPTCP) is a non-profit venture; we do not have paid staff, please be patient for our response.
+
+    Warm regards,
+
+    OPTCP Support
