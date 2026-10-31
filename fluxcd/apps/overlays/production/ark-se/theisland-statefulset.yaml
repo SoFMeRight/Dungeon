@@ -33,7 +33,7 @@ spec:
           # Our own fork build (HomeLabHD/ark-se-server, arkmanager v1.6.69, guarded install).
           # Upstream drpsychick :latest-v1.6.62 is a broken build with arkmanager missing
           # ("arkmanager: command not found", exit 127 crashloop).
-          image: ghcr.io/homelabhd/ark-se-server:v1.6.69
+          image: ghcr.io/homelabhd/ark-se-server:v1.6.69@sha256:05432f9b7b70822cc7ff91a20887d17588a503b2881e994917252f9a22c1e1c6
           ports:
             - containerPort: 7797
               protocol: UDP
