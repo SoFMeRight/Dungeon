@@ -24,7 +24,7 @@ spec:
       # ark-se: arkmanager uses sudo. stable-diffusion-webui: ai-dock init.sh sudo/sudoers.
       - resources:
           kinds: [Pod]
-          namespaces: [shooting-gallery]
+          namespaces: [optcp-shooting-gallery]
           names: ["ark-se-tmc-*"]
       - resources:
           kinds: [Pod]

@@ -73,11 +73,11 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [shooting-gallery]
-          names: ["ark-se-*", "romm-*"]
+          names: ["romm-*"]
       - resources:
           kinds: [Pod]
           namespaces: [optcp-shooting-gallery]
-          names: ["ark-sa-*"]
+          names: ["ark-sa-*", "ark-se-*"]
       # swift-sail — gluetun cohort + LSIO *arr + root-vendor.
       - resources:
           kinds: [Pod]

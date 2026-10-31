@@ -3,9 +3,7 @@ kind: Kustomization
 namespace: shooting-gallery
 resources:
   - cnp-default-deny-ingress.yaml
-  - cnp-game-servers.yaml
   - cnp-romm-db.yaml
   # Egress allows (inert until egress default-deny is enabled for the namespace).
   # romm-db is DNS/mesh-only (no allow needed).
-  - cnp-egress-ark-se.yaml
   - cnp-egress-romm.yaml

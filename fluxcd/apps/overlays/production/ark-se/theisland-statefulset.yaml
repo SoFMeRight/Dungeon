@@ -50,7 +50,7 @@ spec:
             - containerPort: 27095
               protocol: TCP
               name: rcon
-            - containerPort: 8080
+            - containerPort: 8082
               protocol: TCP
               name: health
           env:
@@ -95,6 +95,9 @@ spec:
               value: "true"
             - name: ARKSERVER_SHARED
               value: "/arkserver"
+            # 8082: ARK SA holds 8080 and 8081 on the shared LoadBalancer IP.
+            - name: HEALTH_SERVER_PORT
+              value: "8082"
             - name: HEALTH_SERVER
               value: "true"
           resources:

@@ -8,7 +8,7 @@ metadata:
     lbipam.cilium.io/sharing-cross-namespace: "*"
     gatus.home-operations.com/endpoint: |
       group: "Game Servers (Shooting Gallery🎯)"
-      url: http://ark-se-tmc-theisland.shooting-gallery.svc.cluster.local:8080/healthz
+      url: http://ark-se-tmc-theisland.optcp-shooting-gallery.svc.cluster.local:8082/healthz
       interval: 30s
       conditions:
         - "[STATUS] == 200"
@@ -42,7 +42,7 @@ spec:
       targetPort: 27095
       protocol: TCP
       name: theisland-rcon
-    - port: 8080
-      targetPort: 8080
+    - port: 8082
+      targetPort: 8082
       protocol: TCP
       name: theisland-health

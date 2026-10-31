@@ -6,3 +6,4 @@ resources:
   - allow-intra-breakglass.yaml
   - allow-ark-sa-loadbalancer.yaml
   - allow-minecraft-loadbalancer.yaml
+  - allow-ark-se-loadbalancer.yaml
