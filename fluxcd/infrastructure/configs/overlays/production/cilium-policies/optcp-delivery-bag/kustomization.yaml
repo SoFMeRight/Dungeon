@@ -5,3 +5,4 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-stalwart.yaml
   - cnp-stalwart-migrate.yaml
+  - cnp-bulwark.yaml
