@@ -41,6 +41,9 @@ spec:
         - matchPattern: "*.papermc.io"
         - matchPattern: "*.mojang.com"
         - matchName: "api.minecraftservices.com"
+        # Paper 1.21.11 resolves plugin libraries from Google's Maven Central mirror; older
+        # builds used repo.maven.apache.org.
+        - matchName: "maven-central.storage-download.googleapis.com"
         - matchName: "repo.maven.apache.org"
         # Plugin downloads at start (MODRINTH_PROJECTS) and the plugins' update checks.
         - matchName: "api.modrinth.com"
