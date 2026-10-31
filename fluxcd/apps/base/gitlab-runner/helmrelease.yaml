@@ -51,6 +51,10 @@ spec:
           [runners.kubernetes]
             namespace = "{{ .Release.Namespace }}"
             image = "alpine:3.22"
+            # Pull fresh, because pipelines run moving tags (latest-dev) that a node's
+            # cached copy lets go stale; if the pull fails (registry or network down),
+            # the runner falls back to the cached copy rather than failing the job.
+            pull_policy = ["always", "if-not-present"]
             service_account = "gitlab-runner-jobs"
             automount_service_account_token = false
             poll_timeout = 600
