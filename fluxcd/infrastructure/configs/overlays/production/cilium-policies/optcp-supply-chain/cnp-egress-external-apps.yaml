@@ -1,0 +1,30 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-external-apps-egress
+spec:
+  description: >-
+    GitLab reaches open-ended external sets as core function (CI runner jobs,
+    repo mirrors, package/registry pulls, webhooks, email) via
+    webservice/sidekiq/runner/kas/registry/toolbox/migrations. That set cannot
+    be allowlisted, so world+cluster is granted; DBs and the mesh ride the
+    universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - webservice
+          - sidekiq
+          - gitlab-gitlab-runner
+          - kas
+          - registry
+          - toolbox
+          - migrations
+  egress:
+    - toEntities:
+        - world
+        - cluster

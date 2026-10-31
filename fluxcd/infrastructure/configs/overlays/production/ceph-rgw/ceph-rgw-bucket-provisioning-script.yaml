@@ -168,6 +168,23 @@ data:
       fi
     done
 
+    # Objects keep the owner that wrote them: when a bucket passes to a new user, its
+    # objects don't follow, and every read is AccessDenied. Re-own them when the first
+    # object belongs to someone else.
+    echo ""
+    echo "Checking object ownership..."
+    for bucket in "${BUCKETS[@]}"; do
+      owner="$(radosgw-admin --name client.dungeon-rgw bucket list --bucket="${bucket}" --max-entries=1 \
+        | sed -n 's/.*"owner": "\([^"]*\)".*/\1/p' | head -1)"
+      if [ -n "${owner}" ] && [ "${owner}" != "${UID_NAME}" ]; then
+        echo "  Re-owning ${bucket} (objects owned by ${owner})..."
+        if ! radosgw-admin --name client.dungeon-rgw bucket chown --bucket="${bucket}" --uid="${UID_NAME}" >/dev/null; then
+          echo "  ERROR: failed to re-own ${bucket}"
+          exit 1
+        fi
+      fi
+    done
+
     # Signed S3 PUT of a bucket subresource (?versioning, ?lifecycle) with an XML body.
     # Lifecycle requires Content-MD5, and both carry it.
     put_subresource() {

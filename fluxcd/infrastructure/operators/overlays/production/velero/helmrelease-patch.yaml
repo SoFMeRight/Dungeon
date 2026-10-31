@@ -114,8 +114,10 @@ spec:
             - arylls-lookout
             # Gateway for personal/public services
             - kokiri-forest
-            # Gateway for business/work services (GitLab!)
+            # Gateway for business/work services
             - hyrule-castle
+            # Supply chain: GitLab (namespace plan, group V)
+            - optcp-supply-chain
             # PrPlanIT support (namespace plan, group A)
             - prplanit-support
             # Routing & Gateway infrastructure

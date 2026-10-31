@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-supply-chain
+resources:
+  - cnp-default-deny-ingress.yaml
+  - cnp-egress-external-apps.yaml
+  - cnp-egress-to-gateway.yaml
+  - cnp-gitlab-webhooks.yaml

@@ -3,13 +3,13 @@ kind: HelmRelease
 metadata:
   name: gitlab
 spec:
-  targetNamespace: hyrule-castle
+  targetNamespace: optcp-supply-chain
   upgrade:
     disableWait: true
   chart:
     spec:
       sourceRef:
-        namespace: hyrule-castle
+        namespace: optcp-supply-chain
   values:
     gitlab-runner:
       resources:
@@ -27,9 +27,9 @@ spec:
         labels:
           policy.prplanit.com/ingress: "true"
           policy.prplanit.com/cap.postgres: "true"
-          policy.prplanit.com/access-scope-postgres: hyrule-castle.gitlab.postgres
+          policy.prplanit.com/access-scope-postgres: optcp-supply-chain.gitlab.postgres
           policy.prplanit.com/cap.redis: "true"
-          policy.prplanit.com/access-scope-redis: hyrule-castle.gitlab.redis
+          policy.prplanit.com/access-scope-redis: optcp-supply-chain.gitlab.redis
           policy.prplanit.com/cap.s3: "true"
           policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
       hosts:
@@ -132,7 +132,7 @@ spec:
 
       # External PostgreSQL (CloudNativePG)
       psql:
-        host: gitlab-postgresql-rw.hyrule-castle.svc.cluster.local
+        host: gitlab-postgresql-rw.optcp-supply-chain.svc.cluster.local
         port: 5432
         database: gitlabhq_production
         username: gitlab
@@ -146,11 +146,11 @@ spec:
         host: gitlab-redis  # Sentinel master group name
         port: 6379
         sentinels:
-          - host: gitlab-sentinel-sentinel-0.gitlab-sentinel-sentinel-headless.hyrule-castle.svc.cluster.local
+          - host: gitlab-sentinel-sentinel-0.gitlab-sentinel-sentinel-headless.optcp-supply-chain.svc.cluster.local
             port: 26379
-          - host: gitlab-sentinel-sentinel-1.gitlab-sentinel-sentinel-headless.hyrule-castle.svc.cluster.local
+          - host: gitlab-sentinel-sentinel-1.gitlab-sentinel-sentinel-headless.optcp-supply-chain.svc.cluster.local
             port: 26379
-          - host: gitlab-sentinel-sentinel-2.gitlab-sentinel-sentinel-headless.hyrule-castle.svc.cluster.local
+          - host: gitlab-sentinel-sentinel-2.gitlab-sentinel-sentinel-headless.optcp-supply-chain.svc.cluster.local
             port: 26379
         auth:
           enabled: true
@@ -164,7 +164,7 @@ spec:
       # Praefect PostgreSQL configuration
       praefect:
         psql:
-          host: gitlab-postgresql-rw.hyrule-castle.svc.cluster.local
+          host: gitlab-postgresql-rw.optcp-supply-chain.svc.cluster.local
           port: 5432
           database: praefect
           username: praefect

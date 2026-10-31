@@ -18,4 +18,4 @@ spec:
               - cluster.local/ns/prelude-of-light/sa/cell-membrane-gateway-istio
       to:
         - operation:
-            ports: ["443", "3000", "7443", "8080", "8181"]
+            ports: ["443", "3000", "7443", "8080"]

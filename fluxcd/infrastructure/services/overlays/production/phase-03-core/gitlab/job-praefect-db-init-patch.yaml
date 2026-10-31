@@ -12,4 +12,4 @@ spec:
           image: docker.io/alpine/k8s:1.37.1
           env:
             - name: PGHOST
-              value: gitlab-postgresql-rw.hyrule-castle.svc.cluster.local
+              value: gitlab-postgresql-rw.optcp-supply-chain.svc.cluster.local

@@ -32,6 +32,7 @@ spec:
                 - optcp-cloud
                 - optcp-sibyl-system
                 - optcp-staff-suite
+                - optcp-supply-chain
                 - pedestal-of-time
                 - prplanit-support
                 - shooting-gallery
@@ -83,6 +84,7 @@ spec:
                 - optcp-cloud
                 - optcp-sibyl-system
                 - optcp-staff-suite
+                - optcp-supply-chain
                 - pedestal-of-time
                 - prplanit-support
                 - shooting-gallery

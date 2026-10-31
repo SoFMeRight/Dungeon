@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hyrule-castle/sa/gitlab-postgresql
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-postgresql
       to:
         - operation:
             # 5432: streaming replication; 8000: instance-manager peer /failsafe (CNPG >=1.30)

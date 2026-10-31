@@ -13,7 +13,7 @@ data:
     url: PLACEHOLDER_LOKI_URL
     limit: 1000
     query: |
-      {namespace="hyrule-castle", container="webservice"} |~ "/users/sign_in|ldapmain/callback"
+      {namespace="optcp-supply-chain", container="webservice"} |~ "/users/sign_in|ldapmain/callback"
     labels:
       type: gitlab
     wait_for_ready: 10s

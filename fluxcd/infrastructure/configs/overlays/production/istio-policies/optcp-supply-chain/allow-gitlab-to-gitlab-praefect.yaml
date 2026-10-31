@@ -1,0 +1,21 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-gitlab-to-gitlab-praefect
+spec:
+  selector:
+    matchLabels:
+      app: praefect
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-webservice
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-sidekiq
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-toolbox
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-gitlab-shell
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-gitlab-exporter
+      to:
+        - operation:
+            ports: ["8075", "9236"]

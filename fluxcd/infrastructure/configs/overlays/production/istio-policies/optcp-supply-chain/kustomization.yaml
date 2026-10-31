@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-supply-chain
+resources:
+  - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-cell-membrane.yaml
+  - allow-gitlab-kas-to-gitlab-webservice.yaml
+  - allow-gitlab-postgresql-replication.yaml
+  - allow-gitlab-praefect-to-gitaly.yaml
+  - allow-gitlab-redis-intra-cluster.yaml
+  - allow-gitlab-to-gitlab-postgresql.yaml
+  - allow-gitlab-to-gitlab-praefect.yaml
+  - allow-gitlab-to-gitlab-redis.yaml
+  - allow-gitlab-to-gitlab-sentinel.yaml
+  - allow-webhook-gitlab-certmanager.yaml

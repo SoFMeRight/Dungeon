@@ -26,5 +26,5 @@ spec:
     any:
       - resources:
           kinds: [Pod]
-          namespaces: [hyrule-castle]
+          namespaces: [optcp-supply-chain]
           names: ["gitlab-shared-secrets-*-selfsign-*"]

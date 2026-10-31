@@ -1,17 +1,17 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-gitlab-praefect-to-gitaly
+  name: allow-gitlab-kas-to-gitlab-webservice
 spec:
   selector:
     matchLabels:
-      app: gitaly
+      app: gitlab-webservice
   action: ALLOW
   rules:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hyrule-castle/sa/gitlab-praefect
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-kas
       to:
         - operation:
-            ports: ["8075"]
+            ports: ["8181"]

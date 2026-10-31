@@ -11,8 +11,8 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hyrule-castle/sa/gitlab-redis
-              - cluster.local/ns/hyrule-castle/sa/gitlab-sentinel
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-redis
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-sentinel
       to:
         - operation:
             ports: ["6379"]
@@ -30,8 +30,8 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hyrule-castle/sa/gitlab-sentinel
-              - cluster.local/ns/hyrule-castle/sa/gitlab-redis
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-sentinel
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-redis
       to:
         - operation:
             ports: ["26379"]

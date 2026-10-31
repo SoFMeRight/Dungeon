@@ -11,15 +11,15 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hyrule-castle/sa/gitlab-webservice
-              - cluster.local/ns/hyrule-castle/sa/gitlab-sidekiq
-              - cluster.local/ns/hyrule-castle/sa/gitlab-praefect
-              - cluster.local/ns/hyrule-castle/sa/gitlab-toolbox
-              - cluster.local/ns/hyrule-castle/sa/gitlab-gitaly
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-webservice
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-sidekiq
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-praefect
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-toolbox
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-gitaly
               # Helm-hook Jobs (migrations, praefect DB init) run under their own SAs and
               # need DB access to complete an upgrade; not discovered by PolySieve (hooks).
-              - cluster.local/ns/hyrule-castle/sa/gitlab-migrations
-              - cluster.local/ns/hyrule-castle/sa/gitlab-praefect-db-init
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-migrations
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-praefect-db-init
       to:
         - operation:
             ports: ["5432"]

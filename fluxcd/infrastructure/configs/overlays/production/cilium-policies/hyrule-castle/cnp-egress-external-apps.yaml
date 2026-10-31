@@ -4,9 +4,7 @@ metadata:
   name: allow-external-apps-egress
 spec:
   description: >-
-    These business apps reach open-ended external sets as core function: GitLab
-    (CI runner jobs, repo mirrors, package/registry pulls, webhooks, email) via
-    webservice/sidekiq/runner/kas/registry/toolbox/migrations; Harbor + its
+    These business apps reach open-ended external sets as core function: Harbor + its
     proxy-cache pulling from upstream registries (docker.io/ghcr/quay/lscr);
     ERPNext, InvoiceNinja, opnform, bookstack, calcom, bagisto reaching
     email/SMTP/IMAP, payment gateways, calendar/video and webhook integrations.
@@ -20,13 +18,6 @@ spec:
       - key: app
         operator: In
         values:
-          - webservice
-          - sidekiq
-          - gitlab-gitlab-runner
-          - kas
-          - registry
-          - toolbox
-          - migrations
           - harbor
           - harbor-proxy-cache-proxy
           - frappe-suite-sites

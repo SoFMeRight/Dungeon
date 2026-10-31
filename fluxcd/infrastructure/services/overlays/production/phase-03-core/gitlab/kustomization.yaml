@@ -1,12 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: hyrule-castle
+namespace: optcp-supply-chain
 resources:
   - ../../../../base/gitlab
+  - externalsecret-rails-secret.yaml
   - externalsecret-root.yaml
   - externalsecret-s3.yaml
   - httproute.yaml
   - externalsecret-s3-creds.yaml
+  - externalsecret-shell-host-keys.yaml
 patches:
   - path: helmrelease-patch.yaml
     target:
@@ -48,3 +50,4 @@ patches:
     target:
       kind: ExternalSecret
       name: gitlab-redis-password
+  - path: hold-for-move-patch.yaml

@@ -1,7 +1,7 @@
 # GitLab HA Setup on Kubernetes
 
 ## Architecture
-- **Namespace**: hyrule-castle
+- **Namespace**: optcp-supply-chain
 - **Domain**: gitlab.prplanit.com
 - **SSH Port**: 2424
 - **Storage**: Ceph RBD (SSD-backed) + Ceph RGW S3 for objects
@@ -75,10 +75,10 @@ s3cmd mb s3://gitlab-registry
 4. **Wait for deployment** (30+ minutes for initial deployment):
    ```bash
    # Watch HelmRelease
-   flux get helmreleases -n hyrule-castle gitlab
+   flux get helmreleases -n optcp-supply-chain gitlab
 
    # Watch pods
-   kubectl get pods -n hyrule-castle -w
+   kubectl get pods -n optcp-supply-chain -w
    ```
 
 ## Migration from Docker Compose
@@ -102,8 +102,8 @@ s3cmd mb s3://gitlab-registry
 
 3. **Stop GitLab in K8s temporarily**:
    ```bash
-   kubectl scale deployment -n hyrule-castle gitlab-webservice-default --replicas=0
-   kubectl scale deployment -n hyrule-castle gitlab-sidekiq-all-in-1-v2 --replicas=0
+   kubectl scale deployment -n optcp-supply-chain gitlab-webservice-default --replicas=0
+   kubectl scale deployment -n optcp-supply-chain gitlab-sidekiq-all-in-1-v2 --replicas=0
    ```
 
 4. **Restore data to Gitaly pods**:

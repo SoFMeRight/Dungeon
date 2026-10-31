@@ -1,0 +1,22 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-gitlab-to-gitlab-sentinel
+spec:
+  selector:
+    matchLabels:
+      app: gitlab-sentinel-sentinel
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-webservice
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-sidekiq
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-kas
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-gitlab-exporter
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-toolbox
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-migrations
+      to:
+        - operation:
+            ports: ["26379"]
