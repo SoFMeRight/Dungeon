@@ -7,8 +7,7 @@
 # notPaths /oauth2/* : the oauth2-proxy sign-in/callback/static paths must bypass the gate
 #   (else the login page would have to authenticate itself). Served by the oauth2-proxy-signin
 #   HTTPRoute (books.pcfae.com/oauth2/* → oauth2-proxy).
-# Widen access by adding roles to notValues (operator is the floor):
-#   operator-only : [operator]   admin: [operator,admin]   trusted: [operator,admin,trusted]   guest: [operator,admin,trusted,guest]
+# Widen by adding roles to notValues: operator, admin (the Gated Entry project's roles).
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:

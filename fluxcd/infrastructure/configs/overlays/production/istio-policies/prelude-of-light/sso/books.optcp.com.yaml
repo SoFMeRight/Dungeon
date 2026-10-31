@@ -6,8 +6,7 @@
 #   authz (DENY)          → deny unless the injected role is in `admits` below
 # notPaths /oauth2/* : the oauth2-proxy sign-in/callback/static paths must bypass the gate
 #   (served by the oauth2-proxy-signin-cell-membrane HTTPRoute: books.optcp.com/oauth2/*).
-# Tiers (widen by adding roles to notValues; operator is the floor):
-#   operator-only : [operator]   admin: [operator,admin]   trusted: [operator,admin,trusted]
+# Widen by adding roles to notValues: operator, admin (the Gated Entry project's roles).
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:

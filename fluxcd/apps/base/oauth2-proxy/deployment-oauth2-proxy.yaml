@@ -60,11 +60,6 @@ spec:
               value: "oidc"
             - name: OAUTH2_PROXY_OIDC_GROUPS_CLAIM
               value: "roles"
-            - name: OAUTH2_PROXY_ALLOWED_GROUPS
-              valueFrom:
-                secretKeyRef:
-                  name: oauth2-proxy-secrets
-                  key: OAUTH2_PROXY_ALLOWED_GROUPS
             - name: OAUTH2_PROXY_OIDC_ISSUER_URL
               value: "https://sso.prplanit.com"
             # No fixed REDIRECT_URL: with reverse-proxy=true oauth2-proxy derives the

@@ -1,0 +1,27 @@
+# osTicket staff panel (public)  ·  SSO required on /scp  ·  admits: any signed-in user
+#
+# Self-contained: this file IS the complete access rule for support.prplanit.com on the public
+# cell-membrane gateway. The client portal outside /scp stays open.
+#   require-login (CUSTOM) → oauth2-proxy proves an SSO session
+# No role check: Zitadel only authenticates organizations granted the Gated Entry project,
+# and osTicket admits only its own agents.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: sso-support-prplanit-require-login
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  action: CUSTOM
+  provider:
+    name: oauth2-proxy
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - support.prplanit.com
+              - support.prplanit.com:443
+            paths:
+              - /scp
+              - /scp/*

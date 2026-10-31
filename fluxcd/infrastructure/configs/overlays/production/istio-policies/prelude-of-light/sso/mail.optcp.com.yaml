@@ -10,8 +10,7 @@
 # notPaths JMAP  : /.well-known/jmap and /jmap/* are routed to Stalwart, which requires a Zitadel
 #   bearer token or an app password on every request. Bulwark's server also calls them from
 #   inside the cluster with the user's token and no oauth2-proxy cookie. The web UI stays SSO'd.
-# Tiers (widen by adding roles to notValues; operator is the floor):
-#   operator-only : [operator]   admin: [operator,admin]   trusted: [operator,admin,trusted]
+# Widen by adding roles to notValues: operator, admin (the Gated Entry project's roles).
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
