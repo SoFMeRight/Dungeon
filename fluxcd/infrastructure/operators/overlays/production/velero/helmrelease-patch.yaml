@@ -99,6 +99,8 @@ spec:
             - temple-of-time
             # Cloud & collaboration (namespace plan rev1, group Y/Z)
             - optcp-cloud
+            # Staff suite (namespace plan, group AO)
+            - optcp-staff-suite
             # Discovery & Dashboards
             - lost-woods
             # Monitoring services

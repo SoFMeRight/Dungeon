@@ -31,6 +31,7 @@ spec:
                 - lost-woods
                 - optcp-cloud
                 - optcp-sibyl-system
+                - optcp-staff-suite
                 - pedestal-of-time
                 - prplanit-support
                 - shooting-gallery
@@ -81,6 +82,7 @@ spec:
                 - lost-woods
                 - optcp-cloud
                 - optcp-sibyl-system
+                - optcp-staff-suite
                 - pedestal-of-time
                 - prplanit-support
                 - shooting-gallery
