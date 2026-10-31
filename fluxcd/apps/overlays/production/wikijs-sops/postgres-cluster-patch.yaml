@@ -5,7 +5,7 @@ metadata:
 spec:
   smartShutdownTimeout: 10   # fits the node's graceful-shutdown budget
   stopDelay: 60
-  instances: 1
+  instances: 3
   imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
   enableSuperuserAccess: true
   postgresql:

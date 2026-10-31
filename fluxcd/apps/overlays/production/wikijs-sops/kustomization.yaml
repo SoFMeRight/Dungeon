@@ -10,4 +10,3 @@ patches:
     target:
       kind: Service
       name: wikijs-sops
-  - path: hold-for-move-patch.yaml
