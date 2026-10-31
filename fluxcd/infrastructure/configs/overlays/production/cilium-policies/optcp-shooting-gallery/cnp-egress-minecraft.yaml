@@ -4,10 +4,11 @@ metadata:
   name: allow-minecraft-egress
 spec:
   description: >-
-    minecraft (PAPER 1.21.4) downloads its server jar from the PaperMC API on
+    minecraft (Paper) downloads its server jar from the PaperMC API on
     start, pulls the vanilla base + metadata from Mojang, and (online-mode on)
     validates players against Mojang/Microsoft session/auth services at runtime.
-    Plugins live on the PVC (no per-plugin egress). Allow toFQDNs those hosts on
+    Plugins live on the PVC, but Paper downloads the libraries they declare from
+    Maven Central at start (BentoBox does not load without it). Allow toFQDNs those hosts on
     443/TCP, with L7 DNS. Its listen port 35566 is inbound (public).
   enableDefaultDeny:
     ingress: false
@@ -39,6 +40,7 @@ spec:
         - matchPattern: "*.papermc.io"
         - matchPattern: "*.mojang.com"
         - matchName: "api.minecraftservices.com"
+        - matchName: "repo.maven.apache.org"
         - matchPattern: "*.minecraft.net"
       toPorts:
         - ports:

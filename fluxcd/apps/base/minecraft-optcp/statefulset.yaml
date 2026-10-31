@@ -40,6 +40,7 @@ spec:
           env:
             - name: TYPE
               value: PAPER
+            # renovate: datasource=custom.paper depName=paper
             - name: VERSION
               value: "1.21.4"
             - name: EULA
@@ -61,12 +62,14 @@ spec:
               mountPath: /tmp
           stdin: true
           tty: true
+          # Chunk generation and loading run on the CPU; at a 500m limit the server was throttled
+          # in 84% of CFS periods and chunks crawled in.
           resources:
             requests:
-              cpu: 70m
+              cpu: "1"
               memory: 8Gi
             limits:
-              cpu: 500m
+              cpu: "4"
               memory: 10Gi
       volumes:
         - name: tmp

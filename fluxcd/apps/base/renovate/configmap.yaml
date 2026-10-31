@@ -175,8 +175,30 @@ data:
           ],
           "datasourceTemplate": "github-releases",
           "description": "Version-pinned GitHub release-download manifest URLs in kustomize resources"
+        },
+        {
+          // The Minecraft server version is an env value (itzg VERSION), which no manager
+          // reads; the annotation above it names the custom.paper datasource.
+          //   # renovate: datasource=custom.paper depName=paper
+          //   - name: VERSION
+          //     value: "1.21.4"
+          "customType": "regex",
+          "managerFilePatterns": ["/fluxcd/apps/base/minecraft-[^/]+/statefulset\\.yaml$/"],
+          "matchStrings": [
+            "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n\\s+- name: VERSION\\n\\s+value: \"?(?<currentValue>[^\"\\n]+)\"?"
+          ],
+          "description": "Paper (Minecraft) server version in the itzg VERSION env"
         }
       ],
+
+      // Paper has no built-in datasource: its v3 API lists every version per family
+      // ({"versions": {"26.3": ["26.3", "26.3-rc-3"], "1.21": [...]}}).
+      "customDatasources": {
+        "paper": {
+          "defaultRegistryUrlTemplate": "https://fill.papermc.io/v3/projects/paper",
+          "transformTemplates": ["{\"releases\": [versions.*.{\"version\": $}]}"]
+        }
+      },
 
       "packageRules": [
         {
@@ -502,6 +524,22 @@ data:
           "matchPackageNames": ["**/searxng/searxng"],
           "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-[0-9a-f]+$",
           "commitMessagePrefix": "chore(searxng):"
+        },
+        {
+          // Paper: releases only (the API also lists -pre, -rc and -rc-N builds). A Minecraft
+          // version upgrade rewrites the world on first start and can't be rolled back, and
+          // plugins that hook server internals stop loading until they have a matching build,
+          // so every bump carries the upgrade checklist.
+          "matchDatasources": ["custom.paper"],
+          "versioning": "loose",
+          "allowedVersions": "/^\\d+\\.\\d+(\\.\\d+)?$/",
+          "automerge": false,
+          "labels": ["upgrade-checklist"],
+          "prBodyNotes": [
+            "### ⚠️ Minecraft upgrade: the world converts one way",
+            "- Snapshot the world volume (`data-minecraft-0`) before merging; the first start on the new version rewrites the world.",
+            "- Check every plugin has a build for the new version, WorldEdit and WorldGuard first; a plugin without one is disabled at start."
+          ]
         },
         {
           // OpenProject upgrades run one-way migrations and can unseat the enterprise
