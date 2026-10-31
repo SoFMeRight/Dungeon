@@ -2,13 +2,18 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: minecraft
+  annotations:
+    # force-replace on immutable-field change (e.g. volumeClaimTemplates); PVC retained
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
 spec:
+  # Matches the live claim data-minecraft-0 (ceph-rbd, 20Gi); the template only applies to a
+  # claim that doesn't exist yet.
   volumeClaimTemplates:
   - metadata:
       name: data
     spec:
       accessModes: ["ReadWriteOnce"]
-      storageClassName: ceph-rbd-retain
+      storageClassName: ceph-rbd
       resources:
         requests:
-          storage: 10Gi
+          storage: 20Gi
