@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bulwark
+  labels:
+    app: bulwark
+spec:
+  replicas: 1
+  serviceName: bulwark
+  selector:
+    matchLabels:
+      app: bulwark
+  template:
+    metadata:
+      labels:
+        app: bulwark
+    spec:
+      serviceAccountName: bulwark
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: bulwark
+          image: PLACEHOLDER_IMAGE
+          envFrom:
+            - secretRef:
+                name: bulwark-secret
+            - configMapRef:
+                name: bulwark-env
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: http
+              containerPort: 3000
+          startupProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            periodSeconds: 30
+            failureThreshold: 5
+          volumeMounts:
+            # Settings, admin state and synced user data; must survive restarts.
+            - name: data
+              mountPath: /app/data
+            - name: cache
+              mountPath: /app/.next/cache
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: cache
+          emptyDir:
+            sizeLimit: 256Mi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 256Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi

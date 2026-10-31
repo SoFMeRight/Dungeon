@@ -288,7 +288,10 @@ data:
         - domain: dtrack.optcp.com
           answer: 172.22.30.70
           enabled: true
-        - domain: mail.optcp.com
+        - domain: imap.optcp.com
+          answer: 172.22.30.103
+          enabled: true
+        - domain: smtp.optcp.com
           answer: 172.22.30.103
           enabled: true
         - domain: mail-admin.optcp.com

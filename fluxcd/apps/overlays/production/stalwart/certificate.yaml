@@ -9,3 +9,5 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "mail.optcp.com"
+    - "imap.optcp.com"
+    - "smtp.optcp.com"

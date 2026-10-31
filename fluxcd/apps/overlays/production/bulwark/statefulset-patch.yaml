@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bulwark
+spec:
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/ingress: "true"
+        policy.prplanit.com/cap.oidc: "true"
+    spec:
+      containers:
+        - name: bulwark
+          image: ghcr.io/bulwarkmail/webmail:1.18.0
+          resources:
+            requests:
+              memory: 192Mi
+              cpu: 10m
+            limits:
+              memory: 512Mi
+              cpu: 500m
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-rbd-hdd
+        resources:
+          requests:
+            storage: 1Gi

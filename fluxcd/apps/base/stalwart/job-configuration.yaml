@@ -20,10 +20,53 @@ spec:
         runAsGroup: 2000
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        # The plan carries client-id placeholders; the ids live in OpenBao, not in git.
+        - name: render-plan
+          image: docker.io/busybox:1.38
+          command:
+            - sh
+            - -ec
+            - |
+              : "${STALWART_OIDC_CLIENT_ID:?}" "${BULWARK_OIDC_CLIENT_ID:?}"
+              sed -e "s/@STALWART_OIDC_CLIENT_ID@/${STALWART_OIDC_CLIENT_ID}/g" \
+                  -e "s/@BULWARK_OIDC_CLIENT_ID@/${BULWARK_OIDC_CLIENT_ID}/g" \
+                  /plan/plan.ndjson > /rendered/plan.ndjson
+              ! grep -q '@[A-Z_]*@' /rendered/plan.ndjson
+          env:
+            - name: STALWART_OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-secret
+                  key: STALWART_OIDC_CLIENT_ID
+            - name: BULWARK_OIDC_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-secret
+                  key: BULWARK_OIDC_CLIENT_ID
+          resources:
+            requests:
+              memory: 8Mi
+              cpu: 5m
+            limits:
+              memory: 32Mi
+              cpu: 50m
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: plan
+              mountPath: /plan
+              readOnly: true
+            - name: rendered
+              mountPath: /rendered
       containers:
         - name: configuration
           image: PLACEHOLDER_CLI_IMAGE
-          args: ["apply", "--file", "/plan/plan.ndjson"]
+          args: ["apply", "--file", "/rendered/plan.ndjson"]
           env:
             - name: HOME
               value: /tmp
@@ -46,8 +89,8 @@ spec:
               drop:
                 - ALL
           volumeMounts:
-            - name: plan
-              mountPath: /plan
+            - name: rendered
+              mountPath: /rendered
               readOnly: true
             - name: tmp
               mountPath: /tmp
@@ -55,6 +98,9 @@ spec:
         - name: plan
           configMap:
             name: stalwart-plan
+        - name: rendered
+          emptyDir:
+            sizeLimit: 1Mi
         - name: tmp
           emptyDir:
             sizeLimit: 64Mi

@@ -4,6 +4,7 @@ namespace: optcp-delivery-bag
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-cell-membrane.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-stalwart-to-stalwart-postgres.yaml
   - allow-stalwart-migrate-to-stalwart-postgres.yaml
@@ -13,3 +14,4 @@ resources:
   - allow-stalwart-redis-intra-cluster.yaml
   - allow-stalwart-to-stalwart-redis.yaml
   - allow-stalwart-to-stalwart-elasticsearch.yaml
+  - allow-bulwark-to-stalwart.yaml

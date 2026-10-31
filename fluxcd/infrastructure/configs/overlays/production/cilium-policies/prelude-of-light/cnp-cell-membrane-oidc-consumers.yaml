@@ -59,6 +59,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: kokiri-forest
             policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-delivery-bag
+            policy.prplanit.com/cap.oidc: "true"
       toPorts:
         - ports:
             - port: "443"

@@ -1,0 +1,52 @@
+# Bulwark webmail (public)  ·  SSO required  ·  tier: operator-only  (admits: operator)
+#
+# Self-contained: this file IS the complete access rule for mail.optcp.com on the public
+# cell-membrane gateway. Stalwart creates a mailbox at a user's first sign-in, so this tier is
+# also who can get a mailbox.
+#   require-login (CUSTOM) → oauth2-proxy proves an SSO session + injects the role header
+#   authz (DENY)          → deny unless the injected role is in `admits` below
+# notPaths /oauth2/* : the oauth2-proxy sign-in/callback/static paths must bypass the gate
+#   (served by the oauth2-proxy-signin-cell-membrane HTTPRoute: mail.optcp.com/oauth2/*).
+# Tiers (widen by adding roles to notValues; operator is the floor):
+#   operator-only : [operator]   admin: [operator,admin]   trusted: [operator,admin,trusted]
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: sso-mail-optcp-require-login
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  action: CUSTOM
+  provider:
+    name: oauth2-proxy
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - mail.optcp.com
+              - mail.optcp.com:443
+            notPaths:
+              - /oauth2/*
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: sso-mail-optcp-authz
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+  action: DENY
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - mail.optcp.com
+              - mail.optcp.com:443
+            notPaths:
+              - /oauth2/*
+      when:
+        - key: request.headers[x-auth-request-groups]
+          notValues:
+            - operator     # admits: operator

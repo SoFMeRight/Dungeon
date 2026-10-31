@@ -46,6 +46,7 @@ resources:
   - kimai
   - openproject
   - stalwart
+  - bulwark
   - wikijs-sops
   - opnform
   - osticket
