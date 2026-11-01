@@ -10,7 +10,9 @@ a primary blocks the drain on its always-zero <cluster>-primary PDB for the full
 timeout. So the roll must move it. For each CNPG primary on the node, patch
 status.targetPrimary to a ready off-node replica (the switchover trigger that
 `kubectl cnpg promote` uses) and wait only until the primary ROLE is off the node, so
-the drain can evict the node's now-replica instance.
+the drain can evict the node's now-replica instance. A cluster with enablePDB: false has
+opted out of that protection (single instance, brief disruption accepted): its primary
+is left for the drain to evict, and it restarts on another node.
 
 We deliberately do NOT wait for the demoted instance to rejoin: CNPG's rejoin after a
 demote/eviction is unreliable in this cluster (an instance can strand shut-down with no
@@ -74,6 +76,12 @@ def switchover_primaries_off(node, attempts=60, delay=5):
     for pod in primaries:
         ns = pod["metadata"]["namespace"]
         cluster = pod["metadata"]["labels"]["cnpg.io/cluster"]
+        spec = json.loads(k("get", "cluster", "-n", ns, cluster, "-o", "json")).get("spec", {})
+        if spec.get("enablePDB") is False:
+            # The cluster opted out of disruption protection: CNPG keeps no PDB for it, so
+            # the drain evicts its primary with a clean shutdown and it restarts elsewhere.
+            print(f"{ns}/{cluster}: enablePDB false, no switchover; the drain restarts it")
+            continue
         replicas = json.loads(k(
             "get", "pods", "-n", ns,
             "-l", f"cnpg.io/cluster={cluster},cnpg.io/instanceRole=replica", "-o", "json",
