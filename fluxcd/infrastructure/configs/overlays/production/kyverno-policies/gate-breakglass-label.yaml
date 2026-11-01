@@ -32,6 +32,7 @@ spec:
                 - pedestal-of-time
                 - prplanit-support
                 - optcp-media
+                - optcp-infra-admin
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
@@ -93,6 +94,7 @@ spec:
                 - pedestal-of-time
                 - prplanit-support
                 - optcp-media
+                - optcp-infra-admin
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
@@ -154,6 +156,7 @@ spec:
                 - pedestal-of-time
                 - prplanit-support
                 - optcp-media
+                - optcp-infra-admin
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time

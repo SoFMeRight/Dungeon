@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: node-converge
+spec:
+  # Control plane first (this run), then its own node and the workers (the hand-off).
+  schedule: "0 3 * * *"
+  timeZone: America/Los_Angeles
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: converge
+              image: ghcr.io/homelabhd/ansible:v2.21.5@sha256:9130d35313d7117085b015d2ef6708436377f09ab16dfe4933a76fcc91f2b0f2
+              env:
+                - name: REPO_URL
+                  value: https://git.optcp.com/SoFMeRight/dungeon.git

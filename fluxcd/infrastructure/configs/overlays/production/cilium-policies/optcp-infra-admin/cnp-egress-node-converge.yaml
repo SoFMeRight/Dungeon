@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-node-converge-egress
+spec:
+  description: >-
+    node-converge clones dungeon from git.optcp.com (10.40.9.104) and runs the
+    host playbooks over SSH against the cluster's own nodes. Nothing else.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: node-converge
+  egress:
+    - toEntities:
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "22"
+              protocol: TCP
+    - toCIDR:
+        - 10.40.9.104/32
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

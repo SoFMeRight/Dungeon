@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-converge
+---
+# Fire the hand-off Job from the CronJob's template and watch it start.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: node-converge
+rules:
+  - apiGroups: [batch]
+    resources: [cronjobs]
+    resourceNames: [node-converge]
+    verbs: [get]
+  - apiGroups: [batch]
+    resources: [jobs]
+    verbs: [get, list, create]
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: node-converge
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: node-converge
+subjects:
+  - kind: ServiceAccount
+    name: node-converge
+---
+# Which nodes exist (to pin the hand-off), and which revision Flux applied.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: node-converge
+rules:
+  - apiGroups: [""]
+    resources: [nodes]
+    verbs: [get, list]
+  - apiGroups: [source.toolkit.fluxcd.io]
+    resources: [gitrepositories]
+    resourceNames: [flux-system]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: node-converge
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: node-converge
+subjects:
+  - kind: ServiceAccount
+    name: node-converge
+    namespace: PLACEHOLDER_NAMESPACE

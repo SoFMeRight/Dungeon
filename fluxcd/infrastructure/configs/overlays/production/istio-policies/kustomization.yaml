@@ -19,6 +19,7 @@ resources:
   - optcp-ci-runners/
   - optcp-cloud/
   - optcp-delivery-bag/
+  - optcp-infra-admin/
   - optcp-media/
   - optcp-shooting-gallery/
   - optcp-sibyl-system/

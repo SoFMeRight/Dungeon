@@ -10,6 +10,7 @@ resources:
   - hasteward
   - netbootxyz
   - netbox
+  - node-converge
   - oauth2-proxy
   - semaphore
   # Monitoring, Analytics, Diagnostics
