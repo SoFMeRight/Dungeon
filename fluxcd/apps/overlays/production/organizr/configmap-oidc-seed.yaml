@@ -25,7 +25,7 @@ data:
     $overrides = [
         'oidcEnabled'             => true,
         'oidcZitadelEnabled'      => true,
-        'oidcZitadelName'         => getenv('OIDC_NAME') ?: 'PrecisionPlanIT SSO',
+        'oidcZitadelName'         => getenv('OIDC_NAME') ?: 'Single Sign-On',
         'oidcZitadelClientId'     => $clientId,
         'oidcZitadelClientSecret' => $clientSecret,
         'oidcZitadelDiscoveryUrl' => getenv('OIDC_DISCOVERY_URL') ?: '',

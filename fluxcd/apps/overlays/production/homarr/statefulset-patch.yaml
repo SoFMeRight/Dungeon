@@ -117,7 +117,7 @@ spec:
             - name: AUTH_OIDC_ISSUER
               value: "https://sso.prplanit.com"
             - name: AUTH_OIDC_CLIENT_NAME
-              value: "PrecisionPlanIT.com SSO"
+              value: "Single Sign-On"
             - name: AUTH_OIDC_AUTO_LOGIN
               value: "false"
             - name: AUTH_OIDC_SCOPE_OVERWRITE

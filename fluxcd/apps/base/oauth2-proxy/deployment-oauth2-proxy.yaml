@@ -81,7 +81,7 @@ spec:
             - name: OAUTH2_PROXY_CUSTOM_SIGN_IN_LOGO
               value: "https://support.pcfae.com/logo.php"
             - name: OAUTH2_PROXY_PROVIDER_DISPLAY_NAME
-              value: "PrecisionPlanIT SSO"
+              value: "Single Sign-On"
             - name: OAUTH2_PROXY_THEME
               value: "dark"
             # Behind the istio gateway acting as ext-authz for many hosts:

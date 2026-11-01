@@ -17,7 +17,7 @@ spec:
             - name: OIDC_ENABLED
               value: "true"
             - name: OIDC_PROVIDER
-              value: "Zitadel"
+              value: "Single Sign-On"
             - name: OIDC_SERVER_APPLICATION_URL
               value: "https://sso.prplanit.com"
             - name: OIDC_SERVER_METADATA_URL

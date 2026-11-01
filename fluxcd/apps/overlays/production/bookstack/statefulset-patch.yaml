@@ -39,7 +39,7 @@ spec:
             - name: CACHE_DRIVER
               value: "database"
             - name: OIDC_NAME
-              value: "PrPlanIT SSO"
+              value: "Single Sign-On"
             - name: OIDC_DISPLAY_NAME_CLAIMS
               value: "name"
             - name: OIDC_ISSUER

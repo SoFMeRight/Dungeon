@@ -27,5 +27,5 @@ data:
     }
     </style>
     <div class="prplanit-signin">
-        <button type="button" id="prplanitBtn" class="btn btn-primary" onclick="socialauth_redirect">Login with PrPlanIT SSO</button>
+        <button type="button" id="prplanitBtn" class="btn btn-primary" onclick="socialauth_redirect">Sign in with Single Sign-On</button>
     </div>

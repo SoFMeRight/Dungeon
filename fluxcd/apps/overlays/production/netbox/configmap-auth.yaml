@@ -17,7 +17,7 @@ data:
 
     # Login button label + icon (overrides the default "OpenID Connect")
     SOCIAL_AUTH_BACKEND_ATTRS = {
-        'oidc': ('PrPlanIT SSO', 'shield-key'),
+        'oidc': ('Single Sign-On', 'shield-key'),
     }
 
     # Link SSO logins to an existing NetBox user by verified email

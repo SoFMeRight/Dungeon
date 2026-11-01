@@ -131,7 +131,7 @@ spec:
             # Presentation of the sign-in button, which reads "Sign in with <display name>".
             # An empty icon renders the button as text alone.
             - name: OIDC_DISPLAY_NAME
-              value: "PrPlanIT SSO"
+              value: "Single Sign-On"
             - name: OIDC_ICON
               value: ""
             - name: OIDC_ISSUER
