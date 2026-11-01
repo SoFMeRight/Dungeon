@@ -31,7 +31,7 @@ data:
       // and the in-cluster Harbor registries. Auth for these hosts is supplied
       // separately via RENOVATE_HOST_RULES; hostRules merge per matchHost.
       "hostRules": [
-        { "matchHost": "gitlab.prplanit.com", "allowInternal": true },
+        { "matchHost": "git.optcp.com", "allowInternal": true },
         { "matchHost": "s3.optcp.com", "allowInternal": true },
         { "matchHost": "cr.pcfae.com", "allowInternal": true },
         { "matchHost": "docker.cr.pcfae.com", "allowInternal": true }

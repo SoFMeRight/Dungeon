@@ -7,7 +7,7 @@ RUN apk add --no-cache openssh
 RUN apk add --no-cache coreutils
 
 WORKDIR /usr/src/
-RUN git clone https://gitlab.prplanit.com/precisionplanit/prometheus-eaton-ups-exporter.git
+RUN git clone https://git.optcp.com/precisionplanit/prometheus-eaton-ups-exporter.git
 RUN mv ./prometheus-eaton-ups-exporter ./app
 WORKDIR /usr/src/app
 #COPY ./requirements.txt .

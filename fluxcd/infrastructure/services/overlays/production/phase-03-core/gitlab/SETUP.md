@@ -2,7 +2,7 @@
 
 ## Architecture
 - **Namespace**: optcp-supply-chain
-- **Domain**: gitlab.prplanit.com
+- **Domain**: git.optcp.com
 - **SSH Port**: 2424
 - **Storage**: Ceph RBD (SSD-backed) + Ceph RGW S3 for objects
 
@@ -112,8 +112,8 @@ s3cmd mb s3://gitlab-registry
    - Restart GitLab
 
 5. **Verify**:
-   - Access https://gitlab.prplanit.com
-   - Test SSH: `ssh -T git@gitlab.prplanit.com -p 2424`
+   - Access https://git.optcp.com
+   - Test SSH: `ssh -T git@git.optcp.com -p 2424`
    - Clone a repository
    - Verify all data is present
 

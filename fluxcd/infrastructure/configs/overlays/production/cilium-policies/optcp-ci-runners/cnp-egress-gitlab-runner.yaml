@@ -4,7 +4,7 @@ metadata:
   name: allow-gitlab-runner-egress
 spec:
   description: >-
-    The runner manager polls gitlab.prplanit.com (outside the cluster) for jobs;
+    The runner manager polls git.optcp.com (outside the cluster) for jobs;
     job pods clone from it and pull dependencies from the internet. Both get
     world only: a job runs whatever code a pipeline names, so it gets no path to
     in-cluster workloads. DNS and kube-apiserver (the manager creating job pods)

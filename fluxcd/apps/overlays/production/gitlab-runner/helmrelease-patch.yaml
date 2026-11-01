@@ -7,4 +7,4 @@ spec:
     spec:
       version: "0.94.2"  # runner 19.5.2; server is 19.5.3
   values:
-    gitlabUrl: https://gitlab.prplanit.com/
+    gitlabUrl: https://git.optcp.com/

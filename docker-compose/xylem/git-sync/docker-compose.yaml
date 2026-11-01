@@ -11,7 +11,7 @@
 #      bash -c "
 #        find /temp -mindepth 1 -delete &&
 #        find /files -mindepth 1 -delete &&
-#        git clone https://$GITLAB_NGINX_TOKEN@gitlab.prplanit.com/SoFMeRight/ad-arbitorium-private.git &&
+#        git clone https://$GITLAB_NGINX_TOKEN@git.optcp.com/SoFMeRight/ad-arbitorium-private.git &&
 #       cp -R ./ad-arbitorium-private/-/tree/main/nginx-extras/xylem/conf.d/. /conf.d
 #      "
 #    volumes:
@@ -32,7 +32,7 @@ services:
     container_name: git-sync-nginx
     env_file: git-sync-nginx-secret.env
     environment:
-      GIT_SYNC_REPO: "https://gitlab.prplanit.com/SoFMeRight/ad-arbitorium-private.git"
+      GIT_SYNC_REPO: "https://git.optcp.com/SoFMeRight/ad-arbitorium-private.git"
       GIT_SYNC_DEST: "/git"
       GIT_SYNC_BRANCH: "main"
       GIT_SYNC_REV: "FETCH_HEAD"

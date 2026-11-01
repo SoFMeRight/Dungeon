@@ -369,7 +369,7 @@ data:
         - domain: bw.prplanit.com
           answer: 10.40.9.104
           enabled: true
-        - domain: gitlab.prplanit.com
+        - domain: git.optcp.com
           answer: 10.40.9.104
           enabled: true
         - domain: hasteward.prplanit.com

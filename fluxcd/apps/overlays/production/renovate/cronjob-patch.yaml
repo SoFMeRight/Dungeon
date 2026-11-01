@@ -16,7 +16,7 @@ spec:
               image: ghcr.io/renovatebot/renovate:44
               env:
                 - name: RENOVATE_ENDPOINT
-                  value: "https://gitlab.prplanit.com/api/v4"
+                  value: "https://git.optcp.com/api/v4"
                 # V8 soft heap ceiling. The cold-cache run crashed with "JavaScript
                 # heap out of memory" once docker.io discovery started working; this
                 # caps the heap at 3GB explicitly (rather than relying on Node's

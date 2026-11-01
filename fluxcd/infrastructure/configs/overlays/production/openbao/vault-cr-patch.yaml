@@ -274,8 +274,8 @@ spec:
       - type: jwt
         path: gitlab-ci
         config:
-          oidc_discovery_url: https://gitlab.prplanit.com
-          bound_issuer: https://gitlab.prplanit.com
+          oidc_discovery_url: https://git.optcp.com
+          bound_issuer: https://git.optcp.com
         roles:
           - name: stagefreight-cosign-homelabhd
             role_type: jwt

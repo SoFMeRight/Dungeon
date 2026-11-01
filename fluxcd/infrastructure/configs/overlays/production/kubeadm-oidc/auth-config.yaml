@@ -13,7 +13,7 @@ kind: AuthenticationConfiguration
 jwt:
   # --- GitLab CI (stagefreight) — verbatim equivalent of the prior --oidc-* flags ---
   - issuer:
-      url: https://gitlab.prplanit.com
+      url: https://git.optcp.com
       audiences:
         - stagefreight
     claimMappings:

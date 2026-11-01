@@ -17,7 +17,7 @@
     ignore_errors: true
   - name: Stage 4/5 - Transfer preferred config for zsh.
     ansible.builtin.get_url:
-      url: https://gitlab.prplanit.com/precisionplanit/ant_parade-public/-/raw/main/fs/_linux/root/.zshrc
+      url: https://git.optcp.com/precisionplanit/ant_parade-public/-/raw/main/fs/_linux/root/.zshrc
       dest: /root/.zshrc
       mode: '0664'
       owner: 'root'
@@ -29,7 +29,7 @@
       depth: 1
   - name: Stage 5/5 - Transfer preferred config for powerlevel10k.
     ansible.builtin.get_url:
-      url: https://gitlab.prplanit.com/precisionplanit/ant_parade-public/-/raw/main/fs/_linux/root/.p10k.zsh
+      url: https://git.optcp.com/precisionplanit/ant_parade-public/-/raw/main/fs/_linux/root/.p10k.zsh
       dest: /root/.p10k.zsh
       mode: '0664'
       owner: 'root'

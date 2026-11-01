@@ -4,10 +4,10 @@ services:
     image: 'gitlab/gitlab-ce:19.5.1-ce.0'
     container_name: gitlab
     restart: always
-    hostname: 'gitlab.prplanit.com'
+    hostname: 'git.optcp.com'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'https://gitlab.prplanit.com'
+        external_url 'https://git.optcp.com'
         gitlab_rails['gitlab_shell_ssh_port'] = 22
         letsencrypt['enabled'] = false
         nginx['enable'] = true

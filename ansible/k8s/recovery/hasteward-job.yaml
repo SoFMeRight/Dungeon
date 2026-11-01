@@ -4,7 +4,7 @@
 # Single Go binary — no init container, no Ansible runtime.
 # Backups use restic for block-level dedup, encryption, and compression.
 #
-# Repository: https://gitlab.prplanit.com/precisionplanit/hasteward
+# Repository: https://git.optcp.com/precisionplanit/hasteward
 #             https://github.com/sofmeright/hasteward
 #
 # For automated scheduling, use the operator instead:
