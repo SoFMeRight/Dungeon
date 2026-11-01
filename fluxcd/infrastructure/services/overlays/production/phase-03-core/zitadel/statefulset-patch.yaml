@@ -2,10 +2,14 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: zitadel
+  annotations:
+    configmap.reloader.stakater.com/reload: zitadel-config
 spec:
   replicas: 3
   template:
     metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2026-11-01T20:30:00Z"
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
