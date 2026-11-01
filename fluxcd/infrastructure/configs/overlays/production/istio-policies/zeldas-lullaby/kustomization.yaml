@@ -13,6 +13,7 @@ resources:
   - allow-external-secrets-to-vault.yaml
   - allow-boundary-to-vault.yaml
   - allow-dependency-track-configuration-to-vault.yaml
+  - allow-node-converge-to-vault.yaml
   - allow-bank-vaults-operator-to-vault.yaml
   - allow-vault-to-vault.yaml
   - allow-zitadel-configuration-to-vault.yaml

@@ -143,13 +143,8 @@ spec:
           path "*" {
             capabilities = ["create", "read", "update", "delete", "list", "sudo"]
           }
-      - name: boundary-ssh
-        rules: |
-          path "ssh-client-signer/sign/dungeon-pedestal" {
-            capabilities = ["create", "update"]
-          }
       # Token self-management for Boundary's Vault credential store (periodic,
-      # renewable, orphan token). Paired with boundary-ssh on the token.
+      # renewable, orphan token). Paired with boundary-ssh-read on the token.
       - name: boundary-controller
         rules: |
           path "auth/token/lookup-self" {
@@ -170,11 +165,18 @@ spec:
           path "sys/capabilities-self" {
             capabilities = ["update"]
           }
-      # Read-only for the one KV path holding the dungeon-pedestal brokered SSH key.
+      # Read-only for the KV entry holding dungeon-pedestal's SSH key, which Boundary
+      # brokers (Boundary OSS brokers static credentials; it cannot inject certs).
       - name: boundary-ssh-read
         rules: |
-          path "zeldas-letter/data/apps/boundary-dungeon-pedestal" {
+          path "optcp/data/apps/boundary/dungeon-pedestal" {
             capabilities = ["read"]
+          }
+      # node-converge signs a throwaway key per run against optcp's SSH CA, and nothing else.
+      - name: node-converge
+        rules: |
+          path "optcp-ssh/sign/node-converge" {
+            capabilities = ["create", "update"]
           }
       # StageFreight image/attestation signing — one policy per tenant (a GitLab
       # group = a credential/identity scope, the same boundary Vault already draws
@@ -238,12 +240,17 @@ spec:
             policies: ["dependency-track-configuration"]
             ttl: 1h
           # Boundary controller obtains a periodic, renewable, orphan token via its SA
-          # (no hand-minted token) for its vault credential store -> ssh-client-signer.
+          # (no hand-minted token) for its vault credential store -> brokered static keys.
           - name: boundary
             bound_service_account_names: ["boundary-controller"]
             bound_service_account_namespaces: ["hookshot"]
             policies: ["boundary-controller", "boundary-ssh-read"]
             token_period: "24h"
+          - name: node-converge
+            bound_service_account_names: ["node-converge"]
+            bound_service_account_namespaces: ["optcp-infra-admin"]
+            policies: ["node-converge"]
+            ttl: 1h
       - type: oidc
         config:
           oidc_discovery_url: https://sso.prplanit.com
@@ -365,20 +372,22 @@ spec:
           description: Precision Plan IT
         options:
           version: 2
-      # SSH client-cert signer — Boundary brokers short-lived certs for access to
-      # dungeon-pedestal (the GitOps runner). The CA private key is generated once
-      # inside OpenBao and never leaves; bank-vaults will not regenerate it on
-      # subsequent reconciles. The CA public key is served unauthenticated at
-      # /v1/ssh-client-signer/public_key for pedestal's sshd to trust.
-      - path: ssh-client-signer
+      # optcp's SSH CA (one CA per tenant: a host trusting a CA accepts every cert it
+      # signs, so tenants never share one; the mount is <tenant>-ssh). Roles are named
+      # for the consumer. The CA private key is generated once inside OpenBao and never
+      # leaves; bank-vaults will not regenerate it on subsequent reconciles. The public
+      # key, served unauthenticated at /v1/optcp-ssh/public_key, is what optcp hosts trust.
+      - path: optcp-ssh
         type: ssh
-        description: SSH client-cert signer for Boundary-brokered access
+        description: optcp SSH certificate authority
         configuration:
           config:
             - name: ca
               generate_signing_key: "true"
           roles:
-            - name: dungeon-pedestal
+            # node-converge: one certificate per run, valid long enough to outlast a
+            # full roll (drains included), since Ansible keeps opening connections.
+            - name: node-converge
               key_type: "ca"
               algorithm_signer: "rsa-sha2-256"
               allow_user_certificates: "true"
@@ -386,14 +395,13 @@ spec:
               # bank-vaults injects a list without this; OpenBao's ssh role API requires a string.
               allowed_domains: ""
               default_user: "kai"
-              allowed_extensions: "permit-pty,permit-user-rc"
-              default_extensions:
-                permit-pty: ""
-              ttl: "5m0s"
-              max_ttl: "30m0s"
+              allowed_extensions: ""
+              default_extensions: {}
+              ttl: "4h0m0s"
+              max_ttl: "6h0m0s"
       # Cosign image/attestation signer. ECDSA keys generated once inside OpenBao,
       # non-exportable — they sign via cosign-signer/sign/<tenant> and never leave
-      # the vault, the same custody model as ssh-client-signer's CA above. One key
+      # the vault, the same custody model as optcp-ssh's CA above. One key
       # per tenant (GitLab group) so a compromise in one group cannot forge
       # another's signatures. Verifiers embed each public key
       # (cosign-signer/keys/<tenant>) as an offline trust anchor; nothing calls
