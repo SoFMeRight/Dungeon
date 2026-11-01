@@ -6,7 +6,7 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Administration (Zelda's Lullaby🎵)"
-      url: https://netbird.prplanit.com/
+      url: https://vpn.optcp.com/
       conditions:
         - "[STATUS] == 200"
 spec:
@@ -14,7 +14,7 @@ spec:
     - name: cell-membrane-gateway
       namespace: prelude-of-light
   hostnames:
-    - "netbird.prplanit.com"
+    - "vpn.optcp.com"
   rules:
     - matches:
         - path:

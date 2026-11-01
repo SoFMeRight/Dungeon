@@ -23,7 +23,7 @@ spec:
             - |
               /go/bin/relay run \
                 --listen rels://0.0.0.0:443 \
-                --exposed-address rels://netbird.prplanit.com:443 \
+                --exposed-address rels://vpn.optcp.com:443 \
                 --auth-secret $(NETBIRD_RELAY_SECRET) \
                 --log-level info
           env:

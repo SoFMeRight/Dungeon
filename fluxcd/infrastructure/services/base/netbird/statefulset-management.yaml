@@ -70,13 +70,13 @@ spec:
                   ]
                 },
                 "Relay": {
-                  "Addresses": ["rels://netbird.prplanit.com:443"],
+                  "Addresses": ["rels://vpn.optcp.com:443"],
                   "CredentialsTTL": "24h0m0s",
                   "Secret": "${NETBIRD_RELAY_AUTH_SECRET}"
                 },
                 "Signal": {
                   "Proto": "https",
-                  "URI": "netbird.prplanit.com:443",
+                  "URI": "vpn.optcp.com:443",
                   "Username": "",
                   "Password": ""
                 },
@@ -140,8 +140,8 @@ spec:
                     "RedirectURLs": [
                       "http://localhost:53000/",
                       "http://localhost:54000/",
-                      "https://netbird.prplanit.com/auth",
-                      "https://netbird.prplanit.com/silent-auth"
+                      "https://vpn.optcp.com/auth",
+                      "https://vpn.optcp.com/silent-auth"
                     ]
                   }
                 },

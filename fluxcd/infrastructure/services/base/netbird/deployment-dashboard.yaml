@@ -42,9 +42,9 @@ spec:
               name: http
           env:
             - name: NETBIRD_MGMT_API_ENDPOINT
-              value: "https://netbird.prplanit.com:443"
+              value: "https://vpn.optcp.com:443"
             - name: NETBIRD_MGMT_GRPC_API_ENDPOINT
-              value: "https://netbird.prplanit.com:443"
+              value: "https://vpn.optcp.com:443"
             - name: AUTH_AUDIENCE
               valueFrom:
                 secretKeyRef:

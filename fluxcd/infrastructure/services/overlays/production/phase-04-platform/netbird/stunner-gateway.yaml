@@ -28,7 +28,7 @@ kind: GatewayConfig
 metadata:
   name: netbird-turn
 spec:
-  realm: netbird.prplanit.com
+  realm: vpn.optcp.com
   # Ephemeral (time-windowed) auth: STUNner and NetBird share a secret and each
   # derives per-client, expiring HMAC credentials from it. authRef points at a
   # Secret carrying type=ephemeral + the shared secret (materialised from Vault).

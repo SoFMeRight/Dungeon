@@ -6,7 +6,7 @@ spec:
   description: >-
     Allow the in-cluster NetBird subnet router (farores-wind) to reach the cell-membrane
     gateway on :443. The gateway's own ingress rule only admits `world`, and an in-cluster
-    pod cannot hairpin to the LB IP, so the router reaches netbird.prplanit.com via the
+    pod cannot hairpin to the LB IP, so the router reaches vpn.optcp.com via the
     gateway's ClusterIP (hostAlias) — which needs this explicit ingress allow past
     prelude-of-light's default-deny-ingress. The gateway then proxies to netbird
     management/signal/relay as it does for any client.

@@ -43,14 +43,14 @@ data:
         cache 30
         reload
     }
-    # Route netbird.prplanit.com to the in-cluster cell-membrane gateway Service by
+    # Route vpn.optcp.com to the in-cluster cell-membrane gateway Service by
     # name (follows its ClusterIP); the NetBird router peers here without hairpin.
-    netbird.prplanit.com:53 {
+    vpn.optcp.com:53 {
         errors
         template IN AAAA cluster.local {
            rcode NOERROR
         }
-        rewrite stop name exact netbird.prplanit.com cell-membrane-gateway-istio.prelude-of-light.svc.cluster.local answer auto
+        rewrite stop name exact vpn.optcp.com cell-membrane-gateway-istio.prelude-of-light.svc.cluster.local answer auto
         kubernetes cluster.local {
            pods insecure
            ttl 30

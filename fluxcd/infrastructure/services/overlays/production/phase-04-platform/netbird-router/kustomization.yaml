@@ -14,7 +14,7 @@ patches:
         value: docker.io/netbirdio/netbird:0.78.1
       - op: replace
         path: /spec/template/spec/containers/0/env/0/value
-        value: https://netbird.prplanit.com
+        value: https://vpn.optcp.com
       - op: replace
         path: /spec/volumeClaimTemplates/0/spec/storageClassName
         value: ceph-rbd
