@@ -262,6 +262,7 @@ spec:
             user_claim: sub
             policies: ["vault-admin"]
             allowed_redirect_uris:
+              - https://secrets.optcp.com/ui/vault/auth/oidc/oidc/callback
               - https://vault.pcfae.com/ui/vault/auth/oidc/oidc/callback
               - http://localhost:8250/oidc/callback
             oidc_scopes:

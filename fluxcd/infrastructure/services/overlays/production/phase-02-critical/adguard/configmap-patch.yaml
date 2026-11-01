@@ -306,6 +306,9 @@ data:
         - domain: s3.optcp.com
           answer: 172.22.30.70
           enabled: true
+        - domain: secrets.optcp.com
+          answer: 172.22.30.70
+          enabled: true
         - domain: sops.optcp.com
           answer: 172.22.30.70
           enabled: true
