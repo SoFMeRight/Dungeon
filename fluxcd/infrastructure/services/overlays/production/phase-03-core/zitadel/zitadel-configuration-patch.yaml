@@ -10,6 +10,9 @@ metadata:
   name: zitadel-configuration
 spec:
   template:
+    metadata:
+      annotations:
+        prplanit.com/configure-for: login-v2-on-sso.optcp.com
     spec:
       initContainers:
         - name: wait-for-bootstrap
