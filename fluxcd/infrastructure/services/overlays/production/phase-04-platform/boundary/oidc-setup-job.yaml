@@ -59,7 +59,7 @@ spec:
                 -format json | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
               export BOUNDARY_TOKEN="$TOKEN"
 
-              echo "=== Reconciling OIDC auth method 'zitadel' ==="
+              echo "=== Reconciling the Single Sign-On auth method ==="
               PRIMARY=$(boundary scopes read -id global -keyring-type none -format json \
                 | grep -o '"primary_auth_method_id":"amoidc_[^"]*"' | cut -d'"' -f4 || true)
               if [ -n "$PRIMARY" ]; then
@@ -70,8 +70,8 @@ spec:
                   -client-id "$OIDC_CLIENT_ID" \
                   -client-secret "$OIDC_CLIENT_SECRET" \
                   -api-url-prefix https://access.optcp.com \
-                  -name zitadel \
-                  -description "Single Sign-On via Zitadel" \
+                  -name "Single Sign-On" \
+                  -description "Zitadel" \
                   -keyring-type none \
                   -format json >/dev/null
               else
@@ -81,8 +81,8 @@ spec:
                   -client-secret "$OIDC_CLIENT_SECRET" \
                   -signing-algorithm RS256 \
                   -api-url-prefix https://access.optcp.com \
-                  -name zitadel \
-                  -description "Single Sign-On via Zitadel" \
+                  -name "Single Sign-On" \
+                  -description "Zitadel" \
                   -scope-id global \
                   -keyring-type none \
                   -format json)
