@@ -165,11 +165,11 @@ spec:
           path "sys/capabilities-self" {
             capabilities = ["update"]
           }
-      # Read-only for the KV entry holding dungeon-pedestal's SSH key, which Boundary
-      # brokers (Boundary OSS brokers static credentials; it cannot inject certs).
+      # Read-only for the SSH keys Boundary brokers, one entry per Boundary target named
+      # for it (targets/<target>; Boundary OSS brokers static keys, it cannot inject certs).
       - name: boundary-ssh-read
         rules: |
-          path "optcp/data/apps/boundary/dungeon-pedestal" {
+          path "optcp/data/apps/boundary/targets/*" {
             capabilities = ["read"]
           }
       # node-converge signs a throwaway key per run against optcp's SSH CA, and nothing else.

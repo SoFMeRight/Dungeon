@@ -30,7 +30,7 @@ spec:
             - port: "8200"
               protocol: TCP
     # Boundary controller (hookshot) validates its vault credential store token and
-    # reads the dungeon-pedestal key it brokers (optcp/apps/boundary/dungeon-pedestal).
+    # reads the keys it brokers (optcp/apps/boundary/targets/<target>).
     - fromEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: hookshot
