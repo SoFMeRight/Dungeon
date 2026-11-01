@@ -57,8 +57,9 @@ spec:
                   name: romm-secrets
                   key: db-password
           volumeMounts:
+            # LSIO mariadb keeps its datadir in /config/databases, not /var/lib/mysql.
             - name: shooting-gallery-romm-mysql
-              mountPath: /var/lib/mysql
+              mountPath: /config/databases
             - name: db-cnf
               mountPath: /config/custom.cnf
               subPath: custom.cnf
