@@ -5,4 +5,4 @@ metadata:
 data:
   NEXTAUTH_URL: "https://lwd.optcp.com/api/v1/auth"
   ZITADEL_CUSTOM_NAME: "Single Sign-On"
-  ZITADEL_ISSUER: "https://sso.prplanit.com"
+  ZITADEL_ISSUER: "https://sso.optcp.com"

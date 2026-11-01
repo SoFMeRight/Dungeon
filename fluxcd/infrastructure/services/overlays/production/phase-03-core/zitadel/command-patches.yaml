@@ -11,4 +11,4 @@ spec:
         - name: zitadel-login-v2
           env:
             - name: ZITADEL_ISSUER
-              value: "https://sso.prplanit.com"
+              value: "https://sso.optcp.com"

@@ -7,7 +7,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
-        # Egress to the IdP (sso.prplanit.com) for OIDC discovery/JWKS/token —
+        # Egress to the IdP (sso.optcp.com) for OIDC discovery/JWKS/token —
         # gated into the cell-membrane gateway by cnp-cell-membrane-oidc-consumers.
         policy.prplanit.com/cap.oidc: "true"
     spec:
@@ -30,7 +30,7 @@ spec:
                   name: organizr-oidc
                   key: OIDC_CLIENT_SECRET
             - name: OIDC_DISCOVERY_URL
-              value: "https://sso.prplanit.com/.well-known/openid-configuration"
+              value: "https://sso.optcp.com/.well-known/openid-configuration"
             - name: OIDC_NAME
               value: "Single Sign-On"
             # no-role/unknown authenticated logins land here (Guest); real access is

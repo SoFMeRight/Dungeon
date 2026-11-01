@@ -60,7 +60,7 @@ spec:
             - name: OIDC_PROVIDER_NAME
               value: "PrPlanIT.com"
             - name: OIDC_CONFIGURATION_URL
-              value: "https://sso.prplanit.com/.well-known/openid-configuration"
+              value: "https://sso.optcp.com/.well-known/openid-configuration"
             - name: STATIC_FILES
               value: /theme/frontend
           volumeMounts:

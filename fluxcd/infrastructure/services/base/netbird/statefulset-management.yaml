@@ -87,24 +87,24 @@ spec:
                   "CertFile": "",
                   "CertKey": "",
                   "AuthAudience": "${AUTH_CLIENT_ID}",
-                  "AuthIssuer": "https://sso.prplanit.com",
+                  "AuthIssuer": "https://sso.optcp.com",
                   "AuthUserIDClaim": "",
-                  "AuthKeysLocation": "https://sso.prplanit.com/oauth/v2/keys",
-                  "OIDCConfigEndpoint": "https://sso.prplanit.com/.well-known/openid-configuration",
+                  "AuthKeysLocation": "https://sso.optcp.com/oauth/v2/keys",
+                  "OIDCConfigEndpoint": "https://sso.optcp.com/.well-known/openid-configuration",
                   "IdpSignKeyRefreshEnabled": true,
                   "ExtraAuthAudience": ""
                 },
                 "IdpManagerConfig": {
                   "ManagerType": "zitadel",
                   "ClientConfig": {
-                    "Issuer": "https://sso.prplanit.com",
-                    "TokenEndpoint": "https://sso.prplanit.com/oauth/v2/token",
+                    "Issuer": "https://sso.optcp.com",
+                    "TokenEndpoint": "https://sso.optcp.com/oauth/v2/token",
                     "ClientID": "${IDP_MGMT_CLIENT_ID}",
                     "ClientSecret": "${AUTH_CLIENT_SECRET}",
                     "GrantType": "client_credentials"
                   },
                   "ExtraConfig": {
-                    "ManagementEndpoint": "https://sso.prplanit.com/management/v1"
+                    "ManagementEndpoint": "https://sso.optcp.com/management/v1"
                   },
                   "Auth0ClientCredentials": null,
                   "AzureClientCredentials": null,
@@ -116,10 +116,10 @@ spec:
                   "ProviderConfig": {
                     "ClientID": "${AUTH_CLIENT_ID}",
                     "ClientSecret": "",
-                    "Domain": "sso.prplanit.com",
+                    "Domain": "sso.optcp.com",
                     "Audience": "${AUTH_CLIENT_ID}",
-                    "TokenEndpoint": "https://sso.prplanit.com/oauth/v2/token",
-                    "DeviceAuthEndpoint": "https://sso.prplanit.com/oauth/v2/device_authorization",
+                    "TokenEndpoint": "https://sso.optcp.com/oauth/v2/token",
+                    "DeviceAuthEndpoint": "https://sso.optcp.com/oauth/v2/device_authorization",
                     "AuthorizationEndpoint": "",
                     "Scope": "openid",
                     "UseIDToken": false,
@@ -132,9 +132,9 @@ spec:
                     "ClientSecret": "",
                     "Domain": "",
                     "Audience": "${AUTH_CLIENT_ID}",
-                    "TokenEndpoint": "https://sso.prplanit.com/oauth/v2/token",
+                    "TokenEndpoint": "https://sso.optcp.com/oauth/v2/token",
                     "DeviceAuthEndpoint": "",
-                    "AuthorizationEndpoint": "https://sso.prplanit.com/oauth/v2/authorize",
+                    "AuthorizationEndpoint": "https://sso.optcp.com/oauth/v2/authorize",
                     "Scope": "openid profile email offline_access api",
                     "UseIDToken": false,
                     "RedirectURLs": [

@@ -149,7 +149,7 @@ Verify Zitadel is accessible:
 # Get service endpoint
 kubectl get svc -n zeldas-lullaby zitadel
 
-# Test login at https://sso.prplanit.com (or your domain)
+# Test login at https://sso.optcp.com (or your domain)
 ```
 
 ## Step 7: Create Service Account PAT Tokens
@@ -163,7 +163,7 @@ After importing a database, service account Personal Access Tokens (PATs) will N
 
 ### Create PAT Tokens via Zitadel UI
 
-1. Navigate to https://sso.prplanit.com (your Zitadel domain)
+1. Navigate to https://sso.optcp.com (your Zitadel domain)
 2. Login with admin credentials
 3. Go to **Organization** → **Service Users**
 4. For each service account (`login-client` and `dungeon-k8s-admin`):
@@ -267,7 +267,7 @@ If you see authentication errors:
 
 ### Test Login Flow
 
-1. Navigate to https://sso.prplanit.com
+1. Navigate to https://sso.optcp.com
 2. Should redirect to Login-v2 UI at `/ui/v2/login`
 3. Login with user credentials from imported database
 4. Verify successful login and correct organization

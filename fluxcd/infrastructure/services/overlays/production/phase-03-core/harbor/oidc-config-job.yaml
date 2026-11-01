@@ -65,7 +65,7 @@ spec:
               {
                 "auth_mode": "oidc_auth",
                 "oidc_name": "Single Sign-On",
-                "oidc_endpoint": "https://sso.prplanit.com",
+                "oidc_endpoint": "https://sso.optcp.com",
                 "oidc_client_id": "$OIDC_CLIENT_ID",
                 "oidc_client_secret": "$OIDC_CLIENT_SECRET",
                 "oidc_scope": "openid,profile,email,offline_access",

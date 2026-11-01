@@ -13,7 +13,7 @@ spec:
     external assets for PDF rendering (reactive-resume-chrome), and federation
     delivery to any hub on the fediverse plus an SMTP relay (hubzilla, and the
     poller that drains its delivery queue), and Matrix federation plus the identity
-    provider hairpin (matrix-synapse, matrix-auth — sso.prplanit.com resolves to the
+    provider hairpin (matrix-synapse, matrix-auth — sso.optcp.com resolves to the
     gateway VIP from inside, so this is a cluster destination, not a world one).
     matrix-lk-jwt joins them because authorising a caller means verifying their
     OpenID token against the homeserver that issued it — ours via the gateway VIP

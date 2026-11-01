@@ -253,7 +253,7 @@ spec:
             ttl: 1h
       - type: oidc
         config:
-          oidc_discovery_url: https://sso.prplanit.com
+          oidc_discovery_url: https://sso.optcp.com
           oidc_client_id: "360752964924708521"
           oidc_client_secret: '${ env `VAULT_OIDC_CLIENT_SECRET` }'
           default_role: vault-admin

@@ -12,7 +12,7 @@ spec:
     podLabels:
       policy.prplanit.com/ingress: "true"
       policy.prplanit.com/metrics: "true"
-      # weave-gitops validates OIDC tokens against Zitadel (sso.prplanit.com)
+      # weave-gitops validates OIDC tokens against Zitadel (sso.optcp.com)
       # server-side — needs the cell-membrane gateway hairpin allow.
       policy.prplanit.com/cap.oidc: "true"
     service:

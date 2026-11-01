@@ -4,7 +4,7 @@ metadata:
   name: allow-romm-egress
 spec:
   description: >-
-    romm's OIDC discovery, JWKS and token exchange go to sso.prplanit.com, which
+    romm's OIDC discovery, JWKS and token exchange go to sso.optcp.com, which
     split-horizon DNS resolves to the cell-membrane gateway. Those gateway pods
     are not meshed, so `toEntities: cluster` does not cover them and an explicit
     toEndpoints allow is required — paired with cap.oidc, which is what the

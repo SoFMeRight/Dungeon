@@ -6,7 +6,7 @@ spec:
   description: >-
     headlamp reads the Kubernetes API with the signed-in user's OIDC token
     (covered by the universal allow-kube-apiserver-egress CCNP) and hairpins
-    OIDC token exchange to sso.prplanit.com, reaching the (non-meshed)
+    OIDC token exchange to sso.optcp.com, reaching the (non-meshed)
     cell-membrane/xylem gateway pods on 443. The install-plugins init container
     seeds the Flux plugin from GitHub: DNS via coredns, then api.github.com,
     github.com, and *.githubusercontent.com on 443.

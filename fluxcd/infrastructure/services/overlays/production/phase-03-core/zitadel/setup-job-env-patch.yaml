@@ -7,6 +7,9 @@ metadata:
 spec:
   backoffLimit: 0
   template:
+    metadata:
+      annotations:
+        prplanit.com/setup-for: external-domain-sso.optcp.com
     spec:
       serviceAccountName: zitadel
       initContainers:

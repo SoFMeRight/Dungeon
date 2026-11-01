@@ -11,7 +11,7 @@ data:
     REMOTE_AUTH_BACKEND = 'social_core.backends.open_id_connect.OpenIdConnectAuth'
     REMOTE_AUTH_AUTO_CREATE_USER = True
 
-    SOCIAL_AUTH_OIDC_OIDC_ENDPOINT = 'https://sso.prplanit.com'
+    SOCIAL_AUTH_OIDC_OIDC_ENDPOINT = 'https://sso.optcp.com'
     SOCIAL_AUTH_OIDC_KEY = os.environ.get('OIDC_CLIENT_ID')
     SOCIAL_AUTH_OIDC_SECRET = os.environ.get('OIDC_CLIENT_SECRET')
 

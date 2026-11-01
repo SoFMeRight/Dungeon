@@ -7,7 +7,7 @@ spec:
     Allow gatus / uptime-kuma (gossip-stone) to probe business services behind
     the cell-membrane gateway on 443. Parity with allow-xylem-gateway-lan, which
     already whitelists these monitors; cell-membrane was missing it, so probes
-    to sso.prplanit.com and other cell-membrane hosts were being dropped.
+    to sso.optcp.com and other cell-membrane hosts were being dropped.
   enableDefaultDeny:
     ingress: false
     egress: false

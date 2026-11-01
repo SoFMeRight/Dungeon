@@ -148,7 +148,7 @@ data:
               config:
                 subject_key: preferred_username
                 roles_key: roles
-                openid_connect_url: https://sso.prplanit.com/.well-known/openid-configuration
+                openid_connect_url: https://sso.optcp.com/.well-known/openid-configuration
             authentication_backend:
               type: noop
           clientcert_auth_domain:

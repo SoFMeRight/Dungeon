@@ -40,7 +40,7 @@ spec:
             - name: SSO_SIGNUPS_MATCH_EMAIL
               value: "true"
             - name: SSO_AUTHORITY
-              value: "https://sso.prplanit.com"
+              value: "https://sso.optcp.com"
             - name: SSO_SCOPES
               value: "email profile offline_access"
             - name: SSO_AUDIENCE_TRUSTED

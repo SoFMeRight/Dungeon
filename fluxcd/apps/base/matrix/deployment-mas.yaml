@@ -16,7 +16,7 @@ spec:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: PLACEHOLDER_DB_SCOPE
-        # Token exchange with Zitadel is server-side, and sso.prplanit.com resolves to the
+        # Token exchange with Zitadel is server-side, and sso.optcp.com resolves to the
         # gateway VIP from inside the cluster.
         policy.prplanit.com/cap.oidc: "true"
     spec:

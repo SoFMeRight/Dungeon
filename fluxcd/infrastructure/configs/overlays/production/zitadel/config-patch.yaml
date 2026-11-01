@@ -9,7 +9,7 @@ data:
 
     Port: 8080
     ExternalPort: 443
-    ExternalDomain: sso.prplanit.com
+    ExternalDomain: sso.optcp.com
     ExternalSecure: true
 
     Database:
@@ -68,7 +68,7 @@ data:
     SystemDefaults:
       SecretGenerators:
         PasswordSaltCost: 14
-      Domain: sso.prplanit.com
+      Domain: sso.optcp.com
       ZitadelDocs:
         Enabled: true
         ExternalDomain: docs.zitadel.com

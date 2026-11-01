@@ -4,8 +4,8 @@ metadata:
   name: allow-bulwark-egress
 spec:
   description: >-
-    Bulwark reaches Stalwart's JMAP API, and Zitadel at sso.prplanit.com for OIDC discovery,
-    JWKS and token exchange. sso.prplanit.com resolves to the cell-membrane gateway, which is
+    Bulwark reaches Stalwart's JMAP API, and Zitadel at sso.optcp.com for OIDC discovery,
+    JWKS and token exchange. sso.optcp.com resolves to the cell-membrane gateway, which is
     not meshed, so it needs an explicit allow paired with cap.oidc.
   enableDefaultDeny:
     ingress: false

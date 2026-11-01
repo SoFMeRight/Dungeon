@@ -23,9 +23,9 @@ jwt:
       groups:
         claim: groups
         prefix: "prplanit-git:"
-  # --- Zitadel (sso.prplanit.com) — apps "Kubernetes: Dungeon" (kubelogin) + Headlamp ---
+  # --- Zitadel (sso.optcp.com) — apps "Kubernetes: Dungeon" (kubelogin) + Headlamp ---
   - issuer:
-      url: https://sso.prplanit.com
+      url: https://sso.optcp.com
       audiences:
         - "393723781534750283"  # kubelogin (Kubernetes: Dungeon)
         - "393929303420607200"  # headlamp

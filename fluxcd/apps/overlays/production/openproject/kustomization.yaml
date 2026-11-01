@@ -20,11 +20,11 @@ configMapGenerator:
       - OPENPROJECT_DIRECT__UPLOADS=false
       - OPENPROJECT_SEED__ADMIN__USER__PASSWORD__RESET=false
       - OPENPROJECT_OPENID__CONNECT_PRPLANIT_DISPLAY__NAME=Single Sign-On
-      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_HOST=sso.prplanit.com
-      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_AUTHORIZATION__ENDPOINT=https://sso.prplanit.com/oauth/v2/authorize
-      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_TOKEN__ENDPOINT=https://sso.prplanit.com/oauth/v2/token
-      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_USERINFO__ENDPOINT=https://sso.prplanit.com/oidc/v1/userinfo
-      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_END__SESSION__ENDPOINT=https://sso.prplanit.com/oidc/v1/end_session
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_HOST=sso.optcp.com
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_AUTHORIZATION__ENDPOINT=https://sso.optcp.com/oauth/v2/authorize
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_TOKEN__ENDPOINT=https://sso.optcp.com/oauth/v2/token
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_USERINFO__ENDPOINT=https://sso.optcp.com/oidc/v1/userinfo
+      - OPENPROJECT_OPENID__CONNECT_PRPLANIT_END__SESSION__ENDPOINT=https://sso.optcp.com/oidc/v1/end_session
       - OPENPROJECT_OPENID__CONNECT_PRPLANIT_SCOPE=[openid,email,profile]
       - HOME=/tmp
       - TMPDIR=/tmp/ruby

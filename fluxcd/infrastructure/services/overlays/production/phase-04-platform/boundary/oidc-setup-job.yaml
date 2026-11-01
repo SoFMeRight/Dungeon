@@ -38,7 +38,7 @@ spec:
 
               echo "=== Creating OIDC auth method ==="
               RESULT=$(boundary auth-methods create oidc \
-                -issuer https://sso.prplanit.com \
+                -issuer https://sso.optcp.com \
                 -client-id "$OIDC_CLIENT_ID" \
                 -client-secret "$OIDC_CLIENT_SECRET" \
                 -signing-algorithm RS256 \

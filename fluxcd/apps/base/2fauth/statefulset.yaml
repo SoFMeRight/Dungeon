@@ -119,11 +119,11 @@ spec:
             - name: WEBAUTHN_USER_VERIFICATION
               value: "preferred"
             - name: OPENID_AUTHORIZE_URL
-              value: "https://sso.prplanit.com/oauth/v2/authorize"
+              value: "https://sso.optcp.com/oauth/v2/authorize"
             - name: OPENID_TOKEN_URL
-              value: "https://sso.prplanit.com/oauth/v2/token"
+              value: "https://sso.optcp.com/oauth/v2/token"
             - name: OPENID_USERINFO_URL
-              value: "https://sso.prplanit.com/oidc/v1/userinfo"
+              value: "https://sso.optcp.com/oidc/v1/userinfo"
             - name: OPENID_CLIENT_ID
               valueFrom:
                 secretKeyRef:

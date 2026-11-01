@@ -41,7 +41,7 @@ data:
     auth_oidc:
       client_id: !secret oidc_client_id
       client_secret: !secret oidc_client_secret
-      discovery_url: "https://sso.prplanit.com/.well-known/openid-configuration"
+      discovery_url: "https://sso.optcp.com/.well-known/openid-configuration"
       display_name: "Single Sign-On"
       claims:
         username: preferred_username

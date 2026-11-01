@@ -7,45 +7,51 @@ spec:
   template:
     spec:
       containers:
-      - name: open-webui
-        image: ghcr.io/open-webui/open-webui:v0.12.5
-        env:
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: open-webui-postgres-credentials
-              key: password
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: open-webui-redis-password
-              key: password
-        - name: DATABASE_URL
-          value: "postgresql://openwebui:$(POSTGRES_PASSWORD)@open-webui-postgres-rw.temple-of-time.svc.cluster.local:5432/openwebui"
-        - name: REDIS_URL
-          value: "redis://:$(REDIS_PASSWORD)@open-webui-redis:6379/0"
-        - name: REDIS_SENTINEL_HOSTS
-          value: "open-webui-sentinel-0.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,open-webui-sentinel-1.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,open-webui-sentinel-2.open-webui-sentinel-headless.temple-of-time.svc.cluster.local"
-        - name: REDIS_SENTINEL_PORT
-          value: "26379"
-        - name: WEBSOCKET_REDIS_URL
-          value: "redis://:$(REDIS_PASSWORD)@open-webui-redis:6379/0"
-        - name: WEBSOCKET_SENTINEL_HOSTS
-          value: "open-webui-sentinel-0.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,open-webui-sentinel-1.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,open-webui-sentinel-2.open-webui-sentinel-headless.temple-of-time.svc.cluster.local"
-        - name: WEBSOCKET_SENTINEL_PORT
-          value: "26379"
-        - name: ENABLE_WEBSOCKET_SUPPORT
-          value: "true"
-        - name: WEBSOCKET_MANAGER
-          value: "redis"
-        - name: OLLAMA_BASE_URLS
-          value: "http://172.22.22.143:11434,http://172.22.22.144:11434"
-        - name: OPENID_PROVIDER_URL
-          value: "https://sso.prplanit.com/.well-known/openid-configuration"
-        resources:
-          requests:
-            cpu: "200m"
-            memory: "512Mi"
-          limits:
-            cpu: "1000m"
-            memory: "2Gi"
+        - name: open-webui
+          image: ghcr.io/open-webui/open-webui:v0.12.5
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: open-webui-postgres-credentials
+                  key: password
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: open-webui-redis-password
+                  key: password
+            - name: DATABASE_URL
+              value: "postgresql://openwebui:$(POSTGRES_PASSWORD)@open-webui-postgres-rw.temple-of-time.svc.cluster.local:5432/openwebui"
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@open-webui-redis:6379/0"
+            - name: REDIS_SENTINEL_HOSTS
+              value: >-
+                open-webui-sentinel-0.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,
+                open-webui-sentinel-1.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,
+                open-webui-sentinel-2.open-webui-sentinel-headless.temple-of-time.svc.cluster.local
+            - name: REDIS_SENTINEL_PORT
+              value: "26379"
+            - name: WEBSOCKET_REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@open-webui-redis:6379/0"
+            - name: WEBSOCKET_SENTINEL_HOSTS
+              value: >-
+                open-webui-sentinel-0.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,
+                open-webui-sentinel-1.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,
+                open-webui-sentinel-2.open-webui-sentinel-headless.temple-of-time.svc.cluster.local
+            - name: WEBSOCKET_SENTINEL_PORT
+              value: "26379"
+            - name: ENABLE_WEBSOCKET_SUPPORT
+              value: "true"
+            - name: WEBSOCKET_MANAGER
+              value: "redis"
+            - name: OLLAMA_BASE_URLS
+              value: "http://172.22.22.143:11434,http://172.22.22.144:11434"
+            - name: OPENID_PROVIDER_URL
+              value: "https://sso.optcp.com/.well-known/openid-configuration"
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"

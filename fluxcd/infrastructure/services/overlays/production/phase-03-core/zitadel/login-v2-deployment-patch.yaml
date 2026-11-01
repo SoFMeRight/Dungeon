@@ -13,9 +13,9 @@ spec:
           image: ghcr.io/homelabhd/zitadel-login:v4.19.4
           env:
             - name: ZITADEL_EXTERNAL_DOMAIN
-              value: "sso.prplanit.com"
+              value: "sso.optcp.com"
             - name: CUSTOM_REQUEST_HEADERS
-              value: "Host:sso.prplanit.com"
+              value: "Host:sso.optcp.com"
             - name: NEXT_PUBLIC_BASE_PATH
               value: "/ui/v2/login"
           resources:

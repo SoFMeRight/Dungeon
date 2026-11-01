@@ -19,9 +19,9 @@ spec:
             - name: OIDC_PROVIDER
               value: "Single Sign-On"
             - name: OIDC_SERVER_APPLICATION_URL
-              value: "https://sso.prplanit.com"
+              value: "https://sso.optcp.com"
             - name: OIDC_SERVER_METADATA_URL
-              value: "https://sso.prplanit.com/.well-known/openid-configuration"
+              value: "https://sso.optcp.com/.well-known/openid-configuration"
             - name: OIDC_USERNAME_ATTRIBUTE
               value: "preferred_username"
             - name: OIDC_AUTOLOGIN

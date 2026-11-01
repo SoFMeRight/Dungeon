@@ -43,7 +43,7 @@ spec:
             - name: OIDC_DISPLAY_NAME_CLAIMS
               value: "name"
             - name: OIDC_ISSUER
-              value: "https://sso.prplanit.com"
+              value: "https://sso.optcp.com"
             - name: OIDC_END_SESSION_ENDPOINT
               value: "false"
             - name: OIDC_ISSUER_DISCOVER

@@ -5,7 +5,7 @@ metadata:
 spec:
   description: >-
     linkstack's database is in-cluster and rides the mesh (HBONE). Two things
-    leave the mesh. The OIDC hairpin to sso.prplanit.com resolves via
+    leave the mesh. The OIDC hairpin to sso.optcp.com resolves via
     split-horizon DNS to the cell-membrane gateway, and those gateway pods are
     not meshed, so `toEntities: cluster` does not cover them and an explicit
     toEndpoints allow is required — paired with cap.oidc, which is what the

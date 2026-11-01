@@ -6,7 +6,7 @@ spec:
   description: >-
     grafana's datasources (VictoriaMetrics, Loki), postgres, and the ntfy
     alert contact point are all in-cluster and ride the mesh (HBONE). Its only
-    non-mesh egress is the OIDC login hairpin to sso.prplanit.com,
+    non-mesh egress is the OIDC login hairpin to sso.optcp.com,
     reaching the (non-meshed) cell-membrane/xylem gateway pods on 443. Runtime grafana.com plugin
     installs are deliberately NOT allowed (open manually when installing).
   enableDefaultDeny:
