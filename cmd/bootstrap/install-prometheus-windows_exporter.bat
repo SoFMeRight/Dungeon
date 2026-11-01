@@ -29,7 +29,7 @@ powershell -Command "Invoke-WebRequest -Uri '%DOWNLOAD_URL%' -OutFile '%DESTINAT
 echo Done! Prometheus Windows Exporter version %PROMETHEUS_VERSION% has been downloaded and saved in the %DESTINATION_PATH% directory.
 
 :: Add a task to Task Scheduler
-set DOWNLOAD_URL_TASK_SCHEDULER=https://gitlab.prplanit.com/precisionplanit/ant_parade-public/-/raw/main/fs/_windows/_Ant_Parade/Monitoring-Agents/prometheus-windows_exporter/prometheus-windows_exporter.xml?inline=false
+set DOWNLOAD_URL_TASK_SCHEDULER=https://git.optcp.com/precisionplanit/ant_parade-public/-/raw/main/fs/_windows/_Ant_Parade/Monitoring-Agents/prometheus-windows_exporter/prometheus-windows_exporter.xml?inline=false
 powershell -Command "Invoke-WebRequest -Uri '%DOWNLOAD_URL_TASK_SCHEDULER%' -OutFile '%DESTINATION_PATH%\prometheus-windows_exporter.xml'"
 powershell -Command "Register-ScheduledTask -xml (Get-Content '%DESTINATION_PATH%\prometheus-windows_exporter.xml' | Out-String) -TaskName 'prometheus-windows_exporter' -TaskPath '\SoFMeRight' -User kaiha -Password %password%"
 powershell -Command "Start-ScheduledTask -TaskName \SoFMeRight\prometheus-windows_exporter"

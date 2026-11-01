@@ -288,7 +288,7 @@ kubectl exec -n hyrule-castle $TOOLBOX_POD -- gitlab-rake gitlab:check
 
 ### Step 4.3: Verify Data via UI
 
-Access https://gitlab.prplanit.com and verify:
+Access https://git.optcp.com and verify:
 
 1. **Login works** with existing credentials
 2. **All projects** are visible
@@ -303,22 +303,22 @@ Access https://gitlab.prplanit.com and verify:
 
 ```bash
 # Test clone via HTTPS
-git clone https://gitlab.prplanit.com/<group>/<project>.git
+git clone https://git.optcp.com/<group>/<project>.git
 cd <project>
 git log  # Should show full commit history
 
 # Test clone via SSH (port 2424)
-git clone ssh://git@gitlab.prplanit.com:2424/<group>/<project>.git
+git clone ssh://git@git.optcp.com:2424/<group>/<project>.git
 ```
 
 ### Step 4.5: Verify Container Registry
 
 ```bash
 # Login to registry
-docker login registry.gitlab.prplanit.com
+docker login registry.git.optcp.com
 
 # Pull an existing image
-docker pull registry.gitlab.prplanit.com/<group>/<project>/<image>:tag
+docker pull registry.git.optcp.com/<group>/<project>/<image>:tag
 ```
 
 ### Step 4.6: Check Background Jobs
@@ -349,7 +349,7 @@ gitlab-runner unregister --all-runners
 
 # Register to new K8s GitLab
 gitlab-runner register \
-  --url https://gitlab.prplanit.com \
+  --url https://git.optcp.com \
   --registration-token <new-token>
 ```
 
@@ -359,7 +359,7 @@ K8s GitLab already has a built-in runner deployed.
 
 If external GitLab was on a different domain/IP:
 
-1. Update DNS records to point gitlab.prplanit.com to K8s LoadBalancer (172.22.30.71)
+1. Update DNS records to point git.optcp.com to K8s LoadBalancer (172.22.30.71)
 2. Wait for DNS propagation (5-60 minutes)
 
 ### Step 5.4: Monitor for Issues

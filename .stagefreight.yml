@@ -9,17 +9,17 @@
 
 version: 1
 scribe:
-  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/scribe-gitops.yml
+  preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/scribe-gitops.yml
 lint:
-  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/lint-generic.yml
+  preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/lint-generic.yml
 security:
-  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/security.yml
+  preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/security.yml
 dependency:
-  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/dependency.yml
+  preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/dependency.yml
 commit:
-  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/commit.yml
+  preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/commit.yml
 release:
-  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/release.yml
+  preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/release.yml
 lifecycle:
   mode: gitops
 gitops:
@@ -183,9 +183,9 @@ ci:
       labels:
         - k8s-dungeon-production
 forges:
-  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/forges.yml
+  preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/forges.yml
 git:
-  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/git.yml
+  preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/git.yml
 llms:
   glicynia:
     model: deepseek-r1:1.5b
@@ -266,10 +266,10 @@ stencils:
       Commits since {changelog.range} — {changelog.count}
     type: text
   presets:
-    - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-base.yml
-    - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-status.yml
-    - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-pipeline.yml
-    - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/stencils-gitops.yml
+    - https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/stencils-base.yml
+    - https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/stencils-status.yml
+    - https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/stencils-pipeline.yml
+    - https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/stencils-gitops.yml
   recap:
     body: |
       {summary}
@@ -287,8 +287,8 @@ stencils:
     llm: glicynia
     type: llm
 toolchains:
-  preset: https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/toolchains.yml
+  preset: https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/toolchains.yml
   want:
     presets:
-      - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/toolchains-scanners.yml
-      - https://gitlab.prplanit.com/PrPlanIT/MaintenancePolicy//preset/toolchains-gitops.yml
+      - https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/toolchains-scanners.yml
+      - https://git.optcp.com/PrPlanIT/MaintenancePolicy//preset/toolchains-gitops.yml
