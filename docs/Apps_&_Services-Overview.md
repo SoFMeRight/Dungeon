@@ -15,11 +15,11 @@
 | Netbird (5 components) | ✅ | 🌐 netbird.prplanit.com | [open](https://netbird.prplanit.com) |
 | Netbox (3 components) | ✅ | ❓ netbox.pcfae.com | [open](https://netbox.pcfae.com) |
 | Oauth2 Proxy | ✅ | ❓ books.optcp.com | [open](https://books.optcp.com) |
-| OpenBao | ✅ | 🔒 vault.pcfae.com | [open](https://vault.pcfae.com) |
+| OpenBao | ✅ | 🔒 secrets.optcp.com | [open](https://secrets.optcp.com) |
 | Semaphore | ✅ | 🔒 ansible.pcfae.com | [open](https://ansible.pcfae.com) |
 | Twofauth | ✅ | 🔒 2fa.optcp.com | [open](https://2fa.optcp.com) |
 | Unifi (2 components) | ✅ | 🔒 unifi.pcfae.com | [open](https://unifi.pcfae.com) |
-| Vaultwarden | ✅ | ❓ bitwarden.pcfae.com | [open](https://bitwarden.pcfae.com) |
+| Vaultwarden | ✅ | ✅ passwords.optcp.com | [open](https://passwords.optcp.com) |
 | Zitadel (5 components) | ✅ | 🌐 sso.prplanit.com | [open](https://sso.prplanit.com) |
 
 ### Bot Protection (Wallmaster🖐️)
@@ -296,7 +296,7 @@
 **OpenBao** — StatefulSet — 
 - Namespace: zeldas-lullaby
 - Replicas: 3/3
-- Hosts: vault.pcfae.com
+- Hosts: secrets.optcp.com
 - Gateway: phloem-gateway
 
 **Semaphore** — StatefulSet — 
@@ -323,7 +323,7 @@
 **Vaultwarden** — Deployment — 1.37.4
 - Namespace: zeldas-lullaby
 - Replicas: 3/3
-- Hosts: bitwarden.pcfae.com, vw.prplanit.com
+- Hosts: passwords.optcp.com
 - Gateway: cell-membrane-gateway
 
 **Zitadel — 5 components** — Mixed — 

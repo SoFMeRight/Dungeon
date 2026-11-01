@@ -12,7 +12,6 @@ spec:
       namespace: prelude-of-light
   hostnames:
     - "passwords.optcp.com"
-    - "vw.prplanit.com"
   rules:
     - matches:
         - path:

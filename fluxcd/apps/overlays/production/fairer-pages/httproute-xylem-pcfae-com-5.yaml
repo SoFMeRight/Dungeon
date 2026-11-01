@@ -25,7 +25,6 @@ spec:
     - "thelounge.pcfae.com"
     - "translate.pcfae.com"
     - "uptime.pcfae.com"
-    - "vault.pcfae.com"
     - "web.pcfae.com"
     - "z2m.pcfae.com"
   rules:

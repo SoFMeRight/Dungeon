@@ -6,9 +6,9 @@ catalog:
     # The bank-vaults secret store was migrated vault -> openbao (CR/StatefulSet/pods/PVCs/
     # service/HTTPRoute/ClusterSecretStores all renamed). But bank-vaults HARDCODES
     # app.kubernetes.io/name: vault on the pods — relabeling it would orphan the CCNP/istio
-    # policies keyed on that selector — and the public domain vault.pcfae.com is deliberately
-    # kept. So discovery faithfully derives "Vault" from the live label. This override sets the
-    # display name to the real engine without touching the risky label or the domain.
+    # policies keyed on that selector. So discovery faithfully derives "Vault" from the live
+    # label. This override sets the display name to the real engine without touching that
+    # risky label.
     - match:
         namespace: zeldas-lullaby
         identity: vault

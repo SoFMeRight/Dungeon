@@ -11,7 +11,6 @@ spec:
       namespace: arylls-lookout
   hostnames:
     - "secrets.optcp.com"
-    - "vault.pcfae.com"
   rules:
     - matches:
         - path:

@@ -4,7 +4,6 @@ namespace: zeldas-lullaby
 resources:
   - ../../../../base/vaultwarden
   - httproute.yaml
-  - httproute-xylem.yaml
   - cephfs-data-pv.yaml
   - externalsecret-postgres-backup.yaml
 patches:
