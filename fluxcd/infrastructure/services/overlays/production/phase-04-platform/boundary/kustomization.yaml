@@ -10,6 +10,7 @@ resources:
   - externalsecret-kms-keys.yaml
   - externalsecret-oidc.yaml
   - externalsecret-postgres-backup.yaml
+  - oidc-setup-job.yaml
 
 patches:
   - path: controller-deployment-patch.yaml
