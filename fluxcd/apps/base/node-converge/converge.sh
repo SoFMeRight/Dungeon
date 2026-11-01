@@ -12,7 +12,7 @@
 # fixed host, so excluding any one control-plane node keeps the upgrade order correct.
 set -eu
 
-: "${CONVERGE_PHASE:?}" "${NODE_NAME:?}" "${HOST_IP:?}" "${REPO_URL:?}" "${CRONJOB_NAME:?}"
+: "${CONVERGE_PHASE:?}" "${NODE_NAME:?}" "${HOST_IP:?}" "${REPO_URL:?}" "${CRONJOB_NAME:?}" "${BAO_ADDR:?}"
 work=/tmp/dungeon
 inventory=ansible/inventory
 
@@ -25,8 +25,19 @@ git -C "$work" checkout -q FETCH_HEAD
 cd "$work"
 echo "converging from ${rev}"
 
+# A throwaway key, signed for this run by optcp's SSH CA (OpenBao optcp-ssh) after
+# logging in as this pod's service account. Nodes trust the CA; nothing is stored.
 mkdir -p /tmp/ssh
-install -m 0600 /ssh/SSH_PRIVATE_KEY /tmp/ssh/id
+ssh-keygen -q -t ed25519 -N "" -C "node-converge ${CONVERGE_PHASE}" -f /tmp/ssh/id
+jwt=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+token=$(curl -fsS -X POST "${BAO_ADDR}/v1/auth/kubernetes/login" \
+  -d "$(JWT="$jwt" yq -n -o json -I0 '{"role": "node-converge", "jwt": strenv(JWT)}')" \
+  | yq -p json -r '.auth.client_token')
+curl -fsS -X POST -H "X-Vault-Token: ${token}" "${BAO_ADDR}/v1/optcp-ssh/sign/node-converge" \
+  -d "$(KEY="$(cat /tmp/ssh/id.pub)" yq -n -o json -I0 '{"public_key": strenv(KEY), "valid_principals": "kai"}')" \
+  | yq -p json -r '.data.signed_key' > /tmp/ssh/id-cert.pub
+unset jwt token
+ssh-keygen -Lf /tmp/ssh/id-cert.pub | grep -E "Valid|Principals" -A1 | tr -s ' '
 export ANSIBLE_PRIVATE_KEY_FILE=/tmp/ssh/id
 export ANSIBLE_REMOTE_USER=kai
 export ANSIBLE_HOST_KEY_CHECKING=True

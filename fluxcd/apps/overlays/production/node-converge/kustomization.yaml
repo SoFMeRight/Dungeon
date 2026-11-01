@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: optcp-infra-admin
 resources:
   - ../../../base/node-converge
-  - externalsecret.yaml
 patches:
   - path: cronjob-patch.yaml
   - target:

@@ -58,6 +58,8 @@ spec:
                   value: /tmp
                 - name: ANSIBLE_LOCAL_TEMP
                   value: /tmp/.ansible
+                - name: BAO_ADDR
+                  value: PLACEHOLDER_BAO_ADDR
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: true
@@ -74,18 +76,11 @@ spec:
                 - name: script
                   mountPath: /scripts
                   readOnly: true
-                - name: ssh
-                  mountPath: /ssh
-                  readOnly: true
                 - name: tmp
                   mountPath: /tmp
           volumes:
             - name: script
               configMap:
                 name: node-converge-script
-            - name: ssh
-              secret:
-                secretName: node-converge-ssh
-                defaultMode: 0440
             - name: tmp
               emptyDir: {}
