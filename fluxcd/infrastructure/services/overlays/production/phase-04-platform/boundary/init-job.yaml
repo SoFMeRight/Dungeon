@@ -19,7 +19,7 @@ spec:
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: hookshot.boundary.postgres
       annotations:
-        prplanit.com/init-for: database-1
+        prplanit.com/init-for: database-2
     spec:
       serviceAccountName: boundary-init
       restartPolicy: Never
@@ -96,13 +96,15 @@ spec:
           args:
             - |
               set -eu
-              if boundary database init -config /boundary/controller.hcl -format json >/work/init.json 2>/work/init.err; then
+              if boundary database init -config /boundary/controller.hcl -format json >/work/init.json.part 2>/work/init.err; then
+                mv /work/init.json.part /work/init.json
                 echo "database initialised"
               elif grep -q "already been initialized" /work/init.err; then
                 echo "database already initialised"
                 : >/work/noop
               else
-                cat /work/init.err
+                : >/work/failed
+                sed -E 's#://[^@[:space:]]+@#://<redacted>@#g' /work/init.err
                 exit 1
               fi
           securityContext:
@@ -132,9 +134,10 @@ spec:
             - |
               set -eu
               n=0
-              until [ -e /work/init.json ] || [ -e /work/noop ]; do
+              until [ -e /work/init.json ] || [ -e /work/noop ] || [ -e /work/failed ]; do
                 n=$((n+1)); [ "$n" -gt 300 ] && { echo "init produced nothing"; exit 1; }; sleep 2
               done
+              [ -e /work/failed ] && exit 1
               [ -e /work/noop ] && exit 0
               JWT=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
               TOKEN=$(curl -sf -X POST "$VAULT_ADDR/v1/auth/kubernetes/login" \
