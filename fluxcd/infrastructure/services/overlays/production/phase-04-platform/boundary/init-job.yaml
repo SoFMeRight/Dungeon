@@ -19,7 +19,7 @@ spec:
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: hookshot.boundary.postgres
       annotations:
-        prplanit.com/init-for: database-2
+        prplanit.com/init-for: database-3
     spec:
       serviceAccountName: boundary-init
       restartPolicy: Never
@@ -96,15 +96,17 @@ spec:
           args:
             - |
               set -eu
-              if boundary database init -config /boundary/controller.hcl -format json >/work/init.json.part 2>/work/init.err; then
-                mv /work/init.json.part /work/init.json
-                echo "database initialised"
-              elif grep -q "already been initialized" /work/init.err; then
+              rc=0
+              boundary database init -config /boundary/controller.hcl -format json >/work/init.out 2>/work/init.err || rc=$?
+              if grep -qi "already .*initialized" /work/init.out /work/init.err; then
                 echo "database already initialised"
                 : >/work/noop
+              elif [ "$rc" = 0 ] && grep -q '"auth_method_id"' /work/init.out; then
+                mv /work/init.out /work/init.json
+                echo "database initialised"
               else
                 : >/work/failed
-                sed -E 's#://[^@[:space:]]+@#://<redacted>@#g' /work/init.err
+                sed -E 's#://[^@[:space:]]+@#://<redacted>@#g' /work/init.err /work/init.out | tail -5
                 exit 1
               fi
           securityContext:
