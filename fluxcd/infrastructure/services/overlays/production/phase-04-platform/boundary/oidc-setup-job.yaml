@@ -42,7 +42,7 @@ spec:
                 -client-id "$OIDC_CLIENT_ID" \
                 -client-secret "$OIDC_CLIENT_SECRET" \
                 -signing-algorithm RS256 \
-                -api-url-prefix https://boundary.prplanit.com \
+                -api-url-prefix https://access.optcp.com \
                 -name zitadel \
                 -description "PrecisionPlanIT SSO via Zitadel" \
                 -scope-id global \

@@ -9,9 +9,9 @@ spec:
   parentRefs:
     - name: cell-membrane-gateway
       namespace: prelude-of-light
-      sectionName: https-prplanit
+      sectionName: https-optcp
   hostnames:
-    - "boundary.prplanit.com"
+    - "access.optcp.com"
   rules:
     - matches:
         - path:
