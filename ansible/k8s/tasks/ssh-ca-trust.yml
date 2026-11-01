@@ -1,0 +1,33 @@
+---
+# sshd on this host accepts user certificates signed by optcp's SSH CA (OpenBao
+# optcp-ssh), so node-converge logs in with a short-lived certificate instead of a
+# stored key. The CA's public half is committed (files/optcp-ssh-ca.pub): it is
+# public and static, and a host's trust must not depend on reaching OpenBao.
+# Existing authorized_keys logins are unaffected.
+
+- name: Install optcp's SSH CA public key
+  ansible.builtin.copy:
+    src: optcp-ssh-ca.pub
+    dest: /etc/ssh/optcp-ssh-ca.pub
+    owner: root
+    group: root
+    mode: "0644"
+    validate: /usr/bin/ssh-keygen -lf %s
+  notify: Reload sshd
+
+- name: Trust optcp's SSH CA for user certificates
+  ansible.builtin.copy:
+    dest: /etc/ssh/sshd_config.d/60-optcp-ssh-ca.conf
+    content: |
+      # Managed by dungeon ansible/k8s/tasks/ssh-ca-trust.yml
+      TrustedUserCAKeys /etc/ssh/optcp-ssh-ca.pub
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Reload sshd
+
+# sshd re-reads its config only on reload; check the whole config first so a bad
+# one never reaches the running daemon.
+- name: Check sshd's configuration
+  ansible.builtin.command: /usr/sbin/sshd -t
+  changed_when: false
