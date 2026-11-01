@@ -37,7 +37,7 @@ spec:
                 - optcp-supply-chain
                 - pedestal-of-time
                 - prplanit-support
-                - shooting-gallery
+                - optcp-media
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
@@ -108,7 +108,7 @@ spec:
                 - optcp-supply-chain
                 - pedestal-of-time
                 - prplanit-support
-                - shooting-gallery
+                - optcp-media
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
@@ -183,7 +183,7 @@ spec:
                 - optcp-supply-chain
                 - pedestal-of-time
                 - prplanit-support
-                - shooting-gallery
+                - optcp-media
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
@@ -257,7 +257,7 @@ spec:
                 - optcp-supply-chain
                 - pedestal-of-time
                 - prplanit-support
-                - shooting-gallery
+                - optcp-media
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time

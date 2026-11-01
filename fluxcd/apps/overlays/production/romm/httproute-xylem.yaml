@@ -4,7 +4,7 @@ metadata:
   name: romm-xylem
   annotations:
     gatus.home-operations.com/endpoint: |
-      group: "Game Servers (Shooting Gallery🎯)"
+      group: "Content & Media (Temple of Time🏛️)"
 spec:
   parentRefs:
     - name: phloem-gateway

@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/shooting-gallery/sa/romm
+              - cluster.local/ns/optcp-media/sa/romm
       to:
         - operation:
             ports: ["3306"]

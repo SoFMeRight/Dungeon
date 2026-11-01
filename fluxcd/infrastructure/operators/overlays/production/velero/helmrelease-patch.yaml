@@ -107,8 +107,8 @@ spec:
             - gossip-stone
             # IDS/IPS/SIEM security monitoring
             - lens-of-truth
-            # Game servers
-            - shooting-gallery
+            # Game servers and media libraries
+            - optcp-media
             - optcp-shooting-gallery
             # Gateway for internal-only services
             - arylls-lookout

@@ -19,6 +19,7 @@ resources:
   - optcp-ci-runners/
   - optcp-cloud/
   - optcp-delivery-bag/
+  - optcp-media/
   - optcp-shooting-gallery/
   - optcp-sibyl-system/
   - optcp-staff-suite/
@@ -26,7 +27,6 @@ resources:
   - pedestal-of-time/
   - prelude-of-light/
   - prplanit-support/
-  - shooting-gallery/
   - swift-sail/
   - temple-of-time/
   - tingle-tuner/

@@ -7,7 +7,7 @@ metadata:
 spec:
   refreshInterval: 1h
   secretStoreRef:
-    name: openbao-operationtimecapsule
+    name: openbao-optcp
     kind: ClusterSecretStore
   target:
     name: romm-smb-secret
@@ -15,12 +15,12 @@ spec:
   data:
     - secretKey: username
       remoteRef:
-        key: apps/romm
-        property: SAMBA_USERNAME
+        key: apps/romm/samba
+        property: USERNAME
     - secretKey: password
       remoteRef:
-        key: apps/romm
-        property: SAMBA_PASSWORD
+        key: apps/romm/samba
+        property: PASSWORD
 ---
 # Games PV - SMB share from gringotts
 apiVersion: v1
@@ -47,4 +47,4 @@ spec:
       source: "//gringotts/Games"
     nodeStageSecretRef:
       name: romm-smb-secret
-      namespace: shooting-gallery
+      namespace: optcp-media
