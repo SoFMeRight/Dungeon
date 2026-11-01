@@ -37,7 +37,3 @@ spec:
             limits:
               memory: 2Gi
               cpu: 310m
-      volumes:
-        - name: config
-          configMap:
-            name: stalwart-config-v1
