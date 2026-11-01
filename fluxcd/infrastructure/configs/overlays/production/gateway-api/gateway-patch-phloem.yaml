@@ -160,3 +160,15 @@ spec:
         certificateRefs:
           - kind: Secret
             name: twofauth-optcp-com-tls
+    - name: https-secrets-optcp
+      protocol: HTTPS
+      port: 443
+      hostname: "secrets.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: secrets-optcp-com-tls
