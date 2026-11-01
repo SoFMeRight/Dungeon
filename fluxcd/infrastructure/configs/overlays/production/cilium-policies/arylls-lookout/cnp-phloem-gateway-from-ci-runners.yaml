@@ -1,0 +1,30 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-phloem-gateway-from-ci-runners
+spec:
+  description: >-
+    Allow CI job pods and buildkitd (optcp-ci-runners) to reach phloem-gateway on
+    :80/:443. They resolve cr.pcfae.com to the gateway ClusterIP for Harbor (image
+    and build-cache push/pull, cache retention); the LAN rule excepts the pod CIDR,
+    so they need this identity-based allow. Mirrors allow-phloem-gateway-from-renovate.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: phloem-gateway
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-ci-runners
+            policy.prplanit.com/ci-job: "true"
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-ci-runners
+            app: buildkitd
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP

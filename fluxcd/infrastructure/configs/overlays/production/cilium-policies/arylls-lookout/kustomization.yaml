@@ -4,6 +4,7 @@ namespace: arylls-lookout
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-phloem-gateway.yaml
+  - cnp-phloem-gateway-from-ci-runners.yaml
   - cnp-phloem-gateway-from-netbird-router.yaml
   - cnp-phloem-gateway-from-renovate.yaml
   - cnp-phloem-gateway-from-sbom-operator.yaml

@@ -6,8 +6,9 @@ spec:
   description: >-
     buildkitd takes builds from CI job pods only, on 1234 (mTLS with its own CA).
     It pulls base images and pushes results: the internet, plus the gateways that
-    front in-cluster registries by their public names (the gateway pods are
-    non-meshed, so the cluster entity does not match them).
+    front in-cluster registries by their public names (cr.pcfae.com resolves to
+    phloem; the gateway pods are non-meshed, so the cluster entity does not match
+    them).
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -32,6 +33,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: pedestal-of-time
             gateway.networking.k8s.io/gateway-name: xylem-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            gateway.networking.k8s.io/gateway-name: phloem-gateway
       toPorts:
         - ports:
             - port: "443"
