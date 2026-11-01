@@ -8,12 +8,14 @@
 # skip a matched node with no drain. A converged fleet is a full no-op.
 #
 # kubeadm ordering constraint (why this is NOT a clone of crio-converge):
-#   The FIRST control-plane node runs `kubeadm upgrade apply <ver>`, which
-#   writes the target version into the cluster's kubeadm-config. EVERY other
-#   node (remaining masters AND workers) then runs `kubeadm upgrade node`,
-#   which reads that config. So the first control-plane MUST converge before
-#   any other node — the inverse of crio-converge's workers-first ordering.
-#   The calling play (kubelet-provision.yml) enforces this with three phases.
+#   One control-plane node runs `kubeadm upgrade apply <ver>`, which writes the
+#   target version into the cluster's kubeadm-config. EVERY other node
+#   (remaining masters AND workers) then runs `kubeadm upgrade node`, which
+#   reads that config. Each node decides from that cluster state, not from a
+#   fixed host: a control-plane node applies while the config still names the
+#   old version, every later node runs upgrade node, and a worker refuses until
+#   the control plane has applied. So the order holds however a run is limited
+#   (CI, node-converge excluding its own host, or a single-node hand-off).
 #
 # The drain and the return to service are tasks/node-drain.yml and
 # tasks/node-undrain.yml, shared with crio-converge.yml and update-hosts.yml.
@@ -29,7 +31,8 @@
   vars:
     k8s_minor: "{{ kubernetes_version.split('.')[0] }}.{{ kubernetes_version.split('.')[1] }}"
     kubectl_admin: kubectl --kubeconfig /etc/kubernetes/admin.conf
-    is_first_control_plane: "{{ inventory_hostname == groups['k8s_master'][0] }}"
+    is_control_plane: "{{ 'k8s_master' in group_names }}"
+    cluster_at_target: "{{ cluster_kubeadm_version.stdout | default('') == 'v' ~ kubernetes_version }}"
     live_minor: "{{ kubelet_live.stdout | regex_search('v(\\d+\\.\\d+)', '\\1') | first }}"
   block:
     # A patch task must never straddle a minor. kubeadm upgrade across minors
@@ -41,6 +44,25 @@
           live kubelet {{ live_minor }} != target minor {{ k8s_minor }} — a minor
           upgrade is a staged operation, not a patch converge; do it deliberately.
       when: live_minor != k8s_minor
+
+    # The cluster's kubeadm-config version decides apply vs upgrade node (header).
+    # Read through the delegate's admin.conf, so a worker can see it too.
+    - name: Read the cluster's kubeadm version
+      ansible.builtin.shell: >-
+        {{ kubectl_admin }} -n kube-system get configmap kubeadm-config
+        -o jsonpath='{.data.ClusterConfiguration}' | sed -n 's/^kubernetesVersion: *//p'
+      register: cluster_kubeadm_version
+      changed_when: false
+      check_mode: false
+      delegate_to: "{{ groups['k8s_master'][0] }}"
+
+    - name: Refuse a worker ahead of the control plane
+      ansible.builtin.fail:
+        msg: >-
+          the cluster's kubeadm-config is at {{ cluster_kubeadm_version.stdout }}, not
+          v{{ kubernetes_version }}: a control-plane node applies the target first, so
+          this worker waits for the next run.
+      when: not (is_control_plane | bool) and not (cluster_at_target | bool)
 
     # kubeadm binary FIRST (before the upgrade command that uses it), pinned to
     # the target patch. kubelet/kubectl come AFTER the drain so the node keeps
@@ -64,17 +86,17 @@
         update_cache: true
         allow_change_held_packages: true
 
-    # The cluster-state write. First control-plane sets the target version for
-    # the whole cluster; every other node adopts it. --certificate-renewal=false
-    # keeps a patch roll from rotating certs as a side effect.
-    - name: Upgrade cluster config (first control-plane — kubeadm upgrade apply)
+    # The cluster-state write. The first control-plane node of the roll sets the
+    # target version for the whole cluster; every other node adopts it.
+    # --certificate-renewal=false keeps a patch roll from rotating certs as a side effect.
+    - name: Upgrade cluster config (first control-plane of the roll — kubeadm upgrade apply)
       ansible.builtin.command: >-
         kubeadm upgrade apply v{{ kubernetes_version }} --yes --certificate-renewal=false
-      when: is_first_control_plane | bool
+      when: is_control_plane | bool and not (cluster_at_target | bool)
 
     - name: Upgrade node config (every other node — kubeadm upgrade node)
       ansible.builtin.command: kubeadm upgrade node
-      when: not (is_first_control_plane | bool)
+      when: not (is_control_plane | bool and not (cluster_at_target | bool))
 
     - name: Empty {{ ansible_facts['hostname'] }}
       ansible.builtin.include_tasks: node-drain.yml
