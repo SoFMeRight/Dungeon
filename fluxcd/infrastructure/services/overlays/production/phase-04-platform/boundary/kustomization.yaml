@@ -10,6 +10,8 @@ resources:
   - externalsecret-kms-keys.yaml
   - externalsecret-oidc.yaml
   - externalsecret-postgres-backup.yaml
+  - init-rbac.yaml
+  - init-job.yaml
   - oidc-setup-job.yaml
 
 patches:

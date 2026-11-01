@@ -47,9 +47,13 @@ spec:
               export BOUNDARY_ADDR=http://boundary-controller.hookshot.svc.cluster.local:9200
 
               echo "=== Authenticating ==="
+              # The initial login role lets anyone list global auth methods; the password one is found by type.
+              PW_AM_ID=$(boundary auth-methods list -scope-id global -keyring-type none -format json \
+                | grep -o '"id":"ampw_[^"]*"' | head -1 | cut -d'"' -f4)
+              [ -n "$PW_AM_ID" ] || { echo "no password auth method in the global scope"; exit 1; }
               TOKEN=$(boundary authenticate password \
-                -auth-method-id ampw_wRAPAtb3aw \
-                -login-name admin \
+                -auth-method-id "$PW_AM_ID" \
+                -login-name "${ADMIN_USER:-admin}" \
                 -password env://ADMIN_PASSWORD \
                 -keyring-type none \
                 -format json | grep -o '"token":"[^"]*"' | cut -d'"' -f4)

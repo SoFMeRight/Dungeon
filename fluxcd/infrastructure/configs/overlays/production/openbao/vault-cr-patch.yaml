@@ -172,6 +172,12 @@ spec:
           path "optcp/data/apps/boundary/targets/*" {
             capabilities = ["read"]
           }
+      # boundary-init stores the admin login database init generates; it writes, never reads.
+      - name: boundary-init
+        rules: |
+          path "zeldas-letter/data/apps/boundary" {
+            capabilities = ["create", "update", "patch"]
+          }
       # node-converge signs a throwaway key per run against optcp's SSH CA, and nothing else.
       - name: node-converge
         rules: |
@@ -246,6 +252,11 @@ spec:
             bound_service_account_namespaces: ["hookshot"]
             policies: ["boundary-controller", "boundary-ssh-read"]
             token_period: "24h"
+          - name: boundary-init
+            bound_service_account_names: ["boundary-init"]
+            bound_service_account_namespaces: ["hookshot"]
+            policies: ["boundary-init"]
+            ttl: 1h
           - name: node-converge
             bound_service_account_names: ["node-converge"]
             bound_service_account_namespaces: ["optcp-infra-admin"]

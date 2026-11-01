@@ -1,0 +1,21 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: boundary-init
+rules:
+  - apiGroups: ["external-secrets.io"]
+    resources: ["externalsecrets"]
+    verbs: ["get", "patch"]
+    resourceNames: ["boundary-oidc"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: boundary-init
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: boundary-init
+subjects:
+  - kind: ServiceAccount
+    name: boundary-init

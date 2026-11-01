@@ -1,9 +1,5 @@
-# One-shot job — NOT in kustomization resources.
-# Apply manually after Flux reconcile:
-#   kubectl -n hookshot apply -f init-job.yaml
-#   kubectl -n hookshot logs -f job/boundary-init
-# Save output (contains initial auth method, login, password, token).
-# Delete after success: kubectl -n hookshot delete job boundary-init
+# Initialises Boundary's database once and stores the generated admin login in OpenBao; a no-op
+# on an initialised database. Bump the pod annotation to re-run.
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -16,22 +12,77 @@ spec:
   ttlSecondsAfterFinished: 3600
   backoffLimit: 1
   template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: boundary
+        app.kubernetes.io/component: init
+        policy.prplanit.com/cap.postgres: "true"
+        policy.prplanit.com/access-scope-postgres: hookshot.boundary.postgres
+      annotations:
+        prplanit.com/init-for: database-1
     spec:
-      serviceAccountName: boundary-controller
+      serviceAccountName: boundary-init
       restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       initContainers:
+        # Fails before anything is generated when the store that must receive the password is unreachable.
+        - name: openbao-reachable
+          image: docker.io/alpine/k8s:1.37.1
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              JWT=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+              curl -sf -X POST "$VAULT_ADDR/v1/auth/kubernetes/login" \
+                -d "{\"jwt\":\"$JWT\",\"role\":\"$VAULT_ROLE\"}" -o /dev/null
+          env:
+            - name: VAULT_ADDR
+              value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
+            - name: VAULT_ROLE
+              value: boundary-init
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 64Mi
         - name: render-config
           image: docker.io/prplanit/oh-ci:0.0.1
           command: ["/bin/sh", "-c"]
           args:
             - |
-              set -euo pipefail
+              set -eu
               envsubst < /boundary-template/controller.hcl > /boundary/controller.hcl
           envFrom:
             - secretRef:
                 name: boundary-conn-string
             - secretRef:
                 name: boundary-kms-keys
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 64Mi
           volumeMounts:
             - name: template
               mountPath: /boundary-template
@@ -40,13 +91,106 @@ spec:
       containers:
         - name: boundary-init
           image: docker.io/hashicorp/boundary:0.21.3
-          command: ["boundary", "database", "init", "-config", "/boundary/controller.hcl"]
+          command: ["/bin/sh", "-c"]
+          # The JSON (it holds the password) goes to the shared volume, never to the log.
+          args:
+            - |
+              set -eu
+              if boundary database init -config /boundary/controller.hcl -format json >/work/init.json 2>/work/init.err; then
+                echo "database initialised"
+              elif grep -q "already been initialized" /work/init.err; then
+                echo "database already initialised"
+                : >/work/noop
+              else
+                cat /work/init.err
+                exit 1
+              fi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
           volumeMounts:
             - name: config
               mountPath: /boundary
+            - name: work
+              mountPath: /work
+            - name: tmp
+              mountPath: /tmp
+        - name: store-admin-login
+          image: docker.io/alpine/k8s:1.37.1
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              n=0
+              until [ -e /work/init.json ] || [ -e /work/noop ]; do
+                n=$((n+1)); [ "$n" -gt 300 ] && { echo "init produced nothing"; exit 1; }; sleep 2
+              done
+              [ -e /work/noop ] && exit 0
+              JWT=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+              TOKEN=$(curl -sf -X POST "$VAULT_ADDR/v1/auth/kubernetes/login" \
+                -d "{\"jwt\":\"$JWT\",\"role\":\"$VAULT_ROLE\"}" | jq -r .auth.client_token)
+              jq '{data: {ADMIN_USER: .auth_method.login_name, ADMIN_PASSWORD: .auth_method.password}}' /work/init.json >/work/patch.json
+              for attempt in 1 2 3 4 5; do
+                code=$(curl -s -o /dev/null -w '%{http_code}' -X PATCH "$VAULT_ADDR/v1/$VAULT_PATH" \
+                  -H "X-Vault-Token: $TOKEN" -H 'Content-Type: application/merge-patch+json' -d @/work/patch.json)
+                [ "$code" = 404 ] && code=$(curl -s -o /dev/null -w '%{http_code}' -X POST "$VAULT_ADDR/v1/$VAULT_PATH" \
+                  -H "X-Vault-Token: $TOKEN" -d @/work/patch.json)
+                case "$code" in 200|204) break;; esac
+                echo "store attempt $attempt: http $code"; sleep 5
+              done
+              case "$code" in 200|204) ;; *) exit 1;; esac
+              rm -f /work/init.json /work/patch.json
+              kubectl -n "$NAMESPACE" annotate externalsecret boundary-oidc force-sync="$(date +%s)" --overwrite
+              echo "admin login stored"
+          env:
+            - name: VAULT_ADDR
+              value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
+            - name: VAULT_ROLE
+              value: boundary-init
+            - name: VAULT_PATH
+              value: zeldas-letter/data/apps/boundary
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 64Mi
+          volumeMounts:
+            - name: work
+              mountPath: /work
+            - name: tmp
+              mountPath: /tmp
       volumes:
         - name: template
           configMap:
             name: boundary-controller
         - name: config
-          emptyDir: {}
+          emptyDir:
+            sizeLimit: 1Mi
+        - name: work
+          emptyDir:
+            sizeLimit: 1Mi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 16Mi

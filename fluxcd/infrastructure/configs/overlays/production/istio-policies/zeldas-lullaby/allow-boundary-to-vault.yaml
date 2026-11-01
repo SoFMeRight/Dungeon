@@ -12,6 +12,7 @@ spec:
         - source:
             principals:
               - cluster.local/ns/hookshot/sa/boundary-controller
+              - cluster.local/ns/hookshot/sa/boundary-init
       to:
         - operation:
             ports: ["8200"]
