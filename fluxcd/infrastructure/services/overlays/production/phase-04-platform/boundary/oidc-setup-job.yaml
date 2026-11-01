@@ -18,9 +18,31 @@ spec:
     spec:
       serviceAccountName: boundary-controller
       restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: oidc-setup
           image: docker.io/hashicorp/boundary:0.21.3
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           command: ["sh", "-c"]
           args:
             - |
@@ -74,3 +96,10 @@ spec:
           envFrom:
             - secretRef:
                 name: boundary-oidc
+          env:
+            - name: HOME
+              value: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 16Mi
