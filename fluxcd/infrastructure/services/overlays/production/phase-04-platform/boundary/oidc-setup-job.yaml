@@ -1,8 +1,5 @@
-# One-shot job — NOT in kustomization resources.
-# Apply manually after controllers are healthy and DB is initialized:
-#   kubectl -n hookshot apply -f oidc-setup-job.yaml
-#   kubectl -n hookshot logs -f job/boundary-oidc-setup
-# Delete after success: kubectl -n hookshot delete job boundary-oidc-setup
+# Reconciles the Zitadel OIDC auth method (issuer, callback prefix) on the global scope; bump the
+# pod annotation to re-run.
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -58,23 +55,39 @@ spec:
                 -format json | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
               export BOUNDARY_TOKEN="$TOKEN"
 
-              echo "=== Creating OIDC auth method ==="
-              RESULT=$(boundary auth-methods create oidc \
-                -issuer https://sso.optcp.com \
-                -client-id "$OIDC_CLIENT_ID" \
-                -client-secret "$OIDC_CLIENT_SECRET" \
-                -signing-algorithm RS256 \
-                -api-url-prefix https://access.optcp.com \
-                -name zitadel \
-                -description "PrecisionPlanIT SSO via Zitadel" \
-                -scope-id global \
-                -keyring-type none \
-                -format json)
-              echo "$RESULT"
-
-              OIDC_AM_ID=$(echo "$RESULT" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+              echo "=== Reconciling OIDC auth method 'zitadel' ==="
+              PRIMARY=$(boundary scopes read -id global -keyring-type none -format json \
+                | grep -o '"primary_auth_method_id":"amoidc_[^"]*"' | cut -d'"' -f4 || true)
+              if [ -n "$PRIMARY" ]; then
+                OIDC_AM_ID="$PRIMARY"
+                boundary auth-methods update oidc \
+                  -id "$OIDC_AM_ID" \
+                  -issuer https://sso.optcp.com \
+                  -client-id "$OIDC_CLIENT_ID" \
+                  -client-secret "$OIDC_CLIENT_SECRET" \
+                  -api-url-prefix https://access.optcp.com \
+                  -name zitadel \
+                  -description "Single Sign-On via Zitadel" \
+                  -keyring-type none \
+                  -format json >/dev/null
+              else
+                RESULT=$(boundary auth-methods create oidc \
+                  -issuer https://sso.optcp.com \
+                  -client-id "$OIDC_CLIENT_ID" \
+                  -client-secret "$OIDC_CLIENT_SECRET" \
+                  -signing-algorithm RS256 \
+                  -api-url-prefix https://access.optcp.com \
+                  -name zitadel \
+                  -description "Single Sign-On via Zitadel" \
+                  -scope-id global \
+                  -keyring-type none \
+                  -format json)
+                OIDC_AM_ID=$(echo "$RESULT" | grep -o '"id":"[^"]*"' | head -1 | cut -d'"' -f4)
+              fi
               echo "=== OIDC Auth Method ID: $OIDC_AM_ID ==="
-
+              boundary auth-methods list -scope-id global -keyring-type none -format json \
+                | grep -o '"id":"amoidc_[^"]*"' | cut -d'"' -f4 | grep -v "^$OIDC_AM_ID$" \
+                | sed 's/^/WARN: extra OIDC auth method, not managed here: /' || true
               echo "=== Activating OIDC auth method ==="
               boundary auth-methods change-state oidc \
                 -id "$OIDC_AM_ID" \
@@ -90,7 +103,6 @@ spec:
 
               echo "=== Done ==="
               echo "OIDC auth method '$OIDC_AM_ID' is now primary for global scope."
-              echo "Password auth method 'ampw_wRAPAtb3aw' is still available as fallback."
           # ADMIN_PASSWORD is provided by the boundary-oidc ExternalSecret
           # (OpenBao apps/boundary), never hardcoded.
           envFrom:
