@@ -9,7 +9,7 @@ spec:
         - name: cr-pcfae-admin-pull-secret
       containers:
         - name: init-praefect-db
-          image: docker.io/alpine/k8s:1.37.1
+          image: docker.io/alpine/k8s:1.37.2
           env:
             - name: PGHOST
               value: gitlab-postgresql-rw.optcp-supply-chain.svc.cluster.local

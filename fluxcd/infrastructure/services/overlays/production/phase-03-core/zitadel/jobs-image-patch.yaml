@@ -30,13 +30,13 @@ spec:
     spec:
       initContainers:
         - name: wait-for-db
-          image: docker.io/alpine/k8s:1.37.1
+          image: docker.io/alpine/k8s:1.37.2
       containers:
         - name: zitadel-setup
           image: ghcr.io/homelabhd/zitadel:v4.19.4
         - name: machinekey-writer
-          image: docker.io/alpine/k8s:1.37.1
+          image: docker.io/alpine/k8s:1.37.2
         - name: machine-pat-writer
-          image: docker.io/alpine/k8s:1.37.1
+          image: docker.io/alpine/k8s:1.37.2
         - name: login-client-pat-writer
-          image: docker.io/alpine/k8s:1.37.1
+          image: docker.io/alpine/k8s:1.37.2

@@ -20,7 +20,7 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: init-storage
-          image: docker.io/alpine/k8s:1.37.1
+          image: docker.io/alpine/k8s:1.37.2
           command:
             - sh
             - -c
