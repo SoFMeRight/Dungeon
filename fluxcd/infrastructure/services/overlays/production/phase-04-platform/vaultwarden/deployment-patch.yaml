@@ -23,7 +23,7 @@ spec:
             readOnlyRootFilesystem: true
           env:
             - name: DOMAIN
-              value: "https://vw.prplanit.com"
+              value: "https://passwords.optcp.com"
             # Log the real client IP (the cell-membrane gateway sets X-Forwarded-For; default
             # IP_HEADER is X-Real-IP, which istio does not send). Not spoofable: vaultwarden only
             # receives connections from the in-mesh gateway. Enables CrowdSec to ban the true IP.
