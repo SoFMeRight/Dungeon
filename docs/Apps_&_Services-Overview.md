@@ -832,7 +832,7 @@
 - Gateway: phloem-gateway
 
 **Ark — 4 components** — Mixed — 
-- Namespace: shooting-gallery
+- Namespace: optcp-shooting-gallery
 - Replicas: 3/4
 - Components:
   - ark-sa-tmc-admin-list-server (Deployment)
@@ -841,15 +841,15 @@
   - ark-se-tmc-theisland (StatefulSet)
 
 **Minecraft** — StatefulSet — java25
-- Namespace: shooting-gallery
+- Namespace: optcp-shooting-gallery
 - Replicas: 1/1
 
 **Palworld** — StatefulSet — v2.8.0
-- Namespace: shooting-gallery
+- Namespace: optcp-shooting-gallery
 - Replicas: 1/1
 
 **Romm — 2 components** — StatefulSet — 5.4.0
-- Namespace: shooting-gallery
+- Namespace: optcp-media
 - Replicas: 1/1
 - Hosts: romm.pcfae.com
 - Gateway: phloem-gateway

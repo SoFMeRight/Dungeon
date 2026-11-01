@@ -1,6 +1,6 @@
 # Minecraft Server (OPTCP)
 
-Paper 1.21.4 server running in `shooting-gallery` namespace.
+Paper 1.21.4 server running in `optcp-shooting-gallery` namespace.
 
 ## Plugins (20)
 
