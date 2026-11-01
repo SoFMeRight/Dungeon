@@ -148,10 +148,10 @@ spec:
         certificateRefs:
           - kind: Secret
             name: s3-optcp-com-tls
-    - name: https-2fa-optcp
+    - name: https-authenticator-optcp
       protocol: HTTPS
       port: 443
-      hostname: "2fa.optcp.com"
+      hostname: "authenticator.optcp.com"
       allowedRoutes:
         namespaces:
           from: All

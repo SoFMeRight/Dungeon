@@ -21,7 +21,7 @@ spec:
           image: docker.io/2fauth/2fauth:8.0.3
           env:
             - name: APP_URL
-              value: "https://2fa.optcp.com"
+              value: "https://authenticator.optcp.com"
             - name: SESSION_DRIVER
               value: "database"
             - name: CACHE_DRIVER

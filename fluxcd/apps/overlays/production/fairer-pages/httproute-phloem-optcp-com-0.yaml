@@ -19,7 +19,7 @@ spec:
     - "mail-admin.optcp.com"
     - "sops.optcp.com"
     - "dtrack.optcp.com"
-    - "2fa.optcp.com"
+    - "authenticator.optcp.com"
     - "secrets.optcp.com"
   rules:
     # Which playlist this domain's error pages draw from. The filter injects a fixed

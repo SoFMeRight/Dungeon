@@ -498,7 +498,7 @@ spec:
     name: letsencrypt-production
     kind: ClusterIssuer
   dnsNames:
-    - "2fa.optcp.com"
+    - "authenticator.optcp.com"
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate

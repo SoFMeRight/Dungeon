@@ -280,9 +280,9 @@ data:
         - domain: '*.optcp.com'
           answer: 172.22.30.71
           enabled: true
-        - domain: 2fa.optcp.com
+        - domain: authenticator.optcp.com
           answer: 172.22.30.70
-        - domain: 2fa.optcp.com
+        - domain: authenticator.optcp.com
           answer: fc00:f1:ada:30::70
           enabled: true
         - domain: dtrack.optcp.com

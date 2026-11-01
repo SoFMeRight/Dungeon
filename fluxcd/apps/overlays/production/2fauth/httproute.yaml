@@ -10,7 +10,7 @@ spec:
     - name: phloem-gateway
       namespace: arylls-lookout
   hostnames:
-    - "2fa.optcp.com"
+    - "authenticator.optcp.com"
   rules:
     - matches:
         - path:
