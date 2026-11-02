@@ -32,7 +32,7 @@ services:
     container_name: grafana
     env_file: grafana.env
     image: grafana/grafana-oss:12.0.2
-    #password: root123
+    # password: root123
     ports:
       - '3849:3000'
     restart: always
@@ -58,12 +58,12 @@ services:
     logging: *logging
     command: -config.file=/mnt/config/loki-config.yaml
     container_name: loki
-    #depends_on:
-      #change-vol-ownership:
-        #condition: service_completed_successfully
-    #deploy:
-      #mode: replicated
-      #replicas: 1
+    # depends_on:
+    #   change-vol-ownership:
+    #     condition: service_completed_successfully
+    # deploy:
+    #   mode: replicated
+    #   replicas: 1
     image: grafana/loki:3.5.1
     ports:
       - 3100:3100
@@ -86,7 +86,7 @@ services:
       - 20211:20211
     restart: always
     tmpfs:
-    - /app/api # Syntax: /test:mode=755,uid=568,gid=568
+      - /app/api # Syntax: /test:mode=755,uid=568,gid=568
     volumes:
       - /opt/docker/netalertx/config:/app/config
       - /opt/docker/netalertx/db:/app/db
@@ -100,11 +100,11 @@ services:
       - ntfy.env
       - ntfy_secret.env
     healthcheck: # optional: remember to adapt the host:port to your environment
-        test: ["CMD-SHELL", "wget -q --tries=1 http://localhost:80/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1"]
-        interval: 60s
-        timeout: 10s
-        retries: 3
-        start_period: 40s
+      test: ["CMD-SHELL", "wget -q --tries=1 http://localhost:80/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     image: binwiederhier/ntfy:v2.12
     ports:
       - 1638:80
@@ -133,7 +133,7 @@ services:
     logging: *logging
     container_name: prometheus_eaton_ups_exporter
     env_file: prometheus_eaton_ups_exporter.env
-    image: cr.pcfae.com/sofmeright/prometheus-eaton-ups-exporter:latest
+    image: cr.optcp.com/sofmeright/prometheus-eaton-ups-exporter:latest
     ports:
       - 9795:9795
     restart: always
@@ -149,7 +149,7 @@ services:
       - 9221:9221
     restart: always
     volumes:
-    - /opt/docker/prometheus-pve-exporter/pve.yml:/etc/prometheus/pve.yml
+      - /opt/docker/prometheus-pve-exporter/pve.yml:/etc/prometheus/pve.yml
 
   promtail:
     logging: *logging
@@ -157,10 +157,10 @@ services:
     container_name: promtail
     depends_on:
       - loki
-    #deploy:
-      #mode: global
-    #environment:
-      #- HOSTNAME=promtail
+    # deploy:
+    #   mode: global
+    # environment:
+    #   - HOSTNAME=promtail
     image: grafana/promtail:3.0.0
     restart: always
     volumes:
@@ -173,6 +173,14 @@ services:
     logging: *logging
     container_name: uptime-kuma
     image: louislam/uptime-kuma:1
+    # labels:
+    #   labels-regex: "^.+"
+    #   log_driver: "loki"
+    #   log_opt:
+    #      loki-batch-size:"400"
+    #      loki-url:"http://localhost:3100/loki/api/v1/push"
+    #      max-size:"10m"
+    #      max-file:"3"
     network_mode: bridge
     ports:
       # <Host Port>:<Container Port>
@@ -181,14 +189,6 @@ services:
     volumes:
       - /opt/docker/uptime-kuma/data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
-    #labels:
-      #labels-regex: "^.+"
-      #log_driver: "loki"
-      #log_opt:
-         #loki-batch-size:"400"
-         #loki-url:"http://localhost:3100/loki/api/v1/push"
-         #max-size:"10m"
-         #max-file:"3"
 
   wazuh.manager:
     logging: *logging
@@ -285,12 +285,12 @@ volumes:
   filebeat_var:
   wazuh-indexer-data:
 
-  #change-vol-ownership:
-    #container_name: zz-change-vol-ownership
-    #image: ubuntu
-    #user: root
-    #volumes:
-      #- /opt/docker/loki/data:/var/lib/loki
-    #command: >
-      #bash -c "
-      #mkdir -p /var/lib/loki/chunks && mkdir -p /var/lib/loki/rules && chown -R 10001:10001 /var/lib/loki"
+  # change-vol-ownership:
+  #   container_name: zz-change-vol-ownership
+  #   image: ubuntu
+  #   user: root
+  #   volumes:
+  #     - /opt/docker/loki/data:/var/lib/loki
+  #   command: >
+  #     bash -c "
+  #     mkdir -p /var/lib/loki/chunks && mkdir -p /var/lib/loki/rules && chown -R 10001:10001 /var/lib/loki"
