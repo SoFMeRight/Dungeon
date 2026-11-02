@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: hookshot
+namespace: optcp-remote-access
 
 resources:
   - ../../../../base/boundary
@@ -23,3 +23,5 @@ patches:
   - path: worker-configmap-patch.yaml
   - path: init-job-patch.yaml
   - path: configuration-patch.yaml
+  - path: move-hold-cluster.yaml
+  - path: move-hold-jobs.yaml

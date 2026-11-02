@@ -15,8 +15,6 @@ spec:
       labels:
         app.kubernetes.io/name: boundary
         app.kubernetes.io/component: init
-        policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: hookshot.boundary.postgres
     spec:
       serviceAccountName: boundary-init
       restartPolicy: Never

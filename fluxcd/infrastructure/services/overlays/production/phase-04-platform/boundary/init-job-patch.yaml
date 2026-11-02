@@ -5,6 +5,9 @@ metadata:
 spec:
   template:
     metadata:
+      labels:
+        policy.prplanit.com/cap.postgres: "true"
+        policy.prplanit.com/access-scope-postgres: optcp-remote-access.boundary.postgres
       annotations:
         prplanit.com/init-for: database-4
     spec:

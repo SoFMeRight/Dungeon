@@ -1,0 +1,6 @@
+# Namespace Moves SOP: the Cluster is committed only after the primary's volume is re-bound here.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: boundary-postgres
+$patch: delete

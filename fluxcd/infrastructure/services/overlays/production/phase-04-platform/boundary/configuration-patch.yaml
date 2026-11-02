@@ -14,7 +14,7 @@ spec:
           image: docker.io/hashicorp/boundary:0.21.3
           env:
             - name: BOUNDARY_ADDR
-              value: http://boundary-controller.hookshot.svc.cluster.local:9200
+              value: http://boundary-controller.optcp-remote-access.svc.cluster.local:9200
             - name: OIDC_ISSUER
               value: https://sso.optcp.com
             - name: OIDC_API_URL_PREFIX

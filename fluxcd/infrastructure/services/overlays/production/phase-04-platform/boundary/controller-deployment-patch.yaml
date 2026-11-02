@@ -9,7 +9,7 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: hookshot.boundary.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-remote-access.boundary.postgres
     spec:
       affinity:
         podAntiAffinity:
