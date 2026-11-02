@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: boundary-worker
 spec:
@@ -17,6 +17,16 @@ spec:
             matchLabels:
               app.kubernetes.io/name: boundary
               app.kubernetes.io/component: worker
+      initContainers:
+        - name: render-config
+          env:
+            # Worker N answers at 172.22.30.88:9202 + 10N (worker-service-<N>.yaml).
+            - name: PUBLIC_HOST
+              value: "172.22.30.88"
+            - name: PUBLIC_PORT_BASE
+              value: "9202"
+            - name: PUBLIC_PORT_STEP
+              value: "10"
       containers:
         - name: boundary
           image: docker.io/hashicorp/boundary:0.21.3

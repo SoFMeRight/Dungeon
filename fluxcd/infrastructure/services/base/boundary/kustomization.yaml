@@ -10,7 +10,7 @@ resources:
   - controller-deployment.yaml
   - controller-service.yaml
   - worker-configmap.yaml
-  - worker-deployment.yaml
+  - worker-statefulset.yaml
   - worker-service.yaml
   - serviceaccount.yaml
   - pdb.yaml

@@ -1,12 +1,14 @@
+# The StatefulSet's headless Service. Each worker's public address is its own
+# per-pod Service in the overlay.
 apiVersion: v1
 kind: Service
 metadata:
-  name: boundary-worker
+  name: boundary-worker-headless
   labels:
     app.kubernetes.io/name: boundary
     app.kubernetes.io/component: worker
 spec:
-  type: LoadBalancer
+  clusterIP: None
   selector:
     app.kubernetes.io/name: boundary
     app.kubernetes.io/component: worker

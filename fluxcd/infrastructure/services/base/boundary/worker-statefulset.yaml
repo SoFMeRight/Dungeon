@@ -1,5 +1,9 @@
+# A session is proxied by exactly one worker, and every connection of that session
+# must reach the same one, so each worker has its own name and public address:
+# <PUBLIC_HOST>:<PUBLIC_PORT_BASE + ordinal * PUBLIC_PORT_STEP>, served by the
+# overlay's per-pod Services. Never a load balancer across workers.
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: boundary-worker
   labels:
@@ -7,6 +11,8 @@ metadata:
     app.kubernetes.io/component: worker
 spec:
   replicas: 1
+  serviceName: boundary-worker-headless
+  podManagementPolicy: Parallel
   selector:
     matchLabels:
       app.kubernetes.io/name: boundary
@@ -38,7 +44,21 @@ spec:
           args:
             - |
               set -euo pipefail
+              ordinal="${POD_NAME##*-}"
+              export WORKER_NAME="$POD_NAME"
+              export PUBLIC_ADDR="${PUBLIC_HOST}:$((PUBLIC_PORT_BASE + ordinal * PUBLIC_PORT_STEP))"
               envsubst < /boundary-template/worker.hcl > /boundary/worker.hcl
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: PUBLIC_HOST
+              value: PLACEHOLDER_PUBLIC_HOST
+            - name: PUBLIC_PORT_BASE
+              value: PLACEHOLDER_PUBLIC_PORT_BASE
+            - name: PUBLIC_PORT_STEP
+              value: PLACEHOLDER_PUBLIC_PORT_STEP
           envFrom:
             - secretRef:
                 name: boundary-kms-keys

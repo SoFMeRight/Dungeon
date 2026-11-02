@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: boundary-worker-0
+  labels:
+    app.kubernetes.io/name: boundary
+    app.kubernetes.io/component: worker
+  annotations:
+    lbipam.cilium.io/ips: "172.22.30.88"
+    lbipam.cilium.io/sharing-key: "farores-wind"
+    lbipam.cilium.io/sharing-cross-namespace: "*"
+    service.cilium.io/loadbalancer-mode: "dsr"
+spec:
+  type: LoadBalancer
+  selector:
+    statefulset.kubernetes.io/pod-name: boundary-worker-0
+  ports:
+    - name: proxy
+      port: 9202
+      targetPort: proxy
+      protocol: TCP

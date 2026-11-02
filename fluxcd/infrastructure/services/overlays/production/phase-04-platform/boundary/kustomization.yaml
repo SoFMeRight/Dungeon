@@ -10,14 +10,15 @@ resources:
   - externalsecret-kms-keys.yaml
   - externalsecret-oidc.yaml
   - externalsecret-postgres-backup.yaml
+  - worker-service-0.yaml
+  - worker-service-1.yaml
 
 patches:
   - path: controller-deployment-patch.yaml
-  - path: worker-deployment-patch.yaml
+  - path: worker-statefulset-patch.yaml
   - path: postgres-cluster-patch.yaml
   - path: objectstore-postgres-patch.yaml
   - path: objectstore-postgres-prior-patch.yaml
-  - path: worker-service-patch.yaml
   - path: externalsecret-patch.yaml
   - path: controller-configmap-patch.yaml
   - path: worker-configmap-patch.yaml

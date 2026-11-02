@@ -18,9 +18,9 @@ data:
     }
 
     worker {
-      name              = "boundary-worker"
+      name              = "${WORKER_NAME}"
       initial_upstreams = ["boundary-controller.optcp-remote-access.svc.cluster.local:9201"]
-      public_addr       = "172.22.30.88:9202"
+      public_addr       = "${PUBLIC_ADDR}"
     }
 
     kms "aead" {
