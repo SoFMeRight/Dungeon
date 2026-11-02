@@ -46,6 +46,8 @@ ssh-keygen -Lf /tmp/ssh/id-cert.pub | grep -E "Valid|Principals" -A1 | tr -s ' '
 export ANSIBLE_PRIVATE_KEY_FILE=/tmp/ssh/id
 export ANSIBLE_REMOTE_USER=kai
 export ANSIBLE_HOST_KEY_CHECKING=True
+# The certificates carry no permit-pty; Ansible needs no tty.
+export ANSIBLE_SSH_USETTY=False
 export ANSIBLE_SSH_ARGS="-o UserKnownHostsFile=$work/ansible/known_hosts -o StrictHostKeyChecking=yes"
 
 # The inventory host whose ansible_host is this pod's node.
