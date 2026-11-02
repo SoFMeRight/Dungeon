@@ -403,8 +403,8 @@ spec:
       # optcp's SSH CA (one CA per tenant: a host trusting a CA accepts every cert it
       # signs, so tenants never share one; the mount is <tenant>-ssh). Roles are named
       # for the consumer. The CA private key is generated once inside OpenBao and never
-      # leaves; bank-vaults will not regenerate it on subsequent reconciles. The public
-      # key, served unauthenticated at /v1/optcp-ssh/public_key, is what optcp hosts trust.
+      # leaves. The public key, served unauthenticated at /v1/optcp-ssh/public_key, is
+      # committed at ansible/files/optcp-ssh-ca.pub and is what optcp hosts trust.
       - path: optcp-ssh
         type: ssh
         description: optcp SSH certificate authority
@@ -412,6 +412,9 @@ spec:
           config:
             - name: ca
               generate_signing_key: "true"
+              # Without this bank-vaults rewrites config/ca on every reconcile, and
+              # OpenBao answers each write with a new default issuer: a new CA.
+              create_only: "true"
           roles:
             # node-converge: one certificate per run, valid long enough to outlast a
             # full roll (drains included), since Ansible keeps opening connections.
