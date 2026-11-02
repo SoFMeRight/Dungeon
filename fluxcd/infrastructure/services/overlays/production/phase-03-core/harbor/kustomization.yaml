@@ -27,4 +27,3 @@ patches:
     target:
       kind: Service
       name: harbor
-  - path: hold-for-move-patch.yaml
