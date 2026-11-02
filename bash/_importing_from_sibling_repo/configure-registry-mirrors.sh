@@ -72,7 +72,7 @@ prefix = "docker.io"
 location = "docker.io"
 
 [[registry.mirror]]
-location = "docker.cr.pcfae.com"
+location = "docker.cr.optcp.com"
 
 # GitHub Container Registry mirror
 [[registry]]
@@ -80,7 +80,7 @@ prefix = "ghcr.io"
 location = "ghcr.io"
 
 [[registry.mirror]]
-location = "ghcr.cr.pcfae.com"
+location = "ghcr.cr.optcp.com"
 
 # LinuxServer.io mirror
 [[registry]]
@@ -88,7 +88,7 @@ prefix = "lscr.io"
 location = "lscr.io"
 
 [[registry.mirror]]
-location = "lscr.cr.pcfae.com"
+location = "lscr.cr.optcp.com"
 
 # Quay.io mirror
 [[registry]]
@@ -96,7 +96,7 @@ prefix = "quay.io"
 location = "quay.io"
 
 [[registry.mirror]]
-location = "quay.cr.pcfae.com"
+location = "quay.cr.optcp.com"
 EOF
 
 echo "✓ Registry mirror configuration created"
@@ -140,10 +140,10 @@ if [ $FAIL_COUNT -eq 0 ]; then
   echo "✓ All nodes configured successfully!"
   echo ""
   echo "Registry mirror configuration:"
-  echo "  docker.io → docker.cr.pcfae.com"
-  echo "  ghcr.io   → ghcr.cr.pcfae.com"
-  echo "  lscr.io   → lscr.cr.pcfae.com"
-  echo "  quay.io   → quay.cr.pcfae.com"
+  echo "  docker.io → docker.cr.optcp.com"
+  echo "  ghcr.io   → ghcr.cr.optcp.com"
+  echo "  lscr.io   → lscr.cr.optcp.com"
+  echo "  quay.io   → quay.cr.optcp.com"
   echo ""
   echo "Images will now be pulled through Harbor pull-through caches."
   echo "This reduces bandwidth and avoids rate limiting."

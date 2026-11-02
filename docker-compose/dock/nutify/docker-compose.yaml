@@ -13,7 +13,7 @@ services:
     environment:
       # - SECRET_KEY=$SECRET_KEY # for password encryption and decryption in the database
       - UDEV=1
-    image: cr.pcfae.com/prplanit/nutify-ssh:latest  # Use amd64-latest or armv7-latest based on your architecture
+    image: cr.optcp.com/prplanit/nutify-ssh:latest  # Use amd64-latest or armv7-latest based on your architecture
     ports:
       - 3493:3493
       - 5050:5050

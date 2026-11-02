@@ -114,7 +114,7 @@ services:
 configs:
   # dockerd mirror (docker.io only), inline so the stack stays self-contained.
   # Cache is OFF unless REGISTRY_MIRROR_DOCKER is set — unset renders an empty
-  # mirror list (direct upstream). Set it (e.g. docker.cr.pcfae.com) to enable.
+  # mirror list (direct upstream). Set it (e.g. docker.cr.optcp.com) to enable.
   dind_daemon_json:
     content: |
       { "registry-mirrors": [${REGISTRY_MIRROR_DOCKER:+"https://${REGISTRY_MIRROR_DOCKER}"}] }
