@@ -13,6 +13,7 @@ spec:
             principals:
               - cluster.local/ns/optcp-remote-access/sa/boundary-controller
               - cluster.local/ns/optcp-remote-access/sa/boundary-init
+              - cluster.local/ns/optcp-remote-access/sa/boundary-key-rotation
       to:
         - operation:
             ports: ["8200"]

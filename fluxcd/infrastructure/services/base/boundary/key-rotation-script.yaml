@@ -1,0 +1,54 @@
+# Logic of the boundary-key-rotation CronJob: run the target-key play from the revision
+# Flux applied. Every value is the overlay's intent (key-rotation-patch.yaml).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: boundary-key-rotation
+  labels:
+    app.kubernetes.io/name: boundary-key-rotation
+data:
+  rotate.sh: |
+    #!/bin/sh
+    # boundary-key-rotation: rotate the SSH key Boundary brokers for each target host.
+    # Logs in to OpenBao as this pod's service account; that token signs a throwaway SSH
+    # key for the run (the targets trust optcp's SSH CA) and lets the play write each
+    # target's new key under its targets entry. The play is the logic
+    # (ansible/services/boundary-target-keys.yaml); nothing is stored here.
+    set -eu
+
+    : "${REPO_URL:?}" "${BAO_ADDR:?}" "${BAO_ROLE:?}" "${SSH_SIGN_PATH:?}" "${SSH_PRINCIPAL:?}" \
+      "${PLAYBOOK:?}" "${TARGET_GROUP:?}" "${WORKER_GROUP:?}" "${SECRET_MOUNT:?}" "${SECRET_PATH:?}"
+    work=/tmp/dungeon
+
+    # The revision Flux applied, so the play and inventory match what the cluster runs.
+    rev=$(kubectl -n flux-system get gitrepository flux-system -o jsonpath='{.status.artifact.revision}')
+    sha=${rev##*:}
+    git init -q "$work"
+    git -C "$work" fetch -q --depth 1 "$REPO_URL" "$sha"
+    git -C "$work" checkout -q FETCH_HEAD
+    cd "$work"
+    echo "rotating from ${rev}"
+
+    mkdir -p /tmp/ssh
+    ssh-keygen -q -t ed25519 -N "" -C "boundary-key-rotation" -f /tmp/ssh/id
+    jwt=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+    VAULT_TOKEN=$(curl -fsS -X POST "${BAO_ADDR}/v1/auth/kubernetes/login" \
+      -d "$(JWT="$jwt" ROLE="$BAO_ROLE" yq -n -o json -I0 '{"role": strenv(ROLE), "jwt": strenv(JWT)}')" \
+      | yq -p json -r '.auth.client_token')
+    unset jwt
+    curl -fsS -X POST -H "X-Vault-Token: ${VAULT_TOKEN}" "${BAO_ADDR}/v1/${SSH_SIGN_PATH}" \
+      -d "$(KEY="$(cat /tmp/ssh/id.pub)" PRINCIPAL="$SSH_PRINCIPAL" yq -n -o json -I0 '{"public_key": strenv(KEY), "valid_principals": strenv(PRINCIPAL)}')" \
+      | yq -p json -r '.data.signed_key' > /tmp/ssh/id-cert.pub
+    ssh-keygen -Lf /tmp/ssh/id-cert.pub | grep -E "Valid|Principals" -A1 | tr -s ' '
+
+    # The play reads OpenBao from VAULT_ADDR and VAULT_TOKEN.
+    export VAULT_ADDR="$BAO_ADDR" VAULT_TOKEN
+    export ANSIBLE_PRIVATE_KEY_FILE=/tmp/ssh/id
+    export ANSIBLE_REMOTE_USER="$SSH_PRINCIPAL"
+    export ANSIBLE_HOST_KEY_CHECKING=True
+    export ANSIBLE_SSH_ARGS="-o UserKnownHostsFile=$work/ansible/known_hosts -o StrictHostKeyChecking=yes"
+    ansible-playbook -i ansible/inventory "$PLAYBOOK" \
+      -e "boundary_targets=${TARGET_GROUP}" \
+      -e "boundary_worker_group=${WORKER_GROUP}" \
+      -e "boundary_secret_mount=${SECRET_MOUNT}" \
+      -e "boundary_secret_path=${SECRET_PATH}"

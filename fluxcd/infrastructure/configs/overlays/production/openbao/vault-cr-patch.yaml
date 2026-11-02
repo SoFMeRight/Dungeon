@@ -178,6 +178,16 @@ spec:
           path "optcp/data/apps/boundary/app" {
             capabilities = ["create", "update", "patch"]
           }
+      # boundary-key-rotation writes each target's rotated SSH key and signs its own run's
+      # key against optcp's SSH CA; it reads nothing.
+      - name: boundary-key-rotation
+        rules: |
+          path "optcp/data/apps/boundary/targets/*" {
+            capabilities = ["create", "update"]
+          }
+          path "optcp-ssh/sign/boundary-key-rotation" {
+            capabilities = ["create", "update"]
+          }
       # node-converge signs a throwaway key per run against optcp's SSH CA, and nothing else.
       - name: node-converge
         rules: |
@@ -261,6 +271,11 @@ spec:
             bound_service_account_names: ["node-converge"]
             bound_service_account_namespaces: ["optcp-infra-admin"]
             policies: ["node-converge"]
+            ttl: 1h
+          - name: boundary-key-rotation
+            bound_service_account_names: ["boundary-key-rotation"]
+            bound_service_account_namespaces: ["optcp-remote-access"]
+            policies: ["boundary-key-rotation"]
             ttl: 1h
       - type: oidc
         config:
@@ -410,6 +425,20 @@ spec:
               default_extensions: {}
               ttl: "4h0m0s"
               max_ttl: "6h0m0s"
+            # boundary-key-rotation: one certificate per run, long enough for one play
+            # over Boundary's targets.
+            - name: boundary-key-rotation
+              key_type: "ca"
+              algorithm_signer: "rsa-sha2-256"
+              allow_user_certificates: "true"
+              allowed_users: "kai"
+              # bank-vaults injects a list without this; OpenBao's ssh role API requires a string.
+              allowed_domains: ""
+              default_user: "kai"
+              allowed_extensions: ""
+              default_extensions: {}
+              ttl: "1h0m0s"
+              max_ttl: "2h0m0s"
       # Cosign image/attestation signer. ECDSA keys generated once inside OpenBao,
       # non-exportable — they sign via cosign-signer/sign/<tenant> and never leave
       # the vault, the same custody model as optcp-ssh's CA above. One key

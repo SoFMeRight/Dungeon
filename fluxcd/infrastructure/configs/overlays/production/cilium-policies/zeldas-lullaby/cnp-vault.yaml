@@ -39,6 +39,16 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
+    # boundary-key-rotation logs in, signs its run's SSH key and writes each target's
+    # rotated key (optcp/apps/boundary/targets/<target>).
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-remote-access
+            app.kubernetes.io/name: boundary-key-rotation
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
     - fromEntities:
         - host
         - remote-node

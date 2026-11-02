@@ -19,3 +19,6 @@ resources:
   - init-job.yaml
   - configuration-script.yaml
   - configuration-job.yaml
+  - key-rotation-rbac.yaml
+  - key-rotation-script.yaml
+  - key-rotation-cronjob.yaml

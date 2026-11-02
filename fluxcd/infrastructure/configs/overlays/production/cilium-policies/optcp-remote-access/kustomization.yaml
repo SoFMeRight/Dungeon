@@ -4,5 +4,6 @@ namespace: optcp-remote-access
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-boundary.yaml
+  - cnp-egress-boundary-key-rotation.yaml
   - cnp-loadbalancers.yaml
   - cnp-boundary-worker-from-netbird-router.yaml

@@ -241,6 +241,9 @@ docker_reg:
     xylem:
 # docker_gpu:
 #   hosts:
+boundary_targets:                 # hosts Boundary brokers SSH to (services/boundary-target-keys.yaml)
+  hosts:
+    dungeon-pedestal:
 nginx:
   hosts:
     cell-membrane:

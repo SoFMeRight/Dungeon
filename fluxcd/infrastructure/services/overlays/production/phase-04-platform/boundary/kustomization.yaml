@@ -23,3 +23,11 @@ patches:
   - path: worker-configmap-patch.yaml
   - path: init-job-patch.yaml
   - path: configuration-patch.yaml
+  - path: key-rotation-patch.yaml
+  - target:
+      kind: ClusterRoleBinding
+      name: boundary-key-rotation
+    patch: |-
+      - op: replace
+        path: /subjects/0/namespace
+        value: optcp-remote-access

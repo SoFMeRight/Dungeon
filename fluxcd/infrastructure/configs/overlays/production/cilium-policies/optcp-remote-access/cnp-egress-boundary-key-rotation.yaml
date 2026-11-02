@@ -1,0 +1,38 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-boundary-key-rotation-egress
+spec:
+  description: >-
+    boundary-key-rotation clones dungeon from git.optcp.com (10.40.9.104), logs in to
+    OpenBao, and runs the target-key play over SSH against Boundary's targets
+    (ansible/inventory, group boundary_targets): dungeon-pedestal 172.22.144.8. A new
+    target is added here and to the inventory group. DNS, the API server and the
+    mesh tunnel ride the universal CCNPs.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: boundary-key-rotation
+  egress:
+    - toCIDR:
+        - 10.40.9.104/32
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: zeldas-lullaby
+            app: vault
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
+    - toCIDR:
+        - 172.22.144.8/32
+      toPorts:
+        - ports:
+            - port: "22"
+              protocol: TCP

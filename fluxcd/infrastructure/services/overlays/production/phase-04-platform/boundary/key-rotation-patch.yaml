@@ -1,0 +1,39 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: boundary-key-rotation
+spec:
+  # Daily, after node-converge (03:00) has finished with the nodes.
+  schedule: "30 4 * * *"
+  timeZone: America/Los_Angeles
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: rotate
+              image: ghcr.io/homelabhd/ansible:v2.21.5@sha256:9130d35313d7117085b015d2ef6708436377f09ab16dfe4933a76fcc91f2b0f2
+              env:
+                - name: REPO_URL
+                  value: https://git.optcp.com/SoFMeRight/dungeon.git
+                - name: PLAYBOOK
+                  value: ansible/services/boundary-target-keys.yaml
+                # Inventory groups: the hosts to key, and the Boundary workers whose
+                # addresses the host's authorized_keys entry is restricted to.
+                - name: TARGET_GROUP
+                  value: boundary_targets
+                - name: WORKER_GROUP
+                  value: k8s_worker
+                # optcp/apps/boundary/targets/<host>: the credential library's path.
+                - name: SECRET_MOUNT
+                  value: optcp
+                - name: SECRET_PATH
+                  value: apps/boundary/targets
+                - name: BAO_ADDR
+                  value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
+                - name: BAO_ROLE
+                  value: boundary-key-rotation
+                - name: SSH_SIGN_PATH
+                  value: optcp-ssh/sign/boundary-key-rotation
+                - name: SSH_PRINCIPAL
+                  value: kai
