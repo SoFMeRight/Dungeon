@@ -95,7 +95,6 @@ spec:
               - zitadel-configuration
               - zitadel-postgres
               - boundary-init
-              - boundary-key-rotation
       mutate:
         patchStrategicMerge:
           spec:

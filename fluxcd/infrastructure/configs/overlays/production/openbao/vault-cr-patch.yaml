@@ -145,50 +145,11 @@ spec:
           path "*" {
             capabilities = ["create", "read", "update", "delete", "list", "sudo"]
           }
-      # Token self-management for Boundary's Vault credential store (periodic,
-      # renewable, orphan token). Paired with boundary-ssh-read on the token.
-      - name: boundary-controller
-        rules: |
-          path "auth/token/lookup-self" {
-            capabilities = ["read"]
-          }
-          path "auth/token/renew-self" {
-            capabilities = ["update"]
-          }
-          path "auth/token/revoke-self" {
-            capabilities = ["update"]
-          }
-          path "sys/leases/renew" {
-            capabilities = ["update"]
-          }
-          path "sys/leases/revoke" {
-            capabilities = ["update"]
-          }
-          path "sys/capabilities-self" {
-            capabilities = ["update"]
-          }
-      # Read-only for the SSH keys Boundary brokers, one entry per Boundary target named
-      # for it (targets/<target>; Boundary Community brokers static keys, it cannot inject certs).
-      - name: boundary-ssh-read
-        rules: |
-          path "optcp/data/apps/boundary/targets/*" {
-            capabilities = ["read"]
-          }
       # boundary-init stores the admin login database init generates; it writes, never reads.
       - name: boundary-init
         rules: |
           path "optcp/data/apps/boundary/app" {
             capabilities = ["create", "update", "patch"]
-          }
-      # boundary-key-rotation writes each target's rotated SSH key and signs its own run's
-      # key against optcp's SSH CA; it reads nothing.
-      - name: boundary-key-rotation
-        rules: |
-          path "optcp/data/apps/boundary/targets/*" {
-            capabilities = ["create", "update"]
-          }
-          path "optcp-ssh/sign/boundary-key-rotation" {
-            capabilities = ["create", "update"]
           }
       # People with the operator role sign their own SSH certificate; the role limits the
       # principal to their own username.
@@ -274,11 +235,6 @@ spec:
             ttl: 1h
           # Boundary controller obtains a periodic, renewable, orphan token via its SA
           # (no hand-minted token) for its vault credential store -> brokered static keys.
-          - name: boundary
-            bound_service_account_names: ["boundary-controller"]
-            bound_service_account_namespaces: ["optcp-remote-access"]
-            policies: ["boundary-controller", "boundary-ssh-read"]
-            token_period: "24h"
           - name: boundary-init
             bound_service_account_names: ["boundary-init"]
             bound_service_account_namespaces: ["optcp-remote-access"]
@@ -288,11 +244,6 @@ spec:
             bound_service_account_names: ["node-converge"]
             bound_service_account_namespaces: ["optcp-infra-admin"]
             policies: ["node-converge"]
-            ttl: 1h
-          - name: boundary-key-rotation
-            bound_service_account_names: ["boundary-key-rotation"]
-            bound_service_account_namespaces: ["optcp-remote-access"]
-            policies: ["boundary-key-rotation"]
             ttl: 1h
           # The daily raft-snapshot backup: the openbao-snapshot helper in zeldas-lullaby
           # logs in here, takes a snapshot, and Velero/kopia captures it. Read-only
@@ -485,20 +436,6 @@ spec:
                 permit-pty: ""
               ttl: "1h0m0s"
               max_ttl: "4h0m0s"
-            # boundary-key-rotation: one certificate per run, long enough for one play
-            # over Boundary's targets.
-            - name: boundary-key-rotation
-              key_type: "ca"
-              algorithm_signer: "rsa-sha2-256"
-              allow_user_certificates: "true"
-              allowed_users: "kai"
-              # bank-vaults injects a list without this; OpenBao's ssh role API requires a string.
-              allowed_domains: ""
-              default_user: "kai"
-              allowed_extensions: ""
-              default_extensions: {}
-              ttl: "1h0m0s"
-              max_ttl: "2h0m0s"
       # Cosign image/attestation signer. ECDSA keys generated once inside OpenBao,
       # non-exportable — they sign via cosign-signer/sign/<tenant> and never leave
       # the vault, the same custody model as optcp-ssh's CA above. One key

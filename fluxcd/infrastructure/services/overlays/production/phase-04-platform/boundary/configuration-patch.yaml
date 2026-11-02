@@ -7,7 +7,7 @@ spec:
   template:
     metadata:
       annotations:
-        prplanit.com/configure-for: workers-declared-1
+        prplanit.com/configure-for: targets-declared-1
     spec:
       containers:
         - name: configure
@@ -32,26 +32,35 @@ spec:
               value: '"operator" in "/userinfo/roles" or "operator" in "/token/roles"'
             - name: ADMIN_ROLE_NAME
               value: Administration
-            - name: CRED_STORE_NAME
-              value: openbao
-            # Bump when the boundary OpenBao role's policies change, so the store's token is re-minted.
-            - name: CRED_STORE_TOKEN_GENERATION
-              value: "3"
-            - name: CRED_LIBRARY_NAME
-              value: dungeon-pedestal-key
-            - name: CRED_LIBRARY_PATH
-              value: optcp/data/apps/boundary/targets/dungeon-pedestal
-            - name: CRED_LIBRARY_USERNAME_ATTR
-              value: /data/SSH_USERNAME
-            - name: CRED_LIBRARY_KEY_ATTR
-              value: /data/SSH_PRIVATE_KEY
+            - name: ORG_NAME
+              value: OPTCP
+            - name: PROJECT_NAME
+              value: Hosts
+            # Addresses as in ansible/inventory; each host trusts optcp's SSH CA
+            # (ansible/services/ssh-ca-trust.yaml) and people log in as themselves.
+            - name: TARGETS
+              value: |
+                ant-parade 10.30.1.111 22
+                bluebell 10.30.1.69 22
+                cell-membrane 10.40.9.104 22
+                dungeon-pedestal 172.22.144.8 22
+                freightyard 10.30.8.101 22
+                harbormaster 10.24.7.55 22
+                homing-pigeon 10.0.0.2 22
+                jabu-jabu 10.30.8.98 22
+                moor 10.30.1.123 22
+                the-usual-suspect 10.0.0.1 22
+                xylem 10.24.96.9 22
+                dungeon-map-001 172.22.144.150 22
+                dungeon-map-002 172.22.144.151 22
+                dungeon-map-003 172.22.144.152 22
+                dungeon-map-004 172.22.144.153 22
+                dungeon-map-005 172.22.144.154 22
+                dungeon-chest-001 172.22.144.170 22
+                dungeon-chest-002 172.22.144.171 22
+                dungeon-chest-003 172.22.144.172 22
+                dungeon-chest-004 172.22.144.173 22
+                dungeon-chest-005 172.22.144.174 22
             # The StatefulSet's pods; any other registration is removed.
             - name: WORKER_NAMES
               value: boundary-worker-0 boundary-worker-1
-        - name: vault-token
-          image: docker.io/alpine/k8s:1.37.1
-          env:
-            - name: VAULT_ADDR
-              value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
-            - name: VAULT_ROLE
-              value: boundary

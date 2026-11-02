@@ -8,9 +8,8 @@ data:
     #!/bin/sh
     set -eu
     for v in BOUNDARY_ADDR OIDC_ISSUER OIDC_API_URL_PREFIX OIDC_AUTH_METHOD_NAME OIDC_AUTH_METHOD_DESCRIPTION \
-             ADMIN_LOGIN_NAME MANAGED_GROUP_NAME MANAGED_GROUP_FILTER ADMIN_ROLE_NAME CRED_STORE_NAME \
-             CRED_STORE_TOKEN_GENERATION CRED_LIBRARY_NAME CRED_LIBRARY_PATH CRED_LIBRARY_USERNAME_ATTR CRED_LIBRARY_KEY_ATTR \
-             WORKER_NAMES OIDC_CLIENT_ID OIDC_CLIENT_SECRET ADMIN_PASSWORD; do
+             ADMIN_LOGIN_NAME MANAGED_GROUP_NAME MANAGED_GROUP_FILTER ADMIN_ROLE_NAME \
+             ORG_NAME PROJECT_NAME TARGETS WORKER_NAMES OIDC_CLIENT_ID OIDC_CLIENT_SECRET ADMIN_PASSWORD; do
       eval "[ -n \"\${$v:-}\" ]" || { echo "$v is not set"; exit 1; }
     done
     export BOUNDARY_ADDR
@@ -70,40 +69,35 @@ data:
       || b roles add-principals -id "$ADMIN_ROLE" -principal "$MG_ID" >/dev/null
     echo "managed group $MG_ID is a principal of $ADMIN_ROLE"
 
-    echo "=== Credential store '$CRED_STORE_NAME' token ==="
-    CS_ID=$(by_name credential-stores csvlt "$CRED_STORE_NAME" -scope-id global -recursive)
-    [ -n "$CS_ID" ] || { echo "no Vault credential store named '$CRED_STORE_NAME'"; exit 1; }
-    STATUS=$(b credential-stores read -id "$CS_ID" | grep -o '"token_status":"[^"]*"' | cut -d'"' -f4 || true)
-    # The description records which policy generation the token was minted with.
-    MARK="token-generation=$CRED_STORE_TOKEN_GENERATION"
-    DESC=$(b credential-stores read -id "$CS_ID" | grep -o '"description":"[^"]*"' | head -1 | cut -d'"' -f4 || true)
-    echo "store $CS_ID token_status=${STATUS:-unknown} ${DESC:-no-generation}"
-    if [ "$STATUS" != "current" ] || [ "$DESC" != "$MARK" ]; then
-      : >/work/need-token
-      n=0; until [ -e /work/vault-token ]; do n=$((n+1)); [ "$n" -gt 150 ] && { echo "no token arrived"; exit 1; }; sleep 2; done
-      # -vault-token takes the value itself (no env:// form, unlike the certificate flags).
-      VAULT_TOKEN=$(cat /work/vault-token); rm -f /work/vault-token
-      b credential-stores update vault -id "$CS_ID" -vault-token "$VAULT_TOKEN" -description "$MARK" >/dev/null
-      unset VAULT_TOKEN
-      echo "store $CS_ID token replaced ($MARK)"
-    fi
-
-    echo "=== Credential library '$CRED_LIBRARY_NAME' (static key; Community edition cannot broker certificates) ==="
-    LIB_ID=$(by_name credential-libraries 'clv[a-z]*' "$CRED_LIBRARY_NAME" -credential-store-id "$CS_ID")
-    if [ -n "$LIB_ID" ]; then
-      b credential-libraries update vault-generic -id "$LIB_ID" -vault-path "$CRED_LIBRARY_PATH" \
-        -credential-mapping-override "username_attribute=$CRED_LIBRARY_USERNAME_ATTR" \
-        -credential-mapping-override "private_key_attribute=$CRED_LIBRARY_KEY_ATTR" >/dev/null
-    else
-      LIB_ID=$(b credential-libraries create vault-generic -credential-store-id "$CS_ID" -name "$CRED_LIBRARY_NAME" \
-        -vault-path "$CRED_LIBRARY_PATH" -credential-type ssh_private_key \
-        -credential-mapping-override "username_attribute=$CRED_LIBRARY_USERNAME_ATTR" \
-        -credential-mapping-override "private_key_attribute=$CRED_LIBRARY_KEY_ATTR" | ids "clv[a-z]*" | head -1)
-    fi
-    for other in $(b credential-libraries list -credential-store-id "$CS_ID" | ids "clv[a-z]*" | grep -v "^$LIB_ID$" || true); do
-      b credential-libraries delete -id "$other" >/dev/null && echo "removed undeclared library $other"
+    echo "=== Targets in '$ORG_NAME' / '$PROJECT_NAME' ==="
+    # Sessions carry the person's own SSH certificate (OpenBao optcp-ssh/sign/operator), so a
+    # target is an address and a port and nothing else: no credential sources, no stores.
+    ORG_ID=$(by_name scopes o "$ORG_NAME" -scope-id global)
+    [ -n "$ORG_ID" ] || { echo "no org named '$ORG_NAME'"; exit 1; }
+    PROJECT_ID=$(by_name scopes p "$PROJECT_NAME" -scope-id "$ORG_ID")
+    [ -n "$PROJECT_ID" ] || PROJECT_ID=$(b scopes create -scope-id "$ORG_ID" -name "$PROJECT_NAME" | ids p | head -1)
+    KEEP=""
+    printf '%s\n' "$TARGETS" > /tmp/targets
+    while read -r name address port; do
+      [ -n "$name" ] || continue
+      TID=$(by_name targets ttcp "$name" -scope-id "$PROJECT_ID")
+      if [ -n "$TID" ]; then
+        b targets update tcp -id "$TID" -address "$address" -default-port "$port" >/dev/null
+      else
+        TID=$(b targets create tcp -scope-id "$PROJECT_ID" -name "$name" -address "$address" -default-port "$port" | ids ttcp | head -1)
+      fi
+      for src in $(b targets read -id "$TID" | grep -o '"brokered_credential_source_ids":\[[^]]*\]' | grep -o 'cl[a-z]*_[A-Za-z0-9]*' || true); do
+        b targets remove-credential-sources -id "$TID" -brokered-credential-source "$src" >/dev/null && echo "target $TID: removed credential source $src"
+      done
+      KEEP="$KEEP $TID"
+      echo "target $TID $name $address:$port"
+    done < /tmp/targets
+    for t in $(b targets list -scope-id "$PROJECT_ID" | ids ttcp || true); do
+      case " $KEEP " in *" $t "*) ;; *) b targets delete -id "$t" >/dev/null && echo "removed undeclared target $t" ;; esac
     done
-    echo "library $LIB_ID reads $CRED_LIBRARY_PATH"
+    for cs in $(b credential-stores list -scope-id global -recursive | ids 'cs[a-z]*' || true); do
+      b credential-stores delete -id "$cs" >/dev/null && echo "removed credential store $cs"
+    done
 
     echo "=== Workers: $WORKER_NAMES ==="
     KEEP=""
@@ -114,5 +108,4 @@ data:
     for w in $(b workers list | ids w || true); do
       case " $KEEP " in *" $w "*) ;; *) b workers delete -id "$w" >/dev/null && echo "removed undeclared worker $w" ;; esac
     done
-    : >/work/done
     echo "=== Done ==="

@@ -1,8 +1,7 @@
-# Makes a host trust optcp's SSH CA (../tasks/ssh-ca-trust.yml) so in-cluster automation
-# (node-converge on the nodes, boundary-key-rotation on Boundary's targets) logs in with a
-# certificate signed per run instead of a stored key. Hosts come from --limit;
-# k8s/provision-hosts.yml runs the same tasks on every Kubernetes node. One run per host,
-# by hand, before the automation's first: a host trusts nothing until this has run.
+# Makes a host trust optcp's SSH CA (../tasks/ssh-ca-trust.yml): people's certificates for
+# Boundary sessions and node-converge's per-run certificate, no stored key either way.
+# Hosts come from --limit; k8s/provision-hosts.yml runs the same tasks on every Kubernetes
+# node. One run per host, by hand, before its first session: a host trusts nothing until then.
 - name: Ad Arbitorium 🔐 - GitOps - Services - Trust optcp's SSH CA
   become: true
   hosts: all

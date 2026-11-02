@@ -30,22 +30,12 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
-    # Boundary controller validates its vault credential store token and
-    # reads the keys it brokers (optcp/apps/boundary/targets/<target>).
+    # boundary-init stores the admin login database init generates (optcp/apps/boundary/app).
     - fromEndpoints:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-remote-access
             app.kubernetes.io/name: boundary
-      toPorts:
-        - ports:
-            - port: "8200"
-              protocol: TCP
-    # boundary-key-rotation logs in, signs its run's SSH key and writes each target's
-    # rotated key (optcp/apps/boundary/targets/<target>).
-    - fromEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-remote-access
-            app.kubernetes.io/name: boundary-key-rotation
+            app.kubernetes.io/component: init
       toPorts:
         - ports:
             - port: "8200"

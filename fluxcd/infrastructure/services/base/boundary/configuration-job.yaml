@@ -1,4 +1,4 @@
-# Reconciles Boundary's auth method, admin managed group and credential-store token from the
+# Reconciles Boundary's auth method, admin managed group, targets and workers from the
 # overlay's values; re-runs when its spec changes.
 apiVersion: batch/v1
 kind: Job
@@ -47,18 +47,13 @@ spec:
               value: PLACEHOLDER_MANAGED_GROUP_FILTER
             - name: ADMIN_ROLE_NAME
               value: PLACEHOLDER_ADMIN_ROLE_NAME
-            - name: CRED_STORE_NAME
-              value: PLACEHOLDER_CRED_STORE_NAME
-            - name: CRED_STORE_TOKEN_GENERATION
-              value: PLACEHOLDER_CRED_STORE_TOKEN_GENERATION
-            - name: CRED_LIBRARY_NAME
-              value: PLACEHOLDER_CRED_LIBRARY_NAME
-            - name: CRED_LIBRARY_PATH
-              value: PLACEHOLDER_CRED_LIBRARY_PATH
-            - name: CRED_LIBRARY_USERNAME_ATTR
-              value: PLACEHOLDER_CRED_LIBRARY_USERNAME_ATTR
-            - name: CRED_LIBRARY_KEY_ATTR
-              value: PLACEHOLDER_CRED_LIBRARY_KEY_ATTR
+            - name: ORG_NAME
+              value: PLACEHOLDER_ORG_NAME
+            - name: PROJECT_NAME
+              value: PLACEHOLDER_PROJECT_NAME
+            # One target per line: name address port.
+            - name: TARGETS
+              value: PLACEHOLDER_TARGETS
             - name: WORKER_NAMES
               value: PLACEHOLDER_WORKER_NAMES
             - name: HOME
@@ -82,65 +77,12 @@ spec:
           volumeMounts:
             - name: scripts
               mountPath: /scripts
-            - name: work
-              mountPath: /work
-            - name: tmp
-              mountPath: /tmp
-        # Mints the store's periodic token through OpenBao's Kubernetes auth only when configure asks.
-        - name: vault-token
-          image: PLACEHOLDER_K8S_IMAGE
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              set -eu
-              n=0
-              until [ -e /work/need-token ] || [ -e /work/done ]; do
-                n=$((n+1)); [ "$n" -gt 300 ] && { echo "configure never finished"; exit 1; }; sleep 2
-              done
-              if [ -e /work/need-token ]; then
-                JWT=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-                code=$(curl -s -o /work/login.json -w '%{http_code}' -X POST "$VAULT_ADDR/v1/auth/kubernetes/login" \
-                  -d "{\"jwt\":\"$JWT\",\"role\":\"$VAULT_ROLE\"}")
-                [ "$code" = 200 ] || { echo "openbao login as role $VAULT_ROLE: http $code $(jq -c .errors /work/login.json)"; exit 1; }
-                jq -c '{policies: .auth.policies, orphan: .auth.orphan, renewable: .auth.renewable, period: .auth.token_period}' /work/login.json
-                jq -r .auth.client_token /work/login.json >/work/vault-token.part
-                code=$(curl -s -o /dev/null -w '%{http_code}' -H "X-Vault-Token: $(cat /work/vault-token.part)" "$VAULT_ADDR/v1/auth/token/lookup-self")
-                [ "$code" = 200 ] || { echo "token cannot lookup-self: http $code"; exit 1; }
-                rm -f /work/login.json
-                mv /work/vault-token.part /work/vault-token
-                n=0
-                until [ -e /work/done ]; do n=$((n+1)); [ "$n" -gt 150 ] && exit 1; sleep 2; done
-              fi
-          env:
-            - name: VAULT_ADDR
-              value: PLACEHOLDER_VAULT_ADDR
-            - name: VAULT_ROLE
-              value: PLACEHOLDER_VAULT_ROLE
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-          resources:
-            requests:
-              cpu: 10m
-              memory: 32Mi
-            limits:
-              cpu: 200m
-              memory: 64Mi
-          volumeMounts:
-            - name: work
-              mountPath: /work
             - name: tmp
               mountPath: /tmp
       volumes:
         - name: scripts
           configMap:
             name: boundary-configuration
-        - name: work
-          emptyDir:
-            sizeLimit: 1Mi
         - name: tmp
           emptyDir:
             sizeLimit: 16Mi

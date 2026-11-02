@@ -1,7 +1,7 @@
 ---
 # sshd on this host accepts user certificates signed by optcp's SSH CA (OpenBao
-# optcp-ssh), so in-cluster automation (node-converge on the nodes, boundary-key-rotation
-# on Boundary's targets) logs in with a short-lived certificate instead of a stored key.
+# optcp-ssh): people sign their own (optcp-ssh/sign/operator) for Boundary sessions, and
+# node-converge signs one per run; no stored key either way.
 # The CA's public half is committed (files/optcp-ssh-ca.pub): it is public and static,
 # and a host's trust must not depend on reaching OpenBao. Existing authorized_keys
 # logins are unaffected. Imported by k8s/provision-hosts.yml and services/ssh-ca-trust.yaml.
