@@ -49,7 +49,7 @@ spec:
               echo "=== Authenticating ==="
               # The initial login role lets anyone list global auth methods; the password one is found by type.
               PW_AM_ID=$(boundary auth-methods list -scope-id global -keyring-type none -format json \
-                | grep -o '"id":"ampw_[^"]*"' | head -1 | cut -d'"' -f4)
+                | grep -o '"id":"ampw_[^"]*"' | head -1 | cut -d'"' -f4 || true)
               [ -n "$PW_AM_ID" ] || { echo "no password auth method in the global scope"; exit 1; }
               TOKEN=$(boundary authenticate password \
                 -auth-method-id "$PW_AM_ID" \
@@ -109,7 +109,7 @@ spec:
               # The operator role on the Remote Control project (identity-and-access SOP) administers Boundary.
               FILTER='"operator" in "/userinfo/roles" or "operator" in "/token/roles"'
               MG_ID=$(boundary managed-groups list -auth-method-id "$OIDC_AM_ID" -keyring-type none -format json \
-                | grep -o '{"id":"mgoidc_[^"]*"[^{}]*"name":"operator"' | head -1 | cut -d'"' -f4)
+                | grep -o '{"id":"mgoidc_[^"]*"[^{}]*"name":"operator"' | head -1 | cut -d'"' -f4 || true)
               if [ -z "$MG_ID" ]; then
                 MG_ID=$(boundary managed-groups create oidc -auth-method-id "$OIDC_AM_ID" -name operator \
                   -description "Zitadel role operator" -filter "$FILTER" -keyring-type none -format json \
@@ -118,7 +118,7 @@ spec:
                 boundary managed-groups update oidc -id "$MG_ID" -filter "$FILTER" -keyring-type none -format json >/dev/null
               fi
               ADMIN_ROLE=$(boundary roles list -scope-id global -keyring-type none -format json \
-                | grep -o '{"id":"r_[^"]*"[^{}]*"name":"Administration"' | head -1 | cut -d'"' -f4)
+                | grep -o '{"id":"r_[^"]*"[^{}]*"name":"Administration"' | head -1 | cut -d'"' -f4 || true)
               [ -n "$ADMIN_ROLE" ] || { echo "no Administration role in the global scope"; exit 1; }
               if ! boundary roles read -id "$ADMIN_ROLE" -keyring-type none -format json | grep -q "\"$MG_ID\""; then
                 boundary roles add-principals -id "$ADMIN_ROLE" -principal "$MG_ID" -keyring-type none -format json >/dev/null
