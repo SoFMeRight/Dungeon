@@ -285,6 +285,12 @@ data:
         - domain: authenticator.optcp.com
           answer: fc00:f1:ada:30::70
           enabled: true
+        - domain: cr.optcp.com
+          answer: 172.22.30.70
+          enabled: true
+        - domain: '*.cr.optcp.com'
+          answer: 172.22.30.70
+          enabled: true
         - domain: dtrack.optcp.com
           answer: 172.22.30.70
           enabled: true

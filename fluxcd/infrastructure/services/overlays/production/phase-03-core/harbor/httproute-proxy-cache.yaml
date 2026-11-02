@@ -18,6 +18,7 @@ spec:
       namespace: arylls-lookout
   hostnames:
     - "docker.cr.pcfae.com"
+    - "docker.cr.optcp.com"
   rules:
     - backendRefs:
         - name: harbor-proxy-cache-proxy
@@ -42,6 +43,7 @@ spec:
       namespace: arylls-lookout
   hostnames:
     - "ghcr.cr.pcfae.com"
+    - "ghcr.cr.optcp.com"
   rules:
     - backendRefs:
         - name: harbor-proxy-cache-proxy
@@ -66,6 +68,7 @@ spec:
       namespace: arylls-lookout
   hostnames:
     - "quay.cr.pcfae.com"
+    - "quay.cr.optcp.com"
   rules:
     - backendRefs:
         - name: harbor-proxy-cache-proxy
@@ -90,6 +93,7 @@ spec:
       namespace: arylls-lookout
   hostnames:
     - "lscr.cr.pcfae.com"
+    - "lscr.cr.optcp.com"
   rules:
     - backendRefs:
         - name: harbor-proxy-cache-proxy

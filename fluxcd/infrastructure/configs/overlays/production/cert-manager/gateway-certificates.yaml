@@ -400,6 +400,21 @@ spec:
   dnsNames:
     - "*.cr.pcfae.com"
 ---
+# Harbor's canonical name on phloem only; it is internal, so it never rides cell-membrane's
+# public *.optcp.com wildcard. Covers the registry and its proxy-cache subdomains.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cr-optcp-com-phloem-tls
+spec:
+  secretName: cr-optcp-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "cr.optcp.com"
+    - "*.cr.optcp.com"
+---
 # siem.prplanit.com on phloem: a certificate for the one name, rather than a copy of the
 # *.prplanit.com wildcard key on a second gateway.
 apiVersion: cert-manager.io/v1

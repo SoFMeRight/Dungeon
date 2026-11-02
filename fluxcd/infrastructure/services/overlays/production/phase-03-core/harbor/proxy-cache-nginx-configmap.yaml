@@ -28,15 +28,20 @@ data:
       # Map subdomain to Harbor proxy cache project name
       map $host $proxy_cache_project {
         docker.cr.pcfae.com  docker-cache;
+        docker.cr.optcp.com  docker-cache;
         ghcr.cr.pcfae.com    ghcr-cache;
+        ghcr.cr.optcp.com    ghcr-cache;
         quay.cr.pcfae.com    quay-cache;
+        quay.cr.optcp.com    quay-cache;
         lscr.cr.pcfae.com    lscr-cache;
+        lscr.cr.optcp.com    lscr-cache;
         default              "";
       }
 
       server {
         listen 8080;
-        server_name docker.cr.pcfae.com ghcr.cr.pcfae.com quay.cr.pcfae.com lscr.cr.pcfae.com;
+        server_name docker.cr.pcfae.com ghcr.cr.pcfae.com quay.cr.pcfae.com lscr.cr.pcfae.com
+                    docker.cr.optcp.com ghcr.cr.optcp.com quay.cr.optcp.com lscr.cr.optcp.com;
 
         set $harbor_upstream http://harbor.optcp-supply-chain.svc.cluster.local;
 
@@ -53,7 +58,7 @@ data:
             local www_auth = ngx.header["Www-Authenticate"]
             if www_auth then
               www_auth = www_auth:gsub(
-                'realm="https://cr%.pcfae%.com/',
+                'realm="https://cr%.%a+%.com/',
                 'realm="https://' .. ngx.var.host .. '/'
               )
               ngx.header["Www-Authenticate"] = www_auth
@@ -172,7 +177,7 @@ data:
             local www_auth = ngx.header["Www-Authenticate"]
             if www_auth then
               www_auth = www_auth:gsub(
-                'realm="https://cr%.pcfae%.com/',
+                'realm="https://cr%.%a+%.com/',
                 'realm="https://' .. ngx.var.host .. '/'
               )
               ngx.header["Www-Authenticate"] = www_auth

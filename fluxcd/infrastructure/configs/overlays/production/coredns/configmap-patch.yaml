@@ -43,6 +43,21 @@ data:
         cache 30
         reload
     }
+    # cr.optcp.com: Harbor's canonical name, same in-cluster route as cr.pcfae.com.
+    cr.optcp.com:53 {
+        errors
+        template IN AAAA cluster.local {
+           rcode NOERROR
+        }
+        rewrite stop name exact cr.optcp.com phloem-gateway-istio.arylls-lookout.svc.cluster.local answer auto
+        kubernetes cluster.local {
+           pods insecure
+           ttl 30
+        }
+        forward . 10.0.0.1 10.0.0.2
+        cache 30
+        reload
+    }
     # Route vpn.optcp.com to the in-cluster cell-membrane gateway Service by
     # name (follows its ClusterIP); the NetBird router peers here without hairpin.
     vpn.optcp.com:53 {

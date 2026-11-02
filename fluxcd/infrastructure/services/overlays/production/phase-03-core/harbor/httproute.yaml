@@ -11,6 +11,7 @@ spec:
       namespace: arylls-lookout
   hostnames:
     - "cr.pcfae.com"
+    - "cr.optcp.com"
   rules:
     - matches:
         - path:
