@@ -117,7 +117,7 @@ data:
           }
 
           proxy_pass $harbor_upstream;
-          proxy_set_header Host cr.pcfae.com;
+          proxy_set_header Host cr.optcp.com;
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto https;
@@ -168,7 +168,7 @@ data:
           }
 
           proxy_pass $harbor_upstream;
-          proxy_set_header Host cr.pcfae.com;
+          proxy_set_header Host cr.optcp.com;
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto https;

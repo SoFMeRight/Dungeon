@@ -21,7 +21,7 @@ spec:
       targetPath: persistence.imageChartStorage.s3.secretkey
   values:
     # External URL
-    externalURL: https://cr.pcfae.com
+    externalURL: https://cr.optcp.com
 
     # Harbor components - 3 replicas for HA with fully qualified images
     portal:
