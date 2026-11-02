@@ -15,3 +15,7 @@ resources:
   - serviceaccount.yaml
   - pdb.yaml
   - scheduledbackup-postgres.yaml
+  - init-rbac.yaml
+  - init-job.yaml
+  - configuration-script.yaml
+  - configuration-job.yaml

@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: boundary-init
+spec:
+  template:
+    metadata:
+      annotations:
+        prplanit.com/init-for: database-3
+    spec:
+      initContainers:
+        - name: openbao-reachable
+          image: docker.io/alpine/k8s:1.37.1
+          env:
+            - name: VAULT_ADDR
+              value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
+            - name: VAULT_ROLE
+              value: boundary-init
+        - name: render-config
+          image: docker.io/prplanit/oh-ci:0.0.1
+      containers:
+        - name: boundary-init
+          image: docker.io/hashicorp/boundary:0.21.3
+        - name: store-admin-login
+          image: docker.io/alpine/k8s:1.37.1
+          env:
+            - name: VAULT_ADDR
+              value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
+            - name: VAULT_ROLE
+              value: boundary-init
+            - name: VAULT_PATH
+              value: zeldas-letter/data/apps/boundary

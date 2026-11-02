@@ -10,9 +10,6 @@ resources:
   - externalsecret-kms-keys.yaml
   - externalsecret-oidc.yaml
   - externalsecret-postgres-backup.yaml
-  - init-rbac.yaml
-  - init-job.yaml
-  - oidc-setup-job.yaml
 
 patches:
   - path: controller-deployment-patch.yaml
@@ -24,3 +21,5 @@ patches:
   - path: externalsecret-patch.yaml
   - path: controller-configmap-patch.yaml
   - path: worker-configmap-patch.yaml
+  - path: init-job-patch.yaml
+  - path: configuration-patch.yaml

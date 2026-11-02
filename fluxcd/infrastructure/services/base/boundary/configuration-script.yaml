@@ -1,0 +1,82 @@
+# Logic only; every name, URL and filter arrives as an environment variable from the overlay.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: boundary-configuration
+data:
+  configure.sh: |
+    #!/bin/sh
+    set -eu
+    for v in BOUNDARY_ADDR OIDC_ISSUER OIDC_API_URL_PREFIX OIDC_AUTH_METHOD_NAME OIDC_AUTH_METHOD_DESCRIPTION \
+             ADMIN_LOGIN_NAME MANAGED_GROUP_NAME MANAGED_GROUP_FILTER ADMIN_ROLE_NAME CRED_STORE_NAME \
+             OIDC_CLIENT_ID OIDC_CLIENT_SECRET ADMIN_PASSWORD; do
+      eval "[ -n \"\${$v:-}\" ]" || { echo "$v is not set"; exit 1; }
+    done
+    export BOUNDARY_ADDR
+    b() { boundary "$@" -keyring-type none -format json; }
+    ids() { grep -o "\"id\":\"$1_[^\"]*\"" | cut -d'"' -f4; }
+    # Finds a resource by name: $1 kind, $2 id prefix, $3 name, rest list arguments.
+    by_name() {
+      kind=$1; prefix=$2; name=$3; shift 3
+      for id in $(b "$kind" list "$@" | ids "$prefix" || true); do
+        b "$kind" read -id "$id" | grep -q "\"name\":\"$name\"" && { echo "$id"; return 0; }
+      done
+      return 0
+    }
+
+    echo "=== Authenticating ==="
+    # The initial login role lets anyone list global auth methods; the password one is found by type.
+    PW_AM_ID=$(b auth-methods list -scope-id global | ids ampw | head -1 || true)
+    [ -n "$PW_AM_ID" ] || { echo "no password auth method in the global scope"; exit 1; }
+    BOUNDARY_TOKEN=$(b authenticate password -auth-method-id "$PW_AM_ID" -login-name "$ADMIN_LOGIN_NAME" \
+      -password env://ADMIN_PASSWORD | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+    export BOUNDARY_TOKEN
+
+    echo "=== Auth method '$OIDC_AUTH_METHOD_NAME' ==="
+    OIDC_AM_ID=$(b scopes read -id global | grep -o '"primary_auth_method_id":"amoidc_[^"]*"' | cut -d'"' -f4 || true)
+    if [ -n "$OIDC_AM_ID" ]; then
+      b auth-methods update oidc -id "$OIDC_AM_ID" -issuer "$OIDC_ISSUER" -client-id "$OIDC_CLIENT_ID" \
+        -client-secret "$OIDC_CLIENT_SECRET" -api-url-prefix "$OIDC_API_URL_PREFIX" \
+        -name "$OIDC_AUTH_METHOD_NAME" -description "$OIDC_AUTH_METHOD_DESCRIPTION" >/dev/null
+    else
+      OIDC_AM_ID=$(b auth-methods create oidc -scope-id global -issuer "$OIDC_ISSUER" -client-id "$OIDC_CLIENT_ID" \
+        -client-secret "$OIDC_CLIENT_SECRET" -signing-algorithm RS256 -api-url-prefix "$OIDC_API_URL_PREFIX" \
+        -name "$OIDC_AUTH_METHOD_NAME" -description "$OIDC_AUTH_METHOD_DESCRIPTION" | ids amoidc | head -1)
+    fi
+    echo "auth method $OIDC_AM_ID"
+    b auth-methods list -scope-id global | ids amoidc | grep -v "^$OIDC_AM_ID$" \
+      | sed 's/^/WARN: extra OIDC auth method, not managed here: /' || true
+    b auth-methods change-state oidc -id "$OIDC_AM_ID" -state active-public >/dev/null
+    b scopes update -id global -primary-auth-method-id "$OIDC_AM_ID" >/dev/null
+
+    echo "=== Managed group '$MANAGED_GROUP_NAME' in role '$ADMIN_ROLE_NAME' ==="
+    MG_ID=$(by_name managed-groups mgoidc "$MANAGED_GROUP_NAME" -auth-method-id "$OIDC_AM_ID")
+    if [ -n "$MG_ID" ]; then
+      b managed-groups update oidc -id "$MG_ID" -filter "$MANAGED_GROUP_FILTER" >/dev/null
+    else
+      MG_ID=$(b managed-groups create oidc -auth-method-id "$OIDC_AM_ID" -name "$MANAGED_GROUP_NAME" \
+        -filter "$MANAGED_GROUP_FILTER" | ids mgoidc | head -1)
+    fi
+    ADMIN_ROLE=$(by_name roles r "$ADMIN_ROLE_NAME" -scope-id global)
+    [ -n "$ADMIN_ROLE" ] || { echo "no role named '$ADMIN_ROLE_NAME' in the global scope"; exit 1; }
+    b roles read -id "$ADMIN_ROLE" | grep -q "\"$MG_ID\"" \
+      || b roles add-principals -id "$ADMIN_ROLE" -principal "$MG_ID" >/dev/null
+    echo "managed group $MG_ID is a principal of $ADMIN_ROLE"
+
+    echo "=== Credential store '$CRED_STORE_NAME' token ==="
+    CS_ID=$(by_name credential-stores csvlt "$CRED_STORE_NAME" -scope-id global -recursive)
+    if [ -z "$CS_ID" ]; then
+      echo "no Vault credential store named '$CRED_STORE_NAME'; nothing to renew"
+    else
+      STATUS=$(b credential-stores read -id "$CS_ID" | grep -o '"token_status":"[^"]*"' | cut -d'"' -f4 || true)
+      echo "store $CS_ID token_status=${STATUS:-unknown}"
+      if [ "$STATUS" != "current" ]; then
+        : >/work/need-token
+        n=0; until [ -e /work/vault-token ]; do n=$((n+1)); [ "$n" -gt 150 ] && { echo "no token arrived"; exit 1; }; sleep 2; done
+        VAULT_TOKEN=$(cat /work/vault-token); export VAULT_TOKEN; rm -f /work/vault-token
+        b credential-stores update vault -id "$CS_ID" -vault-token env://VAULT_TOKEN >/dev/null
+        echo "store $CS_ID token replaced"
+      fi
+    fi
+    : >/work/done
+    echo "=== Done ==="

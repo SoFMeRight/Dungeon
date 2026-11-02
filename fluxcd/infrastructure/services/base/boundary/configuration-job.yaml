@@ -1,0 +1,128 @@
+# Reconciles Boundary's auth method, admin managed group and credential-store token from the
+# overlay's values; re-runs when its spec changes.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"  # immutable one-shot Job: force-replace on image bump, not wedge
+  name: boundary-configuration
+spec:
+  # An hour: sbom-operator scans hourly and must see the finished pod.
+  ttlSecondsAfterFinished: 3600
+  backoffLimit: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: boundary
+        app.kubernetes.io/component: configuration
+    spec:
+      serviceAccountName: boundary-controller
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: configure
+          image: PLACEHOLDER_BOUNDARY_IMAGE
+          command: ["/bin/sh", "/scripts/configure.sh"]
+          env:
+            - name: BOUNDARY_ADDR
+              value: PLACEHOLDER_BOUNDARY_ADDR
+            - name: OIDC_ISSUER
+              value: PLACEHOLDER_OIDC_ISSUER
+            - name: OIDC_API_URL_PREFIX
+              value: PLACEHOLDER_OIDC_API_URL_PREFIX
+            - name: OIDC_AUTH_METHOD_NAME
+              value: PLACEHOLDER_OIDC_AUTH_METHOD_NAME
+            - name: OIDC_AUTH_METHOD_DESCRIPTION
+              value: PLACEHOLDER_OIDC_AUTH_METHOD_DESCRIPTION
+            - name: ADMIN_LOGIN_NAME
+              value: PLACEHOLDER_ADMIN_LOGIN_NAME
+            - name: MANAGED_GROUP_NAME
+              value: PLACEHOLDER_MANAGED_GROUP_NAME
+            - name: MANAGED_GROUP_FILTER
+              value: PLACEHOLDER_MANAGED_GROUP_FILTER
+            - name: ADMIN_ROLE_NAME
+              value: PLACEHOLDER_ADMIN_ROLE_NAME
+            - name: CRED_STORE_NAME
+              value: PLACEHOLDER_CRED_STORE_NAME
+            - name: HOME
+              value: /tmp
+          envFrom:
+            - secretRef:
+                name: boundary-oidc
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - name: work
+              mountPath: /work
+            - name: tmp
+              mountPath: /tmp
+        # Mints the store's periodic token through OpenBao's Kubernetes auth only when configure asks.
+        - name: vault-token
+          image: PLACEHOLDER_K8S_IMAGE
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              n=0
+              until [ -e /work/need-token ] || [ -e /work/done ]; do
+                n=$((n+1)); [ "$n" -gt 300 ] && { echo "configure never finished"; exit 1; }; sleep 2
+              done
+              if [ -e /work/need-token ]; then
+                JWT=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+                curl -sf -X POST "$VAULT_ADDR/v1/auth/kubernetes/login" \
+                  -d "{\"jwt\":\"$JWT\",\"role\":\"$VAULT_ROLE\"}" | jq -r .auth.client_token >/work/vault-token.part
+                mv /work/vault-token.part /work/vault-token
+                n=0
+                until [ -e /work/done ]; do n=$((n+1)); [ "$n" -gt 150 ] && exit 1; sleep 2; done
+              fi
+          env:
+            - name: VAULT_ADDR
+              value: PLACEHOLDER_VAULT_ADDR
+            - name: VAULT_ROLE
+              value: PLACEHOLDER_VAULT_ROLE
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 64Mi
+          volumeMounts:
+            - name: work
+              mountPath: /work
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: scripts
+          configMap:
+            name: boundary-configuration
+        - name: work
+          emptyDir:
+            sizeLimit: 1Mi
+        - name: tmp
+          emptyDir:
+            sizeLimit: 16Mi

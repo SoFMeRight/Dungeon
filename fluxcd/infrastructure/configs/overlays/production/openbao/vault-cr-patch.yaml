@@ -172,6 +172,9 @@ spec:
           path "optcp/data/apps/boundary/targets/*" {
             capabilities = ["read"]
           }
+          path "zeldas-letter/data/apps/boundary-dungeon-pedestal" {
+            capabilities = ["read"]
+          }
       # boundary-init stores the admin login database init generates; it writes, never reads.
       - name: boundary-init
         rules: |
