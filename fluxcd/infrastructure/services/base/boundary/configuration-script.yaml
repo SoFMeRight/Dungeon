@@ -101,9 +101,11 @@ data:
       b credential-libraries update vault-ssh-certificate -id "$LIB_ID" -vault-path "$CRED_LIBRARY_PATH" \
         -username "$CRED_LIBRARY_USERNAME" -ttl "$CRED_LIBRARY_TTL" -extension permit-pty= >/dev/null
     else
-      LIB_ID=$(b credential-libraries create vault-ssh-certificate -credential-store-id "$CS_ID" -name "$CRED_LIBRARY_NAME" \
+      OUT=$(b credential-libraries create vault-ssh-certificate -credential-store-id "$CS_ID" -name "$CRED_LIBRARY_NAME" \
         -vault-path "$CRED_LIBRARY_PATH" -username "$CRED_LIBRARY_USERNAME" -key-type ed25519 -ttl "$CRED_LIBRARY_TTL" \
-        -extension permit-pty= | ids clvlt | head -1)
+        -extension permit-pty= 2>&1 || true)
+      LIB_ID=$(printf '%s' "$OUT" | ids clvlt | head -1 || true)
+      [ -n "$LIB_ID" ] || { echo "library create failed: $OUT"; exit 1; }
     fi
     b targets read -id "$TARGET_ID" | grep -q "\"$LIB_ID\"" \
       || b targets add-credential-sources -id "$TARGET_ID" -brokered-credential-source "$LIB_ID" >/dev/null
