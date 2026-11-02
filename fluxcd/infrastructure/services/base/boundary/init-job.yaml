@@ -93,7 +93,8 @@ spec:
               set -eu
               rc=0
               boundary database init -config /boundary/controller.hcl -format json >/work/init.out 2>/work/init.err || rc=$?
-              if grep -qi "already .*initialized" /work/init.out /work/init.err; then
+              # Controllers hold the schema lock only on an initialised database.
+              if grep -qi -e "already .*initialized" -e "Lock failed" /work/init.out /work/init.err; then
                 echo "database already initialised"
                 : >/work/noop
               elif [ "$rc" = 0 ] && grep -q '"auth_method_id"' /work/init.out; then

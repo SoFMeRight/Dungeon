@@ -27,6 +27,10 @@ data:
       return 0
     }
 
+    echo "=== Waiting for the controller API ==="
+    n=0; until anon auth-methods list -scope-id global >/dev/null 2>&1; do
+      n=$((n+1)); [ "$n" -gt 60 ] && { echo "controller not answering at $BOUNDARY_ADDR"; exit 1; }; sleep 5
+    done
     echo "=== Authenticating ==="
     # The initial login role lets anyone list global auth methods; the password one is found by type.
     PW_AM_ID=$(anon auth-methods list -scope-id global | ids ampw | head -1 || true)
