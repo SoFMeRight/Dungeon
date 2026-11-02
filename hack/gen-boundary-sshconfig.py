@@ -23,6 +23,6 @@ def render(exec_cmd, relay, label):
                 ""]
     return "\n".join(out)
 
-(root / 'bash/boundary/optcp.sshconfig').write_text(render('sh %d/.ssh/optcp-cert.sh', 'nc', 'POSIX'))
-(root / 'bash/boundary/optcp.windows.sshconfig').write_text(render('powershell -NoProfile -ExecutionPolicy Bypass -File %d\\.ssh\\optcp-cert.ps1', 'ncat', 'Windows'))
+(root / 'bash/boundary/optcp.sshconfig').write_text(render('sh %d/.ssh/optcp-cert.sh --no-login', 'nc', 'POSIX'))
+(root / 'bash/boundary/optcp.windows.sshconfig').write_text(render('powershell -NoProfile -ExecutionPolicy Bypass -File %d\\.ssh\\optcp-cert.ps1 -NoLogin', 'ncat', 'Windows'))
 print(f"{len(names)} targets")
