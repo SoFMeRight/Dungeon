@@ -8,6 +8,9 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   replicas: 1
+  # RWO volumes attach to one pod at a time: the old pod must release them first.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: crowdsec-dashboard
