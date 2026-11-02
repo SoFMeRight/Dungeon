@@ -19,7 +19,7 @@ spec:
             - -c
             - |
               echo "Waiting for init job to complete first..."
-              until [ "$(kubectl get job zitadel-init -n zeldas-lullaby -o jsonpath='{.status.succeeded}' 2>/dev/null)" = "1" ]; do
+              until [ "$(kubectl get job zitadel-init -n optcp-identity -o jsonpath='{.status.succeeded}' 2>/dev/null)" = "1" ]; do
                 echo "Init job not complete yet, waiting..."
                 sleep 5
               done

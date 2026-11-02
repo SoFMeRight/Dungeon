@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: zeldas-lullaby
+namespace: optcp-identity
 
 resources:
   - ../../../../base/zitadel
@@ -54,3 +54,4 @@ patches:
     target:
       kind: ExternalSecret
       name: zitadel-redis-password
+  - path: hold-for-move-patch.yaml

@@ -13,9 +13,9 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: zeldas-lullaby.zitadel.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-identity.zitadel.postgres
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: zeldas-lullaby.zitadel.redis
+        policy.prplanit.com/access-scope-redis: optcp-identity.zitadel.redis
     spec:
       containers:
         - name: zitadel

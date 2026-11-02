@@ -13,7 +13,7 @@ spec:
             - sh
             - -c
             - |
-              until pg_isready -h zitadel-postgres-rw.zeldas-lullaby.svc.cluster.local -p 5432 -U postgres; do
+              until pg_isready -h zitadel-postgres-rw.optcp-identity.svc.cluster.local -p 5432 -U postgres; do
                 echo "waiting for postgres"
                 sleep 2
               done

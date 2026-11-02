@@ -124,13 +124,15 @@ spec:
           path "prplanit/metadata/*" {
             capabilities = ["read", "list"]
           }
+      # zitadel-configuration writes the admin-SA PAT it mints and caches the flatroles
+      # signing key it reads back.
       - name: zitadel-provisioner
         rules: |
-          path "zeldas-letter/data/apps/zitadel" {
-            capabilities = ["create", "update", "read", "patch"]
+          path "optcp/data/apps/zitadel/admin" {
+            capabilities = ["create", "update", "patch"]
           }
-          path "zeldas-letter/metadata/apps/zitadel" {
-            capabilities = ["read", "list"]
+          path "optcp/data/apps/zitadel/app" {
+            capabilities = ["create", "update", "patch", "read"]
           }
       # dependency-track-configuration issues Dependency-Track keys; it writes them, never reads.
       - name: dependency-track-configuration
@@ -247,7 +249,7 @@ spec:
             ttl: 24h
           - name: zitadel-vault-sync
             bound_service_account_names: ["zitadel-configuration"]
-            bound_service_account_namespaces: ["zeldas-lullaby"]
+            bound_service_account_namespaces: ["optcp-identity"]
             policies: ["zitadel-provisioner"]
             ttl: 1h
           - name: dependency-track-configuration

@@ -1,0 +1,59 @@
+$patch: delete
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: zitadel-postgres
+---
+$patch: delete
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: zitadel-postgres-daily
+---
+$patch: delete
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: zitadel-redis
+---
+$patch: delete
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisSentinel
+metadata:
+  name: zitadel-sentinel
+---
+$patch: delete
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zitadel
+---
+$patch: delete
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zitadel-login-v2
+---
+$patch: delete
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zitadel-flatroles
+---
+$patch: delete
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: zitadel-init
+---
+$patch: delete
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: zitadel-setup
+---
+$patch: delete
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: zitadel-configuration

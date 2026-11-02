@@ -141,7 +141,11 @@ spec:
             - "semaphore-*"
             - "twofauth-*"
             - "unifi-*"
-            - "zitadel-*"
+      # optcp-identity — zitadel's configuration Job and Redis.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-identity]
+          names: ["zitadel-*"]
       # farores-wind — netbird-router (WireGuard subnet router needs a writable rootfs for the agent).
       - resources:
           kinds: [Pod]

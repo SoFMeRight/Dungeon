@@ -9,4 +9,3 @@ resources:
   - cnp-netbird-turn.yaml
   - cnp-webhooks.yaml
   - cnp-vault.yaml
-  - cnp-zitadel-internal.yaml

@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-zitadel-configuration-to-vault
+spec:
+  description: >-
+    zitadel-configuration writes the admin-SA PAT and caches the flatroles signing
+    key in OpenBao (zeldas-lullaby) on 8200.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: zitadel-configuration
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: zeldas-lullaby
+            app: vault
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP

@@ -11,8 +11,8 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/zeldas-lullaby/sa/zitadel-redis
-              - cluster.local/ns/zeldas-lullaby/sa/zitadel-sentinel
+              - cluster.local/ns/optcp-identity/sa/zitadel-redis
+              - cluster.local/ns/optcp-identity/sa/zitadel-sentinel
       to:
         - operation:
             ports: ["6379"]
@@ -30,8 +30,8 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/zeldas-lullaby/sa/zitadel-sentinel
-              - cluster.local/ns/zeldas-lullaby/sa/zitadel-redis
+              - cluster.local/ns/optcp-identity/sa/zitadel-sentinel
+              - cluster.local/ns/optcp-identity/sa/zitadel-redis
       to:
         - operation:
             ports: ["26379"]

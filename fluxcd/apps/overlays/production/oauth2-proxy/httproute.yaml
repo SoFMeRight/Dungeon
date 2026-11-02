@@ -2,7 +2,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: oauth2-proxy
-  namespace: zeldas-lullaby
+  namespace: optcp-identity
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Administration (Zelda's Lullaby🎵)"
@@ -33,7 +33,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: oauth2-proxy-signin
-  namespace: zeldas-lullaby
+  namespace: optcp-identity
   annotations:
     # /oauth2/* path-helper on an already-monitored app host (books.pcfae.com has
     # its own app route); the oauth2-proxy backend is covered by the oa2p.pcfae.com
@@ -62,7 +62,7 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: oauth2-proxy-signin-cell-membrane
-  namespace: zeldas-lullaby
+  namespace: optcp-identity
   annotations:
     # /oauth2/* path-helper on already-monitored public app hosts (z2m.arbitorium.com,
     # books/music.optcp.com each have their own app routes); the oauth2-proxy backend

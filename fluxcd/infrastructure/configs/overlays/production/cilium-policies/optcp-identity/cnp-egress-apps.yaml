@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-apps-egress
+spec:
+  description: >-
+    zitadel (SMTP, OIDC/SAML federation) and oauth2-proxy (OIDC discovery +
+    upstreams) reach open-ended external sets, so world+cluster is granted; DBs
+    and the mesh ride the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - zitadel
+          - oauth2-proxy
+  egress:
+    - toEntities:
+        - world
+        - cluster

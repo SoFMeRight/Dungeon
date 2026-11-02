@@ -14,7 +14,7 @@ data:
 
     Database:
       Postgres:
-        Host: zitadel-postgres-rw.zeldas-lullaby.svc.cluster.local
+        Host: zitadel-postgres-rw.optcp-identity.svc.cluster.local
         Port: 5432
         Database: zitadel
         User:
@@ -134,7 +134,7 @@ data:
       Connectors:
         Redis:
           Enabled: true
-          Addr: zitadel-redis-master.zeldas-lullaby.svc.cluster.local:6379
+          Addr: zitadel-redis-master.optcp-identity.svc.cluster.local:6379
           CircuitBreaker:
             Interval: 30s
             MaxConsecutiveFailures: 50

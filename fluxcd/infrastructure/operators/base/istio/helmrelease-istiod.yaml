@@ -82,7 +82,7 @@ spec:
       extensionProviders:
         - name: oauth2-proxy
           envoyExtAuthzHttp:
-            service: oauth2-proxy.zeldas-lullaby.svc.cluster.local
+            service: oauth2-proxy.optcp-identity.svc.cluster.local
             port: 4180
             # No pathPrefix: the check runs against the original path in oauth2-proxy's
             # proxy-handler mode → 302 auto-redirect to login when unauthenticated,

@@ -25,7 +25,7 @@ spec:
               - cluster.local/ns/optcp-sibyl-system/sa/dependency-track-postgres
               - cluster.local/ns/zeldas-lullaby/sa/netbird-postgres
               - cluster.local/ns/zeldas-lullaby/sa/vaultwarden-postgres
-              - cluster.local/ns/zeldas-lullaby/sa/zitadel-postgres
+              - cluster.local/ns/optcp-identity/sa/zitadel-postgres
       to:
         - operation:
             ports: ["9443"]

@@ -99,7 +99,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: redis-sentinel-repair
-  namespace: zeldas-lullaby
+  namespace: optcp-identity
   labels:
     app: redis-sentinel-repair
 rules:
@@ -114,7 +114,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: redis-sentinel-repair
-  namespace: zeldas-lullaby
+  namespace: optcp-identity
   labels:
     app: redis-sentinel-repair
 roleRef:

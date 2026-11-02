@@ -19,7 +19,7 @@
     k8s_app_name: "{{ lookup('ansible.builtin.env', 'K8S_APP_NAME') }}"
     vault_addr: "{{ lookup('ansible.builtin.env', 'VAULT_ADDR') }}"
     vault_role: "{{ lookup('ansible.builtin.env', 'VAULT_ROLE') }}"
-    vault_path: "{{ lookup('ansible.builtin.env', 'VAULT_PATH') }}"   # full KV-v2 data path, as the bash used it
+    vault_path: "{{ lookup('ansible.builtin.env', 'VAULT_PATH') }}"   # KV-v2 data path holding the app's entries
     sa_jwt: "{{ lookup('ansible.builtin.file', '/var/run/secrets/kubernetes.io/serviceaccount/token') }}"
     flatroles_url: "http://zitadel-flatroles.{{ app_namespace }}.svc.cluster.local:8080"
 
@@ -68,16 +68,16 @@
           role: "{{ vault_role }}"
       register: vault_login
 
-    - name: Set Vault token + KV-v2 data URL
+    - name: Set Vault token + KV-v2 entry URLs
       ansible.builtin.set_fact:
         vault_token: "{{ vault_login.json.auth.client_token }}"
-        vault_data_url: "{{ vault_addr }}/v1/{{ vault_path }}"
+        vault_admin_url: "{{ vault_addr }}/v1/{{ vault_path }}/admin"
+        vault_app_url: "{{ vault_addr }}/v1/{{ vault_path }}/app"
 
     # ------------------------------------------------- step 1: admin-SA -> Vault
-    # merge-patch so sibling keys (redis/backup/etc.) are never clobbered.
     - name: "step 1: store admin-SA creds in Vault"
       ansible.builtin.uri:
-        url: "{{ vault_data_url }}"
+        url: "{{ vault_admin_url }}"
         method: PATCH
         headers:
           X-Vault-Token: "{{ vault_token }}"
@@ -85,8 +85,8 @@
         body_format: json
         body:
           data:
-            admin-sa-token: "{{ admin_pat }}"
-            admin-sa-userId: "{{ admin_user_id }}"
+            TOKEN: "{{ admin_pat }}"
+            USER_ID: "{{ admin_user_id }}"
         status_code: [200, 204]
 
     # --------------------------------------------- step 2: instance features
@@ -244,25 +244,12 @@
         that: client_id | length > 0
         fail_msg: "no clientId resolved"
 
-    - name: "step 3: store clientId in Vault"
-      ansible.builtin.uri:
-        url: "{{ vault_data_url }}"
-        method: PATCH
-        headers:
-          X-Vault-Token: "{{ vault_token }}"
-          Content-Type: application/merge-patch+json
-        body_format: json
-        body:
-          data:
-            k8s-oidc-client-id: "{{ client_id }}"
-        status_code: [200, 204]
-
     # --------------------------------- step 4: flatRoles v2 (fail-closed)
     # Executions are wired (and v1 retired) only after the target passes a /healthz
     # self-test, so any failure leaves the prior state serving.
     - name: "step 4: read cached signing key from Vault"
       ansible.builtin.uri:
-        url: "{{ vault_data_url }}"
+        url: "{{ vault_app_url }}"
         method: GET
         headers:
           X-Vault-Token: "{{ vault_token }}"
@@ -342,7 +329,7 @@
 
     - name: "step 4: persist signing key to Vault when changed"
       ansible.builtin.uri:
-        url: "{{ vault_data_url }}"
+        url: "{{ vault_app_url }}"
         method: PATCH
         headers:
           X-Vault-Token: "{{ vault_token }}"

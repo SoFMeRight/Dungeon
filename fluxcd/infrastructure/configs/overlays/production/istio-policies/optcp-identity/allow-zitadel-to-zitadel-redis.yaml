@@ -1,17 +1,17 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-zitadel-to-zitadel-postgres
+  name: allow-zitadel-to-zitadel-redis
 spec:
   selector:
     matchLabels:
-      cnpg.io/cluster: zitadel-postgres
+      app: zitadel-redis
   action: ALLOW
   rules:
     - from:
         - source:
             principals:
-              - cluster.local/ns/zeldas-lullaby/sa/zitadel
+              - cluster.local/ns/optcp-identity/sa/zitadel
       to:
         - operation:
-            ports: ["5432"]
+            ports: ["6379"]

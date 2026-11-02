@@ -10,6 +10,7 @@ resources:
   - optcp-ci-runners.yaml
   - optcp-cloud.yaml
   - optcp-delivery-bag.yaml
+  - optcp-identity.yaml
   - optcp-infra-admin.yaml
   - optcp-media.yaml
   - optcp-shooting-gallery.yaml

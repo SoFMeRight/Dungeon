@@ -14,7 +14,7 @@ spec:
             - -c
             - |
               echo "Waiting for setup job to complete..."
-              until [ "$(kubectl get job zitadel-setup -n zeldas-lullaby -o jsonpath='{.status.succeeded}' 2>/dev/null)" = "1" ]; do
+              until [ "$(kubectl get job zitadel-setup -n optcp-identity -o jsonpath='{.status.succeeded}' 2>/dev/null)" = "1" ]; do
                 echo "Setup job not complete yet, waiting..."
                 sleep 5
               done

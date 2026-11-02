@@ -93,8 +93,10 @@ spec:
             kind: configmap
             name: velero-volume-policy
           includedNamespaces:
-            # Administrative services (vault, weave, zitadel)
+            # Administrative services (vault, weave)
             - zeldas-lullaby
+            # Identity: zitadel, oauth2-proxy (namespace plan, group H)
+            - optcp-identity
             # Archival/Content Management & Media Servers
             - temple-of-time
             # Cloud & collaboration (namespace plan rev1, group Y/Z)

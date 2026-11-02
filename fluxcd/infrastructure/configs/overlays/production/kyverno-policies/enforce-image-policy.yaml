@@ -33,6 +33,7 @@ spec:
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
+                - optcp-identity
                 - optcp-sibyl-system
                 - optcp-staff-suite
                 - optcp-supply-chain
@@ -106,6 +107,7 @@ spec:
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
+                - optcp-identity
                 - optcp-sibyl-system
                 - optcp-staff-suite
                 - optcp-supply-chain
@@ -183,6 +185,7 @@ spec:
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
+                - optcp-identity
                 - optcp-sibyl-system
                 - optcp-staff-suite
                 - optcp-supply-chain
@@ -259,6 +262,7 @@ spec:
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
+                - optcp-identity
                 - optcp-sibyl-system
                 - optcp-staff-suite
                 - optcp-supply-chain

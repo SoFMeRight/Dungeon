@@ -1,5 +1,5 @@
 # The zitadel-configuration Job writes Zitadel's generated credentials to OpenBao at
-# zeldas-letter/apps/zitadel; external-secrets reads them back.
+# optcp/apps/zitadel/{admin,app}; external-secrets reads them back.
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -13,7 +13,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/zeldas-lullaby/sa/zitadel-configuration
+              - cluster.local/ns/optcp-identity/sa/zitadel-configuration
       to:
         - operation:
             ports: ["8200"]

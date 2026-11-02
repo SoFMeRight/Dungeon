@@ -13,7 +13,7 @@ spec:
           command:
             - sh
             - -c
-            - until pg_isready -h zitadel-postgres-rw.zeldas-lullaby.svc.cluster.local -p 5432 -U postgres; do echo waiting for postgres; sleep 2; done
+            - until pg_isready -h zitadel-postgres-rw.optcp-identity.svc.cluster.local -p 5432 -U postgres; do echo waiting for postgres; sleep 2; done
 ---
 # Patch setup job sidecar containers to replace PLACEHOLDER_NAMESPACE with actual namespace
 apiVersion: batch/v1
@@ -30,7 +30,7 @@ spec:
             - -c
             - |
               echo "Waiting for setup container to terminate..."
-              until [ ! -z "$(kubectl get pod ${POD_NAME} -n zeldas-lullaby -o jsonpath='{.status.containerStatuses[?(@.name=='\''zitadel-setup'\'')].state.terminated}' 2>/dev/null)" ]; do
+              until [ ! -z "$(kubectl get pod ${POD_NAME} -n optcp-identity -o jsonpath='{.status.containerStatuses[?(@.name=='\''zitadel-setup'\'')].state.terminated}' 2>/dev/null)" ]; do
                 sleep 5
               done
               echo "Setup container terminated. Extracting sa.json..."
@@ -44,7 +44,7 @@ spec:
             - -c
             - |
               echo "Waiting for setup container to terminate..."
-              until [ ! -z "$(kubectl get pod ${POD_NAME} -n zeldas-lullaby -o jsonpath='{.status.containerStatuses[?(@.name=='\''zitadel-setup'\'')].state.terminated}' 2>/dev/null)" ]; do
+              until [ ! -z "$(kubectl get pod ${POD_NAME} -n optcp-identity -o jsonpath='{.status.containerStatuses[?(@.name=='\''zitadel-setup'\'')].state.terminated}' 2>/dev/null)" ]; do
                 sleep 5
               done
               echo "Setup container terminated. Extracting PAT..."
@@ -58,7 +58,7 @@ spec:
             - -c
             - |
               echo "Waiting for setup container to terminate..."
-              until [ ! -z "$(kubectl get pod ${POD_NAME} -n zeldas-lullaby -o jsonpath='{.status.containerStatuses[?(@.name=='\''zitadel-setup'\'')].state.terminated}' 2>/dev/null)" ]; do
+              until [ ! -z "$(kubectl get pod ${POD_NAME} -n optcp-identity -o jsonpath='{.status.containerStatuses[?(@.name=='\''zitadel-setup'\'')].state.terminated}' 2>/dev/null)" ]; do
                 sleep 5
               done
               echo "Setup container terminated. Extracting login client PAT..."

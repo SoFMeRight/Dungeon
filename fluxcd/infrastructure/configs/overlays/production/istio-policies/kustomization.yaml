@@ -20,6 +20,7 @@ resources:
   - optcp-ci-runners/
   - optcp-cloud/
   - optcp-delivery-bag/
+  - optcp-identity/
   - optcp-infra-admin/
   - optcp-media/
   - optcp-shooting-gallery/

@@ -4,9 +4,8 @@ metadata:
   name: allow-apps-egress
 spec:
   description: >-
-    These administrative apps reach open-ended external sets: zitadel (SMTP,
-    OIDC/SAML federation), netbird (WireGuard management/signal/TURN + peers),
-    oauth2-proxy (OIDC discovery + upstreams), semaphore (Ansible against the
+    These administrative apps reach open-ended external sets: netbird (WireGuard
+    management/signal/TURN + peers), semaphore (Ansible against the
     LAN/remote fleet + git), unifi-app (LAN UniFi devices + firmware), vaultwarden
     (push + HIBP), netbox-server (webhooks/scripts), and twofauth (service-icon
     fetch). Those cannot be allowlisted, so world+cluster is granted; DBs and
@@ -20,9 +19,7 @@ spec:
       - key: app
         operator: In
         values:
-          - zitadel
           - netbird
-          - oauth2-proxy
           - semaphore
           - unifi-app
           - vaultwarden
