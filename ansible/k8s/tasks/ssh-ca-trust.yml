@@ -7,7 +7,7 @@
 
 - name: Install optcp's SSH CA public key
   ansible.builtin.copy:
-    src: optcp-ssh-ca.pub
+    src: "{{ playbook_dir }}/../k8s/files/optcp-ssh-ca.pub"
     dest: /etc/ssh/optcp-ssh-ca.pub
     owner: root
     group: root

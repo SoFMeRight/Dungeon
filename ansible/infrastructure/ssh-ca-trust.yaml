@@ -1,0 +1,12 @@
+# Every optcp host trusts optcp's SSH CA, so Boundary-brokered and node-converge certificates
+# sign in without a key on the host. The Kubernetes nodes also get it from k8s/provision-hosts.yml.
+- name: Trust optcp's SSH CA
+  hosts: linux:docker
+  become: true
+  tasks:
+    - ansible.builtin.import_tasks: ../k8s/tasks/ssh-ca-trust.yml
+  handlers:
+    - name: Reload sshd
+      ansible.builtin.systemd_service:
+        name: ssh
+        state: reloaded

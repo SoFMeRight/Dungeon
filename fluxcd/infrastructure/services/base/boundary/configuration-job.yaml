@@ -49,14 +49,18 @@ spec:
               value: PLACEHOLDER_ADMIN_ROLE_NAME
             - name: CRED_STORE_NAME
               value: PLACEHOLDER_CRED_STORE_NAME
+            - name: CRED_STORE_TOKEN_GENERATION
+              value: PLACEHOLDER_CRED_STORE_TOKEN_GENERATION
             - name: CRED_LIBRARY_NAME
               value: PLACEHOLDER_CRED_LIBRARY_NAME
             - name: CRED_LIBRARY_PATH
               value: PLACEHOLDER_CRED_LIBRARY_PATH
-            - name: CRED_LIBRARY_USERNAME_ATTR
-              value: PLACEHOLDER_CRED_LIBRARY_USERNAME_ATTR
-            - name: CRED_LIBRARY_KEY_ATTR
-              value: PLACEHOLDER_CRED_LIBRARY_KEY_ATTR
+            - name: CRED_LIBRARY_USERNAME
+              value: PLACEHOLDER_CRED_LIBRARY_USERNAME
+            - name: CRED_LIBRARY_TTL
+              value: PLACEHOLDER_CRED_LIBRARY_TTL
+            - name: TARGET_NAME
+              value: PLACEHOLDER_TARGET_NAME
             - name: HOME
               value: /tmp
           envFrom:

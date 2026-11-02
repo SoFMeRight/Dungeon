@@ -9,7 +9,7 @@ data:
     set -eu
     for v in BOUNDARY_ADDR OIDC_ISSUER OIDC_API_URL_PREFIX OIDC_AUTH_METHOD_NAME OIDC_AUTH_METHOD_DESCRIPTION \
              ADMIN_LOGIN_NAME MANAGED_GROUP_NAME MANAGED_GROUP_FILTER ADMIN_ROLE_NAME CRED_STORE_NAME \
-             CRED_LIBRARY_NAME CRED_LIBRARY_PATH CRED_LIBRARY_USERNAME_ATTR CRED_LIBRARY_KEY_ATTR \
+             CRED_STORE_TOKEN_GENERATION CRED_LIBRARY_NAME CRED_LIBRARY_PATH CRED_LIBRARY_USERNAME CRED_LIBRARY_TTL TARGET_NAME \
              OIDC_CLIENT_ID OIDC_CLIENT_SECRET ADMIN_PASSWORD; do
       eval "[ -n \"\${$v:-}\" ]" || { echo "$v is not set"; exit 1; }
     done
@@ -72,33 +72,45 @@ data:
 
     echo "=== Credential store '$CRED_STORE_NAME' token ==="
     CS_ID=$(by_name credential-stores csvlt "$CRED_STORE_NAME" -scope-id global -recursive)
-    if [ -z "$CS_ID" ]; then
-      echo "no Vault credential store named '$CRED_STORE_NAME'; nothing to renew"
-    else
-      STATUS=$(b credential-stores read -id "$CS_ID" | grep -o '"token_status":"[^"]*"' | cut -d'"' -f4 || true)
-      echo "store $CS_ID token_status=${STATUS:-unknown}"
-      if [ "$STATUS" != "current" ]; then
-        : >/work/need-token
-        n=0; until [ -e /work/vault-token ]; do n=$((n+1)); [ "$n" -gt 150 ] && { echo "no token arrived"; exit 1; }; sleep 2; done
-        # -vault-token takes the value itself (no env:// form, unlike the certificate flags).
-        VAULT_TOKEN=$(cat /work/vault-token); rm -f /work/vault-token
-        b credential-stores update vault -id "$CS_ID" -vault-token "$VAULT_TOKEN" >/dev/null
-        unset VAULT_TOKEN
-        echo "store $CS_ID token replaced"
-      fi
-      echo "=== Credential library '$CRED_LIBRARY_NAME' ==="
-      LIB_ID=$(by_name credential-libraries clvlt "$CRED_LIBRARY_NAME" -credential-store-id "$CS_ID")
-      if [ -n "$LIB_ID" ]; then
-        b credential-libraries update vault-generic -id "$LIB_ID" -vault-path "$CRED_LIBRARY_PATH" \
-          -credential-mapping-override "username_attribute=$CRED_LIBRARY_USERNAME_ATTR" \
-          -credential-mapping-override "private_key_attribute=$CRED_LIBRARY_KEY_ATTR" >/dev/null
-      else
-        LIB_ID=$(b credential-libraries create vault-generic -credential-store-id "$CS_ID" -name "$CRED_LIBRARY_NAME" \
-          -vault-path "$CRED_LIBRARY_PATH" -credential-type ssh_private_key \
-          -credential-mapping-override "username_attribute=$CRED_LIBRARY_USERNAME_ATTR" \
-          -credential-mapping-override "private_key_attribute=$CRED_LIBRARY_KEY_ATTR" | ids clvlt | head -1)
-      fi
-      echo "library $LIB_ID reads $CRED_LIBRARY_PATH"
+    [ -n "$CS_ID" ] || { echo "no Vault credential store named '$CRED_STORE_NAME'"; exit 1; }
+    STATUS=$(b credential-stores read -id "$CS_ID" | grep -o '"token_status":"[^"]*"' | cut -d'"' -f4 || true)
+    # The description records which policy generation the token was minted with.
+    MARK="token-generation=$CRED_STORE_TOKEN_GENERATION"
+    DESC=$(b credential-stores read -id "$CS_ID" | grep -o '"description":"[^"]*"' | head -1 | cut -d'"' -f4 || true)
+    echo "store $CS_ID token_status=${STATUS:-unknown} ${DESC:-no-generation}"
+    if [ "$STATUS" != "current" ] || [ "$DESC" != "$MARK" ]; then
+      : >/work/need-token
+      n=0; until [ -e /work/vault-token ]; do n=$((n+1)); [ "$n" -gt 150 ] && { echo "no token arrived"; exit 1; }; sleep 2; done
+      # -vault-token takes the value itself (no env:// form, unlike the certificate flags).
+      VAULT_TOKEN=$(cat /work/vault-token); rm -f /work/vault-token
+      b credential-stores update vault -id "$CS_ID" -vault-token "$VAULT_TOKEN" -description "$MARK" >/dev/null
+      unset VAULT_TOKEN
+      echo "store $CS_ID token replaced ($MARK)"
     fi
+
+    echo "=== Credential library '$CRED_LIBRARY_NAME' (SSH certificate) on target '$TARGET_NAME' ==="
+    TARGET_ID=$(by_name targets 't[a-z]*' "$TARGET_NAME" -scope-id global -recursive)
+    [ -n "$TARGET_ID" ] || { echo "no target named '$TARGET_NAME'"; exit 1; }
+    LIB_ID=$(by_name credential-libraries clvlt "$CRED_LIBRARY_NAME" -credential-store-id "$CS_ID")
+    if [ -n "$LIB_ID" ] && ! b credential-libraries read -id "$LIB_ID" | grep -q '"type":"vault-ssh-certificate"'; then
+      b targets remove-credential-sources -id "$TARGET_ID" -brokered-credential-source "$LIB_ID" >/dev/null 2>&1 || true
+      b credential-libraries delete -id "$LIB_ID" >/dev/null
+      LIB_ID=""
+    fi
+    if [ -n "$LIB_ID" ]; then
+      b credential-libraries update vault-ssh-certificate -id "$LIB_ID" -vault-path "$CRED_LIBRARY_PATH" \
+        -username "$CRED_LIBRARY_USERNAME" -ttl "$CRED_LIBRARY_TTL" -extension permit-pty= >/dev/null
+    else
+      LIB_ID=$(b credential-libraries create vault-ssh-certificate -credential-store-id "$CS_ID" -name "$CRED_LIBRARY_NAME" \
+        -vault-path "$CRED_LIBRARY_PATH" -username "$CRED_LIBRARY_USERNAME" -key-type ed25519 -ttl "$CRED_LIBRARY_TTL" \
+        -extension permit-pty= | ids clvlt | head -1)
+    fi
+    b targets read -id "$TARGET_ID" | grep -q "\"$LIB_ID\"" \
+      || b targets add-credential-sources -id "$TARGET_ID" -brokered-credential-source "$LIB_ID" >/dev/null
+    for other in $(b credential-libraries list -credential-store-id "$CS_ID" | ids clvlt | grep -v "^$LIB_ID$" || true); do
+      b targets remove-credential-sources -id "$TARGET_ID" -brokered-credential-source "$other" >/dev/null 2>&1 || true
+      b credential-libraries delete -id "$other" >/dev/null && echo "removed undeclared library $other"
+    done
+    echo "library $LIB_ID signs at $CRED_LIBRARY_PATH as $CRED_LIBRARY_USERNAME for target $TARGET_ID"
     : >/work/done
     echo "=== Done ==="

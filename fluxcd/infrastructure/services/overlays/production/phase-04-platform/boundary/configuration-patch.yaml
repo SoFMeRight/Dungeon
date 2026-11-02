@@ -7,7 +7,7 @@ spec:
   template:
     metadata:
       annotations:
-        prplanit.com/configure-for: moved-to-optcp-remote-access-3
+        prplanit.com/configure-for: ssh-certificates-1
     spec:
       containers:
         - name: configure
@@ -34,14 +34,19 @@ spec:
               value: Administration
             - name: CRED_STORE_NAME
               value: openbao
+            # Bump when the boundary OpenBao role's policies change, so the store's token is re-minted.
+            - name: CRED_STORE_TOKEN_GENERATION
+              value: "2"
             - name: CRED_LIBRARY_NAME
-              value: dungeon-pedestal-key
+              value: ssh-certificate
             - name: CRED_LIBRARY_PATH
-              value: optcp/data/apps/boundary/targets/dungeon-pedestal
-            - name: CRED_LIBRARY_USERNAME_ATTR
-              value: /data/SSH_USERNAME
-            - name: CRED_LIBRARY_KEY_ATTR
-              value: /data/SSH_PRIVATE_KEY
+              value: optcp-ssh/sign/boundary
+            - name: CRED_LIBRARY_USERNAME
+              value: kai
+            - name: CRED_LIBRARY_TTL
+              value: 30m
+            - name: TARGET_NAME
+              value: dungeon-pedestal
         - name: vault-token
           image: docker.io/alpine/k8s:1.37.1
           env:
