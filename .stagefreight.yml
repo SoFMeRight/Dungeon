@@ -174,7 +174,7 @@ ansible:
 ci:
   forge:
     - gitlab
-  image: docker.cr.pcfae.com/prplanit/stagefreight:latest-dev
+  image: docker.cr.optcp.com/prplanit/stagefreight:latest-dev
   routing:
     perform:
       labels:
