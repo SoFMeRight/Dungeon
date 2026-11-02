@@ -190,6 +190,13 @@ spec:
           path "optcp-ssh/sign/boundary-key-rotation" {
             capabilities = ["create", "update"]
           }
+      # People with the operator role sign their own SSH certificate; the role limits the
+      # principal to their own username.
+      - name: ssh-operator
+        rules: |
+          path "optcp-ssh/sign/operator" {
+            capabilities = ["create", "update"]
+          }
       # node-converge signs a throwaway key per run against optcp's SSH CA, and nothing else.
       - name: node-converge
         rules: |
@@ -315,6 +322,21 @@ spec:
               - offline_access
             bound_claims:
               roles: "Admin"
+          # Operators: a one-hour SSH certificate for their own username, nothing else.
+          - name: operator
+            user_claim: preferred_username
+            policies: ["ssh-operator"]
+            token_ttl: 1h
+            allowed_redirect_uris:
+              - https://secrets.optcp.com/ui/vault/auth/oidc/oidc/callback
+              - http://localhost:8250/oidc/callback
+            oidc_scopes:
+              - openid
+              - profile
+              - email
+              - offline_access
+            bound_claims:
+              roles: "operator"
       # GitLab CI workload identity -> Vault. StageFreight pipelines present the
       # STAGEFREIGHT_OIDC id_token (aud: stagefreight) and exchange it here for a
       # short-lived token. No static secret and no Kubernetes SA token (build jobs
@@ -446,6 +468,23 @@ spec:
               default_extensions: {}
               ttl: "4h0m0s"
               max_ttl: "6h0m0s"
+            # operator: a person's own certificate, principal = the username Zitadel gave
+            # (the oidc mount's alias; auth_oidc_d33174a6 is that mount's accessor).
+            - name: operator
+              key_type: "ca"
+              algorithm_signer: "rsa-sha2-256"
+              allow_user_certificates: "true"
+              allowed_users_template: "true"
+              allowed_users: "{{identity.entity.aliases.auth_oidc_d33174a6.name}}"
+              default_user_template: "true"
+              default_user: "{{identity.entity.aliases.auth_oidc_d33174a6.name}}"
+              # bank-vaults injects a list without this; OpenBao's ssh role API requires a string.
+              allowed_domains: ""
+              allowed_extensions: "permit-pty"
+              default_extensions:
+                permit-pty: ""
+              ttl: "1h0m0s"
+              max_ttl: "4h0m0s"
             # boundary-key-rotation: one certificate per run, long enough for one play
             # over Boundary's targets.
             - name: boundary-key-rotation
