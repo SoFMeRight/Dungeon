@@ -25,10 +25,12 @@ spec:
         spec:
           serviceAccountName: boundary-key-rotation
           restartPolicy: Never
+          # nobody (65534): the only non-root user the image defines, and ssh refuses to
+          # run as a uid with no passwd entry.
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
+            runAsUser: 65534
+            runAsGroup: 65534
+            fsGroup: 65534
             runAsNonRoot: true
             seccompProfile:
               type: RuntimeDefault
@@ -61,6 +63,9 @@ spec:
                   value: /tmp
                 - name: ANSIBLE_LOCAL_TEMP
                   value: /tmp/.ansible
+                # nobody's home is /; keep every temp path under the pod's /tmp.
+                - name: ANSIBLE_REMOTE_TMP
+                  value: /tmp/.ansible/tmp
               securityContext:
                 allowPrivilegeEscalation: false
                 readOnlyRootFilesystem: true
