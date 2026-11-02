@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: hyrule-castle-harbor-jobservice-pv
+  name: optcp-supply-chain-harbor-jobservice-pv
 spec:
   capacity:
     storage: 10Gi
@@ -13,8 +13,8 @@ spec:
   claimRef:
     apiVersion: v1
     kind: PersistentVolumeClaim
-    name: hyrule-castle-harbor-jobservice
-    namespace: hyrule-castle
+    name: optcp-supply-chain-harbor-jobservice
+    namespace: optcp-supply-chain
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
     nodeStageSecretRef:
@@ -25,19 +25,19 @@ spec:
       fsName: Seed_Bank
       staticVolume: "true"
       rootPath: /dungeon/nvme/apps/harbor/job-logs
-    volumeHandle: hyrule-castle-harbor-jobservice-static
+    volumeHandle: optcp-supply-chain-harbor-jobservice-static
 ---
 # Harbor Jobservice CephFS PVC
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: hyrule-castle-harbor-jobservice
-  namespace: hyrule-castle
+  name: optcp-supply-chain-harbor-jobservice
+  namespace: optcp-supply-chain
 spec:
   accessModes:
     - ReadWriteMany
   resources:
     requests:
       storage: 10Gi
-  volumeName: hyrule-castle-harbor-jobservice-pv
+  volumeName: optcp-supply-chain-harbor-jobservice-pv
   storageClassName: ""

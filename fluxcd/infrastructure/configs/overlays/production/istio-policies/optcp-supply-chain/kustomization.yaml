@@ -5,6 +5,7 @@ resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
   - allow-gateway-ingress-cell-membrane.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-gitlab-kas-to-gitlab-webservice.yaml
   - allow-gitlab-postgresql-replication.yaml
   - allow-gitlab-praefect-to-gitaly.yaml
@@ -14,3 +15,15 @@ resources:
   - allow-gitlab-to-gitlab-redis.yaml
   - allow-gitlab-to-gitlab-sentinel.yaml
   - allow-webhook-gitlab-certmanager.yaml
+  - allow-harbor-core-to-harbor-jobservice.yaml
+  - allow-harbor-core-to-harbor-registry.yaml
+  - allow-harbor-jobservice-to-harbor-core.yaml
+  - allow-harbor-nginx-to-harbor-core.yaml
+  - allow-harbor-nginx-to-harbor-registry.yaml
+  - allow-harbor-oidc-config-to-harbor-core.yaml
+  - allow-harbor-postgres-replication.yaml
+  - allow-harbor-proxy-cache-to-harbor.yaml
+  - allow-harbor-redis-intra-cluster.yaml
+  - allow-harbor-to-harbor-portal.yaml
+  - allow-harbor-to-harbor-postgres.yaml
+  - allow-harbor-to-harbor-redis.yaml

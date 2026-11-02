@@ -38,7 +38,7 @@ data:
         listen 8080;
         server_name docker.cr.pcfae.com ghcr.cr.pcfae.com quay.cr.pcfae.com lscr.cr.pcfae.com;
 
-        set $harbor_upstream http://harbor.hyrule-castle.svc.cluster.local;
+        set $harbor_upstream http://harbor.optcp-supply-chain.svc.cluster.local;
 
         # Registry v2 ping — passthrough, no rewrite.
         # Fix www-authenticate realm to use proxy-cache subdomain.

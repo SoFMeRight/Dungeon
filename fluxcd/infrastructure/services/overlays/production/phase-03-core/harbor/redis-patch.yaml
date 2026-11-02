@@ -8,7 +8,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: hyrule-castle.harbor.redis
+        policy.prplanit.com/service-scope: optcp-supply-chain.harbor.redis
     spec:
       containers:
         - name: redis

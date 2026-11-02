@@ -1,18 +1,18 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-harbor-jobservice-to-harbor-core
+  name: allow-harbor-nginx-to-harbor-registry
 spec:
   selector:
     matchLabels:
       app: harbor
-      component: core
+      component: registry
   action: ALLOW
   rules:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hyrule-castle/sa/harbor-jobservice
+              - cluster.local/ns/optcp-supply-chain/sa/harbor-nginx
       to:
         - operation:
-            ports: ["8080"]
+            ports: ["5000", "8080"]

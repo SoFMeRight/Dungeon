@@ -1,0 +1,29 @@
+$patch: delete
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: harbor-postgres
+---
+$patch: delete
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: harbor-postgres-daily
+---
+$patch: delete
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: harbor-redis
+---
+$patch: delete
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: harbor
+---
+$patch: delete
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: harbor-oidc-config

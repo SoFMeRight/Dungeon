@@ -1,19 +1,18 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-harbor-to-harbor-portal
+  name: allow-harbor-proxy-cache-to-harbor
 spec:
   selector:
     matchLabels:
       app: harbor
-      component: portal
+      component: nginx
   action: ALLOW
   rules:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hyrule-castle/sa/harbor-core
-              - cluster.local/ns/hyrule-castle/sa/harbor-nginx
+              - "cluster.local/ns/optcp-supply-chain/sa/harbor-proxy-cache-proxy"
       to:
         - operation:
             ports: ["8080"]

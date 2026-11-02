@@ -11,9 +11,9 @@ spec:
     - from:
         - source:
             principals:
-              - "cluster.local/ns/hyrule-castle/sa/harbor-registry"
-              - "cluster.local/ns/hyrule-castle/sa/harbor-core"
-              - "cluster.local/ns/hyrule-castle/sa/harbor-jobservice"
+              - "cluster.local/ns/optcp-supply-chain/sa/harbor-registry"
+              - "cluster.local/ns/optcp-supply-chain/sa/harbor-core"
+              - "cluster.local/ns/optcp-supply-chain/sa/harbor-jobservice"
       to:
         - operation:
             ports: ["8080"]

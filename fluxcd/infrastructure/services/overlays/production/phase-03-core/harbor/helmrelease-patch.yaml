@@ -3,7 +3,7 @@ kind: HelmRelease
 metadata:
   name: harbor
 spec:
-  targetNamespace: hyrule-castle
+  targetNamespace: optcp-supply-chain
   install:
     timeout: 15m
   valuesFrom:
@@ -47,9 +47,9 @@ spec:
           memory: 193Mi
       podLabels:
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: hyrule-castle.harbor.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-supply-chain.harbor.postgres
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: hyrule-castle.harbor.redis
+        policy.prplanit.com/access-scope-redis: optcp-supply-chain.harbor.redis
         policy.prplanit.com/cap.ceph: "true"
         policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
         # core validates OIDC tokens against Zitadel (sso.optcp.com) — needs
@@ -69,7 +69,7 @@ spec:
           memory: 63Mi
       podLabels:
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: hyrule-castle.harbor.redis
+        policy.prplanit.com/access-scope-redis: optcp-supply-chain.harbor.redis
         policy.prplanit.com/cap.ceph: "true"
         policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
       image:
@@ -136,7 +136,7 @@ spec:
     redis:
       type: external
       external:
-        addr: harbor-redis-0.harbor-redis.hyrule-castle.svc.cluster.local:6379
+        addr: harbor-redis-0.harbor-redis.optcp-supply-chain.svc.cluster.local:6379
 
     # Storage configuration - Ceph RGW (S3 compatible)
     persistence:
@@ -148,7 +148,7 @@ spec:
         jobservice:
           jobLog:
             # Use CephFS (RWX) for multi-replica jobservice
-            existingClaim: hyrule-castle-harbor-jobservice
+            existingClaim: optcp-supply-chain-harbor-jobservice
             storageClass: ""
             size: ""
       imageChartStorage:

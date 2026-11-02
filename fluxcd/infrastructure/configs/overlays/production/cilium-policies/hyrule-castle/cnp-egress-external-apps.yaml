@@ -4,10 +4,8 @@ metadata:
   name: allow-external-apps-egress
 spec:
   description: >-
-    These business apps reach open-ended external sets as core function: Harbor + its
-    proxy-cache pulling from upstream registries (docker.io/ghcr/quay/lscr);
-    ERPNext, InvoiceNinja, opnform, bookstack, calcom, bagisto reaching
-    email/SMTP/IMAP, payment gateways, calendar/video and webhook integrations.
+    These business apps reach open-ended external sets as core function: ERPNext,
+    InvoiceNinja, opnform, bookstack, calcom, bagisto reaching email/SMTP/IMAP, payment gateways, calendar/video and webhook integrations.
     That set cannot be allowlisted, so world+cluster is granted; DBs and the mesh
     ride the universal CCNP baseline. Inert until egress default-deny is enabled.
   enableDefaultDeny:
@@ -18,8 +16,6 @@ spec:
       - key: app
         operator: In
         values:
-          - harbor
-          - harbor-proxy-cache-proxy
           - frappe-suite-sites
           - frappe-suite-queue-long
           - frappe-suite-queue-short

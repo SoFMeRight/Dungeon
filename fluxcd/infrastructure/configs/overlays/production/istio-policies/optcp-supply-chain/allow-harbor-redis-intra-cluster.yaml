@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hyrule-castle/sa/harbor-redis
+              - cluster.local/ns/optcp-supply-chain/sa/harbor-redis
       to:
         - operation:
             ports: ["6379"]

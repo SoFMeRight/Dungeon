@@ -6,3 +6,4 @@ resources:
   - cnp-egress-external-apps.yaml
   - cnp-egress-to-gateway.yaml
   - cnp-gitlab-webhooks.yaml
+  - cnp-harbor.yaml

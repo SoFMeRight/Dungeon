@@ -31,7 +31,7 @@ spec:
           namespaces: [hookshot]
           names: ["tactical-*"]
       # hyrule-castle — apt-cacher/bagisto/invoiceninja apache+root, bookstack LSIO,
-      # frappe-suite (writes /home/frappe + sites), harbor Helm chart, opnform-client node,
+      # frappe-suite (writes /home/frappe + sites), opnform-client node,
       # renovate (containerbase installs toolchains at runtime).
       - resources:
           kinds: [Pod]
@@ -41,14 +41,13 @@ spec:
             - "bagisto-demo-*"
             - "bookstack-*"
             - "frappe-suite-*"
-            - "harbor-*"
             - "invoiceninja-app-*"
             - "renovate-*"
-      # optcp-supply-chain — gitlab Helm chart.
+      # optcp-supply-chain — gitlab and harbor Helm charts.
       - resources:
           kinds: [Pod]
           namespaces: [optcp-supply-chain]
-          names: ["gitlab-*"]
+          names: ["gitlab-*", "harbor-*"]
       # prplanit-support — osticket apache+root.
       - resources:
           kinds: [Pod]
