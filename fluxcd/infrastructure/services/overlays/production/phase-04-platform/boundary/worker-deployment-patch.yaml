@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: boundary-worker
 spec:
-  replicas: 2
+  replicas: 0
   template:
     metadata:
       annotations:
