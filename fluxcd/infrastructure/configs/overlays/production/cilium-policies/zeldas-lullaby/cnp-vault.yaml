@@ -29,12 +29,9 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
-    # Boundary controller (hookshot) validates its vault credential store token and
+    # Boundary controller validates its vault credential store token and
     # reads the keys it brokers (optcp/apps/boundary/targets/<target>).
     - fromEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: hookshot
-            app.kubernetes.io/name: boundary
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-remote-access
             app.kubernetes.io/name: boundary

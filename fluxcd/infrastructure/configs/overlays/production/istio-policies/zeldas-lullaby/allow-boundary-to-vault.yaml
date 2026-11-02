@@ -11,8 +11,6 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/hookshot/sa/boundary-controller
-              - cluster.local/ns/hookshot/sa/boundary-init
               - cluster.local/ns/optcp-remote-access/sa/boundary-controller
               - cluster.local/ns/optcp-remote-access/sa/boundary-init
       to:
