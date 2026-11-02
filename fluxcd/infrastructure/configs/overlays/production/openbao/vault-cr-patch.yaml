@@ -172,13 +172,10 @@ spec:
           path "optcp/data/apps/boundary/targets/*" {
             capabilities = ["read"]
           }
-          path "zeldas-letter/data/apps/boundary-dungeon-pedestal" {
-            capabilities = ["read"]
-          }
       # boundary-init stores the admin login database init generates; it writes, never reads.
       - name: boundary-init
         rules: |
-          path "zeldas-letter/data/apps/boundary" {
+          path "optcp/data/apps/boundary/app" {
             capabilities = ["create", "update", "patch"]
           }
       # node-converge signs a throwaway key per run against optcp's SSH CA, and nothing else.

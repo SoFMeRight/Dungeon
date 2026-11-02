@@ -9,6 +9,7 @@ data:
     set -eu
     for v in BOUNDARY_ADDR OIDC_ISSUER OIDC_API_URL_PREFIX OIDC_AUTH_METHOD_NAME OIDC_AUTH_METHOD_DESCRIPTION \
              ADMIN_LOGIN_NAME MANAGED_GROUP_NAME MANAGED_GROUP_FILTER ADMIN_ROLE_NAME CRED_STORE_NAME \
+             CRED_LIBRARY_NAME CRED_LIBRARY_PATH CRED_LIBRARY_USERNAME_ATTR CRED_LIBRARY_KEY_ATTR \
              OIDC_CLIENT_ID OIDC_CLIENT_SECRET ADMIN_PASSWORD; do
       eval "[ -n \"\${$v:-}\" ]" || { echo "$v is not set"; exit 1; }
     done
@@ -81,6 +82,19 @@ data:
         unset VAULT_TOKEN
         echo "store $CS_ID token replaced"
       fi
+      echo "=== Credential library '$CRED_LIBRARY_NAME' ==="
+      LIB_ID=$(by_name credential-libraries clvlt "$CRED_LIBRARY_NAME" -credential-store-id "$CS_ID")
+      if [ -n "$LIB_ID" ]; then
+        b credential-libraries update vault-generic -id "$LIB_ID" -vault-path "$CRED_LIBRARY_PATH" \
+          -credential-mapping-override "username_attribute=$CRED_LIBRARY_USERNAME_ATTR" \
+          -credential-mapping-override "private_key_attribute=$CRED_LIBRARY_KEY_ATTR" >/dev/null
+      else
+        LIB_ID=$(b credential-libraries create vault-generic -credential-store-id "$CS_ID" -name "$CRED_LIBRARY_NAME" \
+          -vault-path "$CRED_LIBRARY_PATH" -credential-type ssh_private_key \
+          -credential-mapping-override "username_attribute=$CRED_LIBRARY_USERNAME_ATTR" \
+          -credential-mapping-override "private_key_attribute=$CRED_LIBRARY_KEY_ATTR" | ids clvlt | head -1)
+      fi
+      echo "library $LIB_ID reads $CRED_LIBRARY_PATH"
     fi
     : >/work/done
     echo "=== Done ==="

@@ -6,7 +6,7 @@ spec:
   template:
     metadata:
       annotations:
-        prplanit.com/init-for: database-3
+        prplanit.com/init-for: database-4
     spec:
       initContainers:
         - name: openbao-reachable
@@ -29,4 +29,4 @@ spec:
             - name: VAULT_ROLE
               value: boundary-init
             - name: VAULT_PATH
-              value: zeldas-letter/data/apps/boundary
+              value: optcp/data/apps/boundary/app
