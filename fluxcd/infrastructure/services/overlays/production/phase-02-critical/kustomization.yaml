@@ -5,4 +5,5 @@ resources:
   - ./adguard
   - ./chrony
   - ./openbao
+  - ./openbao-snapshot
   - ./redis-sentinel-repair

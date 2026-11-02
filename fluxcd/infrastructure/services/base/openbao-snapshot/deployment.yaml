@@ -1,0 +1,63 @@
+# An idle helper pod whose only job is to host the Velero pre-backup hook: Velero
+# execs `bao operator raft snapshot save /backup/vault.snap` in here, then FSB/kopia
+# captures the `snapshot` volume (dedup'd to gringotts). The pod itself just sleeps.
+#
+# backup.velero.io/backup-volumes: snapshot  — opt-in ONLY the snapshot volume, so the
+# SA token and /tmp (which briefly holds the login token) are NEVER backed up.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openbao-snapshot
+  labels:
+    app: openbao-snapshot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openbao-snapshot
+  template:
+    metadata:
+      labels:
+        app: openbao-snapshot
+      annotations:
+        backup.velero.io/backup-volumes: snapshot
+    spec:
+      serviceAccountName: openbao-snapshot
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 100
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: bao
+          image: docker.io/openbao/openbao:2.7.2
+          command: ["sleep", "infinity"]
+          env:
+            - name: BAO_ADDR
+              value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
+            - name: HOME
+              value: /tmp
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: snapshot
+              mountPath: /backup
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+      volumes:
+        - name: snapshot
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}

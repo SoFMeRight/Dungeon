@@ -55,11 +55,12 @@ This repository seeks to be the source of truth regarding the active state of my
 
 Our peak hours are typically 6:00AM – 10:00PM PST. Backups are scheduled to minimize risk during these times.
 
-| Day           | Time  | Task                                             |
-| ------------- | ----- | ------------------------------------------------ |
-| Daily         | 18:00 | Dungeon (K8s) Backup via Velero                  |
-| Mon, Fri      | 22:00 | NAS & PBS → local-zfs backup                     |
-| Tue, Thu, Fri | 23:00 | All other core/essential VMs → Flashy-Fuscia-SSD |
+| Day           | Time             | Task                                                                |
+| ------------- | ---------------- | ------------------------------------------------------------------- |
+| Nightly       | staggered 22:00+ | K8s databases (CNPG + MariaDB) → gringotts (SeaweedFS, object-lock)  |
+| Daily         | 03:00            | OpenBao raft snapshot → gringotts via Velero (kopia, dedup)          |
+| Mon, Fri      | 22:00            | NAS & PBS → local-zfs backup                                        |
+| Tue, Thu, Fri | 23:00            | Other core/essential VMs → Flashy-Fuscia-SSD                        |
 
 ## 🖥️ Hardware Overview
 

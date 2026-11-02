@@ -226,6 +226,14 @@ spec:
           path "cosign-signer/keys/sofmeright" {
             capabilities = ["read"]
           }
+      # Read-only on the raft snapshot endpoint and nothing else. The openbao-snapshot
+      # helper assumes this (via the kubernetes role below) to stream a raft snapshot to
+      # Velero/kopia for backup; it can read NO secrets and perform no other operation.
+      - name: snapshot
+        rules: |
+          path "sys/storage/raft/snapshot" {
+            capabilities = ["read"]
+          }
     auth:
       - type: kubernetes
         config:
@@ -278,6 +286,14 @@ spec:
             bound_service_account_names: ["boundary-key-rotation"]
             bound_service_account_namespaces: ["optcp-remote-access"]
             policies: ["boundary-key-rotation"]
+            ttl: 1h
+          # The daily raft-snapshot backup: the openbao-snapshot helper in zeldas-lullaby
+          # logs in here, takes a snapshot, and Velero/kopia captures it. Read-only
+          # snapshot policy; the 1h token covers a single backup run.
+          - name: openbao-snapshot
+            bound_service_account_names: ["openbao-snapshot"]
+            bound_service_account_namespaces: ["zeldas-lullaby"]
+            policies: ["snapshot"]
             ttl: 1h
       - type: oidc
         config:

@@ -1,0 +1,40 @@
+# Daily OpenBao raft-snapshot backup.
+#
+# Velero runs the pre-hook in the openbao-snapshot helper (zeldas-lullaby): it logs into
+# OpenBao via the `openbao-snapshot` k8s-auth role and writes `raft snapshot save` to the
+# helper's /backup volume, then FSB/kopia captures ONLY that volume (opt-in via the pod's
+# backup.velero.io/backup-volumes annotation) — dedup'd to gringotts.
+#
+# Restore: `velero restore` the volume → `bao operator raft snapshot restore /backup/vault.snap`.
+# The snapshot is Vault-encrypted-at-rest; the git/SOPS unseal keys are the other half of
+# recovery. onError: Fail makes a failed snapshot a loud FAILED backup, never a silent empty one.
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: openbao-raft-snapshot
+spec:
+  schedule: "0 3 * * *"
+  template:
+    includedNamespaces:
+      - zeldas-lullaby
+    labelSelector:
+      matchLabels:
+        app: openbao-snapshot
+    ttl: 8760h0m0s   # keep a year; kopia dedups near-identical snapshots to ~hundreds of MB
+    hooks:
+      resources:
+        - name: raft-snapshot-save
+          includedNamespaces:
+            - zeldas-lullaby
+          labelSelector:
+            matchLabels:
+              app: openbao-snapshot
+          pre:
+            - exec:
+                container: bao
+                command:
+                  - /bin/sh
+                  - -c
+                  - bao login -method=kubernetes role=openbao-snapshot >/dev/null && bao operator raft snapshot save /backup/vault.snap
+                onError: Fail
+                timeout: 3m
