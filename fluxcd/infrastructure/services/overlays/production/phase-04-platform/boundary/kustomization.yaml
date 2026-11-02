@@ -23,4 +23,3 @@ patches:
   - path: worker-configmap-patch.yaml
   - path: init-job-patch.yaml
   - path: configuration-patch.yaml
-  - path: move-hold-jobs.yaml

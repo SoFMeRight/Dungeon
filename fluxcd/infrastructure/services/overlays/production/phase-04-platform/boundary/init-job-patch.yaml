@@ -9,7 +9,7 @@ spec:
         policy.prplanit.com/cap.postgres: "true"
         policy.prplanit.com/access-scope-postgres: optcp-remote-access.boundary.postgres
       annotations:
-        prplanit.com/init-for: database-4
+        prplanit.com/init-for: database-5
     spec:
       initContainers:
         - name: openbao-reachable

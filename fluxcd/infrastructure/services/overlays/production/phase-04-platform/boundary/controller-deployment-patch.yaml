@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: boundary-controller
 spec:
-  replicas: 0
+  replicas: 3
   template:
     metadata:
       labels:

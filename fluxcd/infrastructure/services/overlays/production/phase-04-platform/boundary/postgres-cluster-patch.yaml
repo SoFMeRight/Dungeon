@@ -17,7 +17,7 @@ spec:
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 
-  instances: 2
+  instances: 3
 
   imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
 
