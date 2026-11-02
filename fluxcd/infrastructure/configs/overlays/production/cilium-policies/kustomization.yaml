@@ -29,6 +29,7 @@ resources:
   - gorons-bracelet
   - gossip-stone
   - hookshot
+  - optcp-remote-access
   - zeldas-lullaby
   # Batch 5 — Most complex
   - hyrule-castle

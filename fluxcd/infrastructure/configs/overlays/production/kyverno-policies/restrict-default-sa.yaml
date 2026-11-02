@@ -25,6 +25,7 @@ spec:
                 - gorons-bracelet
                 - gossip-stone
                 - hookshot
+                - optcp-remote-access
                 - hyrule-castle
                 - kokiri-forest
                 - lens-of-truth
@@ -79,6 +80,7 @@ spec:
                 - gorons-bracelet
                 - gossip-stone
                 - hookshot
+                - optcp-remote-access
                 - hyrule-castle
                 - kokiri-forest
                 - lens-of-truth

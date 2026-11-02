@@ -35,6 +35,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: hookshot
             app.kubernetes.io/name: boundary
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-remote-access
+            app.kubernetes.io/name: boundary
       toPorts:
         - ports:
             - port: "8200"

@@ -29,6 +29,7 @@ resources:
   - delivery-bag.yaml
   - wallmaster.yaml
   - hookshot.yaml
+  - optcp-remote-access.yaml
   - lakitu.yaml
   - gerudo-crest.yaml
   - mr-resetti.yaml

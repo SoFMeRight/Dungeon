@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-boundary-egress
+spec:
+  description: >-
+    HashiCorp Boundary: the controllers reach their postgres (in-cluster) plus
+    external OIDC/KMS, and the workers proxy user sessions to an open-ended set
+    of LAN/cluster targets on arbitrary ports and dial back to the controllers.
+    That target set cannot be allowlisted, so world+cluster is granted (world
+    covers LAN/external targets and KMS, cluster the in-cluster targets and
+    postgres). DNS rides the universal CCNP baseline. Inert until egress
+    default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: boundary
+  egress:
+    - toEntities:
+        - world
+        - cluster

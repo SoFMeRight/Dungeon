@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-boundary-admin-to-controller
+spec:
+  action: ALLOW
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: boundary
+      app.kubernetes.io/component: controller
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-remote-access/sa/boundary-controller
+      to:
+        - operation:
+            ports: ["9200"]

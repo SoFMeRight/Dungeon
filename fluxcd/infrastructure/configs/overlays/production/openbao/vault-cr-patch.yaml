@@ -249,12 +249,12 @@ spec:
           # (no hand-minted token) for its vault credential store -> brokered static keys.
           - name: boundary
             bound_service_account_names: ["boundary-controller"]
-            bound_service_account_namespaces: ["hookshot"]
+            bound_service_account_namespaces: ["hookshot", "optcp-remote-access"]
             policies: ["boundary-controller", "boundary-ssh-read"]
             token_period: "24h"
           - name: boundary-init
             bound_service_account_names: ["boundary-init"]
-            bound_service_account_namespaces: ["hookshot"]
+            bound_service_account_namespaces: ["hookshot", "optcp-remote-access"]
             policies: ["boundary-init"]
             ttl: 1h
           - name: node-converge

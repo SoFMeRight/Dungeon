@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-boundary-controller-to-boundary-postgres
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: boundary-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-remote-access/sa/boundary-controller
+              - cluster.local/ns/optcp-remote-access/sa/boundary-init
+      to:
+        - operation:
+            ports: ["5432"]

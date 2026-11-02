@@ -1,0 +1,15 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-boundary-worker-loadbalancer
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: boundary
+      app.kubernetes.io/component: worker
+  action: ALLOW
+  rules:
+    # Internet-facing remote access — source IPs are unpredictable
+    - to:
+        - operation:
+            ports: ["9202"]

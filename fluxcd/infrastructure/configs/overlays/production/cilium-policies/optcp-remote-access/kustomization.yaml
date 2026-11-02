@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-remote-access
+resources:
+  - cnp-default-deny-ingress.yaml
+  - cnp-egress-boundary.yaml
+  - cnp-loadbalancers.yaml
+  - cnp-boundary-worker-from-netbird-router.yaml
