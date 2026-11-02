@@ -273,11 +273,13 @@ spec:
               - offline_access
             bound_claims:
               roles: "Admin"
-          # Operators: a one-hour SSH certificate for their own username, nothing else.
+          # Operators: one-hour SSH certificates for their own username, nothing else; the
+          # login lasts a working day so the client re-signs without a new Zitadel round.
           - name: operator
             user_claim: preferred_username
             policies: ["ssh-operator"]
-            token_ttl: 1h
+            token_ttl: 8h
+            token_max_ttl: 12h
             allowed_redirect_uris:
               - https://secrets.optcp.com/ui/vault/auth/oidc/oidc/callback
               - http://localhost:8250/oidc/callback
