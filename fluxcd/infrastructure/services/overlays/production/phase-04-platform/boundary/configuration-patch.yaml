@@ -7,7 +7,7 @@ spec:
   template:
     metadata:
       annotations:
-        prplanit.com/configure-for: ssh-certificates-3
+        prplanit.com/configure-for: static-key-restored-1
     spec:
       containers:
         - name: configure
@@ -36,17 +36,15 @@ spec:
               value: openbao
             # Bump when the boundary OpenBao role's policies change, so the store's token is re-minted.
             - name: CRED_STORE_TOKEN_GENERATION
-              value: "2"
+              value: "3"
             - name: CRED_LIBRARY_NAME
-              value: ssh-certificate
+              value: dungeon-pedestal-key
             - name: CRED_LIBRARY_PATH
-              value: optcp-ssh/sign/boundary
-            - name: CRED_LIBRARY_USERNAME
-              value: kai
-            - name: CRED_LIBRARY_TTL
-              value: 30m
-            - name: TARGET_NAME
-              value: dungeon-pedestal
+              value: optcp/data/apps/boundary/targets/dungeon-pedestal
+            - name: CRED_LIBRARY_USERNAME_ATTR
+              value: /data/SSH_USERNAME
+            - name: CRED_LIBRARY_KEY_ATTR
+              value: /data/SSH_PRIVATE_KEY
         - name: vault-token
           image: docker.io/alpine/k8s:1.37.1
           env:

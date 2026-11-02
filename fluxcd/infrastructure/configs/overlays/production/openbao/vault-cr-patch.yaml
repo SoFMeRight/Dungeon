@@ -144,7 +144,7 @@ spec:
             capabilities = ["create", "read", "update", "delete", "list", "sudo"]
           }
       # Token self-management for Boundary's Vault credential store (periodic,
-      # renewable, orphan token). Paired with boundary-ssh-sign on the token.
+      # renewable, orphan token). Paired with boundary-ssh-read on the token.
       - name: boundary-controller
         rules: |
           path "auth/token/lookup-self" {
@@ -165,12 +165,12 @@ spec:
           path "sys/capabilities-self" {
             capabilities = ["update"]
           }
-      # Boundary's credential store signs a short-lived user certificate per session against
-      # optcp's SSH CA; hosts trust the CA, no key is installed on any host.
-      - name: boundary-ssh-sign
+      # Read-only for the SSH keys Boundary brokers, one entry per Boundary target named
+      # for it (targets/<target>; Boundary Community brokers static keys, it cannot inject certs).
+      - name: boundary-ssh-read
         rules: |
-          path "optcp-ssh/sign/boundary" {
-            capabilities = ["create", "update"]
+          path "optcp/data/apps/boundary/targets/*" {
+            capabilities = ["read"]
           }
       # boundary-init stores the admin login database init generates; it writes, never reads.
       - name: boundary-init
@@ -250,7 +250,7 @@ spec:
           - name: boundary
             bound_service_account_names: ["boundary-controller"]
             bound_service_account_namespaces: ["optcp-remote-access"]
-            policies: ["boundary-controller", "boundary-ssh-sign"]
+            policies: ["boundary-controller", "boundary-ssh-read"]
             token_period: "24h"
           - name: boundary-init
             bound_service_account_names: ["boundary-init"]
@@ -410,19 +410,6 @@ spec:
               default_extensions: {}
               ttl: "4h0m0s"
               max_ttl: "6h0m0s"
-            # boundary: one certificate per brokered session, as the target's user.
-            - name: boundary
-              key_type: "ca"
-              algorithm_signer: "rsa-sha2-256"
-              allow_user_certificates: "true"
-              allowed_users: "kai"
-              allowed_domains: ""
-              default_user: "kai"
-              allowed_extensions: "permit-pty"
-              default_extensions:
-                permit-pty: ""
-              ttl: "30m0s"
-              max_ttl: "1h0m0s"
       # Cosign image/attestation signer. ECDSA keys generated once inside OpenBao,
       # non-exportable — they sign via cosign-signer/sign/<tenant> and never leave
       # the vault, the same custody model as optcp-ssh's CA above. One key
