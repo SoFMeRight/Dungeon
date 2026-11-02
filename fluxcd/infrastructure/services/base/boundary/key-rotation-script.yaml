@@ -29,6 +29,11 @@ data:
     cd "$work"
     echo "rotating from ${rev}"
 
+    # The hosts trust the committed CA public key; a certificate from any other CA is refused.
+    committed=$(ssh-keygen -lf ansible/files/optcp-ssh-ca.pub | awk '{print $2}')
+    serving=$(curl -fsS "${BAO_ADDR}/v1/${SSH_SIGN_PATH%%/*}/public_key" | ssh-keygen -lf - | awk '{print $2}')
+    [ "$committed" = "$serving" ] || { echo "OpenBao's ${SSH_SIGN_PATH%%/*} CA is ${serving}; the hosts trust ${committed} (ansible/files/optcp-ssh-ca.pub)"; exit 1; }
+
     mkdir -p /tmp/ssh
     ssh-keygen -q -t ed25519 -N "" -C "boundary-key-rotation" -f /tmp/ssh/id
     jwt=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)

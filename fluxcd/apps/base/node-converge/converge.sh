@@ -27,6 +27,11 @@ echo "converging from ${rev}"
 
 # A throwaway key, signed for this run by optcp's SSH CA (OpenBao optcp-ssh) after
 # logging in as this pod's service account. Nodes trust the CA; nothing is stored.
+# The nodes trust the committed CA public key; a certificate from any other CA is refused.
+committed=$(ssh-keygen -lf ansible/files/optcp-ssh-ca.pub | awk '{print $2}')
+serving=$(curl -fsS "${BAO_ADDR}/v1/optcp-ssh/public_key" | ssh-keygen -lf - | awk '{print $2}')
+[ "$committed" = "$serving" ] || { echo "OpenBao's optcp-ssh CA is ${serving}; the nodes trust ${committed} (ansible/files/optcp-ssh-ca.pub)"; exit 1; }
+
 mkdir -p /tmp/ssh
 ssh-keygen -q -t ed25519 -N "" -C "node-converge ${CONVERGE_PHASE}" -f /tmp/ssh/id
 jwt=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
