@@ -108,8 +108,10 @@ spec:
               echo "=== Managed group 'operator' in Administration ==="
               # The operator role on the Remote Control project (identity-and-access SOP) administers Boundary.
               FILTER='"operator" in "/userinfo/roles" or "operator" in "/token/roles"'
-              MG_ID=$(boundary managed-groups list -auth-method-id "$OIDC_AM_ID" -keyring-type none -format json \
-                | grep -o '{"id":"mgoidc_[^"]*"[^{}]*"name":"operator"' | head -1 | cut -d'"' -f4 || true)
+              MG_ID=""
+              for id in $(boundary managed-groups list -auth-method-id "$OIDC_AM_ID" -keyring-type none -format json | grep -o '"id":"mgoidc_[^"]*"' | cut -d'"' -f4); do
+                boundary managed-groups read -id "$id" -keyring-type none -format json | grep -q '"name":"operator"' && { MG_ID="$id"; break; }
+              done
               if [ -z "$MG_ID" ]; then
                 MG_ID=$(boundary managed-groups create oidc -auth-method-id "$OIDC_AM_ID" -name operator \
                   -description "Zitadel role operator" -filter "$FILTER" -keyring-type none -format json \
@@ -117,8 +119,10 @@ spec:
               else
                 boundary managed-groups update oidc -id "$MG_ID" -filter "$FILTER" -keyring-type none -format json >/dev/null
               fi
-              ADMIN_ROLE=$(boundary roles list -scope-id global -keyring-type none -format json \
-                | grep -o '{"id":"r_[^"]*"[^{}]*"name":"Administration"' | head -1 | cut -d'"' -f4 || true)
+              ADMIN_ROLE=""
+              for id in $(boundary roles list -scope-id global -keyring-type none -format json | grep -o '"id":"r_[^"]*"' | cut -d'"' -f4); do
+                boundary roles read -id "$id" -keyring-type none -format json | grep -q '"name":"Administration"' && { ADMIN_ROLE="$id"; break; }
+              done
               [ -n "$ADMIN_ROLE" ] || { echo "no Administration role in the global scope"; exit 1; }
               if ! boundary roles read -id "$ADMIN_ROLE" -keyring-type none -format json | grep -q "\"$MG_ID\""; then
                 boundary roles add-principals -id "$ADMIN_ROLE" -principal "$MG_ID" -keyring-type none -format json >/dev/null
