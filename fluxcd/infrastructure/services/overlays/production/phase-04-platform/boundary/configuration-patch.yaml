@@ -7,7 +7,7 @@ spec:
   template:
     metadata:
       annotations:
-        prplanit.com/configure-for: credential-store-token-2
+        prplanit.com/configure-for: credential-store-token-3
     spec:
       containers:
         - name: configure

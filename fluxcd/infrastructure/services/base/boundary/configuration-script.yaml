@@ -75,8 +75,10 @@ data:
       if [ "$STATUS" != "current" ]; then
         : >/work/need-token
         n=0; until [ -e /work/vault-token ]; do n=$((n+1)); [ "$n" -gt 150 ] && { echo "no token arrived"; exit 1; }; sleep 2; done
-        VAULT_TOKEN=$(cat /work/vault-token); export VAULT_TOKEN; rm -f /work/vault-token
-        b credential-stores update vault -id "$CS_ID" -vault-token env://VAULT_TOKEN >/dev/null
+        # -vault-token takes the value itself (no env:// form, unlike the certificate flags).
+        VAULT_TOKEN=$(cat /work/vault-token); rm -f /work/vault-token
+        b credential-stores update vault -id "$CS_ID" -vault-token "$VAULT_TOKEN" >/dev/null
+        unset VAULT_TOKEN
         echo "store $CS_ID token replaced"
       fi
     fi
