@@ -91,7 +91,7 @@ data:
     echo "=== Credential library '$CRED_LIBRARY_NAME' (SSH certificate) on target '$TARGET_NAME' ==="
     TARGET_ID=$(by_name targets 't[a-z]*' "$TARGET_NAME" -scope-id global -recursive)
     [ -n "$TARGET_ID" ] || { echo "no target named '$TARGET_NAME'"; exit 1; }
-    LIB_ID=$(by_name credential-libraries clvlt "$CRED_LIBRARY_NAME" -credential-store-id "$CS_ID")
+    LIB_ID=$(by_name credential-libraries 'clv[a-z]*' "$CRED_LIBRARY_NAME" -credential-store-id "$CS_ID")
     if [ -n "$LIB_ID" ] && ! b credential-libraries read -id "$LIB_ID" | grep -q '"type":"vault-ssh-certificate"'; then
       b targets remove-credential-sources -id "$TARGET_ID" -brokered-credential-source "$LIB_ID" >/dev/null 2>&1 || true
       b credential-libraries delete -id "$LIB_ID" >/dev/null
@@ -104,12 +104,12 @@ data:
       OUT=$(b credential-libraries create vault-ssh-certificate -credential-store-id "$CS_ID" -name "$CRED_LIBRARY_NAME" \
         -vault-path "$CRED_LIBRARY_PATH" -username "$CRED_LIBRARY_USERNAME" -key-type ed25519 -ttl "$CRED_LIBRARY_TTL" \
         -extension permit-pty= 2>&1 || true)
-      LIB_ID=$(printf '%s' "$OUT" | ids clvlt | head -1 || true)
+      LIB_ID=$(printf '%s' "$OUT" | ids "clv[a-z]*" | head -1 || true)
       [ -n "$LIB_ID" ] || { echo "library create failed: $OUT"; exit 1; }
     fi
     b targets read -id "$TARGET_ID" | grep -q "\"$LIB_ID\"" \
       || b targets add-credential-sources -id "$TARGET_ID" -brokered-credential-source "$LIB_ID" >/dev/null
-    for other in $(b credential-libraries list -credential-store-id "$CS_ID" | ids clvlt | grep -v "^$LIB_ID$" || true); do
+    for other in $(b credential-libraries list -credential-store-id "$CS_ID" | ids "clv[a-z]*" | grep -v "^$LIB_ID$" || true); do
       b targets remove-credential-sources -id "$TARGET_ID" -brokered-credential-source "$other" >/dev/null 2>&1 || true
       b credential-libraries delete -id "$other" >/dev/null && echo "removed undeclared library $other"
     done
