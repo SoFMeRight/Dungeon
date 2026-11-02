@@ -121,7 +121,7 @@ These are the mandatory standards for all production workloads.
 | ID | Requirement | Target | Notes |
 |----|-------------|--------|-------|
 | IMG-1 | Pinned image tag | Release tag (`vX.Y.Z`) | No `:latest` or `:latest-dev`; if the latest release lacks what's needed, cut a new release |
-| IMG-2 | Fully qualified name | Canonical registry | `docker.io/…`, `ghcr.io/…`; never the `cr.pcfae.com` pull-through mirror, which nodes apply transparently |
+| IMG-2 | Fully qualified name | Canonical registry | `docker.io/…`, `ghcr.io/…`; never the `cr.optcp.com` pull-through mirror, which nodes apply transparently |
 | IMG-3 | `imagePullPolicy` | `IfNotPresent` | `Always` only for mutable tags |
 | IMG-4 | First-party registry | `ghcr.io/<org>/…` (prplanit, homelabhd) | docker.io rate-limits in-cluster pulls; a new GHCR package must be made public |
 | IMG-5 | Digest after a rebuild | Updated | A pinned `@sha256:` keeps running the old image until the digest is changed; update it whenever the tag is rebuilt |
@@ -749,7 +749,7 @@ metadata:
 
 | Item | Status | Notes |
 |------|--------|-------|
-| Harbor pull-through cache | Y | `cr.pcfae.com` proxy-cache projects (docker/ghcr/quay/lscr); reduces external dependency + rate limits |
+| Harbor pull-through cache | Y | `cr.optcp.com` proxy-cache projects (docker/ghcr/quay/lscr); reduces external dependency + rate limits |
 | Image signature verification | N | Not implemented |
 | SBOM generation | N | Not implemented |
 | Admission controller (image policy) | Partial | Kyverno deployed; `enforce-image-policy` runs in Audit — needs a scanner + move to Enforce |

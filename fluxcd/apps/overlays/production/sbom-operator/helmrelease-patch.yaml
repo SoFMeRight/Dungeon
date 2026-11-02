@@ -14,7 +14,7 @@ spec:
       dtrack-default-parent-project: 37a90c44-df07-447f-a849-017fbe3a8d12
       kubernetes-cluster-id: dungeon
       # Pull through the Harbor proxy caches, as the nodes do.
-      registry-proxy: docker.io=docker.cr.pcfae.com,ghcr.io=ghcr.cr.pcfae.com,quay.io=quay.cr.pcfae.com,lscr.io=lscr.cr.pcfae.com
+      registry-proxy: docker.io=docker.cr.optcp.com,ghcr.io=ghcr.cr.optcp.com,quay.io=quay.cr.optcp.com,lscr.io=lscr.cr.optcp.com
     # syft holds an image's whole file catalogue in memory.
     resources:
       requests:

@@ -30,7 +30,7 @@ spec:
   description: >-
     CI job pods (labelled by the runner's pod_labels) reach the internet and,
     inside the cluster, only buildkitd for image builds and the phloem gateway
-    for Harbor (cr.pcfae.com resolves to it).
+    for Harbor (cr.optcp.com resolves to it).
   enableDefaultDeny:
     ingress: false
     egress: false

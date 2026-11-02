@@ -17,7 +17,7 @@ data:
 
       // No docker.io registryAlias: Renovate must query Docker Hub DIRECTLY to
       // discover image tags. Routing it through the Harbor pull-through cache
-      // (docker.cr.pcfae.com) does not work — a pull-through cache cannot serve
+      // (docker.cr.optcp.com) does not work — a pull-through cache cannot serve
       // the tag-list API for images it hasn't cached, so update discovery
       // silently failed for every docker.io image. Direct docker.io queries are
       // authenticated via the docker.io hostRule (RENOVATE_HOST_RULES, Docker Hub
@@ -33,6 +33,8 @@ data:
       "hostRules": [
         { "matchHost": "git.optcp.com", "allowInternal": true },
         { "matchHost": "s3.optcp.com", "allowInternal": true },
+        { "matchHost": "cr.optcp.com", "allowInternal": true },
+        { "matchHost": "docker.cr.optcp.com", "allowInternal": true },
         { "matchHost": "cr.pcfae.com", "allowInternal": true },
         { "matchHost": "docker.cr.pcfae.com", "allowInternal": true }
       ],
@@ -495,7 +497,7 @@ data:
           // hash, and exclude the -amd64/-arm64/-armhf single-arch tags (the multi-arch
           // hash-only tag is what's deployed). e.g. 1.43.0.10492 -> 1.43.2.10687.
           // matchPackageNames matches the resolved packageName, which the docker.io
-          // registryAlias rewrites to docker.cr.pcfae.com/... — so a "docker.io/..."
+          // registryAlias rewrites to docker.cr.optcp.com/... — so a "docker.io/..."
           // key never matches. Use a registry-agnostic glob.
           "matchPackageNames": ["**/plexinc/pms-docker"],
           "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\.(?<build>\\d+)-[0-9a-f]+$",
@@ -520,7 +522,7 @@ data:
           // hash changes every release, so default docker versioning treats each release as
           // an incompatible variant and never detects an update — same failure mode as Plex.
           // Parse the numeric calver and ignore the hash. Registry-agnostic glob so it matches
-          // whether pinned on ghcr.io (no alias) or docker.io (rewritten to docker.cr.pcfae.com).
+          // whether pinned on ghcr.io (no alias) or docker.io (rewritten to docker.cr.optcp.com).
           "matchPackageNames": ["**/searxng/searxng"],
           "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)-[0-9a-f]+$",
           "commitMessagePrefix": "chore(searxng):"

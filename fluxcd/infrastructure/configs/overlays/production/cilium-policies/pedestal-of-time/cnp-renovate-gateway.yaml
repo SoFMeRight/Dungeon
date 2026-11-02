@@ -5,7 +5,7 @@ metadata:
 spec:
   description: >-
     Renovate (tingle-tuner/app=renovate) ingress to xylem-gateway for registry
-    tag discovery via the gateway mirror (docker.cr.pcfae.com). Identity-based
+    tag discovery via the gateway mirror (docker.cr.optcp.com). Identity-based
     allow — it does NOT relax the pod-CIDR lockdown in allow-xylem-gateway-lan
     (which excludes the pod CIDR to prevent LB-IP identity bypass); it permits
     one specific pod identity. Renovate is the only pod that needs gateway-fronted

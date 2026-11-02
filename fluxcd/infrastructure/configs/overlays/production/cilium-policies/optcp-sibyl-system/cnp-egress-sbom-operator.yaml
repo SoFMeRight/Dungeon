@@ -5,7 +5,7 @@ metadata:
 spec:
   description: >-
     sbom-operator pulls every running image to catalogue it. docker.io, ghcr.io,
-    quay.io and lscr.io go through the Harbor proxy caches and cr.pcfae.com
+    quay.io and lscr.io go through the Harbor proxy caches and cr.optcp.com
     is Harbor itself, all behind the phloem gateway, which is not meshed. The
     registries Harbor does not mirror are reached directly, with their blob CDNs
     and token endpoints. L7 DNS is required for toFQDNs to match. Uploads to

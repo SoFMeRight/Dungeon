@@ -9,7 +9,7 @@ metadata:
       group: "Business Apps (Hyrule Castle🏰)"
       # A registry answers 404 at the root; /v2/ returning an auth challenge is
       # what proves the proxy cache is actually serving.
-      url: https://docker.cr.pcfae.com/v2/
+      url: https://docker.cr.optcp.com/v2/
       conditions:
         - "[STATUS] == 401"
 spec:
@@ -34,7 +34,7 @@ metadata:
       group: "Business Apps (Hyrule Castle🏰)"
       # A registry answers 404 at the root; /v2/ returning an auth challenge is
       # what proves the proxy cache is actually serving.
-      url: https://ghcr.cr.pcfae.com/v2/
+      url: https://ghcr.cr.optcp.com/v2/
       conditions:
         - "[STATUS] == 401"
 spec:
@@ -59,7 +59,7 @@ metadata:
       group: "Business Apps (Hyrule Castle🏰)"
       # A registry answers 404 at the root; /v2/ returning an auth challenge is
       # what proves the proxy cache is actually serving.
-      url: https://quay.cr.pcfae.com/v2/
+      url: https://quay.cr.optcp.com/v2/
       conditions:
         - "[STATUS] == 401"
 spec:
@@ -84,7 +84,7 @@ metadata:
       group: "Business Apps (Hyrule Castle🏰)"
       # A registry answers 404 at the root; /v2/ returning an auth challenge is
       # what proves the proxy cache is actually serving.
-      url: https://lscr.cr.pcfae.com/v2/
+      url: https://lscr.cr.optcp.com/v2/
       conditions:
         - "[STATUS] == 401"
 spec:

@@ -6,7 +6,7 @@ spec:
   description: >-
     buildkitd takes builds from CI job pods only, on 1234 (mTLS with its own CA).
     It pulls base images and pushes results: the internet, plus the gateways that
-    front in-cluster registries by their public names (cr.pcfae.com resolves to
+    front in-cluster registries by their public names (cr.optcp.com resolves to
     phloem; the gateway pods are non-meshed, so the cluster entity does not match
     them).
   enableDefaultDeny:

@@ -80,22 +80,22 @@
     - Credentials stored in Vault at `registries/<registry-url>` with keys: `username`, `password`
 
 - Harbor Container Registry Strategy:
-  - **Primary Registry**: Harbor (internal) at `cr.pcfae.com`, admin-managed. Runs **in-cluster** — GitOps-managed under `fluxcd/infrastructure/services/*/harbor` (namespace `hyrule-castle`, services phase-03-core), with registry blobs on ceph-rgw (S3) and its own PostgreSQL. Cluster-outage availability is covered by the CRI-O mirror's automatic fallback to upstream registries (below), not by external hosting. **Replaces the retired JFrog/JCR** — `jcr.pcfae.com`, `*.jcr.pcfae.com`, `jcr-pcfae-dungeon-pull-secret`, and the `jcr-pull-secret` label are all DEAD; do not reference them.
-  - **Pull-Through Cache Registries**: Harbor proxy-cache projects proxy upstream registries via `*.cr.pcfae.com` subdomains
-    - `docker.cr.pcfae.com` - Docker Hub (docker.io) pull-through cache
-    - `ghcr.cr.pcfae.com` - GitHub Container Registry (ghcr.io) pull-through cache
-    - `quay.cr.pcfae.com` - Quay.io (quay.io) pull-through cache
-    - `lscr.cr.pcfae.com` - LinuxServer.io (lscr.io) pull-through cache
+  - **Primary Registry**: Harbor (internal) at `cr.optcp.com`, admin-managed. Runs **in-cluster** — GitOps-managed under `fluxcd/infrastructure/services/*/harbor` (namespace `hyrule-castle`, services phase-03-core), with registry blobs on ceph-rgw (S3) and its own PostgreSQL. Cluster-outage availability is covered by the CRI-O mirror's automatic fallback to upstream registries (below), not by external hosting. **Replaces the retired JFrog/JCR** — `jcr.pcfae.com`, `*.jcr.pcfae.com`, `jcr-pcfae-dungeon-pull-secret`, and the `jcr-pull-secret` label are all DEAD; do not reference them.
+  - **Pull-Through Cache Registries**: Harbor proxy-cache projects proxy upstream registries via `*.cr.optcp.com` subdomains
+    - `docker.cr.optcp.com` - Docker Hub (docker.io) pull-through cache
+    - `ghcr.cr.optcp.com` - GitHub Container Registry (ghcr.io) pull-through cache
+    - `quay.cr.optcp.com` - Quay.io (quay.io) pull-through cache
+    - `lscr.cr.optcp.com` - LinuxServer.io (lscr.io) pull-through cache
   - **CRI-O Registry Mirrors (Automatic)**:
     - All cluster nodes have CRI-O registry mirrors configured to route upstream names through the Harbor mirrors
     - **Transparent redirection**: Images can be requested using original registry names (e.g., `docker.io/redis:alpine`) and CRI-O automatically pulls through the Harbor mirrors
     - **Automatic fallback**: If Harbor is unavailable, CRI-O falls back to upstream registries
-    - **Mirrored registries**: docker.io → docker.cr.pcfae.com, ghcr.io → ghcr.cr.pcfae.com, lscr.io → lscr.cr.pcfae.com, quay.io → quay.cr.pcfae.com
+    - **Mirrored registries**: docker.io → docker.cr.optcp.com, ghcr.io → ghcr.cr.optcp.com, lscr.io → lscr.cr.optcp.com, quay.io → quay.cr.optcp.com
     - **Benefits**: Reduces bandwidth, avoids rate limits, caches images, no manifest changes required.
   - **Image Pull Strategy**:
     - **All Applications**: Always use original upstream registry names (docker.io, ghcr.io, quay.io, lscr.io) - CRI-O mirrors automatically route through Harbor with transparent fallback
-    - **No need to explicitly reference `*.cr.pcfae.com`**: CRI-O handles the routing automatically, no manifest changes required
-  - **Pull Secret**: `cr-pcfae-admin-pull-secret`, distributed by a ClusterExternalSecret (ESO, Vault-backed; auths `cr.pcfae.com`) to every namespace labeled `cr-pcfae-pull-secret: "enabled"`. Namespaces are labeled in `fluxcd/infrastructure/namespaces/<ns>.yaml`.
+    - **No need to explicitly reference `*.cr.optcp.com`**: CRI-O handles the routing automatically, no manifest changes required
+  - **Pull Secret**: `cr-pcfae-admin-pull-secret`, distributed by a ClusterExternalSecret (ESO, Vault-backed; auths `cr.optcp.com`) to every namespace labeled `cr-pcfae-pull-secret: "enabled"`. Namespaces are labeled in `fluxcd/infrastructure/namespaces/<ns>.yaml`.
 
 - FluxCD App Structure:
   - `fluxcd/apps/base/<app>/` contains TEMPLATED Kubernetes resources WITHOUT any environment-specific values including: no hardcoded namespaces, image tags, replicas, storage classes, LoadBalancer IPs, cluster-specific annotations (lbipam.cilium.io/*), domain names, URLs, etc. These are reusable templates across environments.

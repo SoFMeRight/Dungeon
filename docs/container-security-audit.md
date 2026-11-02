@@ -235,7 +235,7 @@ securityContext:
 
 ## Custom Site Images (Pending)
 
-All use `cr.pcfae.com/prplanit/` nginx-based images serving static sites. Each image repo needs non-root treatment:
+All use `cr.optcp.com/prplanit/` nginx-based images serving static sites. Each image repo needs non-root treatment:
 - Remove `user nginx;` directive
 - Set pid to `/tmp/nginx.pid`
 - Set temp paths to `/tmp`
@@ -247,14 +247,14 @@ Then update overlay with `runAsUser: 100, runAsGroup: 101` and containerPort 808
 
 | App | Image | Status | Last Audit |
 |-----|-------|--------|------------|
-| astralfocal-site | cr.pcfae.com/prplanit/astralfocal.com:v0.0.2 | Pending | - |
-| enamorafoto-site | cr.pcfae.com/prplanit/enamorafoto.com:v0.0.2 | Pending | - |
-| etherealclique-site | cr.pcfae.com/prplanit/etherealclique.com:v0.0.2 | Pending | - |
-| homelabhelpdesk-site | cr.pcfae.com/prplanit/homelabhelpdesk.com:v0.0.2 | Pending | - |
-| kai-hamilton-site | cr.pcfae.com/prplanit/kai-hamilton.com:v0.0.2 | Pending | - |
-| precisionplanit-site | cr.pcfae.com/prplanit/precisionplanit.com:v0.0.2 | Pending | - |
-| sofmeright-site | cr.pcfae.com/prplanit/sofmeright.com:v0.0.5 | Pending | - |
-| yesimvegan-site | cr.pcfae.com/prplanit/yesimvegan.com:v0.0.2 | Pending | - |
+| astralfocal-site | cr.optcp.com/prplanit/astralfocal.com:v0.0.2 | Pending | - |
+| enamorafoto-site | cr.optcp.com/prplanit/enamorafoto.com:v0.0.2 | Pending | - |
+| etherealclique-site | cr.optcp.com/prplanit/etherealclique.com:v0.0.2 | Pending | - |
+| homelabhelpdesk-site | cr.optcp.com/prplanit/homelabhelpdesk.com:v0.0.2 | Pending | - |
+| kai-hamilton-site | cr.optcp.com/prplanit/kai-hamilton.com:v0.0.2 | Pending | - |
+| precisionplanit-site | cr.optcp.com/prplanit/precisionplanit.com:v0.0.2 | Pending | - |
+| sofmeright-site | cr.optcp.com/prplanit/sofmeright.com:v0.0.5 | Pending | - |
+| yesimvegan-site | cr.optcp.com/prplanit/yesimvegan.com:v0.0.2 | Pending | - |
 | fairer-pages | docker.io/prplanit/fairer-pages:v0.0.11 | Pending | - |
 
 ---

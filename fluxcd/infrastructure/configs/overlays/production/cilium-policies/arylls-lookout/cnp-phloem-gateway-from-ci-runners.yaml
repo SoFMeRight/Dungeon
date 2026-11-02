@@ -5,7 +5,7 @@ metadata:
 spec:
   description: >-
     Allow CI job pods and buildkitd (optcp-ci-runners) to reach phloem-gateway on
-    :80/:443. They resolve cr.pcfae.com to the gateway ClusterIP for Harbor (image
+    :80/:443. They resolve cr.optcp.com to the gateway ClusterIP for Harbor (image
     and build-cache push/pull, cache retention); the LAN rule excepts the pod CIDR,
     so they need this identity-based allow. Mirrors allow-phloem-gateway-from-renovate.
   enableDefaultDeny:
