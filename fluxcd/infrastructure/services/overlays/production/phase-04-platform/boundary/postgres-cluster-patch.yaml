@@ -39,10 +39,6 @@ spec:
   livenessProbeTimeout: 5
 
   postgresql:
-    synchronous:
-      method: any
-      number: 1
-
     parameters:
       shared_buffers: "128MB"
       max_connections: "100"
