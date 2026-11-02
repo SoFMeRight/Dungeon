@@ -87,8 +87,14 @@ spec:
               done
               if [ -e /work/need-token ]; then
                 JWT=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-                curl -sf -X POST "$VAULT_ADDR/v1/auth/kubernetes/login" \
-                  -d "{\"jwt\":\"$JWT\",\"role\":\"$VAULT_ROLE\"}" | jq -r .auth.client_token >/work/vault-token.part
+                code=$(curl -s -o /work/login.json -w '%{http_code}' -X POST "$VAULT_ADDR/v1/auth/kubernetes/login" \
+                  -d "{\"jwt\":\"$JWT\",\"role\":\"$VAULT_ROLE\"}")
+                [ "$code" = 200 ] || { echo "openbao login as role $VAULT_ROLE: http $code $(jq -c .errors /work/login.json)"; exit 1; }
+                jq -c '{policies: .auth.policies, orphan: .auth.orphan, renewable: .auth.renewable, period: .auth.token_period}' /work/login.json
+                jq -r .auth.client_token /work/login.json >/work/vault-token.part
+                code=$(curl -s -o /dev/null -w '%{http_code}' -H "X-Vault-Token: $(cat /work/vault-token.part)" "$VAULT_ADDR/v1/auth/token/lookup-self")
+                [ "$code" = 200 ] || { echo "token cannot lookup-self: http $code"; exit 1; }
+                rm -f /work/login.json
                 mv /work/vault-token.part /work/vault-token
                 n=0
                 until [ -e /work/done ]; do n=$((n+1)); [ "$n" -gt 150 ] && exit 1; sleep 2; done

@@ -13,7 +13,9 @@ data:
       eval "[ -n \"\${$v:-}\" ]" || { echo "$v is not set"; exit 1; }
     done
     export BOUNDARY_ADDR
-    b() { boundary "$@" -keyring-type none -format json; }
+    # anon: before login; b: the session token is passed explicitly from a variable the CLI never reads on its own.
+    anon() { boundary "$@" -keyring-type none -format json; }
+    b() { boundary "$@" -token env://SESSION_TOKEN -keyring-type none -format json; }
     ids() { grep -o "\"id\":\"$1_[^\"]*\"" | cut -d'"' -f4; }
     # Finds a resource by name: $1 kind, $2 id prefix, $3 name, rest list arguments.
     by_name() {
@@ -26,11 +28,11 @@ data:
 
     echo "=== Authenticating ==="
     # The initial login role lets anyone list global auth methods; the password one is found by type.
-    PW_AM_ID=$(b auth-methods list -scope-id global | ids ampw | head -1 || true)
+    PW_AM_ID=$(anon auth-methods list -scope-id global | ids ampw | head -1 || true)
     [ -n "$PW_AM_ID" ] || { echo "no password auth method in the global scope"; exit 1; }
-    BOUNDARY_TOKEN=$(b authenticate password -auth-method-id "$PW_AM_ID" -login-name "$ADMIN_LOGIN_NAME" \
+    SESSION_TOKEN=$(anon authenticate password -auth-method-id "$PW_AM_ID" -login-name "$ADMIN_LOGIN_NAME" \
       -password env://ADMIN_PASSWORD | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
-    export BOUNDARY_TOKEN
+    export SESSION_TOKEN
 
     echo "=== Auth method '$OIDC_AUTH_METHOD_NAME' ==="
     OIDC_AM_ID=$(b scopes read -id global | grep -o '"primary_auth_method_id":"amoidc_[^"]*"' | cut -d'"' -f4 || true)
