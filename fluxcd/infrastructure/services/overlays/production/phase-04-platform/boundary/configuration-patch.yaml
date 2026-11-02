@@ -7,7 +7,7 @@ spec:
   template:
     metadata:
       annotations:
-        prplanit.com/configure-for: static-key-restored-1
+        prplanit.com/configure-for: workers-declared-1
     spec:
       containers:
         - name: configure
@@ -45,6 +45,9 @@ spec:
               value: /data/SSH_USERNAME
             - name: CRED_LIBRARY_KEY_ATTR
               value: /data/SSH_PRIVATE_KEY
+            # The StatefulSet's pods; any other registration is removed.
+            - name: WORKER_NAMES
+              value: boundary-worker-0 boundary-worker-1
         - name: vault-token
           image: docker.io/alpine/k8s:1.37.1
           env:

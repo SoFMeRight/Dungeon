@@ -10,7 +10,7 @@ data:
     for v in BOUNDARY_ADDR OIDC_ISSUER OIDC_API_URL_PREFIX OIDC_AUTH_METHOD_NAME OIDC_AUTH_METHOD_DESCRIPTION \
              ADMIN_LOGIN_NAME MANAGED_GROUP_NAME MANAGED_GROUP_FILTER ADMIN_ROLE_NAME CRED_STORE_NAME \
              CRED_STORE_TOKEN_GENERATION CRED_LIBRARY_NAME CRED_LIBRARY_PATH CRED_LIBRARY_USERNAME_ATTR CRED_LIBRARY_KEY_ATTR \
-             OIDC_CLIENT_ID OIDC_CLIENT_SECRET ADMIN_PASSWORD; do
+             WORKER_NAMES OIDC_CLIENT_ID OIDC_CLIENT_SECRET ADMIN_PASSWORD; do
       eval "[ -n \"\${$v:-}\" ]" || { echo "$v is not set"; exit 1; }
     done
     export BOUNDARY_ADDR
@@ -104,5 +104,15 @@ data:
       b credential-libraries delete -id "$other" >/dev/null && echo "removed undeclared library $other"
     done
     echo "library $LIB_ID reads $CRED_LIBRARY_PATH"
+
+    echo "=== Workers: $WORKER_NAMES ==="
+    KEEP=""
+    for name in $WORKER_NAMES; do
+      id=$(by_name workers w "$name")
+      [ -n "$id" ] && { KEEP="$KEEP $id"; echo "worker $id is $name"; } || echo "worker $name has not registered yet"
+    done
+    for w in $(b workers list | ids w || true); do
+      case " $KEEP " in *" $w "*) ;; *) b workers delete -id "$w" >/dev/null && echo "removed undeclared worker $w" ;; esac
+    done
     : >/work/done
     echo "=== Done ==="
