@@ -53,7 +53,7 @@ spec:
           authtype: LOGIN
 
       # Primary storage on Ceph RGW, path-style over the in-cluster service; the bucket's
-      # key comes from optcp/apps/nextcloud/s3-optcp via the nextcloud-s3 Secret.
+      # key comes from optcp/apps/nextcloud/s3-active via the nextcloud-s3 Secret.
       objectStore:
         s3:
           enabled: true

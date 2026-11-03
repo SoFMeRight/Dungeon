@@ -10,3 +10,4 @@ resources:
   - cnp-webhooks.yaml
   - cnp-vault.yaml
   - cnp-egress-openbao-snapshot.yaml
+  - cnp-egress-secrets-rename.yaml

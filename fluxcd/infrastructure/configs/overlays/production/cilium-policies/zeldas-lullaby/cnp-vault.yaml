@@ -48,6 +48,13 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            app: secrets-rename
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
     - fromEntities:
         - host
         - remote-node
