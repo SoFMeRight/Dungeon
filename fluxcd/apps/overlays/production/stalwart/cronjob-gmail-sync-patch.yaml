@@ -3,6 +3,7 @@ kind: CronJob
 metadata:
   name: stalwart-gmail-sync
 spec:
+  suspend: true
   schedule: "7 * * * *"
   timeZone: America/Los_Angeles
   jobTemplate:
