@@ -36,7 +36,7 @@ data:
 
       server {
         listen 8080;
-        docker.cr.optcp.com ghcr.cr.optcp.com quay.cr.optcp.com lscr.cr.optcp.com;
+        server_name docker.cr.optcp.com ghcr.cr.optcp.com quay.cr.optcp.com lscr.cr.optcp.com;
 
         set $harbor_upstream http://harbor.optcp-supply-chain.svc.cluster.local;
 
