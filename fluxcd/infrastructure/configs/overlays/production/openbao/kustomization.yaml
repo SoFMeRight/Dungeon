@@ -18,8 +18,7 @@ resources:
   - clustersecretstore-arbitorium.yaml  # External Secrets for the house tenant (arbitorium-* namespaces)
   - clustersecretstore-optcp.yaml  # optcp tenant mount, apps/<app>/<issuer>; tenant=optcp namespaces only
   - clustersecretstore-optcp-k8s-dungeon-public.yaml  # every namespace; reads only the public registry pull token
-  - clustersecretstore-prplanit.yaml
-  - secrets-rename-job.yaml  # one-off, removed once run  # prplanit tenant mount, apps/<app>/<issuer>; tenant=prplanit namespaces only
+  - clustersecretstore-prplanit.yaml  # prplanit tenant mount, apps/<app>/<issuer>; tenant=prplanit namespaces only
 
 patches:
   - path: vault-cr-patch.yaml

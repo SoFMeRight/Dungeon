@@ -13,7 +13,6 @@ resources:
   - allow-dependency-track-configuration-to-vault.yaml
   - allow-node-converge-to-vault.yaml
   - allow-openbao-snapshot-to-vault.yaml
-  - allow-secrets-rename-to-vault.yaml
   - allow-bank-vaults-operator-to-vault.yaml
   - allow-vault-to-vault.yaml
   - allow-zitadel-configuration-to-vault.yaml
