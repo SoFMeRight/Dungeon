@@ -50,7 +50,3 @@ patches:
     target:
       kind: RedisReplication
       name: zitadel-redis
-  - path: externalsecret-redis-patch.yaml
-    target:
-      kind: ExternalSecret
-      name: zitadel-redis-password

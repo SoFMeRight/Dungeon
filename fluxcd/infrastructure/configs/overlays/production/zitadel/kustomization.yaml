@@ -5,7 +5,6 @@ namespace: optcp-identity
 
 resources:
   - ../../../base/zitadel  # Get the base config
-  - postgres-secrets.enc.yaml  # Production secrets (to be encrypted)
   - zitadel-masterkey.enc.yaml
   - zitadel-secrets.enc.yaml
 
