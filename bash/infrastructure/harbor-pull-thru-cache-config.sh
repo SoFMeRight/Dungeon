@@ -16,7 +16,7 @@ set -euo pipefail
 # -------------------------------------------------------------------
 # Configuration — edit these as needed
 # -------------------------------------------------------------------
-HARBOR_URL="${HARBOR_URL:-https://cr.pcfae.com}"
+HARBOR_URL="${HARBOR_URL:-https://cr.optcp.com}"
 HARBOR_USER="${HARBOR_USER:-admin}"
 HARBOR_API="${HARBOR_URL}/api/v2.0"
 

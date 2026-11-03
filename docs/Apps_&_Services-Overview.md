@@ -39,7 +39,7 @@
 | Calcom | ✅ | 🌐 cal.prplanit.com | [open](https://cal.prplanit.com) |
 | Frappe Suite (9 components) | ✅ | 🔒 hq.prplanit.com | [open](https://hq.prplanit.com) |
 | Gitlab (11 components) | ✅ | 🌐 git.prplanit.com | [open](https://git.prplanit.com) |
-| Harbor (6 components) | ✅ | 🔒 cr.optcp.com | [open](https://cr.pcfae.com) |
+| Harbor (6 components) | ✅ | 🔒 cr.optcp.com | [open](https://cr.optcp.com) |
 | Harbor Proxy Cache Proxy | ✅ | 🔒 docker.cr.optcp.com | [open](https://docker.cr.optcp.com) |
 | Invoiceninja (3 components) | ✅ | ❓ invoice.pcfae.com | [open](https://invoice.pcfae.com) |
 | Opnform (7 components) | ✅ | 🌐 form.prplanit.com | [open](https://form.prplanit.com) |

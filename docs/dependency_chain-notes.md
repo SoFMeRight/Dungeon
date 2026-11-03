@@ -112,7 +112,6 @@ infrastructure/
 | gitlab | Cluster (PostgreSQL), Redis, ExternalSecret | Yes | Git server (hosts FluxCD repo) |
 | harbor | Cluster (PostgreSQL), ExternalSecret | Yes | Container registry (cr.optcp.com) |
 | zitadel | Cluster (PostgreSQL), ExternalSecret | Yes | Authentication/SSO |
-| jfrog-artifactory | Cluster (PostgreSQL), ExternalSecret | Yes | Artifact registry (jcr.pcfae.com) |
 | quay | Cluster (PostgreSQL), ExternalSecret | Yes | Container registry |
 | apt-cacher-ng | - | No | APT package cache |
 
