@@ -26,3 +26,4 @@ patches:
   - path: redis-replication-patch.yaml
   - path: elasticsearch-patch.yaml
   - path: cronjob-gmail-sync-patch.yaml
+  - path: externalsecret-gmail-sync-patch.yaml

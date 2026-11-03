@@ -20,3 +20,7 @@ resources:
   - job-configuration.yaml
   - externalsecret-gmail-sync.yaml
   - cronjob-gmail-sync.yaml
+configMapGenerator:
+  - name: stalwart-gmail-sync-script
+    files:
+      - gmail-sync.sh
