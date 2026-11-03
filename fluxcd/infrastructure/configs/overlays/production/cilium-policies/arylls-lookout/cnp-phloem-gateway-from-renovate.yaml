@@ -4,11 +4,10 @@ metadata:
   name: allow-phloem-gateway-from-renovate
 spec:
   description: >-
-    Allow Renovate (tingle-tuner/app=renovate) to reach phloem-gateway on :80/:443.
-    The gateway's LAN rule admits RFC1918 but excepts the pod CIDR to prevent identity
-    bypass via the LB IP; Renovate resolves cr.optcp.com (and the *.cr.optcp.com proxy
-    caches) to the gateway ClusterIP for in-cluster Harbor tag discovery, so it needs
-    this explicit identity-based allow. Mirrors allow-phloem-gateway-from-netbird-router.
+    Renovate (hyrule-castle/app=renovate) ingress to phloem-gateway on :80/:443 for
+    Harbor tag discovery on cr.optcp.com and the *.cr.optcp.com proxy caches.
+    Identity-based: the gateway's LAN rule excepts the pod CIDR, so in-cluster callers
+    need an explicit allow.
   enableDefaultDeny:
     ingress: false
     egress: false

@@ -29,40 +29,55 @@ spec:
             - sh
             - -c
             - |
+              set -e
               echo "Waiting for setup container to terminate..."
               until [ ! -z "$(kubectl get pod ${POD_NAME} -n optcp-identity -o jsonpath='{.status.containerStatuses[?(@.name=='\''zitadel-setup'\'')].state.terminated}' 2>/dev/null)" ]; do
                 sleep 5
               done
+              if [ ! -s /machinekey/sa.json ]; then
+                echo "Setup wrote no /machinekey/sa.json; secret zitadel-admin-sa left unchanged."
+                exit 0
+              fi
               echo "Setup container terminated. Extracting sa.json..."
               kubectl create secret generic zitadel-admin-sa \
                 --from-file=zitadel-admin-sa.json=/machinekey/sa.json \
                 --dry-run=client -o yaml | kubectl apply -f -
-              echo "Secret zitadel-admin-sa created successfully!"
+              echo "Secret zitadel-admin-sa applied."
         - name: machine-pat-writer
           command:
             - sh
             - -c
             - |
+              set -e
               echo "Waiting for setup container to terminate..."
               until [ ! -z "$(kubectl get pod ${POD_NAME} -n optcp-identity -o jsonpath='{.status.containerStatuses[?(@.name=='\''zitadel-setup'\'')].state.terminated}' 2>/dev/null)" ]; do
                 sleep 5
               done
+              if [ ! -s /machinekey/pat ]; then
+                echo "Setup wrote no /machinekey/pat; secret zitadel-k8s-admin-sa left unchanged."
+                exit 0
+              fi
               echo "Setup container terminated. Extracting PAT..."
               kubectl create secret generic zitadel-k8s-admin-sa \
                 --from-file=pat=/machinekey/pat \
                 --dry-run=client -o yaml | kubectl apply -f -
-              echo "Secret zitadel-k8s-admin-sa created successfully!"
+              echo "Secret zitadel-k8s-admin-sa applied."
         - name: login-client-pat-writer
           command:
             - sh
             - -c
             - |
+              set -e
               echo "Waiting for setup container to terminate..."
               until [ ! -z "$(kubectl get pod ${POD_NAME} -n optcp-identity -o jsonpath='{.status.containerStatuses[?(@.name=='\''zitadel-setup'\'')].state.terminated}' 2>/dev/null)" ]; do
                 sleep 5
               done
+              if [ ! -s /login-client/pat ]; then
+                echo "Setup wrote no /login-client/pat; secret zitadel-login-client left unchanged."
+                exit 0
+              fi
               echo "Setup container terminated. Extracting login client PAT..."
               kubectl create secret generic zitadel-login-client \
                 --from-file=pat=/login-client/pat \
                 --dry-run=client -o yaml | kubectl apply -f -
-              echo "Secret zitadel-login-client created successfully!"
+              echo "Secret zitadel-login-client applied."
