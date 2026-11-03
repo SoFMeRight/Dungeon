@@ -72,8 +72,5 @@ spec:
             claimName: vaultwarden-data
         - name: rsa-key
           secret:
-            secretName: vaultwarden-secrets
-            items:
-              - key: rsa_key.pem
-                path: rsa_key.pem
+            secretName: vaultwarden-rsa-key
             defaultMode: 0600
