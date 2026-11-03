@@ -16,6 +16,7 @@ resources:
   - openbao  # Bank-Vaults (openbao) with SOPS-encrypted keys
   - velero  # Backup and disaster recovery credentials
   - zitadel  # Identity and Access Management
+  - vaultwarden  # RSA signing key
   - adguard  # DNS filtering and ad blocking
   - grafana  # Grafana admin credentials
   - loki  # Loki S3 credentials for log storage
