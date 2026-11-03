@@ -13,7 +13,7 @@ spec:
             - name: imapsync
               image: docker.io/gilleslamiral/imapsync:2.326@sha256:ece980cb0fd2806369975d2989a3e8d9fbf28d632cdd45a05961a1e511612ed5
               env:
-                # Entries apps/stalwart/smtp-<name> land in Gmail/<name>.
+                # Entries are apps/stalwart/smtp-<name>.
                 - name: ENTRY_PREFIX
                   value: smtp-
                 # Stalwart's IMAPS inside the cluster; the certificate is for mail.optcp.com.
@@ -27,6 +27,9 @@ spec:
                   value: kai@optcp.com
                 - name: FOLDER_PREFIX
                   value: Gmail
+                # Each mailbox lands in Gmail/<address before the @>; entry names stay private.
+                - name: FOLDER_NAME
+                  value: user
                 # Gmail's virtual folders repeat what the labels already hold.
                 - name: EXCLUDE
                   value: '^\[Gmail\]/(All Mail|Important|Starred|Spam|Trash)$'

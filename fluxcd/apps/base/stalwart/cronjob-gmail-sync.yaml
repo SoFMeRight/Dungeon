@@ -51,6 +51,8 @@ spec:
                   value: TARGET_PASSWORD
                 - name: FOLDER_PREFIX
                   value: PLACEHOLDER_FOLDER_PREFIX
+                - name: FOLDER_NAME
+                  value: PLACEHOLDER_FOLDER_NAME
                 - name: EXCLUDE
                   value: PLACEHOLDER_EXCLUDE
                 - name: IMAPSYNC_OPTIONS
