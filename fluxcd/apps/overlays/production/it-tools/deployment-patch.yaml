@@ -13,7 +13,7 @@ spec:
         runAsUser: 101
         runAsGroup: 101
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: it-tools
           image: docker.io/corentinth/it-tools:2024.10.22-7ca5933

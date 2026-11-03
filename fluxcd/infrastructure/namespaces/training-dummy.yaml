@@ -9,7 +9,6 @@ metadata:
     # Everything here is expendable. Mirrors temple-of-time so a sim faithfully reproduces
     # how the real database namespaces run (istio ambient, PSS baseline, pull secrets).
     purpose: db-disaster-sim
-    cr-pcfae-pull-secret: "enabled"
     docker-io-pull-secret: "enabled"
     istio.io/dataplane-mode: ambient
     pod-security.kubernetes.io/enforce: baseline

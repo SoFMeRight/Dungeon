@@ -11,7 +11,7 @@ spec:
         runAsGroup: 2000
         fsGroup: 2000
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: hbbs
           image: docker.io/rustdesk/rustdesk-server:1.1.16

@@ -5,7 +5,6 @@ namespace: kokiri-forest
 
 resources:
   - ../../../base/astralfocal-site
-  - externalsecret-registry.yaml
   - httproute.yaml
 
 patches:

@@ -12,7 +12,7 @@ spec:
           key: client-secret
   vaultPodSpec:
     imagePullSecrets:
-      - name: cr-pcfae-admin-pull-secret
+      - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
   vaultLabels:
     policy.prplanit.com/ingress: "true"
     policy.prplanit.com/cap.oidc: "true"

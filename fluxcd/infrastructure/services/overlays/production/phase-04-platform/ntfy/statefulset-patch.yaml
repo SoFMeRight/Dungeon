@@ -10,7 +10,7 @@ spec:
         policy.prplanit.com/ingress: "true"
     spec:
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: ntfy
           image: docker.io/binwiederhier/ntfy:v2.37.1

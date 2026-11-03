@@ -10,7 +10,7 @@ spec:
         policy.prplanit.com/ingress: "true"
     spec:
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: dashboard
           image: cr.optcp.com/prplanit/crowdsec-dashboard@sha256:d0655b736f3a33ec92fe081691de53010f7349470d8490f082bb078b53801b59

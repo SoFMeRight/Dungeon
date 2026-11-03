@@ -3,7 +3,6 @@ kind: Namespace
 metadata:
   name: arbitorium-game-streaming
   labels:
-    cr-pcfae-pull-secret: "enabled"
     docker-io-pull-secret: "enabled"
     istio.io/dataplane-mode: ambient
     # Game-streaming seats (steam-headless → Sunshine → Moonlight). privileged PSA: each seat

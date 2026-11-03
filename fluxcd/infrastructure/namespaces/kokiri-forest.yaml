@@ -5,7 +5,6 @@ metadata:
   labels:
     name: kokiri-forest
     purpose: gateway-personal
-    cr-pcfae-pull-secret: "enabled"
     docker-io-pull-secret: "enabled"
     pod-security.kubernetes.io/enforce: baseline
     pod-security.kubernetes.io/audit: baseline

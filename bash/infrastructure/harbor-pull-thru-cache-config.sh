@@ -192,7 +192,7 @@ if [ -n "$robot_name" ] && [ -n "$robot_secret" ]; then
   echo "  Password: $robot_secret"
   echo "  ========================================="
   echo ""
-  echo "  Store in Vault at: registries/cr.pcfae.com"
+  echo "  Store in Vault at: registries/cr.optcp.com"
   echo "    username = $robot_name"
   echo "    password = $robot_secret"
 else

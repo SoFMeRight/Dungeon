@@ -14,7 +14,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       initContainers:
         - name: wait-for-init
           image: docker.io/busybox:1.38

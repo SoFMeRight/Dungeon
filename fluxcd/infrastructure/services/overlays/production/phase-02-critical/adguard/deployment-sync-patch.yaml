@@ -7,7 +7,7 @@ spec:
   template:
     spec:
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: adguardhome-sync
           image: docker.io/linuxserver/adguardhome-sync:v0.9.6-ls181

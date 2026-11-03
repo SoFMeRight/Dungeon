@@ -15,7 +15,7 @@ patches:
       - op: replace
         path: /spec/template/spec/imagePullSecrets
         value:
-          - name: cr-pcfae-admin-pull-secret
+          - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       - op: replace
         path: /spec/template/spec/containers/0/image
         value: cr.optcp.com/hlhd/prometheus-eaton-ups-exporter:v0.9.3

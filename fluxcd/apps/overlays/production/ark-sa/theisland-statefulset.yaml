@@ -23,7 +23,7 @@ spec:
       serviceAccountName: ark-sa-tmc-theisland
       enableServiceLinks: false
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       # acekorneya ASA runs the server via Proton/Wine as uid 7777 (non-root). Canary for the drop-ALL
       # + NoNewPrivs posture — revert to the prior (default-caps) form if Proton's prefix rebuild breaks.
       securityContext:

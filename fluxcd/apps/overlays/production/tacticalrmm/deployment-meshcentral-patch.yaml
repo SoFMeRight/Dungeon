@@ -18,7 +18,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       # ndots 2: meshc.prplanit.com resolves as an absolute name before any search domain.
       dnsConfig:
         options:

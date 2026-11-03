@@ -13,7 +13,7 @@ spec:
         policy.prplanit.com/cap.oidc: "true"
     spec:
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       securityContext:
         fsGroup: 101
       volumes:

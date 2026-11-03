@@ -13,7 +13,7 @@ spec:
         runAsUser: 1001
         runAsGroup: 1001
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: shlink-app
           image: docker.io/shlinkio/shlink:5.1.8

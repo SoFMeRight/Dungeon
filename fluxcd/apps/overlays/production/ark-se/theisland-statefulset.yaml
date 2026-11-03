@@ -22,7 +22,7 @@ spec:
       serviceAccountName: ark-se-tmc-theisland
       enableServiceLinks: false
       # Pulling the fork image from GHCR (public package) — no pull secret. The old
-      # cr-pcfae-admin-pull-secret (harbor) was vestigial and wrong for ghcr.
+      # pull-secret-cr-optcp-optcp-k8s-dungeon-public (harbor) was vestigial and wrong for ghcr.
       # arkserver is root/sudo-required: run.sh + arkmanager need root to fix perms and set up
       # crontab. Left unhardened as a game-server exception (runs as image default uid 1001
       # `steam`, sudo-capable).

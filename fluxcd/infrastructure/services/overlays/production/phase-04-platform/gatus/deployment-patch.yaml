@@ -16,7 +16,7 @@ spec:
         prometheus.io/port: "8080"
     spec:
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       initContainers:
         - name: init-config
           image: docker.io/library/busybox:1.38

@@ -17,7 +17,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       # NOTE: nginx must start freely - meshcentral waits for nginx, init waits for meshcentral
       containers:
         # readOnlyRootFilesystem EXCEPTION: the tactical-nginx entrypoint sed-edits

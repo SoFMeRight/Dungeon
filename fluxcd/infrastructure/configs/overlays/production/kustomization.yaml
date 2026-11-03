@@ -27,7 +27,6 @@ resources:
   - prometheus-exporter-pve  # Proxmox VE exporter credentials
   - gateway-api  # Gateway API resources (implemented by Istio) with TLS certificates
   - cert-manager  # TLS certificates and Cloudflare credentials
-  - registries/cr.pcfae.com-admin  # Container registry pull credentials
   - registries/cr.optcp.com-k8s-dungeon-public
   - registries/cr.optcp.com-k8s-dungeon-internal
   - registries/docker.io-prplanit  # Docker Hub pull credentials (temple-of-time)

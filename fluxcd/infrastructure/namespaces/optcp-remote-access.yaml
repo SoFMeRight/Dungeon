@@ -5,7 +5,6 @@ metadata:
   labels:
     name: optcp-remote-access
     tenant: optcp                          # openbao-optcp ClusterSecretStore condition
-    cr-pcfae-pull-secret: "enabled"
     docker-io-pull-secret: "enabled"
     istio.io/dataplane-mode: ambient
     pod-security.kubernetes.io/enforce: baseline

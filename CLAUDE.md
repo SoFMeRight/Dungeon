@@ -76,11 +76,11 @@
   - **Container Registry Credentials**: Managed as shared resources in `infrastructure/configs/overlays/production/registries/`
     - Base template: `infrastructure/configs/base/registries/docker.io-example/`
     - Production overlays: `infrastructure/configs/overlays/production/registries/<registry>-<account>/`
-    - Apps reference the pull secret by name (e.g., `cr-pcfae-admin-pull-secret`) in their deployment `imagePullSecrets`
+    - Apps reference the pull secret by name (e.g., `pull-secret-cr-optcp-optcp-k8s-dungeon-public`) in their deployment `imagePullSecrets`
     - Credentials stored in Vault at `registries/<registry-url>` with keys: `username`, `password`
 
 - Harbor Container Registry Strategy:
-  - **Primary Registry**: Harbor (internal) at `cr.optcp.com`, admin-managed. Runs **in-cluster** — GitOps-managed under `fluxcd/infrastructure/services/*/harbor` (namespace `hyrule-castle`, services phase-03-core), with registry blobs on ceph-rgw (S3) and its own PostgreSQL. Cluster-outage availability is covered by the CRI-O mirror's automatic fallback to upstream registries (below), not by external hosting. **Replaces the retired JFrog/JCR** — `jcr.pcfae.com`, `*.jcr.pcfae.com`, `jcr-pcfae-dungeon-pull-secret`, and the `jcr-pull-secret` label are all DEAD; do not reference them.
+  - **Primary Registry**: Harbor (internal) at `cr.optcp.com`, admin-managed. Runs **in-cluster** — GitOps-managed under `fluxcd/infrastructure/services/*/harbor` (namespace `optcp-supply-chain`, services phase-03-core), with registry blobs on ceph-rgw (S3) and its own PostgreSQL. Cluster-outage availability is covered by the CRI-O mirror's automatic fallback to upstream registries (below), not by external hosting. **Replaces the retired JFrog/JCR** — `jcr.pcfae.com`, `*.jcr.pcfae.com`, `jcr-pcfae-dungeon-pull-secret`, and the `jcr-pull-secret` label are all DEAD; do not reference them.
   - **Pull-Through Cache Registries**: Harbor proxy-cache projects proxy upstream registries via `*.cr.optcp.com` subdomains
     - `docker.cr.optcp.com` - Docker Hub (docker.io) pull-through cache
     - `ghcr.cr.optcp.com` - GitHub Container Registry (ghcr.io) pull-through cache
@@ -95,7 +95,9 @@
   - **Image Pull Strategy**:
     - **All Applications**: Always use original upstream registry names (docker.io, ghcr.io, quay.io, lscr.io) - CRI-O mirrors automatically route through Harbor with transparent fallback
     - **No need to explicitly reference `*.cr.optcp.com`**: CRI-O handles the routing automatically, no manifest changes required
-  - **Pull Secret**: `cr-pcfae-admin-pull-secret`, distributed by a ClusterExternalSecret (ESO, Vault-backed; auths `cr.optcp.com`) to every namespace labeled `cr-pcfae-pull-secret: "enabled"`. Namespaces are labeled in `fluxcd/infrastructure/namespaces/<ns>.yaml`.
+  - **Pull Secrets** (auths `cr.optcp.com`, `*.cr.optcp.com`; pull-only robots):
+    - `pull-secret-cr-optcp-optcp-k8s-dungeon-public`: public projects, in every namespace, from one ClusterExternalSecret through a store that reads only that token (`optcp/shared/registry/cr.optcp.com-public`).
+    - `pull-secret-cr-optcp-optcp-k8s-dungeon-internal`: internal projects, only in namespaces whose workloads run internal images, through that namespace's own SecretStore (`optcp/shared/registry/cr.optcp.com-internal`).
 
 - FluxCD App Structure:
   - `fluxcd/apps/base/<app>/` contains TEMPLATED Kubernetes resources WITHOUT any environment-specific values including: no hardcoded namespaces, image tags, replicas, storage classes, LoadBalancer IPs, cluster-specific annotations (lbipam.cilium.io/*), domain names, URLs, etc. These are reusable templates across environments.

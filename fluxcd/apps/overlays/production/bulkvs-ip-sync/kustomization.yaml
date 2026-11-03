@@ -18,5 +18,5 @@ patches:
       - op: replace
         path: /spec/template/spec/imagePullSecrets
         value:
-          - name: cr-pcfae-admin-pull-secret
+          - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
   - path: externalsecret-patch.yaml

@@ -6,7 +6,7 @@ spec:
   template:
     spec:
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       initContainers:
         - name: security-config
           image: docker.io/wazuh/wazuh-indexer:4.14.9

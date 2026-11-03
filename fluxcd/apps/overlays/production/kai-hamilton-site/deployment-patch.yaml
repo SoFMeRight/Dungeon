@@ -9,7 +9,7 @@ spec:
         policy.prplanit.com/ingress: "true"
     spec:
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-internal
       containers:
         - name: kai-hamilton-site
           image: cr.optcp.com/sofmeright/kai-hamilton.com:v0.0.3

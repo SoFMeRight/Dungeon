@@ -4,7 +4,6 @@ metadata:
   name: mr-resetti
   labels:
     name: mr-resetti
-    cr-pcfae-pull-secret: "enabled"
     docker-io-pull-secret: "enabled"
     istio.io/dataplane-mode: ambient
     pod-security.kubernetes.io/enforce: baseline

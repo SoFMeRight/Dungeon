@@ -3,7 +3,6 @@ kind: Namespace
 metadata:
   name: swift-sail
   labels:
-    cr-pcfae-pull-secret: "enabled"
     docker-io-pull-secret: "enabled"
     pod-security.kubernetes.io/enforce: privileged
     pod-security.kubernetes.io/audit: privileged

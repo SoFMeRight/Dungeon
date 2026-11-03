@@ -23,7 +23,7 @@ spec:
       serviceAccountName: ark-sa-tmc-valguero
       enableServiceLinks: false
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       # acekorneya ASA via Proton/Wine as uid 7777; the theisland canary confirmed Proton's prefix
       # rebuild + server launch work under drop ALL + NoNewPrivs.
       securityContext:

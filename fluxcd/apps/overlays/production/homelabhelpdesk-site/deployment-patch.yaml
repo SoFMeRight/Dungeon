@@ -9,7 +9,7 @@ spec:
         policy.prplanit.com/ingress: "true"
     spec:
       imagePullSecrets:
-        - name: cr-pcfae-admin-pull-secret
+        - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: homelabhelpdesk-site
           image: cr.optcp.com/prplanit/homelabhelpdesk.com:v0.0.3
