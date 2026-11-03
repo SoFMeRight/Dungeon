@@ -105,8 +105,7 @@ spec:
               : "${ACCOUNT_NAME:?}" "${APP_PASSWORD_NAME:?}" "${VAULT_ADDR:?}" "${VAULT_ROLE:?}" \
                 "${VAULT_MOUNT:?}" "${APP_PASSWORD_PATH:?}" "${SEED_PREFIX:?}" "${GMAIL_MAILBOXES:?}" "${IMAP_HOST:?}" "${IMAP_PORT:?}"
               auth="$STALWART_USER:$STALWART_PASSWORD"
-              api=$(curl -fsS -u "$auth" "$STALWART_URL/.well-known/jmap" | jq -r .apiUrl)
-              case "$api" in /*) api="$STALWART_URL$api" ;; esac
+              api="$STALWART_URL/jmap/"
               jmap() {
                 curl -fsS -u "$auth" -H 'Content-Type: application/json' "$api" \
                   -d "$(jq -cn --arg m "$1" --argjson a "$2" '{using:["urn:ietf:params:jmap:core","urn:stalwart:jmap"],methodCalls:[[$m,$a,"c0"]]}')" \
