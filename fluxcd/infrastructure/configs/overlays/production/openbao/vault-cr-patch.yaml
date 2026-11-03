@@ -151,6 +151,16 @@ spec:
           path "optcp/data/apps/boundary/app" {
             capabilities = ["create", "update", "patch"]
           }
+      # stalwart-configuration writes the identities Stalwart issues: the Gmail sync's app
+      # password, and the empty smtp-<name> seeds the Operator fills; it reads nothing.
+      - name: stalwart-configuration
+        rules: |
+          path "optcp/data/apps/stalwart/gmail-sync" {
+            capabilities = ["create", "update"]
+          }
+          path "optcp/data/apps/stalwart/smtp-*" {
+            capabilities = ["create"]
+          }
       # People with the operator role sign their own SSH certificate; the role limits the
       # principal to their own username.
       - name: ssh-operator
@@ -273,6 +283,11 @@ spec:
             bound_service_account_names: ["openbao-snapshot"]
             bound_service_account_namespaces: ["zeldas-lullaby"]
             policies: ["snapshot"]
+            ttl: 1h
+          - name: stalwart-configuration
+            bound_service_account_names: ["stalwart-configuration"]
+            bound_service_account_namespaces: ["optcp-delivery-bag"]
+            policies: ["stalwart-configuration"]
             ttl: 1h
       - type: oidc
         config:

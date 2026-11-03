@@ -12,7 +12,6 @@ spec:
         app: stalwart-configuration
     spec:
       serviceAccountName: stalwart-configuration
-      automountServiceAccountToken: false
       restartPolicy: OnFailure
       securityContext:
         runAsNonRoot: true
@@ -63,7 +62,6 @@ spec:
               readOnly: true
             - name: rendered
               mountPath: /rendered
-      containers:
         - name: configuration
           image: PLACEHOLDER_CLI_IMAGE
           args: ["apply", "--file", "/rendered/plan.ndjson"]
@@ -92,6 +90,112 @@ spec:
             - name: rendered
               mountPath: /rendered
               readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      containers:
+        # Identities Stalwart issues for other workloads, written to OpenBao (issuers write,
+        # they do not read): the Gmail sync's app password on the account it writes into, and
+        # one empty smtp-<name> entry per declared Gmail mailbox for the Operator to fill.
+        - name: identities
+          image: PLACEHOLDER_K8S_IMAGE
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              : "${ACCOUNT_NAME:?}" "${APP_PASSWORD_NAME:?}" "${VAULT_ADDR:?}" "${VAULT_ROLE:?}" \
+                "${VAULT_MOUNT:?}" "${APP_PASSWORD_PATH:?}" "${SEED_PREFIX:?}" "${GMAIL_MAILBOXES:?}" "${IMAP_HOST:?}" "${IMAP_PORT:?}"
+              auth="$STALWART_USER:$STALWART_PASSWORD"
+              api=$(curl -fsS -u "$auth" "$STALWART_URL/.well-known/jmap" | jq -r .apiUrl)
+              case "$api" in /*) api="$STALWART_URL$api" ;; esac
+              jmap() {
+                curl -fsS -u "$auth" -H 'Content-Type: application/json' "$api" \
+                  -d "$(jq -cn --arg m "$1" --argjson a "$2" '{using:["urn:ietf:params:jmap:core","urn:stalwart:jmap"],methodCalls:[[$m,$a,"c0"]]}')" \
+                  | jq -c '.methodResponses[0][1]'
+              }
+              JWT=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+              TOKEN=$(curl -sS -X POST "$VAULT_ADDR/v1/auth/kubernetes/login" \
+                -d "$(jq -cn --arg j "$JWT" --arg r "$VAULT_ROLE" '{jwt:$j,role:$r}')" | jq -r '.auth.client_token // empty')
+              unset JWT
+              [ -n "$TOKEN" ] || { echo "openbao login as role $VAULT_ROLE failed"; exit 1; }
+              h="X-Vault-Token: $TOKEN"
+
+              acct=$(jmap Account/query "$(jq -cn --arg n "$ACCOUNT_NAME" '{filter:{name:$n}}')" | jq -r '.ids[0] // empty')
+              [ -n "$acct" ] || { echo "no account named $ACCOUNT_NAME"; exit 1; }
+              creds=$(jmap Account/get "$(jq -cn --arg i "$acct" '{ids:[$i],properties:["credentials"]}')" | jq -c '.list[0].credentials // []')
+              have=$(echo "$creds" | jq -r --arg d "$APP_PASSWORD_NAME" '[.[] | select(."@type"=="AppPassword" and .description==$d)] | length')
+              stored=$(curl -s -o /dev/null -w '%{http_code}' -H "$h" "$VAULT_ADDR/v1/$VAULT_MOUNT/data/$APP_PASSWORD_PATH")
+              if [ "$stored" = 200 ] && [ "$have" -gt 0 ]; then
+                echo "$APP_PASSWORD_NAME app password on $ACCOUNT_NAME: in place"
+              else
+                new=$(echo "$creds" | jq -c --arg d "$APP_PASSWORD_NAME" '[.[] | select(."@type"!="AppPassword" or .description!=$d)] + [{"@type":"AppPassword",description:$d}]')
+                resp=$(jmap Account/set "$(jq -cn --arg i "$acct" --argjson c "$new" '{update:{($i):{credentials:$c}}}')")
+                secret=$(echo "$resp" | jq -r --arg d "$APP_PASSWORD_NAME" '[.. | objects | select(."@type"=="AppPassword" and .description==$d) | .secret // empty] | first // empty')
+                [ -n "$secret" ] || { echo "no secret returned for $APP_PASSWORD_NAME: $(echo "$resp" | jq -c 'del(.updated)')"; exit 1; }
+                curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/$VAULT_MOUNT/data/$APP_PASSWORD_PATH" \
+                  -d "$(jq -cn --arg s "$secret" '{data:{APP_PASSWORD:$s}}')" >/dev/null
+                unset secret
+                echo "$APP_PASSWORD_NAME app password on $ACCOUNT_NAME: minted and stored"
+              fi
+
+              for m in $GMAIL_MAILBOXES; do
+                code=$(curl -s -o /dev/null -w '%{http_code}' -H "$h" -X POST "$VAULT_ADDR/v1/$VAULT_MOUNT/data/${SEED_PREFIX}$m" \
+                  -d "$(jq -cn --arg host "$IMAP_HOST" --arg port "$IMAP_PORT" '{options:{cas:0},data:{HOST:$host,PORT:$port,USERNAME:"",PASSWORD:"",FROM:""}}')")
+                case "$code" in
+                  200) echo "seeded ${SEED_PREFIX}$m" ;;
+                  400) ;;
+                  *) echo "seeding ${SEED_PREFIX}$m: http $code"; exit 1 ;;
+                esac
+              done
+              curl -sS -H "$h" -X POST "$VAULT_ADDR/v1/auth/token/revoke-self" >/dev/null || true
+          env:
+            - name: HOME
+              value: /tmp
+            - name: STALWART_URL
+              value: http://stalwart:8080
+            - name: STALWART_USER
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-secret
+                  key: STALWART_USER
+            - name: STALWART_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: stalwart-secret
+                  key: STALWART_PASSWORD
+            - name: ACCOUNT_NAME
+              value: PLACEHOLDER_ACCOUNT_NAME
+            - name: APP_PASSWORD_NAME
+              value: PLACEHOLDER_APP_PASSWORD_NAME
+            - name: VAULT_ADDR
+              value: PLACEHOLDER_VAULT_ADDR
+            - name: VAULT_ROLE
+              value: PLACEHOLDER_VAULT_ROLE
+            - name: VAULT_MOUNT
+              value: PLACEHOLDER_VAULT_MOUNT
+            - name: APP_PASSWORD_PATH
+              value: PLACEHOLDER_APP_PASSWORD_PATH
+            - name: SEED_PREFIX
+              value: PLACEHOLDER_SEED_PREFIX
+            - name: GMAIL_MAILBOXES
+              value: PLACEHOLDER_GMAIL_MAILBOXES
+            - name: IMAP_HOST
+              value: PLACEHOLDER_IMAP_HOST
+            - name: IMAP_PORT
+              value: PLACEHOLDER_IMAP_PORT
+          securityContext:
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 64Mi
+          volumeMounts:
             - name: tmp
               mountPath: /tmp
       volumes:

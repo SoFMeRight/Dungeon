@@ -5,7 +5,9 @@ metadata:
 spec:
   template:
     spec:
-      containers:
+      initContainers:
+        - name: render-plan
+          image: docker.io/busybox:1.38
         - name: configuration
           image: docker.io/stalwartlabs/cli:1.0.14
           resources:
@@ -15,3 +17,32 @@ spec:
             limits:
               memory: 128Mi
               cpu: 200m
+      containers:
+        - name: identities
+          image: docker.io/alpine/k8s:1.37.1
+          env:
+            # The account the Gmail sync writes into, and the app password it logs in with.
+            - name: ACCOUNT_NAME
+              value: kai
+            - name: APP_PASSWORD_NAME
+              value: gmail-sync
+            - name: VAULT_ADDR
+              value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
+            - name: VAULT_ROLE
+              value: stalwart-configuration
+            - name: VAULT_MOUNT
+              value: optcp
+            - name: APP_PASSWORD_PATH
+              value: apps/stalwart/gmail-sync
+            # One smtp-<name> entry per mailbox, created empty but for HOST and PORT; the
+            # Operator fills USERNAME, PASSWORD and FROM. Never overwritten.
+            - name: SEED_PREFIX
+              value: apps/stalwart/smtp-
+            - name: GMAIL_MAILBOXES
+              value: >-
+                timecapsuleops outspokekin sofmeright precisionplanit homelabhelp
+                klhfcknbrnr thecodesbykai optimecapsule personal
+            - name: IMAP_HOST
+              value: imap.gmail.com
+            - name: IMAP_PORT
+              value: "993"

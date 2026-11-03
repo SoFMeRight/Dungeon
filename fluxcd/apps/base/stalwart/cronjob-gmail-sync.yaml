@@ -48,6 +48,7 @@ spec:
                     user=${f##*/smtp-}
                     host=$(field "$f" HOST); port=$(field "$f" PORT); login=$(field "$f" USERNAME)
                     printf '%s' "$(field "$f" PASSWORD)" > /tmp/pass1
+                    if [ -z "$login" ] || [ ! -s /tmp/pass1 ]; then echo "== $user: not filled in yet, skipped"; continue; fi
                     echo "== $user"
                     imapsync --host1 "$host" --port1 "$port" --ssl1 --sslargs1 SSL_verify_mode=1 \
                       --user1 "$login" --passfile1 /tmp/pass1 \

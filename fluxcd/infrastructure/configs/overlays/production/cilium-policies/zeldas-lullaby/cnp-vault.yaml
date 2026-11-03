@@ -48,6 +48,15 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
+    # stalwart-configuration writes the identities Stalwart issues (optcp/apps/stalwart/*).
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-delivery-bag
+            app: stalwart-configuration
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
     - fromEntities:
         - host
         - remote-node

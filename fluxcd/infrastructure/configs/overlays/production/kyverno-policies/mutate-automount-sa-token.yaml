@@ -95,6 +95,7 @@ spec:
               - zitadel-configuration
               - zitadel-postgres
               - boundary-init
+              - stalwart-configuration
       mutate:
         patchStrategicMerge:
           spec:
