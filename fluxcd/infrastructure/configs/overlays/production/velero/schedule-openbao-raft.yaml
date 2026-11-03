@@ -35,6 +35,9 @@ spec:
                 command:
                   - /bin/sh
                   - -c
-                  - bao login -method=kubernetes role=openbao-snapshot >/dev/null && bao operator raft snapshot save /backup/vault.snap
+                  - >-
+                    BAO_TOKEN=$(bao write -field=token auth/kubernetes/login role=openbao-snapshot
+                    jwt=@/var/run/secrets/kubernetes.io/serviceaccount/token)
+                    bao operator raft snapshot save /backup/vault.snap
                 onError: Fail
                 timeout: 3m

@@ -40,6 +40,14 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
+    # openbao-snapshot logs in and streams the raft snapshot for the Velero backup.
+    - fromEndpoints:
+        - matchLabels:
+            app: openbao-snapshot
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
     - fromEntities:
         - host
         - remote-node

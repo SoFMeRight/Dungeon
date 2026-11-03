@@ -9,3 +9,4 @@ resources:
   - cnp-netbird-turn.yaml
   - cnp-webhooks.yaml
   - cnp-vault.yaml
+  - cnp-egress-openbao-snapshot.yaml

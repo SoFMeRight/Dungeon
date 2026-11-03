@@ -1,0 +1,22 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-openbao-snapshot-egress
+spec:
+  description: >-
+    The openbao-snapshot helper logs in to OpenBao and streams a raft snapshot for the
+    Velero backup; nothing else. DNS rides the universal CCNP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: openbao-snapshot
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app: vault
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
