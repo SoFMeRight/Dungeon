@@ -36,6 +36,13 @@ spec:
         - ports:
             - port: "8080"
               protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            app: stalwart-gmail-sync
+      toPorts:
+        - ports:
+            - port: "1993"
+              protocol: TCP
   egress:
     - toEntities:
         - world

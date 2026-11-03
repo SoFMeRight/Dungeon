@@ -25,3 +25,4 @@ patches:
   - path: service-mail-patch.yaml
   - path: redis-replication-patch.yaml
   - path: elasticsearch-patch.yaml
+  - path: cronjob-gmail-sync-patch.yaml

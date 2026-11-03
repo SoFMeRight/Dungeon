@@ -1,0 +1,102 @@
+# Copies each Gmail mailbox into folders under the Stalwart login, one way and duplicate-free
+# (Mail Platform design, "Gmail consolidation"). Logic here; schedule, image and the
+# Stalwart side are the overlay's.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: stalwart-gmail-sync
+  labels:
+    app: stalwart-gmail-sync
+spec:
+  schedule: PLACEHOLDER_SCHEDULE
+  timeZone: PLACEHOLDER_TIMEZONE
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            app: stalwart-gmail-sync
+        spec:
+          serviceAccountName: stalwart-gmail-sync
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: imapsync
+              image: PLACEHOLDER_IMAGE
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  set -eu
+                  : "${STALWART_HOST:?}" "${STALWART_PORT:?}" "${STALWART_TLS_NAME:?}" "${STALWART_USERNAME:?}" "${FOLDER_PREFIX:?}"
+                  umask 077
+                  field() { K="$2" perl -MJSON::PP -0777 -ne 'print decode_json($_)->{$ENV{K}} // ""' "$1"; }
+                  printf '%s' "$(cat /secrets/STALWART_APP_PASSWORD)" > /tmp/pass2
+                  failed=""
+                  for f in /secrets/smtp-*; do
+                    [ -e "$f" ] || { echo "no smtp-* entries"; break; }
+                    user=${f##*/smtp-}
+                    host=$(field "$f" HOST); port=$(field "$f" PORT); login=$(field "$f" USERNAME)
+                    printf '%s' "$(field "$f" PASSWORD)" > /tmp/pass1
+                    echo "== $user"
+                    imapsync --host1 "$host" --port1 "$port" --ssl1 --sslargs1 SSL_verify_mode=1 \
+                      --user1 "$login" --passfile1 /tmp/pass1 \
+                      --host2 "$STALWART_HOST" --port2 "$STALWART_PORT" --ssl2 \
+                      --sslargs2 SSL_verify_mode=1 --sslargs2 "SSL_verifycn_name=$STALWART_TLS_NAME" --sslargs2 "SSL_hostname=$STALWART_TLS_NAME" \
+                      --user2 "$STALWART_USERNAME" --passfile2 /tmp/pass2 \
+                      --subfolder2 "$FOLDER_PREFIX/$user" --automap --skipcrossduplicates --useheader Message-Id \
+                      --exclude '^\[Gmail\]/(All Mail|Important|Starred|Spam|Trash)$' \
+                      --syncinternaldates --nolog --nofoldersizes --noreleasecheck --tmpdir /tmp \
+                      || failed="$failed $user"
+                    rm -f /tmp/pass1
+                  done
+                  rm -f /tmp/pass2
+                  [ -z "$failed" ] || { echo "failed:$failed"; exit 1; }
+              env:
+                - name: STALWART_HOST
+                  value: PLACEHOLDER_STALWART_HOST
+                - name: STALWART_PORT
+                  value: PLACEHOLDER_STALWART_PORT
+                - name: STALWART_TLS_NAME
+                  value: PLACEHOLDER_STALWART_TLS_NAME
+                - name: STALWART_USERNAME
+                  value: PLACEHOLDER_STALWART_USERNAME
+                - name: FOLDER_PREFIX
+                  value: PLACEHOLDER_FOLDER_PREFIX
+                - name: HOME
+                  value: /tmp
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  memory: 1Gi
+              volumeMounts:
+                - name: secrets
+                  mountPath: /secrets
+                  readOnly: true
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: secrets
+              secret:
+                secretName: stalwart-gmail-sync
+            - name: tmp
+              emptyDir:
+                sizeLimit: 512Mi

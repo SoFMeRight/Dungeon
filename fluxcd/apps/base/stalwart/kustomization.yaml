@@ -18,3 +18,5 @@ resources:
   - elasticsearch-statefulset.yaml
   - elasticsearch-service.yaml
   - job-configuration.yaml
+  - externalsecret-gmail-sync.yaml
+  - cronjob-gmail-sync.yaml

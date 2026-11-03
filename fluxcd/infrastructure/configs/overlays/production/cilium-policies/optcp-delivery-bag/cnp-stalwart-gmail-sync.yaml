@@ -1,0 +1,41 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-stalwart-gmail-sync-egress
+spec:
+  description: >-
+    The Gmail sync reads imap.gmail.com over IMAPS, with L7 DNS so Cilium learns its
+    addresses, and writes into Stalwart's IMAPS in-cluster. Nothing else.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: stalwart-gmail-sync
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "imap.gmail.com"
+      toPorts:
+        - ports:
+            - port: "993"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app: stalwart
+      toPorts:
+        - ports:
+            - port: "1993"
+              protocol: TCP

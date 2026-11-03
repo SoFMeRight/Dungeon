@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: stalwart-gmail-sync
+spec:
+  schedule: "7 * * * *"
+  timeZone: America/Los_Angeles
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: imapsync
+              image: docker.io/gilleslamiral/imapsync:2.326@sha256:ece980cb0fd2806369975d2989a3e8d9fbf28d632cdd45a05961a1e511612ed5
+              env:
+                # Stalwart's IMAPS inside the cluster; the certificate is for mail.optcp.com.
+                - name: STALWART_HOST
+                  value: stalwart-mail.optcp-delivery-bag.svc.cluster.local
+                - name: STALWART_PORT
+                  value: "993"
+                - name: STALWART_TLS_NAME
+                  value: mail.optcp.com
+                - name: STALWART_USERNAME
+                  value: kai@optcp.com
+                - name: FOLDER_PREFIX
+                  value: Gmail

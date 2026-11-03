@@ -5,3 +5,4 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-stalwart.yaml
   - cnp-bulwark.yaml
+  - cnp-stalwart-gmail-sync.yaml
