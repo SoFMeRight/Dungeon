@@ -19,6 +19,10 @@ spec:
       name: harbor-secrets
       valuesKey: s3_secretkey
       targetPath: persistence.imageChartStorage.s3.secretkey
+    - kind: Secret
+      name: harbor-secrets
+      valuesKey: secret_key
+      targetPath: secretKey
   values:
     # External URL
     externalURL: https://cr.optcp.com
