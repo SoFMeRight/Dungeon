@@ -158,6 +158,17 @@ spec:
           path "optcp-ssh/sign/operator" {
             capabilities = ["create", "update"]
           }
+      # Registry pull tokens (Registry Tokens): each reads only its own entry.
+      - name: optcp-k8s-dungeon-public
+        rules: |
+          path "optcp/data/shared/registry/cr.optcp.com-public" {
+            capabilities = ["read"]
+          }
+      - name: optcp-k8s-dungeon-internal
+        rules: |
+          path "optcp/data/shared/registry/cr.optcp.com-internal" {
+            capabilities = ["read"]
+          }
       # node-converge signs a throwaway key per run against optcp's SSH CA, and nothing else.
       - name: node-converge
         rules: |
@@ -223,6 +234,16 @@ spec:
             bound_service_account_namespaces: ["zeldas-lullaby"]
             policies: ["external-secrets-prplanit"]
             ttl: 24h
+          - name: optcp-k8s-dungeon-public
+            bound_service_account_names: ["external-secrets-vault"]
+            bound_service_account_namespaces: ["zeldas-lullaby"]
+            policies: ["optcp-k8s-dungeon-public"]
+            ttl: 24h
+          - name: optcp-k8s-dungeon-internal
+            bound_service_account_names: ["optcp-k8s-dungeon-internal"]
+            bound_service_account_namespaces: ["kokiri-forest"]
+            policies: ["optcp-k8s-dungeon-internal"]
+            ttl: 1h
           - name: zitadel-vault-sync
             bound_service_account_names: ["zitadel-configuration"]
             bound_service_account_namespaces: ["optcp-identity"]
