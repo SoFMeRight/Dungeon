@@ -5,6 +5,7 @@ resources:
   - ../../../../base/vaultwarden
   - httproute.yaml
   - cephfs-data-pv.yaml
+  - rsa-key-secret.enc.yaml
   - externalsecret-postgres-backup.yaml
 patches:
   - path: deployment-patch.yaml
