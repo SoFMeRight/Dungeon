@@ -60,7 +60,7 @@ spec:
             poll_timeout = 600
             cpu_request = "100m"
             memory_request = "256Mi"
-            memory_limit = "2Gi"
+            memory_limit = "8Gi"
             helper_cpu_request = "50m"
             helper_memory_request = "64Mi"
             helper_memory_limit = "256Mi"
