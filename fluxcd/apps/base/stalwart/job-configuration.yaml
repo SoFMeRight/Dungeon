@@ -120,16 +120,15 @@ spec:
 
               acct=$(jmap x:Account/query "$(jq -cn --arg n "$ACCOUNT_NAME" '{filter:{name:$n}}')" | jq -r '.ids[0] // empty')
               [ -n "$acct" ] || { echo "no account named $ACCOUNT_NAME"; exit 1; }
-              creds=$(jmap x:Account/get "$(jq -cn --arg i "$acct" '{ids:[$i],properties:["credentials"]}')" | jq -c '.list[0].credentials // []')
-              have=$(echo "$creds" | jq -r --arg d "$APP_PASSWORD_NAME" '[.[] | select(."@type"=="AppPassword" and .description==$d)] | length')
+              have=$(jmap x:AppPassword/get "$(jq -cn --arg a "$acct" '{accountId:$a}')" \
+                | jq -r --arg d "$APP_PASSWORD_NAME" '[(.list // [])[] | select(.description==$d)] | length')
               stored=$(curl -s -o /dev/null -w '%{http_code}' -H "$h" "$VAULT_ADDR/v1/$VAULT_MOUNT/data/$APP_PASSWORD_PATH")
               if [ "$stored" = 200 ] && [ "$have" -gt 0 ]; then
                 echo "$APP_PASSWORD_NAME app password on $ACCOUNT_NAME: in place"
               else
-                new=$(echo "$creds" | jq -c --arg d "$APP_PASSWORD_NAME" '[.[] | select(."@type"!="AppPassword" or .description!=$d)] + [{"@type":"AppPassword",description:$d}]')
-                resp=$(jmap x:Account/set "$(jq -cn --arg i "$acct" --argjson c "$new" '{update:{($i):{credentials:$c}}}')")
-                secret=$(echo "$resp" | jq -r --arg d "$APP_PASSWORD_NAME" '[.. | objects | select(."@type"=="AppPassword" and .description==$d) | .secret // empty] | first // empty')
-                [ -n "$secret" ] || { echo "no secret returned for $APP_PASSWORD_NAME: $(echo "$resp" | jq -c 'del(.updated)')"; exit 1; }
+                resp=$(jmap x:AppPassword/set "$(jq -cn --arg a "$acct" --arg d "$APP_PASSWORD_NAME" '{accountId:$a,create:{n0:{description:$d}}}')")
+                secret=$(echo "$resp" | jq -r '.created.n0.secret // empty')
+                [ -n "$secret" ] || { echo "no app password created for $APP_PASSWORD_NAME: $(echo "$resp" | jq -c 'del(.created)')"; exit 1; }
                 curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/$VAULT_MOUNT/data/$APP_PASSWORD_PATH" \
                   -d "$(jq -cn --arg s "$secret" '{data:{APP_PASSWORD:$s}}')" >/dev/null
                 unset secret
