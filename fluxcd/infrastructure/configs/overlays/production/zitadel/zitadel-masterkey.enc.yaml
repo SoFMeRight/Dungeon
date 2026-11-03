@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: zitadel-masterkey
+    namespace: zeldas-lullaby
+type: Opaque
+stringData:
+    #ENC[AES256_GCM,data:mHinPeNPJKWREgay0/19TLGjYjmdYMVeFJ8g3+zw,iv:DUQ8gziE4qV33bbFkIIyZlUr2L20PxbMLmmUa5khmQ8=,tag:R1nnlhejnZU+a/mLaBIytw==,type:comment]
+    masterkey: ENC[AES256_GCM,data:8ByW9enNXfNzR82kPxZ1IDNktoDCg/yNZeC2C2tei88=,iv:5nhIsHVKTnKjWvclyDvX9UlS65fVxnuUZrTiFBOfRB0=,tag:XG3MT5Oc1b7R/CbGSi80pg==,type:str]
+sops:
+    age:
+        - recipient: age1y8vegwlhcdgerrtn5947j5lcsswcu0zz6ukhs0hvvhsp79sa99nsn82dkr
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA0WmdNYmJLNU8yVkx0S1Qx
+            Mm1XRXI1U1BkOVcxY3gxQld5M0xNMGZjMXdVCkhrUldQOFZ3VWI0UUg0Nk05WmI1
+            OTM0LzVOczgvdGVsa1g1R3lSRGREbTQKLS0tIElpOEtoRzRmalBEVDJIRVBmTE5E
+            NWpsbUhob2xVYjIrWVdMZUlIOG0vRXMKp4UuDOqDtDSJMZSZo82WOPJxTCSIZ1J+
+            28ZnltLJ+1DhILrVgRvAbWbuXPrPecLPCwUq9OOcqf0TeGjoVxLvag==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2025-09-25T10:44:23Z"
+    mac: ENC[AES256_GCM,data:tGQfQUbJZhtvYeSy26aXoRhLVe769MFt+8CnYMbv9UVrW8Bv1fpypa9AC7B7gHEky4eMQRm/UNs4O+xG0tmBnWrvn4l53XNRi+UjryQz8Z9joErw0skBq7Sbl8meSUjbKckLnCIzR7dqBHtWVF/mj6kz2ZWBN6TmbOAdZaqrlXE=,iv:hepZR7aVjmzb/PwOD3eR2xrNCKuvui133eD1L7B3MH8=,tag:Q0ibniQDmZmTLxTe5nDEWQ==,type:str]
+    encrypted_regex: ^(data|stringData)$
+    version: 3.10.2
