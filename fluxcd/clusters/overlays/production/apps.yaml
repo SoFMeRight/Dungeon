@@ -12,7 +12,7 @@ spec:
   dependsOn:
     - name: infra-configs
     - name: infra-controllers
-    # Apps are saturated with infra deps: ESO/vault (secrets + cr-pcfae pull secret),
+    # Apps are saturated with infra deps: ESO/vault (secrets + registry pull secrets),
     # ceph storage (PVCs), CNPG/ESO operators, and OIDC against zitadel. phase-03
     # transitively guarantees operators → phase-01(ceph) → phase-02(vault) → phase-03
     # (zitadel) are all Ready first, so apps stop racing infrastructure on a cold boot.

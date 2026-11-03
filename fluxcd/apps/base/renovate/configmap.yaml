@@ -34,9 +34,7 @@ data:
         { "matchHost": "git.optcp.com", "allowInternal": true },
         { "matchHost": "s3.optcp.com", "allowInternal": true },
         { "matchHost": "cr.optcp.com", "allowInternal": true },
-        { "matchHost": "docker.cr.optcp.com", "allowInternal": true },
-        { "matchHost": "cr.pcfae.com", "allowInternal": true },
-        { "matchHost": "docker.cr.pcfae.com", "allowInternal": true }
+        { "matchHost": "docker.cr.optcp.com", "allowInternal": true }
       ],
 
       "flux": {

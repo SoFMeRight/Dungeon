@@ -10,7 +10,6 @@ spec:
     - name: phloem-gateway
       namespace: arylls-lookout
   hostnames:
-    - "cr.pcfae.com"
     - "cr.optcp.com"
   rules:
     - matches:

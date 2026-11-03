@@ -17,18 +17,15 @@ spec:
     # pcfae.com
     - "code.pcfae.com"
     - "convertx.pcfae.com"
-    - "cr.pcfae.com"
     - "crowdsec.pcfae.com"
     - "design.pcfae.com"
     - "dl.pcfae.com"
     - "dns.pcfae.com"
     - "dns2.pcfae.com"
-    - "docker.cr.pcfae.com"
     - "draw.pcfae.com"
     - "flowy.pcfae.com"
     - "flux.pcfae.com"
     - "fotos.pcfae.com"
-    - "ghcr.cr.pcfae.com"
     - "grafana.pcfae.com"
   rules:
     # Which playlist this domain's error pages draw from. The filter injects a fixed

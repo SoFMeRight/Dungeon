@@ -77,18 +77,6 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: cr-pcfae-com-tls
-spec:
-  secretName: cr-pcfae-com-tls
-  issuerRef:
-    name: letsencrypt-production
-    kind: ClusterIssuer
-  dnsNames:
-    - "*.cr.pcfae.com"
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
   name: sofmeright-com-tls
 spec:
   secretName: sofmeright-com-tls
@@ -387,18 +375,6 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "pcfae.com"
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: cr-pcfae-com-phloem-tls
-spec:
-  secretName: cr-pcfae-com-tls
-  issuerRef:
-    name: letsencrypt-production
-    kind: ClusterIssuer
-  dnsNames:
-    - "*.cr.pcfae.com"
 ---
 # Harbor's canonical name on phloem only; it is internal, so it never rides cell-membrane's
 # public *.optcp.com wildcard. Covers the registry and its proxy-cache subdomains.
