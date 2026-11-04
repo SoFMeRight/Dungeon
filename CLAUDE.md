@@ -40,7 +40,9 @@
   - `fluxcd/infrastructure/namespaces` manages all Kubernetes namespaces - ALL namespaces MUST be deployed via this path only
     - Namespaces (Ocarina of Time theme):
       - tingle-tuner: Tools and utilities (quirky helper character)
-      - zeldas-lullaby: Administrative services (vault, weave, zitadel)
+      - zeldas-lullaby: Administrative services (netbird, netbox, semaphore, unifi)
+      - optcp-secrets: Secret store and delivery (openbao, bank-vaults, external-secrets)
+      - optcp-identity: Identity (zitadel, oauth2-proxy)
       - compass: DNS & NTP services (navigation/direction)
       - gossip-stone: Monitoring services (tells you secrets/info)
       - lost-woods: Discovery & Dashboards (exploration/finding things)
@@ -65,7 +67,7 @@
 - Secret Management Strategy:
   - Critical infrastructure apps (vault, zitadel, etc.) use SOPS for secret management so they can run with local auth without dependencies during cluster issues
   - **CRITICAL: Never edit .enc.yaml files directly!** These are SOPS-encrypted files. Direct editing corrupts them and destroys secrets permanently. Always use `sops` command to decrypt, edit plaintext, then re-encrypt.
-  - Most other applications use Vault External Secrets Operator to manage secrets from Vault at http://172.22.30.86:8200/ui/vault/secrets/operationtimecapsule/kv/list
+  - Most other applications use External Secrets Operator to manage secrets from OpenBao at https://secrets.optcp.com (in-cluster: http://openbao.optcp-secrets.svc.cluster.local:8200)
   - Vault secret path structure in operationtimecapsule namespace:
     - `apps/<app-name>` - bundled comprehensive secrets specific to that application (e.g., apps/linkwarden)
     - `smtp/<service-name>` - SMTP-related secrets that may be shared between applications (e.g., smtp/ofcourseimvegan)
@@ -254,7 +256,7 @@
   - BGP LOAD BALANCERS:
     - General CIDR: 172.22.30.0/24.
     - Shared IPs (Ocarina of Time naming theme):
-      - Administrative (vault, zitadel, netbird): 172.22.30.86 (sharing-key: zeldas-lullaby)
+      - NetBird TURN (netbird-turn): 172.22.30.86 (sharing-key: zeldas-lullaby)
       - Network infrastructure (unifi): 172.22.30.20 (sharing-key: kaepora-gaebora)
       - Mail services (ntfy-smtp): 172.22.30.102 (sharing-key: delivery-bag)
       - Mail server (stalwart): 172.22.30.103 (sharing-key: optcp-delivery-bag)

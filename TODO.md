@@ -91,10 +91,6 @@ CLAUDE.md specifies PVC naming pattern for StatefulSets: `<namespace>-<app>-<pur
 - [ ] Ollama: `data-ollama-0` → `tingle-tuner-ollama-data-ollama-0`
 - [ ] LibreTranslate: `models-libretranslate-0` → `tingle-tuner-libretranslate-models-libretranslate-0`
 
-### zeldas-lullaby namespace:
-- [ ] Vault: `vault-data` → `zeldas-lullaby-vault-data-vault-0` (if StatefulSet)
-- [ ] Zitadel: `zitadel-postgres-data` → `zeldas-lullaby-zitadel-postgres-data-zitadel-postgres-0` (if StatefulSet)
-
 **Migration process (learned from Jellyfin/Plex migrations):**
 1. Update volumeClaimTemplate names in StatefulSet patch to include namespace prefix
 2. Scale down StatefulSet to 0 replicas
