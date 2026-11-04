@@ -1,7 +1,0 @@
-# Held for the move to optcp-secrets: the raft volumes re-bind and get the new peer
-# addresses before the operator recreates the StatefulSet. Released in the next commit.
-$patch: delete
-apiVersion: vault.banzaicloud.com/v1alpha1
-kind: Vault
-metadata:
-  name: openbao

@@ -29,4 +29,3 @@ patches:
     target:
       kind: ClusterRoleBinding
       name: openbao-tokenreview-binding
-  - path: hold-for-move-patch.yaml
