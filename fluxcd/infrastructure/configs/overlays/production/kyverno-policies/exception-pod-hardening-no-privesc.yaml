@@ -52,7 +52,7 @@ spec:
       # policy's failurePolicy:Ignore (a Kyverno blip must not block Vault pod creation).
       - resources:
           kinds: [Pod]
-          namespaces: [zeldas-lullaby]
+          namespaces: [optcp-secrets]
           names: ["bank-vaults-operator-*", "openbao-*"]
       # nextcloud-collabora (Helm chroot sandbox). (kimai/osticket-mariadb agents + harbor-redis +
       # harbor-proxy-cache all hardened directly — no longer excepted here.)

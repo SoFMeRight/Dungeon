@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/zeldas-lullaby/sa/bank-vaults-operator
+              - cluster.local/ns/optcp-secrets/sa/bank-vaults-operator
       to:
         - operation:
             ports: ["8200"]

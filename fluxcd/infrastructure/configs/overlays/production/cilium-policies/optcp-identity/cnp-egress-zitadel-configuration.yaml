@@ -5,7 +5,7 @@ metadata:
 spec:
   description: >-
     zitadel-configuration writes the admin-SA PAT and caches the flatroles signing
-    key in OpenBao (zeldas-lullaby) on 8200.
+    key in OpenBao (optcp-secrets) on 8200.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -15,7 +15,7 @@ spec:
   egress:
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: zeldas-lullaby
+            k8s:io.kubernetes.pod.namespace: optcp-secrets
             app: vault
       toPorts:
         - ports:

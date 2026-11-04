@@ -1,6 +1,6 @@
 # Daily OpenBao raft-snapshot backup.
 #
-# Velero runs the pre-hook in the openbao-snapshot helper (zeldas-lullaby): it logs into
+# Velero runs the pre-hook in the openbao-snapshot helper (optcp-secrets): it logs into
 # OpenBao via the `openbao-snapshot` k8s-auth role and writes `raft snapshot save` to the
 # helper's /backup volume, then FSB/kopia captures ONLY that volume (opt-in via the pod's
 # backup.velero.io/backup-volumes annotation) — dedup'd to gringotts.
@@ -16,7 +16,7 @@ spec:
   schedule: "0 3 * * *"
   template:
     includedNamespaces:
-      - zeldas-lullaby
+      - optcp-secrets
     labelSelector:
       matchLabels:
         app: openbao-snapshot
@@ -25,7 +25,7 @@ spec:
       resources:
         - name: raft-snapshot-save
           includedNamespaces:
-            - zeldas-lullaby
+            - optcp-secrets
           labelSelector:
             matchLabels:
               app: openbao-snapshot

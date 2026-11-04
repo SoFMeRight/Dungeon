@@ -93,8 +93,10 @@ spec:
             kind: configmap
             name: velero-volume-policy
           includedNamespaces:
-            # Administrative services (vault, weave)
+            # Administrative services (netbird, netbox, unifi, semaphore)
             - zeldas-lullaby
+            # Secrets: openbao, bank-vaults, external-secrets (namespace plan, group AP)
+            - optcp-secrets
             # Identity: zitadel, oauth2-proxy (namespace plan, group H)
             - optcp-identity
             # Credential vaults: vaultwarden, twofauth (namespace plan, group AH)

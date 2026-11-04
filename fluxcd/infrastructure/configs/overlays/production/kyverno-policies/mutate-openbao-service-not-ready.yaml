@@ -11,7 +11,7 @@ metadata:
       http://openbao:8200, can never initialize or unseal. This sets the field on CREATE and
       on UPDATE, so an operator rewrite or a Service created during a webhook blip is corrected
       on the next update. Safe on UPDATE: unlike a pod securityContext the field is mutable.
-      failurePolicy: Ignore because Kyverno shares this namespace (zeldas-lullaby).
+      failurePolicy: Ignore so a Kyverno webhook blip never blocks the openbao Service.
 spec:
   background: false
   failurePolicy: Ignore
@@ -22,7 +22,7 @@ spec:
           - resources:
               kinds: [Service]
               operations: [CREATE, UPDATE]
-              namespaces: [zeldas-lullaby]
+              namespaces: [optcp-secrets]
               names: [openbao]
       mutate:
         patchStrategicMerge:

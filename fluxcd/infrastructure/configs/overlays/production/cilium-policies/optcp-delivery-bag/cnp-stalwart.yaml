@@ -69,7 +69,7 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: zeldas-lullaby
+            k8s:io.kubernetes.pod.namespace: optcp-secrets
             app: vault
       toPorts:
         - ports:

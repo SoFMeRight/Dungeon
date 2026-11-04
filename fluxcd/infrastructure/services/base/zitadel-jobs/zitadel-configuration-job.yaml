@@ -70,7 +70,7 @@ spec:
             - name: ZITADEL_ROUTE
               value: zitadel
             - name: VAULT_ADDR
-              value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
+              value: http://openbao.optcp-secrets.svc.cluster.local:8200
             - name: VAULT_ROLE
               value: zitadel-vault-sync
             - name: VAULT_PATH

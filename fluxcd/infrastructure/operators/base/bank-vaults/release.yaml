@@ -4,7 +4,7 @@ metadata:
   name: bank-vaults-operator
 spec:
   releaseName: bank-vaults-operator
-  targetNamespace: zeldas-lullaby
+  targetNamespace: PLACEHOLDER_TARGET_NAMESPACE
   interval: 30m
   chart:
     spec:
@@ -30,8 +30,3 @@ spec:
       limits:
         cpu: 356m
         memory: 192Mi
-    webhook:
-      enabled: true
-      image:
-        repository: ghcr.io/bank-vaults/vault-secrets-webhook
-        tag: PLACEHOLDER_WEBHOOK_TAG

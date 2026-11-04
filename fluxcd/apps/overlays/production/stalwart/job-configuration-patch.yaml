@@ -27,7 +27,7 @@ spec:
             - name: APP_PASSWORD_NAME
               value: gmail-sync
             - name: VAULT_ADDR
-              value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
+              value: http://openbao.optcp-secrets.svc.cluster.local:8200
             - name: VAULT_ROLE
               value: stalwart-configuration
             - name: VAULT_MOUNT

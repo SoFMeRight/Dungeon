@@ -36,7 +36,7 @@ spec:
           command: ["sleep", "infinity"]
           env:
             - name: BAO_ADDR
-              value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
+              value: http://openbao.optcp-secrets.svc.cluster.local:8200
             - name: HOME
               value: /tmp
           securityContext:

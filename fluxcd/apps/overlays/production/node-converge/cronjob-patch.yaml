@@ -17,4 +17,4 @@ spec:
                 - name: REPO_URL
                   value: https://git.optcp.com/SoFMeRight/dungeon.git
                 - name: BAO_ADDR
-                  value: http://openbao.zeldas-lullaby.svc.cluster.local:8200
+                  value: http://openbao.optcp-secrets.svc.cluster.local:8200

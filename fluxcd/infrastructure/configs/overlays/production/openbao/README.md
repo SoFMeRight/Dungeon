@@ -1,6 +1,6 @@
 # OpenBao
 
-OpenBao runs as a three-node raft cluster in `zeldas-lullaby`, managed by the bank-vaults operator from the `Vault` CR `openbao`: `../../../base/openbao/vault-cr.yaml`, patched by `vault-cr-patch.yaml` here.
+OpenBao runs as a three-node raft cluster in `optcp-secrets`, managed by the bank-vaults operator from the `Vault` CR `openbao`: `../../../base/openbao/vault-cr.yaml`, patched by `vault-cr-patch.yaml` here.
 
 ## How it starts
 
@@ -14,7 +14,7 @@ A cold start is every node sealed at once. Three settings keep it from deadlocki
 
 - **The sealed-tolerant liveness probe** (`vaultContainerSpec.livenessProbe` in `vault-cr-patch.yaml`). The default probe returns 503 while sealed and kills the pod before it can be unsealed.
 - **`publishNotReadyAddresses: true` on the Service `openbao`**, set by the Kyverno policy `mutate-openbao-service-not-ready`. A sealed node never reports ready; without it the configurer finds no endpoint at `http://openbao:8200`.
-- **The istio policy `allow-vault-to-vault`** (`istio-policies/zeldas-lullaby/`), which allows 8200 (bootstrap and configurer) and 8201 (raft) between the OpenBao pods.
+- **The istio policy `allow-vault-to-vault`** (`istio-policies/optcp-secrets/`), which allows 8200 (bootstrap and configurer) and 8201 (raft) between the OpenBao pods.
 
 ## Restoring from a raft snapshot
 

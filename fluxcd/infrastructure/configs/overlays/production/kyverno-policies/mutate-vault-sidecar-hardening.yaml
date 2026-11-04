@@ -16,8 +16,8 @@ metadata:
       bank-vaults container runs uid 65534). NOT applied to the raft pods: pod-level
       runAsNonRoot is impossible there (openbao image has a non-numeric user ->
       CreateContainerConfigError). readOnlyRootFilesystem is left off (runtime writes).
-      failurePolicy: Ignore is required — Kyverno shares this namespace (zeldas-lullaby), so
-      a Fail webhook-rebuild blip would block Vault StatefulSet pod creation. Validate with
+      failurePolicy: Ignore is required — with Fail, a Kyverno webhook-rebuild blip would
+      block Vault StatefulSet pod creation, and every secret in the cluster depends on it. Validate with
       kubectl create --dry-run=server before rolling real pods. ADMISSION-TIME ONLY.
 spec:
   background: true
@@ -31,14 +31,14 @@ spec:
               # CREATE-only: admission-time hardening (see description). On UPDATE the
               # securityContext is immutable and re-injecting it wedges controller pod updates.
               operations: [CREATE]
-              namespaces: [zeldas-lullaby]
+              namespaces: [optcp-secrets]
               selector:
                 matchLabels:
                   app.kubernetes.io/name: vault
           - resources:
               kinds: [Pod]
               operations: [CREATE]
-              namespaces: [zeldas-lullaby]
+              namespaces: [optcp-secrets]
               selector:
                 matchLabels:
                   app.kubernetes.io/name: vault-configurator
@@ -102,7 +102,7 @@ spec:
           # Strip IPC_LOCK from the openbao container. vault-operator v1.24.0 hardcodes
           # capabilities.add [IPC_LOCK, SETFCAP] and APPENDS the CR's vaultContainerSpec caps
           # (mergo WithAppendSlice) — so the CR cannot remove IPC_LOCK. PSA baseline (enforced on
-          # zeldas-lullaby) forbids it, wedging the raft rollout at the highest ordinal. mlock is
+          # optcp-secrets) forbids it, wedging the raft rollout at the highest ordinal. mlock is
           # off (config disable_mlock: true) so IPC_LOCK is unused; overwrite add with the intended
           # set. Kyverno mutation runs before PSA validation, so the rewritten pod admits cleanly.
           - list: "request.object.spec.containers"
@@ -142,7 +142,7 @@ spec:
           - resources:
               kinds: [Pod]
               operations: [CREATE]
-              namespaces: [zeldas-lullaby]
+              namespaces: [optcp-secrets]
               selector:
                 matchLabels:
                   app.kubernetes.io/name: vault-configurator

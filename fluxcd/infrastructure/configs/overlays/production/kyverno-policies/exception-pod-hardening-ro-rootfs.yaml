@@ -128,15 +128,20 @@ spec:
           kinds: [Pod]
           namespaces: [tingle-tuner]
           names: ["faster-whisper-*", "hrconvert2-*", "librespeed-speedtest-*", "libretranslate-*", "stable-diffusion-webui-*"]
-      # zeldas-lullaby — Vault operator, netbird-dashboard supervisord, netbox/unifi LSIO, DBs.
+      # optcp-secrets — Vault operator and the OpenBao pods.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-secrets]
+          names:
+            - "bank-vaults-operator-*"
+            - "openbao-*"
+      # zeldas-lullaby — netbird-dashboard supervisord, netbox/unifi LSIO, DBs.
       - resources:
           kinds: [Pod]
           namespaces: [zeldas-lullaby]
           names:
-            - "bank-vaults-operator-*"
             - "netbird-dashboard-*"
             - "netbox-server-*"
-            - "openbao-*"
             - "semaphore-*"
             - "unifi-*"
       # optcp-identity — zitadel's configuration Job and Redis.
