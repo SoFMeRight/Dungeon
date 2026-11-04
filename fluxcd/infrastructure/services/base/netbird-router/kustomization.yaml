@@ -4,4 +4,5 @@ resources:
   - serviceaccounts.yaml
   - statefulset-router.yaml
   - service-router.yaml
+  - secretstore.yaml
   - externalsecret-router.yaml

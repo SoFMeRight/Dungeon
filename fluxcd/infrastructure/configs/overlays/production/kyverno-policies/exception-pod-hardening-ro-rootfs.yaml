@@ -163,9 +163,9 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-keyring]
           names: ["twofauth-*"]
-      # farores-wind — netbird-router (WireGuard subnet router needs a writable rootfs for the agent).
+      # optcp-vpn — netbird-router (WireGuard subnet router needs a writable rootfs for the agent).
       - resources:
           kinds: [Pod]
-          namespaces: [farores-wind]
+          namespaces: [optcp-vpn]
           names:
             - "netbird-router-*"

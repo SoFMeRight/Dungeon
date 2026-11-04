@@ -1,0 +1,8 @@
+# Held at zero replicas while the router-data volumes re-bind to claims in optcp-vpn; no pod
+# means no claim is provisioned. The next commit removes this.
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: netbird-router-dungeon
+spec:
+  replicas: 0

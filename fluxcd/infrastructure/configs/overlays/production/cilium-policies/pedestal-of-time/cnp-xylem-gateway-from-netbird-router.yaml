@@ -4,7 +4,7 @@ metadata:
   name: allow-xylem-gateway-from-netbird-router
 spec:
   description: >-
-    Allow the in-cluster NetBird subnet router (farores-wind) to reach xylem-gateway
+    Allow the in-cluster NetBird subnet router (optcp-vpn) to reach xylem-gateway
     on :80/:443. The gateway's LAN rule admits RFC1918 but excepts the pod CIDR to
     prevent identity bypass via the LB IP; the router forwards VPN traffic from a pod
     IP, so it needs this explicit identity-based allow. This is the sanctioned VPN
@@ -18,7 +18,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: farores-wind
+            k8s:io.kubernetes.pod.namespace: optcp-vpn
             app: netbird
             component: router
       toPorts:

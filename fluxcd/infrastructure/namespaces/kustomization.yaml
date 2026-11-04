@@ -20,6 +20,7 @@ resources:
   - optcp-sibyl-system.yaml
   - optcp-staff-suite.yaml
   - optcp-supply-chain.yaml
+  - optcp-vpn.yaml
   - prplanit-support.yaml
   - fairy-bottle.yaml
   - gorons-bracelet.yaml
@@ -39,5 +40,4 @@ resources:
   - mr-resetti.yaml
   - training-dummy.yaml
   - prelude-of-light.yaml
-  - farores-wind.yaml
   - arbitorium-game-streaming.yaml

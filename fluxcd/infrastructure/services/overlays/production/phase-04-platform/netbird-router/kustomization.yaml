@@ -1,10 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-# The NetBird in-cluster subnet router lives in farores-wind (the zero-trust remote-access
-# tier), NOT with the netbird control plane in zeldas-lullaby: it needs NET_ADMIN/MKNOD, which
-# zeldas-lullaby's baseline PodSecurity forbids, and a privileged network pivot does not belong
-# beside Vault/Zitadel. farores-wind is privileged PSA and isolates the pivot's blast radius.
-namespace: farores-wind
+# The NetBird in-cluster subnet router has its own namespace, apart from the netbird
+# control plane: it needs NET_ADMIN/MKNOD, which baseline PodSecurity forbids, so its
+# privileged namespace holds nothing else.
+namespace: optcp-vpn
 resources:
   - ../../../../base/netbird-router
 patches:
@@ -21,13 +20,4 @@ patches:
     target:
       kind: StatefulSet
       name: netbird-router-dungeon
-  - patch: |-
-      - op: replace
-        path: /spec/secretStoreRef/name
-        value: openbao-zeldas-letter
-      - op: replace
-        path: /spec/data/0/remoteRef/key
-        value: apps/netbird
-    target:
-      kind: ExternalSecret
-      name: netbird-router-dungeon
+  - path: hold-for-move-patch.yaml

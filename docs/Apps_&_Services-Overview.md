@@ -1308,7 +1308,7 @@
 | Istio (2 components) | king-of-red-lions | ✅ |
 | Istio Cni | king-of-red-lions | ✅ |
 | Istiod | king-of-red-lions | ✅ |
-| Netbird Router Dungeon | farores-wind | ✅ |
+| Netbird Router Dungeon | optcp-vpn | ✅ |
 | Stunner (2 components) | king-of-red-lions | ✅ |
 | Ztunnel | king-of-red-lions | ✅ |
 | Ztunnel | king-of-red-lions | ✅ |
@@ -1486,7 +1486,7 @@
 - Replicas: 1/1
 
 **Netbird Router Dungeon** — StatefulSet — 0.78.1
-- Namespace: farores-wind
+- Namespace: optcp-vpn
 - Replicas: 3/3
 
 **Stunner** — Deployment — 1.2.1

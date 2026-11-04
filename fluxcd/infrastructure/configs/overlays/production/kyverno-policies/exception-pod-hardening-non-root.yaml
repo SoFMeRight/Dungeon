@@ -129,8 +129,8 @@ spec:
           kinds: [Pod]
           namespaces: [zeldas-lullaby]
           names: ["netbird-dashboard-*", "netbird-turn-*"]
-      # farores-wind — netbird-router (WireGuard subnet router: NET_ADMIN/MKNOD, runs as root).
+      # optcp-vpn — netbird-router (WireGuard subnet router: NET_ADMIN/MKNOD, runs as root).
       - resources:
           kinds: [Pod]
-          namespaces: [farores-wind]
+          namespaces: [optcp-vpn]
           names: ["netbird-router-*"]
