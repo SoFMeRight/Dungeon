@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: zeldas-lullaby
 resources:
   - rsa-key-secret.enc.yaml
+  - db-secret.enc.yaml
