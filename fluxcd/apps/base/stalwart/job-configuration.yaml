@@ -152,7 +152,12 @@ spec:
                 [ -n "$id" ] && [ -n "$secret" ] || { echo "no app password created for $APP_PASSWORD_NAME: $(echo "$resp" | jq -c 'del(.created)')"; exit 1; }
                 new="$id:$name"
                 echo "[\"$new\"]" | jq -c '. + input' - /tmp/live.json > /tmp/live2.json && mv /tmp/live2.json /tmp/live.json
-                record() { curl -fsS -H "$h" -X POST "$meta" -d "$(jq -cn --argjson c "$1" '{custom_metadata:$c}')" >/dev/null; }
+                # OpenBao refuses empty metadata values, so only the keys that have one are written.
+                record() {
+                  c=$(curl -s -o /tmp/record.json -w '%{http_code}' -H "$h" -X POST "$meta" \
+                    -d "$(jq -cn --argjson c "$1" '{custom_metadata:($c | with_entries(select(.value != "")))}')")
+                  case "$c" in 2??) ;; *) echo "openbao metadata write: http $c $(jq -c '.errors' /tmp/record.json 2>/dev/null)"; return 1 ;; esac
+                }
                 # Recorded as pending first, so a run that dies before the swap leaves its name to clean up.
                 record "$(jq -cn --arg c "$current" --arg p "$new" --arg r "$ROTATION" '{app_password:$c,pending:$p,rotation:$r}')" \
                   && curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/$VAULT_MOUNT/data/$APP_PASSWORD_PATH" \
