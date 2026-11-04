@@ -13,6 +13,9 @@ spec:
         - name: import-cert
           image: docker.io/linuxserver/unifi-network-application:10.6.109-ls152
           securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
             allowPrivilegeEscalation: false
             capabilities:
               drop:
@@ -20,6 +23,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
+              set -e
               KEYSTORE="/config/data/keystore"
               STOREPASS="aircontrolenterprise"
               mkdir -p /config/data
