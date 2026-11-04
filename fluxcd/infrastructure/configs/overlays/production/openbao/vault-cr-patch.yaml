@@ -244,12 +244,16 @@ spec:
       # StageFreight image/attestation signing — one policy per tenant (a GitLab
       # group = a credential/identity scope, the same boundary Vault already draws
       # for KV with external-secrets-optcp vs -prplanit). Each grants sign +
-      # read-public-key on ONLY its own cosign-signer key, so a compromised runner
+      # read-public-key on ONLY its own cosign-signer key (sign/<key>/+ is the hash-algorithm
+      # form cosign calls), so a compromised runner
       # in one group can never sign for another. CI can never export, rotate, or
       # delete a key; verifiers embed the public half offline and never call Vault.
       - name: stagefreight-cosign-homelabhd
         rules: |
           path "cosign-signer/sign/homelabhd" {
+            capabilities = ["create", "update"]
+          }
+          path "cosign-signer/sign/homelabhd/+" {
             capabilities = ["create", "update"]
           }
           path "cosign-signer/keys/homelabhd" {
@@ -260,12 +264,18 @@ spec:
           path "cosign-signer/sign/prplanit" {
             capabilities = ["create", "update"]
           }
+          path "cosign-signer/sign/prplanit/+" {
+            capabilities = ["create", "update"]
+          }
           path "cosign-signer/keys/prplanit" {
             capabilities = ["read"]
           }
       - name: stagefreight-cosign-sofmeright
         rules: |
           path "cosign-signer/sign/sofmeright" {
+            capabilities = ["create", "update"]
+          }
+          path "cosign-signer/sign/sofmeright/+" {
             capabilities = ["create", "update"]
           }
           path "cosign-signer/keys/sofmeright" {
