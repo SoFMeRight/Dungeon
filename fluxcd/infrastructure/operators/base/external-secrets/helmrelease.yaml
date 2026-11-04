@@ -19,6 +19,11 @@ spec:
   values:
     fullnameOverride: "external-secrets"
     installCRDs: true
+    # Uninstalling the release (a namespace move does) must never delete the CRDs, or every
+    # ExternalSecret and the Secrets they own go with them.
+    crds:
+      annotations:
+        helm.sh/resource-policy: keep
     replicaCount: 2
     leaderElection: true
     resources:
