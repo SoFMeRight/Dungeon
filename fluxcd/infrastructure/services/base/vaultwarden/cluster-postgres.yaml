@@ -15,7 +15,7 @@ spec:
       database: vaultwarden
       owner: vaultwarden
       secret:
-        name: vaultwarden-secrets
+        name: vaultwarden-db
 
   storage:
     storageClass: PLACEHOLDER_STORAGE_CLASS

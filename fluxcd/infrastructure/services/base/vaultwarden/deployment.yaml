@@ -45,7 +45,7 @@ spec:
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: vaultwarden-secrets
+                  name: vaultwarden-db
                   key: DATABASE_URL
             - name: ADMIN_TOKEN
               valueFrom:
