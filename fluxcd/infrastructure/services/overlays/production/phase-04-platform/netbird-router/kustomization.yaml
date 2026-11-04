@@ -20,4 +20,3 @@ patches:
     target:
       kind: StatefulSet
       name: netbird-router-dungeon
-  - path: hold-for-move-patch.yaml
