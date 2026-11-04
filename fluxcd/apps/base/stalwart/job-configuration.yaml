@@ -172,14 +172,19 @@ spec:
                 echo "$APP_PASSWORD_NAME app password on $ACCOUNT_NAME: minted (rotation $ROTATION)"
               fi
 
+              # An entry that exists is never written: its metadata answers 200 and it is skipped.
+              # cas:0 keeps a write from landing on one created in between.
               for m in $GMAIL_MAILBOXES; do
+                code=$(curl -s -o /dev/null -w '%{http_code}' -H "$h" "$VAULT_ADDR/v1/$VAULT_MOUNT/metadata/${SEED_PREFIX}$m")
+                case "$code" in
+                  200) continue ;;
+                  404) ;;
+                  *) echo "checking ${SEED_PREFIX}$m: http $code"; exit 1 ;;
+                esac
                 code=$(curl -s -o /dev/null -w '%{http_code}' -H "$h" -X POST "$VAULT_ADDR/v1/$VAULT_MOUNT/data/${SEED_PREFIX}$m" \
                   -d "$(jq -cn --arg host "$IMAP_HOST" --arg port "$IMAP_PORT" '{options:{cas:0},data:{HOST:$host,PORT:$port,USERNAME:"",PASSWORD:"",FROM:""}}')")
-                case "$code" in
-                  200) echo "seeded ${SEED_PREFIX}$m" ;;
-                  400) ;;
-                  *) echo "seeding ${SEED_PREFIX}$m: http $code"; exit 1 ;;
-                esac
+                [ "$code" = 200 ] || { echo "seeding ${SEED_PREFIX}$m: http $code"; exit 1; }
+                echo "seeded ${SEED_PREFIX}$m"
               done
               curl -sS -H "$h" -X POST "$VAULT_ADDR/v1/auth/token/revoke-self" >/dev/null || true
           env:

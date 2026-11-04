@@ -152,8 +152,8 @@ spec:
             capabilities = ["create", "update", "patch"]
           }
       # stalwart-configuration writes the identities Stalwart issues: the Gmail sync's app
-      # password, and the empty smtp-<name> seeds the Operator fills. It reads no secret: the
-      # metadata holds only the ids of the app passwords it minted, so it destroys no other.
+      # password, and the empty smtp-<name> seeds the Operator fills. It reads no secret, only
+      # metadata: the app password it recorded, and whether a seed already exists.
       - name: stalwart-configuration
         rules: |
           path "optcp/data/apps/stalwart/gmail-sync" {
@@ -164,6 +164,9 @@ spec:
           }
           path "optcp/data/apps/stalwart/smtp-*" {
             capabilities = ["create"]
+          }
+          path "optcp/metadata/apps/stalwart/smtp-*" {
+            capabilities = ["read"]
           }
       # People with the operator role sign their own SSH certificate; the role limits the
       # principal to their own username.
