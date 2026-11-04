@@ -35,4 +35,3 @@ patches:
     target:
       kind: Service
       name: vaultwarden
-  - path: hold-for-move-patch.yaml
