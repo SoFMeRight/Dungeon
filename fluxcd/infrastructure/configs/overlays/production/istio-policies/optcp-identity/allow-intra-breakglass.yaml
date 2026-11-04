@@ -10,4 +10,4 @@ spec:
   rules:
     - from:
         - source:
-            namespaces: ["optcp-cloud"]
+            namespaces: ["optcp-identity"]

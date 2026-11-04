@@ -41,7 +41,7 @@ spec:
         name: twofauth-data
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: ceph-rbd-retain
+        storageClassName: ceph-rbd
         resources:
           requests:
             storage: 5Gi

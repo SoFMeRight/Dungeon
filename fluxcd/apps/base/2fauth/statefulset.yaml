@@ -71,9 +71,15 @@ spec:
             - name: MAIL_MAILER
               value: "smtp"
             - name: MAIL_HOST
-              value: "smtp.gmail.com"
+              valueFrom:
+                secretKeyRef:
+                  name: twofauth-secrets
+                  key: smtp_host
             - name: MAIL_PORT
-              value: "465"
+              valueFrom:
+                secretKeyRef:
+                  name: twofauth-secrets
+                  key: smtp_port
             - name: MAIL_USERNAME
               valueFrom:
                 secretKeyRef:
@@ -85,7 +91,10 @@ spec:
                   name: twofauth-secrets
                   key: smtp_password
             - name: MAIL_ENCRYPTION
-              value: "SSL"
+              valueFrom:
+                secretKeyRef:
+                  name: twofauth-secrets
+                  key: smtp_security
             - name: MAIL_FROM_NAME
               valueFrom:
                 secretKeyRef:

@@ -8,5 +8,5 @@ spec:
   resources:
     requests:
       storage: 2Gi
-  volumeName: vaultwarden-data-pv
+  volumeName: optcp-keyring-vaultwarden-data-0
   storageClassName: ""
