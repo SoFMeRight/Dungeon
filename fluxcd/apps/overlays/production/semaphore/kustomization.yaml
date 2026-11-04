@@ -13,4 +13,3 @@ patches:
     target:
       kind: Service
       name: semaphore
-  - path: hold-for-move-patch.yaml

@@ -21,4 +21,3 @@ patches:
     target:
       kind: Service
       name: netbox-server
-  - path: hold-for-move-patch.yaml

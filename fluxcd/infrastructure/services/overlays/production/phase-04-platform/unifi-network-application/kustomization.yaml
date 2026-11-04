@@ -15,4 +15,3 @@ patches:
   - path: statefulset-app-patch.yaml
   - path: statefulset-mongodb-patch.yaml
   - path: service-patch.yaml
-  - path: hold-for-move-patch.yaml
