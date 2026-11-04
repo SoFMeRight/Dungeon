@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - serviceaccount-app.yaml
+  - serviceaccount-mongodb.yaml
+  - statefulset-app.yaml
+  - statefulset-mongodb.yaml
+  - configmap-mongodb-init.yaml
+  - service.yaml

@@ -93,8 +93,12 @@ spec:
             kind: configmap
             name: velero-volume-policy
           includedNamespaces:
-            # Administrative services (netbird, netbox, unifi, semaphore)
+            # Remote access: netbird (moving to optcp-remote-access)
             - zeldas-lullaby
+            # Infrastructure management: unifi-network-application, semaphore (namespace plan, group AG)
+            - optcp-infrastructure-management
+            # IPAM: netbox (namespace plan, group AQ)
+            - optcp-ipam
             # Secrets: openbao, bank-vaults, external-secrets (namespace plan, group AP)
             - optcp-secrets
             # Identity: zitadel, oauth2-proxy (namespace plan, group H)

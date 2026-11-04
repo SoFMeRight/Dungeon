@@ -135,15 +135,24 @@ spec:
           names:
             - "bank-vaults-operator-*"
             - "openbao-*"
-      # zeldas-lullaby — netbird-dashboard supervisord, netbox/unifi LSIO, DBs.
+      # optcp-infrastructure-management — unifi-network-application LSIO and its MongoDB, semaphore.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-infrastructure-management]
+          names:
+            - "semaphore-*"
+            - "unifi-network-application-*"
+      # optcp-ipam — netbox-server LSIO.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-ipam]
+          names: ["netbox-server-*"]
+      # zeldas-lullaby — netbird-dashboard supervisord.
       - resources:
           kinds: [Pod]
           namespaces: [zeldas-lullaby]
           names:
             - "netbird-dashboard-*"
-            - "netbox-server-*"
-            - "semaphore-*"
-            - "unifi-*"
       # optcp-identity — zitadel's configuration Job and Redis.
       - resources:
           kinds: [Pod]

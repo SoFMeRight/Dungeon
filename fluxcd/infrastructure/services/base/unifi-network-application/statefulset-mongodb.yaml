@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: unifi-network-application-mongodb
+spec:
+  revisionHistoryLimit: 5
+  serviceName: unifi-network-application-mongodb
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi-network-application-mongodb
+  template:
+    metadata:
+      labels:
+        app: unifi-network-application-mongodb
+    spec:
+      serviceAccountName: unifi-network-application-mongodb
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: mongo
+          image: PLACEHOLDER_IMAGE
+          ports:
+            - containerPort: 27017
+              name: mongo
+              protocol: TCP
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: unifi-network-application-secrets
+                  key: MONGO_INITDB_ROOT_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: unifi-network-application-secrets
+                  key: MONGO_INITDB_ROOT_PASSWORD
+            - name: MONGO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: unifi-network-application-secrets
+                  key: MONGO_USER
+            - name: MONGO_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: unifi-network-application-secrets
+                  key: MONGO_PASS
+            - name: MONGO_DBNAME
+              value: "unifi"
+            - name: MONGO_AUTHSOURCE
+              value: "unifi"
+          volumeMounts:
+            - name: unifi-network-application-mongodb
+              mountPath: /data/db
+            - name: init-mongo
+              mountPath: /docker-entrypoint-initdb.d/init-mongo.sh
+              subPath: init-mongo.sh
+          resources:
+            requests:
+              cpu: 15m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 336Mi
+      volumes:
+        - name: init-mongo
+          configMap:
+            name: unifi-network-application-mongodb-init
+            defaultMode: 0755
+  volumeClaimTemplates:
+    - metadata:
+        name: unifi-network-application-mongodb
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: 10Gi

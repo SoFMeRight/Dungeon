@@ -42,7 +42,8 @@ spec:
                 - prplanit-support
                 - optcp-media
                 - optcp-secrets
-                - optcp-infra-admin
+                - optcp-infrastructure-management
+                - optcp-ipam
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
@@ -118,7 +119,8 @@ spec:
                 - prplanit-support
                 - optcp-media
                 - optcp-secrets
-                - optcp-infra-admin
+                - optcp-infrastructure-management
+                - optcp-ipam
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
@@ -198,7 +200,8 @@ spec:
                 - prplanit-support
                 - optcp-media
                 - optcp-secrets
-                - optcp-infra-admin
+                - optcp-infrastructure-management
+                - optcp-ipam
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
@@ -277,7 +280,8 @@ spec:
                 - prplanit-support
                 - optcp-media
                 - optcp-secrets
-                - optcp-infra-admin
+                - optcp-infrastructure-management
+                - optcp-ipam
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time

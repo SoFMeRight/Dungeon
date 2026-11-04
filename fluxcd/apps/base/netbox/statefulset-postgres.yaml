@@ -25,7 +25,10 @@ spec:
             - name: POSTGRES_DB
               value: "netbox"
             - name: POSTGRES_USER
-              value: "netbox"
+              valueFrom:
+                secretKeyRef:
+                  name: netbox-secrets
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

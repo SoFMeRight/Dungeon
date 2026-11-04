@@ -111,14 +111,24 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-secrets]
           names: ["bank-vaults-operator-*", "openbao-*"]
-      # zeldas-lullaby — netbird-dashboard (supervisord),
-      # netbox-server LSIO, unifi-app LSIO, netbird-turn (STUNner dataplane binds :3478 — root-required
-      # under CRI-O; otherwise fully hardened via its Dataplane CR: RO-rootfs, no-privesc, drop-all-caps
-      # + NET_BIND_SERVICE. This is its ONLY exception — unlike neko it doesn't need no-privesc.)
+      # optcp-infrastructure-management — unifi-network-application-app LSIO (s6-overlay).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-infrastructure-management]
+          names: ["unifi-network-application-app-*"]
+      # optcp-ipam — netbox-server LSIO (s6-overlay).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-ipam]
+          names: ["netbox-server-*"]
+      # zeldas-lullaby — netbird-dashboard (supervisord), netbird-turn (STUNner dataplane binds
+      # :3478 — root-required under CRI-O; otherwise fully hardened via its Dataplane CR: RO-rootfs,
+      # no-privesc, drop-all-caps + NET_BIND_SERVICE. This is its ONLY exception — unlike neko it
+      # doesn't need no-privesc.)
       - resources:
           kinds: [Pod]
           namespaces: [zeldas-lullaby]
-          names: ["netbird-dashboard-*", "netbird-turn-*", "netbox-server-*", "unifi-app-*"]
+          names: ["netbird-dashboard-*", "netbird-turn-*"]
       # farores-wind — netbird-router (WireGuard subnet router: NET_ADMIN/MKNOD, runs as root).
       - resources:
           kinds: [Pod]

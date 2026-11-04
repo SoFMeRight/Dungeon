@@ -4,5 +4,4 @@ namespace: zeldas-lullaby
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-apps.yaml
-  - cnp-loadbalancers.yaml
   - cnp-netbird-turn.yaml

@@ -11,7 +11,8 @@ resources:
   - optcp-cloud.yaml
   - optcp-delivery-bag.yaml
   - optcp-identity.yaml
-  - optcp-infra-admin.yaml
+  - optcp-infrastructure-management.yaml
+  - optcp-ipam.yaml
   - optcp-keyring.yaml
   - optcp-media.yaml
   - optcp-secrets.yaml

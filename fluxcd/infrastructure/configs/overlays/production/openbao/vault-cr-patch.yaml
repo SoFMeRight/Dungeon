@@ -206,6 +206,30 @@ spec:
           path "optcp/data/apps/vaultwarden/smtp" {
             capabilities = ["read"]
           }
+      - name: netbox
+        rules: |
+          path "optcp/data/apps/netbox/app" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/netbox/oidc" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/netbox/postgres" {
+            capabilities = ["read"]
+          }
+      - name: semaphore
+        rules: |
+          path "optcp/data/apps/semaphore/app" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/semaphore/postgres" {
+            capabilities = ["read"]
+          }
+      - name: unifi-network-application
+        rules: |
+          path "optcp/data/apps/unifi-network-application/mongodb" {
+            capabilities = ["read"]
+          }
       - name: vaultwarden-postgres
         rules: |
           path "optcp/data/apps/vaultwarden/s3-backup" {
@@ -286,6 +310,21 @@ spec:
             bound_service_account_namespaces: ["kokiri-forest"]
             policies: ["optcp-k8s-dungeon-internal"]
             ttl: 1h
+          - name: netbox
+            bound_service_account_names: ["netbox-server"]
+            bound_service_account_namespaces: ["optcp-ipam"]
+            policies: ["netbox"]
+            ttl: 1h
+          - name: semaphore
+            bound_service_account_names: ["semaphore"]
+            bound_service_account_namespaces: ["optcp-infrastructure-management"]
+            policies: ["semaphore"]
+            ttl: 1h
+          - name: unifi-network-application
+            bound_service_account_names: ["unifi-network-application-app"]
+            bound_service_account_namespaces: ["optcp-infrastructure-management"]
+            policies: ["unifi-network-application"]
+            ttl: 1h
           - name: twofauth
             bound_service_account_names: ["twofauth"]
             bound_service_account_namespaces: ["optcp-keyring"]
@@ -320,7 +359,7 @@ spec:
             ttl: 1h
           - name: node-converge
             bound_service_account_names: ["node-converge"]
-            bound_service_account_namespaces: ["optcp-infra-admin"]
+            bound_service_account_namespaces: ["optcp-infrastructure-management"]
             policies: ["node-converge"]
             ttl: 1h
           # The daily raft-snapshot backup: the openbao-snapshot helper in optcp-secrets

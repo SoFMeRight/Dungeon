@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-netbox-egress
+spec:
+  description: >-
+    netbox-server's webhooks and custom scripts reach open-ended external sets
+    that cannot be allowlisted, so world+cluster is granted; postgres, redis and
+    the mesh ride the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: netbox-server
+  egress:
+    - toEntities:
+        - world
+        - cluster

@@ -30,6 +30,9 @@ spec:
             k8s:io.kubernetes.pod.namespace: optcp-keyring
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-ipam
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-secrets
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:

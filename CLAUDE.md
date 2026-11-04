@@ -235,7 +235,7 @@
     - General CIDR: 172.22.30.0/24.
     - Shared IPs (Ocarina of Time naming theme):
       - NetBird TURN (netbird-turn): 172.22.30.86 (sharing-key: zeldas-lullaby)
-      - Network infrastructure (unifi): 172.22.30.20 (sharing-key: kaepora-gaebora)
+      - Network infrastructure (unifi-network-application): 172.22.30.20 (sharing-key: kaepora-gaebora)
       - Mail services (ntfy-smtp): 172.22.30.102 (sharing-key: delivery-bag)
       - Mail server (stalwart): 172.22.30.103 (sharing-key: optcp-delivery-bag)
       - Bot protection services (anubis): 172.22.30.187 (sharing-key: wallmaster)

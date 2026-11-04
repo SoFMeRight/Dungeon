@@ -1,0 +1,21 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: unifi-network-application-xylem
+  annotations:
+    gatus.home-operations.com/endpoint: |
+      group: "Administration (Zelda's Lullaby🎵)"
+spec:
+  parentRefs:
+    - name: phloem-gateway
+      namespace: arylls-lookout
+  hostnames:
+    - "unifi.pcfae.com"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: unifi-network-application-app
+          port: 8443

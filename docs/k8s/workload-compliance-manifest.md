@@ -562,8 +562,8 @@ Query to refresh: `kubectl get policyreport -A -o json | jq -r '[.items[].result
 | oauth2-proxy | oauth2-proxy | Y (65532:65532) | N | Y | ? | ? | ? | Y | ? | full non-root, distroless, port 4180 |
 | semaphore | postgres | Y (999:999) | N | Y | ? | ? | ? | Y | ? | non-root sidecar — pgdata pre-owned 999, entrypoint skips root chown |
 | semaphore | semaphore | Y (1000:1000) | N | Y | ? | ? | ? | Y | ? | full non-root (runs ansible over SSH, no in-container root needed) |
-| unifi | unifi-app | N (root) | N | Partial | ? | ? | ? | Y | ? | LSIO s6-overlay root-required; drop ALL + curated caps + seccomp; import-cert init derooted |
-| unifi | mongodb | Y (999:999) | N | Y | ? | ? | ? | Y | ? | non-root — /data/db pre-owned 999, entrypoint skips root gosu |
+| unifi-network-application | unifi-network-application-app | N (root) | N | Partial | ? | ? | ? | Y | ? | LSIO s6-overlay root-required; drop ALL + curated caps + seccomp; import-cert init derooted |
+| unifi-network-application | mongodb | Y (999:999) | N | Y | ? | ? | ? | Y | ? | non-root — /data/db pre-owned 999, entrypoint skips root gosu |
 
 ---
 

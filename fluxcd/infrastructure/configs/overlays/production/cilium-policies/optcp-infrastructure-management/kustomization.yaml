@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-infrastructure-management
+resources:
+  - cnp-default-deny-ingress.yaml
+  - cnp-egress-node-converge.yaml
+  - cnp-egress-apps.yaml
+  - cnp-loadbalancers.yaml

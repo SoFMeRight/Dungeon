@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for optcp-infrastructure-management namespace.
+    Ingress: unifi-network-application-app's LAN LoadBalancer via cnp-loadbalancers;
+    CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, and ingress-gateway
+    traffic for labeled pods.
+    Egress: node-converge via cnp-egress-node-converge, semaphore and
+    unifi-network-application-app via cnp-egress-apps; DNS, intra-namespace mesh
+    (app->mongodb) and kube-apiserver ride the universal CCNP baseline.
+    Both directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor

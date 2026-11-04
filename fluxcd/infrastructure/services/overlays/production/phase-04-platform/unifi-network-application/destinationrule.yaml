@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: unifi-network-application-app-tls
+spec:
+  host: unifi-network-application-app.optcp-infrastructure-management.svc.cluster.local
+  trafficPolicy:
+    portLevelSettings:
+      - port:
+          number: 8443
+        tls:
+          mode: SIMPLE
+          sni: unifi.pcfae.com

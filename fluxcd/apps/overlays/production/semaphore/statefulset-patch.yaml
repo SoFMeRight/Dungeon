@@ -41,7 +41,7 @@ spec:
     - metadata:
         name: postgres-data
       spec:
-        storageClassName: ceph-rbd-retain
+        storageClassName: ceph-rbd
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
@@ -49,7 +49,7 @@ spec:
     - metadata:
         name: config
       spec:
-        storageClassName: ceph-rbd-retain
+        storageClassName: ceph-rbd
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
@@ -57,7 +57,7 @@ spec:
     - metadata:
         name: playbooks
       spec:
-        storageClassName: ceph-rbd-retain
+        storageClassName: ceph-rbd
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
@@ -65,7 +65,7 @@ spec:
     - metadata:
         name: ssh-keys
       spec:
-        storageClassName: ceph-rbd-retain
+        storageClassName: ceph-rbd
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:

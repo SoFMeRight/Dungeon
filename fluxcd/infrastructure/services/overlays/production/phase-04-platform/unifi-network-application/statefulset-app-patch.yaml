@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: unifi-network-application-app
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        policy.prplanit.com/ingress: "true"
+    spec:
+      initContainers:
+        - name: import-cert
+          image: docker.io/linuxserver/unifi-network-application:10.6.109-ls152
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              KEYSTORE="/config/data/keystore"
+              STOREPASS="aircontrolenterprise"
+              mkdir -p /config/data
+              openssl pkcs12 -export \
+                -in /tls/tls.crt -inkey /tls/tls.key \
+                -out /tmp/unifi.p12 -name unifi \
+                -passout pass:${STOREPASS}
+              keytool -delete -alias unifi \
+                -keystore ${KEYSTORE} \
+                -storepass ${STOREPASS} -noprompt 2>/dev/null || true
+              keytool -importkeystore \
+                -srckeystore /tmp/unifi.p12 -srcstoretype PKCS12 \
+                -srcstorepass ${STOREPASS} \
+                -destkeystore ${KEYSTORE} -deststoretype pkcs12 \
+                -deststorepass ${STOREPASS} -destkeypass ${STOREPASS} \
+                -alias unifi -trustcacerts -noprompt
+              rm -f /tmp/unifi.p12
+              echo "Certificate imported into UniFi keystore"
+          volumeMounts:
+            - name: unifi-network-application-config
+              mountPath: /config
+            - name: tls-cert
+              mountPath: /tls
+              readOnly: true
+      containers:
+        - name: unifi-network-application-app
+          image: docker.io/linuxserver/unifi-network-application:10.6.109-ls152
+          env:
+            - name: TZ
+              value: "America/Los_Angeles"
+          volumeMounts:
+            - name: tls-cert
+              mountPath: /tls
+              readOnly: true
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - SETUID
+                - SETGID
+                - CHOWN
+                - DAC_OVERRIDE
+                - FOWNER
+      volumes:
+        - name: tls-cert
+          secret:
+            secretName: unifi-pcfae-com-tls
+  volumeClaimTemplates:
+    - metadata:
+        name: unifi-network-application-config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: ceph-rbd
+        resources:
+          requests:
+            storage: 256Mi

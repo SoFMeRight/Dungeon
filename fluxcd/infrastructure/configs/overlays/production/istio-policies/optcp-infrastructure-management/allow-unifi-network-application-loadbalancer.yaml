@@ -1,0 +1,20 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-unifi-network-application-loadbalancer
+spec:
+  selector:
+    matchLabels:
+      app: unifi-network-application-app
+  action: ALLOW
+  rules:
+    # LAN devices (APs, switches, phones) connecting via LoadBalancer
+    - from:
+        - source:
+            ipBlocks:
+              - "10.0.0.0/8"
+              - "172.16.0.0/12"
+              - "192.168.0.0/16"
+      to:
+        - operation:
+            ports: ["3478", "10001", "8080", "1900", "8843", "8880", "5514"]

@@ -6,4 +6,5 @@ resources:
   - statefulset-redis.yaml
   - statefulset-netbox.yaml
   - service.yaml
+  - secretstore.yaml
   - externalsecret.yaml

@@ -38,7 +38,8 @@ resources:
   - optcp-cloud
   - optcp-delivery-bag
   - optcp-identity
-  - optcp-infra-admin
+  - optcp-infrastructure-management
+  - optcp-ipam
   - optcp-keyring
   - optcp-media
   - optcp-secrets

@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-unifi-network-application-app-to-unifi-network-application-mongodb
+spec:
+  selector:
+    matchLabels:
+      app: unifi-network-application-mongodb
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-infrastructure-management/sa/unifi-network-application-app
+      to:
+        - operation:
+            ports: ["27017"]

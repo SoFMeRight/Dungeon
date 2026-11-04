@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-netbox-server-to-netbox-redis
+spec:
+  selector:
+    matchLabels:
+      app: netbox-redis
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-ipam/sa/netbox-server
+      to:
+        - operation:
+            ports: ["6379"]

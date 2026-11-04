@@ -7,7 +7,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: postgres
-        policy.prplanit.com/service-scope: zeldas-lullaby.netbox.postgres
+        policy.prplanit.com/service-scope: optcp-ipam.netbox.postgres
     spec:
       securityContext:
         runAsUser: 70
@@ -28,7 +28,7 @@ spec:
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_POSTGRES_DATA
-            - name: zeldas-lullaby-netbox-postgres-data
+            - name: netbox-postgres-data
               mountPath: /var/lib/postgresql/data
             - name: postgres-run
               mountPath: /var/run/postgresql
@@ -48,7 +48,7 @@ spec:
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
-        name: zeldas-lullaby-netbox-postgres-data
+        name: netbox-postgres-data
       spec:
         accessModes:
           - ReadWriteOnce

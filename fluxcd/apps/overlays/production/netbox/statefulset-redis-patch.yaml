@@ -7,7 +7,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: zeldas-lullaby.netbox.redis
+        policy.prplanit.com/service-scope: optcp-ipam.netbox.redis
     spec:
       securityContext:
         runAsUser: 999
@@ -28,7 +28,7 @@ spec:
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_REDIS_DATA
-            - name: zeldas-lullaby-netbox-redis-data
+            - name: netbox-redis-data
               mountPath: /data
           resources:
             requests:
@@ -39,7 +39,7 @@ spec:
               memory: "16Mi"
   volumeClaimTemplates:
     - metadata:
-        name: zeldas-lullaby-netbox-redis-data
+        name: netbox-redis-data
       spec:
         accessModes:
           - ReadWriteOnce

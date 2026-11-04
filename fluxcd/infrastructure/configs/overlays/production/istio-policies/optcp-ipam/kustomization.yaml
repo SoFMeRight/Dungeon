@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-ipam
+resources:
+  - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml
+  - allow-netbox-server-to-netbox-postgres.yaml
+  - allow-netbox-server-to-netbox-redis.yaml
+  - allow-gateway-ingress-cell-membrane.yaml
+  - allow-gateway-ingress-phloem.yaml

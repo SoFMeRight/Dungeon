@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-apps-egress
+spec:
+  description: >-
+    semaphore (Ansible against the LAN/remote fleet + git) and
+    unifi-network-application-app (LAN UniFi devices + firmware) reach open-ended
+    external sets that cannot be allowlisted, so world+cluster is granted; the
+    database and the mesh ride the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - semaphore
+          - unifi-network-application-app
+  egress:
+    - toEntities:
+        - world
+        - cluster

@@ -86,7 +86,10 @@ spec:
             - name: DB_NAME
               value: "netbox"
             - name: DB_USER
-              value: "netbox"
+              valueFrom:
+                secretKeyRef:
+                  name: netbox-secrets
+                  key: DB_USER
             - name: DB_HOST
               value: "netbox-postgres"
             - name: DB_PORT

@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: zeldas-lullaby
+namespace: optcp-ipam
 
 resources:
   - ../../../base/netbox
@@ -17,8 +17,8 @@ patches:
     target:
       kind: Service
       name: netbox-server
-  - path: externalsecret-patch.yaml
   - path: service-netbox-server-ingress-patch.yaml
     target:
       kind: Service
       name: netbox-server
+  - path: hold-for-move-patch.yaml

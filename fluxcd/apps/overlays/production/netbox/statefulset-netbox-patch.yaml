@@ -8,9 +8,9 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: zeldas-lullaby.netbox.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-ipam.netbox.postgres
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: zeldas-lullaby.netbox.redis
+        policy.prplanit.com/access-scope-redis: optcp-ipam.netbox.redis
         policy.prplanit.com/cap.oidc: "true"
     spec:
       initContainers:
@@ -31,7 +31,7 @@ spec:
               sed -i '/# BEGIN CROWDSEC-LOGGING (gitops-managed)/,/# END CROWDSEC-LOGGING (gitops-managed)/d' "$CFG"
               cat /auth-config/logging.py >> "$CFG"
           volumeMounts:
-            - name: zeldas-lullaby-netbox-config-data
+            - name: netbox-config-data
               mountPath: /config
             - name: netbox-auth-config
               mountPath: /auth-config
@@ -54,7 +54,7 @@ spec:
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_CONFIG_DATA
-            - name: zeldas-lullaby-netbox-config-data
+            - name: netbox-config-data
               mountPath: /config
             - name: netbox-auth-config
               mountPath: /auth-config
@@ -71,7 +71,7 @@ spec:
             name: netbox-auth-config
   volumeClaimTemplates:
     - metadata:
-        name: zeldas-lullaby-netbox-config-data
+        name: netbox-config-data
       spec:
         accessModes:
           - ReadWriteOnce

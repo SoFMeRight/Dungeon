@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: unifi-network-application-app
+spec:
+  revisionHistoryLimit: 5
+  serviceName: unifi-network-application-app
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unifi-network-application-app
+  template:
+    metadata:
+      labels:
+        app: unifi-network-application-app
+    spec:
+      serviceAccountName: unifi-network-application-app
+      # linuxserver/unifi-network-application is s6-overlay managed (preinit fatals as non-root:
+      # "/run belongs to uid 0"). Root-required. Partial hardening: seccomp + drop ALL, adding back
+      # only the file-ownership/setuid caps s6 needs to drop privileges to PUID/PGID at startup.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: unifi-network-application-app
+          image: PLACEHOLDER_IMAGE
+          ports:
+            - containerPort: 8443
+              name: https-ui
+              protocol: TCP
+            - containerPort: 3478
+              name: stun
+              protocol: UDP
+            - containerPort: 10001
+              name: discovery
+              protocol: UDP
+            - containerPort: 8080
+              name: http-portal
+              protocol: TCP
+            - containerPort: 1900
+              name: upnp
+              protocol: UDP
+            - containerPort: 8843
+              name: https-portal
+              protocol: TCP
+            - containerPort: 8880
+              name: http-redir
+              protocol: TCP
+            - containerPort: 6789
+              name: mobile-speed
+              protocol: TCP
+            - containerPort: 5514
+              name: syslog
+              protocol: UDP
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Etc/UTC"
+            - name: MONGO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: unifi-network-application-secrets
+                  key: MONGO_USER
+            - name: MONGO_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: unifi-network-application-secrets
+                  key: MONGO_PASS
+            - name: MONGO_HOST
+              value: "unifi-network-application-mongodb"
+            - name: MONGO_PORT
+              value: "27017"
+            - name: MONGO_DBNAME
+              value: "unifi"
+            - name: MONGO_AUTHSOURCE
+              value: "unifi"
+            - name: MEM_LIMIT
+              value: "1024"
+            - name: MEM_STARTUP
+              value: "1024"
+          volumeMounts:
+            - name: unifi-network-application-config
+              mountPath: /config
+          resources:
+            requests:
+              cpu: 11m
+              memory: 1Gi
+            limits:
+              cpu: 2000m
+              memory: 1456Mi
+          # UniFi wedges silently: if the web context fails to init (e.g. mongo unreachable at
+          # startup) tomcat keeps listening on 8443 and /status returns HTTP 200 with {"up":false}
+          # forever, so a status-code probe never catches it. Probe the /status BODY for up:true.
+          # startupProbe gives the slow JVM + DB-migration init up to 10m before liveness engages;
+          # liveness then auto-restarts a wedged context instead of leaving it stuck "starting up".
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -sk --max-time 4 https://localhost:8443/status | grep -q 'up.:true'"
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -sk --max-time 4 https://localhost:8443/status | grep -q 'up.:true'"
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "curl -sk --max-time 4 https://localhost:8443/status | grep -q 'up.:true'"
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+  volumeClaimTemplates:
+    - metadata:
+        name: unifi-network-application-config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: 10Gi

@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/optcp-infra-admin/sa/node-converge
+              - cluster.local/ns/optcp-infrastructure-management/sa/node-converge
       to:
         - operation:
             ports: ["8200"]
