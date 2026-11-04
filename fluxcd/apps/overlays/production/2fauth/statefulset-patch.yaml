@@ -34,11 +34,11 @@ spec:
               memory: 256Mi
               cpu: 500m
           volumeMounts:
-            - name: zeldas-lullaby-twofauth-data
+            - name: twofauth-data
               mountPath: /2fauth
   volumeClaimTemplates:
     - metadata:
-        name: zeldas-lullaby-twofauth-data
+        name: twofauth-data
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain

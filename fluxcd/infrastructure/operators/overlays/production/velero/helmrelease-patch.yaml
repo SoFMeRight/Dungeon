@@ -97,6 +97,8 @@ spec:
             - zeldas-lullaby
             # Identity: zitadel, oauth2-proxy (namespace plan, group H)
             - optcp-identity
+            # Credential vaults: vaultwarden, twofauth (namespace plan, group AH)
+            - optcp-keyring
             # Archival/Content Management & Media Servers
             - temple-of-time
             # Cloud & collaboration (namespace plan rev1, group Y/Z)

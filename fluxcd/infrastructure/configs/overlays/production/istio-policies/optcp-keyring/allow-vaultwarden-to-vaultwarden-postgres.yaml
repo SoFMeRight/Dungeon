@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/zeldas-lullaby/sa/vaultwarden
+              - cluster.local/ns/optcp-keyring/sa/vaultwarden
       to:
         - operation:
             ports: ["5432"]

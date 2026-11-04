@@ -6,7 +6,7 @@ spec:
   description: >-
     Default-deny ingress AND egress for zeldas-lullaby namespace.
     Ingress: administrative services (vault, external-secrets, netbird,
-    netbox, semaphore, twofauth, unifi, vaultwarden);
+    netbox, semaphore, unifi);
     CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, postgres/redis
     contracts, and ingress-gateway traffic for labeled pods.
     Egress: DNS + intra-namespace mesh (app->db, vault raft, redis) +

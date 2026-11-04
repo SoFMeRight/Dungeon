@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-apps-egress
+spec:
+  description: >-
+    vaultwarden (push + HIBP) and twofauth (service-icon fetch) reach open-ended
+    external sets, so world+cluster is granted; the database and the mesh ride
+    the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - vaultwarden
+          - twofauth
+  egress:
+    - toEntities:
+        - world
+        - cluster

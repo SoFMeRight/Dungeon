@@ -4,7 +4,6 @@ namespace: zeldas-lullaby
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
-  - allow-vaultwarden-to-vaultwarden-postgres.yaml
   - allow-netbird-management-to-netbird-postgres.yaml
   - allow-netbox-server-to-netbox-postgres.yaml
   - allow-netbox-server-to-netbox-redis.yaml
@@ -19,7 +18,6 @@ resources:
   - allow-zitadel-configuration-to-vault.yaml
   - allow-netbird-turn-loadbalancer.yaml
   - allow-netbird-postgres-replication.yaml
-  - allow-vaultwarden-postgres-replication.yaml
   - allow-webhook-external-secrets.yaml
   - allow-unifi-app-to-unifi-db.yaml
   - allow-unifi-loadbalancer.yaml

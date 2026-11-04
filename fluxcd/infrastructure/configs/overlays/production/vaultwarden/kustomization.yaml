@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: zeldas-lullaby
+namespace: optcp-keyring
 resources:
   - rsa-key-secret.enc.yaml
   - db-secret.enc.yaml

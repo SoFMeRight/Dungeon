@@ -14,7 +14,7 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: zeldas-lullaby.vaultwarden.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-keyring.vaultwarden.postgres
     spec:
       containers:
         - name: vaultwarden

@@ -179,6 +179,34 @@ spec:
           path "optcp/data/shared/registry/cr.optcp.com-internal" {
             capabilities = ["read"]
           }
+      # Workload consumers (Secret Stores, least privilege): each reads only its own entries.
+      - name: twofauth
+        rules: |
+          path "optcp/data/apps/twofauth/app" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/twofauth/oidc" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/twofauth/smtp" {
+            capabilities = ["read"]
+          }
+      - name: vaultwarden
+        rules: |
+          path "optcp/data/apps/vaultwarden/app" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/vaultwarden/oidc" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/vaultwarden/smtp" {
+            capabilities = ["read"]
+          }
+      - name: vaultwarden-postgres
+        rules: |
+          path "optcp/data/apps/vaultwarden/s3-backup" {
+            capabilities = ["read"]
+          }
       # node-converge signs a throwaway key per run against optcp's SSH CA, and nothing else.
       - name: node-converge
         rules: |
@@ -253,6 +281,21 @@ spec:
             bound_service_account_names: ["optcp-k8s-dungeon-internal"]
             bound_service_account_namespaces: ["kokiri-forest"]
             policies: ["optcp-k8s-dungeon-internal"]
+            ttl: 1h
+          - name: twofauth
+            bound_service_account_names: ["twofauth"]
+            bound_service_account_namespaces: ["optcp-keyring"]
+            policies: ["twofauth"]
+            ttl: 1h
+          - name: vaultwarden
+            bound_service_account_names: ["vaultwarden"]
+            bound_service_account_namespaces: ["optcp-keyring"]
+            policies: ["vaultwarden"]
+            ttl: 1h
+          - name: vaultwarden-postgres
+            bound_service_account_names: ["vaultwarden-postgres"]
+            bound_service_account_namespaces: ["optcp-keyring"]
+            policies: ["vaultwarden-postgres"]
             ttl: 1h
           - name: zitadel-vault-sync
             bound_service_account_names: ["zitadel-configuration"]

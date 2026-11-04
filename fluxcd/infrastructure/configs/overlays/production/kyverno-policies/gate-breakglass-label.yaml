@@ -28,6 +28,7 @@ spec:
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-identity
+                - optcp-keyring
                 - optcp-sibyl-system
                 - optcp-staff-suite
                 - optcp-supply-chain
@@ -92,6 +93,7 @@ spec:
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-identity
+                - optcp-keyring
                 - optcp-sibyl-system
                 - optcp-staff-suite
                 - optcp-supply-chain
@@ -156,6 +158,7 @@ spec:
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-identity
+                - optcp-keyring
                 - optcp-sibyl-system
                 - optcp-staff-suite
                 - optcp-supply-chain

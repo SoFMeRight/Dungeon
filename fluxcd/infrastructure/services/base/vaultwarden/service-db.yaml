@@ -4,4 +4,4 @@ metadata:
   name: vaultwarden-db
 spec:
   type: ExternalName
-  externalName: vaultwarden-postgres-rw.zeldas-lullaby.svc.cluster.local
+  externalName: vaultwarden-postgres-rw.optcp-keyring.svc.cluster.local

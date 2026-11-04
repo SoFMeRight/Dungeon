@@ -1,0 +1,23 @@
+$patch: delete
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: vaultwarden-postgres
+---
+$patch: delete
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: vaultwarden-postgres-daily
+---
+$patch: delete
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vaultwarden
+---
+$patch: delete
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vaultwarden-data

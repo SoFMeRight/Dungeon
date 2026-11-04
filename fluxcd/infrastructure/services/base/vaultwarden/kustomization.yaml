@@ -9,5 +9,6 @@ resources:
   - pvc.yaml
   - service.yaml
   - service-db.yaml
+  - secretstore.yaml
   - externalsecret.yaml
   - scheduledbackup-postgres.yaml

@@ -39,6 +39,7 @@ resources:
   - optcp-delivery-bag
   - optcp-identity
   - optcp-infra-admin
+  - optcp-keyring
   - optcp-media
   - optcp-shooting-gallery
   - optcp-sibyl-system

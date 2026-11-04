@@ -12,6 +12,7 @@ resources:
   - optcp-delivery-bag.yaml
   - optcp-identity.yaml
   - optcp-infra-admin.yaml
+  - optcp-keyring.yaml
   - optcp-media.yaml
   - optcp-shooting-gallery.yaml
   - optcp-sibyl-system.yaml
