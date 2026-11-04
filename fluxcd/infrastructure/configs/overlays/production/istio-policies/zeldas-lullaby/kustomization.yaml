@@ -7,6 +7,4 @@ resources:
   - allow-netbird-management-to-netbird-postgres.yaml
   - allow-netbird-turn-loadbalancer.yaml
   - allow-netbird-postgres-replication.yaml
-  - allow-gateway-ingress-xylem.yaml
-  - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
