@@ -1,0 +1,38 @@
+# Base images pull through the Harbor mirrors.
+[registry."docker.io"]
+  mirrors = ["docker.cr.optcp.com"]
+[registry."ghcr.io"]
+  mirrors = ["ghcr.cr.optcp.com"]
+[registry."quay.io"]
+  mirrors = ["quay.cr.optcp.com"]
+[registry."lscr.io"]
+  mirrors = ["lscr.cr.optcp.com"]
+
+# Pruning order: easily-rebuilt classes past 512MB, then anything unused for 7 days,
+# then unshared, then everything — the cache held under 12GB with 3GB free, never below
+# a 2GB floor.
+[worker.oci]
+  gc = true
+
+  # Contexts, checkouts, cache mounts: highest churn, cheapest to rebuild.
+  [[worker.oci.gcpolicy]]
+    filters = ["type==source.local", "type==source.git.checkout", "type==exec.cachemount"]
+    keepDuration = "24h"
+    maxUsedSpace = "512MB"
+
+  [[worker.oci.gcpolicy]]
+    keepDuration = "168h"
+    reservedSpace = "2GB"
+    maxUsedSpace = "12GB"
+    minFreeSpace = "3GB"
+
+  [[worker.oci.gcpolicy]]
+    reservedSpace = "2GB"
+    maxUsedSpace = "12GB"
+    minFreeSpace = "3GB"
+
+  [[worker.oci.gcpolicy]]
+    all = true
+    reservedSpace = "2GB"
+    maxUsedSpace = "12GB"
+    minFreeSpace = "3GB"

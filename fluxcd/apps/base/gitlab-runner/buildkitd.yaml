@@ -15,11 +15,14 @@ automountServiceAccountToken: false
 # setuid/file-cap helpers.
 # --oci-worker-no-process-sandbox: Kubernetes has no systempaths=unconfined, so build steps
 # share buildkitd's PID namespace (BuildKit's documented caveat for this mode).
+# The build cache is its own volume (buildkitd-state); buildkitd-config, from the overlay,
+# sets its GC budget and registry mirrors.
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: buildkitd
 spec:
+  serviceName: buildkitd
   replicas: 1
   selector:
     matchLabels:
@@ -33,6 +36,10 @@ spec:
     spec:
       serviceAccountName: buildkitd
       automountServiceAccountToken: false
+      # fsGroup makes the fresh state volume writable by the rootless uid.
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: buildkitd
           image: docker.io/moby/buildkit:v0.34.1-rootless
@@ -48,6 +55,8 @@ spec:
             - --tlskey
             - /certs/tls.key
             - --oci-worker-no-process-sandbox
+            - --config
+            - /etc/buildkit/buildkitd.toml
           ports:
             - name: buildkitd
               containerPort: 1234
@@ -83,7 +92,10 @@ spec:
             - name: certs
               mountPath: /certs
               readOnly: true
-            - name: state
+            - name: config
+              mountPath: /etc/buildkit
+              readOnly: true
+            - name: buildkitd-state
               mountPath: /home/user/.local/share/buildkit
             # rootlesskit's state directory
             - name: rootlesskit
@@ -99,17 +111,35 @@ spec:
         - name: certs
           secret:
             secretName: buildkitd-tls
-        - name: state
-          emptyDir: {}
+        - name: config
+          configMap:
+            name: buildkitd-config
+        # Runtime plumbing only: memory-backed, so nothing lands on the node's disk.
         - name: rootlesskit
-          emptyDir: {}
+          emptyDir:
+            medium: Memory
+            sizeLimit: 16Mi
         - name: docker-config
-          emptyDir: {}
+          emptyDir:
+            medium: Memory
+            sizeLimit: 16Mi
         - name: run
           emptyDir:
             medium: Memory
         - name: tmp
-          emptyDir: {}
+          emptyDir:
+            medium: Memory
+            sizeLimit: 64Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: buildkitd-state
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: 10Gi
 ---
 apiVersion: v1
 kind: Service

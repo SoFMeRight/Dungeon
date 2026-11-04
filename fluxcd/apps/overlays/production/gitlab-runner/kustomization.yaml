@@ -3,5 +3,11 @@ kind: Kustomization
 namespace: optcp-ci-runners
 resources:
   - ../../../base/gitlab-runner
+configMapGenerator:
+  - name: buildkitd-config
+    files:
+      - buildkitd.toml
 patches:
   - path: helmrelease-patch.yaml
+  - path: buildkitd-patch.yaml
+  - path: pvc-cache-patch.yaml

@@ -7,3 +7,4 @@ resources:
   - externalsecret.yaml
   - buildkitd-certificates.yaml
   - buildkitd.yaml
+  - pvc-cache.yaml

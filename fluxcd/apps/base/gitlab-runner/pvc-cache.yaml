@@ -1,0 +1,13 @@
+# StageFreight's cross-job cache, mounted at /stagefreight in every job pod. Concurrent
+# jobs on any node share it.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gitlab-runner-cache
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: PLACEHOLDER_STORAGE_CLASS
+  resources:
+    requests:
+      storage: 10Gi

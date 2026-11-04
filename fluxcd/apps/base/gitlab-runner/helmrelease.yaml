@@ -17,6 +17,10 @@ spec:
       retries: 3
   values:
     gitlabUrl: PLACEHOLDER_GITLAB_URL
+    # Class and size of each job's scratch volume (job-scratch below); set by the overlay.
+    jobScratch:
+      storageClass: PLACEHOLDER_STORAGE_CLASS
+      size: 5Gi
     concurrent: 4
     checkInterval: 10
     rbac:
@@ -42,12 +46,16 @@ spec:
       config: |
         [[runners]]
           # Image builds go to the rootless buildkitd beside the runner; StageFreight reads
-          # BUILDKIT_HOST and the client certs at /buildkit-certs. HOME is an emptyDir, so
-          # buildx state works with a read-only rootfs.
+          # BUILDKIT_HOST and the client certs at /buildkit-certs. HOME is on the job's
+          # scratch volume, so buildx state works with a read-only rootfs.
           environment = [
             "BUILDKIT_HOST=tcp://buildkitd.{{ .Release.Namespace }}.svc:1234",
             "HOME=/home/runner",
+            "SF_CACHE_ROOT=/stagefreight",
           ]
+          [runners.feature_flags]
+            # Without it [[runners.kubernetes.pod_spec]] is ignored.
+            FF_USE_ADVANCED_POD_SPEC_CONFIGURATION = true
           [runners.kubernetes]
             namespace = "{{ .Release.Namespace }}"
             image = "alpine:3.22"
@@ -59,7 +67,7 @@ spec:
             automount_service_account_token = false
             poll_timeout = 600
             cpu_request = "100m"
-            memory_request = "256Mi"
+            memory_request = "2Gi"
             memory_limit = "8Gi"
             helper_cpu_request = "50m"
             helper_memory_request = "64Mi"
@@ -95,12 +103,9 @@ spec:
               privileged = false
               [runners.kubernetes.init_permissions_container_security_context.capabilities]
                 drop = ["ALL"]
-            [[runners.kubernetes.volumes.empty_dir]]
-              name = "tmp"
-              mount_path = "/tmp"
-            [[runners.kubernetes.volumes.empty_dir]]
-              name = "home"
-              mount_path = "/home/runner"
+            [[runners.kubernetes.volumes.pvc]]
+              name = "gitlab-runner-cache"
+              mount_path = "/stagefreight"
             [[runners.kubernetes.volumes.secret]]
               name = "buildkit-client-tls"
               mount_path = "/buildkit-certs"
@@ -111,6 +116,51 @@ spec:
                 "tls.key" = "key.pem"
             [runners.kubernetes.pod_labels]
               "policy.prplanit.com/ci-job" = "true"
+            # The job's clone, /tmp and $HOME live on a per-job volume. scratch-init creates
+            # the subPath directories as the job's uid: kubelet-created ones are root-owned.
+            [[runners.kubernetes.pod_spec]]
+              name = "job-scratch"
+              patch_type = "strategic"
+              patch = '''
+                securityContext:
+                  fsGroupChangePolicy: OnRootMismatch
+                initContainers:
+                  - name: scratch-init
+                    image: docker.io/library/alpine:3.22
+                    command: ["mkdir", "-p", "/scratch/builds", "/scratch/tmp", "/scratch/home"]
+                    securityContext:
+                      runAsNonRoot: true
+                      runAsUser: 1000
+                      runAsGroup: 1000
+                      allowPrivilegeEscalation: false
+                      readOnlyRootFilesystem: true
+                      capabilities:
+                        drop: ["ALL"]
+                    volumeMounts:
+                      - name: scratch
+                        mountPath: /scratch
+                containers:
+                  - name: build
+                    volumeMounts:
+                      - { name: scratch, mountPath: /builds, subPath: builds }
+                      - { name: scratch, mountPath: /tmp, subPath: tmp }
+                      - { name: scratch, mountPath: /home/runner, subPath: home }
+                  - name: helper
+                    volumeMounts:
+                      - { name: scratch, mountPath: /builds, subPath: builds }
+                      - { name: scratch, mountPath: /tmp, subPath: tmp }
+                      - { name: scratch, mountPath: /home/runner, subPath: home }
+                volumes:
+                  - name: scratch
+                    ephemeral:
+                      volumeClaimTemplate:
+                        spec:
+                          accessModes: ["ReadWriteOnce"]
+                          storageClassName: {{ .Values.jobScratch.storageClass }}
+                          resources:
+                            requests:
+                              storage: {{ .Values.jobScratch.size }}
+              '''
     securityContext:
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: true

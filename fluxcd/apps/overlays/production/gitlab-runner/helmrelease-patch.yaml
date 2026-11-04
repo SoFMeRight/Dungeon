@@ -8,3 +8,6 @@ spec:
       version: "0.94.2"  # runner 19.5.2; server is 19.5.3
   values:
     gitlabUrl: https://git.optcp.com/
+    jobScratch:
+      storageClass: ceph-rbd-delete
+      size: 5Gi

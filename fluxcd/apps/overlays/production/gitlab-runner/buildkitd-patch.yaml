@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: buildkitd
+spec:
+  volumeClaimTemplates:
+    - metadata:
+        name: buildkitd-state
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: ceph-rbd-delete
+        resources:
+          requests:
+            storage: 15Gi
