@@ -41,6 +41,7 @@ spec:
                 - pedestal-of-time
                 - prplanit-support
                 - optcp-media
+                - optcp-secrets
                 - optcp-infra-admin
                 - optcp-shooting-gallery
                 - swift-sail
@@ -116,6 +117,7 @@ spec:
                 - pedestal-of-time
                 - prplanit-support
                 - optcp-media
+                - optcp-secrets
                 - optcp-infra-admin
                 - optcp-shooting-gallery
                 - swift-sail
@@ -195,6 +197,7 @@ spec:
                 - pedestal-of-time
                 - prplanit-support
                 - optcp-media
+                - optcp-secrets
                 - optcp-infra-admin
                 - optcp-shooting-gallery
                 - swift-sail
@@ -273,6 +276,7 @@ spec:
                 - pedestal-of-time
                 - prplanit-support
                 - optcp-media
+                - optcp-secrets
                 - optcp-infra-admin
                 - optcp-shooting-gallery
                 - swift-sail

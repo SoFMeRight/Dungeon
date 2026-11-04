@@ -4,10 +4,8 @@ metadata:
   name: allow-security-core-egress
 spec:
   description: >-
-    The cluster security/secrets core reaches open-ended external sets: vault
-    forms its raft peer quorum and reaches its auto-unseal/transit + OIDC
-    backends; external-secrets syncs from the Vault LB (172.22.30.86 -> cluster)
-    and any configured external providers. Those
+    vault forms its raft peer quorum and reaches its auto-unseal/transit + OIDC
+    backends, open-ended external sets that
     cannot be allowlisted, so world+cluster is granted (kube-apiserver + mesh ride
     the universal CCNP baseline). Inert until egress default-deny is enabled.
   enableDefaultDeny:
@@ -19,7 +17,6 @@ spec:
         operator: In
         values:
           - vault
-          - external-secrets
   egress:
     - toEntities:
         - world

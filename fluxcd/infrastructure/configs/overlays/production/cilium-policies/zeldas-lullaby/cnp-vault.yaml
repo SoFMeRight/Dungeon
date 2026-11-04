@@ -15,6 +15,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-secrets
             app.kubernetes.io/name: external-secrets
       toPorts:
         - ports:

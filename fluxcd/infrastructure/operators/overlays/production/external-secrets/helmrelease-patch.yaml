@@ -3,4 +3,4 @@ kind: HelmRelease
 metadata:
   name: external-secrets
 spec:
-  targetNamespace: zeldas-lullaby
+  targetNamespace: optcp-secrets

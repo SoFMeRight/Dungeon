@@ -41,6 +41,7 @@ resources:
   - optcp-infra-admin
   - optcp-keyring
   - optcp-media
+  - optcp-secrets
   - optcp-shooting-gallery
   - optcp-sibyl-system
   - optcp-staff-suite

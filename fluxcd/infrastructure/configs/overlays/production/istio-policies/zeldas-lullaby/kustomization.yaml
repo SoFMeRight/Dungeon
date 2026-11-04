@@ -18,7 +18,6 @@ resources:
   - allow-zitadel-configuration-to-vault.yaml
   - allow-netbird-turn-loadbalancer.yaml
   - allow-netbird-postgres-replication.yaml
-  - allow-webhook-external-secrets.yaml
   - allow-unifi-app-to-unifi-db.yaml
   - allow-unifi-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
