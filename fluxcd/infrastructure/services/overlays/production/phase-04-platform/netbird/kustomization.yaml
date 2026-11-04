@@ -195,3 +195,4 @@ patches:
     target:
       kind: StatefulSet
       name: netbird-management
+  - path: prepare-move-patch.yaml
