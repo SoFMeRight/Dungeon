@@ -99,7 +99,7 @@ releases:
     tag: "v{version}"
     asset: "RMG-Portable-Linux64-v{version}.AppImage"
     # renovate: datasource=github-releases depName=Rosalie241/RMG extractVersion=^v(?<version>.+)$
-    version: "0.9.0"
+    version: "0.9.1"
     layout: raw
     mode: "0755"
     dest: /home/steamheadless/Applications/RMG.AppImage
