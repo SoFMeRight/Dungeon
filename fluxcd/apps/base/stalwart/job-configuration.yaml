@@ -120,20 +120,34 @@ spec:
 
               acct=$(jmap x:Account/query "$(jq -cn --arg n "$ACCOUNT_NAME" '{filter:{name:$n}}')" | jq -r '.ids[0] // empty')
               [ -n "$acct" ] || { echo "no account named $ACCOUNT_NAME"; exit 1; }
-              have=$(jmap x:AppPassword/get "$(jq -cn --arg a "$acct" '{accountId:$a}')" \
-                | jq -r --arg d "$APP_PASSWORD_NAME" '[(.list // [])[] | select(.description==$d)] | length')
-              stored=$(curl -s -o /dev/null -w '%{http_code}' -H "$h" "$VAULT_ADDR/v1/$VAULT_MOUNT/data/$APP_PASSWORD_PATH")
-              if [ "$stored" = 200 ] && [ "$have" -gt 0 ]; then
-                echo "$APP_PASSWORD_NAME app password on $ACCOUNT_NAME: in place"
-              else
-                resp=$(jmap x:AppPassword/set "$(jq -cn --arg a "$acct" --arg d "$APP_PASSWORD_NAME" '{accountId:$a,create:{n0:{description:$d}}}')")
-                secret=$(echo "$resp" | jq -r '.created.n0.secret // empty')
-                [ -n "$secret" ] || { echo "no app password created for $APP_PASSWORD_NAME: $(echo "$resp" | jq -c 'del(.created)')"; exit 1; }
-                curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/$VAULT_MOUNT/data/$APP_PASSWORD_PATH" \
-                  -d "$(jq -cn --arg s "$secret" '{data:{APP_PASSWORD:$s}}')" >/dev/null
-                unset secret
-                echo "$APP_PASSWORD_NAME app password on $ACCOUNT_NAME: minted and stored"
-              fi
+              # Rotated on every run. The ids it minted are recorded in the entry's metadata
+              # (never the secret), and only those are ever destroyed.
+              meta="$VAULT_ADDR/v1/$VAULT_MOUNT/metadata/$APP_PASSWORD_PATH"
+              code=$(curl -s -o /tmp/meta.json -w '%{http_code}' -H "$h" "$meta")
+              case "$code" in
+                200) old=$(jq -c '[.data.custom_metadata // {} | .app_password_id, .pending_id | select(. != null and . != "")]' /tmp/meta.json) ;;
+                404) old='[]' ;;
+                *) echo "openbao metadata read: http $code"; exit 1 ;;
+              esac
+              destroy() {
+                jmap x:AppPassword/set "$(jq -cn --arg a "$acct" --argjson i "$1" '{accountId:$a,destroy:$i}')" \
+                  | jq -e '[(.notDestroyed // {})[] | select(.type != "notFound")] | length == 0' >/dev/null
+              }
+              resp=$(jmap x:AppPassword/set "$(jq -cn --arg a "$acct" --arg d "$APP_PASSWORD_NAME" '{accountId:$a,create:{n0:{description:$d}}}')")
+              new=$(echo "$resp" | jq -r '.created.n0.id // empty')
+              secret=$(echo "$resp" | jq -r '.created.n0.secret // empty')
+              [ -n "$new" ] && [ -n "$secret" ] || { echo "no app password created for $APP_PASSWORD_NAME: $(echo "$resp" | jq -c 'del(.created)')"; exit 1; }
+              custom() { curl -fsS -H "$h" -X POST "$meta" -d "$(jq -cn --argjson c "$1" '{custom_metadata:$c}')" >/dev/null; }
+              # Recorded as pending first, so a run that dies before the swap still leaves its id to clean up.
+              custom "$(jq -cn --argjson o "$old" --arg n "$new" '{app_password_id:($o[0] // ""),pending_id:$n}')" \
+                && curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/$VAULT_MOUNT/data/$APP_PASSWORD_PATH" \
+                  -d "$(jq -cn --arg s "$secret" '{data:{APP_PASSWORD:$s}}')" >/dev/null \
+                && custom "$(jq -cn --arg n "$new" '{app_password_id:$n,pending_id:""}')" \
+                || { unset secret; destroy "$(jq -cn --arg n "$new" '[$n]')"; echo "storing $APP_PASSWORD_NAME failed; new app password removed"; exit 1; }
+              unset secret
+              stale=$(jq -cn --argjson o "$old" --arg n "$new" '[$o[] | select(. != $n)] | unique')
+              destroy "$stale" || { echo "removing replaced $APP_PASSWORD_NAME app passwords failed"; exit 1; }
+              echo "$APP_PASSWORD_NAME app password on $ACCOUNT_NAME: rotated, $(echo "$stale" | jq length) replaced"
 
               for m in $GMAIL_MAILBOXES; do
                 code=$(curl -s -o /dev/null -w '%{http_code}' -H "$h" -X POST "$VAULT_ADDR/v1/$VAULT_MOUNT/data/${SEED_PREFIX}$m" \

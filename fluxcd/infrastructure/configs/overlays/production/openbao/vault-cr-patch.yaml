@@ -152,11 +152,15 @@ spec:
             capabilities = ["create", "update", "patch"]
           }
       # stalwart-configuration writes the identities Stalwart issues: the Gmail sync's app
-      # password, and the empty smtp-<name> seeds the Operator fills; it reads nothing.
+      # password, and the empty smtp-<name> seeds the Operator fills. It reads no secret: the
+      # metadata holds only the ids of the app passwords it minted, so it destroys no other.
       - name: stalwart-configuration
         rules: |
           path "optcp/data/apps/stalwart/gmail-sync" {
             capabilities = ["create", "update"]
+          }
+          path "optcp/metadata/apps/stalwart/gmail-sync" {
+            capabilities = ["create", "read", "update"]
           }
           path "optcp/data/apps/stalwart/smtp-*" {
             capabilities = ["create"]
