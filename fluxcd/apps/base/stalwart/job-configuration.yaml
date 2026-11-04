@@ -93,16 +93,16 @@ spec:
             - name: tmp
               mountPath: /tmp
       containers:
-        # Identities Stalwart issues for other workloads, written to OpenBao (issuers write,
-        # they do not read): the Gmail sync's app password on the account it writes into, and
-        # one empty smtp-<name> entry per declared Gmail mailbox for the Operator to fill.
+        # Identities Stalwart issues for other workloads, written to OpenBao (issuers write; they
+        # read only the metadata they record): the Gmail sync's IMAP-only app password on its own
+        # account, and one empty smtp-<name> entry per declared Gmail mailbox for the Operator to fill.
         - name: identities
           image: PLACEHOLDER_K8S_IMAGE
           command: ["/bin/sh", "-c"]
           args:
             - |
               set -eu
-              : "${ACCOUNT_NAME:?}" "${APP_PASSWORD_NAME:?}" "${VAULT_ADDR:?}" "${VAULT_ROLE:?}" \
+              : "${ACCOUNT_NAME:?}" "${APP_PASSWORD_NAME:?}" "${APP_PASSWORD_PERMISSIONS:?}" "${ROTATION:?}" "${VAULT_ADDR:?}" "${VAULT_ROLE:?}" \
                 "${VAULT_MOUNT:?}" "${APP_PASSWORD_PATH:?}" "${SEED_PREFIX:?}" "${GMAIL_MAILBOXES:?}" "${IMAP_HOST:?}" "${IMAP_PORT:?}"
               auth="$STALWART_USER:$STALWART_PASSWORD"
               api="$STALWART_URL/jmap/"
@@ -120,34 +120,52 @@ spec:
 
               acct=$(jmap x:Account/query "$(jq -cn --arg n "$ACCOUNT_NAME" '{filter:{name:$n}}')" | jq -r '.ids[0] // empty')
               [ -n "$acct" ] || { echo "no account named $ACCOUNT_NAME"; exit 1; }
-              # Rotated on every run. The ids it minted are recorded in the entry's metadata
-              # (never the secret), and only those are ever destroyed.
+              # One app password, minted only when the recorded one is gone or ROTATION changes.
+              # Each is named <APP_PASSWORD_NAME>-<time>, a name never reused; the entry's metadata
+              # (never the secret) records it as <id>:<name>, and only an app password matching a
+              # recorded id and name is ever destroyed.
               meta="$VAULT_ADDR/v1/$VAULT_MOUNT/metadata/$APP_PASSWORD_PATH"
               code=$(curl -s -o /tmp/meta.json -w '%{http_code}' -H "$h" "$meta")
               case "$code" in
-                200) old=$(jq -c '[.data.custom_metadata // {} | .app_password_id, .pending_id | select(. != null and . != "")]' /tmp/meta.json) ;;
-                404) old='[]' ;;
+                200) jq -c '.data.custom_metadata // {}' /tmp/meta.json > /tmp/rec.json ;;
+                404) echo '{}' > /tmp/rec.json ;;
                 *) echo "openbao metadata read: http $code"; exit 1 ;;
               esac
+              jmap x:AppPassword/get "$(jq -cn --arg a "$acct" '{accountId:$a}')" \
+                | jq -c '[(.list // [])[] | "\(.id):\(.description)"]' > /tmp/live.json
+              live() { [ -n "$1" ] && jq -e --arg r "$1" 'index($r) != null' /tmp/live.json >/dev/null; }
+              current=$(jq -r '.app_password // ""' /tmp/rec.json)
+              pending=$(jq -r '.pending // ""' /tmp/rec.json)
               destroy() {
-                jmap x:AppPassword/set "$(jq -cn --arg a "$acct" --argjson i "$1" '{accountId:$a,destroy:$i}')" \
-                  | jq -e '[(.notDestroyed // {})[] | select(.type != "notFound")] | length == 0' >/dev/null
+                live "$1" || return 0
+                jmap x:AppPassword/set "$(jq -cn --arg a "$acct" --arg i "${1%%:*}" '{accountId:$a,destroy:[$i]}')" \
+                  | jq -e '(.destroyed // []) | length == 1' >/dev/null
               }
-              resp=$(jmap x:AppPassword/set "$(jq -cn --arg a "$acct" --arg d "$APP_PASSWORD_NAME" '{accountId:$a,create:{n0:{description:$d}}}')")
-              new=$(echo "$resp" | jq -r '.created.n0.id // empty')
-              secret=$(echo "$resp" | jq -r '.created.n0.secret // empty')
-              [ -n "$new" ] && [ -n "$secret" ] || { echo "no app password created for $APP_PASSWORD_NAME: $(echo "$resp" | jq -c 'del(.created)')"; exit 1; }
-              custom() { curl -fsS -H "$h" -X POST "$meta" -d "$(jq -cn --argjson c "$1" '{custom_metadata:$c}')" >/dev/null; }
-              # Recorded as pending first, so a run that dies before the swap still leaves its id to clean up.
-              custom "$(jq -cn --argjson o "$old" --arg n "$new" '{app_password_id:($o[0] // ""),pending_id:$n}')" \
-                && curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/$VAULT_MOUNT/data/$APP_PASSWORD_PATH" \
-                  -d "$(jq -cn --arg s "$secret" '{data:{APP_PASSWORD:$s}}')" >/dev/null \
-                && custom "$(jq -cn --arg n "$new" '{app_password_id:$n,pending_id:""}')" \
-                || { unset secret; destroy "$(jq -cn --arg n "$new" '[$n]')"; echo "storing $APP_PASSWORD_NAME failed; new app password removed"; exit 1; }
-              unset secret
-              stale=$(jq -cn --argjson o "$old" --arg n "$new" '[$o[] | select(. != $n)] | unique')
-              destroy "$stale" || { echo "removing replaced $APP_PASSWORD_NAME app passwords failed"; exit 1; }
-              echo "$APP_PASSWORD_NAME app password on $ACCOUNT_NAME: rotated, $(echo "$stale" | jq length) replaced"
+              if live "$current" && [ -z "$pending" ] && [ "$(jq -r '.rotation // ""' /tmp/rec.json)" = "$ROTATION" ]; then
+                echo "$APP_PASSWORD_NAME app password on $ACCOUNT_NAME: in place"
+              else
+                name="$APP_PASSWORD_NAME-$(date -u +%Y%m%dT%H%M%SZ)"
+                resp=$(jmap x:AppPassword/set "$(jq -cn --arg a "$acct" --arg d "$name" --arg p "$APP_PASSWORD_PERMISSIONS" \
+                  '{accountId:$a,create:{n0:{description:$d,permissions:{"@type":"Replace",permissions:($p | split(" ") | map({(.):true}) | add)}}}}')")
+                id=$(echo "$resp" | jq -r '.created.n0.id // empty')
+                secret=$(echo "$resp" | jq -r '.created.n0.secret // empty')
+                [ -n "$id" ] && [ -n "$secret" ] || { echo "no app password created for $APP_PASSWORD_NAME: $(echo "$resp" | jq -c 'del(.created)')"; exit 1; }
+                new="$id:$name"
+                echo "[\"$new\"]" | jq -c '. + input' - /tmp/live.json > /tmp/live2.json && mv /tmp/live2.json /tmp/live.json
+                record() { curl -fsS -H "$h" -X POST "$meta" -d "$(jq -cn --argjson c "$1" '{custom_metadata:$c}')" >/dev/null; }
+                # Recorded as pending first, so a run that dies before the swap leaves its name to clean up.
+                record "$(jq -cn --arg c "$current" --arg p "$new" --arg r "$ROTATION" '{app_password:$c,pending:$p,rotation:$r}')" \
+                  && curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/$VAULT_MOUNT/data/$APP_PASSWORD_PATH" \
+                    -d "$(jq -cn --arg s "$secret" '{data:{APP_PASSWORD:$s}}')" >/dev/null \
+                  && record "$(jq -cn --arg c "$new" --arg r "$ROTATION" '{app_password:$c,pending:"",rotation:$r}')" \
+                  || { unset secret; destroy "$new"; echo "storing $APP_PASSWORD_NAME failed; new app password removed"; exit 1; }
+                unset secret
+                for old in "$current" "$pending"; do
+                  [ "$old" = "$new" ] && continue
+                  destroy "$old" || { echo "removing replaced $APP_PASSWORD_NAME app password failed"; exit 1; }
+                done
+                echo "$APP_PASSWORD_NAME app password on $ACCOUNT_NAME: minted (rotation $ROTATION)"
+              fi
 
               for m in $GMAIL_MAILBOXES; do
                 code=$(curl -s -o /dev/null -w '%{http_code}' -H "$h" -X POST "$VAULT_ADDR/v1/$VAULT_MOUNT/data/${SEED_PREFIX}$m" \
@@ -178,6 +196,10 @@ spec:
               value: PLACEHOLDER_ACCOUNT_NAME
             - name: APP_PASSWORD_NAME
               value: PLACEHOLDER_APP_PASSWORD_NAME
+            - name: APP_PASSWORD_PERMISSIONS
+              value: PLACEHOLDER_APP_PASSWORD_PERMISSIONS
+            - name: ROTATION
+              value: PLACEHOLDER_ROTATION
             - name: VAULT_ADDR
               value: PLACEHOLDER_VAULT_ADDR
             - name: VAULT_ROLE

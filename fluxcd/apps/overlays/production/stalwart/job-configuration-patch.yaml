@@ -21,11 +21,20 @@ spec:
         - name: identities
           image: docker.io/alpine/k8s:1.37.1
           env:
-            # The account the Gmail sync writes into, and the app password it logs in with.
+            # The Gmail sync's own account, and the app password it logs in with: IMAP only.
+            # Raise ROTATION to replace the app password on the next run.
             - name: ACCOUNT_NAME
-              value: kai
+              value: gmail-sync
             - name: APP_PASSWORD_NAME
               value: gmail-sync
+            - name: APP_PASSWORD_PERMISSIONS
+              value: >-
+                authenticate imapAuthenticate imapCapability imapId imapEnable imapNamespace
+                imapList imapLsub imapStatus imapSelect imapExamine imapFetch imapSearch imapStore
+                imapAppend imapCopy imapMove imapExpunge imapCreate imapDelete imapRename
+                imapSubscribe imapIdle
+            - name: ROTATION
+              value: "1"
             - name: VAULT_ADDR
               value: http://openbao.optcp-secrets.svc.cluster.local:8200
             - name: VAULT_ROLE
