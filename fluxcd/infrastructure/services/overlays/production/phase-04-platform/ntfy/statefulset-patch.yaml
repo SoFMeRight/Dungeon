@@ -13,7 +13,7 @@ spec:
         - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: ntfy
-          image: docker.io/binwiederhier/ntfy:v2.37.1
+          image: docker.io/binwiederhier/ntfy:v2.37.2
           ports:
             - name: http
               containerPort: 8080
