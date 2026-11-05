@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: optcp-ingress-operator
+  labels:
+    name: optcp-ingress-operator
+    purpose: ingress-operator
+    tenant: optcp                          # openbao-optcp ClusterSecretStore condition
+    docker-io-pull-secret: "enabled"
+    istio.io/dataplane-mode: ambient
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: "latest"
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: "latest"
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: "latest"

@@ -11,8 +11,8 @@ metadata:
         - "[RESPONSE_TIME] < 5000"
 spec:
   parentRefs:
-    - name: xylem-gateway
-      namespace: pedestal-of-time
+    - name: xylem-ingress-gateway
+      namespace: optcp-ingress-operator
   hostnames:
     - "monica.pcfae.com"
   rules:

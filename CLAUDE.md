@@ -260,7 +260,7 @@
 - Traefik & Gateway API Routing Strategy:
   - **IP-based Domain Isolation**: Use separate Gateway resources with unique LoadBalancer IPs to enable firewall-based internet exposure control (pfSense NAT rules per IP)
   - **Gateway Architecture**:
-    - **xylem-gateway** (172.22.30.69, namespace and sharing-key pedestal-of-time): Operator-tier internal services (*.pcfae.com) - NO pfSense port forward = internal only
+    - **xylem-ingress-gateway** (172.22.30.69, namespace and sharing-key optcp-ingress-operator): Operator-tier internal services (*.pcfae.com) - NO pfSense port forward = internal only
     - **phloem-ingress-gateway** (172.22.30.70, namespace and sharing-key optcp-ingress-internal): The main internal gateway (*.pcfae.com, internal *.optcp.com and *.prplanit.com hosts) - NO pfSense port forward
     - **cell-membrane-ingress-gateway** (172.22.30.71, namespace and sharing-key optcp-ingress-public): The single public gateway (pfSense forwards port 443) — business/work (*.precisionplanit.com, *.prplanit.com, *.optcp.com, *.ipleek.com, *.uni2.cc, *.homelabhelpdesk.com, *.operationtimecapsule.com) AND personal (*.sofmeright.com, *.arbitorium.com, *.yesimvegan.com, kai-hamilton.com, astralfocal.com, *.etherealclique.com)
   - Each Gateway has its own:

@@ -10,7 +10,7 @@ spec:
     fromEndpoints entry requires BOTH the namespace AND
     policy.prplanit.com/cap.oidc=true (logical AND) — only labeled pods match,
     NOT whole namespaces. The namespace label only scopes Cilium's
-    cross-namespace match. Mirrors the xylem-gateway cap.s3 pattern and
+    cross-namespace match. Mirrors the xylem-ingress-gateway cap.s3 pattern and
     preserves the "no identity bypass via LB IP" posture (no `cluster`/all-pods).
   enableDefaultDeny:
     ingress: false

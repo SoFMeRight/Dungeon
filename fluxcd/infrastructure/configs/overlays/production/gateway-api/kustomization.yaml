@@ -38,7 +38,7 @@ patches:
   - path: gateway-patch-xylem.yaml
     target:
       kind: Gateway
-      name: xylem-gateway
+      name: xylem-ingress-gateway
   - path: gateway-patch-cell-membrane.yaml
     target:
       kind: Gateway
@@ -47,14 +47,14 @@ patches:
     target:
       kind: Gateway
       name: phloem-ingress-gateway
-  # Set namespace for xylem-gateway to pedestal-of-time
+  # Set namespace for xylem-ingress-gateway to optcp-ingress-operator
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: pedestal-of-time
+        value: optcp-ingress-operator
     target:
       kind: Gateway
-      name: xylem-gateway
+      name: xylem-ingress-gateway
   # Set namespace for cell-membrane-ingress-gateway to optcp-ingress-public
   - patch: |-
       - op: add

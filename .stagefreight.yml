@@ -71,6 +71,7 @@ gitops:
       - name: "Infrastructure (Aryll's Lookout\U0001F52D)"
         namespaces:
           - optcp-ingress-internal
+          - optcp-ingress-operator
       - name: "Content & Media (Temple of Time\U0001F3DB️)"
         namespaces:
           - temple-of-time
@@ -130,7 +131,7 @@ gitops:
           - 172.22.30.0/24
         gateways:
           - phloem-ingress-gateway
-          - xylem-gateway
+          - xylem-ingress-gateway
         level: intranet
       - level: cluster
         service_types:

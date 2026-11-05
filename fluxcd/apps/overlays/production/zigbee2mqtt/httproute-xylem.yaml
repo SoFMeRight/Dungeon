@@ -7,8 +7,8 @@ metadata:
       group: "Security & IoT (Lens of Truth🔍)"
 spec:
   parentRefs:
-    - name: xylem-gateway
-      namespace: pedestal-of-time
+    - name: xylem-ingress-gateway
+      namespace: optcp-ingress-operator
   hostnames:
     - "z2m.pcfae.com"
   rules:

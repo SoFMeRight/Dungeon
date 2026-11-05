@@ -1,10 +1,10 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-xylem-gateway-from-netbird-router
+  name: allow-xylem-ingress-gateway-from-netbird-router
 spec:
   description: >-
-    Allow the in-cluster NetBird subnet router (optcp-vpn) to reach xylem-gateway
+    Allow the in-cluster NetBird subnet router (optcp-vpn) to reach xylem-ingress-gateway
     on :80/:443. The gateway's LAN rule admits RFC1918 but excepts the pod CIDR to
     prevent identity bypass via the LB IP; the router forwards VPN traffic from a pod
     IP, so it needs this explicit identity-based allow. This is the sanctioned VPN
@@ -14,7 +14,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: xylem-gateway
+      gateway.networking.k8s.io/gateway-name: xylem-ingress-gateway
   ingress:
     - fromEndpoints:
         - matchLabels:

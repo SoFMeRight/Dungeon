@@ -15,7 +15,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/pedestal-of-time/sa/xylem-gateway-istio
+              - cluster.local/ns/optcp-ingress-operator/sa/xylem-ingress-gateway-istio
       to:
         - operation:
             ports: ["8080", "8443"]

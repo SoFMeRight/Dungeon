@@ -102,6 +102,7 @@ spec:
                 - gerudo-crest
                 - lakitu
                 - optcp-ingress-internal
+                - optcp-ingress-operator
           # Repo-manifest exceptions (self-documenting label on the workload).
           - resources:
               selector:
@@ -155,6 +156,7 @@ spec:
                 - gerudo-crest
                 - lakitu
                 - optcp-ingress-internal
+                - optcp-ingress-operator
           # Repo-manifest self-documenting exceptions.
           - resources:
               selector:
@@ -197,6 +199,7 @@ spec:
                 - gerudo-crest
                 - lakitu
                 - optcp-ingress-internal
+                - optcp-ingress-operator
           # Repo-manifest self-documenting exceptions.
           - resources:
               selector:
@@ -242,6 +245,7 @@ spec:
                 - gerudo-crest
                 - lakitu
                 - optcp-ingress-internal
+                - optcp-ingress-operator
           # Repo-manifest self-documenting exceptions.
           - resources:
               selector:

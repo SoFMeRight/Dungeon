@@ -1008,7 +1008,7 @@
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: monica.pcfae.com
-- Gateway: xylem-gateway
+- Gateway: xylem-ingress-gateway
 - Components:
   - monica (StatefulSet)
   - monica-db (StatefulSet, database)
@@ -1027,7 +1027,7 @@
 - Namespace: pedestal-of-time
 - Replicas: 2/2
 - Hosts: fotos.pcfae.com
-- Gateway: xylem-gateway
+- Gateway: xylem-ingress-gateway
 - Components:
   - photoprism-x (StatefulSet)
   - photoprism-x-mariadb (StatefulSet, database)
@@ -1036,7 +1036,7 @@
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: plexx.pcfae.com
-- Gateway: xylem-gateway
+- Gateway: xylem-ingress-gateway
 
 **Roundcube Primary — 2 components** — StatefulSet — 
 - Namespace: pedestal-of-time
@@ -1302,7 +1302,7 @@
 | Kube Vip | kube-system | ✅ |
 | Metrics Server | kube-system | ✅ |
 | Kyverno Admission Controller (4 components) | mr-resetti | ✅ |
-| Xylem Gateway Istio | pedestal-of-time | ✅ |
+| Xylem Ingress Gateway Istio | optcp-ingress-operator | ✅ |
 | Cell Membrane Gateway Istio | optcp-ingress-public | ✅ |
 | Cert Manager (3 components) | king-of-red-lions | ✅ |
 | Istio (2 components) | king-of-red-lions | ✅ |
@@ -1462,7 +1462,7 @@
 - Replicas: 5/5
 
 **Xylem Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
-- Namespace: pedestal-of-time
+- Namespace: optcp-ingress-operator
 - Replicas: 1/1
 
 **Cell Membrane Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless

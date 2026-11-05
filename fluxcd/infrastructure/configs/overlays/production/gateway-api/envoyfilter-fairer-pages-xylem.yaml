@@ -2,11 +2,11 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: fairer-pages-error-handler-xylem
-  namespace: pedestal-of-time
+  namespace: optcp-ingress-operator
 spec:
   workloadSelector:
     labels:
-      gateway.networking.k8s.io/gateway-name: xylem-gateway
+      gateway.networking.k8s.io/gateway-name: xylem-ingress-gateway
   configPatches:
     - applyTo: HTTP_FILTER
       match:

@@ -1,10 +1,10 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-xylem-gateway-lan
+  name: allow-xylem-ingress-gateway-lan
 spec:
   description: >-
-    LAN ingress to xylem-gateway (172.22.30.69). Internal services only —
+    LAN ingress to xylem-ingress-gateway (172.22.30.69). Internal services only —
     no pfSense port forward. RFC1918 allowed minus pod CIDR to prevent
     identity bypass via LB IP. pfSense owns LAN segment access control.
   enableDefaultDeny:
@@ -12,7 +12,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: xylem-gateway
+      gateway.networking.k8s.io/gateway-name: xylem-ingress-gateway
   ingress:
     - fromCIDRSet:
         - cidr: "10.0.0.0/8"

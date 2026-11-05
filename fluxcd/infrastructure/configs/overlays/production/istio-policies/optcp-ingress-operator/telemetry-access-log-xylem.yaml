@@ -17,7 +17,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: xylem-gateway
+      gateway.networking.k8s.io/gateway-name: xylem-ingress-gateway
   accessLogging:
     - providers:
         - name: cell-membrane-access-log

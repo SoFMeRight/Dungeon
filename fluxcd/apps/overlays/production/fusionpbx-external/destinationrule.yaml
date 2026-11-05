@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: fusionpbx-external
 spec:
-  # Exported cluster-wide so the cross-namespace xylem-gateway applies TLS origination.
+  # Exported cluster-wide so the cross-namespace xylem-ingress-gateway applies TLS origination.
   exportTo:
     - "*"
   host: bluebell.prplanit.internal

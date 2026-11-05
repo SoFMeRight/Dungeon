@@ -14,6 +14,7 @@ resources:
   - training-dummy
   # Batch 2 — Simple
   - optcp-ingress-internal
+  - optcp-ingress-operator
   - optcp-ingress-public
   - kokiri-forest
   - delivery-bag

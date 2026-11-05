@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for optcp-ingress-operator namespace.
+    Gateway pods get LAN ingress via cnp-xylem-ingress-gateway and the
+    cnp-xylem-ingress-gateway-from-* identity allows; egress via
+    cnp-egress-xylem-ingress-gateway (whole-cluster + world backends). DNS,
+    kube-apiserver and mesh (HBONE) ride the universal CCNP baseline.
+    CCNPs provide: kubelet-probes, istio-ambient, prometheus-scrape.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor

@@ -15,7 +15,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: xylem-gateway
+      gateway.networking.k8s.io/gateway-name: xylem-ingress-gateway
   action: CUSTOM
   provider:
     name: oauth2-proxy
@@ -34,7 +34,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: xylem-gateway
+      gateway.networking.k8s.io/gateway-name: xylem-ingress-gateway
   action: DENY
   rules:
     - to:
