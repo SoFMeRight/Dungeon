@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: hubzilla-cron
 spec:
-  # Held at zero for the volume re-bind into outspokekin-social.
-  replicas: 0
   template:
     metadata:
       labels:

@@ -3,8 +3,7 @@ kind: StatefulSet
 metadata:
   name: ghost-mysql
 spec:
-  # Held at zero for the volume re-bind into optcp-web.
-  replicas: 0
+  replicas: 1
   template:
     spec:
       securityContext:
