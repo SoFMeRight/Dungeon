@@ -219,3 +219,66 @@ spec:
               protocol: TCP
             - port: "8082"
               protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-game-servers-from-steam-headless-seats
+spec:
+  description: >-
+    Ingress from the steam-headless seats on the game and query ports, never RCON or health. Pairs
+    with allow-steam-headless-seats-to-game-servers in arbitorium-game-streaming.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - ark-sa-tmc-theisland
+          - ark-sa-tmc-valguero
+          - ark-se-tmc-theisland
+          - enshrouded
+          - minecraft
+          - palworld
+          - valheim
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arbitorium-game-streaming
+            app: steam-headless
+      toPorts:
+        - ports:
+            - port: "2456"
+              protocol: UDP
+            - port: "2457"
+              protocol: UDP
+            - port: "7797"
+              protocol: UDP
+            - port: "7797"
+              protocol: TCP
+            - port: "8211"
+              protocol: UDP
+            - port: "8777"
+              protocol: UDP
+            - port: "8777"
+              protocol: TCP
+            - port: "8778"
+              protocol: UDP
+            - port: "8779"
+              protocol: UDP
+            - port: "8779"
+              protocol: TCP
+            - port: "8780"
+              protocol: UDP
+            - port: "15637"
+              protocol: UDP
+            - port: "27015"
+              protocol: UDP
+            - port: "27057"
+              protocol: UDP
+            - port: "27057"
+              protocol: TCP
+            - port: "35566"
+              protocol: TCP

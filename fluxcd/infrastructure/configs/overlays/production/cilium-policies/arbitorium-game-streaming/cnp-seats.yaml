@@ -99,3 +99,68 @@ spec:
         - ports:
             - port: "445"
               protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-steam-headless-seats-to-game-servers
+spec:
+  description: >-
+    Seats reach the game servers on their game and query ports, never RCON or health. The
+    LoadBalancer IP is translated before policy applies, so this matches the server pods. Pairs
+    with allow-game-servers-from-steam-headless-seats in optcp-shooting-gallery.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: steam-headless
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-shooting-gallery
+          matchExpressions:
+            - key: app
+              operator: In
+              values:
+                - ark-sa-tmc-theisland
+                - ark-sa-tmc-valguero
+                - ark-se-tmc-theisland
+                - enshrouded
+                - minecraft
+                - palworld
+                - valheim
+      toPorts:
+        - ports:
+            - port: "2456"
+              protocol: UDP
+            - port: "2457"
+              protocol: UDP
+            - port: "7797"
+              protocol: UDP
+            - port: "7797"
+              protocol: TCP
+            - port: "8211"
+              protocol: UDP
+            - port: "8777"
+              protocol: UDP
+            - port: "8777"
+              protocol: TCP
+            - port: "8778"
+              protocol: UDP
+            - port: "8779"
+              protocol: UDP
+            - port: "8779"
+              protocol: TCP
+            - port: "8780"
+              protocol: UDP
+            - port: "15637"
+              protocol: UDP
+            - port: "27015"
+              protocol: UDP
+            - port: "27057"
+              protocol: UDP
+            - port: "27057"
+              protocol: TCP
+            - port: "35566"
+              protocol: TCP
