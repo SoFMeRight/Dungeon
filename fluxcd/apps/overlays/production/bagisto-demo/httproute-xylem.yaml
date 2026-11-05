@@ -7,8 +7,8 @@ metadata:
       group: "Business Apps (Hyrule Castle🏰)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "bagisto.pcfae.com"
   rules:

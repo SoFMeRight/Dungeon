@@ -7,8 +7,8 @@ metadata:
       group: "Mail (OpTCP)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "mail-admin.optcp.com"
   rules:

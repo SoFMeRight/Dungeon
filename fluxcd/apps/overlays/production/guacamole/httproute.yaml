@@ -12,8 +12,8 @@ metadata:
         - "[RESPONSE_TIME] < 5000"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "guacamole.pcfae.com"
   rules:

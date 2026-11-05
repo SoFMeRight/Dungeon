@@ -4,9 +4,9 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress AND egress for optcp-gateway-phloem namespace.
-    Gateway pods get VPN/LAN CIDR ingress via cnp-phloem-gateway and the
-    cnp-phloem-gateway-from-* identity allows; egress via cnp-egress-phloem-gateway (whole-cluster +
+    Default-deny ingress AND egress for optcp-ingress-internal namespace.
+    Gateway pods get VPN/LAN CIDR ingress via cnp-phloem-ingress-gateway and the
+    cnp-phloem-ingress-gateway-from-* identity allows; egress via cnp-egress-phloem-ingress-gateway (whole-cluster +
     world backends). DNS, kube-apiserver and mesh (HBONE) ride the universal
     CCNP baseline.
     CCNPs provide: kubelet-probes, istio-ambient, prometheus-scrape.

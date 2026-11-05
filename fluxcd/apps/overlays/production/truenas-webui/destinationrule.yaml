@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: truenas-webui
 spec:
-  # Exported cluster-wide so the cross-namespace phloem-gateway applies TLS origination.
+  # Exported cluster-wide so the cross-namespace phloem-ingress-gateway applies TLS origination.
   exportTo:
     - "*"
   host: gringotts.prplanit.internal

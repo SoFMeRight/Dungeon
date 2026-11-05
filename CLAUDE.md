@@ -168,7 +168,7 @@
   - **RGW (S3) Configuration**:
     - Deployed in `gorons-bracelet` namespace as StatefulSet
     - **Canonical S3 endpoint**: `https://s3.optcp.com` (all clients)
-    - TLS terminated at phloem-gateway (172.22.30.70) with the `s3-optcp-com-phloem-tls` certificate
+    - TLS terminated at phloem-ingress-gateway (172.22.30.70) with the `s3-optcp-com-phloem-tls` certificate
     - HTTPRoute `ceph-rgw-s3` in gorons-bracelet routes `s3.optcp.com` → ceph-rgw service (port 80)
     - All S3 clients MUST use path-style addressing (`s3ForcePathStyle: true`)
     - LoadBalancer IP: 172.22.30.101 (direct RGW access, admin/monitoring only)
@@ -261,7 +261,7 @@
   - **IP-based Domain Isolation**: Use separate Gateway resources with unique LoadBalancer IPs to enable firewall-based internet exposure control (pfSense NAT rules per IP)
   - **Gateway Architecture**:
     - **xylem-gateway** (172.22.30.69, namespace and sharing-key pedestal-of-time): Operator-tier internal services (*.pcfae.com) - NO pfSense port forward = internal only
-    - **phloem-gateway** (172.22.30.70, namespace and sharing-key optcp-gateway-phloem): The main internal gateway (*.pcfae.com, internal *.optcp.com and *.prplanit.com hosts) - NO pfSense port forward
+    - **phloem-ingress-gateway** (172.22.30.70, namespace and sharing-key optcp-ingress-internal): The main internal gateway (*.pcfae.com, internal *.optcp.com and *.prplanit.com hosts) - NO pfSense port forward
     - **cell-membrane-gateway** (172.22.30.71, namespace and sharing-key prelude-of-light): The single public gateway (pfSense forwards port 443) — business/work (*.precisionplanit.com, *.prplanit.com, *.optcp.com, *.ipleek.com, *.uni2.cc, *.homelabhelpdesk.com, *.operationtimecapsule.com) AND personal (*.sofmeright.com, *.arbitorium.com, *.yesimvegan.com, kai-hamilton.com, astralfocal.com, *.etherealclique.com)
   - Each Gateway has its own:
     - Unique LoadBalancer IP via `lbipam.cilium.io/ips` annotation

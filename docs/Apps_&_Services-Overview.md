@@ -297,25 +297,25 @@
 - Namespace: zeldas-lullaby
 - Replicas: 3/3
 - Hosts: secrets.optcp.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Semaphore** — StatefulSet — 
 - Namespace: zeldas-lullaby
 - Replicas: 1/1
 - Hosts: ansible.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Twofauth** — StatefulSet — 8.0.3
 - Namespace: zeldas-lullaby
 - Replicas: 1/1
 - Hosts: authenticator.optcp.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Unifi — 2 components** — StatefulSet — 
 - Namespace: zeldas-lullaby
 - Replicas: 2/2
 - Hosts: unifi.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - unifi-app (StatefulSet)
   - unifi-db (StatefulSet, database)
@@ -342,7 +342,7 @@
 - Namespace: wallmaster
 - Replicas: 1/1
 - Hosts: anubis.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Endlessh Go** — StatefulSet — 2026.0730.0
 - Namespace: tingle-tuner
@@ -352,13 +352,13 @@
 - Namespace: hyrule-castle
 - Replicas: 1/1
 - Hosts: apt.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Bagisto — 2 components** — StatefulSet — 
 - Namespace: hyrule-castle
 - Replicas: 2/2
 - Hosts: bagisto.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - bagisto-demo (StatefulSet)
   - bagisto-demo-db (StatefulSet, database)
@@ -382,7 +382,7 @@
 - Namespace: hyrule-castle
 - Replicas: 9/9
 - Hosts: hq.prplanit.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - frappe-suite-frontend (Deployment)
   - frappe-suite-mariadb (StatefulSet, database)
@@ -416,7 +416,7 @@
 - Namespace: hyrule-castle
 - Replicas: 13/13
 - Hosts: cr.optcp.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - harbor-core (Deployment)
   - harbor-jobservice (Deployment)
@@ -429,7 +429,7 @@
 - Namespace: hyrule-castle
 - Replicas: 2/2
 - Hosts: docker.cr.optcp.com, ghcr.cr.optcp.com, lscr.cr.optcp.com, quay.cr.optcp.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Invoiceninja — 3 components** — StatefulSet — 
 - Namespace: hyrule-castle
@@ -481,7 +481,7 @@
 - Namespace: optcp-cloud
 - Replicas: 4/4
 - Hosts: projects.optcp.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - openproject-memcached (Deployment, cache)
   - openproject-web (Deployment)
@@ -491,13 +491,13 @@
 - Namespace: optcp-cloud
 - Replicas: 1/1
 - Hosts: sops.optcp.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Hubble Ui** — Deployment — 
 - Namespace: kube-system
 - Replicas: 1/1
 - Hosts: hubble.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Appflowy — 8 components** — Mixed — 
 - Namespace: temple-of-time
@@ -533,7 +533,7 @@
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: images.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Jellyfin** — StatefulSet — 10.11.11
 - Namespace: temple-of-time
@@ -545,7 +545,7 @@
 - Namespace: temple-of-time
 - Replicas: 2/2
 - Hosts: joplin.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - joplin-app (StatefulSet)
   - joplin-postgres (StatefulSet, database)
@@ -554,7 +554,7 @@
 - Namespace: temple-of-time
 - Replicas: 3/3
 - Hosts: kimai.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - kimai (StatefulSet)
   - kimai-mariadb (StatefulSet, database)
@@ -582,7 +582,7 @@
 - Namespace: temple-of-time
 - Replicas: 9/9
 - Hosts: ai.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - open-webui (StatefulSet)
   - open-webui-redis (StatefulSet, cache)
@@ -604,7 +604,7 @@
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: photos.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - photoprism (StatefulSet)
   - photoprism-mariadb (StatefulSet, database)
@@ -662,25 +662,25 @@
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: speedtester.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Netbootxyz** — StatefulSet — 0.7.6-nbxyz10
 - Namespace: compass
 - Replicas: 1/1
 - Hosts: netboot.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Openspeedtest** — Deployment — v2.0.6
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: speedtest.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Searxng — 2 components** — Deployment — 2026.10.11-ad46ebd7d
 - Namespace: compass
 - Replicas: 3/3
 - Hosts: search.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - searxng (Deployment)
   - searxng-redis (Deployment, cache)
@@ -707,13 +707,13 @@
 - Namespace: lost-woods
 - Replicas: 1/1
 - Hosts: ferdium.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Homarr — 3 components** — StatefulSet — v1.77.2
 - Namespace: lost-woods
 - Replicas: 3/3
 - Hosts: apptray.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - homarr (StatefulSet)
   - homarr-redis (StatefulSet, cache)
@@ -759,13 +759,13 @@
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: anime.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Bazarr** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: bazarr.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Byparr** — StatefulSet — 
 - Namespace: swift-sail
@@ -775,7 +775,7 @@
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: lidarr.pcfae.com, qbitt.pcfae.com, radarr.pcfae.com, readarr.pcfae.com, sonarr.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Jellyseerr** — StatefulSet — 
 - Namespace: swift-sail
@@ -787,49 +787,49 @@
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: overseer.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Pinchflat** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: pinchflat.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Prowlarr** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: prowlarr.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Py Kms** — StatefulSet — python3-next
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: kms.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Pyload Ng** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: dl.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Sabnzbd** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: sabnzbd.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Supermicro License Generator** — Deployment — v0.0.5
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: smkeygen.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Thelounge** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: thelounge.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Ark — 4 components** — Mixed — 
 - Namespace: optcp-shooting-gallery
@@ -852,7 +852,7 @@
 - Namespace: optcp-media
 - Replicas: 1/1
 - Hosts: romm.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - romm (StatefulSet)
   - romm-db (StatefulSet, database)
@@ -861,19 +861,19 @@
 - Namespace: gossip-stone
 - Replicas: 2/2
 - Hosts: pbs.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Pve Cluster Proxy** — Deployment — 1.31.5-alpine
 - Namespace: gossip-stone
 - Replicas: 2/2
 - Hosts: pve.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Stalwart** — Deployment — v0.16.27
 - Namespace: optcp-delivery-bag
 - Replicas: 1/1
 - Hosts: mail-admin.optcp.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Ntfy** — StatefulSet — v2.29.0
 - Namespace: delivery-bag
@@ -888,7 +888,7 @@
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: beszel.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Gatus** — Deployment — 
 - Namespace: gossip-stone
@@ -900,19 +900,19 @@
 - Namespace: gossip-stone
 - Replicas: 3/3
 - Hosts: grafana.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Headlamp** — StatefulSet — v0.45.0
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: headlamp.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Loki — 3 components** — Mixed — 
 - Namespace: gossip-stone
 - Replicas: 11/11
 - Hosts: logging.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - loki-gateway (Deployment)
   - loki (StatefulSet)
@@ -922,7 +922,7 @@
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: nut.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Prometheus Exporter — 2 components** — Deployment — 
 - Namespace: gossip-stone
@@ -935,7 +935,7 @@
 - Namespace: gossip-stone
 - Replicas: 2/2
 - Hosts: isptest.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - speedtest-tracker (StatefulSet)
   - speedtest-tracker-postgres (StatefulSet, database)
@@ -963,13 +963,13 @@
 - Namespace: gossip-stone
 - Replicas: 2/2
 - Hosts: metrics.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Weave Gitops** — Deployment — v0.39.1
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: flux.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Linkstack — 2 components** — StatefulSet — v4.8.8
 - Namespace: kokiri-forest
@@ -984,25 +984,25 @@
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: budget.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Dailytxt** — StatefulSet — 2.6.4
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: shiplog.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Homebox** — StatefulSet — 0.26.2
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: inventory.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Lubelogger** — StatefulSet — v1.7.3
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: lubelogger.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Monica — 2 components** — StatefulSet — 
 - Namespace: pedestal-of-time
@@ -1017,7 +1017,7 @@
 - Namespace: pedestal-of-time
 - Replicas: 3/3
 - Hosts: paperless.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - paperless-db (StatefulSet, database)
   - paperless-redis (StatefulSet, cache)
@@ -1042,7 +1042,7 @@
 - Namespace: pedestal-of-time
 - Replicas: 2/2
 - Hosts: mail.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - roundcube-primary-gmail (StatefulSet)
   - roundcube-primary-gmail-db (StatefulSet, database)
@@ -1051,7 +1051,7 @@
 - Namespace: lakitu
 - Replicas: 1/1
 - Hosts: hosts.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Navidrome** — Deployment — 0.64.2
 - Namespace: temple-of-time
@@ -1072,7 +1072,7 @@
 - Namespace: hookshot
 - Replicas: 3/3
 - Hosts: guacamole.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - guacamole (Deployment)
   - guacamole-guacd (Deployment)
@@ -1104,7 +1104,7 @@
 - Namespace: lens-of-truth
 - Replicas: 4/4
 - Hosts: crowdsec-lapi.pcfae.com, crowdsec.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - crowdsec (StatefulSet)
   - crowdsec-cloudflare-bouncer (StatefulSet)
@@ -1115,7 +1115,7 @@
 - Namespace: lens-of-truth
 - Replicas: 1/1
 - Hosts: nvr.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Home Assistant** — StatefulSet — 2026.10.1
 - Namespace: lens-of-truth
@@ -1131,7 +1131,7 @@
 - Namespace: lens-of-truth
 - Replicas: 3/3
 - Hosts: siem.prplanit.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - wazuh-dashboard (StatefulSet)
   - wazuh-indexer (StatefulSet)
@@ -1147,7 +1147,7 @@
 - Namespace: optcp-sibyl-system
 - Replicas: 2/2
 - Hosts: dtrack.optcp.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - dependency-track-api-server (Deployment)
   - dependency-track-frontend (Deployment)
@@ -1180,19 +1180,19 @@
 - Namespace: gorons-bracelet
 - Replicas: 2/2
 - Hosts: s3.optcp.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Convertx** — StatefulSet — v0.19.0
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: convertx.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Draw Io** — StatefulSet — 31.7.0
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: draw.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Fairer Pages** — Deployment — v0.0.14
 - Namespace: tingle-tuner
@@ -1208,37 +1208,37 @@
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: gwfonts.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Hrconvert2** — StatefulSet — v3.8.4
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: hrconvert2.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **It Tools** — Deployment — 2024.10.22-7ca5933
 - Namespace: tingle-tuner
 - Replicas: 3/3
 - Hosts: ittools.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Libretranslate** — StatefulSet — v1.9.6-cuda
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: translate.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Mazanoke** — Deployment — v1.1.7
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: mazanoke.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Neko — 2 components** — Mixed — 
 - Namespace: swift-sail
 - Replicas: 2/2
 - Hosts: web.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 - Components:
   - neko-gateway (Deployment)
   - neko-vpn (StatefulSet)
@@ -1247,7 +1247,7 @@
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: ollama.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 **Openwakeword** — StatefulSet — 2.1.0
 - Namespace: tingle-tuner
@@ -1261,7 +1261,7 @@
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: sdiff.pcfae.com
-- Gateway: phloem-gateway
+- Gateway: phloem-ingress-gateway
 
 </details>
 
@@ -1280,7 +1280,7 @@
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
 | Cloudflare Ddns | compass | ✅ |
-| Phloem Gateway Istio | optcp-gateway-phloem | ✅ |
+| Phloem Gateway Istio | optcp-ingress-internal | ✅ |
 | Reflector | gerudo-crest | ✅ |
 | Reloader | gerudo-crest | ✅ |
 | Alloy | lakitu | ✅ |
@@ -1374,7 +1374,7 @@
 - Replicas: 1/1
 
 **Phloem Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
-- Namespace: optcp-gateway-phloem
+- Namespace: optcp-ingress-internal
 - Replicas: 1/1
 
 **Reflector** — Deployment — 10.0.69

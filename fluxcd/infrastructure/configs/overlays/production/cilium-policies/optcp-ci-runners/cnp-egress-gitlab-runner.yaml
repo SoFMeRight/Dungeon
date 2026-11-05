@@ -49,8 +49,8 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-gateway-phloem
-            gateway.networking.k8s.io/gateway-name: phloem-gateway
+            k8s:io.kubernetes.pod.namespace: optcp-ingress-internal
+            gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
       toPorts:
         - ports:
             - port: "443"

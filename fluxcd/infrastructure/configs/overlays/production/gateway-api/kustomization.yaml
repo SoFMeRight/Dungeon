@@ -46,7 +46,7 @@ patches:
   - path: gateway-patch-phloem.yaml
     target:
       kind: Gateway
-      name: phloem-gateway
+      name: phloem-ingress-gateway
   # Set namespace for xylem-gateway to pedestal-of-time
   - patch: |-
       - op: add
@@ -63,11 +63,11 @@ patches:
     target:
       kind: Gateway
       name: cell-membrane-gateway
-  # Set namespace for phloem-gateway to optcp-gateway-phloem
+  # Set namespace for phloem-ingress-gateway to optcp-ingress-internal
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: optcp-gateway-phloem
+        value: optcp-ingress-internal
     target:
       kind: Gateway
-      name: phloem-gateway
+      name: phloem-ingress-gateway

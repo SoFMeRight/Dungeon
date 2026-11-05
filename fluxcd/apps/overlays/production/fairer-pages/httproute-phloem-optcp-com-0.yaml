@@ -9,8 +9,8 @@ metadata:
     gatus.home-operations.com/enabled: "false"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 

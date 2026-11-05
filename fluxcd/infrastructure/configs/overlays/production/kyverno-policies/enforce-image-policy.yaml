@@ -18,7 +18,7 @@ spec:
           - resources:
               kinds: ["Pod"]
               namespaces:
-                - optcp-gateway-phloem
+                - optcp-ingress-internal
                 - compass
                 - delivery-bag
                 - fairy-bottle
@@ -95,7 +95,7 @@ spec:
           - resources:
               kinds: ["Deployment", "StatefulSet", "DaemonSet", "Job", "CronJob"]
               namespaces:
-                - optcp-gateway-phloem
+                - optcp-ingress-internal
                 - compass
                 - delivery-bag
                 - fairy-bottle
@@ -176,7 +176,7 @@ spec:
           - resources:
               kinds: ["Pod"]
               namespaces:
-                - optcp-gateway-phloem
+                - optcp-ingress-internal
                 - compass
                 - delivery-bag
                 - fairy-bottle
@@ -256,7 +256,7 @@ spec:
           - resources:
               kinds: ["Deployment", "StatefulSet", "DaemonSet", "Job", "CronJob"]
               namespaces:
-                - optcp-gateway-phloem
+                - optcp-ingress-internal
                 - compass
                 - delivery-bag
                 - fairy-bottle

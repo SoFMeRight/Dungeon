@@ -70,7 +70,7 @@ gitops:
           - kokiri-forest
       - name: "Infrastructure (Aryll's Lookout\U0001F52D)"
         namespaces:
-          - optcp-gateway-phloem
+          - optcp-ingress-internal
       - name: "Content & Media (Temple of Time\U0001F3DB️)"
         namespaces:
           - temple-of-time
@@ -129,7 +129,7 @@ gitops:
       - cidrs:
           - 172.22.30.0/24
         gateways:
-          - phloem-gateway
+          - phloem-ingress-gateway
           - xylem-gateway
         level: intranet
       - level: cluster

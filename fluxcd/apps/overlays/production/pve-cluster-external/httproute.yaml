@@ -7,8 +7,8 @@ metadata:
       group: "Infrastructure (Aryll's Lookout🔭)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "pve.pcfae.com"
   rules:
@@ -29,8 +29,8 @@ metadata:
       group: "Infrastructure (Aryll's Lookout🔭)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "pbs.pcfae.com"
   rules:

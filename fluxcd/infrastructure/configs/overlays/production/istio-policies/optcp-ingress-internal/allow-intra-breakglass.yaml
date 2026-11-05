@@ -10,4 +10,4 @@ spec:
   rules:
     - from:
         - source:
-            namespaces: ["optcp-gateway-phloem"]
+            namespaces: ["optcp-ingress-internal"]

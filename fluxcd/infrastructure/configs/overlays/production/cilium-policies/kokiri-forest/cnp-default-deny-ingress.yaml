@@ -5,7 +5,7 @@ metadata:
 spec:
   description: >-
     Default-deny ingress AND egress for kokiri-forest namespace.
-    Ingress: gateway pods via cnp-phloem-gateway; linkstack via
+    Ingress: gateway pods via cnp-phloem-ingress-gateway; linkstack via
     ingress-backend CCNP; linkstack-db from linkstack via cnp-linkstack-db.
     Egress: linkstack->linkstack-db rides HBONE, so the universal DNS/HBONE
     CCNPs cover the in-cluster path, but linkstack does leave the mesh — the

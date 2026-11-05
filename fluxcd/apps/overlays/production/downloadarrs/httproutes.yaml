@@ -10,8 +10,8 @@ spec:
   hostnames:
     - qbitt.pcfae.com
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   rules:
     - backendRefs:
         - name: downloadarrs
@@ -32,8 +32,8 @@ spec:
   hostnames:
     - radarr.pcfae.com
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   rules:
     - backendRefs:
         - name: downloadarrs
@@ -54,8 +54,8 @@ spec:
   hostnames:
     - sonarr.pcfae.com
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   rules:
     - backendRefs:
         - name: downloadarrs
@@ -76,8 +76,8 @@ spec:
   hostnames:
     - lidarr.pcfae.com
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   rules:
     - backendRefs:
         - name: downloadarrs
@@ -98,8 +98,8 @@ spec:
   hostnames:
     - readarr.pcfae.com
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   rules:
     - backendRefs:
         - name: downloadarrs

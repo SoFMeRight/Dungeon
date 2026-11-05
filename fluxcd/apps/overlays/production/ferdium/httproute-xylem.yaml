@@ -7,8 +7,8 @@ metadata:
       group: "Discovery & Dashboards (Lost Woods🌲)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "ferdium.pcfae.com"
   rules:

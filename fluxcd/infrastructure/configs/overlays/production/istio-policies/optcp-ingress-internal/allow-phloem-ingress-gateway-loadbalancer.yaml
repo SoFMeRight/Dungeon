@@ -1,11 +1,11 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-phloem-gateway-loadbalancer
+  name: allow-phloem-ingress-gateway-loadbalancer
 spec:
   selector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: phloem-gateway
+      gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
   action: ALLOW
   rules:
     # All RFC1918 clients — Cilium CNP owns anti-hairpin (pod CIDR exclusion).

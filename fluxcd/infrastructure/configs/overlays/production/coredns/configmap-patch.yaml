@@ -34,7 +34,7 @@ data:
         template IN AAAA cluster.local {
            rcode NOERROR
         }
-        rewrite stop name exact cr.optcp.com phloem-gateway-istio.optcp-gateway-phloem.svc.cluster.local answer auto
+        rewrite stop name exact cr.optcp.com phloem-ingress-gateway-istio.optcp-ingress-internal.svc.cluster.local answer auto
         kubernetes cluster.local {
            pods insecure
            ttl 30

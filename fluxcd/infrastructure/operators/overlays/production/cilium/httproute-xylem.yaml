@@ -8,8 +8,8 @@ metadata:
       group: "Cluster Infrastructure (Kube System⚙️)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "hubble.pcfae.com"
   rules:

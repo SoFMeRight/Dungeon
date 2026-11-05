@@ -18,7 +18,7 @@ spec:
               # default-SA pods still cannot be created.
               operations: [CREATE, UPDATE]
               namespaces:
-                - optcp-gateway-phloem
+                - optcp-ingress-internal
                 - compass
                 - delivery-bag
                 - fairy-bottle
@@ -77,7 +77,7 @@ spec:
               kinds: [Deployment, StatefulSet, DaemonSet, Job, CronJob]
               operations: [CREATE, UPDATE]
               namespaces:
-                - optcp-gateway-phloem
+                - optcp-ingress-internal
                 - compass
                 - delivery-bag
                 - fairy-bottle

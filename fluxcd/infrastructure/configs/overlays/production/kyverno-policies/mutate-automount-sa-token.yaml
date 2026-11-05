@@ -46,7 +46,7 @@ spec:
                 - king-of-red-lions
                 - gerudo-crest
                 - lakitu
-                - optcp-gateway-phloem
+                - optcp-ingress-internal
       preconditions:
         all:
           # Skip pods whose ServiceAccount is RBAC-bound (genuinely uses the token). Everything

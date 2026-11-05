@@ -7,8 +7,8 @@ metadata:
       group: "Remote Access (Hookshot🪝)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - dd-ui.pcfae.com
   rules:

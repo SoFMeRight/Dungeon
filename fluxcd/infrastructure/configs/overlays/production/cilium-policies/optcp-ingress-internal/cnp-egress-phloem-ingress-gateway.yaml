@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-phloem-gateway-egress
+  name: allow-phloem-ingress-gateway-egress
 spec:
   description: >-
     The phloem gateway (Envoy) terminates TLS (*.pcfae.com) and proxies to backend
@@ -17,7 +17,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: phloem-gateway
+      gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
   egress:
     - toEntities:
         - world

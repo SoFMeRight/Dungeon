@@ -1,10 +1,10 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-phloem-gateway-from-renovate
+  name: allow-phloem-ingress-gateway-from-renovate
 spec:
   description: >-
-    Renovate (hyrule-castle/app=renovate) ingress to phloem-gateway on :80/:443 for
+    Renovate (hyrule-castle/app=renovate) ingress to phloem-ingress-gateway on :80/:443 for
     Harbor tag discovery on cr.optcp.com and the *.cr.optcp.com proxy caches.
     Identity-based: the gateway's LAN rule excepts the pod CIDR, so in-cluster callers
     need an explicit allow.
@@ -13,7 +13,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: phloem-gateway
+      gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
   ingress:
     - fromEndpoints:
         - matchLabels:

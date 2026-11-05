@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: optcp-gateway-phloem
+  name: optcp-ingress-internal
   labels:
-    name: optcp-gateway-phloem
-    purpose: gateway-internal
+    name: optcp-ingress-internal
+    purpose: ingress-internal
     tenant: optcp                          # openbao-optcp ClusterSecretStore condition
     docker-io-pull-secret: "enabled"
     istio.io/dataplane-mode: ambient

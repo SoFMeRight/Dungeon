@@ -2,11 +2,11 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: https-location-phloem
-  namespace: optcp-gateway-phloem
+  namespace: optcp-ingress-internal
 spec:
   workloadSelector:
     labels:
-      gateway.networking.k8s.io/gateway-name: phloem-gateway
+      gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
   configPatches:
     - applyTo: HTTP_FILTER
       match:

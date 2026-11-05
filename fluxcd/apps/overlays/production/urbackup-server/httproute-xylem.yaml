@@ -7,8 +7,8 @@ metadata:
       group: "Backup Services (Fairy Bottle🧚)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "backups.pcfae.com"
   rules:

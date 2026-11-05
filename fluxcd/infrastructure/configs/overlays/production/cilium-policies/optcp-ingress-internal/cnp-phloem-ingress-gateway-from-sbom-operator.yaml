@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-phloem-gateway-from-sbom-operator
+  name: allow-phloem-ingress-gateway-from-sbom-operator
 spec:
   description: >-
     sbom-operator pulls images from Harbor and its proxy caches.
@@ -10,7 +10,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: phloem-gateway
+      gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
   ingress:
     - fromEndpoints:
         - matchLabels:

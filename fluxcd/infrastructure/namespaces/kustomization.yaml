@@ -10,9 +10,9 @@ resources:
   - optcp-ci-runners.yaml
   - optcp-cloud.yaml
   - optcp-delivery-bag.yaml
-  - optcp-gateway-phloem.yaml
   - optcp-identity.yaml
   - optcp-infrastructure-management.yaml
+  - optcp-ingress-internal.yaml
   - optcp-ipam.yaml
   - optcp-keyring.yaml
   - optcp-media.yaml
@@ -25,7 +25,6 @@ resources:
   - prplanit-support.yaml
   - fairy-bottle.yaml
   - gorons-bracelet.yaml
-  - arylls-lookout.yaml
   - kokiri-forest.yaml
   - hyrule-castle.yaml
   - king-of-red-lions.yaml

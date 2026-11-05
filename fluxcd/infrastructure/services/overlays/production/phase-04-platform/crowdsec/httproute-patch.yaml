@@ -7,7 +7,7 @@ metadata:
       group: "Security & IoT (Lens of Truth🔍)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "crowdsec.pcfae.com"

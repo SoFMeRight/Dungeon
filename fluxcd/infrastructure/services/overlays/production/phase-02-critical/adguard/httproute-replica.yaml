@@ -7,8 +7,8 @@ metadata:
       group: "DNS & Network (Compass🧭)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   # adguardhome-sync replica → pinned to adguard-1 (stable login session).
   hostnames:
     - "dns2.pcfae.com"

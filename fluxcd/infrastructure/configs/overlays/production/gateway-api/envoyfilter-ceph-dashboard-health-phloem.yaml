@@ -2,11 +2,11 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: ceph-dashboard-health-phloem
-  namespace: optcp-gateway-phloem
+  namespace: optcp-ingress-internal
 spec:
   workloadSelector:
     labels:
-      gateway.networking.k8s.io/gateway-name: phloem-gateway
+      gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
   configPatches:
     # Active HTTP health check on the ceph-dashboard upstream. The Ceph mgr dashboard is
     # active/standby: only the active mgr answers 200, standby mgrs answer 500. Passive

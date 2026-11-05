@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             namespaces:
-              - optcp-gateway-phloem
+              - optcp-ingress-internal
               - compass
               - delivery-bag
               - fairy-bottle

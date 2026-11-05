@@ -47,7 +47,7 @@ Evaluation order: DENY policies first, then ALLOW (OR composition).
 **Ownership:** generator (do NOT hand-edit)
 
 - Selector: `policy.prplanit.com/ingress: "true"`
-- Principal: gateway SA (e.g., `optcp-gateway-phloem/phloem-gateway-istio`)
+- Principal: gateway SA (e.g., `optcp-ingress-internal/phloem-ingress-gateway-istio`)
 - Ports: derived from HTTPRoute backendRefs → Service targetPort resolution
 
 **Important distinction — gateway entry vs backend authorization:**

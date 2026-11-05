@@ -1,10 +1,10 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-phloem-gateway-lan
+  name: allow-phloem-ingress-gateway-lan
 spec:
   description: >-
-    VPN-internal ingress to phloem-gateway (172.22.30.70 / fc00:f1:ada:30::70). No
+    VPN-internal ingress to phloem-ingress-gateway (172.22.30.70 / fc00:f1:ada:30::70). No
     WAN port forward — pfSense forwards .70 to the VPN subnets only (cell-membrane
     is the sole public gateway; xylem stays LAN/operator-VPN). RFC1918 and the site
     IPv6 ULA (fc00:f1::/32) allowed, each minus its pod CIDR to prevent identity
@@ -15,7 +15,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: phloem-gateway
+      gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
   ingress:
     - fromCIDRSet:
         - cidr: "10.0.0.0/8"
@@ -32,7 +32,7 @@ spec:
               protocol: TCP
             - port: "443"
               protocol: TCP
-    # S3 consumer pods reaching s3.optcp.com via phloem-gateway
+    # S3 consumer pods reaching s3.optcp.com via phloem-ingress-gateway
     # CNP fromEndpoints requires explicit namespace for cross-namespace match
     - fromEndpoints:
         - matchLabels:

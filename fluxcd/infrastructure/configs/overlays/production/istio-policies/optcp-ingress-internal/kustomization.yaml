@@ -1,8 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: optcp-gateway-phloem
+namespace: optcp-ingress-internal
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
-  - allow-phloem-gateway-loadbalancer.yaml
+  - allow-phloem-ingress-gateway-loadbalancer.yaml
   - telemetry-access-log-phloem.yaml

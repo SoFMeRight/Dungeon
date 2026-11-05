@@ -8,8 +8,8 @@ metadata:
       group: "Observability (Gossip Stone💬)"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "flux.pcfae.com"
   rules:

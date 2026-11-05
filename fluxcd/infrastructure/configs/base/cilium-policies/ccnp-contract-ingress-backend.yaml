@@ -20,9 +20,9 @@ spec:
       policy.prplanit.com/ingress: "true"
   ingress:
     - fromEndpoints:
-        # phloem-gateway
+        # phloem-ingress-gateway
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-gateway-phloem
+            k8s:io.kubernetes.pod.namespace: optcp-ingress-internal
             policy.prplanit.com/client-class: ingress-gateway
         # xylem-gateway
         - matchLabels:

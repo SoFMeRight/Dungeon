@@ -14,8 +14,8 @@ metadata:
         - "[STATUS] == 401"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "docker.cr.optcp.com"
   rules:
@@ -38,8 +38,8 @@ metadata:
         - "[STATUS] == 401"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "ghcr.cr.optcp.com"
   rules:
@@ -62,8 +62,8 @@ metadata:
         - "[STATUS] == 401"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "quay.cr.optcp.com"
   rules:
@@ -86,8 +86,8 @@ metadata:
         - "[STATUS] == 401"
 spec:
   parentRefs:
-    - name: phloem-gateway
-      namespace: optcp-gateway-phloem
+    - name: phloem-ingress-gateway
+      namespace: optcp-ingress-internal
   hostnames:
     - "lscr.cr.optcp.com"
   rules:

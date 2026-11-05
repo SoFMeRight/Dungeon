@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: realip-phloem
-  namespace: optcp-gateway-phloem
+  namespace: optcp-ingress-internal
 spec:
   # Gateway-wide real-client-IP normalization. By default Envoy passes a client-supplied
   # X-Forwarded-For through unchanged, so any backend that trusts the leftmost XFF (or reads
@@ -15,7 +15,7 @@ spec:
   # already trust, generalized to every host so app-log detections read an unspoofable IP.
   workloadSelector:
     labels:
-      gateway.networking.k8s.io/gateway-name: phloem-gateway
+      gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
   configPatches:
     - applyTo: HTTP_FILTER
       match:
