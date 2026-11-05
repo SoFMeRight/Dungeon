@@ -24,7 +24,7 @@ spec:
             # camoufox write to it), so roRootFS is off — the rest of the hardening stays:
             # non-root uid 1000, drop-ALL caps, and gluetun VPN-netns isolation.
             readOnlyRootFilesystem: false
-          image: ghcr.io/thephaseless/byparr:3.0.4
+          image: ghcr.io/thephaseless/byparr:3.1.1
           env:
             - name: TZ
               value: "America/Los_Angeles"
