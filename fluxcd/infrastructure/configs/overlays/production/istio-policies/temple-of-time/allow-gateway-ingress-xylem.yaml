@@ -15,7 +15,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/optcp-ingress-operator/sa/xylem-ingress-gateway-istio
+              - cluster.local/ns/optcp-ingress-private/sa/xylem-ingress-gateway-istio
       to:
         - operation:
             ports: ["2283", "2342", "2368", "3000", "8001", "8080", "8083", "9000", "22300"]

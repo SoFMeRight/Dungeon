@@ -19,7 +19,7 @@ spec:
               kinds: ["Pod"]
               namespaces:
                 - optcp-ingress-internal
-                - optcp-ingress-operator
+                - optcp-ingress-private
                 - compass
                 - delivery-bag
                 - fairy-bottle
@@ -97,7 +97,7 @@ spec:
               kinds: ["Deployment", "StatefulSet", "DaemonSet", "Job", "CronJob"]
               namespaces:
                 - optcp-ingress-internal
-                - optcp-ingress-operator
+                - optcp-ingress-private
                 - compass
                 - delivery-bag
                 - fairy-bottle
@@ -179,7 +179,7 @@ spec:
               kinds: ["Pod"]
               namespaces:
                 - optcp-ingress-internal
-                - optcp-ingress-operator
+                - optcp-ingress-private
                 - compass
                 - delivery-bag
                 - fairy-bottle
@@ -260,7 +260,7 @@ spec:
               kinds: ["Deployment", "StatefulSet", "DaemonSet", "Job", "CronJob"]
               namespaces:
                 - optcp-ingress-internal
-                - optcp-ingress-operator
+                - optcp-ingress-private
                 - compass
                 - delivery-bag
                 - fairy-bottle

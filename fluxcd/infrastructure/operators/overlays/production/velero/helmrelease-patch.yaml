@@ -122,7 +122,7 @@ spec:
             - optcp-shooting-gallery
             # Gateway for internal-only services
             - optcp-ingress-internal
-            - optcp-ingress-operator
+            - optcp-ingress-private
             # Gateway for personal/public services
             - kokiri-forest
             # Gateway for business/work services

@@ -19,7 +19,7 @@ spec:
               operations: [CREATE, UPDATE]
               namespaces:
                 - optcp-ingress-internal
-                - optcp-ingress-operator
+                - optcp-ingress-private
                 - compass
                 - delivery-bag
                 - fairy-bottle
@@ -79,7 +79,7 @@ spec:
               operations: [CREATE, UPDATE]
               namespaces:
                 - optcp-ingress-internal
-                - optcp-ingress-operator
+                - optcp-ingress-private
                 - compass
                 - delivery-bag
                 - fairy-bottle

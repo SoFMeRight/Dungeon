@@ -1302,7 +1302,7 @@
 | Kube Vip | kube-system | ✅ |
 | Metrics Server | kube-system | ✅ |
 | Kyverno Admission Controller (4 components) | mr-resetti | ✅ |
-| Xylem Ingress Gateway Istio | optcp-ingress-operator | ✅ |
+| Xylem Ingress Gateway Istio | optcp-ingress-private | ✅ |
 | Cell Membrane Gateway Istio | optcp-ingress-public | ✅ |
 | Cert Manager (3 components) | king-of-red-lions | ✅ |
 | Istio (2 components) | king-of-red-lions | ✅ |
@@ -1462,7 +1462,7 @@
 - Replicas: 5/5
 
 **Xylem Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
-- Namespace: optcp-ingress-operator
+- Namespace: optcp-ingress-private
 - Replicas: 1/1
 
 **Cell Membrane Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless

@@ -18,14 +18,14 @@ patches:
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: optcp-ingress-operator
+        value: optcp-ingress-private
     target:
       kind: Certificate
       name: pcfae-com-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: optcp-ingress-operator
+        value: optcp-ingress-private
     target:
       kind: Certificate
       name: pcfae-com-apex-tls

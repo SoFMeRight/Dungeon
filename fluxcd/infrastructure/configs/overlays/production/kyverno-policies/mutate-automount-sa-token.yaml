@@ -47,7 +47,7 @@ spec:
                 - gerudo-crest
                 - lakitu
                 - optcp-ingress-internal
-                - optcp-ingress-operator
+                - optcp-ingress-private
       preconditions:
         all:
           # Skip pods whose ServiceAccount is RBAC-bound (genuinely uses the token). Everything

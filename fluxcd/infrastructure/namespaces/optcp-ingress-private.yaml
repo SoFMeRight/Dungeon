@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: optcp-ingress-operator
+  name: optcp-ingress-private
   labels:
-    name: optcp-ingress-operator
-    purpose: ingress-operator
+    name: optcp-ingress-private
+    purpose: ingress-private
     tenant: optcp                          # openbao-optcp ClusterSecretStore condition
     docker-io-pull-secret: "enabled"
     istio.io/dataplane-mode: ambient

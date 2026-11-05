@@ -12,7 +12,7 @@ spec:
         - source:
             namespaces:
               - optcp-ingress-internal
-              - optcp-ingress-operator
+              - optcp-ingress-private
               - compass
               - delivery-bag
               - fairy-bottle

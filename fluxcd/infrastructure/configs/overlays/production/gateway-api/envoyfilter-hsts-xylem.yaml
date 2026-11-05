@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: hsts-xylem
-  namespace: optcp-ingress-operator
+  namespace: optcp-ingress-private
 spec:
   workloadSelector:
     labels:

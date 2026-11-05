@@ -8,7 +8,7 @@ metadata:
 spec:
   parentRefs:
     - name: xylem-ingress-gateway
-      namespace: optcp-ingress-operator
+      namespace: optcp-ingress-private
   hostnames:
     - "z2m.pcfae.com"
   rules:

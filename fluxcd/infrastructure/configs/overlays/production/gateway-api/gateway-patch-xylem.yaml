@@ -18,7 +18,7 @@ spec:
     annotations:
       backup.velero.io/backup-volumes-excludes: workload-socket,credential-socket,istio-envoy,workload-certs,istio-data
       lbipam.cilium.io/ips: "172.22.30.69"
-      lbipam.cilium.io/sharing-key: "optcp-ingress-operator"
+      lbipam.cilium.io/sharing-key: "optcp-ingress-private"
       lbipam.cilium.io/sharing-cross-namespace: "*"
       service.cilium.io/loadbalancer-mode: "dsr"
   listeners:

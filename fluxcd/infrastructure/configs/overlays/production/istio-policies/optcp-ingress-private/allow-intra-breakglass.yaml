@@ -10,4 +10,4 @@ spec:
   rules:
     - from:
         - source:
-            namespaces: ["optcp-ingress-operator"]
+            namespaces: ["optcp-ingress-private"]

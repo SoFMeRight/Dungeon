@@ -47,11 +47,11 @@ patches:
     target:
       kind: Gateway
       name: phloem-ingress-gateway
-  # Set namespace for xylem-ingress-gateway to optcp-ingress-operator
+  # Set namespace for xylem-ingress-gateway to optcp-ingress-private
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: optcp-ingress-operator
+        value: optcp-ingress-private
     target:
       kind: Gateway
       name: xylem-ingress-gateway

@@ -26,7 +26,7 @@ spec:
             policy.prplanit.com/client-class: ingress-gateway
         # xylem-ingress-gateway
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-ingress-operator
+            k8s:io.kubernetes.pod.namespace: optcp-ingress-private
             policy.prplanit.com/client-class: ingress-gateway
         # cell-membrane-ingress-gateway
         - matchLabels:

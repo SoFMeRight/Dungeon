@@ -13,7 +13,7 @@ resources:
   - optcp-identity.yaml
   - optcp-infrastructure-management.yaml
   - optcp-ingress-internal.yaml
-  - optcp-ingress-operator.yaml
+  - optcp-ingress-private.yaml
   - optcp-ingress-public.yaml
   - optcp-ipam.yaml
   - optcp-keyring.yaml
