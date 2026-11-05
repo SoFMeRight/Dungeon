@@ -4,8 +4,6 @@ namespace: hookshot
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
-  - allow-guacamole-to-guacamole-postgres.yaml
-  - allow-guacamole-to-guacamole-guacd.yaml
   - allow-tactical-to-tactical-postgres.yaml
   - allow-tactical-to-tactical-redis.yaml
   - allow-tactical-to-tactical-mongodb.yaml
@@ -15,7 +13,6 @@ resources:
   - allow-tactical-nginx-to-tactical-websockets.yaml
   - allow-tactical-nginx-to-tactical-nats.yaml
   - allow-tactical-nginx-to-tactical-meshcentral.yaml
-  - allow-rustdesk-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml

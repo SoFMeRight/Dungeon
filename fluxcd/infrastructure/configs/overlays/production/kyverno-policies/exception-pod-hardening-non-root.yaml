@@ -26,12 +26,12 @@ spec:
           kinds: [Pod]
           namespaces: [gossip-stone]
           names: ["nutify-*", "speedtest-tracker-*"]
-      # hyrule-castle — apt-cacher-ng/bagisto (root-start chown), bookstack(+db) LSIO, invoiceninja
+      # hyrule-castle — bagisto (root-start chown), bookstack(+db) LSIO, invoiceninja
       # apache-root, harbor (Helm openresty/redis)
       - resources:
           kinds: [Pod]
           namespaces: [hyrule-castle]
-          names: ["apt-cacher-ng-*", "bagisto-demo-*", "bookstack-*", "invoiceninja-app-*"]
+          names: ["bagisto-demo-*", "bookstack-*", "invoiceninja-app-*"]
       # optcp-supply-chain — apt-cacher-ng (root-start chown)
       - resources:
           kinds: [Pod]

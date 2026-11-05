@@ -5,12 +5,12 @@ metadata:
 spec:
   description: >-
     Default-deny ingress AND egress for hookshot namespace.
-    Ingress: remote access services (guacamole, rustdesk, tactical-rmm);
+    Ingress: tactical-rmm;
     CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, postgres/redis
     contracts, and ingress-gateway traffic for labeled pods.
-    Egress: DNS + intra-namespace mesh (existing tactical/guacamole CNPs) +
+    Egress: DNS + intra-namespace mesh (existing tactical CNPs) +
     kube-apiserver ride the universal CCNP baseline; per-app cnp-egress-* grant
-    the remote-control components (guacd, rustdesk, tactical-rmm)
+    the remote-control components (tactical-rmm)
     world+cluster since they proxy to open-ended LAN/external targets. The DB
     and frontend/nginx pods need nothing external.
     Both directions use a reserved-label anchor to trigger enforcement.

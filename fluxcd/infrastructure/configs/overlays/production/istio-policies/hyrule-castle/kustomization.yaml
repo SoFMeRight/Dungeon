@@ -20,7 +20,6 @@ resources:
   - allow-opnform-ingress-to-opnform-api.yaml
   - allow-opnform-client-to-opnform-ingress.yaml
   - allow-calcom-postgres-replication.yaml
-  - allow-apt-cacher-ng-loadbalancer.yaml
   - allow-renovate-to-renovate-redis.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml

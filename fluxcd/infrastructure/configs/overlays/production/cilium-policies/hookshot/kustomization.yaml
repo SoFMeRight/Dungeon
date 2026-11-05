@@ -3,9 +3,5 @@ kind: Kustomization
 namespace: hookshot
 resources:
   - cnp-default-deny-ingress.yaml
-  - cnp-egress-guacamole-guacd.yaml
-  - cnp-egress-rustdesk.yaml
   - cnp-egress-tactical-rmm.yaml
-  - cnp-loadbalancers.yaml
-  - cnp-guacamole-internal.yaml
   - cnp-tactical-mesh.yaml

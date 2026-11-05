@@ -30,14 +30,13 @@ spec:
           kinds: [Pod]
           namespaces: [hookshot]
           names: ["tactical-*"]
-      # hyrule-castle — apt-cacher/bagisto/invoiceninja apache+root, bookstack LSIO,
+      # hyrule-castle — bagisto/invoiceninja apache+root, bookstack LSIO,
       # frappe-suite (writes /home/frappe + sites), opnform-client node,
       # renovate (containerbase installs toolchains at runtime).
       - resources:
           kinds: [Pod]
           namespaces: [hyrule-castle]
           names:
-            - "apt-cacher-ng-*"
             - "bagisto-demo-*"
             - "bookstack-*"
             - "frappe-suite-*"
