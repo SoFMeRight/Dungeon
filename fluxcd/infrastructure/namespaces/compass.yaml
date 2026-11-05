@@ -4,6 +4,7 @@ metadata:
   name: compass
   labels:
     name: compass
+    tenant: optcp
     docker-io-pull-secret: "enabled"
     istio.io/dataplane-mode: ambient
     pod-security.kubernetes.io/enforce: baseline
