@@ -155,4 +155,3 @@ patches:
     target:
       kind: StatefulSet
       name: netbird-management
-  - path: adopt-primary-patch.yaml
