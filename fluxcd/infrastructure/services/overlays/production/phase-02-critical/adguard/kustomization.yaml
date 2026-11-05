@@ -55,7 +55,8 @@ patches:
 
 # The cluster AdGuard is the DNS source of truth: the copy-config init container writes this
 # file over the live config on every start, the generated name's hash rolls the pods whenever
-# it changes, and adguardhome-sync pushes the result to the DNS VMs (dns1, dns2.prplanit.internal).
+# it changes, and adguardhome-sync pushes the result to The-Usual-Suspect (dns1), which syncs
+# on to dns2.
 configMapGenerator:
   - name: adguard-gitops-config
     files:

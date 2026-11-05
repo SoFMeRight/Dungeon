@@ -5,8 +5,8 @@ metadata:
 spec:
   description: >-
     adguardhome-sync pushes AdGuardHome config from the cluster origin (adguard-0,
-    rendered from git) to the DNS VM replicas (dns1, dns2.prplanit.internal) over
-    80/TCP on a 10m cron. Allow egress to the origin pod and to both VMs, with
+    rendered from git) to its replica, The-Usual-Suspect (dns1.prplanit.internal), over
+    80/TCP on a 10m cron. Allow egress to the origin pod and to dns1, with
     L7 DNS so Cilium learns whatever address they resolve to.
   enableDefaultDeny:
     ingress: false
@@ -30,7 +30,6 @@ spec:
               - matchPattern: "*"
     - toFQDNs:
         - matchName: "dns1.prplanit.internal"
-        - matchName: "dns2.prplanit.internal"
       toPorts:
         - ports:
             - port: "80"
