@@ -7,7 +7,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: hyrule-castle.renovate.redis
+        policy.prplanit.com/service-scope: optcp-ci-runners.renovate.redis
     spec:
       securityContext:
         runAsUser: 999

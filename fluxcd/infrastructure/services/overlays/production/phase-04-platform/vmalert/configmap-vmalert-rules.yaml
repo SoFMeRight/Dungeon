@@ -121,8 +121,8 @@ data:
           # finish), falling back to its creation time when it never has.
           - alert: RenovateStale
             expr: |
-              (time() - max by (namespace, cronjob) (kube_cronjob_status_last_successful_time{namespace="hyrule-castle", cronjob="renovate"}
-                or kube_cronjob_created{namespace="hyrule-castle", cronjob="renovate"})) / 3600 > 13
+              (time() - max by (namespace, cronjob) (kube_cronjob_status_last_successful_time{namespace="optcp-ci-runners", cronjob="renovate"}
+                or kube_cronjob_created{namespace="optcp-ci-runners", cronjob="renovate"})) / 3600 > 13
             for: 15m
             labels:
               severity: warning
@@ -132,7 +132,7 @@ data:
               resolved_title: Renovate current
               resolved: Renovate completed every repository again
           - alert: RenovateStatusMissing
-            expr: absent(kube_cronjob_info{namespace="hyrule-castle", cronjob="renovate"})
+            expr: absent(kube_cronjob_info{namespace="optcp-ci-runners", cronjob="renovate"})
             for: 1h
             labels:
               severity: warning

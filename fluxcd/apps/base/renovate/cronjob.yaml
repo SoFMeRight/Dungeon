@@ -16,7 +16,7 @@ spec:
             app: renovate
             policy.prplanit.com/cap.s3: "true"
             policy.prplanit.com/cap.redis: "true"
-            policy.prplanit.com/access-scope-redis: hyrule-castle.renovate.redis
+            policy.prplanit.com/access-scope-redis: optcp-ci-runners.renovate.redis
             policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
         spec:
           restartPolicy: Never
