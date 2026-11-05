@@ -3,7 +3,7 @@ kind: ServiceEntry
 metadata:
   name: sideporch-camera
 spec:
-  # Exported cluster-wide so the phloem-ingress-gateway (prelude-of-light) can program this
+  # Exported cluster-wide so the gateways in their own namespaces can program this
   # external cluster — the gateway lives in a different namespace than this overlay.
   exportTo:
     - "*"

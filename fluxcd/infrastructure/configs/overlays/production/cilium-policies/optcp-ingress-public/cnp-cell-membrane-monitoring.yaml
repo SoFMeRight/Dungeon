@@ -13,7 +13,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+      gateway.networking.k8s.io/gateway-name: cell-membrane-ingress-gateway
   ingress:
     - fromEndpoints:
         - matchLabels:

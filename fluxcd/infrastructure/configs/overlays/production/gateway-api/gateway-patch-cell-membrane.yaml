@@ -1,10 +1,10 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: cell-membrane-gateway
+  name: cell-membrane-ingress-gateway
   annotations:
     lbipam.cilium.io/ips: "172.22.30.71"
-    lbipam.cilium.io/sharing-key: "prelude-of-light"
+    lbipam.cilium.io/sharing-key: "optcp-ingress-public"
     lbipam.cilium.io/sharing-cross-namespace: "*"
     service.cilium.io/loadbalancer-mode: "dsr"
     # Carries envoyproxy/envoy#45198 (HBONE connect_originate stream leak), which

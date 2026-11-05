@@ -281,7 +281,7 @@
 - Namespace: zeldas-lullaby
 - Replicas: 3/3
 - Hosts: netbox.pcfae.com, netbox.prplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - netbox-postgres (StatefulSet, database)
   - netbox-redis (StatefulSet, cache)
@@ -291,7 +291,7 @@
 - Namespace: zeldas-lullaby
 - Replicas: 1/1
 - Hosts: books.optcp.com, books.pcfae.com, music.optcp.com, oa2p.pcfae.com, z2m.arbitorium.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **OpenBao** — StatefulSet — 
 - Namespace: zeldas-lullaby
@@ -324,13 +324,13 @@
 - Namespace: zeldas-lullaby
 - Replicas: 3/3
 - Hosts: passwords.optcp.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Zitadel — 5 components** — Mixed — 
 - Namespace: zeldas-lullaby
 - Replicas: 8/8
 - Hosts: sso.optcp.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - zitadel (StatefulSet)
   - zitadel-flatroles (Deployment)
@@ -367,7 +367,7 @@
 - Namespace: hyrule-castle
 - Replicas: 1/1
 - Hosts: kb.precisionplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - bookstack (StatefulSet)
   - bookstack-db (StatefulSet, database)
@@ -376,7 +376,7 @@
 - Namespace: hyrule-castle
 - Replicas: 3/3
 - Hosts: cal.prplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Frappe Suite — 9 components** — Mixed — 
 - Namespace: hyrule-castle
@@ -398,7 +398,7 @@
 - Namespace: hyrule-castle
 - Replicas: 22/22
 - Hosts: git.prplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - gitlab-gitlab-exporter (Deployment)
   - gitlab-gitlab-shell (Deployment)
@@ -435,7 +435,7 @@
 - Namespace: hyrule-castle
 - Replicas: 3/3
 - Hosts: invoice.pcfae.com, invoiceninja.prplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - invoiceninja-app (StatefulSet)
   - invoiceninja-mysql (StatefulSet, database)
@@ -445,7 +445,7 @@
 - Namespace: hyrule-castle
 - Replicas: 7/7
 - Hosts: form.prplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - opnform-api (Deployment)
   - opnform-api-scheduler (Deployment)
@@ -459,13 +459,13 @@
 - Namespace: hyrule-castle
 - Replicas: 3/3
 - Hosts: support.pcfae.com, support.prplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Nextcloud — 9 components** — Deployment — 
 - Namespace: optcp-cloud
 - Replicas: 5/5
 - Hosts: cloud.optcp.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - nextcloud (Deployment)
   - nextcloud-collabora (Deployment)
@@ -503,7 +503,7 @@
 - Namespace: temple-of-time
 - Replicas: 9/9
 - Hosts: flwy.prplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - appflowy-admin-frontend (Deployment)
   - appflowy-ai (Deployment)
@@ -518,13 +518,13 @@
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: books.optcp.com, books.pcfae.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Ghost — 2 components** — StatefulSet — 6-alpine
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: blog.pcfae.com, blog.sofmeright.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - ghost (StatefulSet)
   - ghost-mysql (StatefulSet, database)
@@ -539,7 +539,7 @@
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: flix.optcp.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Joplin — 2 components** — StatefulSet — 
 - Namespace: temple-of-time
@@ -563,7 +563,7 @@
 - Namespace: temple-of-time
 - Replicas: 3/3
 - Hosts: bookmarks.pcfae.com, lwd.optcp.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - linkwarden (StatefulSet)
   - linkwarden-meilisearch (StatefulSet)
@@ -573,7 +573,7 @@
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: meals.yesimvegan.com, recipes.pcfae.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - mealie (StatefulSet)
   - mealie-postgres (StatefulSet, database)
@@ -592,7 +592,7 @@
 - Namespace: temple-of-time
 - Replicas: 5/5
 - Hosts: design.pcfae.com, penpot.prplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - penpot-backend (StatefulSet)
   - penpot-exporter (StatefulSet)
@@ -613,13 +613,13 @@
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: plex.optcp.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Reactive Resume — 3 components** — Mixed — 
 - Namespace: temple-of-time
 - Replicas: 3/3
 - Hosts: resume.sofmeright.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - reactive-resume-app (Deployment)
   - reactive-resume-chrome (Deployment)
@@ -629,7 +629,7 @@
 - Namespace: temple-of-time
 - Replicas: 3/3
 - Hosts: sh.pcfae.com, sh.uni2.cc, shlink.pcfae.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - shlink-app (StatefulSet)
   - shlink-db (StatefulSet, database)
@@ -639,7 +639,7 @@
 - Namespace: temple-of-time
 - Replicas: 2/2
 - Hosts: wiki.yesimvegan.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - wikijs-vegan (StatefulSet)
   - wikijs-vegan-db (StatefulSet, database)
@@ -656,7 +656,7 @@
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: ipleek.com, www.ipleek.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Librespeed Speedtest** — Deployment — 6.3.1-alpine
 - Namespace: tingle-tuner
@@ -689,19 +689,19 @@
 - Namespace: kokiri-forest
 - Replicas: 1/1
 - Hosts: astralfocal.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Enamorafoto Site** — Deployment — v0.0.3
 - Namespace: kokiri-forest
 - Replicas: 1/1
 - Hosts: enamorafoto.operationtimecapsule.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Etherealclique Site** — Deployment — v0.0.3
 - Namespace: kokiri-forest
 - Replicas: 1/1
 - Hosts: etherealclique.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Ferdium** — StatefulSet — 7.2.3
 - Namespace: lost-woods
@@ -723,37 +723,37 @@
 - Namespace: kokiri-forest
 - Replicas: 1/1
 - Hosts: homelabhelpdesk.com, www.homelabhelpdesk.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Kai Hamilton Site** — Deployment — v0.0.3
 - Namespace: kokiri-forest
 - Replicas: 1/1
 - Hosts: kai-hamilton.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Organizr** — StatefulSet — 
 - Namespace: lost-woods
 - Replicas: 1/1
 - Hosts: apps.pcfae.com, apps.prplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Precisionplanit Site** — Deployment — v0.0.3
 - Namespace: kokiri-forest
 - Replicas: 1/1
 - Hosts: precisionplanit.com, www.precisionplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Sofmeright Site** — Deployment — v0.0.6
 - Namespace: kokiri-forest
 - Replicas: 1/1
 - Hosts: sofmeright.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Yesimvegan Site** — Deployment — v0.1.0
 - Namespace: kokiri-forest
 - Replicas: 1/1
 - Hosts: yesimvegan.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Anirra** — StatefulSet — xiFwhijN
 - Namespace: swift-sail
@@ -781,7 +781,7 @@
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: jseer.optcp.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Overseerr** — StatefulSet — 
 - Namespace: swift-sail
@@ -894,7 +894,7 @@
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: status.pcfae.com, status.sofmeright.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Grafana** — Deployment — 12.4.12
 - Namespace: gossip-stone
@@ -944,7 +944,7 @@
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: analytics.prplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - umami (StatefulSet)
   - umami-postgres (StatefulSet, database)
@@ -953,7 +953,7 @@
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: uptime.pcfae.com, uptime.sofmeright.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Vmalert** — Deployment — v1.97.1
 - Namespace: gossip-stone
@@ -975,7 +975,7 @@
 - Namespace: kokiri-forest
 - Replicas: 1/1
 - Hosts: bio.outspokekin.com, bio.sofmeright.com, bio.uni2.cc
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - linkstack (StatefulSet)
   - linkstack-db (StatefulSet, database)
@@ -1057,13 +1057,13 @@
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: music.optcp.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Boundary — 2 components** — Deployment — 0.21.3
 - Namespace: hookshot
 - Replicas: 5/5
 - Hosts: access.optcp.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - boundary-controller (Deployment)
   - boundary-worker (Deployment)
@@ -1086,7 +1086,7 @@
 - Namespace: hookshot
 - Replicas: 11/11
 - Hosts: meshc.prplanit.com, trmm-api.prplanit.com, trmm.prplanit.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - tactical-backend (Deployment)
   - tactical-celery (Deployment)
@@ -1121,7 +1121,7 @@
 - Namespace: lens-of-truth
 - Replicas: 1/1
 - Hosts: hass.arbitorium.com, hass.pcfae.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Mosquitto** — StatefulSet — 2.1.2-alpine
 - Namespace: lens-of-truth
@@ -1141,7 +1141,7 @@
 - Namespace: lens-of-truth
 - Replicas: 1/1
 - Hosts: z2m.arbitorium.com, z2m.pcfae.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Dependency Track Api Server — 2 components** — Deployment — 5.2.0
 - Namespace: optcp-sibyl-system
@@ -1156,7 +1156,7 @@
 - Namespace: temple-of-time
 - Replicas: 4/4
 - Hosts: social.outspokekin.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 - Components:
   - hubzilla (Deployment)
   - hubzilla-cron (Deployment)
@@ -1198,7 +1198,7 @@
 - Namespace: tingle-tuner
 - Replicas: 3/3
 - Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.outspokekin.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, authenticator.optcp.com, ai.pcfae.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, bitwarden.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, chat.outspokekin.com, cloud.optcp.com, code.pcfae.com, convertx.pcfae.com, cr.optcp.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, docker.cr.optcp.com, dolibarr.prplanit.com, draw.pcfae.com, dtrack.optcp.com, erpnext.prplanit.com, fairer-pages.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, ghcr.cr.optcp.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, hass.arbitorium.com, hass.pcfae.com, homelabhelpdesk.com, hosts.pcfae.com, hq.prplanit.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, joplin.pcfae.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, livekit.outspokekin.com, ls.sofmeright.com, lscr.cr.optcp.com, lubelogger.pcfae.com, lwd.optcp.com, mail-admin.optcp.com, mail.pcfae.com, mail.precisionplanit.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, mazanoke.pcfae.com, meals.yesimvegan.com, monica.pcfae.com, netalertx.pcfae.com, vpn.optcp.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, optcp.com, orangehrm.prplanit.com, outspokekin.com, overseer.pcfae.com, paperless.pcfae.com, pbx.pcfae.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, projects.optcp.com, prowlarr.pcfae.com, prplanit.com, qbitt.pcfae.com, quay.cr.optcp.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.pcfae.com, search.pcfae.com, sh.pcfae.com, sh.uni2.cc, shiplog.pcfae.com, shlink.pcfae.com, siem.prplanit.com, smkeygen.pcfae.com, social.outspokekin.com, sofmeright.com, sonarr.pcfae.com, sops.optcp.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.optcp.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.pcfae.com, trmm.prplanit.com, uni2.cc, uptime.pcfae.com, uptime.sofmeright.com, vault.pcfae.com, vw.prplanit.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.pcfae.com
-- Gateway: cell-membrane-gateway
+- Gateway: cell-membrane-ingress-gateway
 
 **Faster Whisper** — StatefulSet — gpu
 - Namespace: tingle-tuner
@@ -1303,7 +1303,7 @@
 | Metrics Server | kube-system | ✅ |
 | Kyverno Admission Controller (4 components) | mr-resetti | ✅ |
 | Xylem Gateway Istio | pedestal-of-time | ✅ |
-| Cell Membrane Gateway Istio | prelude-of-light | ✅ |
+| Cell Membrane Gateway Istio | optcp-ingress-public | ✅ |
 | Cert Manager (3 components) | king-of-red-lions | ✅ |
 | Istio (2 components) | king-of-red-lions | ✅ |
 | Istio Cni | king-of-red-lions | ✅ |
@@ -1466,7 +1466,7 @@
 - Replicas: 1/1
 
 **Cell Membrane Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
-- Namespace: prelude-of-light
+- Namespace: optcp-ingress-public
 - Replicas: 1/1
 
 **Cert Manager** — Deployment — v1.21.2

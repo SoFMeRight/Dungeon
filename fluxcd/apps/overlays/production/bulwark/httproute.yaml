@@ -7,8 +7,8 @@ metadata:
       group: "Mail (OpTCP)"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - "mail.optcp.com"
   rules:

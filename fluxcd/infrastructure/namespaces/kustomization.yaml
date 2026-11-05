@@ -13,6 +13,7 @@ resources:
   - optcp-identity.yaml
   - optcp-infrastructure-management.yaml
   - optcp-ingress-internal.yaml
+  - optcp-ingress-public.yaml
   - optcp-ipam.yaml
   - optcp-keyring.yaml
   - optcp-media.yaml
@@ -39,5 +40,4 @@ resources:
   - gerudo-crest.yaml
   - mr-resetti.yaml
   - training-dummy.yaml
-  - prelude-of-light.yaml
   - arbitorium-game-streaming.yaml

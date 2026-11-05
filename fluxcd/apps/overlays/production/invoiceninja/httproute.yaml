@@ -2,14 +2,14 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: invoiceninja-nginx
-  namespace: prelude-of-light
+  namespace: optcp-ingress-public
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Business Apps (Hyrule Castle🏰)"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - "invoiceninja.prplanit.com"
   rules:

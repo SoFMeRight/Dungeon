@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: meshcentral-websocket-cell-membrane
-  namespace: prelude-of-light
+  namespace: optcp-ingress-public
 spec:
   # MeshCentral's remote-desktop / terminal / agent connections are long-lived WebSockets.
   # Disable the route timeout + idle-timeout so they aren't reaped. Browsers use the standard
@@ -10,7 +10,7 @@ spec:
   # SCOPED to meshc.prplanit.com ONLY — this file must never affect any other app's routes.
   workloadSelector:
     labels:
-      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+      gateway.networking.k8s.io/gateway-name: cell-membrane-ingress-gateway
   configPatches:
     - applyTo: HTTP_ROUTE
       match:

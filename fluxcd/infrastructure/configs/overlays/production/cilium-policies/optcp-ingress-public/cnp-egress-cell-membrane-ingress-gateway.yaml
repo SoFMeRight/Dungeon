@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-cell-membrane-gateway-egress
+  name: allow-cell-membrane-ingress-gateway-egress
 spec:
   description: >-
     The cell-membrane gateway (Envoy) terminates public TLS and proxies to
@@ -14,7 +14,7 @@ spec:
     egress: false
   endpointSelector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+      gateway.networking.k8s.io/gateway-name: cell-membrane-ingress-gateway
   egress:
     - toEntities:
         - world

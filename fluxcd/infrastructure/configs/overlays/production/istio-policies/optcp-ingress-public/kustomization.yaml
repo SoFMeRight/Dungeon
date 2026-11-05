@@ -1,10 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: prelude-of-light
+namespace: optcp-ingress-public
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
-  - allow-cell-membrane-gateway-loadbalancer.yaml
+  - allow-cell-membrane-ingress-gateway-loadbalancer.yaml
   - telemetry-access-log-cell-membrane.yaml
   - deny-tacticalrmm-operator-from-internet.yaml
   - sso

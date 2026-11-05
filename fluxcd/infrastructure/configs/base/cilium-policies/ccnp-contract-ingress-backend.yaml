@@ -28,9 +28,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: pedestal-of-time
             policy.prplanit.com/client-class: ingress-gateway
-        # cell-membrane-gateway
+        # cell-membrane-ingress-gateway
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: prelude-of-light
+            k8s:io.kubernetes.pod.namespace: optcp-ingress-public
             policy.prplanit.com/client-class: ingress-gateway
       toPorts:
         - ports:

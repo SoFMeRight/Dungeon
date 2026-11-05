@@ -4,10 +4,10 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress AND egress for prelude-of-light namespace.
-    Gateway pods get RFC1918 CIDR ingress via cnp-phloem-ingress-gateway (pfSense
-    forwards .70 to the VPN subnets only). Egress is granted by
-    cnp-egress-phloem-ingress-gateway (whole-cluster + world backends). DNS,
+    Default-deny ingress AND egress for optcp-ingress-public namespace.
+    Gateway pods get public ingress via cnp-cell-membrane-ingress-gateway and the
+    cnp-cell-membrane-ingress-gateway-from-* identity allows; egress via
+    cnp-egress-cell-membrane-ingress-gateway (whole-cluster + world backends). DNS,
     kube-apiserver and mesh (HBONE) ride the universal CCNP baseline.
     CCNPs provide: kubelet-probes, istio-ambient, prometheus-scrape.
   enableDefaultDeny:

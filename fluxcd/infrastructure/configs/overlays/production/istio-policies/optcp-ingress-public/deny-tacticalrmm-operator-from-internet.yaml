@@ -7,7 +7,7 @@ spec:
   # path rule on the pod would never be consulted.
   selector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+      gateway.networking.k8s.io/gateway-name: cell-membrane-ingress-gateway
   action: DENY
   # From the internet, Tactical RMM serves only what its agents use. The dashboard, its API
   # and MeshCentral's web UI answer private sources only (LAN, VPN, in-cluster monitoring).

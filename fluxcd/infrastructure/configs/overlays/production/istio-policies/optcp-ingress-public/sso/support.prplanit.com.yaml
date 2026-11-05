@@ -12,7 +12,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+      gateway.networking.k8s.io/gateway-name: cell-membrane-ingress-gateway
   action: CUSTOM
   provider:
     name: oauth2-proxy

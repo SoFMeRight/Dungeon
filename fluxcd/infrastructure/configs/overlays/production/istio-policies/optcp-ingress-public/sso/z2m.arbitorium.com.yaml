@@ -1,20 +1,21 @@
-# calibre-web (public)  ·  SSO required  ·  tier: operator-only  (admits: operator)
+# zigbee2mqtt (public)  ·  SSO required  ·  tier: operator-only  (admits: operator)
 #
-# Self-contained: this file IS the complete access rule for books.optcp.com on the public
-# cell-membrane gateway. The internal xylem host (books.pcfae.com) keeps its own operator gate.
+# Self-contained: this file IS the complete access rule for z2m.arbitorium.com on the
+# public cell-membrane gateway. The internal xylem host (z2m.pcfae.com) is deliberately
+# UNGATED so the Home Assistant embed keeps working even if OIDC/oauth2-proxy is down.
 #   require-login (CUSTOM) → oauth2-proxy proves an SSO session + injects the role header
 #   authz (DENY)          → deny unless the injected role is in `admits` below
 # notPaths /oauth2/* : the oauth2-proxy sign-in/callback/static paths must bypass the gate
-#   (served by the oauth2-proxy-signin-cell-membrane HTTPRoute: books.optcp.com/oauth2/*).
+#   (served by the oauth2-proxy-signin-cell-membrane HTTPRoute: z2m.arbitorium.com/oauth2/*).
 # Widen by adding roles to notValues: operator, admin (the Gated Entry project's roles).
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: sso-books-optcp-require-login
+  name: sso-z2m-require-login
 spec:
   selector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+      gateway.networking.k8s.io/gateway-name: cell-membrane-ingress-gateway
   action: CUSTOM
   provider:
     name: oauth2-proxy
@@ -22,24 +23,24 @@ spec:
     - to:
         - operation:
             hosts:
-              - books.optcp.com
+              - z2m.arbitorium.com
             notPaths:
               - /oauth2/*
 ---
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: sso-books-optcp-authz
+  name: sso-z2m-authz
 spec:
   selector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+      gateway.networking.k8s.io/gateway-name: cell-membrane-ingress-gateway
   action: DENY
   rules:
     - to:
         - operation:
             hosts:
-              - books.optcp.com
+              - z2m.arbitorium.com
             notPaths:
               - /oauth2/*
       when:

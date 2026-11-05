@@ -14,7 +14,7 @@ resources:
   - training-dummy
   # Batch 2 — Simple
   - optcp-ingress-internal
-  - prelude-of-light
+  - optcp-ingress-public
   - kokiri-forest
   - delivery-bag
   - compass

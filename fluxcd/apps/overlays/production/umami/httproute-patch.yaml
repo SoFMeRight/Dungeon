@@ -7,8 +7,8 @@ metadata:
       group: "Observability (Gossip Stone💬)"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - analytics.prplanit.com
   rules:

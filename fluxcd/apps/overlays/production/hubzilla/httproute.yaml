@@ -9,8 +9,8 @@ spec:
   # Public: federation is inbound as well as outbound — remote instances deliver
   # activity here and resolve the apex's .well-known redirects to this host.
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - "social.outspokekin.com"
   rules:

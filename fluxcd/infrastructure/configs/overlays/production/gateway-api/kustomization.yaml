@@ -42,7 +42,7 @@ patches:
   - path: gateway-patch-cell-membrane.yaml
     target:
       kind: Gateway
-      name: cell-membrane-gateway
+      name: cell-membrane-ingress-gateway
   - path: gateway-patch-phloem.yaml
     target:
       kind: Gateway
@@ -55,14 +55,14 @@ patches:
     target:
       kind: Gateway
       name: xylem-gateway
-  # Set namespace for cell-membrane-gateway to prelude-of-light
+  # Set namespace for cell-membrane-ingress-gateway to optcp-ingress-public
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: prelude-of-light
+        value: optcp-ingress-public
     target:
       kind: Gateway
-      name: cell-membrane-gateway
+      name: cell-membrane-ingress-gateway
   # Set namespace for phloem-ingress-gateway to optcp-ingress-internal
   - patch: |-
       - op: add

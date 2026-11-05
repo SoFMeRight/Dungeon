@@ -7,8 +7,8 @@ metadata:
       group: "Content & Media (Temple of Time🏛️)"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
       sectionName: https-prplanit
   hostnames:
     - "flwy.prplanit.com"
@@ -30,8 +30,8 @@ metadata:
       group: "Content & Media (Temple of Time🏛️)"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
       sectionName: http
   hostnames:
     - "flwy.prplanit.com"

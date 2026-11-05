@@ -12,8 +12,8 @@ metadata:
       url: https://sh.uni2.cc/rest/health
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - "sh.uni2.cc"
   rules:

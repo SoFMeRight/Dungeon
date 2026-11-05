@@ -12,8 +12,8 @@ spec:
   # Public: federation is inbound as well as outbound, and the apex's .well-known points
   # remote servers here.
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - "matrix.outspokekin.com"
   rules:
@@ -60,8 +60,8 @@ metadata:
       group: "Social (Temple of Time⏳)"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - "matrix-auth.outspokekin.com"
   rules:
@@ -82,8 +82,8 @@ metadata:
       group: "Social (Temple of Time⏳)"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - "chat.outspokekin.com"
   rules:
@@ -128,8 +128,8 @@ spec:
   # catch-all, so anything else on outspokekin.com is answered by whatever serves the
   # apex site — this route claims two paths, not the domain.
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - "outspokekin.com"
   rules:
@@ -156,8 +156,8 @@ metadata:
         - "[STATUS] == 200"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - "livekit.outspokekin.com"
   rules:
@@ -199,8 +199,8 @@ metadata:
       group: "Social (Temple of Time⏳)"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - "matrix-call.outspokekin.com"
   rules:

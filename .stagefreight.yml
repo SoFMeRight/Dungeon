@@ -35,7 +35,7 @@ gitops:
       - name: Routing Infrastructure
         namespaces:
           - king-of-red-lions
-          - prelude-of-light
+          - optcp-ingress-public
           - farores-wind
       - name: "Storage (Goron's Bracelet\U0001F4AA)"
         namespaces:
@@ -124,7 +124,7 @@ gitops:
           - 172.22.30.87:3479
           - 172.22.30.102:25
         gateways:
-          - cell-membrane-gateway
+          - cell-membrane-ingress-gateway
         level: internet
       - cidrs:
           - 172.22.30.0/24

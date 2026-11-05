@@ -119,7 +119,7 @@ s3cmd mb s3://gitlab-registry
 
 ## Network Configuration
 
-- **HTTPS**: Via cell-membrane-gateway (172.22.30.71) on port 443
+- **HTTPS**: Via cell-membrane-ingress-gateway (172.22.30.71) on port 443
 - **SSH**: Via LoadBalancer (172.22.30.71) on port 2424
 - Both share the same IP using Cilium LBIPAM sharing-key: hyrule-castle
 

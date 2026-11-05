@@ -15,7 +15,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/prelude-of-light/sa/cell-membrane-gateway-istio
+              - cluster.local/ns/optcp-ingress-public/sa/cell-membrane-ingress-gateway-istio
       to:
         - operation:
             ports: ["2368", "3000", "7880", "8008", "8080", "8083", "8096", "9000", "32400"]

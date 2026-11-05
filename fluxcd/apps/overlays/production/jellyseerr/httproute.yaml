@@ -8,8 +8,8 @@ metadata:
       group: "Downloads & Media (Swift Sail⛵)"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
   hostnames:
     - "jseer.optcp.com"
   rules:

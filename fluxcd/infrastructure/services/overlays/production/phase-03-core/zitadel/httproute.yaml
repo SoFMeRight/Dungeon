@@ -7,11 +7,11 @@ metadata:
       group: "Administration (Zelda's Lullaby🎵)"
 spec:
   parentRefs:
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
       sectionName: https-optcp
-    - name: cell-membrane-gateway
-      namespace: prelude-of-light
+    - name: cell-membrane-ingress-gateway
+      namespace: optcp-ingress-public
       sectionName: https-prplanit
   hostnames:
     - sso.optcp.com

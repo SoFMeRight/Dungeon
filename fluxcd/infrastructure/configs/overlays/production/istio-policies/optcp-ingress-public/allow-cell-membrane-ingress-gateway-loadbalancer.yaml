@@ -1,11 +1,11 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-cell-membrane-gateway-loadbalancer
+  name: allow-cell-membrane-ingress-gateway-loadbalancer
 spec:
   selector:
     matchLabels:
-      gateway.networking.k8s.io/gateway-name: cell-membrane-gateway
+      gateway.networking.k8s.io/gateway-name: cell-membrane-ingress-gateway
   action: ALLOW
   rules:
     # Internet-facing gateway — source IPs are intentionally unrestricted here.
