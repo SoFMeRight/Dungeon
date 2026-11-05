@@ -1,7 +1,0 @@
-# The Cluster is left out until netbird-postgres-1's volume re-binds in optcp-remote-access;
-# the next commit restores it at instances: 1 and it adopts that volume.
-$patch: delete
-apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
-metadata:
-  name: netbird-postgres

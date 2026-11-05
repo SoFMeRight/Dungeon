@@ -1,0 +1,9 @@
+# Namespace move to optcp-remote-access (namespace-moves.md, CNPG): the Cluster comes back with
+# its primary only and adopts netbird-postgres-1's re-bound volume. The next commit removes this
+# and the replicas clone from the primary.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: netbird-postgres
+spec:
+  instances: 1

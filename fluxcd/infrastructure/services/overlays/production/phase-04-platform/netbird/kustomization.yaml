@@ -155,7 +155,4 @@ patches:
     target:
       kind: StatefulSet
       name: netbird-management
-  - path: hold-for-move-patch.yaml
-  # Last, and alone in its file: kustomize 5.5.0 (StageFreight) panics on several
-  # $patch: delete documents in one file.
-  - path: hold-cluster-for-move-patch.yaml
+  - path: adopt-primary-patch.yaml
