@@ -13,7 +13,6 @@ resources:
   - optcp-identity.yaml
   - optcp-infrastructure-management.yaml
   - optcp-ingress-internal.yaml
-  - optcp-ingress-private.yaml
   - optcp-ingress-public.yaml
   - optcp-ipam.yaml
   - optcp-keyring.yaml
@@ -42,3 +41,4 @@ resources:
   - mr-resetti.yaml
   - training-dummy.yaml
   - arbitorium-game-streaming.yaml
+  - kai-ingress-private.yaml

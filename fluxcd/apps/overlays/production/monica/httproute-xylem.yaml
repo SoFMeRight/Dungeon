@@ -12,7 +12,7 @@ metadata:
 spec:
   parentRefs:
     - name: xylem-ingress-gateway
-      namespace: optcp-ingress-private
+      namespace: kai-ingress-private
   hostnames:
     - "monica.pcfae.com"
   rules:

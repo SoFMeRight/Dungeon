@@ -102,7 +102,7 @@ spec:
                 - optcp-operators-baseline
                 - lakitu
                 - optcp-ingress-internal
-                - optcp-ingress-private
+                - kai-ingress-private
           # Repo-manifest exceptions (self-documenting label on the workload).
           - resources:
               selector:
@@ -156,7 +156,7 @@ spec:
                 - optcp-operators-baseline
                 - lakitu
                 - optcp-ingress-internal
-                - optcp-ingress-private
+                - kai-ingress-private
           # Repo-manifest self-documenting exceptions.
           - resources:
               selector:
@@ -199,7 +199,7 @@ spec:
                 - optcp-operators-baseline
                 - lakitu
                 - optcp-ingress-internal
-                - optcp-ingress-private
+                - kai-ingress-private
           # Repo-manifest self-documenting exceptions.
           - resources:
               selector:
@@ -245,7 +245,7 @@ spec:
                 - optcp-operators-baseline
                 - lakitu
                 - optcp-ingress-internal
-                - optcp-ingress-private
+                - kai-ingress-private
           # Repo-manifest self-documenting exceptions.
           - resources:
               selector:

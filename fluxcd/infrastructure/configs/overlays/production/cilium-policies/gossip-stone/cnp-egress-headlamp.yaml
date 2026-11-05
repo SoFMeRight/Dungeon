@@ -22,7 +22,7 @@ spec:
             k8s:io.kubernetes.pod.namespace: optcp-ingress-public
             gateway.networking.k8s.io/gateway-name: cell-membrane-ingress-gateway
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-ingress-private
+            k8s:io.kubernetes.pod.namespace: kai-ingress-private
             gateway.networking.k8s.io/gateway-name: xylem-ingress-gateway
       toPorts:
         - ports:
