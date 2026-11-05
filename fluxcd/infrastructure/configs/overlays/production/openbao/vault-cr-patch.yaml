@@ -168,19 +168,6 @@ spec:
           path "optcp/metadata/apps/stalwart/smtp-*" {
             capabilities = ["read"]
           }
-      # secrets-write (one-off): creates the adguardhome-sync entries from its SOPS seed and
-      # reads them back, nothing else. Removed once run.
-      - name: secrets-write
-        rules: |
-          path "optcp/data/apps/adguardhome-sync/adguard-origin" {
-            capabilities = ["create", "read"]
-          }
-          path "optcp/data/apps/adguardhome-sync/adguard-dns1" {
-            capabilities = ["create", "read"]
-          }
-          path "optcp/data/apps/adguardhome-sync/app" {
-            capabilities = ["create", "read"]
-          }
       # People with the operator role sign their own SSH certificate; the role limits the
       # principal to their own username.
       - name: ssh-operator
@@ -442,11 +429,6 @@ spec:
             bound_service_account_names: ["stalwart-configuration"]
             bound_service_account_namespaces: ["optcp-delivery-bag"]
             policies: ["stalwart-configuration"]
-            ttl: 1h
-          - name: secrets-write
-            bound_service_account_names: ["secrets-write"]
-            bound_service_account_namespaces: ["optcp-secrets"]
-            policies: ["secrets-write"]
             ttl: 1h
       - type: oidc
         config:

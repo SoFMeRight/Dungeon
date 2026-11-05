@@ -58,14 +58,6 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
-    # secrets-write (one-off) creates the adguardhome-sync entries; removed once run.
-    - fromEndpoints:
-        - matchLabels:
-            app: secrets-write
-      toPorts:
-        - ports:
-            - port: "8200"
-              protocol: TCP
     - fromEntities:
         - host
         - remote-node
