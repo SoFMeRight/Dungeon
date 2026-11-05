@@ -5,4 +5,5 @@ resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
   - allow-linkstack-to-linkstack-db.yaml
+  - allow-hubzilla-to-hubzilla-mariadb.yaml
   - allow-gateway-ingress-cell-membrane.yaml

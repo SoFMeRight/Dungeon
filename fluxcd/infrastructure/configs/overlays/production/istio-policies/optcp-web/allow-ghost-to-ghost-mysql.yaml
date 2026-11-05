@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ghost-to-ghost-mysql
+spec:
+  selector:
+    matchLabels:
+      app: ghost-mysql
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-web/sa/ghost
+      to:
+        - operation:
+            ports: ["3306"]

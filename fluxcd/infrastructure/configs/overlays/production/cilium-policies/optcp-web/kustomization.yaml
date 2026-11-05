@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: optcp-web
 resources:
   - cnp-default-deny-ingress.yaml
+  - cnp-egress-ghost.yaml

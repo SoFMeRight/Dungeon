@@ -4,4 +4,6 @@ namespace: yesimvegan-web
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-mealie-to-mealie-postgres.yaml
+  - allow-wikijs-vegan-to-wikijs-vegan-db.yaml
   - allow-gateway-ingress-cell-membrane.yaml

@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-wikijs-vegan-to-wikijs-vegan-db
+spec:
+  selector:
+    matchLabels:
+      app: wikijs-vegan-db
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/yesimvegan-web/sa/wikijs-vegan
+      to:
+        - operation:
+            ports: ["5432"]

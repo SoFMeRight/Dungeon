@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-hubzilla-egress
+spec:
+  description: >-
+    hubzilla delivers federation traffic to any hub on the fediverse plus an
+    SMTP relay, and hubzilla-cron is the poller that drains its delivery queue.
+    Sign-in rides the identity provider hairpin (sso.optcp.com resolves to the
+    gateway VIP from inside, so this is a cluster destination, not a world
+    one). That set cannot be allowlisted, so world+cluster is granted (cluster
+    covers in-cluster deps beyond the mesh). DNS + intra-namespace mesh
+    (app->db) ride the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - hubzilla
+          - hubzilla-cron
+  egress:
+    - toEntities:
+        - world
+        - cluster

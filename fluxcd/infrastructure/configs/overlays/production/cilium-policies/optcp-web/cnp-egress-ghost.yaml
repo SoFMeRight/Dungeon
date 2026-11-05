@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-ghost-egress
+spec:
+  description: >-
+    ghost reaches an open-ended external set as its core function — blog
+    integrations and email. That set cannot be allowlisted, so world+cluster is
+    granted (cluster covers in-cluster deps beyond the mesh). DNS +
+    intra-namespace mesh (app->db) ride the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: ghost
+  egress:
+    - toEntities:
+        - world
+        - cluster

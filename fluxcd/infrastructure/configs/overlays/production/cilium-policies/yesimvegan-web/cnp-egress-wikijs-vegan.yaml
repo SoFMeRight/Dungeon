@@ -1,0 +1,22 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-wikijs-vegan-egress
+spec:
+  description: >-
+    wikijs-vegan reaches an open-ended external set as its core function — wiki
+    integrations and email — and signs in through the identity provider hairpin
+    (sso.optcp.com resolves to the gateway VIP from inside, so this is a
+    cluster destination, not a world one). That set cannot be allowlisted, so world+cluster is granted (cluster
+    covers in-cluster deps beyond the mesh). DNS + intra-namespace mesh
+    (app->db) ride the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: wikijs-vegan
+  egress:
+    - toEntities:
+        - world
+        - cluster

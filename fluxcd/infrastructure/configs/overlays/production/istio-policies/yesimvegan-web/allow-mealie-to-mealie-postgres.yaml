@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-mealie-to-mealie-postgres
+spec:
+  selector:
+    matchLabels:
+      app: mealie-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/yesimvegan-web/sa/mealie
+      to:
+        - operation:
+            ports: ["5432"]
