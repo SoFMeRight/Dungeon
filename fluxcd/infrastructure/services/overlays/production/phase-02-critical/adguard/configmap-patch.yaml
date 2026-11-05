@@ -253,6 +253,9 @@ data:
         - domain: '*.arbitorium.com'
           answer: 172.22.30.71
           enabled: true
+        - domain: '*.private.arbitorium.com'
+          answer: 172.22.30.69
+          enabled: true
         - domain: astralfocal.com
           answer: 172.22.30.71
           enabled: true
@@ -290,6 +293,15 @@ data:
           enabled: true
         - domain: '*.cr.optcp.com'
           answer: 172.22.30.70
+          enabled: true
+        - domain: hosts.optcp.com
+          answer: 172.22.30.70
+          enabled: true
+        - domain: '*.internal.optcp.com'
+          answer: 172.22.30.70
+          enabled: true
+        - domain: '*.private.optcp.com'
+          answer: 172.22.30.69
           enabled: true
         - domain: dtrack.optcp.com
           answer: 172.22.30.70

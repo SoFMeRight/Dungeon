@@ -1,0 +1,49 @@
+# netalertx (internal)  ·  SSO required  ·  tier: operator-only  (admits: operator)
+#
+# Self-contained: this file IS the complete access rule for hosts.optcp.com on the internal
+# phloem gateway. The owner-only xylem host (hosts.private.optcp.com) is ungated, so it
+# stays usable when SSO is down.
+#   require-login (CUSTOM) → oauth2-proxy proves an SSO session + injects the role header
+#   authz (DENY)          → deny unless the injected role is in `admits` below
+# notPaths /oauth2/* : the oauth2-proxy sign-in/callback/static paths must bypass the gate
+#   (served by the oauth2-proxy-signin HTTPRoute: hosts.optcp.com/oauth2/*).
+# Widen by adding roles to notValues: operator, admin (the Gated Entry project's roles).
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: sso-hosts-optcp-require-login
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
+  action: CUSTOM
+  provider:
+    name: oauth2-proxy
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - hosts.optcp.com
+            notPaths:
+              - /oauth2/*
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: sso-hosts-optcp-authz
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
+  action: DENY
+  rules:
+    - to:
+        - operation:
+            hosts:
+              - hosts.optcp.com
+            notPaths:
+              - /oauth2/*
+      when:
+        - key: request.headers[x-auth-request-groups]
+          notValues:
+            - operator     # admits: operator

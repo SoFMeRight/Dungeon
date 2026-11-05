@@ -1,17 +1,18 @@
 # zigbee2mqtt (public)  ·  SSO required  ·  tier: operator-only  (admits: operator)
 #
-# Self-contained: this file IS the complete access rule for z2m.arbitorium.com on the
-# public cell-membrane gateway. The internal xylem host (z2m.pcfae.com) is deliberately
-# UNGATED so the Home Assistant embed keeps working even if OIDC/oauth2-proxy is down.
+# Self-contained: this file IS the complete access rule for zigbee.arbitorium.com, and its
+# z2m.arbitorium.com alias, on the public cell-membrane gateway. The owner-only xylem hosts
+# (zigbee.private.arbitorium.com, z2m.pcfae.com) are deliberately UNGATED so the Home
+# Assistant embed keeps working even if OIDC/oauth2-proxy is down.
 #   require-login (CUSTOM) → oauth2-proxy proves an SSO session + injects the role header
 #   authz (DENY)          → deny unless the injected role is in `admits` below
 # notPaths /oauth2/* : the oauth2-proxy sign-in/callback/static paths must bypass the gate
-#   (served by the oauth2-proxy-signin-cell-membrane HTTPRoute: z2m.arbitorium.com/oauth2/*).
+#   (served by the oauth2-proxy-signin-cell-membrane HTTPRoute: zigbee.arbitorium.com/oauth2/*).
 # Widen by adding roles to notValues: operator, admin (the Gated Entry project's roles).
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: sso-z2m-require-login
+  name: sso-zigbee-require-login
 spec:
   selector:
     matchLabels:
@@ -23,6 +24,7 @@ spec:
     - to:
         - operation:
             hosts:
+              - zigbee.arbitorium.com
               - z2m.arbitorium.com
             notPaths:
               - /oauth2/*
@@ -30,7 +32,7 @@ spec:
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: sso-z2m-authz
+  name: sso-zigbee-authz
 spec:
   selector:
     matchLabels:
@@ -40,6 +42,7 @@ spec:
     - to:
         - operation:
             hosts:
+              - zigbee.arbitorium.com
               - z2m.arbitorium.com
             notPaths:
               - /oauth2/*

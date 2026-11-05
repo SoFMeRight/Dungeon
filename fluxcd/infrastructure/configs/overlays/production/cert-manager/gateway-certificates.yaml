@@ -502,3 +502,53 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "secrets.optcp.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: hosts-optcp-com-phloem-tls
+spec:
+  secretName: hosts-optcp-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "hosts.optcp.com"
+---
+# No-SSO endpoints on phloem, behind each app's own login (identity-and-access SOP).
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: internal-optcp-com-phloem-tls
+spec:
+  secretName: internal-optcp-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.internal.optcp.com"
+---
+# No-SSO endpoints on xylem, the owner's alone (identity-and-access SOP).
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: private-optcp-com-xylem-tls
+spec:
+  secretName: private-optcp-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.private.optcp.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: private-arbitorium-com-xylem-tls
+spec:
+  secretName: private-arbitorium-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "*.private.arbitorium.com"

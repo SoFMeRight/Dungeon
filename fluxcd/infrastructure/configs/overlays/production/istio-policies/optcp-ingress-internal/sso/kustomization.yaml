@@ -5,3 +5,4 @@ kind: Kustomization
 # add its <host>.yaml + one line here.
 resources:
   - _gateway-header-strip.yaml
+  - hosts.optcp.com.yaml

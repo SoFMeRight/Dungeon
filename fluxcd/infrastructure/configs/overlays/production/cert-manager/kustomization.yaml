@@ -296,3 +296,31 @@ patches:
     target:
       kind: Certificate
       name: outspokekin-com-apex-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: optcp-ingress-internal
+    target:
+      kind: Certificate
+      name: hosts-optcp-com-phloem-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: optcp-ingress-internal
+    target:
+      kind: Certificate
+      name: internal-optcp-com-phloem-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: kai-ingress-private
+    target:
+      kind: Certificate
+      name: private-optcp-com-xylem-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: kai-ingress-private
+    target:
+      kind: Certificate
+      name: private-arbitorium-com-xylem-tls

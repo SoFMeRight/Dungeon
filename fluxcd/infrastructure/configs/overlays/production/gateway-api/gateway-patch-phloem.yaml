@@ -76,6 +76,30 @@ spec:
         certificateRefs:
           - kind: Secret
             name: cr-optcp-com-tls
+    - name: https-internal-optcp-wildcard
+      protocol: HTTPS
+      port: 443
+      hostname: "*.internal.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: internal-optcp-com-tls
+    - name: https-hosts-optcp
+      protocol: HTTPS
+      port: 443
+      hostname: "hosts.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: hosts-optcp-com-tls
     - name: https-siem-prplanit
       protocol: HTTPS
       port: 443

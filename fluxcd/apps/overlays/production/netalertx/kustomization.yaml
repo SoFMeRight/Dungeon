@@ -4,6 +4,7 @@ namespace: lakitu
 resources:
   - ../../../base/netalertx
   - httproute-xylem.yaml
+  - httproute-private.yaml
 patches:
   - path: statefulset-patch.yaml
   - target:

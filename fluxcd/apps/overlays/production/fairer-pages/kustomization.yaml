@@ -29,6 +29,8 @@ resources:
   - httproute-xylem-pcfae-com-3.yaml
   - httproute-xylem-pcfae-com-4.yaml
   - httproute-xylem-pcfae-com-5.yaml
+  - httproute-xylem-private-arbitorium-com-0.yaml
+  - httproute-xylem-private-optcp-com-0.yaml
 
 patches:
   - path: service-patch.yaml

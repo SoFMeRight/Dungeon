@@ -52,3 +52,27 @@ spec:
         certificateRefs:
           - kind: Secret
             name: pcfae-com-apex-tls
+    - name: https-private-optcp-wildcard
+      protocol: HTTPS
+      port: 443
+      hostname: "*.private.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: private-optcp-com-tls
+    - name: https-private-arbitorium-wildcard
+      protocol: HTTPS
+      port: 443
+      hostname: "*.private.arbitorium.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: private-arbitorium-com-tls

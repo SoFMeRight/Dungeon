@@ -45,6 +45,7 @@ spec:
       namespace: optcp-ingress-internal
   hostnames:
     - "books.pcfae.com"
+    - "hosts.optcp.com"
   rules:
     - matches:
         - path:
@@ -64,7 +65,7 @@ metadata:
   name: oauth2-proxy-signin-cell-membrane
   namespace: optcp-identity
   annotations:
-    # /oauth2/* path-helper on already-monitored public app hosts (z2m.arbitorium.com,
+    # /oauth2/* path-helper on already-monitored public app hosts (zigbee.arbitorium.com,
     # books/music.optcp.com each have their own app routes); the oauth2-proxy backend
     # is covered by oa2p.pcfae.com. Opt out of Gatus to avoid duplicate entries.
     gatus.home-operations.com/enabled: "false"
@@ -73,6 +74,7 @@ spec:
     - name: cell-membrane-ingress-gateway
       namespace: optcp-ingress-public
   hostnames:
+    - "zigbee.arbitorium.com"
     - "z2m.arbitorium.com"
     - "books.optcp.com"
     - "music.optcp.com"

@@ -5,7 +5,7 @@ kind: Kustomization
 # add its <host>.yaml + one line here.
 resources:
   - _gateway-header-strip.yaml
-  - z2m.arbitorium.com.yaml
+  - zigbee.arbitorium.com.yaml
   - books.optcp.com.yaml
   - music.optcp.com.yaml
   - mail.optcp.com.yaml

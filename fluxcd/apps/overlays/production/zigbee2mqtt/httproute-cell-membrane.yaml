@@ -10,6 +10,7 @@ spec:
     - name: cell-membrane-ingress-gateway
       namespace: optcp-ingress-public
   hostnames:
+    - "zigbee.arbitorium.com"
     - "z2m.arbitorium.com"
   rules:
     - matches:

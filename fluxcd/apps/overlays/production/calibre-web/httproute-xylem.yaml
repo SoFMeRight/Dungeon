@@ -11,6 +11,7 @@ spec:
       namespace: optcp-ingress-internal
   hostnames:
     - "books.pcfae.com"
+    - "books.internal.optcp.com"
   rules:
     - matches:
         - path:
