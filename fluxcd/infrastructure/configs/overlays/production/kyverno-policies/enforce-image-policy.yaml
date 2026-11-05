@@ -39,6 +39,7 @@ spec:
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
+                - optcp-delivery-bag
                 - optcp-identity
                 - optcp-keyring
                 - optcp-sibyl-system
@@ -121,6 +122,7 @@ spec:
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
+                - optcp-delivery-bag
                 - optcp-identity
                 - optcp-keyring
                 - optcp-sibyl-system
@@ -207,6 +209,7 @@ spec:
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
+                - optcp-delivery-bag
                 - optcp-identity
                 - optcp-keyring
                 - optcp-sibyl-system
@@ -292,6 +295,7 @@ spec:
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
+                - optcp-delivery-bag
                 - optcp-identity
                 - optcp-keyring
                 - optcp-sibyl-system

@@ -5,3 +5,4 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-buildkitd.yaml
   - cnp-egress-gitlab-runner.yaml
+  - cnp-egress-renovate.yaml

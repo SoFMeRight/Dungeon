@@ -12,6 +12,7 @@ spec:
         - source:
             principals:
               - "cluster.local/ns/hyrule-castle/sa/renovate"
+              - "cluster.local/ns/optcp-ci-runners/sa/renovate"
       to:
         - operation:
             ports: ["8080"]

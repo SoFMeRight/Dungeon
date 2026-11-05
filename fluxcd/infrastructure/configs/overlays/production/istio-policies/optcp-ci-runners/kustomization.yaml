@@ -5,3 +5,4 @@ resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
   - allow-ci-jobs-to-buildkitd.yaml
+  - allow-renovate-to-renovate-redis.yaml

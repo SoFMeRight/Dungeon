@@ -14,3 +14,4 @@ resources:
   - allow-stalwart-to-stalwart-redis.yaml
   - allow-stalwart-to-stalwart-elasticsearch.yaml
   - allow-bulwark-to-stalwart.yaml
+  - allow-roundcube-primary-gmail-to-roundcube-primary-gmail-db.yaml

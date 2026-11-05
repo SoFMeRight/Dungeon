@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-roundcube-primary-gmail-to-roundcube-primary-gmail-db
+spec:
+  selector:
+    matchLabels:
+      app: roundcube-primary-gmail-db
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-delivery-bag/sa/roundcube-primary-gmail
+      to:
+        - operation:
+            ports: ["3306"]

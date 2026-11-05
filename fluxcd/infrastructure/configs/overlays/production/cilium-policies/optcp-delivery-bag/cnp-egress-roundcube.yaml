@@ -1,0 +1,54 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-roundcube-primary-gmail-egress
+spec:
+  description: >-
+    roundcube-primary-gmail is a webmail client for a Gmail account: it reaches
+    Gmail over IMAP (993) and SMTP submission (587/465), and validates the
+    OAuth2 (XOAUTH2) token against Google's auth endpoints on 443. Allow egress
+    to the Gmail/Google hosts, with L7 DNS so Cilium learns their addresses. Its
+    MariaDB (roundcube-primary-gmail-db) is intra-namespace and rides the mesh
+    (universal ambient CCNP). Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: roundcube-primary-gmail
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "imap.gmail.com"
+      toPorts:
+        - ports:
+            - port: "993"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: "smtp.gmail.com"
+      toPorts:
+        - ports:
+            - port: "587"
+              protocol: TCP
+            - port: "465"
+              protocol: TCP
+    - toFQDNs:
+        - matchName: "accounts.google.com"
+        - matchName: "oauth2.googleapis.com"
+        - matchName: "www.googleapis.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

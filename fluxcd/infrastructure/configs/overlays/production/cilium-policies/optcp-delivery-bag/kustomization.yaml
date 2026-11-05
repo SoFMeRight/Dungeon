@@ -6,3 +6,5 @@ resources:
   - cnp-stalwart.yaml
   - cnp-bulwark.yaml
   - cnp-stalwart-gmail-sync.yaml
+  - cnp-egress-roundcube.yaml
+  - cnp-roundcube-to-db.yaml

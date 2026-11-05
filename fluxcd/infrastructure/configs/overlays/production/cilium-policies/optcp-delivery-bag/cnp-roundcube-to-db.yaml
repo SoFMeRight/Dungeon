@@ -1,0 +1,22 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-roundcube-primary-gmail-to-db
+spec:
+  description: >-
+    Allow roundcube-primary-gmail app to access
+    roundcube-primary-gmail-db on 3306/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: roundcube-primary-gmail-db
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: roundcube-primary-gmail
+      toPorts:
+        - ports:
+            - port: "3306"
+              protocol: TCP

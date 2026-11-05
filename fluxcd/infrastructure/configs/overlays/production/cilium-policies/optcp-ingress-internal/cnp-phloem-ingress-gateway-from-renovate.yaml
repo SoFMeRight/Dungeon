@@ -19,6 +19,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: hyrule-castle
             app: renovate
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-ci-runners
+            app: renovate
       toPorts:
         - ports:
             - port: "80"
