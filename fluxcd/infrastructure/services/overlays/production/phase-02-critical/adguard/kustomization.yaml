@@ -10,10 +10,6 @@ resources:
   - httproute-replica.yaml
 
 patches:
-  - path: configmap-patch.yaml
-    target:
-      kind: ConfigMap
-      name: adguard-config
   - path: statefulset-patch.yaml
     target:
       kind: StatefulSet
@@ -46,3 +42,21 @@ patches:
     target:
       kind: Service
       name: adguard-web
+  # The base ConfigMap is a seed-only template; adguard-gitops-config replaces it.
+  - target:
+      kind: ConfigMap
+      name: adguard-config
+    patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: adguard-config
+
+# The cluster AdGuard is the DNS source of truth: the copy-config init container writes this
+# file over the live config on every start, the generated name's hash rolls the pods whenever
+# it changes, and adguardhome-sync pushes the result to the DNS VMs (dns, dns2.pcfae.com).
+configMapGenerator:
+  - name: adguard-gitops-config
+    files:
+      - AdGuardHome.yaml

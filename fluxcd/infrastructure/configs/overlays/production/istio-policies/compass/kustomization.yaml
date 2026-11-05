@@ -6,6 +6,7 @@ resources:
   - allow-intra-breakglass.yaml
   - allow-searxng-to-searxng-redis.yaml
   - allow-dns-loadbalancer.yaml
+  - allow-adguardhome-sync-to-adguard.yaml
   - allow-ntp-loadbalancer.yaml
   - allow-netbootxyz-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml

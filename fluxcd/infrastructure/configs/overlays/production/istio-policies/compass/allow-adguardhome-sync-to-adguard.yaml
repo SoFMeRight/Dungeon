@@ -1,0 +1,19 @@
+# adguardhome-sync reads the cluster origin's config (adguard-web-0 → pod :80) to push it
+# to the DNS VMs.
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-adguardhome-sync-to-adguard
+spec:
+  selector:
+    matchLabels:
+      app: adguard
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/compass/sa/adguardhome-sync
+      to:
+        - operation:
+            ports: ["80"]

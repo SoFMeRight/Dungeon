@@ -4,10 +4,10 @@ metadata:
   name: allow-adguardhome-sync-egress
 spec:
   description: >-
-    adguardhome-sync replicates AdGuardHome config from the origin instance
-    (dns.pcfae.com) to the replica (dns2.pcfae.com) over 443/TCP on a 10m
-    cron. Allow egress to both hosts, with L7 DNS so Cilium learns whatever
-    address they resolve to (cluster LoadBalancer or a second physical host).
+    adguardhome-sync pushes AdGuardHome config from the cluster origin (adguard-0,
+    rendered from git) to the DNS VM replicas (dns.pcfae.com, dns2.pcfae.com) over
+    443/TCP on a 10m cron. Allow egress to the origin pod and to both hosts, with
+    L7 DNS so Cilium learns whatever address they resolve to.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -34,4 +34,11 @@ spec:
       toPorts:
         - ports:
             - port: "443"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app: adguard
+      toPorts:
+        - ports:
+            - port: "80"
               protocol: TCP

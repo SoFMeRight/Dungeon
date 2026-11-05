@@ -18,14 +18,10 @@ spec:
             - sh
             - -c
             - |
-              if [ ! -f /opt/adguardhome/conf/AdGuardHome.yaml ]; then
-                echo "Copying and updating initial config..."
-                cp /tmp/config/AdGuardHome.yaml /tmp/processed-config.yaml
-                sed -i "s|ADGUARD_PASSWORD_PLACEHOLDER|${ADGUARD_PASSWORD}|g" /tmp/processed-config.yaml
-                cp /tmp/processed-config.yaml /opt/adguardhome/conf/AdGuardHome.yaml
-              else
-                echo "Config already exists, skipping..."
-              fi
+              # Git is the source of truth: write the declared config over the live one on
+              # every start. UI edits do not survive a restart; change AdGuardHome.yaml.
+              sed "s|ADGUARD_PASSWORD_PLACEHOLDER|${ADGUARD_PASSWORD}|g" /tmp/config/AdGuardHome.yaml > /tmp/processed-config.yaml
+              cp /tmp/processed-config.yaml /opt/adguardhome/conf/AdGuardHome.yaml
           env:
             - name: ADGUARD_PASSWORD
               valueFrom:
@@ -51,6 +47,10 @@ spec:
                 - ALL
               add:
                 - NET_BIND_SERVICE
+      volumes:
+        - name: config-template
+          configMap:
+            name: adguard-gitops-config
   volumeClaimTemplates:
     - metadata:
         name: adguard-data
