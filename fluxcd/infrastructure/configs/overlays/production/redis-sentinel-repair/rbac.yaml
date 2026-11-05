@@ -31,9 +31,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: redis-sentinel-repair
-    namespace: gorons-bracelet
-  - kind: ServiceAccount
-    name: redis-sentinel-repair
     namespace: optcp-operators-baseline
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -63,9 +60,6 @@ roleRef:
   kind: Role
   name: redis-sentinel-repair
 subjects:
-  - kind: ServiceAccount
-    name: redis-sentinel-repair
-    namespace: gorons-bracelet
   - kind: ServiceAccount
     name: redis-sentinel-repair
     namespace: optcp-operators-baseline
@@ -99,9 +93,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: redis-sentinel-repair
-    namespace: gorons-bracelet
-  - kind: ServiceAccount
-    name: redis-sentinel-repair
     namespace: optcp-operators-baseline
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -131,9 +122,6 @@ roleRef:
   kind: Role
   name: redis-sentinel-repair
 subjects:
-  - kind: ServiceAccount
-    name: redis-sentinel-repair
-    namespace: gorons-bracelet
   - kind: ServiceAccount
     name: redis-sentinel-repair
     namespace: optcp-operators-baseline

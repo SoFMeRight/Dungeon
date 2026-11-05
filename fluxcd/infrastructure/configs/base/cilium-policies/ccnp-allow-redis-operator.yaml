@@ -5,7 +5,7 @@ metadata:
 spec:
   description: >-
     Allows Redis operator to manage Redis replication instances.
-    The operator in gorons-bracelet needs to reach Redis pods
+    The operator in optcp-operators-baseline needs to reach Redis pods
     on port 6379 for health checks and configuration.
   enableDefaultDeny:
     egress: false
@@ -16,11 +16,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: gorons-bracelet
-            app.kubernetes.io/name: redis-operator
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-operators-baseline
-            app.kubernetes.io/name: redis-operator
+            name: redis-operator
       toPorts:
         - ports:
             - port: "6379"

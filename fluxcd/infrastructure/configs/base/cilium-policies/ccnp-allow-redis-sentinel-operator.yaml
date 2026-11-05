@@ -5,7 +5,7 @@ metadata:
 spec:
   description: >-
     Allows Redis operator to manage Redis Sentinel instances.
-    The operator in gorons-bracelet needs to reach Sentinel pods
+    The operator in optcp-operators-baseline needs to reach Sentinel pods
     on port 26379 for health checks and failover orchestration.
   enableDefaultDeny:
     egress: false
@@ -16,11 +16,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: gorons-bracelet
-            app.kubernetes.io/name: redis-operator
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-operators-baseline
-            app.kubernetes.io/name: redis-operator
+            name: redis-operator
       toPorts:
         - ports:
             - port: "26379"
