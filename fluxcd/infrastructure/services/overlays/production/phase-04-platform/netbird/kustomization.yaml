@@ -22,6 +22,7 @@ patches:
           # a PodMonitor, so without them nothing collects the metrics the instances
           # already publish on 9187.
           annotations:
+            backup.velero.io/backup-volumes-excludes: "pgdata,scratch-data,shm,plugins"
             prometheus.io/scrape: "true"
             prometheus.io/port: "9187"
           labels:

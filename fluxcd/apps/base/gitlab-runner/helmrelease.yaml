@@ -116,6 +116,7 @@ spec:
                 "tls.key" = "key.pem"
             [runners.kubernetes.pod_labels]
               "policy.prplanit.com/ci-job" = "true"
+              "velero.io/exclude-from-backup" = "true"
             # The job's clone, /tmp and $HOME live on a per-job volume. scratch-init creates
             # the subPath directories as the job's uid: kubelet-created ones are root-owned.
             [[runners.kubernetes.pod_spec]]

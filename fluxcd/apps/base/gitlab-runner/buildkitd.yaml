@@ -29,6 +29,8 @@ spec:
       app: buildkitd
   template:
     metadata:
+      annotations:
+        backup.velero.io/backup-volumes-excludes: buildkitd-state
       labels:
         app: buildkitd
         policy.prplanit.com/except-no-privesc: "true"

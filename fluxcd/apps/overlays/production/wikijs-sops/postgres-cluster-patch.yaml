@@ -26,6 +26,7 @@ spec:
       cpu: "500m"
   inheritedMetadata:
     annotations:
+      backup.velero.io/backup-volumes-excludes: "pgdata,scratch-data,shm,plugins"
       prometheus.io/scrape: "true"
       prometheus.io/port: "9187"
     labels:

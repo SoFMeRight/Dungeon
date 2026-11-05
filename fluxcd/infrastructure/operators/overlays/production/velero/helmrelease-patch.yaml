@@ -136,6 +136,8 @@ spec:
             - hyrule-castle
             # Supply chain: GitLab (namespace plan, group V)
             - optcp-supply-chain
+            # CI runners: gitlab-runner, buildkitd, renovate (namespace plan, group AL)
+            - optcp-ci-runners
             # PrPlanIT support (namespace plan, group A)
             - prplanit-support
             # Routing & Gateway infrastructure
@@ -148,6 +150,8 @@ spec:
             - pedestal-of-time
             # Mail services
             - delivery-bag
+            # Comms and mail: stalwart, bulwark (namespace plan, group AD)
+            - optcp-delivery-bag
             # Bot protection & security services
             - wallmaster
             # Tools w/o userdata
