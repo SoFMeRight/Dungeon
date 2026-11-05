@@ -11,6 +11,21 @@ spec:
   upgrade:
     crds: CreateReplace
   interval: 30m
+  # Uninstalling the release (a namespace move does) must never delete the CRDs, or every
+  # MariaDB, Database, User, Grant and Backup goes with them, and the operator's StatefulSets
+  # after. The chart has no value for it, so the post-renderer adds the keep policy.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: CustomResourceDefinition
+            patch: |
+              apiVersion: apiextensions.k8s.io/v1
+              kind: CustomResourceDefinition
+              metadata:
+                name: mariadb-operator-crds
+                annotations:
+                  helm.sh/resource-policy: keep
   chart:
     spec:
       chart: mariadb-operator-crds
