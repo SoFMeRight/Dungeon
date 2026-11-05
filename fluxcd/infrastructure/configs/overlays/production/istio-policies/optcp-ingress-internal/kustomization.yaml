@@ -6,3 +6,4 @@ resources:
   - allow-intra-breakglass.yaml
   - allow-phloem-ingress-gateway-loadbalancer.yaml
   - telemetry-access-log-phloem.yaml
+  - sso
