@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-apt-cacher-ng-egress
+spec:
+  description: >-
+    apt-cacher-ng is a caching proxy for APT: it fetches .deb packages and index
+    files on demand from an open-ended set of Debian/Ubuntu/third-party mirrors
+    on 80/443, which cannot be allowlisted, so it is granted world. DNS rides the
+    universal CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: apt-cacher-ng
+  egress:
+    - toEntities:
+        - world

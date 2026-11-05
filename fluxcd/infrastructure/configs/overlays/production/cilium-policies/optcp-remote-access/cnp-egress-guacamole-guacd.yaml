@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-guacamole-guacd-egress
+spec:
+  description: >-
+    guacd is the Guacamole proxy daemon: it opens RDP/VNC/SSH connections to an
+    open-ended set of remote-desktop targets (mostly LAN hosts) on arbitrary
+    ports, which cannot be allowlisted, so it is granted world+cluster. DNS
+    rides the universal CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: guacamole-guacd
+  egress:
+    - toEntities:
+        - world
+        - cluster

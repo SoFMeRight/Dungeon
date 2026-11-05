@@ -1,0 +1,14 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-rustdesk-loadbalancer
+spec:
+  selector:
+    matchLabels:
+      app: rustdesk
+  action: ALLOW
+  rules:
+    # Internet-facing remote access — source IPs are unpredictable
+    - to:
+        - operation:
+            ports: ["21114", "21115", "21116", "21117", "21118", "21119"]

@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-guacamole-to-guacd
+spec:
+  description: >-
+    Allow guacamole app to reach guacamole-guacd on 4822/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: guacamole-guacd
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: guacamole
+      toPorts:
+        - ports:
+            - port: "4822"
+              protocol: TCP

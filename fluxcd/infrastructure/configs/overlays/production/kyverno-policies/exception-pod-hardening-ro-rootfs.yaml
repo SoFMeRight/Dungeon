@@ -43,11 +43,11 @@ spec:
             - "frappe-suite-*"
             - "invoiceninja-app-*"
             - "renovate-*"
-      # optcp-supply-chain — gitlab and harbor Helm charts.
+      # optcp-supply-chain — apt-cacher apache+root, gitlab and harbor Helm charts.
       - resources:
           kinds: [Pod]
           namespaces: [optcp-supply-chain]
-          names: ["gitlab-*", "harbor-*"]
+          names: ["apt-cacher-ng-*", "gitlab-*", "harbor-*"]
       # prplanit-support — osticket apache+root.
       - resources:
           kinds: [Pod]

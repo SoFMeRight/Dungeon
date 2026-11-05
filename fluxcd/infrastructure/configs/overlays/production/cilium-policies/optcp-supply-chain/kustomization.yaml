@@ -3,6 +3,8 @@ kind: Kustomization
 namespace: optcp-supply-chain
 resources:
   - cnp-default-deny-ingress.yaml
+  - cnp-apt-cacher-ng.yaml
+  - cnp-egress-apt-cacher-ng.yaml
   - cnp-egress-external-apps.yaml
   - cnp-egress-to-gateway.yaml
   - cnp-gitlab-webhooks.yaml

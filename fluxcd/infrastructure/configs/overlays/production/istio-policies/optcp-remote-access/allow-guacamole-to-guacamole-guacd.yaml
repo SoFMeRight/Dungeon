@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-guacamole-to-guacamole-guacd
+spec:
+  selector:
+    matchLabels:
+      app: guacamole-guacd
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-remote-access/sa/guacamole
+      to:
+        - operation:
+            ports: ["4822"]
