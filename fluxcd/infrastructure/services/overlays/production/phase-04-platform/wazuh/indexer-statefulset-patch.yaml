@@ -9,10 +9,10 @@ spec:
         - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       initContainers:
         - name: stage-secure-config
-          image: docker.io/wazuh/wazuh-indexer:4.14.9
+          image: docker.io/wazuh/wazuh-indexer:4.14.10
       containers:
         - name: wazuh-indexer
-          image: docker.io/wazuh/wazuh-indexer:4.14.9
+          image: docker.io/wazuh/wazuh-indexer:4.14.10
           envFrom: []
           resources:
             requests:

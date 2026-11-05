@@ -9,7 +9,7 @@ spec:
         - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       initContainers:
         - name: security-config
-          image: docker.io/wazuh/wazuh-indexer:4.14.9
+          image: docker.io/wazuh/wazuh-indexer:4.14.10
       containers:
         - name: configure
           image: ghcr.io/homelabhd/ansible:v2.21.5@sha256:9130d35313d7117085b015d2ef6708436377f09ab16dfe4933a76fcc91f2b0f2

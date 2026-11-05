@@ -9,7 +9,7 @@ spec:
         - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: wazuh-manager
-          image: docker.io/wazuh/wazuh-manager:4.14.9
+          image: docker.io/wazuh/wazuh-manager:4.14.10
           envFrom:
             - secretRef:
                 name: wazuh-manager-secrets
