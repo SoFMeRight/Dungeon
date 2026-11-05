@@ -14,10 +14,10 @@ spec:
       shared_buffers: "512MB"
       max_connections: "100"
       wal_keep_size: "64MB"
-      max_slot_wal_keep_size: "800MB"   # 8% of the 10Gi PVC
+      max_slot_wal_keep_size: "800MB"   # 5% of the 16Gi PVC
   storage:
     storageClass: ceph-rbd
-    size: 10Gi
+    size: 16Gi
   resources:
     requests:
       memory: "1Gi"   # >= shared_buffers
