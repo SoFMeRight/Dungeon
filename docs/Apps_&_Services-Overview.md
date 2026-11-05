@@ -1280,7 +1280,7 @@
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
 | Cloudflare Ddns | compass | ✅ |
-| Phloem Gateway Istio | arylls-lookout | ✅ |
+| Phloem Gateway Istio | optcp-gateway-phloem | ✅ |
 | Reflector | gerudo-crest | ✅ |
 | Reloader | gerudo-crest | ✅ |
 | Alloy | lakitu | ✅ |
@@ -1374,7 +1374,7 @@
 - Replicas: 1/1
 
 **Phloem Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
-- Namespace: arylls-lookout
+- Namespace: optcp-gateway-phloem
 - Replicas: 1/1
 
 **Reflector** — Deployment — 10.0.69

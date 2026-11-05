@@ -10,7 +10,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: arylls-lookout
+      namespace: optcp-gateway-phloem
   hostnames:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 

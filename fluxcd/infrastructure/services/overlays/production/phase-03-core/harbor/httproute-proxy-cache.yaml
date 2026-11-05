@@ -15,7 +15,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: arylls-lookout
+      namespace: optcp-gateway-phloem
   hostnames:
     - "docker.cr.optcp.com"
   rules:
@@ -39,7 +39,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: arylls-lookout
+      namespace: optcp-gateway-phloem
   hostnames:
     - "ghcr.cr.optcp.com"
   rules:
@@ -63,7 +63,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: arylls-lookout
+      namespace: optcp-gateway-phloem
   hostnames:
     - "quay.cr.optcp.com"
   rules:
@@ -87,7 +87,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: arylls-lookout
+      namespace: optcp-gateway-phloem
   hostnames:
     - "lscr.cr.optcp.com"
   rules:

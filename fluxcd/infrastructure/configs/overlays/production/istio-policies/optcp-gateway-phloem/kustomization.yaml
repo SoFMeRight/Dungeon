@@ -1,10 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: arylls-lookout
+namespace: optcp-gateway-phloem
 resources:
   - ../../../../base/istio-policies
-  - allow-gateway-ingress-xylem.yaml
-  - allow-gateway-ingress-phloem.yaml
   - allow-intra-breakglass.yaml
   - allow-phloem-gateway-loadbalancer.yaml
   - telemetry-access-log-phloem.yaml

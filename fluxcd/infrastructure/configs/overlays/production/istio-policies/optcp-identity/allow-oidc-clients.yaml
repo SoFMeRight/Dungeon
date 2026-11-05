@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             namespaces:
-              - arylls-lookout
+              - optcp-gateway-phloem
               - compass
               - delivery-bag
               - fairy-bottle

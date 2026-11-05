@@ -29,88 +29,88 @@ patches:
     target:
       kind: Certificate
       name: pcfae-com-apex-tls
-  # phloem-gateway pcfae certs land in prelude-of-light
+  # phloem-gateway certs land in optcp-gateway-phloem
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: pcfae-com-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: pcfae-com-apex-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: cr-optcp-com-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: siem-prplanit-com-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: hq-prplanit-com-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: projects-optcp-com-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: mail-admin-optcp-com-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: sops-optcp-com-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: dtrack-optcp-com-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: s3-optcp-com-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: twofauth-optcp-com-phloem-tls
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Certificate
       name: secrets-optcp-com-phloem-tls

@@ -70,7 +70,7 @@ gitops:
           - kokiri-forest
       - name: "Infrastructure (Aryll's Lookout\U0001F52D)"
         namespaces:
-          - arylls-lookout
+          - optcp-gateway-phloem
       - name: "Content & Media (Temple of Time\U0001F3DB️)"
         namespaces:
           - temple-of-time

@@ -13,7 +13,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: arylls-lookout
+      namespace: optcp-gateway-phloem
   hostnames:
     - "oa2p.pcfae.com"
   rules:
@@ -42,7 +42,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: arylls-lookout
+      namespace: optcp-gateway-phloem
   hostnames:
     - "books.pcfae.com"
   rules:

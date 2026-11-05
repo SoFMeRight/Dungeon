@@ -10,4 +10,4 @@ spec:
   rules:
     - from:
         - source:
-            namespaces: ["arylls-lookout"]
+            namespaces: ["optcp-gateway-phloem"]

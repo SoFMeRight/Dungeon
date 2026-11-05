@@ -11,7 +11,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: arylls-lookout
+      namespace: optcp-gateway-phloem
   hostnames:
     - "shiplog.pcfae.com"
   rules:

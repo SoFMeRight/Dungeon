@@ -2,7 +2,7 @@ apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
   name: https-location-phloem
-  namespace: arylls-lookout
+  namespace: optcp-gateway-phloem
 spec:
   workloadSelector:
     labels:

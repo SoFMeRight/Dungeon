@@ -39,7 +39,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: arylls-lookout
+      namespace: optcp-gateway-phloem
   hostnames:
     - "sh.pcfae.com"
   rules:
@@ -62,7 +62,7 @@ metadata:
 spec:
   parentRefs:
     - name: phloem-gateway
-      namespace: arylls-lookout
+      namespace: optcp-gateway-phloem
   hostnames:
     - "shlink.pcfae.com"
   rules:

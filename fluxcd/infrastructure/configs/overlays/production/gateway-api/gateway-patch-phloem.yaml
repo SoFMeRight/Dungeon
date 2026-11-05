@@ -4,7 +4,7 @@ metadata:
   name: phloem-gateway
   annotations:
     lbipam.cilium.io/ips: "172.22.30.70,fc00:f1:ada:30::70"
-    lbipam.cilium.io/sharing-key: "arylls-lookout"
+    lbipam.cilium.io/sharing-key: "optcp-gateway-phloem"
     lbipam.cilium.io/sharing-cross-namespace: "*"
     service.cilium.io/loadbalancer-mode: "dsr"
     # Carries envoyproxy/envoy#45198 (HBONE connect_originate stream leak), which

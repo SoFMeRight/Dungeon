@@ -101,7 +101,7 @@ spec:
                 - king-of-red-lions
                 - gerudo-crest
                 - lakitu
-                - arylls-lookout
+                - optcp-gateway-phloem
           # Repo-manifest exceptions (self-documenting label on the workload).
           - resources:
               selector:
@@ -154,7 +154,7 @@ spec:
                 - king-of-red-lions
                 - gerudo-crest
                 - lakitu
-                - arylls-lookout
+                - optcp-gateway-phloem
           # Repo-manifest self-documenting exceptions.
           - resources:
               selector:
@@ -196,7 +196,7 @@ spec:
                 - king-of-red-lions
                 - gerudo-crest
                 - lakitu
-                - arylls-lookout
+                - optcp-gateway-phloem
           # Repo-manifest self-documenting exceptions.
           - resources:
               selector:
@@ -241,7 +241,7 @@ spec:
                 - king-of-red-lions
                 - gerudo-crest
                 - lakitu
-                - arylls-lookout
+                - optcp-gateway-phloem
           # Repo-manifest self-documenting exceptions.
           - resources:
               selector:

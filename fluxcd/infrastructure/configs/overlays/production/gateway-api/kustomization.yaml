@@ -63,11 +63,11 @@ patches:
     target:
       kind: Gateway
       name: cell-membrane-gateway
-  # Set namespace for phloem-gateway to arylls-lookout
+  # Set namespace for phloem-gateway to optcp-gateway-phloem
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: arylls-lookout
+        value: optcp-gateway-phloem
     target:
       kind: Gateway
       name: phloem-gateway

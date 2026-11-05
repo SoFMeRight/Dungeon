@@ -22,7 +22,7 @@ spec:
     - fromEndpoints:
         # phloem-gateway
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: arylls-lookout
+            k8s:io.kubernetes.pod.namespace: optcp-gateway-phloem
             policy.prplanit.com/client-class: ingress-gateway
         # xylem-gateway
         - matchLabels:

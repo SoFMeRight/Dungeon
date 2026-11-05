@@ -121,7 +121,7 @@ spec:
             - optcp-media
             - optcp-shooting-gallery
             # Gateway for internal-only services
-            - arylls-lookout
+            - optcp-gateway-phloem
             # Gateway for personal/public services
             - kokiri-forest
             # Gateway for business/work services

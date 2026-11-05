@@ -12,7 +12,7 @@ spec:
   # is reached over the LAN and nothing resolves it from outside.
   parentRefs:
     - name: phloem-gateway
-      namespace: arylls-lookout
+      namespace: optcp-gateway-phloem
   hostnames:
     - "hq.prplanit.com"
   rules:

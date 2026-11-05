@@ -10,6 +10,7 @@ resources:
   - optcp-ci-runners.yaml
   - optcp-cloud.yaml
   - optcp-delivery-bag.yaml
+  - optcp-gateway-phloem.yaml
   - optcp-identity.yaml
   - optcp-infrastructure-management.yaml
   - optcp-ipam.yaml
