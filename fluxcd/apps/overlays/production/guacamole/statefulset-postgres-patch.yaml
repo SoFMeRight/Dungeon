@@ -3,11 +3,13 @@ kind: StatefulSet
 metadata:
   name: guacamole-postgres
 spec:
+  # Held at zero for the volume re-bind into optcp-remote-access.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/access-class: postgres
-        policy.prplanit.com/service-scope: hookshot.guacamole.postgres
+        policy.prplanit.com/service-scope: optcp-remote-access.guacamole.postgres
     spec:
       securityContext:
         runAsUser: 70

@@ -3,12 +3,14 @@ kind: Deployment
 metadata:
   name: guacamole
 spec:
+  # Held at zero for the volume re-bind into optcp-remote-access.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: hookshot.guacamole.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-remote-access.guacamole.postgres
     spec:
       securityContext:
         runAsUser: 1001

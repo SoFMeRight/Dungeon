@@ -15,4 +15,5 @@ resources:
   - allow-guacamole-to-guacamole-postgres.yaml
   - allow-guacamole-to-guacamole-guacd.yaml
   - allow-rustdesk-loadbalancer.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
