@@ -145,32 +145,6 @@ gitops:
           field: group
     oidc:
       audience: stagefreight
-ansible:
-  image: ghcr.io/homelabhd/ansible:v2.21.5
-  inventory: ansible/inventory
-  playbooks:
-    kubelet-provision:
-      converge: true
-      groups:
-        - k8s_master
-        - k8s_worker
-      path: ansible/k8s/kubelet-provision.yml
-    provision-hosts:
-      converge: true
-      groups:
-        - k8s_worker
-        - k8s_master
-      path: ansible/k8s/provision-hosts.yml
-    wazuh-agent:
-      converge: true
-      groups:
-        - k8s_master
-        - k8s_worker
-      path: ansible/services/wazuh-agent.yaml
-  ssh:
-    credentials: DUNGEON
-    known_hosts: ansible/known_hosts
-    user: kai
 ci:
   forge:
     - gitlab
