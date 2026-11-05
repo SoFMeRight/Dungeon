@@ -3,8 +3,7 @@ kind: StatefulSet
 metadata:
   name: apt-cacher-ng
 spec:
-  # Held at zero for the volume re-bind into optcp-supply-chain.
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:
