@@ -3,4 +3,4 @@ kind: HelmRelease
 metadata:
   name: mariadb-operator-crds
 spec:
-  targetNamespace: gorons-bracelet
+  targetNamespace: optcp-operators-baseline

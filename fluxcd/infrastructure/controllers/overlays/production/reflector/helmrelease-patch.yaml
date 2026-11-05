@@ -3,6 +3,26 @@ kind: HelmRelease
 metadata:
   name: reflector
 spec:
+  # Never backed up in gerudo-crest; optcp-operators-baseline is in the Velero
+  # schedule for the operators, so reflector opts out to keep that unchanged.
+  commonMetadata:
+    labels:
+      velero.io/exclude-from-backup: "true"
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: reflector
+              spec:
+                template:
+                  metadata:
+                    labels:
+                      velero.io/exclude-from-backup: "true"
   values:
     fullnameOverride: reflector
     image:

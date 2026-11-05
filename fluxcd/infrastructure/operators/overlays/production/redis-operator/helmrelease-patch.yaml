@@ -3,4 +3,4 @@ kind: HelmRelease
 metadata:
   name: redis-operator
 spec:
-  targetNamespace: gorons-bracelet
+  targetNamespace: optcp-operators-baseline

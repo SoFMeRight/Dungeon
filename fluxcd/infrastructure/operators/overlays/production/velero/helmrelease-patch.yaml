@@ -147,6 +147,10 @@ spec:
             - tingle-tuner
             # Storage services
             - gorons-bracelet
+            # Operators: CNPG, barman, MariaDB, Redis (namespace plan, group B).
+            # reflector and reloader carry velero.io/exclude-from-backup: they
+            # were never backed up in gerudo-crest.
+            - optcp-operators-baseline
             # DNS & NTP services
             - compass
           excludedResources:

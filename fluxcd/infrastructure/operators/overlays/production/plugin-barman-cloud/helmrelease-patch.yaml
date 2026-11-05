@@ -3,7 +3,7 @@ kind: HelmRelease
 metadata:
   name: plugin-barman-cloud
 spec:
-  targetNamespace: gorons-bracelet
+  targetNamespace: optcp-operators-baseline
   values:
     # The chart ships no requests, which would leave the component that gates every
     # cluster's WAL archiving in BestEffort and first to be reclaimed under node pressure.

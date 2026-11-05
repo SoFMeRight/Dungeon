@@ -1,6 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: optcp-infrastructure-management
+# Never backed up in optcp-infra-admin; opt out of the
+# optcp-infrastructure-management Velero coverage to keep that unchanged.
+labels:
+  - pairs:
+      velero.io/exclude-from-backup: "true"
+    includeTemplates: true
 resources:
   - ../../../base/node-converge
 patches:

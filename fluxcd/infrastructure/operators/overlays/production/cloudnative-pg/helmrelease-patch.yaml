@@ -3,7 +3,7 @@ kind: HelmRelease
 metadata:
   name: cloudnative-pg
 spec:
-  targetNamespace: gorons-bracelet
+  targetNamespace: optcp-operators-baseline
   values:
     resources:
       requests:
