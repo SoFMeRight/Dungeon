@@ -16,7 +16,6 @@ resources:
   - optcp-ingress-internal
   - kai-ingress-private
   - optcp-ingress-public
-  - kokiri-forest
   - delivery-bag
   - compass
   - swift-sail

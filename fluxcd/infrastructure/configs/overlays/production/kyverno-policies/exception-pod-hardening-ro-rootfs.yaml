@@ -55,10 +55,6 @@ spec:
           names: ["osticket-*"]
       - resources:
           kinds: [Pod]
-          namespaces: [kokiri-forest]
-          names: ["linkstack-*"]
-      - resources:
-          kinds: [Pod]
           namespaces: [outspokekin-social]
           names: ["linkstack-*"]
       - resources:

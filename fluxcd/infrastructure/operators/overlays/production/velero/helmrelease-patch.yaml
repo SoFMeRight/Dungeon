@@ -123,8 +123,6 @@ spec:
             # Gateway for internal-only services
             - optcp-ingress-internal
             - kai-ingress-private
-            # Gateway for personal/public services
-            - kokiri-forest
             # Public sites: Kai, astralfocal, enamorafoto (namespace plan, group AR)
             - optcp-web
             # OutspokeKin social platform and brand site

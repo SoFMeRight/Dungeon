@@ -24,7 +24,6 @@ spec:
                 - optcp-remote-access
                 - hyrule-castle
                 - king-of-red-lions
-                - kokiri-forest
                 - optcp-web
                 - outspokekin-social
                 - outspokekin-web
@@ -97,7 +96,6 @@ spec:
                 - optcp-remote-access
                 - hyrule-castle
                 - king-of-red-lions
-                - kokiri-forest
                 - optcp-web
                 - outspokekin-social
                 - outspokekin-web
@@ -170,7 +168,6 @@ spec:
                 - optcp-remote-access
                 - hyrule-castle
                 - king-of-red-lions
-                - kokiri-forest
                 - optcp-web
                 - outspokekin-social
                 - outspokekin-web

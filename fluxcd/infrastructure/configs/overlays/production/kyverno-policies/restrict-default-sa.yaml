@@ -29,7 +29,6 @@ spec:
                 - hookshot
                 - optcp-remote-access
                 - hyrule-castle
-                - kokiri-forest
                 - optcp-web
                 - outspokekin-social
                 - outspokekin-web
@@ -94,7 +93,6 @@ spec:
                 - hookshot
                 - optcp-remote-access
                 - hyrule-castle
-                - kokiri-forest
                 - optcp-web
                 - outspokekin-social
                 - outspokekin-web

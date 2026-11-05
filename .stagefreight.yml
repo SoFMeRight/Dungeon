@@ -72,7 +72,6 @@ gitops:
           - prplanit-support
       - name: "Personal Sites (Kokiri Forest\U0001F33F)"
         namespaces:
-          - kokiri-forest
           - optcp-web
           - outspokekin-social
           - outspokekin-web

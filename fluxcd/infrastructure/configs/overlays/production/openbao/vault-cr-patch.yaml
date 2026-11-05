@@ -352,7 +352,7 @@ spec:
             ttl: 24h
           - name: optcp-k8s-dungeon-internal
             bound_service_account_names: ["optcp-k8s-dungeon-internal"]
-            bound_service_account_namespaces: ["kokiri-forest", "optcp-web", "outspokekin-web", "yesimvegan-web"]
+            bound_service_account_namespaces: ["optcp-web", "outspokekin-web", "yesimvegan-web"]
             policies: ["optcp-k8s-dungeon-internal"]
             ttl: 1h
           - name: netbird
