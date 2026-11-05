@@ -5,3 +5,4 @@ namespace: compass
 
 resources:
   - adguard-secret.enc.yaml
+  - adguard-sync-user.enc.yaml

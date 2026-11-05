@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: adguard-sync-user
+type: Opaque
+stringData:
+    sync-password: ENC[AES256_GCM,data:UM0krzV0Sk1dbZzqT7+c,iv:hPkPLPFzyZQHArf0pS8bs8ujM2EXjsLPaWfWSANAc50=,tag:O9NdEp19Jkg+zetDx+sa3w==,type:str]
+sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
+    age:
+        - recipient: age1y8vegwlhcdgerrtn5947j5lcsswcu0zz6ukhs0hvvhsp79sa99nsn82dkr
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBnM1NNaVNud2ZHZkVSL2Fl
+            WFpQQVhycWtNaDhDcEx3Z3F2ZllFNmNSdlRBCisweDg1bjFRVFZSVm5JSWh5WEpZ
+            YzZYekFtcGpZa2NKT0h4N1k5VHQwRncKLS0tIG45SkEybWhxb3VzSHBKQ1E3U25l
+            MFVURWVSd1BXMzdSYTVZZGdyK1pXV1kKnahQLsw7XhhyjxWlsKQAKjuIdf5hTLuk
+            FYtCHrjiMaT+U2ctIYnQlkZA8nGGNONpO5nt33F0h3xpAThrUInu+g==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-11-05T07:28:50Z"
+    mac: ENC[AES256_GCM,data:RHZSKFKHEwOPJhwi65TBQ6CP2GyrC/9o+mvL9ZosTdlmEqu8gTnVdbhMt5w8fXhmNN/OqiJmEIA9DIC/hxPoXpz9apI4Z0QQ6nXjk8JZHqjpXCF2Dy2TWrm3K4GpXikuKXD2B9kLE72paYfUSjhwDZo/H40cRalrqBFCSfxoMrA=,iv:gTkTY886pdMLJyBpw1vOuDQm6uLZe8OtAm7faYCmRSo=,tag:IUh674kFB5buI1Zli3OsgA==,type:str]
+    pgp: []
+    encrypted_regex: ^(data|stringData)$
+    version: 3.9.4

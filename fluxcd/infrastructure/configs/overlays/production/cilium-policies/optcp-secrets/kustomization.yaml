@@ -7,4 +7,5 @@ resources:
   - cnp-webhooks.yaml
   - cnp-vault.yaml
   - cnp-egress-openbao-snapshot.yaml
+  - cnp-egress-secrets-write.yaml
   - cnp-egress-security-core.yaml
