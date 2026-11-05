@@ -3,12 +3,13 @@ kind: StatefulSet
 metadata:
   name: mealie-postgres
 spec:
-  replicas: 1
+  # Held at zero for the volume re-bind into yesimvegan-web.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/access-class: postgres
-        policy.prplanit.com/service-scope: temple-of-time.mealie.postgres
+        policy.prplanit.com/service-scope: yesimvegan-web.mealie.postgres
     spec:
       securityContext:
         runAsUser: 999

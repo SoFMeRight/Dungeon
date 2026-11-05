@@ -79,7 +79,7 @@
           - kind: StatefulSet
             name: penpot-redis
       mealie:
-        namespace: temple-of-time
+        namespace: yesimvegan-web
         pg_statefulset: mealie-postgres
         pg_container: postgres
         pg_user: mealie

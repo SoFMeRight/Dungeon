@@ -3,10 +3,12 @@ kind: StatefulSet
 metadata:
   name: hubzilla-mariadb
 spec:
+  # Held at zero for the volume re-bind into outspokekin-social.
+  replicas: 0
   template:
     metadata:
       labels:
-        policy.prplanit.com/service-scope: temple-of-time.hubzilla.mariadb
+        policy.prplanit.com/service-scope: outspokekin-social.hubzilla.mariadb
     spec:
       containers:
         - name: mariadb

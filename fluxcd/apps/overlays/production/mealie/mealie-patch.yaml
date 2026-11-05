@@ -3,13 +3,14 @@ kind: StatefulSet
 metadata:
   name: mealie
 spec:
-  replicas: 1
+  # Held at zero for the volume re-bind into yesimvegan-web.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: temple-of-time.mealie.postgres
+        policy.prplanit.com/access-scope-postgres: yesimvegan-web.mealie.postgres
     spec:
       # SysEggplant theme: serve a copy of the frontend with the theme stylesheet linked into every page.
       initContainers:

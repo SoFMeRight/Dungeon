@@ -14,7 +14,7 @@ spec:
     apiVersion: v1
     kind: PersistentVolumeClaim
     name: temple-of-time-hubzilla-store
-    namespace: temple-of-time
+    namespace: outspokekin-social
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
     nodeStageSecretRef:
