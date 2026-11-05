@@ -22,7 +22,7 @@ spec:
               # every start. UI edits do not survive a restart; change AdGuardHome.yaml.
               sed "s|ADGUARD_PASSWORD_PLACEHOLDER|${ADGUARD_PASSWORD}|g" /tmp/config/AdGuardHome.yaml > /tmp/processed-config.yaml
               # adguardhome-sync logs in as its own user, added once its bcrypt hash is in
-              # OpenBao (optcp/apps/adguard/adguardhome-sync).
+              # adguard-secret (sync-password).
               if [ -n "${SYNC_PASSWORD}" ]; then
                 awk 'BEGIN{h=ENVIRON["SYNC_PASSWORD"]} {print} /^users:$/{print "  - name: adguardhome-sync"; print "    password: " h}' /tmp/processed-config.yaml > /tmp/with-sync.yaml
                 mv /tmp/with-sync.yaml /tmp/processed-config.yaml
@@ -37,7 +37,7 @@ spec:
             - name: SYNC_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: adguard-sync-user
+                  name: adguard-secret
                   key: sync-password
                   optional: true
           volumeMounts:

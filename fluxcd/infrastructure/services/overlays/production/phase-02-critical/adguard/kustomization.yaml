@@ -8,7 +8,6 @@ resources:
   - cilium-network-policy.yaml
   - httproute-primary.yaml
   - httproute-replica.yaml
-  - externalsecret-sync-user.yaml
 
 patches:
   - path: statefulset-patch.yaml
