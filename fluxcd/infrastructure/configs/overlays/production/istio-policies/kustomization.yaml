@@ -6,7 +6,6 @@ resources:
   - compass/
   - delivery-bag/
   - fairy-bottle/
-  - gerudo-crest/
   - gorons-bracelet/
   - gossip-stone/
   - hookshot/
@@ -26,6 +25,7 @@ resources:
   - optcp-ipam/
   - optcp-keyring/
   - optcp-media/
+  - optcp-operators-baseline/
   - optcp-secrets/
   - optcp-shooting-gallery/
   - optcp-sibyl-system/

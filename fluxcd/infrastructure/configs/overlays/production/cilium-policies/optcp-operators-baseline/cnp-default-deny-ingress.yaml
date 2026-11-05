@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for optcp-operators-baseline namespace.
+    The workloads are reflector, which mirrors annotated secrets/configmaps
+    across namespaces, and reloader, which rolls workloads when their config
+    changes; both work only through the Kubernetes API. Their egress
+    (kube-apiserver + DNS + mesh) and their ingress (kubelet health probes) are
+    all covered by the universal CCNP baseline — no app-specific CNP is needed.
+    Neither serves anything to other pods.
+    Both directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
