@@ -1,7 +1,7 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-apps-egress
+  name: allow-netbird-egress
 spec:
   description: >-
     netbird (WireGuard management/signal/TURN + peers) reaches open-ended external

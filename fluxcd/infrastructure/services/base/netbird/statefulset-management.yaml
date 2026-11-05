@@ -100,7 +100,7 @@ spec:
                     "Issuer": "https://sso.optcp.com",
                     "TokenEndpoint": "https://sso.optcp.com/oauth/v2/token",
                     "ClientID": "${IDP_MGMT_CLIENT_ID}",
-                    "ClientSecret": "${AUTH_CLIENT_SECRET}",
+                    "ClientSecret": "${IDP_MGMT_CLIENT_SECRET}",
                     "GrantType": "client_credentials"
                   },
                   "ExtraConfig": {
@@ -158,7 +158,7 @@ spec:
 
               # Substitute environment variables
               sed -i "s|\${AUTH_CLIENT_ID}|${AUTH_CLIENT_ID}|g" /etc/netbird/config.json
-              sed -i "s|\${AUTH_CLIENT_SECRET}|${AUTH_CLIENT_SECRET}|g" /etc/netbird/config.json
+              sed -i "s|\${IDP_MGMT_CLIENT_SECRET}|${IDP_MGMT_CLIENT_SECRET}|g" /etc/netbird/config.json
               sed -i "s|\${IDP_MGMT_CLIENT_ID}|${IDP_MGMT_CLIENT_ID}|g" /etc/netbird/config.json
               sed -i "s|\${TURN_SHARED_SECRET}|${TURN_SHARED_SECRET}|g" /etc/netbird/config.json
               sed -i "s|\${NETBIRD_RELAY_AUTH_SECRET}|${NETBIRD_RELAY_AUTH_SECRET}|g" /etc/netbird/config.json
@@ -172,11 +172,11 @@ spec:
                 secretKeyRef:
                   name: netbird-secrets
                   key: AUTH_CLIENT_ID
-            - name: AUTH_CLIENT_SECRET
+            - name: IDP_MGMT_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: netbird-secrets
-                  key: AUTH_CLIENT_SECRET
+                  key: IDP_MGMT_CLIENT_SECRET
             - name: IDP_MGMT_CLIENT_ID
               valueFrom:
                 secretKeyRef:
@@ -240,12 +240,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: netbird-secrets
-                  key: AUTH_CLIENT_ID
+                  key: IDP_MGMT_CLIENT_ID
             - name: NETBIRD_IDP_MGMT_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: netbird-secrets
-                  key: AUTH_CLIENT_SECRET
+                  key: IDP_MGMT_CLIENT_SECRET
           volumeMounts:
             - name: management-data
               mountPath: /var/lib/netbird

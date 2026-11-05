@@ -23,7 +23,7 @@ spec:
               - cluster.local/ns/optcp-staff-suite/sa/openproject-postgres
               - cluster.local/ns/optcp-staff-suite/sa/wikijs-sops-postgres
               - cluster.local/ns/optcp-sibyl-system/sa/dependency-track-postgres
-              - cluster.local/ns/zeldas-lullaby/sa/netbird-postgres
+              - cluster.local/ns/optcp-remote-access/sa/netbird-postgres
               - cluster.local/ns/optcp-keyring/sa/vaultwarden-postgres
               - cluster.local/ns/optcp-identity/sa/zitadel-postgres
       to:

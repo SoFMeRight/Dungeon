@@ -4,7 +4,3 @@ namespace: zeldas-lullaby
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
-  - allow-netbird-management-to-netbird-postgres.yaml
-  - allow-netbird-turn-loadbalancer.yaml
-  - allow-netbird-postgres-replication.yaml
-  - allow-gateway-ingress-cell-membrane.yaml

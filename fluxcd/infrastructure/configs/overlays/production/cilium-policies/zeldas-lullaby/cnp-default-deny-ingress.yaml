@@ -4,15 +4,9 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress AND egress for zeldas-lullaby namespace.
-    Ingress: netbird;
-    CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, postgres/redis
-    contracts, and ingress-gateway traffic for labeled pods.
-    Egress: DNS + intra-namespace mesh (app->db, redis) +
-    kube-apiserver ride the universal CCNP baseline; cnp-egress-apps grants the
-    reaching-external admin apps world+cluster. DBs and redis/sentinel
-    need nothing beyond the mesh.
-    Both directions use a reserved-label anchor to trigger enforcement.
+    Default-deny ingress AND egress for zeldas-lullaby namespace, which no longer
+    holds a workload (netbird moved to optcp-remote-access). Both directions use a
+    reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
     egress: true

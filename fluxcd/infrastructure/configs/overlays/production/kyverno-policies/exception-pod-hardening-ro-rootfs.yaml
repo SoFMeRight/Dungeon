@@ -147,10 +147,10 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-ipam]
           names: ["netbox-server-*"]
-      # zeldas-lullaby — netbird-dashboard supervisord.
+      # optcp-remote-access — netbird-dashboard supervisord.
       - resources:
           kinds: [Pod]
-          namespaces: [zeldas-lullaby]
+          namespaces: [optcp-remote-access]
           names:
             - "netbird-dashboard-*"
       # optcp-identity — zitadel's configuration Job and Redis.

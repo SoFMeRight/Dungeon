@@ -10,7 +10,7 @@ spec:
         any:
           - resources:
               kinds: [Deployment]
-              namespaces: ["swift-sail", "zeldas-lullaby", "temple-of-time"]
+              namespaces: ["swift-sail", "optcp-remote-access", "temple-of-time"]
               selector:
                 matchLabels:
                   stunner.l7mp.io/owned-by: stunner
@@ -39,21 +39,21 @@ spec:
             annotations:
               lbipam.cilium.io/ips: "172.22.30.120"
     # NetBird's STUNner TURN gateway inherits coturn's old address (172.22.30.86,
-    # sharing-key zeldas-lullaby) so turn.prplanit.com DNS and the WAN NAT don't move.
+    # sharing-key optcp-remote-access) so turn.prplanit.com DNS and the WAN NAT don't move.
     - name: set-netbird-turn-lb-ip-on-service
       match:
         any:
           - resources:
               kinds: [Service]
-              namespaces: ["zeldas-lullaby"]
+              namespaces: ["optcp-remote-access"]
               annotations:
-                stunner.l7mp.io/related-gateway-name: "zeldas-lullaby/netbird-turn"
+                stunner.l7mp.io/related-gateway-name: "optcp-remote-access/netbird-turn"
       mutate:
         patchStrategicMerge:
           metadata:
             annotations:
               lbipam.cilium.io/ips: "172.22.30.86"
-              lbipam.cilium.io/sharing-key: "zeldas-lullaby"
+              lbipam.cilium.io/sharing-key: "optcp-remote-access"
               lbipam.cilium.io/sharing-cross-namespace: "*"
     # Matrix's TURN gateway takes its own address rather than sharing NetBird's: both
     # want a TURN listener, and two listeners cannot hold the same port on one IP.

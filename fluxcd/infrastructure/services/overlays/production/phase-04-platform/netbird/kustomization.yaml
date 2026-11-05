@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: zeldas-lullaby
+namespace: optcp-remote-access
 
 resources:
   - ../../../../base/netbird
@@ -27,7 +27,7 @@ patches:
           labels:
             policy.prplanit.com/cnpg: "managed"
             policy.prplanit.com/access-class: postgres
-            policy.prplanit.com/service-scope: zeldas-lullaby.netbird.postgres
+            policy.prplanit.com/service-scope: optcp-remote-access.netbird.postgres
             policy.prplanit.com/cap.s3-nas: "true"
             policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
     target:
@@ -93,46 +93,6 @@ patches:
       name: netbird-relay
   - patch: |-
       - op: replace
-        path: /spec/secretStoreRef/name
-        value: openbao-zeldas-letter
-      - op: replace
-        path: /spec/data/0/remoteRef/key
-        value: apps/netbird
-      - op: replace
-        path: /spec/data/1/remoteRef/key
-        value: apps/netbird
-      - op: replace
-        path: /spec/data/2/remoteRef/key
-        value: apps/netbird
-      - op: replace
-        path: /spec/data/3/remoteRef/key
-        value: apps/netbird
-      - op: replace
-        path: /spec/data/4/remoteRef/key
-        value: apps/netbird
-      - op: replace
-        path: /spec/data/5/remoteRef/key
-        value: apps/netbird
-      - op: replace
-        path: /spec/data/6/remoteRef/key
-        value: apps/netbird
-      - op: replace
-        path: /spec/data/7/remoteRef/key
-        value: apps/netbird
-      - op: replace
-        path: /spec/data/8/remoteRef/key
-        value: apps/netbird
-      - op: replace
-        path: /spec/data/9/remoteRef/key
-        value: apps/netbird
-      - op: replace
-        path: /spec/data/10/remoteRef/key
-        value: apps/netbird
-    target:
-      kind: ExternalSecret
-      name: netbird-secrets
-  - patch: |-
-      - op: replace
         path: /spec/volumeClaimTemplates/0/spec/storageClassName
         value: ceph-rbd
     target:
@@ -195,4 +155,7 @@ patches:
     target:
       kind: StatefulSet
       name: netbird-management
-  - path: prepare-move-patch.yaml
+  - path: hold-for-move-patch.yaml
+  # Last, and alone in its file: kustomize 5.5.0 (StageFreight) panics on several
+  # $patch: delete documents in one file.
+  - path: hold-cluster-for-move-patch.yaml

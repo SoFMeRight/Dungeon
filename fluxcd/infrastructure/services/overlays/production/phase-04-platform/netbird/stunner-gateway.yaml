@@ -20,7 +20,7 @@ spec:
     group: "stunner.l7mp.io"
     kind: GatewayConfig
     name: netbird-turn
-    namespace: zeldas-lullaby
+    namespace: optcp-remote-access
   description: "STUNner TURN/STUN gateway for NetBird VPN peers"
 ---
 apiVersion: stunner.l7mp.io/v1
@@ -34,7 +34,7 @@ spec:
   # Secret carrying type=ephemeral + the shared secret (materialised from Vault).
   authRef:
     name: netbird-turn-auth
-    namespace: zeldas-lullaby
+    namespace: optcp-remote-access
   # The shared hardened dataplane (infrastructure/configs/.../stunner). Referencing it
   # still yields this gateway's own stunnerd deployment, realm and credentials.
   dataplane: stunner-hardened
@@ -48,7 +48,7 @@ spec:
   gatewayClassName: netbird-turn
   # One UDP listener is all NetBird uses (turn:turn.prplanit.com:3478?transport=udp).
   # The operator auto-creates the LoadBalancer Service; a Kyverno rule pins its IP
-  # to 172.22.30.86 (sharing-key zeldas-lullaby), the address coturn used to hold.
+  # to 172.22.30.86 (sharing-key optcp-remote-access), the address coturn used to hold.
   listeners:
     - name: turn-udp
       port: 3478

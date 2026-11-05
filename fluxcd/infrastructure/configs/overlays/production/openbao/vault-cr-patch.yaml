@@ -209,6 +209,23 @@ spec:
           path "optcp/data/apps/vaultwarden/smtp" {
             capabilities = ["read"]
           }
+      - name: netbird
+        rules: |
+          path "optcp/data/apps/netbird/app" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/netbird/oidc" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/netbird/postgres" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/netbird/s3-backup" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/netbird/zitadel" {
+            capabilities = ["read"]
+          }
       - name: netbird-router
         rules: |
           path "optcp/data/apps/netbird-router/netbird" {
@@ -327,6 +344,11 @@ spec:
             bound_service_account_names: ["optcp-k8s-dungeon-internal"]
             bound_service_account_namespaces: ["kokiri-forest"]
             policies: ["optcp-k8s-dungeon-internal"]
+            ttl: 1h
+          - name: netbird
+            bound_service_account_names: ["netbird-management"]
+            bound_service_account_namespaces: ["optcp-remote-access"]
+            policies: ["netbird"]
             ttl: 1h
           - name: netbird-router
             bound_service_account_names: ["netbird-router-dungeon"]

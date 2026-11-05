@@ -5,7 +5,8 @@ metadata:
 spec:
   description: >-
     Default-deny ingress and egress for optcp-remote-access; the universal CCNPs and the
-    per-app cnp-egress-* policies grant what the access plane needs.
+    per-app cnp-egress-* policies grant what the access plane needs, and cnp-netbird-turn
+    admits public STUN/TURN to NetBird's STUNner dataplane.
   enableDefaultDeny:
     ingress: true
     egress: true

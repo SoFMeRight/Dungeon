@@ -1,7 +1,7 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-netbird-postgres-replication
+  name: allow-netbird-management-to-netbird-postgres
 spec:
   selector:
     matchLabels:
@@ -11,8 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/zeldas-lullaby/sa/netbird-postgres
+              - cluster.local/ns/optcp-remote-access/sa/netbird-management
       to:
         - operation:
-            # 5432: streaming replication; 8000: instance-manager peer /failsafe (CNPG >=1.30)
-            ports: ["5432", "8000"]
+            ports: ["5432"]

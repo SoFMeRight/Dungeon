@@ -29,6 +29,7 @@ spec:
               - tingle-tuner
               - wallmaster
               - optcp-identity
+              - optcp-remote-access
               - zeldas-lullaby
       to:
         - operation:

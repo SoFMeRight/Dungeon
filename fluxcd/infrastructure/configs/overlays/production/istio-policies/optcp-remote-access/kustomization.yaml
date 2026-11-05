@@ -9,4 +9,7 @@ resources:
   - allow-boundary-worker-to-controller.yaml
   - allow-boundary-worker-loadbalancer.yaml
   - allow-boundary-admin-to-controller.yaml
+  - allow-netbird-management-to-netbird-postgres.yaml
+  - allow-netbird-postgres-replication.yaml
+  - allow-netbird-turn-loadbalancer.yaml
   - allow-gateway-ingress-cell-membrane.yaml

@@ -16,5 +16,6 @@ resources:
   - service-signal.yaml
   - service-dashboard.yaml
   - service-relay.yaml
+  - secretstore.yaml
   - externalsecret.yaml
   - scheduledbackup-postgres.yaml

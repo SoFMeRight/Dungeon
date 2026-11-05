@@ -8,4 +8,4 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: zeldas-lullaby.netbird.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-remote-access.netbird.postgres

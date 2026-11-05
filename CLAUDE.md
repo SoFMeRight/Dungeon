@@ -234,7 +234,7 @@
   - BGP LOAD BALANCERS:
     - General CIDR: 172.22.30.0/24.
     - Shared IPs (Ocarina of Time naming theme):
-      - NetBird TURN (netbird-turn): 172.22.30.86 (sharing-key: zeldas-lullaby)
+      - NetBird TURN (netbird-turn): 172.22.30.86 (sharing-key: optcp-remote-access)
       - Network infrastructure (unifi-network-application): 172.22.30.20 (sharing-key: kaepora-gaebora)
       - Mail services (ntfy-smtp): 172.22.30.102 (sharing-key: delivery-bag)
       - Mail server (stalwart): 172.22.30.103 (sharing-key: optcp-delivery-bag)
