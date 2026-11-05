@@ -18,6 +18,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: gorons-bracelet
             app.kubernetes.io/name: mariadb-operator
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-operators-baseline
+            app.kubernetes.io/name: mariadb-operator
       toPorts:
         - ports:
             - port: "3306"

@@ -1,0 +1,31 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-cnpg-instance-callback
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cloudnative-pg
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/gossip-stone/sa/gatus-postgres
+              - cluster.local/ns/gossip-stone/sa/grafana-postgres
+              - cluster.local/ns/hyrule-castle/sa/calcom-postgres
+              - cluster.local/ns/optcp-supply-chain/sa/gitlab-postgresql
+              - cluster.local/ns/optcp-supply-chain/sa/harbor-postgres
+              - cluster.local/ns/lost-woods/sa/homarr-postgres
+              - cluster.local/ns/temple-of-time/sa/appflowy-postgres
+              - cluster.local/ns/optcp-cloud/sa/nextcloud-postgres
+              - cluster.local/ns/temple-of-time/sa/open-webui-postgres
+              - cluster.local/ns/optcp-staff-suite/sa/openproject-postgres
+              - cluster.local/ns/optcp-staff-suite/sa/wikijs-sops-postgres
+              - cluster.local/ns/optcp-sibyl-system/sa/dependency-track-postgres
+              - cluster.local/ns/optcp-remote-access/sa/netbird-postgres
+              - cluster.local/ns/optcp-keyring/sa/vaultwarden-postgres
+              - cluster.local/ns/optcp-identity/sa/zitadel-postgres
+      to:
+        - operation:
+            ports: ["9443"]

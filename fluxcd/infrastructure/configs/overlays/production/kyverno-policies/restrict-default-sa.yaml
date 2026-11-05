@@ -24,6 +24,7 @@ spec:
                 - delivery-bag
                 - fairy-bottle
                 - gorons-bracelet
+                - optcp-operators-baseline
                 - gossip-stone
                 - hookshot
                 - optcp-remote-access
@@ -83,6 +84,7 @@ spec:
                 - delivery-bag
                 - fairy-bottle
                 - gorons-bracelet
+                - optcp-operators-baseline
                 - gossip-stone
                 - hookshot
                 - optcp-remote-access

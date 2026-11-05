@@ -12,6 +12,7 @@ spec:
         - source:
             principals:
               - cluster.local/ns/gorons-bracelet/sa/redis-operator
+              - cluster.local/ns/optcp-operators-baseline/sa/redis-operator
       to:
         - operation:
             ports: ["6379"]
@@ -30,6 +31,7 @@ spec:
         - source:
             principals:
               - cluster.local/ns/gorons-bracelet/sa/redis-operator
+              - cluster.local/ns/optcp-operators-baseline/sa/redis-operator
       to:
         - operation:
             ports: ["26379"]

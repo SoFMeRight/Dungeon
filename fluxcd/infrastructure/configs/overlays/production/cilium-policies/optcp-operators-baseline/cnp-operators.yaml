@@ -1,0 +1,67 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-cloudnative-pg-webhook
+spec:
+  description: >-
+    Allow kube-apiserver to reach cloudnative-pg webhook on 9443/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: cloudnative-pg
+  ingress:
+    - fromEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "9443"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-mariadb-operator-webhook
+spec:
+  description: >-
+    Allow kube-apiserver to reach mariadb-operator webhook on 9443/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: mariadb-operator-webhook
+  ingress:
+    - fromEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "9443"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-cnpg-to-barman-plugin
+spec:
+  description: >-
+    Allow the cloudnative-pg operator to reach the barman-cloud plugin on 9090/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: plugin-barman-cloud
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: gorons-bracelet
+            app.kubernetes.io/name: cloudnative-pg
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-operators-baseline
+            app.kubernetes.io/name: cloudnative-pg
+      toPorts:
+        - ports:
+            - port: "9090"
+              protocol: TCP

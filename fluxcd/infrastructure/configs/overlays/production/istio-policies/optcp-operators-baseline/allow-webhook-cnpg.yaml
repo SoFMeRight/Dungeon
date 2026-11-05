@@ -1,0 +1,23 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-cnpg-webhook-apiserver
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cloudnative-pg
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            ipBlocks:
+              # Control plane nodes (kube-apiserver webhook callbacks)
+              - "172.22.144.150/32"  # dungeon-map-001
+              - "172.22.144.151/32"  # dungeon-map-002
+              - "172.22.144.152/32"  # dungeon-map-003
+              - "172.22.144.153/32"  # dungeon-map-004
+              - "172.22.144.154/32"  # dungeon-map-005
+              - "172.22.144.105/32"  # control plane VIP
+      to:
+        - operation:
+            ports: ["9443"]

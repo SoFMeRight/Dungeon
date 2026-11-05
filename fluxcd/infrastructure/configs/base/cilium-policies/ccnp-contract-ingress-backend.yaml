@@ -20,13 +20,13 @@ spec:
       policy.prplanit.com/ingress: "true"
   ingress:
     - fromEndpoints:
-        # phloem-ingress-gateway
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-ingress-internal
-            policy.prplanit.com/client-class: ingress-gateway
         # xylem-ingress-gateway
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: kai-ingress-private
+            policy.prplanit.com/client-class: ingress-gateway
+        # phloem-ingress-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-ingress-internal
             policy.prplanit.com/client-class: ingress-gateway
         # cell-membrane-ingress-gateway
         - matchLabels:

@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: optcp-operators-baseline
 resources:
   - cnp-default-deny-ingress.yaml
+  - cnp-operators.yaml

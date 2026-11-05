@@ -12,6 +12,7 @@ spec:
         - source:
             principals:
               - cluster.local/ns/gorons-bracelet/sa/mariadb-operator
+              - cluster.local/ns/optcp-operators-baseline/sa/mariadb-operator
       to:
         - operation:
             ports: ["3306", "5555"]

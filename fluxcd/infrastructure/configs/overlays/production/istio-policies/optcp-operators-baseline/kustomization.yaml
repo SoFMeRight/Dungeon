@@ -3,3 +3,8 @@ kind: Kustomization
 namespace: optcp-operators-baseline
 resources:
   - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml
+  - allow-cnpg-instance-callback.yaml
+  - allow-webhook-cnpg.yaml
+  - allow-cnpg-to-barman-plugin.yaml
+  - allow-webhook-mariadb-operator.yaml

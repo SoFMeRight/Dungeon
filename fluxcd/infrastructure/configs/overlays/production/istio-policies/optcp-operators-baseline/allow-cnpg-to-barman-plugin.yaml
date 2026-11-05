@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-cnpg-to-barman-plugin
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: plugin-barman-cloud
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/gorons-bracelet/sa/cloudnative-pg
+              - cluster.local/ns/optcp-operators-baseline/sa/cloudnative-pg
+      to:
+        - operation:
+            ports: ["9090"]

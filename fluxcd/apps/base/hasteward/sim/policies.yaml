@@ -19,6 +19,7 @@ spec:
         - source:
             principals:
               - cluster.local/ns/gorons-bracelet/sa/cloudnative-pg
+              - cluster.local/ns/optcp-operators-baseline/sa/cloudnative-pg
       to:
         - operation:
             ports:

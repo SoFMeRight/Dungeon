@@ -5,12 +5,13 @@ metadata:
 spec:
   description: >-
     Default-deny ingress AND egress for optcp-operators-baseline namespace.
-    The workloads are reflector, which mirrors annotated secrets/configmaps
-    across namespaces, and reloader, which rolls workloads when their config
-    changes; both work only through the Kubernetes API. Their egress
-    (kube-apiserver + DNS + mesh) and their ingress (kubelet health probes) are
-    all covered by the universal CCNP baseline — no app-specific CNP is needed.
-    Neither serves anything to other pods.
+    The workloads are the CloudNativePG (+ barman-cloud plugin), MariaDB and
+    Redis operators, redis-sentinel-repair, reflector and reloader. Their
+    egress (kube-apiserver + DNS + mesh) and their kubelet probes ride the
+    universal CCNP baseline; cnp-operators admits the kube-apiserver to the
+    CNPG and MariaDB webhooks and the CNPG operator to the barman-cloud plugin.
+    The operators reach their databases through the cnpg-, mariadb- and
+    redis-operator CCNPs and the per-namespace Istio policies.
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true

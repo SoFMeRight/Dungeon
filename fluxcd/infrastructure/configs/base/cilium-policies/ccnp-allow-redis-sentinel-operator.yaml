@@ -18,6 +18,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: gorons-bracelet
             app.kubernetes.io/name: redis-operator
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-operators-baseline
+            app.kubernetes.io/name: redis-operator
       toPorts:
         - ports:
             - port: "26379"
