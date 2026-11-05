@@ -610,9 +610,13 @@ spec:
               default_user: "{{identity.entity.aliases.auth_oidc_d33174a6.name}}"
               # bank-vaults injects a list without this; OpenBao's ssh role API requires a string.
               allowed_domains: ""
-              allowed_extensions: "permit-pty"
+              allowed_extensions: "permit-X11-forwarding,permit-agent-forwarding,permit-port-forwarding,permit-pty,permit-user-rc"
               default_extensions:
+                permit-X11-forwarding: ""
+                permit-agent-forwarding: ""
+                permit-port-forwarding: ""
                 permit-pty: ""
+                permit-user-rc: ""
               ttl: "1h0m0s"
               max_ttl: "4h0m0s"
       # Cosign image/attestation signer. ECDSA keys generated once inside OpenBao,
