@@ -11,16 +11,16 @@ spec:
       labels:
         seat: marxii
     spec:
-      # The GTX 980 Ti seat node.
+      # The seat node.
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
               - matchExpressions:
-                  - key: nvidia.com/gpu.family
+                  - key: kubernetes.io/hostname
                     operator: In
                     values:
-                      - maxwell
+                      - dungeon-chest-004
       initContainers:
         - name: sync-apps
           volumeMounts:

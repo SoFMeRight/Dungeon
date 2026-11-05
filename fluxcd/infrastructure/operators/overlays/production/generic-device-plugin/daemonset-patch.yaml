@@ -5,9 +5,9 @@ metadata:
 spec:
   template:
     spec:
-      # Only the game-streaming seat node (GTX 980 Ti).
+      # Only the game-streaming seat node.
       nodeSelector:
-        nvidia.com/gpu.family: maxwell
+        kubernetes.io/hostname: dungeon-chest-004
       containers:
         - name: generic-device-plugin
           # 0.2.0; upstream publishes no image signature, so the digest is the pin.
