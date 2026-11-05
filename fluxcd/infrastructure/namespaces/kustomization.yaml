@@ -39,7 +39,6 @@ resources:
   - hookshot.yaml
   - optcp-remote-access.yaml
   - lakitu.yaml
-  - gerudo-crest.yaml
   - mr-resetti.yaml
   - training-dummy.yaml
   - arbitorium-game-streaming.yaml
