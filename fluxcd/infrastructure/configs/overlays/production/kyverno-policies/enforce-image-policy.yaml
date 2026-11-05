@@ -50,7 +50,6 @@ spec:
                 - temple-of-time
                 - tingle-tuner
                 - wallmaster
-                - zeldas-lullaby
       validate:
         message: >-
           Images must be pinned to a non-latest tag or an immutable digest.
@@ -128,7 +127,6 @@ spec:
                 - temple-of-time
                 - tingle-tuner
                 - wallmaster
-                - zeldas-lullaby
       validate:
         message: >-
           Images must be pinned to a non-latest tag or an immutable digest.
@@ -210,7 +208,6 @@ spec:
                 - temple-of-time
                 - tingle-tuner
                 - wallmaster
-                - zeldas-lullaby
       validate:
         message: >-
           Image registry is not allowlisted. Use an approved registry,
@@ -291,7 +288,6 @@ spec:
                 - temple-of-time
                 - tingle-tuner
                 - wallmaster
-                - zeldas-lullaby
       validate:
         message: >-
           Image registry is not allowlisted. Use an approved registry,

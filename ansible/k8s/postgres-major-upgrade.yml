@@ -134,7 +134,7 @@
             name: opnform-redis
 
       semaphore:
-        namespace: zeldas-lullaby
+        namespace: optcp-infrastructure-management
         pg_statefulset: semaphore
         pg_container: postgres
         pg_user: semaphore

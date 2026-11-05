@@ -21,9 +21,6 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: zeldas-lullaby
-            policy.prplanit.com/cap.oidc: "true"
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-identity
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:

@@ -26,9 +26,6 @@ gitops:
   dungeon:
     backend: flux
     categories:
-      - name: "Administration (Zelda's Lullaby\U0001F3B5)"
-        namespaces:
-          - zeldas-lullaby
       - name: "DNS & Network (Compass\U0001F9ED)"
         namespaces:
           - compass
@@ -36,13 +33,14 @@ gitops:
         namespaces:
           - king-of-red-lions
           - optcp-ingress-public
-          - farores-wind
+          - optcp-vpn
       - name: "Storage (Goron's Bracelet\U0001F4AA)"
         namespaces:
           - gorons-bracelet
       - name: Backup Services
         namespaces:
           - fairy-bottle
+          - training-dummy
       - name: "Observability (Gossip Stone\U0001F4AC)"
         namespaces:
           - gossip-stone
@@ -50,6 +48,7 @@ gitops:
       - name: "Security & IoT (Lens of Truth\U0001F50D)"
         namespaces:
           - lens-of-truth
+          - optcp-sibyl-system
         tier: app
       - name: "Bot Protection (Wallmaster\U0001F590️)"
         namespaces:
@@ -58,6 +57,9 @@ gitops:
       - name: Internal Trust
         namespaces:
           - optcp-operators-baseline
+          - optcp-identity
+          - optcp-keyring
+          - optcp-secrets
       - name: Policy Enforcement
         namespaces:
           - mr-resetti
@@ -65,6 +67,9 @@ gitops:
       - name: "Business Apps (Hyrule Castle\U0001F3F0)"
         namespaces:
           - hyrule-castle
+          - optcp-cloud
+          - optcp-staff-suite
+          - prplanit-support
       - name: "Personal Sites (Kokiri Forest\U0001F33F)"
         namespaces:
           - kokiri-forest
@@ -72,9 +77,12 @@ gitops:
         namespaces:
           - optcp-ingress-internal
           - kai-ingress-private
+          - optcp-infrastructure-management
+          - optcp-ipam
       - name: "Content & Media (Temple of Time\U0001F3DB️)"
         namespaces:
           - temple-of-time
+          - optcp-media
         tier: app
       - name: "Discovery & Dashboards (Lost Woods\U0001F332)"
         namespaces:
@@ -86,15 +94,18 @@ gitops:
         tier: app
       - name: "Game Servers (Shooting Gallery\U0001F3AF)"
         namespaces:
-          - shooting-gallery
+          - optcp-shooting-gallery
+          - arbitorium-game-streaming
         tier: app
       - name: "Notifications (Delivery Bag\U0001F4EC)"
         namespaces:
           - delivery-bag
+          - optcp-delivery-bag
         tier: app
       - name: "Remote Access (Hookshot\U0001FA9D)"
         namespaces:
           - hookshot
+          - optcp-remote-access
         tier: app
       - name: "Tools & Utilities (Tingle Tuner\U0001F527)"
         namespaces:
@@ -103,6 +114,10 @@ gitops:
       - name: Private Apps (Pedestal of Time⚔️)
         namespaces:
           - pedestal-of-time
+      - name: Supply Chain & CI
+        namespaces:
+          - optcp-supply-chain
+          - optcp-ci-runners
       - name: Platform
         namespaces:
           - kube-system

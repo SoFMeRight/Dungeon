@@ -41,7 +41,7 @@
 #   ... ansible-playbook k8s/recovery/hasteward.yml \
 #       -e engine=cnpg \
 #       -e cluster_name=zitadel-postgres \
-#       -e namespace=zeldas-lullaby \
+#       -e namespace=optcp-identity \
 #       -e mode=triage
 #
 # Repair all unhealthy instances:

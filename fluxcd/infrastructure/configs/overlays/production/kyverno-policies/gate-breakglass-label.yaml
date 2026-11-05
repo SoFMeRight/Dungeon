@@ -44,7 +44,6 @@ spec:
                 - temple-of-time
                 - tingle-tuner
                 - wallmaster
-                - zeldas-lullaby
       preconditions:
         all:
           - key: "{{ request.object.metadata.labels.\"zt.breakglass/pod\" || '' }}"
@@ -112,7 +111,6 @@ spec:
                 - temple-of-time
                 - tingle-tuner
                 - wallmaster
-                - zeldas-lullaby
       preconditions:
         all:
           - key: "{{ request.object.spec.template.metadata.labels.\"zt.breakglass/pod\" || '' }}"
@@ -180,7 +178,6 @@ spec:
                 - temple-of-time
                 - tingle-tuner
                 - wallmaster
-                - zeldas-lullaby
               operations: [UPDATE]
       preconditions:
         all:

@@ -61,8 +61,6 @@ spec:
                 secretKeyRef:
                   name: zitadel-postgres-superuser
                   key: password
-            - name: ZITADEL_FIRSTINSTANCE_MACHINEKEYPATH
-              value: /machinekey/sa.json
             - name: ZITADEL_FIRSTINSTANCE_PATPATH
               value: /machinekey/pat
             - name: ZITADEL_FIRSTINSTANCE_LOGINCLIENTPATPATH
@@ -90,40 +88,6 @@ spec:
             limits:
               memory: 512Mi
               cpu: 500m
-        - name: machinekey-writer
-          image: PLACEHOLDER_KUBECTL_IMAGE
-          securityContext:
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - ALL
-          env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          command:
-            - sh
-            - -c
-            - |
-              set -e
-              echo "Waiting for setup container to terminate..."
-              until [ ! -z "$(kubectl get pod ${POD_NAME} -n PLACEHOLDER_NAMESPACE -o jsonpath="{.status.containerStatuses[?(@.name=='zitadel-setup')].state.terminated}" 2>/dev/null)" ]; do
-                sleep 5
-              done
-              if [ ! -s /machinekey/sa.json ]; then
-                echo "Setup wrote no /machinekey/sa.json; secret zitadel-admin-sa left unchanged."
-                exit 0
-              fi
-              echo "Setup container terminated. Extracting sa.json..."
-              kubectl create secret generic zitadel-admin-sa \
-                --from-file=zitadel-admin-sa.json=/machinekey/sa.json \
-                --dry-run=client -o yaml | kubectl apply -f -
-              echo "Secret zitadel-admin-sa applied."
-          volumeMounts:
-            - name: machinekey
-              mountPath: /machinekey
-              readOnly: true
         - name: machine-pat-writer
           image: PLACEHOLDER_KUBECTL_IMAGE
           securityContext:
