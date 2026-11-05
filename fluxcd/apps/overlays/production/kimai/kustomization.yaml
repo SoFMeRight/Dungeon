@@ -6,6 +6,10 @@ resources:
   - httproute.yaml
 patches:
   - path: mariadb-patch.yaml
+  - path: backup-mariadb-patch.yaml
+    target:
+      kind: Backup
+      name: kimai-mariadb-backup-.*
   - path: statefulset-patch.yaml
   - path: service-kimai-ingress-patch.yaml
     target:

@@ -230,6 +230,18 @@ configs:
             ]
           },
           {
+            "name": "optcp-dungeon-mariadb-kimai",
+            "credentials": [
+              { "accessKey": "${OPTCP_DUNGEON_MARIADB_KIMAI_S3_ACCESS_KEY}", "secretKey": "${OPTCP_DUNGEON_MARIADB_KIMAI_S3_SECRET_KEY}" }
+            ],
+            "actions": [
+              "Read:optcp-dungeon-mariadb-kimai",
+              "Write:optcp-dungeon-mariadb-kimai",
+              "List:optcp-dungeon-mariadb-kimai",
+              "Tagging:optcp-dungeon-mariadb-kimai"
+            ]
+          },
+          {
             "_comment": "MIGRATION: the prefix grants below are the pre-split location; remove them once destinationPath points at the bucket.",
             "name": "outspokekin-dungeon-cnpg-matrix",
             "credentials": [

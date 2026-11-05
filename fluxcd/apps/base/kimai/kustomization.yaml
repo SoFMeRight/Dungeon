@@ -4,6 +4,8 @@ resources:
   - serviceaccount.yaml
   - mariadb.yaml
   - mariadb-externalsecret.yaml
+  - backup-mariadb.yaml
+  - externalsecret-backup.yaml
   - statefulset.yaml
   - externalsecret.yaml
   - service.yaml
