@@ -25,7 +25,7 @@
 #   # Plan only (default — no changes, flux untouched):     (no flags)
 #   # Migrate every static PV (one commit for all):         -e confirm=true
 #   # Scope to one namespace:                               -e confirm=true -e targets=temple-of-time
-#   # Scope to specific volumes:                            -e confirm=true -e 'targets_list=["temple-of-time/optcp-mealie-data"]'
+#   # Scope to specific volumes:                            -e confirm=true -e 'targets_list=["yesimvegan-web/optcp-mealie-data"]'
 
 - name: Migrate static RBD PVs to the Rook operator driver (same name, in place)
   hosts: localhost

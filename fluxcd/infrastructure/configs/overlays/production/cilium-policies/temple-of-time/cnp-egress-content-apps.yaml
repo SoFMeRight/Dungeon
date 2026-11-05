@@ -7,12 +7,10 @@ spec:
     These content/media apps fetch from an open-ended external set as their core
     function — metadata/artwork providers (jellyfin, plex, calibre-web,
     photoprism), arbitrary user URLs to archive/scrape/shorten (linkwarden,
-    mealie, shlink), LLM/AI and web-RAG endpoints (open-webui, appflowy-cloud/
-    worker), photo maps + ML models (immich), blog/wiki integrations + email
-    (ghost, wikijs-vegan, kimai), collab signaling (nextcloud-talk-hpb),
-    external assets for PDF rendering (reactive-resume-chrome), and federation
-    delivery to any hub on the fediverse plus an SMTP relay (hubzilla, and the
-    poller that drains its delivery queue), and Matrix federation plus the identity
+    shlink), LLM/AI and web-RAG endpoints (open-webui, appflowy-cloud/
+    worker), photo maps + ML models (immich), integrations + email (kimai),
+    collab signaling (nextcloud-talk-hpb), external assets for PDF rendering
+    (reactive-resume-chrome), and Matrix federation plus the identity
     provider hairpin (matrix-synapse, matrix-auth — sso.optcp.com resolves to the
     gateway VIP from inside, so this is a cluster destination, not a world one).
     matrix-lk-jwt joins them because authorising a caller means verifying their
@@ -34,17 +32,12 @@ spec:
           - jellyfin
           - plex
           - linkwarden
-          - mealie
           - calibre-web
-          - ghost
-          - hubzilla
-          - hubzilla-cron
           - matrix-synapse
           - matrix-auth
           - matrix-lk-jwt
           - photoprism
           - shlink-app
-          - wikijs-vegan
           - appflowy-cloud
           - appflowy-worker
           - nextcloud-talk-hpb

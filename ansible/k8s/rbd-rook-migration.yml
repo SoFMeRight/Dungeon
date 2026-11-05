@@ -32,7 +32,7 @@
 #   # See the full tiered plan (safe, no changes):        (no flags; add -e include_sts=true to list STSs)
 #   # Execute the auto tier (Deployment/standalone):       -e confirm=true
 #   # Also migrate specific review volumes:                -e confirm=true -e 'targets_list=["tingle-tuner/searxng-redis-data"]'
-#   # Migrate specific StatefulSets (only those):          -e confirm=true -e 'sts_targets=["temple-of-time/ghost-mysql"]'
+#   # Migrate specific StatefulSets (only those):          -e confirm=true -e 'sts_targets=["optcp-web/ghost-mysql"]'
 #   # Migrate everything in one namespace (auto+review+sts):-e confirm=true -e targets=lens-of-truth -e include_sts=true
 #   # Migrate ALL StatefulSets (big — every DB, serial):   -e confirm=true -e include_sts=true
 #   # Roll a volume back from escrow (old driver):         -e confirm=true -e rollback=NS/PVC
