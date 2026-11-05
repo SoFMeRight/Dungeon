@@ -59,6 +59,10 @@ spec:
           names: ["linkstack-*"]
       - resources:
           kinds: [Pod]
+          namespaces: [outspokekin-social]
+          names: ["linkstack-*"]
+      - resources:
+          kinds: [Pod]
           namespaces: [lens-of-truth]
           names: ["crowdsec-*", "frigate-*", "home-assistant-*", "wazuh-*"]
       - resources:

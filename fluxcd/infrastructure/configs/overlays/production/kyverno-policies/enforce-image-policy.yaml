@@ -31,6 +31,11 @@ spec:
                 - hyrule-castle
                 - king-of-red-lions
                 - kokiri-forest
+                - optcp-web
+                - outspokekin-social
+                - outspokekin-web
+                - prplanit-web
+                - yesimvegan-web
                 - lens-of-truth
                 - lost-woods
                 - optcp-ci-runners
@@ -109,6 +114,11 @@ spec:
                 - hyrule-castle
                 - king-of-red-lions
                 - kokiri-forest
+                - optcp-web
+                - outspokekin-social
+                - outspokekin-web
+                - prplanit-web
+                - yesimvegan-web
                 - lens-of-truth
                 - lost-woods
                 - optcp-ci-runners
@@ -191,6 +201,11 @@ spec:
                 - hyrule-castle
                 - king-of-red-lions
                 - kokiri-forest
+                - optcp-web
+                - outspokekin-social
+                - outspokekin-web
+                - prplanit-web
+                - yesimvegan-web
                 - lens-of-truth
                 - lost-woods
                 - optcp-ci-runners
@@ -272,6 +287,11 @@ spec:
                 - hyrule-castle
                 - king-of-red-lions
                 - kokiri-forest
+                - optcp-web
+                - outspokekin-social
+                - outspokekin-web
+                - prplanit-web
+                - yesimvegan-web
                 - lens-of-truth
                 - lost-woods
                 - optcp-ci-runners

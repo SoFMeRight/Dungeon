@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-linkstack-db
+spec:
+  description: >-
+    Allow linkstack app to reach linkstack-db (MariaDB) on port 3306.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: linkstack-db
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: linkstack
+      toPorts:
+        - ports:
+            - port: "3306"
+              protocol: TCP

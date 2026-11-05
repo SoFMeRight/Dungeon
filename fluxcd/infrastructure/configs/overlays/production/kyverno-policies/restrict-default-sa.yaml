@@ -30,6 +30,11 @@ spec:
                 - optcp-remote-access
                 - hyrule-castle
                 - kokiri-forest
+                - optcp-web
+                - outspokekin-social
+                - outspokekin-web
+                - prplanit-web
+                - yesimvegan-web
                 - lens-of-truth
                 - lost-woods
                 - optcp-ci-runners
@@ -90,6 +95,11 @@ spec:
                 - optcp-remote-access
                 - hyrule-castle
                 - kokiri-forest
+                - optcp-web
+                - outspokekin-social
+                - outspokekin-web
+                - prplanit-web
+                - yesimvegan-web
                 - lens-of-truth
                 - lost-woods
                 - optcp-ci-runners

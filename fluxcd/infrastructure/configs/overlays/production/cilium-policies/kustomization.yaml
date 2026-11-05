@@ -47,6 +47,11 @@ resources:
   - optcp-sibyl-system
   - optcp-staff-suite
   - optcp-supply-chain
+  - optcp-web
+  - outspokekin-social
+  - outspokekin-web
   - prplanit-support
+  - prplanit-web
+  - yesimvegan-web
   # lakitu: netconsole collector ingress only (no contract CNPs here)
   - lakitu

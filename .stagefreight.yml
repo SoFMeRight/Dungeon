@@ -73,6 +73,11 @@ gitops:
       - name: "Personal Sites (Kokiri Forest\U0001F33F)"
         namespaces:
           - kokiri-forest
+          - optcp-web
+          - outspokekin-social
+          - outspokekin-web
+          - prplanit-web
+          - yesimvegan-web
       - name: "Infrastructure (Aryll's Lookout\U0001F52D)"
         namespaces:
           - optcp-ingress-internal

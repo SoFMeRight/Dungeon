@@ -125,6 +125,15 @@ spec:
             - kai-ingress-private
             # Gateway for personal/public services
             - kokiri-forest
+            # Public sites: Kai, astralfocal, enamorafoto (namespace plan, group AR)
+            - optcp-web
+            # OutspokeKin social platform and brand site
+            - outspokekin-social
+            - outspokekin-web
+            # PrPlanIT business sites
+            - prplanit-web
+            # YesImVegan site and public resources
+            - yesimvegan-web
             # Gateway for business/work services
             - hyrule-castle
             # Supply chain: GitLab (namespace plan, group V)

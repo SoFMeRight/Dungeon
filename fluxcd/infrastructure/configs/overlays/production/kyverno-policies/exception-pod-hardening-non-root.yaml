@@ -37,6 +37,11 @@ spec:
           kinds: [Pod]
           namespaces: [kokiri-forest]
           names: ["linkstack-*"]
+      # outspokekin-social — linkstack (apache-root, regenerates /etc/apache2 + binds :443)
+      - resources:
+          kinds: [Pod]
+          namespaces: [outspokekin-social]
+          names: ["linkstack-*"]
       # lens-of-truth — crowdsec/wazuh (SIEM, host access), frigate (privileged), home-assistant (devices)
       - resources:
           kinds: [Pod]

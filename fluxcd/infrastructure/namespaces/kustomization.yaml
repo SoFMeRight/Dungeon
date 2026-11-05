@@ -23,7 +23,12 @@ resources:
   - optcp-staff-suite.yaml
   - optcp-supply-chain.yaml
   - optcp-vpn.yaml
+  - optcp-web.yaml
+  - outspokekin-social.yaml
+  - outspokekin-web.yaml
   - prplanit-support.yaml
+  - prplanit-web.yaml
+  - yesimvegan-web.yaml
   - fairy-bottle.yaml
   - gorons-bracelet.yaml
   - kokiri-forest.yaml
