@@ -176,6 +176,11 @@ spec:
             capabilities = ["create", "update"]
           }
       # Registry pull tokens (Registry Tokens): each reads only its own entry.
+      - name: optcp-docker-io
+        rules: |
+          path "optcp/data/shared/registry/docker.io" {
+            capabilities = ["read"]
+          }
       - name: optcp-k8s-dungeon-public
         rules: |
           path "optcp/data/shared/registry/cr.optcp.com-public" {
@@ -334,6 +339,11 @@ spec:
             bound_service_account_names: ["external-secrets-vault"]
             bound_service_account_namespaces: ["optcp-secrets"]
             policies: ["external-secrets-prplanit"]
+            ttl: 24h
+          - name: optcp-docker-io
+            bound_service_account_names: ["external-secrets-vault"]
+            bound_service_account_namespaces: ["optcp-secrets"]
+            policies: ["optcp-docker-io"]
             ttl: 24h
           - name: optcp-k8s-dungeon-public
             bound_service_account_names: ["external-secrets-vault"]

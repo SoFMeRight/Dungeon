@@ -9,7 +9,7 @@ patches:
     patch: |-
       - op: replace
         path: /spec/externalSecretSpec/secretStoreRef/name
-        value: openbao-zeldas-letter
+        value: openbao-optcp-docker-io
       - op: replace
         path: /spec/externalSecretSpec/dataFrom/0/extract/key
-        value: registries/docker.io
+        value: shared/registry/docker.io

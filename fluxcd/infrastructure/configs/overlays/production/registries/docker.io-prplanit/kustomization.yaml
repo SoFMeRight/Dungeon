@@ -13,7 +13,7 @@ patches:
         value: docker-io-prplanit-pull-secret
       - op: replace
         path: /spec/secretStoreRef/name
-        value: openbao-zeldas-letter
+        value: openbao-optcp-docker-io
       - op: replace
         path: /spec/target/name
         value: docker-io-prplanit-pull-secret
@@ -23,11 +23,11 @@ patches:
           {
             "auths": {
               "docker.io": {
-                "auth": "{{ printf "%s:%s" .username .access_token | b64enc }}",
+                "auth": "{{ printf "%s:%s" .USERNAME .PASSWORD | b64enc }}",
                 "email": ""
               }
             }
           }
       - op: replace
         path: /spec/dataFrom/0/extract/key
-        value: registries/docker.io
+        value: shared/registry/docker.io
