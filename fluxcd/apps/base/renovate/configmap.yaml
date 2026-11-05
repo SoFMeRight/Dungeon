@@ -230,7 +230,7 @@ data:
           "minimumReleaseAge": "30 days"
         },
         {
-          // Relational-DB (postgres, mysql) major bumps are NOT drop-in: the on-disk data
+          // Relational-DB (postgres, mysql, mariadb) major bumps are NOT drop-in: the on-disk data
           // format changes and the official image refuses to start on an older-major data
           // dir — a major MUST be paired with a manual dump/restore (or pg_upgrade /
           // mysql_upgrade) first. So park these DB MAJORS behind explicit dependency-
@@ -240,7 +240,7 @@ data:
           // Plain images only, NOT CNPG's cloudnative-pg/postgresql nor the mariadb-operator
           // (operator-managed upgrades, grouped separately below).
           "matchDatasources": ["docker"],
-          "matchPackageNames": ["**/postgres", "**/mysql"],
+          "matchPackageNames": ["**/postgres", "**/mysql", "**/mariadb"],
           "matchUpdateTypes": ["major"],
           "dependencyDashboardApproval": true
         },
