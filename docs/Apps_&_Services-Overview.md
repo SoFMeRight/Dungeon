@@ -6,7 +6,7 @@
 
 ## Apps & Services (136)
 
-✅ 135 healthy
+✅ 136 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -168,7 +168,7 @@
 | Nutify | ✅ | 🔒 nut.pcfae.com | [open](https://nut.pcfae.com) |
 | Prometheus Exporter (2 components) | ✅ | 🔒 |  |
 | Speedtest (2 components) | ✅ | 🏠 isptest.pcfae.com | [open](https://isptest.pcfae.com) |
-| Umami | ❓ | 🏠 analytics.prplanit.com | [open](https://analytics.prplanit.com) |
+| Umami | ✅ | 🏠 analytics.prplanit.com | [open](https://analytics.prplanit.com) |
 | Uptime Kuma | ✅ | 🏠 uptime.pcfae.com | [open](https://uptime.pcfae.com) |
 | Vmalert | ✅ | 🏠 |  |
 | Vminsert | ✅ | 🏠 metrics.pcfae.com | [open](https://metrics.pcfae.com) |
@@ -874,7 +874,7 @@
 
 **Umami** — StatefulSet — postgresql-latest
 - Namespace: optcp-web-analytics
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: analytics.prplanit.com
 
 **Uptime Kuma** — StatefulSet — 2.5.8
@@ -1397,7 +1397,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Reloader | optcp-operators-baseline | ✅ |
 | Renovate Redis | optcp-ci-runners | ✅ |
 | Steam Headless | arbitorium-game-streaming | ⚠️ |
-| Umami Postgres | optcp-web-analytics | ❓ |
+| Umami Postgres | optcp-web-analytics | ✅ |
 | Valheim | optcp-shooting-gallery | ✅ |
 | Vault Configurator | optcp-secrets | ✅ |
 | Velero | optcp-fairy-bottle | ✅ |
