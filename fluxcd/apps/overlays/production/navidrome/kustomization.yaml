@@ -6,3 +6,13 @@ namespace: temple-of-time
 resources:
   - ../../../base/navidrome
   - httproute.yaml
+
+patches:
+  # Held at zero for the volume re-bind into optcp-media.
+  - target:
+      kind: Deployment
+      name: navidrome
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 0
