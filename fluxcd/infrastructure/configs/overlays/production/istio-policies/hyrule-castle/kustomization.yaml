@@ -4,7 +4,6 @@ namespace: hyrule-castle
 resources:
   - ../../../../base/istio-policies
   - allow-calcom-to-calcom-postgres.yaml
-  - allow-bookstack-to-bookstack-db.yaml
   - allow-invoiceninja-app-to-invoiceninja-mysql.yaml
   - allow-invoiceninja-app-to-invoiceninja-redis.yaml
   - allow-invoiceninja-nginx-to-invoiceninja-app.yaml

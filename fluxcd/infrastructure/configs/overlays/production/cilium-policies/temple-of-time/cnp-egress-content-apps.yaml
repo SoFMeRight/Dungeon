@@ -6,8 +6,8 @@ spec:
   description: >-
     These content/media apps fetch from an open-ended external set as their core
     function — metadata/artwork providers (jellyfin, plex, calibre-web,
-    photoprism), arbitrary user URLs to archive/scrape/shorten (linkwarden,
-    shlink), LLM/AI and web-RAG endpoints (open-webui, appflowy-cloud/
+    photoprism), arbitrary user URLs to archive/scrape (linkwarden),
+    LLM/AI and web-RAG endpoints (open-webui, appflowy-cloud/
     worker), photo maps + ML models (immich),
     collab signaling (nextcloud-talk-hpb), external assets for PDF rendering
     (reactive-resume-chrome), and Matrix federation plus the identity
@@ -37,7 +37,6 @@ spec:
           - matrix-auth
           - matrix-lk-jwt
           - photoprism
-          - shlink-app
           - appflowy-cloud
           - appflowy-worker
           - nextcloud-talk-hpb

@@ -26,12 +26,12 @@ spec:
           kinds: [Pod]
           namespaces: [gossip-stone]
           names: ["nutify-*", "speedtest-tracker-*"]
-      # hyrule-castle — bagisto (root-start chown), bookstack(+db) LSIO, invoiceninja
+      # hyrule-castle — bagisto (root-start chown), invoiceninja
       # apache-root, harbor (Helm openresty/redis)
       - resources:
           kinds: [Pod]
           namespaces: [hyrule-castle]
-          names: ["bagisto-demo-*", "bookstack-*", "invoiceninja-app-*"]
+          names: ["bagisto-demo-*", "invoiceninja-app-*"]
       # optcp-supply-chain — apt-cacher-ng (root-start chown)
       - resources:
           kinds: [Pod]
@@ -92,7 +92,7 @@ spec:
             - "thelounge-*"
       # temple-of-time — appflowy web/admin (entrypoint sed-writes root-owned /app), calibre-web LSIO,
       # linkwarden (deliberately root), plex s6,
-      # shlink-db LSIO mariadb, matrix-turn (STUNner dataplane;
+      # matrix-turn (STUNner dataplane;
       # inherits root from the shared stunner-hardened Dataplane, which NetBird's :3478 requires.
       # This gateway listens on 3479 and would run unprivileged, but the Dataplane is
       # cluster-scoped and one spec serves every gateway. Otherwise fully hardened by that CR:
@@ -100,7 +100,7 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [temple-of-time]
-          names: ["appflowy-admin-frontend-*", "appflowy-web-*", "calibre-web-*", "linkwarden-*", "matrix-turn-*", "plex-*", "shlink-db-*"]
+          names: ["appflowy-admin-frontend-*", "appflowy-web-*", "calibre-web-*", "linkwarden-*", "matrix-turn-*", "plex-*"]
       # optcp-staff-suite — kimai apache-root (+ its cronjobs/sidecars).
       - resources:
           kinds: [Pod]

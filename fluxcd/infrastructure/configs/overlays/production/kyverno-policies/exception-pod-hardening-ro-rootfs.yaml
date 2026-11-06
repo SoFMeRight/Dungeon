@@ -30,14 +30,13 @@ spec:
           kinds: [Pod]
           namespaces: [hookshot]
           names: ["tactical-*"]
-      # hyrule-castle — bagisto/invoiceninja apache+root, bookstack LSIO,
+      # hyrule-castle — bagisto/invoiceninja apache+root,
       # frappe-suite (writes /home/frappe + sites), opnform-client node.
       - resources:
           kinds: [Pod]
           namespaces: [hyrule-castle]
           names:
             - "bagisto-demo-*"
-            - "bookstack-*"
             - "frappe-suite-*"
             - "invoiceninja-app-*"
       # optcp-supply-chain — apt-cacher apache+root, gitlab and harbor Helm charts.
@@ -111,7 +110,6 @@ spec:
             - "penpot-frontend-*"
             - "photoprism-*"
             - "plex-*"
-            - "shlink-db-*"
       # optcp-staff-suite — kimai apache + sidecars.
       - resources:
           kinds: [Pod]

@@ -21,8 +21,6 @@ resources:
   - allow-matrix-to-matrix-postgres.yaml
   - allow-photoprism-to-photoprism-mariadb.yaml
   - allow-joplin-app-to-joplin-postgres.yaml
-  - allow-shlink-app-to-shlink-db.yaml
-  - allow-shlink-web-client-to-shlink-app.yaml
   - allow-reactive-resume-app-to-reactive-resume-postgres.yaml
   - allow-reactive-resume-app-to-reactive-resume-chrome.yaml
   - allow-reactive-resume-app-to-reactive-resume-minio.yaml
