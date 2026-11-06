@@ -42,7 +42,6 @@ spec:
           - resources:
               namespaces:
                 - gorons-bracelet
-                - fairy-bottle
                 - optcp-fairy-bottle
                 - king-of-red-lions
                 - optcp-operators-baseline

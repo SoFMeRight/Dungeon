@@ -16,7 +16,6 @@ spec:
                 - kai-ingress-private
                 - compass
                 - delivery-bag
-                - fairy-bottle
                 - optcp-fairy-bottle
                 - gorons-bracelet
                 - optcp-operators-baseline
@@ -90,7 +89,6 @@ spec:
                 - kai-ingress-private
                 - compass
                 - delivery-bag
-                - fairy-bottle
                 - optcp-fairy-bottle
                 - gorons-bracelet
                 - optcp-operators-baseline
@@ -164,7 +162,6 @@ spec:
                 - kai-ingress-private
                 - compass
                 - delivery-bag
-                - fairy-bottle
                 - optcp-fairy-bottle
                 - gorons-bracelet
                 - optcp-operators-baseline
