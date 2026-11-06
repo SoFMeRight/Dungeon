@@ -62,7 +62,7 @@
           - kind: StatefulSet
             name: paperless-redis
       penpot:
-        namespace: temple-of-time
+        namespace: optcp-cloud
         pg_statefulset: penpot-postgres
         pg_container: postgres
         pg_user: penpot
@@ -101,7 +101,7 @@
           - kind: StatefulSet
             name: lenpaste-app
       joplin:
-        namespace: temple-of-time
+        namespace: optcp-cloud
         pg_statefulset: joplin-postgres
         pg_container: postgres
         pg_user: postgres
@@ -112,11 +112,11 @@
           - kind: StatefulSet
             name: joplin-app
       opnform:
-        namespace: hyrule-castle
+        namespace: optcp-cloud
         pg_statefulset: opnform-postgres
         pg_container: postgres
         pg_user: prplanit
-        pvc_name: hyrule-castle-postgres-data-opnform-postgres-0
+        pvc_name: postgres-data-opnform-postgres-0
         overlay_file: fluxcd/apps/overlays/production/opnform/images-patch.yaml
         current_version: "16"
         app_workloads:

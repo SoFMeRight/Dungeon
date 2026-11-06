@@ -3,13 +3,15 @@ kind: StatefulSet
 metadata:
   name: penpot-backend
 spec:
+  # Held at zero for the volume re-bind into optcp-cloud.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: temple-of-time.penpot.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-cloud.penpot.postgres
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: temple-of-time.penpot.redis
+        policy.prplanit.com/access-scope-redis: optcp-cloud.penpot.redis
         policy.prplanit.com/cap.oidc: "true"
     spec:
       securityContext:

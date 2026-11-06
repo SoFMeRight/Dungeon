@@ -442,7 +442,7 @@
   - invoiceninja-redis (StatefulSet, cache)
 
 **Opnform — 7 components** — Mixed — 
-- Namespace: hyrule-castle
+- Namespace: optcp-cloud
 - Replicas: 7/7
 - Hosts: form.prplanit.com
 - Gateway: cell-membrane-ingress-gateway
@@ -542,7 +542,7 @@
 - Gateway: cell-membrane-ingress-gateway
 
 **Joplin — 2 components** — StatefulSet — 
-- Namespace: temple-of-time
+- Namespace: optcp-cloud
 - Replicas: 2/2
 - Hosts: joplin.pcfae.com
 - Gateway: phloem-ingress-gateway
@@ -560,7 +560,7 @@
   - kimai-mariadb (StatefulSet, database)
 
 **Linkwarden — 3 components** — StatefulSet — 
-- Namespace: temple-of-time
+- Namespace: optcp-cloud
 - Replicas: 3/3
 - Hosts: bookmarks.pcfae.com, lwd.optcp.com
 - Gateway: cell-membrane-ingress-gateway
@@ -589,7 +589,7 @@
   - open-webui-sentinel (StatefulSet, cache)
 
 **Penpot — 5 components** — StatefulSet — 
-- Namespace: temple-of-time
+- Namespace: optcp-cloud
 - Replicas: 5/5
 - Hosts: design.pcfae.com, penpot.prplanit.com
 - Gateway: cell-membrane-ingress-gateway
@@ -616,7 +616,7 @@
 - Gateway: cell-membrane-ingress-gateway
 
 **Reactive Resume — 3 components** — Mixed — 
-- Namespace: temple-of-time
+- Namespace: optcp-cloud
 - Replicas: 3/3
 - Hosts: resume.sofmeright.com
 - Gateway: cell-membrane-ingress-gateway

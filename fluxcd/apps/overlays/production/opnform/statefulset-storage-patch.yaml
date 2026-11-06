@@ -3,11 +3,13 @@ kind: StatefulSet
 metadata:
   name: opnform-postgres
 spec:
+  # Held at zero for the volume re-bind into optcp-cloud.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/access-class: postgres
-        policy.prplanit.com/service-scope: hyrule-castle.opnform.postgres
+        policy.prplanit.com/service-scope: optcp-cloud.opnform.postgres
   volumeClaimTemplates:
     - metadata:
         name: postgres-data
@@ -24,11 +26,13 @@ kind: StatefulSet
 metadata:
   name: opnform-redis
 spec:
+  # Held at zero for the volume re-bind into optcp-cloud.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: hyrule-castle.opnform.redis
+        policy.prplanit.com/service-scope: optcp-cloud.opnform.redis
   volumeClaimTemplates:
     - metadata:
         name: redis-data

@@ -13,7 +13,7 @@ spec:
     apiVersion: v1
     kind: PersistentVolumeClaim
     name: hyrule-castle-opnform-storage
-    namespace: hyrule-castle
+    namespace: optcp-cloud
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
     nodeStageSecretRef:

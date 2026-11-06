@@ -3,11 +3,13 @@ kind: StatefulSet
 metadata:
   name: penpot-redis
 spec:
+  # Held at zero for the volume re-bind into optcp-cloud.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: temple-of-time.penpot.redis
+        policy.prplanit.com/service-scope: optcp-cloud.penpot.redis
     spec:
       securityContext:
         runAsUser: 999

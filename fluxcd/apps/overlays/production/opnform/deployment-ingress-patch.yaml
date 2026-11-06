@@ -8,6 +8,6 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: hyrule-castle.opnform.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-cloud.opnform.postgres
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: hyrule-castle.opnform.redis
+        policy.prplanit.com/access-scope-redis: optcp-cloud.opnform.redis
