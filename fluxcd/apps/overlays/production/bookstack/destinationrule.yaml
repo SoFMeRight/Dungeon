@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: bookstack
 spec:
-  host: bookstack.hyrule-castle.svc.cluster.local
+  host: bookstack.optcp-cloud.svc.cluster.local
   trafficPolicy:
     portLevelSettings:
       - port:
