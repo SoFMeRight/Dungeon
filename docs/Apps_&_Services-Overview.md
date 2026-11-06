@@ -1156,13 +1156,11 @@
 
 </details>
 
-## Platform Components (42)
+## Platform Components (40)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
 | Adguardhome Sync | compass | ✅ |
-| Bulkvs Ip Sync | compass | ✅ |
-| Cloudflare Ddns | compass | ✅ |
 | Alloy | lakitu | ✅ |
 | Alloy | lakitu | ✅ |
 | Alloy Syslog | lakitu | ✅ |
@@ -1208,14 +1206,6 @@
 
 **Adguardhome Sync** — Deployment — v0.9.6-ls181
 - Namespace: compass
-- Replicas: 1/1
-
-**Bulkvs Ip Sync** — Deployment — v0.0.1
-- Namespace: optcp-address-sync
-- Replicas: 1/1
-
-**Cloudflare Ddns** — Deployment — 1
-- Namespace: optcp-address-sync
 - Replicas: 1/1
 
 **Alloy** — DaemonSet — 
@@ -1376,14 +1366,16 @@
 
 </details>
 
-## Unclassified (20)
+## Unclassified (22)
 
 Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
 
 | Workload | Namespace | Status |
 | --- | --- | --- |
 | Buildkitd | optcp-ci-runners | ✅ |
+| Bulkvs Ip Sync | optcp-address-sync | ✅ |
 | Cell Membrane Ingress Gateway Istio | optcp-ingress-public | ✅ |
+| Cloudflare Ddns | optcp-address-sync | ✅ |
 | Cloudnative Pg | optcp-operators-baseline | ✅ |
 | Enshrouded | optcp-shooting-gallery | ✅ |
 | External Secrets | optcp-secrets | ✅ |
