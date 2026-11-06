@@ -19,6 +19,8 @@ spec:
         - name: mariadb
           image: PLACEHOLDER_IMAGE
           env:
+            - name: MARIADB_AUTO_UPGRADE
+              value: "1"
             - name: TZ
               value: "Etc/UTC"
             - name: MYSQL_USER

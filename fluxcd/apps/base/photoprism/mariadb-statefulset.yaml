@@ -21,6 +21,46 @@ spec:
         runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
+      initContainers:
+        - name: reset-root-password
+          image: docker.io/mariadb:11
+          command:
+            - sh
+            - -c
+            - |
+              E=$(printf %s "$MARIADB_ROOT_PASSWORD" | sed "s/\\\\/\\\\\\\\/g; s/'/''/g")
+              {
+                printf "FLUSH PRIVILEGES;\n"
+                printf "ALTER USER IF EXISTS 'root'@'localhost' IDENTIFIED BY '%s';\n" "$E"
+                printf "ALTER USER IF EXISTS 'root'@'%%' IDENTIFIED BY '%s';\n" "$E"
+              } | mariadbd --bootstrap --skip-networking
+          env:
+            - name: MARIADB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: photoprism-secret
+                  key: MARIADB_ROOT_PASSWORD
+          resources:
+            requests:
+              cpu: 2m
+              memory: 311Mi
+            limits:
+              cpu: 359m
+              memory: 311Mi
+          volumeMounts:
+            - name: database
+              mountPath: /var/lib/mysql
+            - name: mysql-run
+              mountPath: /run/mysqld
+            - name: mysql-tmp
+              mountPath: /tmp
+          securityContext:
+            privileged: false
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
       containers:
         - name: mariadb
           image: docker.io/mariadb:11

@@ -27,6 +27,8 @@ spec:
             - --skip-character-set-client-handshake
             - --skip-innodb-read-only-compressed
           env:
+            - name: MARIADB_AUTO_UPGRADE
+              value: "1"
             - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
