@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-opnform-ingress-to-opnform-api
+  namespace: optcp-cloud
+spec:
+  selector:
+    matchLabels:
+      app: opnform-api
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/opnform-ingress
+      to:
+        - operation:
+            ports: ["9000"]

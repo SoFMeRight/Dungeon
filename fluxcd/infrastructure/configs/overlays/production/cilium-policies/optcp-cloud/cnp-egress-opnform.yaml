@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-opnform-egress
+spec:
+  description: >-
+    opnform egress: world and cluster for outbound mail and form integrations.
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - opnform-api
+          - opnform-api-scheduler
+          - opnform-api-worker
+  egress:
+    - toEntities:
+        - world
+        - cluster

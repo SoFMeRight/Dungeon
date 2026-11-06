@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-penpot-frontend-to-penpot-backend
+spec:
+  selector:
+    matchLabels:
+      app: penpot-backend
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/penpot-frontend
+              - cluster.local/ns/optcp-cloud/sa/penpot-exporter
+      to:
+        - operation:
+            ports: ["6060"]

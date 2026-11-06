@@ -17,6 +17,15 @@ resources:
   - allow-nextcloud-to-nextcloud-postgres.yaml
   - allow-nextcloud-to-nextcloud-redis.yaml
   - allow-nextcloud-to-nextcloud-elasticsearch.yaml
+  - allow-opnform-client-to-opnform-ingress.yaml
+  - allow-opnform-ingress-to-opnform-api.yaml
+  - allow-opnform-ingress-to-opnform-client.yaml
+  - allow-opnform-to-opnform-postgres.yaml
+  - allow-opnform-to-opnform-redis.yaml
+  - allow-penpot-exporter-to-penpot-frontend.yaml
+  - allow-penpot-frontend-to-penpot-backend.yaml
+  - allow-penpot-to-penpot-postgres.yaml
+  - allow-penpot-to-penpot-redis.yaml
   - allow-reactive-resume-app-to-reactive-resume-chrome.yaml
   - allow-reactive-resume-app-to-reactive-resume-postgres.yaml
   - allow-shlink-app-to-shlink-db.yaml

@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-opnform-to-opnform-postgres
+spec:
+  selector:
+    matchLabels:
+      app: opnform-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/opnform-api
+              - cluster.local/ns/optcp-cloud/sa/opnform-api-worker
+              - cluster.local/ns/optcp-cloud/sa/opnform-api-scheduler
+      to:
+        - operation:
+            ports: ["5432"]

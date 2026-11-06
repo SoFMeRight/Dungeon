@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-penpot-exporter-to-penpot-frontend
+spec:
+  selector:
+    matchLabels:
+      app: penpot-frontend
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/penpot-exporter
+      to:
+        - operation:
+            ports: ["8080"]

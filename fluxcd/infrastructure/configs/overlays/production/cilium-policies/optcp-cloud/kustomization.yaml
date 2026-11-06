@@ -9,5 +9,6 @@ resources:
   - cnp-egress-nextcloud-clamav.yaml
   - cnp-egress-nextcloud-postgres.yaml
   - cnp-egress-collabora.yaml
+  - cnp-egress-opnform.yaml
   - cnp-egress-reactive-resume-chrome.yaml
   - cnp-egress-shlink.yaml

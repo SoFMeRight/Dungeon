@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-penpot-to-penpot-redis
+spec:
+  selector:
+    matchLabels:
+      app: penpot-redis
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/penpot-backend
+              - cluster.local/ns/optcp-cloud/sa/penpot-exporter
+      to:
+        - operation:
+            ports: ["6379"]

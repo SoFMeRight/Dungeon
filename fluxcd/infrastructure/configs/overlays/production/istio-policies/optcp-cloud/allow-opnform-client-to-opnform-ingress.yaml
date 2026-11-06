@@ -1,0 +1,21 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-opnform-client-to-opnform-ingress
+  namespace: optcp-cloud
+spec:
+  selector:
+    matchLabels:
+      app: opnform-ingress
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/opnform-client
+      to:
+        - operation:
+            # opnform-ingress nginx runs non-root on container port 8080 (Service 80->8080).
+            # istio ambient enforces AuthorizationPolicy on the workload/target port, so this
+            # must be 8080 — the SSR client->ingress hop (public form render) resets otherwise.
+            ports: ["8080"]
