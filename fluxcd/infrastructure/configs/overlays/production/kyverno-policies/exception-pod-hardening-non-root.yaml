@@ -106,11 +106,12 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-staff-suite]
           names: ["kimai-*"]
-      # optcp-cloud — nextcloud apache-root (+ its cron/notify-push sidecars, collabora, clamav)
+      # optcp-cloud — bookstack(+db) LSIO, nextcloud apache-root (+ its cron/notify-push sidecars,
+      # collabora, clamav), shlink-db LSIO mariadb
       - resources:
           kinds: [Pod]
           namespaces: [optcp-cloud]
-          names: ["nextcloud-*"]
+          names: ["bookstack-*", "nextcloud-*", "shlink-db-*"]
       # tingle-tuner — faster-whisper LSIO, hrconvert2 apache-root, stable-diffusion-webui ai-dock root
       - resources:
           kinds: [Pod]

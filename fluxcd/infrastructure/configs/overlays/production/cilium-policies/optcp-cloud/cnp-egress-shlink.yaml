@@ -1,0 +1,15 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-shlink-app-egress
+spec:
+  description: >-
+    Shlink egress: arbitrary user URLs to shorten and validate, cluster for
+    in-cluster dependencies beyond the mesh.
+  endpointSelector:
+    matchLabels:
+      app: shlink-app
+  egress:
+    - toEntities:
+        - world
+        - cluster

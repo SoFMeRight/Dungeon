@@ -6,6 +6,7 @@ resources:
   - allow-intra-breakglass.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
+  - allow-bookstack-to-bookstack-db.yaml
   - allow-nextcloud-collabora-to-nextcloud.yaml
   - allow-nextcloud-postgres-replication.yaml
   - allow-nextcloud-redis-intra-cluster.yaml
@@ -13,3 +14,5 @@ resources:
   - allow-nextcloud-to-nextcloud-postgres.yaml
   - allow-nextcloud-to-nextcloud-redis.yaml
   - allow-nextcloud-to-nextcloud-elasticsearch.yaml
+  - allow-shlink-app-to-shlink-db.yaml
+  - allow-shlink-web-client-to-shlink-app.yaml

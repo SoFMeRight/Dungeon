@@ -123,11 +123,11 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-delivery-bag]
           names: ["stalwart-redis-*", "stalwart-sentinel-*", "stalwart-elasticsearch-*"]
-      # optcp-cloud — nextcloud apache + sidecars
+      # optcp-cloud — bookstack LSIO, nextcloud apache + sidecars, shlink-db LSIO
       - resources:
           kinds: [Pod]
           namespaces: [optcp-cloud]
-          names: ["nextcloud-*"]
+          names: ["bookstack-*", "nextcloud-*", "shlink-db-*"]
       # tingle-tuner — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp), apache
       # (hrconvert2). searxng is hardened.
       - resources:

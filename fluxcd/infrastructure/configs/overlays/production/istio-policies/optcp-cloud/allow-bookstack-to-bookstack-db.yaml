@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-bookstack-to-bookstack-db
+spec:
+  selector:
+    matchLabels:
+      app: bookstack-db
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/bookstack
+      to:
+        - operation:
+            ports: ["3306"]
