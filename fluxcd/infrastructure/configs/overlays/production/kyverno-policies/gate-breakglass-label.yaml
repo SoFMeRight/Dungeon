@@ -17,6 +17,7 @@ spec:
                 - compass
                 - delivery-bag
                 - fairy-bottle
+                - optcp-fairy-bottle
                 - gorons-bracelet
                 - optcp-operators-baseline
                 - gossip-stone
@@ -90,6 +91,7 @@ spec:
                 - compass
                 - delivery-bag
                 - fairy-bottle
+                - optcp-fairy-bottle
                 - gorons-bracelet
                 - optcp-operators-baseline
                 - gossip-stone
@@ -163,6 +165,7 @@ spec:
                 - compass
                 - delivery-bag
                 - fairy-bottle
+                - optcp-fairy-bottle
                 - gorons-bracelet
                 - optcp-operators-baseline
                 - gossip-stone

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: optcp-fairy-bottle
+  labels:
+    name: optcp-fairy-bottle
+    tenant: optcp                          # openbao-optcp ClusterSecretStore gate
+    istio.io/dataplane-mode: ambient
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/enforce-version: "latest"
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/audit-version: "latest"
+    pod-security.kubernetes.io/warn: baseline
+    pod-security.kubernetes.io/warn-version: "latest"

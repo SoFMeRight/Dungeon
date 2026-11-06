@@ -9,6 +9,7 @@ resources:
   - optcp-ci-runners.yaml
   - optcp-cloud.yaml
   - optcp-delivery-bag.yaml
+  - optcp-fairy-bottle.yaml
   - optcp-identity.yaml
   - optcp-infrastructure-management.yaml
   - optcp-ingress-internal.yaml
