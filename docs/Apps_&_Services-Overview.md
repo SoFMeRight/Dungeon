@@ -6,7 +6,7 @@
 
 ## Apps & Services (136)
 
-✅ 136 healthy
+✅ 135 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -168,7 +168,7 @@
 | Nutify | ✅ | 🔒 nut.pcfae.com | [open](https://nut.pcfae.com) |
 | Prometheus Exporter (2 components) | ✅ | 🔒 |  |
 | Speedtest (2 components) | ✅ | 🏠 isptest.pcfae.com | [open](https://isptest.pcfae.com) |
-| Umami | ✅ | 🏠 analytics.prplanit.com | [open](https://analytics.prplanit.com) |
+| Umami | ❓ | 🏠 analytics.prplanit.com | [open](https://analytics.prplanit.com) |
 | Uptime Kuma | ✅ | 🏠 uptime.pcfae.com | [open](https://uptime.pcfae.com) |
 | Vmalert | ✅ | 🏠 |  |
 | Vminsert | ✅ | 🏠 metrics.pcfae.com | [open](https://metrics.pcfae.com) |
@@ -874,7 +874,7 @@
 
 **Umami** — StatefulSet — postgresql-latest
 - Namespace: optcp-web-analytics
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: analytics.prplanit.com
 
 **Uptime Kuma** — StatefulSet — 2.5.8
@@ -1156,7 +1156,7 @@
 
 </details>
 
-## Platform Components (43)
+## Platform Components (42)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
@@ -1170,7 +1170,6 @@
 | Kube State Metrics | gossip-stone | ✅ |
 | Netconsole Collector | lakitu | ✅ |
 | Node (2 components) | lakitu | ✅ |
-| Umami Postgres | gossip-stone | ✅ |
 | Vmauth | gossip-stone | ✅ |
 | Vmselect | gossip-stone | ✅ |
 | Vmstorage | gossip-stone | ✅ |
@@ -1246,10 +1245,6 @@
 **Node** — DaemonSet — v1.9.1
 - Namespace: lakitu
 - Replicas: 10/10
-
-**Umami Postgres** — StatefulSet — 18-alpine
-- Namespace: optcp-web-analytics
-- Replicas: 1/1
 
 **Vmauth** — Deployment — v1.97.1
 - Namespace: gossip-stone
@@ -1381,7 +1376,7 @@
 
 </details>
 
-## Unclassified (19)
+## Unclassified (20)
 
 Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
 
@@ -1402,6 +1397,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Reloader | optcp-operators-baseline | ✅ |
 | Renovate Redis | optcp-ci-runners | ✅ |
 | Steam Headless | arbitorium-game-streaming | ⚠️ |
+| Umami Postgres | optcp-web-analytics | ❓ |
 | Valheim | optcp-shooting-gallery | ✅ |
 | Vault Configurator | optcp-secrets | ✅ |
 | Velero | optcp-fairy-bottle | ✅ |
