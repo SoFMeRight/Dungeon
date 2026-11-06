@@ -1,0 +1,19 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-appflowy-egress
+spec:
+  description: >-
+    appflowy-cloud and appflowy-worker egress: world and cluster for LLM/AI and
+    web-RAG endpoints.
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - appflowy-cloud
+          - appflowy-worker
+  egress:
+    - toEntities:
+        - world
+        - cluster

@@ -3,6 +3,8 @@ kind: Kustomization
 namespace: optcp-cloud
 resources:
   - cnp-default-deny-ingress.yaml
+  - cnp-egress-appflowy.yaml
+  - cnp-egress-appflowy-gotrue.yaml
   - cnp-egress-bookstack.yaml
   - cnp-egress-calcom.yaml
   - cnp-egress-linkwarden.yaml

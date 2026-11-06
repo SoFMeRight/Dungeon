@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-appflowy-nginx-to-appflowy-gotrue
+spec:
+  # gotrue shares app=appflowy with nginx — component disambiguates the target.
+  selector:
+    matchLabels:
+      app: appflowy
+      component: gotrue
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/appflowy-nginx
+      to:
+        - operation:
+            ports: ["9999"]

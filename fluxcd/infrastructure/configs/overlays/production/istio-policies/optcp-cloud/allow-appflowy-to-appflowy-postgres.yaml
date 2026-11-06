@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-appflowy-to-appflowy-postgres
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: appflowy-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/appflowy-cloud
+              - cluster.local/ns/optcp-cloud/sa/appflowy-worker
+              - cluster.local/ns/optcp-cloud/sa/appflowy-gotrue
+      to:
+        - operation:
+            ports: ["5432"]

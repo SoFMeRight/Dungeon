@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-appflowy-to-appflowy-redis
+spec:
+  selector:
+    matchLabels:
+      app: appflowy-redis
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/appflowy-cloud
+              - cluster.local/ns/optcp-cloud/sa/appflowy-worker
+      to:
+        - operation:
+            ports: ["6379"]

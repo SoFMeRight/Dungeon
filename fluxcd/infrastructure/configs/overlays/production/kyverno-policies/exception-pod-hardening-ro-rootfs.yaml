@@ -119,11 +119,11 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-delivery-bag]
           names: ["stalwart-redis-*", "stalwart-sentinel-*", "stalwart-elasticsearch-*"]
-      # optcp-cloud — bookstack LSIO, linkwarden root, nextcloud apache + sidecars, penpot-frontend, shlink-db LSIO
+      # optcp-cloud — appflowy web/admin (NOT cloud/ai, which are hardened), bookstack LSIO, linkwarden root, nextcloud apache + sidecars, penpot-frontend, shlink-db LSIO
       - resources:
           kinds: [Pod]
           namespaces: [optcp-cloud]
-          names: ["bookstack-*", "linkwarden-*", "nextcloud-*", "penpot-frontend-*", "shlink-db-*"]
+          names: ["appflowy-admin-frontend-*", "appflowy-web-*", "bookstack-*", "linkwarden-*", "nextcloud-*", "penpot-frontend-*", "shlink-db-*"]
       # tingle-tuner — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp), apache
       # (hrconvert2). searxng is hardened.
       - resources:

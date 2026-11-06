@@ -6,6 +6,13 @@ resources:
   - allow-intra-breakglass.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
+  - allow-appflowy-to-appflowy-postgres.yaml
+  - allow-appflowy-to-appflowy-redis.yaml
+  - allow-appflowy-cloud-to-appflowy-gotrue.yaml
+  - allow-appflowy-nginx-to-appflowy-gotrue.yaml
+  - allow-appflowy-nginx-to-appflowy-cloud.yaml
+  - allow-appflowy-nginx-to-appflowy-web.yaml
+  - allow-appflowy-postgres-replication.yaml
   - allow-bookstack-to-bookstack-db.yaml
   - allow-calcom-postgres-replication.yaml
   - allow-calcom-to-calcom-postgres.yaml
