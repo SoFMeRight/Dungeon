@@ -3,10 +3,14 @@ kind: MariaDB
 metadata:
   name: kimai-mariadb
 spec:
+  # Held for the volume re-bind into optcp-staff-suite.
+  suspend: true
   podMetadata:
+    annotations:
+      backup.velero.io/backup-volumes-excludes: "storage,galera"
     labels:
       policy.prplanit.com/access-class: mariadb
-      policy.prplanit.com/service-scope: temple-of-time.kimai.mariadb
+      policy.prplanit.com/service-scope: optcp-staff-suite.kimai.mariadb
   # Ensure pods are on separate nodes for HA
   affinity:
     antiAffinityEnabled: true

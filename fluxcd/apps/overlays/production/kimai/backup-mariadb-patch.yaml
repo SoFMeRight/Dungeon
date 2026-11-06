@@ -4,3 +4,6 @@
 - op: replace
   path: /spec/storage/s3/endpoint
   value: 172.22.150.101:8333
+- op: add
+  path: /spec/schedule/suspend
+  value: true

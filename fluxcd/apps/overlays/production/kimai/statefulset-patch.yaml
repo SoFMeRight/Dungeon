@@ -3,12 +3,14 @@ kind: StatefulSet
 metadata:
   name: kimai
 spec:
+  # Held at zero for the volume re-bind into optcp-staff-suite.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.mariadb: "true"
-        policy.prplanit.com/access-scope-mariadb: temple-of-time.kimai.mariadb
+        policy.prplanit.com/access-scope-mariadb: optcp-staff-suite.kimai.mariadb
     spec:
       containers:
         - name: kimai
