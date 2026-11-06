@@ -39,11 +39,11 @@ spec:
             - "bagisto-demo-*"
             - "frappe-suite-*"
             - "invoiceninja-app-*"
-      # optcp-supply-chain — apt-cacher apache+root, gitlab and harbor Helm charts.
+      # optcp-supply-chain — apt-cacher apache+root, gitlab and harbor Helm charts, LSIO netbootxyz.
       - resources:
           kinds: [Pod]
           namespaces: [optcp-supply-chain]
-          names: ["apt-cacher-ng-*", "gitlab-*", "harbor-*"]
+          names: ["apt-cacher-ng-*", "gitlab-*", "harbor-*", "netbootxyz-*"]
       # optcp-ci-runners — renovate (containerbase installs toolchains at runtime).
       - resources:
           kinds: [Pod]

@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-netbootxyz-tftp-lan
+spec:
+  description: >-
+    LAN-only TFTP ingress to netbootxyz (172.22.30.122) on port 69/UDP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: netbootxyz
+  ingress:
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.144.0/20"
+        - cidr: "fc00:f1::/32"
+          except:
+            - "fc00:f1:0ca4:15a0::/56"
+      toPorts:
+        - ports:
+            - port: "69"
+              protocol: UDP

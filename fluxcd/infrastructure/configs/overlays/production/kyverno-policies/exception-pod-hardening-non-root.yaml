@@ -32,11 +32,11 @@ spec:
           kinds: [Pod]
           namespaces: [hyrule-castle]
           names: ["bagisto-demo-*", "invoiceninja-app-*"]
-      # optcp-supply-chain — apt-cacher-ng (root-start chown)
+      # optcp-supply-chain — apt-cacher-ng (root-start chown), LSIO netbootxyz
       - resources:
           kinds: [Pod]
           namespaces: [optcp-supply-chain]
-          names: ["apt-cacher-ng-*"]
+          names: ["apt-cacher-ng-*", "netbootxyz-*"]
       # outspokekin-social — linkstack (apache-root, regenerates /etc/apache2 + binds :443)
       - resources:
           kinds: [Pod]

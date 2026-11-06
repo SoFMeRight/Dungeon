@@ -5,6 +5,8 @@ resources:
   - cnp-default-deny-ingress.yaml
   - cnp-apt-cacher-ng.yaml
   - cnp-egress-apt-cacher-ng.yaml
+  - cnp-netbootxyz-tftp.yaml
+  - cnp-egress-netbootxyz.yaml
   - cnp-egress-external-apps.yaml
   - cnp-egress-to-gateway.yaml
   - cnp-gitlab-webhooks.yaml
