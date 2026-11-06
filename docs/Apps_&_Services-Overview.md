@@ -632,7 +632,7 @@
 - Hosts: speedtester.pcfae.com
 
 **Netbootxyz** — StatefulSet — 0.7.6-nbxyz10
-- Namespace: compass
+- Namespace: optcp-supply-chain
 - Replicas: 1/1
 - Hosts: netboot.pcfae.com
 
