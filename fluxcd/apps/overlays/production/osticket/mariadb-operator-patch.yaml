@@ -4,6 +4,8 @@ metadata:
   name: osticket-mariadb
 spec:
   podMetadata:
+    annotations:
+      backup.velero.io/backup-volumes-excludes: "storage,galera"
     labels:
       policy.prplanit.com/access-class: mariadb
       policy.prplanit.com/service-scope: prplanit-support.osticket.mariadb
