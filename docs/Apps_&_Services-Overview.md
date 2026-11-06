@@ -6,7 +6,7 @@
 
 ## Apps & Services (136)
 
-✅ 135 healthy · ⚠️ 1 degraded
+✅ 136 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -101,7 +101,7 @@
 | Enamorafoto Site | ✅ | 🏠 enamorafoto.operationtimecapsule.com | [open](https://enamorafoto.operationtimecapsule.com) |
 | Etherealclique Site | ✅ | 🏠 etherealclique.com | [open](https://etherealclique.com) |
 | Ferdium | ✅ | 🏠 ferdium.pcfae.com | [open](https://ferdium.pcfae.com) |
-| Homarr (3 components) | ⚠️ | 🏠 apptray.pcfae.com | [open](https://apptray.pcfae.com) |
+| Homarr (3 components) | ✅ | 🏠 apptray.pcfae.com | [open](https://apptray.pcfae.com) |
 | Homelabhelpdesk Site | ✅ | 🏠 homelabhelpdesk.com | [open](https://homelabhelpdesk.com) |
 | Kai Hamilton Site | ✅ | 🏠 kai-hamilton.com | [open](https://kai-hamilton.com) |
 | Organizr | ✅ | 🏠 apps.pcfae.com | [open](https://apps.pcfae.com) |
@@ -671,7 +671,7 @@
 
 **Homarr — 3 components** — StatefulSet — v1.77.2
 - Namespace: optcp-app-directory
-- Replicas: 1/3
+- Replicas: 3/3
 - Hosts: apptray.pcfae.com
 - Components:
   - homarr (StatefulSet)
