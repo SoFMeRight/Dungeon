@@ -17,14 +17,14 @@
 # out. Run once with DRY_RUN=true and read the plan before running it for real.
 #
 #   kubectl apply -f cnpg-archive-migrate-job.yaml
-#   kubectl -n fairy-bottle logs -f job/cnpg-archive-migrate
-#   kubectl -n fairy-bottle delete job cnpg-archive-migrate
+#   kubectl -n optcp-fairy-bottle logs -f job/cnpg-archive-migrate
+#   kubectl -n optcp-fairy-bottle delete job cnpg-archive-migrate
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: cnpg-archive-migrate
-  namespace: fairy-bottle
+  namespace: optcp-fairy-bottle
   labels:
     app.kubernetes.io/name: cnpg-archive-migrate
     app.kubernetes.io/component: job

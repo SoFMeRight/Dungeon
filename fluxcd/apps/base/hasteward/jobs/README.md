@@ -41,7 +41,7 @@ tag against the registry and substitutes `name@sha256:...`, with
 `imagePullPolicy: IfNotPresent`. Two consequences worth knowing:
 
 - **What ran is recoverable after the fact.** The digest is in the Job spec, so
-  `kubectl -n fairy-bottle get job/<name> -o jsonpath='{.spec.template.spec.containers[0].image}'`
+  `kubectl -n optcp-fairy-bottle get job/<name> -o jsonpath='{.spec.template.spec.containers[0].image}'`
   answers "which build produced this diagnosis" months later. It also prints whether the
   digest changed since the previous run.
 - **A registry outage degrades instead of blocking.** Resolution happens on the operator's
@@ -73,8 +73,8 @@ recovered clone has reset statistics. Then force toward the branch you proved.
 Each run gets a unique Job name via `generateName`. Follow it:
 
 ```sh
-kubectl -n fairy-bottle get jobs -l hasteward.prplanit.com/target=<cluster>
-kubectl -n fairy-bottle logs -f job/<printed-name>
+kubectl -n optcp-fairy-bottle get jobs -l hasteward.prplanit.com/target=<cluster>
+kubectl -n optcp-fairy-bottle logs -f job/<printed-name>
 ```
 
 ## Verbs

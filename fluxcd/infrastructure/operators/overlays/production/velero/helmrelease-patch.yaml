@@ -4,7 +4,7 @@ metadata:
   name: velero
   namespace: flux-system
 spec:
-  targetNamespace: fairy-bottle
+  targetNamespace: optcp-fairy-bottle
   values:
     # Note: Chart already sets prometheus.io/scrape and prometheus.io/port annotations by default
     image:

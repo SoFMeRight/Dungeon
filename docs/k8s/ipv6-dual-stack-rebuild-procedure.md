@@ -112,15 +112,15 @@ flux get kustomizations
 ### Phase 6: Restore from Velero
 ```bash
 # Verify Velero is running
-kubectl -n fairy-bottle get pods
+kubectl -n optcp-fairy-bottle get pods
 
 # Create restore from backup
-kubectl -n fairy-bottle create -f - <<EOF
+kubectl -n optcp-fairy-bottle create -f - <<EOF
 apiVersion: velero.io/v1
 kind: Restore
 metadata:
   name: restore-from-pre-ipv6-rebuild
-  namespace: fairy-bottle
+  namespace: optcp-fairy-bottle
 spec:
   backupName: pre-ipv6-dual-stack-rebuild
   includedNamespaces:
@@ -129,10 +129,10 @@ spec:
 EOF
 
 # Monitor restore progress
-kubectl -n fairy-bottle get restore restore-from-pre-ipv6-rebuild -w
+kubectl -n optcp-fairy-bottle get restore restore-from-pre-ipv6-rebuild -w
 
 # Check for errors
-kubectl -n fairy-bottle describe restore restore-from-pre-ipv6-rebuild
+kubectl -n optcp-fairy-bottle describe restore restore-from-pre-ipv6-rebuild
 ```
 
 ### Phase 7: Verify Cluster

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Run a named HASteward operation as a one-shot Job — no scratch YAML. Pick a verb file in
 # this directory, fill the blanks, apply. The ServiceAccount + ClusterRole are flux-managed
-# (../rbac.yaml); the Job runs in fairy-bottle and targets a cluster in any namespace.
+# (../rbac.yaml); the Job runs in optcp-fairy-bottle and targets a cluster in any namespace.
 #
 #   ./run.sh triage           -c nextcloud-postgres -n temple-of-time
 #   ./run.sh deadlock-recover -c nextcloud-postgres -n temple-of-time -i 2
@@ -14,7 +14,7 @@
 #                    a donor when authority is ambiguous (split-brain) because picking the
 #                    surviving lineage is unrecoverable and therefore a human's call; this
 #                    flag is how that decision is handed back to the tool once made.
-# Follow logs after it starts:  kubectl -n fairy-bottle logs -f job/<printed-name>
+# Follow logs after it starts:  kubectl -n optcp-fairy-bottle logs -f job/<printed-name>
 set -euo pipefail
 
 VERB="${1:-}"
@@ -152,7 +152,7 @@ if [ -n "$DIGEST" ]; then
   esac
   # What the last run of this tool actually executed, for an at-a-glance "is this new?".
   # Jobs linger for ttlSecondsAfterFinished, so this needs no state file of its own.
-  PREV="$(kubectl -n fairy-bottle get jobs -l app.kubernetes.io/name=hasteward \
+  PREV="$(kubectl -n optcp-fairy-bottle get jobs -l app.kubernetes.io/name=hasteward \
             --sort-by=.metadata.creationTimestamp \
             -o jsonpath='{.items[-1:].spec.template.spec.containers[0].image}' 2>/dev/null || true)"
   PREV_DIGEST=""
@@ -173,7 +173,7 @@ else
   echo "         Submitting the tag unpinned with imagePullPolicy=IfNotPresent, so this runs" >&2
   echo "         whatever layer the scheduling node already has — which may be OLD CODE, and" >&2
   echo "         which fails to start at all if that node has never pulled it." >&2
-  echo "         Verify before trusting a result: kubectl -n fairy-bottle get job/<name> -o jsonpath='{.spec.template.spec.containers[0].image}'" >&2
+  echo "         Verify before trusting a result: kubectl -n optcp-fairy-bottle get job/<name> -o jsonpath='{.spec.template.spec.containers[0].image}'" >&2
 fi
 
 export ENGINE CLUSTER NAMESPACE INSTANCE IMAGE FORCE PULL_POLICY EXTRA_ARGS

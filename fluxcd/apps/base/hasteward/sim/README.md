@@ -28,7 +28,7 @@ flow end to end. The wedge injector short-circuits to the interesting state in s
 
 ```sh
 ../jobs/run.sh deadlock-recover -c training-dummy-postgres -n training-dummy -i <ordinal>
-kubectl -n fairy-bottle logs -f job/<printed-name>
+kubectl -n optcp-fairy-bottle logs -f job/<printed-name>
 ```
 
 Iterate the fix, re-inject, re-run — no production risk. When a mechanism heals the wedge

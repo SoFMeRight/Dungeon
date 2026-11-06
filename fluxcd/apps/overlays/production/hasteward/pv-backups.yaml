@@ -12,7 +12,7 @@ spec:
     apiVersion: v1
     kind: PersistentVolumeClaim
     name: hasteward-backups
-    namespace: fairy-bottle
+    namespace: optcp-fairy-bottle
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
     nodeStageSecretRef:

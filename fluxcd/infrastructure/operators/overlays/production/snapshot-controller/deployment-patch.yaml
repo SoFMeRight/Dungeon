@@ -18,4 +18,4 @@ spec:
               memory: 94Mi
           args:
             - "--leader-election=true"
-            - "--leader-election-namespace=fairy-bottle"
+            - "--leader-election-namespace=optcp-fairy-bottle"

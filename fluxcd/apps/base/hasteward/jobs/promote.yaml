@@ -7,7 +7,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   generateName: hasteward-promote-${CLUSTER}-
-  namespace: fairy-bottle
+  namespace: optcp-fairy-bottle
   labels:
     app.kubernetes.io/name: hasteward
     hasteward.prplanit.com/verb: promote

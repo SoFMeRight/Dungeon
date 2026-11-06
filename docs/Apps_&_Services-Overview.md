@@ -1272,8 +1272,8 @@
 | External Secrets (3 components) | zeldas-lullaby | ✅ |
 | Vault Configurator | zeldas-lullaby | ✅ |
 | Vault Operator | zeldas-lullaby | ✅ |
-| Snapshot Controller | fairy-bottle | ✅ |
-| Velero (2 components) | fairy-bottle | ✅ |
+| Snapshot Controller | optcp-fairy-bottle | ✅ |
+| Velero (2 components) | optcp-fairy-bottle | ✅ |
 | Gitlab Gitlab Runner | hyrule-castle | ❌ |
 | Mariadb | hyrule-castle | ✅ |
 | Renovate Redis | hyrule-castle | ✅ |
@@ -1342,11 +1342,11 @@
 - Replicas: 1/1
 
 **Snapshot Controller** — Deployment — v8.6.0
-- Namespace: fairy-bottle
+- Namespace: optcp-fairy-bottle
 - Replicas: 2/2
 
 **Velero** — Mixed — 1.18.2
-- Namespace: fairy-bottle
+- Namespace: optcp-fairy-bottle
 - Replicas: 6/6
 
 **Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
