@@ -15,7 +15,6 @@ spec:
               - cluster.local/ns/gossip-stone/sa/grafana-postgres
               - cluster.local/ns/optcp-supply-chain/sa/gitlab-postgresql
               - cluster.local/ns/optcp-supply-chain/sa/harbor-postgres
-              - cluster.local/ns/lost-woods/sa/homarr-postgres
               - cluster.local/ns/optcp-app-directory/sa/homarr-postgres
               - cluster.local/ns/optcp-cloud/sa/appflowy-postgres
               - cluster.local/ns/optcp-cloud/sa/calcom-postgres

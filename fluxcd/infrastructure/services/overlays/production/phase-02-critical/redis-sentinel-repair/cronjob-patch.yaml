@@ -12,6 +12,6 @@ spec:
               image: docker.io/alpine/k8s:1.37.1
               env:
                 - name: TARGET_NAMESPACES
-                  value: "hyrule-castle lost-woods optcp-app-directory optcp-identity temple-of-time"
+                  value: "hyrule-castle optcp-app-directory optcp-identity temple-of-time"
                 - name: DRY_RUN
                   value: "false"

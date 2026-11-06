@@ -4,5 +4,4 @@ namespace: lost-woods
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-ferdium.yaml
-  - cnp-egress-homarr.yaml
   - cnp-egress-organizr.yaml

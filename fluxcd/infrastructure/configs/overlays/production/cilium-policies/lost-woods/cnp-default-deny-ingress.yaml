@@ -5,13 +5,11 @@ metadata:
 spec:
   description: >-
     Default-deny ingress AND egress for lost-woods namespace.
-    Ingress: homarr DB access covered by contract CCNPs (has labels); all apps
-    have ingress labels — CCNPs cover kubelet-probes, istio-ambient,
-    prometheus-scrape, and ingress-gateway traffic.
-    Egress: DNS + intra-namespace mesh (homarr->postgres/redis) + kube-apiserver
-    ride the universal CCNP baseline; per-app cnp-egress-* grant the broad,
-    user-configured egress of the dashboards/aggregator (ferdium, homarr,
-    organizr). The static sites are serve-only and need nothing external.
+    Ingress: all apps have ingress labels — CCNPs cover kubelet-probes,
+    istio-ambient, prometheus-scrape, and ingress-gateway traffic.
+    Egress: DNS + intra-namespace mesh + kube-apiserver ride the universal CCNP
+    baseline; per-app cnp-egress-* grant the broad, user-configured egress of the
+    dashboards/aggregator (ferdium, organizr).
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true

@@ -47,11 +47,11 @@ spec:
           kinds: [Pod]
           namespaces: [lens-of-truth]
           names: ["crowdsec-*", "frigate-*", "home-assistant-*", "wazuh-manager-*"]
-      # lost-woods — ferdium/organizr LSIO s6; homarr (RE-EVALUATE: node app, possibly hardenable)
+      # lost-woods — ferdium/organizr LSIO s6
       - resources:
           kinds: [Pod]
           namespaces: [lost-woods]
-          names: ["ferdium-*", "homarr-*", "organizr-*"]
+          names: ["ferdium-*", "organizr-*"]
       # optcp-app-directory — homarr (RE-EVALUATE: node app, possibly hardenable)
       - resources:
           kinds: [Pod]
