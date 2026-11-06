@@ -11,6 +11,7 @@ spec:
     - from:
         - source:
             principals:
+              - "cluster.local/ns/optcp-cloud/sa/reactive-resume-app"
               - "cluster.local/ns/temple-of-time/sa/reactive-resume-app"
       to:
         - operation:

@@ -4,8 +4,10 @@ namespace: optcp-cloud
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-bookstack.yaml
+  - cnp-egress-linkwarden.yaml
   - cnp-egress-nextcloud.yaml
   - cnp-egress-nextcloud-clamav.yaml
   - cnp-egress-nextcloud-postgres.yaml
   - cnp-egress-collabora.yaml
+  - cnp-egress-reactive-resume-chrome.yaml
   - cnp-egress-shlink.yaml

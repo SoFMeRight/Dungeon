@@ -1,0 +1,15 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-linkwarden-egress
+spec:
+  description: >-
+    Linkwarden egress: arbitrary user URLs to archive and scrape, cluster for the
+    hairpin to the IdP (sso.optcp.com via split-horizon DNS to the gateway).
+  endpointSelector:
+    matchLabels:
+      app: linkwarden
+  egress:
+    - toEntities:
+        - world
+        - cluster

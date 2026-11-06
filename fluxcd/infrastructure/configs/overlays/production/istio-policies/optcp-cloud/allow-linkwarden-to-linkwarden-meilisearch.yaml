@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-linkwarden-to-linkwarden-meilisearch
+spec:
+  selector:
+    matchLabels:
+      app: linkwarden-meilisearch
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-cloud/sa/linkwarden
+      to:
+        - operation:
+            ports: ["7700"]

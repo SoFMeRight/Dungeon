@@ -7,6 +7,9 @@ resources:
   - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
   - allow-bookstack-to-bookstack-db.yaml
+  - allow-joplin-app-to-joplin-postgres.yaml
+  - allow-linkwarden-to-linkwarden-meilisearch.yaml
+  - allow-linkwarden-to-linkwarden-postgres.yaml
   - allow-nextcloud-collabora-to-nextcloud.yaml
   - allow-nextcloud-postgres-replication.yaml
   - allow-nextcloud-redis-intra-cluster.yaml
@@ -14,5 +17,7 @@ resources:
   - allow-nextcloud-to-nextcloud-postgres.yaml
   - allow-nextcloud-to-nextcloud-redis.yaml
   - allow-nextcloud-to-nextcloud-elasticsearch.yaml
+  - allow-reactive-resume-app-to-reactive-resume-chrome.yaml
+  - allow-reactive-resume-app-to-reactive-resume-postgres.yaml
   - allow-shlink-app-to-shlink-db.yaml
   - allow-shlink-web-client-to-shlink-app.yaml

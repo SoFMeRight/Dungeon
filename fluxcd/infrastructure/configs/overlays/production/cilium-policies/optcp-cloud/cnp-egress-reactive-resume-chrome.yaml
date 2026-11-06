@@ -1,0 +1,15 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-reactive-resume-chrome-egress
+spec:
+  description: >-
+    Reactive Resume's Chrome: external assets for PDF rendering, cluster for
+    in-cluster dependencies beyond the mesh.
+  endpointSelector:
+    matchLabels:
+      app: reactive-resume-chrome
+  egress:
+    - toEntities:
+        - world
+        - cluster
