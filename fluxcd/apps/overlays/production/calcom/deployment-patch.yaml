@@ -3,7 +3,8 @@ kind: Deployment
 metadata:
   name: calcom
 spec:
-  replicas: 3
+  # Held at zero for the namespace move.
+  replicas: 0
   template:
     metadata:
       labels:
