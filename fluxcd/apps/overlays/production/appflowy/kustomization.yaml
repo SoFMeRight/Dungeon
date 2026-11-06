@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: temple-of-time
+namespace: optcp-cloud
 resources:
   - ../../../base/appflowy
   - httproute.yaml
@@ -40,3 +40,5 @@ patches:
     target:
       kind: Service
       name: appflowy-nginx
+  # After the Cluster patch, which needs the Cluster to exist.
+  - path: hold-for-move-patch.yaml

@@ -1,0 +1,17 @@
+$patch: delete
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: appflowy-postgres
+---
+$patch: delete
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: appflowy-db
+---
+$patch: delete
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: appflowy-postgres-daily

@@ -8,7 +8,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: temple-of-time.appflowy.redis
+        policy.prplanit.com/service-scope: optcp-cloud.appflowy.redis
     spec:
       securityContext:
         runAsUser: 999

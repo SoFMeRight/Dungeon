@@ -9,9 +9,9 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: temple-of-time.appflowy.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-cloud.appflowy.postgres
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: temple-of-time.appflowy.redis
+        policy.prplanit.com/access-scope-redis: optcp-cloud.appflowy.redis
         policy.prplanit.com/cap.s3: "true"
         policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
     spec:

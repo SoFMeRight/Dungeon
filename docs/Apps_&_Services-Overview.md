@@ -500,7 +500,7 @@
 - Gateway: phloem-ingress-gateway
 
 **Appflowy — 8 components** — Mixed — 
-- Namespace: temple-of-time
+- Namespace: optcp-cloud
 - Replicas: 9/9
 - Hosts: flwy.prplanit.com
 - Gateway: cell-membrane-ingress-gateway
