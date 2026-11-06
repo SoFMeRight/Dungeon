@@ -5,3 +5,4 @@ resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
   - allow-umami-to-umami-postgres.yaml
+  - allow-gateway-ingress-cell-membrane.yaml

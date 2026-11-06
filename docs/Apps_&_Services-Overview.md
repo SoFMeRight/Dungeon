@@ -873,7 +873,7 @@
   - speedtest-tracker-postgres (StatefulSet, database)
 
 **Umami** — StatefulSet — postgresql-latest
-- Namespace: gossip-stone
+- Namespace: optcp-web-analytics
 - Replicas: 1/1
 - Hosts: analytics.prplanit.com
 
@@ -1248,7 +1248,7 @@
 - Replicas: 10/10
 
 **Umami Postgres** — StatefulSet — 18-alpine
-- Namespace: gossip-stone
+- Namespace: optcp-web-analytics
 - Replicas: 1/1
 
 **Vmauth** — Deployment — v1.97.1

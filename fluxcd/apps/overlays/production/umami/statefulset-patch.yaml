@@ -3,7 +3,8 @@ kind: StatefulSet
 metadata:
   name: umami
 spec:
-  replicas: 1
+  # Held at zero for the volume re-bind into optcp-web-analytics.
+  replicas: 0
   template:
     metadata:
       labels:
@@ -18,7 +19,7 @@ spec:
           securityContext:
             readOnlyRootFilesystem: true
           volumeMounts:
-            - name: gossip-stone-umami-data
+            - name: umami-data
               mountPath: /app/data
             - name: tmp
               mountPath: /tmp
@@ -35,7 +36,7 @@ spec:
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
-        name: gossip-stone-umami-data
+        name: umami-data
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
@@ -48,7 +49,8 @@ kind: StatefulSet
 metadata:
   name: umami-postgres
 spec:
-  replicas: 1
+  # Held at zero for the volume re-bind into optcp-web-analytics.
+  replicas: 0
   template:
     spec:
       securityContext:
@@ -59,7 +61,7 @@ spec:
         - name: postgres
           image: docker.io/library/postgres:18-alpine
           volumeMounts:
-            - name: gossip-stone-umami-postgres
+            - name: umami-postgres
               mountPath: /var/lib/postgresql/data
           resources:
             requests:
@@ -70,7 +72,7 @@ spec:
               memory: 128Mi
   volumeClaimTemplates:
     - metadata:
-        name: gossip-stone-umami-postgres
+        name: umami-postgres
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
