@@ -12,6 +12,7 @@ resources:
   - allow-appflowy-nginx-to-appflowy-gotrue.yaml
   - allow-appflowy-nginx-to-appflowy-cloud.yaml
   - allow-appflowy-nginx-to-appflowy-web.yaml
+  - allow-appflowy-nginx-to-appflowy-admin-frontend.yaml
   - allow-appflowy-postgres-replication.yaml
   - allow-bookstack-to-bookstack-db.yaml
   - allow-calcom-postgres-replication.yaml

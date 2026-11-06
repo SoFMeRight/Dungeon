@@ -7,8 +7,7 @@ spec:
     These content/media apps fetch from an open-ended external set as their core
     function — metadata/artwork providers (jellyfin, plex, calibre-web,
     photoprism),
-    LLM/AI and web-RAG endpoints (open-webui, appflowy-cloud/
-    worker), photo maps + ML models (immich),
+    LLM/AI and web-RAG endpoints (open-webui), photo maps + ML models (immich),
     collab signaling (nextcloud-talk-hpb), and Matrix federation plus the identity
     provider hairpin (matrix-synapse, matrix-auth — sso.optcp.com resolves to the
     gateway VIP from inside, so this is a cluster destination, not a world one).
@@ -35,8 +34,6 @@ spec:
           - matrix-auth
           - matrix-lk-jwt
           - photoprism
-          - appflowy-cloud
-          - appflowy-worker
           - nextcloud-talk-hpb
   egress:
     - toEntities:

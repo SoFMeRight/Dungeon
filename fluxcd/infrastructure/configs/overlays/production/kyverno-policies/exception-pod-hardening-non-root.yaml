@@ -90,7 +90,7 @@ spec:
             - "pyload-ng-*"
             - "sabnzbd-*"
             - "thelounge-*"
-      # temple-of-time — appflowy web/admin (entrypoint sed-writes root-owned /app), calibre-web LSIO,
+      # temple-of-time — calibre-web LSIO,
       # plex s6,
       # matrix-turn (STUNner dataplane;
       # inherits root from the shared stunner-hardened Dataplane, which NetBird's :3478 requires.
@@ -100,7 +100,7 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [temple-of-time]
-          names: ["appflowy-admin-frontend-*", "appflowy-web-*", "calibre-web-*", "matrix-turn-*", "plex-*"]
+          names: ["calibre-web-*", "matrix-turn-*", "plex-*"]
       # optcp-staff-suite — kimai apache-root (+ its cronjobs/sidecars).
       - resources:
           kinds: [Pod]

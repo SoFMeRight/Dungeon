@@ -95,14 +95,12 @@ spec:
             - "pyload-ng-*"
             - "sabnzbd-*"
             - "thelounge-*"
-      # temple-of-time — appflowy web/admin (NOT cloud/ai, which are hardened), calibre-web LSIO,
+      # temple-of-time — calibre-web LSIO,
       # immich, photoprism/plex vendor, DBs.
       - resources:
           kinds: [Pod]
           namespaces: [temple-of-time]
           names:
-            - "appflowy-admin-frontend-*"
-            - "appflowy-web-*"
             - "calibre-web-*"
             - "immich-*"
             - "open-webui-*"

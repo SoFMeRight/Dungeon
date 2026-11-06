@@ -16,7 +16,6 @@ spec:
               - cluster.local/ns/optcp-supply-chain/sa/gitlab-postgresql
               - cluster.local/ns/optcp-supply-chain/sa/harbor-postgres
               - cluster.local/ns/lost-woods/sa/homarr-postgres
-              - cluster.local/ns/temple-of-time/sa/appflowy-postgres
               - cluster.local/ns/optcp-cloud/sa/appflowy-postgres
               - cluster.local/ns/optcp-cloud/sa/calcom-postgres
               - cluster.local/ns/optcp-cloud/sa/nextcloud-postgres
