@@ -13,7 +13,6 @@ spec:
             principals:
               - cluster.local/ns/gossip-stone/sa/gatus-postgres
               - cluster.local/ns/gossip-stone/sa/grafana-postgres
-              - cluster.local/ns/hyrule-castle/sa/calcom-postgres
               - cluster.local/ns/optcp-supply-chain/sa/gitlab-postgresql
               - cluster.local/ns/optcp-supply-chain/sa/harbor-postgres
               - cluster.local/ns/lost-woods/sa/homarr-postgres

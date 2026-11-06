@@ -22,7 +22,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: hyrule-castle
+            k8s:io.kubernetes.pod.namespace: optcp-cloud
             policy.prplanit.com/cap.self-origin: "true"
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: hookshot
