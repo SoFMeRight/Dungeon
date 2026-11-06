@@ -15,11 +15,3 @@ patches:
       - op: add
         path: /spec/volumeName
         value: pvc-c8f6cfef-dba4-4514-b3f7-a0ab3d72026d
-  # Held at zero for the volume re-bind into optcp-media.
-  - target:
-      kind: Deployment
-      name: navidrome
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 0

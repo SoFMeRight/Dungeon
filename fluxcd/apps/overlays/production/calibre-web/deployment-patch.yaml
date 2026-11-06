@@ -3,8 +3,7 @@ kind: Deployment
 metadata:
   name: calibre-web
 spec:
-  # Held at zero for the volume re-bind into optcp-media.
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
     rollingUpdate: null

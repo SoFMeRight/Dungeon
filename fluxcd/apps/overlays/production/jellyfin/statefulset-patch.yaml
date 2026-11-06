@@ -4,8 +4,6 @@ kind: StatefulSet
 metadata:
   name: jellyfin
 spec:
-  # Held at zero for the volume re-bind into optcp-media.
-  replicas: 0
   template:
     metadata:
       labels:
