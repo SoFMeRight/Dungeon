@@ -710,7 +710,7 @@
 - Gateway: phloem-ingress-gateway
 
 **Homarr — 3 components** — StatefulSet — v1.77.2
-- Namespace: lost-woods
+- Namespace: optcp-app-directory
 - Replicas: 3/3
 - Hosts: apptray.pcfae.com
 - Gateway: phloem-ingress-gateway

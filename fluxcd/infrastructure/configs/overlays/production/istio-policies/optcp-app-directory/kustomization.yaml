@@ -8,3 +8,4 @@ resources:
   - allow-homarr-to-homarr-redis.yaml
   - allow-homarr-postgres-replication.yaml
   - allow-homarr-redis-intra-cluster.yaml
+  - allow-gateway-ingress-phloem.yaml

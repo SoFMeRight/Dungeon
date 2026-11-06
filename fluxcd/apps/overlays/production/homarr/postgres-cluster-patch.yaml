@@ -26,7 +26,7 @@ spec:
     labels:
       policy.prplanit.com/cnpg: "managed"
       policy.prplanit.com/access-class: postgres
-      policy.prplanit.com/service-scope: lost-woods.homarr.postgres
+      policy.prplanit.com/service-scope: optcp-app-directory.homarr.postgres
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 
