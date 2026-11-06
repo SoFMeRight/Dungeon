@@ -3,8 +3,7 @@ kind: StatefulSet
 metadata:
   name: shlink-app
 spec:
-  # Held at zero for the volume re-bind into optcp-cloud.
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:
