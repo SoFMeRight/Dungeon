@@ -1,13 +1,20 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: temple-of-time
+namespace: optcp-media
 
 resources:
   - ../../../base/navidrome
   - httproute.yaml
 
 patches:
+  - target:
+      kind: PersistentVolumeClaim
+      name: navidrome-data
+    patch: |-
+      - op: add
+        path: /spec/volumeName
+        value: pvc-c8f6cfef-dba4-4514-b3f7-a0ab3d72026d
   # Held at zero for the volume re-bind into optcp-media.
   - target:
       kind: Deployment

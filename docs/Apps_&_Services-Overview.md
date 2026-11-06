@@ -515,7 +515,7 @@
   - appflowy-worker (Deployment)
 
 **Calibre Web** — Deployment — 0.6.27
-- Namespace: temple-of-time
+- Namespace: optcp-media
 - Replicas: 1/1
 - Hosts: books.optcp.com, books.pcfae.com
 - Gateway: cell-membrane-ingress-gateway
@@ -536,7 +536,7 @@
 - Gateway: phloem-ingress-gateway
 
 **Jellyfin** — StatefulSet — 10.11.11
-- Namespace: temple-of-time
+- Namespace: optcp-media
 - Replicas: 1/1
 - Hosts: flix.optcp.com
 - Gateway: cell-membrane-ingress-gateway
@@ -610,7 +610,7 @@
   - photoprism-mariadb (StatefulSet, database)
 
 **Plex** — StatefulSet — 1.43.4.10903-e5521bd8c
-- Namespace: temple-of-time
+- Namespace: optcp-media
 - Replicas: 1/1
 - Hosts: plex.optcp.com
 - Gateway: cell-membrane-ingress-gateway
@@ -1054,7 +1054,7 @@
 - Gateway: phloem-ingress-gateway
 
 **Navidrome** — Deployment — 0.64.2
-- Namespace: temple-of-time
+- Namespace: optcp-media
 - Replicas: 1/1
 - Hosts: music.optcp.com
 - Gateway: cell-membrane-ingress-gateway

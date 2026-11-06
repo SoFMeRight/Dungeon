@@ -1,4 +1,4 @@
-# Static PersistentVolumeClaims for Plex (temple-of-time)
+# Static PersistentVolumeClaims for Plex (optcp-media)
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

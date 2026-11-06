@@ -1,4 +1,4 @@
-# Static PersistentVolumes for Calibre-Web (temple-of-time)
+# Static PersistentVolumes for Calibre-Web (optcp-media)
 ---
 apiVersion: v1
 kind: PersistentVolume

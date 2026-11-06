@@ -1,4 +1,4 @@
-# Static PersistentVolumes for Jellyfin (temple-of-time)
+# Static PersistentVolumes for Jellyfin (optcp-media)
 ---
 apiVersion: v1
 kind: PersistentVolume

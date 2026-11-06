@@ -1,4 +1,4 @@
-# Static PersistentVolumeClaims for Jellyfin (temple-of-time)
+# Static PersistentVolumeClaims for Jellyfin (optcp-media)
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

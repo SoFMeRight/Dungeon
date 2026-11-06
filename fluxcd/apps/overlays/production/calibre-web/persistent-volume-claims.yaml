@@ -1,4 +1,4 @@
-# Static PersistentVolumeClaims for Calibre-Web (temple-of-time)
+# Static PersistentVolumeClaims for Calibre-Web (optcp-media)
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
