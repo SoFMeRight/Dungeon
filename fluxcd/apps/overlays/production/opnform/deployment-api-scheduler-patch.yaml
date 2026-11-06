@@ -3,8 +3,6 @@ kind: Deployment
 metadata:
   name: opnform-api-scheduler
 spec:
-  # Held at zero for the volume re-bind into optcp-cloud.
-  replicas: 0
   template:
     spec:
       containers:
