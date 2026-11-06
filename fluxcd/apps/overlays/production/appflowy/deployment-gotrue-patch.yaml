@@ -3,7 +3,8 @@ kind: Deployment
 metadata:
   name: appflowy-gotrue
 spec:
-  replicas: 1
+  # Held at zero for the namespace move.
+  replicas: 0
   template:
     metadata:
       annotations:
