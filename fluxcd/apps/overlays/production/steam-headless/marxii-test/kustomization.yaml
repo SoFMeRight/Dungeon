@@ -34,3 +34,11 @@ patches:
       - op: add
         path: /spec/selector/seat
         value: marxii-test
+      - op: add
+        path: /metadata/annotations
+        value:
+          gatus.home-operations.com/endpoint: |
+            url: http://steam-headless-marxii-test.arbitorium-game-streaming.svc.cluster.local:47989/serverinfo
+            interval: 60s
+            conditions:
+              - "[STATUS] == 200"

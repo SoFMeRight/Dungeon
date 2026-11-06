@@ -10,6 +10,7 @@ spec:
     metadata:
       labels:
         seat: marxii
+        policy.prplanit.com/probe: "true"
     spec:
       # The seat node.
       affinity:

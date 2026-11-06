@@ -175,6 +175,8 @@ spec:
               protocol: TCP
             - port: "8480"
               protocol: TCP
+            - port: "8483"
+              protocol: TCP
             - port: "8554"
               protocol: TCP
             - port: "8555"
@@ -183,9 +185,9 @@ spec:
               protocol: TCP
             - port: "8777"
               protocol: TCP
+        - ports:
             - port: "8778"
               protocol: TCP
-        - ports:
             - port: "8779"
               protocol: TCP
             - port: "8780"
@@ -264,10 +266,24 @@ spec:
               protocol: TCP
             - port: "32469"
               protocol: TCP
+        - ports:
             - port: "33080"
               protocol: TCP
-        - ports:
             - port: "35566"
+              protocol: TCP
+            - port: "47984"
+              protocol: TCP
+            - port: "47989"
+              protocol: TCP
+            - port: "47990"
+              protocol: TCP
+            - port: "47998"
+              protocol: TCP
+            - port: "47999"
+              protocol: TCP
+            - port: "48000"
+              protocol: TCP
+            - port: "48010"
               protocol: TCP
             - port: "55000"
               protocol: TCP

@@ -10,6 +10,7 @@ spec:
     metadata:
       labels:
         seat: marxii-test
+        policy.prplanit.com/probe: "true"
       annotations:
         # systemd needs a writable cgroup2 hierarchy; honoured only by the nvidia-userns handler.
         io.kubernetes.cri-o.cgroup2-mount-hierarchy-rw: "true"

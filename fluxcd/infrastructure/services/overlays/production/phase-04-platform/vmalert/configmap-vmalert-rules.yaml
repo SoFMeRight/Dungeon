@@ -294,11 +294,11 @@ data:
         interval: 1m
         rules:
           # Gatus's last result per endpoint (1 healthy, 0 failing). Only the
-          # HTTPRoute endpoints: the svc/ endpoints gatus-sidecar generates from every
-          # Service are reachability checks behind them. A Nextcloud outage sat at 0
-          # here for 35 days once already, with nothing alerting.
+          # HTTPRoute endpoints and the marxii seat: the other svc/ endpoints gatus-sidecar
+          # generates from every Service are reachability checks behind them. A Nextcloud
+          # outage sat at 0 here for 35 days once already, with nothing alerting.
           - alert: EndpointDown
-            expr: gatus_results_endpoint_success{name!~"svc/.*"} == 0
+            expr: gatus_results_endpoint_success{name!~"svc/.*"} == 0 or gatus_results_endpoint_success{name="svc/steam-headless-marxii"} == 0
             for: 30m
             labels:
               severity: warning

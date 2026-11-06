@@ -5,6 +5,11 @@ metadata:
   annotations:
     lbipam.cilium.io/ips: "172.22.30.143"
     lbipam.cilium.io/sharing-key: "arbitorium-game-streaming-marxii"
+    gatus.home-operations.com/endpoint: |
+      url: http://steam-headless-marxii.arbitorium-game-streaming.svc.cluster.local:47989/serverinfo
+      interval: 60s
+      conditions:
+        - "[STATUS] == 200"
 spec:
   type: LoadBalancer
   externalTrafficPolicy: Cluster
