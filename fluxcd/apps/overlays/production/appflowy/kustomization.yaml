@@ -40,5 +40,3 @@ patches:
     target:
       kind: Service
       name: appflowy-nginx
-  # After the Cluster patch, which needs the Cluster to exist.
-  - path: hold-for-move-patch.yaml

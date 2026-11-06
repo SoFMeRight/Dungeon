@@ -3,8 +3,7 @@ kind: Deployment
 metadata:
   name: appflowy-worker
 spec:
-  # Held at zero for the namespace move.
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:
