@@ -101,6 +101,11 @@ spec:
           kinds: [Pod]
           namespaces: [temple-of-time]
           names: ["appflowy-admin-frontend-*", "appflowy-web-*", "calibre-web-*", "kimai-*", "linkwarden-*", "matrix-turn-*", "plex-*", "shlink-db-*"]
+      # optcp-staff-suite — kimai apache-root (+ its cronjobs/sidecars).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-staff-suite]
+          names: ["kimai-*"]
       # optcp-cloud — nextcloud apache-root (+ its cron/notify-push sidecars, collabora, clamav)
       - resources:
           kinds: [Pod]

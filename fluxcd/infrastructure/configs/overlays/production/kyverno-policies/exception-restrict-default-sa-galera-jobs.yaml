@@ -24,3 +24,11 @@ spec:
           kinds: [Pod]
           namespaces: [prplanit-support]
           names: ["osticket-mariadb-init-*", "osticket-mariadb-*-recovery-*"]
+      - resources:
+          kinds: [Job]
+          namespaces: [optcp-staff-suite]
+          names: ["kimai-mariadb-init", "kimai-mariadb-*-recovery"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-staff-suite]
+          names: ["kimai-mariadb-init-*", "kimai-mariadb-*-recovery-*"]

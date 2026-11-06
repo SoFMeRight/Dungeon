@@ -1,0 +1,33 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-kimai-galera-replication
+spec:
+  description: >-
+    Allow kimai-mariadb Galera cluster internal replication.
+    Ports: 3306 (MySQL), 4567 (Galera IST/SST), 4568 (IST),
+    4444 (SST donor), 5555 (Galera agent).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: mariadb
+      app.kubernetes.io/instance: kimai-mariadb
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/name: mariadb
+            app.kubernetes.io/instance: kimai-mariadb
+      toPorts:
+        - ports:
+            - port: "3306"
+              protocol: TCP
+            - port: "4444"
+              protocol: TCP
+            - port: "4567"
+              protocol: TCP
+            - port: "4568"
+              protocol: TCP
+            - port: "5555"
+              protocol: TCP

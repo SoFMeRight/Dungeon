@@ -1,0 +1,15 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-kimai-egress
+spec:
+  description: >-
+    Kimai egress: world for integrations and outbound mail, cluster for in-cluster
+    dependencies beyond the mesh.
+  endpointSelector:
+    matchLabels:
+      app: kimai
+  egress:
+    - toEntities:
+        - world
+        - cluster

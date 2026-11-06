@@ -3,6 +3,8 @@ kind: Kustomization
 namespace: optcp-staff-suite
 resources:
   - cnp-default-deny-ingress.yaml
+  - cnp-egress-kimai.yaml
   - cnp-egress-openproject.yaml
+  - cnp-galera-replication.yaml
   - cnp-openproject-memcached.yaml
   - cnp-egress-wikijs-sops.yaml
