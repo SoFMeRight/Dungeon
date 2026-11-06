@@ -31,6 +31,7 @@ spec:
                 - optcp-remote-access
                 - hyrule-castle
                 - optcp-web
+                - optcp-web-analytics
                 - outspokekin-social
                 - outspokekin-web
                 - prplanit-web
@@ -97,6 +98,7 @@ spec:
                 - optcp-remote-access
                 - hyrule-castle
                 - optcp-web
+                - optcp-web-analytics
                 - outspokekin-social
                 - outspokekin-web
                 - prplanit-web

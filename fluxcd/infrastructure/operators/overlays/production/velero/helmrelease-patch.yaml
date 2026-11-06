@@ -126,6 +126,8 @@ spec:
             - kai-ingress-private
             # Public sites: Kai, astralfocal, enamorafoto (namespace plan, group AR)
             - optcp-web
+            # Web analytics (namespace plan)
+            - optcp-web-analytics
             # OutspokeKin social platform and brand site
             - outspokekin-social
             - outspokekin-web

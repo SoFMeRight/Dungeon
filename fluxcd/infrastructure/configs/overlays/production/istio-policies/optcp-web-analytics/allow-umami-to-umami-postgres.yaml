@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-umami-to-umami-postgres
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: umami-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-web-analytics/sa/umami
+      to:
+        - operation:
+            ports: ["5432"]

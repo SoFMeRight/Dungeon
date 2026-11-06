@@ -48,6 +48,7 @@ resources:
   - optcp-staff-suite
   - optcp-supply-chain
   - optcp-web
+  - optcp-web-analytics
   - outspokekin-social
   - outspokekin-web
   - prplanit-support

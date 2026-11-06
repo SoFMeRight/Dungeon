@@ -1,0 +1,22 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-umami-to-umami-postgres
+spec:
+  description: >-
+    Allow umami app to access umami-postgres on 5432/TCP.
+    Unlabeled DB without postgres-client contract labels.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: umami-postgres
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: umami
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP

@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for optcp-web-analytics namespace.
+    Ingress: umami-postgres via cnp-umami-db; CCNPs cover kubelet-probes,
+    istio-ambient, prometheus-scrape, and ingress-gateway traffic.
+    Egress: DNS + intra-namespace mesh (umami->umami-postgres) ride the universal
+    CCNP baseline. Both directions use a reserved-label anchor.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor

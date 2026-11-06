@@ -32,6 +32,7 @@ spec:
                 - hyrule-castle
                 - king-of-red-lions
                 - optcp-web
+                - optcp-web-analytics
                 - outspokekin-social
                 - outspokekin-web
                 - prplanit-web
@@ -116,6 +117,7 @@ spec:
                 - hyrule-castle
                 - king-of-red-lions
                 - optcp-web
+                - optcp-web-analytics
                 - outspokekin-social
                 - outspokekin-web
                 - prplanit-web
@@ -204,6 +206,7 @@ spec:
                 - hyrule-castle
                 - king-of-red-lions
                 - optcp-web
+                - optcp-web-analytics
                 - outspokekin-social
                 - outspokekin-web
                 - prplanit-web
@@ -291,6 +294,7 @@ spec:
                 - hyrule-castle
                 - king-of-red-lions
                 - optcp-web
+                - optcp-web-analytics
                 - outspokekin-social
                 - outspokekin-web
                 - prplanit-web

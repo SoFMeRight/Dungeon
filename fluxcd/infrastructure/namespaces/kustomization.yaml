@@ -26,6 +26,7 @@ resources:
   - optcp-supply-chain.yaml
   - optcp-vpn.yaml
   - optcp-web.yaml
+  - optcp-web-analytics.yaml
   - outspokekin-social.yaml
   - outspokekin-web.yaml
   - prplanit-support.yaml
