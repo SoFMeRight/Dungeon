@@ -4,8 +4,5 @@ namespace: temple-of-time
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-content-apps.yaml
-  - cnp-media-servers.yaml
-  - cnp-egress-navidrome.yaml
-  - cnp-overseerr-to-plex.yaml
   - cnp-matrix-turn.yaml
   - cnp-matrix-turn-to-livekit.yaml

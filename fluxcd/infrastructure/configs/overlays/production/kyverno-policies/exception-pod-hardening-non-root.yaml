@@ -90,9 +90,7 @@ spec:
             - "pyload-ng-*"
             - "sabnzbd-*"
             - "thelounge-*"
-      # temple-of-time — calibre-web LSIO,
-      # plex s6,
-      # matrix-turn (STUNner dataplane;
+      # temple-of-time — matrix-turn (STUNner dataplane;
       # inherits root from the shared stunner-hardened Dataplane, which NetBird's :3478 requires.
       # This gateway listens on 3479 and would run unprivileged, but the Dataplane is
       # cluster-scoped and one spec serves every gateway. Otherwise fully hardened by that CR:
@@ -100,7 +98,7 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [temple-of-time]
-          names: ["calibre-web-*", "matrix-turn-*", "plex-*"]
+          names: ["matrix-turn-*"]
       # optcp-staff-suite — kimai apache-root (+ its cronjobs/sidecars).
       - resources:
           kinds: [Pod]

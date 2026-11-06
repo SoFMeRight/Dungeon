@@ -5,8 +5,7 @@ metadata:
 spec:
   description: >-
     These content/media apps fetch from an open-ended external set as their core
-    function — metadata/artwork providers (jellyfin, plex, calibre-web,
-    photoprism),
+    function — metadata/artwork providers (photoprism),
     LLM/AI and web-RAG endpoints (open-webui), photo maps + ML models (immich),
     collab signaling (nextcloud-talk-hpb), and Matrix federation plus the identity
     provider hairpin (matrix-synapse, matrix-auth — sso.optcp.com resolves to the
@@ -27,9 +26,6 @@ spec:
         values:
           - immich
           - open-webui
-          - jellyfin
-          - plex
-          - calibre-web
           - matrix-synapse
           - matrix-auth
           - matrix-lk-jwt

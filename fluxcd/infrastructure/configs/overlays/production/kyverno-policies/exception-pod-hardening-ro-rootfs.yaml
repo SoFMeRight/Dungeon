@@ -95,17 +95,14 @@ spec:
             - "pyload-ng-*"
             - "sabnzbd-*"
             - "thelounge-*"
-      # temple-of-time — calibre-web LSIO,
-      # immich, photoprism/plex vendor, DBs.
+      # temple-of-time — immich, photoprism vendor, DBs.
       - resources:
           kinds: [Pod]
           namespaces: [temple-of-time]
           names:
-            - "calibre-web-*"
             - "immich-*"
             - "open-webui-*"
             - "photoprism-*"
-            - "plex-*"
       # optcp-staff-suite — kimai apache + sidecars.
       - resources:
           kinds: [Pod]
