@@ -3,11 +3,13 @@ kind: StatefulSet
 metadata:
   name: joplin-postgres
 spec:
+  # Held at zero for the volume re-bind into optcp-cloud.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/access-class: postgres
-        policy.prplanit.com/service-scope: temple-of-time.joplin.postgres
+        policy.prplanit.com/service-scope: optcp-cloud.joplin.postgres
     spec:
       securityContext:
         runAsUser: 999

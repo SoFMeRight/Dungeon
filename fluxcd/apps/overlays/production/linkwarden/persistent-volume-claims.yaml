@@ -1,4 +1,4 @@
-# Static PersistentVolumeClaims for Linkwarden (temple-of-time)
+# Static PersistentVolumeClaims for Linkwarden (optcp-cloud)
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

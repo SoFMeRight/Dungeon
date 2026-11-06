@@ -3,12 +3,13 @@ kind: StatefulSet
 metadata:
   name: linkwarden-postgres
 spec:
-  replicas: 1
+  # Held at zero for the volume re-bind into optcp-cloud.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/access-class: postgres
-        policy.prplanit.com/service-scope: temple-of-time.linkwarden.postgres
+        policy.prplanit.com/service-scope: optcp-cloud.linkwarden.postgres
     spec:
       securityContext:
         runAsUser: 70

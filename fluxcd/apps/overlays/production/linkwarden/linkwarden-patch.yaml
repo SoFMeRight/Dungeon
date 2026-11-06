@@ -3,13 +3,14 @@ kind: StatefulSet
 metadata:
   name: linkwarden
 spec:
-  replicas: 1
+  # Held at zero for the volume re-bind into optcp-cloud.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: temple-of-time.linkwarden.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-cloud.linkwarden.postgres
     spec:
       # linkwarden's image bundles its Playwright/Chromium browser in root's home
       # (/root/.cache/ms-playwright) and has NO USER directive — it is built to run as

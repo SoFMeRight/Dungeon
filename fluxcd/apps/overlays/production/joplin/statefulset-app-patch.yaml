@@ -3,12 +3,14 @@ kind: StatefulSet
 metadata:
   name: joplin-app
 spec:
+  # Held at zero for the volume re-bind into optcp-cloud.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: temple-of-time.joplin.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-cloud.joplin.postgres
       annotations:
         # tmp (incl. /tmp/pm2) is an emptyDir scratch with no backup value; joplin's state
         # lives in postgres, which is backed up separately.

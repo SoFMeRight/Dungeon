@@ -1,4 +1,4 @@
-# Static PersistentVolumes for Linkwarden (temple-of-time)
+# Static PersistentVolumes for Linkwarden (optcp-cloud)
 ---
 apiVersion: v1
 kind: PersistentVolume

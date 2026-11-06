@@ -18,4 +18,4 @@ spec:
               - cluster.local/ns/optcp-ingress-public/sa/cell-membrane-ingress-gateway-istio
       to:
         - operation:
-            ports: ["3000", "7880", "8008", "8080", "8083", "8096", "32400"]
+            ports: ["7880", "8008", "8080", "8083", "8096", "32400"]

@@ -3,13 +3,14 @@ kind: Deployment
 metadata:
   name: reactive-resume-app
 spec:
-  replicas: 1
+  # Held at zero for the volume re-bind into optcp-cloud.
+  replicas: 0
   template:
     metadata:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: temple-of-time.reactive-resume.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-cloud.reactive-resume.postgres
     spec:
       containers:
         - name: app
