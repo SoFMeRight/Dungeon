@@ -1,0 +1,31 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-calcom-egress
+spec:
+  description: >-
+    calcom egress: world and cluster for mail, calendars and video providers, and
+    the gateway pods for webhook callbacks to public URLs. The gateways are not
+    meshed, so the cluster entity does not match them.
+  endpointSelector:
+    matchLabels:
+      app: calcom
+  egress:
+    - toEntities:
+        - world
+        - cluster
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-ingress-public
+            gateway.networking.k8s.io/gateway-name: cell-membrane-ingress-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kai-ingress-private
+            gateway.networking.k8s.io/gateway-name: xylem-ingress-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "15021"
+              protocol: TCP

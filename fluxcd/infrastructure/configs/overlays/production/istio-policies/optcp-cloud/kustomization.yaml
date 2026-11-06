@@ -7,6 +7,8 @@ resources:
   - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
   - allow-bookstack-to-bookstack-db.yaml
+  - allow-calcom-postgres-replication.yaml
+  - allow-calcom-to-calcom-postgres.yaml
   - allow-joplin-app-to-joplin-postgres.yaml
   - allow-linkwarden-to-linkwarden-meilisearch.yaml
   - allow-linkwarden-to-linkwarden-postgres.yaml
