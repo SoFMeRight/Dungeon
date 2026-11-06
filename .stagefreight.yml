@@ -26,21 +26,23 @@ gitops:
   dungeon:
     backend: flux
     categories:
+      - name: "Administration (Zelda's Lullaby\U0001F3B5)"
+        namespaces:
+          - zeldas-lullaby
       - name: "DNS & Network (Compass\U0001F9ED)"
         namespaces:
           - compass
       - name: Routing Infrastructure
         namespaces:
           - king-of-red-lions
-          - optcp-ingress-public
-          - optcp-vpn
+          - prelude-of-light
+          - farores-wind
       - name: "Storage (Goron's Bracelet\U0001F4AA)"
         namespaces:
           - gorons-bracelet
       - name: Backup Services
         namespaces:
           - fairy-bottle
-          - training-dummy
       - name: "Observability (Gossip Stone\U0001F4AC)"
         namespaces:
           - gossip-stone
@@ -48,7 +50,6 @@ gitops:
       - name: "Security & IoT (Lens of Truth\U0001F50D)"
         namespaces:
           - lens-of-truth
-          - optcp-sibyl-system
         tier: app
       - name: "Bot Protection (Wallmaster\U0001F590️)"
         namespaces:
@@ -56,10 +57,7 @@ gitops:
         tier: app
       - name: Internal Trust
         namespaces:
-          - optcp-operators-baseline
-          - optcp-identity
-          - optcp-keyring
-          - optcp-secrets
+          - gerudo-crest
       - name: Policy Enforcement
         namespaces:
           - mr-resetti
@@ -67,26 +65,15 @@ gitops:
       - name: "Business Apps (Hyrule Castle\U0001F3F0)"
         namespaces:
           - hyrule-castle
-          - optcp-cloud
-          - optcp-staff-suite
-          - prplanit-support
       - name: "Personal Sites (Kokiri Forest\U0001F33F)"
         namespaces:
-          - optcp-web
-          - outspokekin-social
-          - outspokekin-web
-          - prplanit-web
-          - yesimvegan-web
+          - kokiri-forest
       - name: "Infrastructure (Aryll's Lookout\U0001F52D)"
         namespaces:
-          - optcp-ingress-internal
-          - kai-ingress-private
-          - optcp-infrastructure-management
-          - optcp-ipam
+          - arylls-lookout
       - name: "Content & Media (Temple of Time\U0001F3DB️)"
         namespaces:
           - temple-of-time
-          - optcp-media
         tier: app
       - name: "Discovery & Dashboards (Lost Woods\U0001F332)"
         namespaces:
@@ -98,18 +85,15 @@ gitops:
         tier: app
       - name: "Game Servers (Shooting Gallery\U0001F3AF)"
         namespaces:
-          - optcp-shooting-gallery
-          - arbitorium-game-streaming
+          - shooting-gallery
         tier: app
       - name: "Notifications (Delivery Bag\U0001F4EC)"
         namespaces:
           - delivery-bag
-          - optcp-delivery-bag
         tier: app
       - name: "Remote Access (Hookshot\U0001FA9D)"
         namespaces:
           - hookshot
-          - optcp-remote-access
         tier: app
       - name: "Tools & Utilities (Tingle Tuner\U0001F527)"
         namespaces:
@@ -118,10 +102,6 @@ gitops:
       - name: Private Apps (Pedestal of Time⚔️)
         namespaces:
           - pedestal-of-time
-      - name: Supply Chain & CI
-        namespaces:
-          - optcp-supply-chain
-          - optcp-ci-runners
       - name: Platform
         namespaces:
           - kube-system
@@ -144,13 +124,13 @@ gitops:
           - 172.22.30.87:3479
           - 172.22.30.102:25
         gateways:
-          - cell-membrane-ingress-gateway
+          - cell-membrane-gateway
         level: internet
       - cidrs:
           - 172.22.30.0/24
         gateways:
-          - phloem-ingress-gateway
-          - xylem-ingress-gateway
+          - phloem-gateway
+          - xylem-gateway
         level: intranet
       - level: cluster
         service_types:
@@ -165,6 +145,32 @@ gitops:
           field: group
     oidc:
       audience: stagefreight
+ansible:
+  image: ghcr.io/homelabhd/ansible:v2.21.5
+  inventory: ansible/inventory
+  playbooks:
+    kubelet-provision:
+      converge: true
+      groups:
+        - k8s_master
+        - k8s_worker
+      path: ansible/k8s/kubelet-provision.yml
+    provision-hosts:
+      converge: true
+      groups:
+        - k8s_worker
+        - k8s_master
+      path: ansible/k8s/provision-hosts.yml
+    wazuh-agent:
+      converge: true
+      groups:
+        - k8s_master
+        - k8s_worker
+      path: ansible/services/wazuh-agent.yaml
+  ssh:
+    credentials: DUNGEON
+    known_hosts: ansible/known_hosts
+    user: kai
 ci:
   forge:
     - gitlab
@@ -189,8 +195,7 @@ metadata:
   category: infrastructure
   description:
     - Source of truth for the Dungeon Kubernetes cluster and the Ad_Arbitorium Proxmox cluster.
-    - This repository seeks to be the source of truth regarding the active state of my Kubernetes cluster "Dungeon" and my Proxmox Cluster "Ad_Arbitorium".
-      All system state, automation routines, and backup strategies should be declared within this repository.
+    - This repository seeks to be the source of truth regarding the active state of my Kubernetes cluster "Dungeon" and my Proxmox Cluster "Ad_Arbitorium". All system state, automation routines, and backup strategies should be declared within this repository.
   license: GPL-3.0-only
   org: SoFMeRight
   title: Dungeon
