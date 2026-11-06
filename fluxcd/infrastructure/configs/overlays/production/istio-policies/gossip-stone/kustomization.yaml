@@ -17,7 +17,6 @@ resources:
   - allow-vmauth-to-vmselect.yaml
   - allow-freelens-to-vmauth.yaml
   - allow-grafana-to-loki.yaml
-  - allow-umami-to-umami-postgres.yaml
   - allow-speedtest-tracker-to-speedtest-tracker-postgres.yaml
   - allow-vminsert-to-vmstorage.yaml
   - allow-alloy-to-loki.yaml
