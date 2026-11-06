@@ -113,6 +113,7 @@ spec:
             - optcp-staff-suite
             # Discovery & Dashboards
             - lost-woods
+            - optcp-app-directory
             # Monitoring services
             - gossip-stone
             # IDS/IPS/SIEM security monitoring

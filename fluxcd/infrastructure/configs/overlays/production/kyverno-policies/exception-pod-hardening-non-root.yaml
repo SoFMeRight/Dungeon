@@ -52,6 +52,11 @@ spec:
           kinds: [Pod]
           namespaces: [lost-woods]
           names: ["ferdium-*", "homarr-*", "organizr-*"]
+      # optcp-app-directory — homarr (RE-EVALUATE: node app, possibly hardenable)
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-app-directory]
+          names: ["homarr-*"]
       # pedestal-of-time — lubelogger (DataProtection keys), monica (php-fpm root), paperless (root init),
       # plex-ms-x (s6 root-start)
       - resources:

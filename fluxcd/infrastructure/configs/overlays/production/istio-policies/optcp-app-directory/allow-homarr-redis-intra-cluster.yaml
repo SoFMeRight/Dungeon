@@ -1,0 +1,37 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-homarr-redis-intra-cluster
+spec:
+  selector:
+    matchLabels:
+      app: homarr-redis
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-app-directory/sa/homarr-redis
+              - cluster.local/ns/optcp-app-directory/sa/homarr-sentinel
+      to:
+        - operation:
+            ports: ["6379"]
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-homarr-sentinel-intra-cluster
+spec:
+  selector:
+    matchLabels:
+      app: homarr-sentinel-sentinel
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-app-directory/sa/homarr-sentinel
+              - cluster.local/ns/optcp-app-directory/sa/homarr-redis
+      to:
+        - operation:
+            ports: ["26379"]

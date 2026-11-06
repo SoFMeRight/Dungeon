@@ -21,6 +21,7 @@ resources:
   - swift-sail
   # Batch 3 — Mixed
   - lost-woods
+  - optcp-app-directory
   - arbitorium-game-streaming
   - pedestal-of-time
   - lens-of-truth

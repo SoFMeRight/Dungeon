@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-homarr-to-homarr-redis
+spec:
+  selector:
+    matchLabels:
+      app: homarr-redis
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-app-directory/sa/homarr
+      to:
+        - operation:
+            ports: ["6379"]

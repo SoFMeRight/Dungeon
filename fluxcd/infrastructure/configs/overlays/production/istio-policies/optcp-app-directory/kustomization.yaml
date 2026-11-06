@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-app-directory
+resources:
+  - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml
+  - allow-homarr-to-homarr-postgres.yaml
+  - allow-homarr-to-homarr-redis.yaml
+  - allow-homarr-postgres-replication.yaml
+  - allow-homarr-redis-intra-cluster.yaml
