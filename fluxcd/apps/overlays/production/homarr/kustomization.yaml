@@ -49,5 +49,3 @@ patches:
     target:
       kind: Service
       name: homarr
-  # Must stay last: the targeted Cluster and RedisReplication patches need their objects.
-  - path: hold-for-move-patch.yaml

@@ -30,8 +30,7 @@ spec:
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 
-  # Held at one for the volume re-bind into optcp-app-directory.
-  instances: 1
+  instances: 3
 
   imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
 
@@ -54,6 +53,11 @@ spec:
   stopDelay: 60
 
   postgresql:
+    # Enable synchronous replication for zero data loss and fast failover
+    synchronous:
+      method: any      # Any 1 replica can acknowledge
+      number: 1        # At least 1 replica must confirm writes
+
     parameters:
       shared_buffers: "128MB"
       max_connections: "150"
