@@ -31,7 +31,7 @@ spec:
           namespaces: [hookshot]
           names: ["tactical-*"]
       # hyrule-castle — bagisto/invoiceninja apache+root,
-      # frappe-suite (writes /home/frappe + sites), opnform-client node.
+      # frappe-suite (writes /home/frappe + sites).
       - resources:
           kinds: [Pod]
           namespaces: [hyrule-castle]
@@ -106,7 +106,6 @@ spec:
             - "calibre-web-*"
             - "immich-*"
             - "open-webui-*"
-            - "penpot-frontend-*"
             - "photoprism-*"
             - "plex-*"
       # optcp-staff-suite — kimai apache + sidecars.

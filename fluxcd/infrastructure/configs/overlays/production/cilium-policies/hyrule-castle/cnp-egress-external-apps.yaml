@@ -5,7 +5,7 @@ metadata:
 spec:
   description: >-
     These business apps reach open-ended external sets as core function: ERPNext,
-    InvoiceNinja, opnform, calcom, bagisto reaching email/SMTP/IMAP, payment gateways, calendar/video and webhook integrations.
+    InvoiceNinja, calcom, bagisto reaching email/SMTP/IMAP, payment gateways, calendar/video and webhook integrations.
     That set cannot be allowlisted, so world+cluster is granted; DBs and the mesh
     ride the universal CCNP baseline. Inert until egress default-deny is enabled.
   enableDefaultDeny:
@@ -23,9 +23,6 @@ spec:
           - frappe-suite-websocket
           - calcom
           - invoiceninja-app
-          - opnform-api
-          - opnform-api-scheduler
-          - opnform-api-worker
           - bagisto-demo
   egress:
     - toEntities:
