@@ -3,8 +3,6 @@ kind: MariaDB
 metadata:
   name: kimai-mariadb
 spec:
-  # Held for the volume re-bind into optcp-staff-suite.
-  suspend: true
   podMetadata:
     annotations:
       backup.velero.io/backup-volumes-excludes: "storage,galera"
