@@ -1211,11 +1211,11 @@
 - Replicas: 1/1
 
 **Bulkvs Ip Sync** — Deployment — v0.0.1
-- Namespace: compass
+- Namespace: optcp-address-sync
 - Replicas: 1/1
 
 **Cloudflare Ddns** — Deployment — 1
-- Namespace: compass
+- Namespace: optcp-address-sync
 - Replicas: 1/1
 
 **Alloy** — DaemonSet — 

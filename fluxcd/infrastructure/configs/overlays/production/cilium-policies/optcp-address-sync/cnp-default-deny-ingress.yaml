@@ -1,0 +1,22 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for optcp-address-sync namespace. Nothing
+    connects in; CCNPs cover kubelet-probes, istio-ambient and prometheus-scrape.
+    Egress: per-app cnp-egress-* grant the BulkVS and Cloudflare APIs and the
+    public-IP trace (toFQDNs/toCIDR). Both directions use a reserved-label anchor.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor

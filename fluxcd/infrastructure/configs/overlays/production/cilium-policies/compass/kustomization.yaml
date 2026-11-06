@@ -9,8 +9,6 @@ resources:
   # Egress allows (inert until egress default-deny is enabled for the namespace).
   # adguard has its own egress CNP in the adguard overlay; speedtests are inbound-only.
   - cnp-egress-chrony.yaml
-  - cnp-egress-bulkvs-ip-sync.yaml
-  - cnp-egress-cloudflare-ddns.yaml
   - cnp-egress-netbootxyz.yaml
   - cnp-egress-adguardhome-sync.yaml
   - cnp-egress-searxng.yaml
