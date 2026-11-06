@@ -4,29 +4,29 @@
 > Generated from live Kubernetes state
 > Cluster: dungeon
 
-## Apps & Services (135)
+## Apps & Services (136)
 
-✅ 134 healthy · ⚠️ 1 degraded
+✅ 135 healthy · ⚠️ 1 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Netbird (5 components) | ✅ | 🌐 vpn.optcp.com | [open](https://vpn.optcp.com) |
-| Netbox (3 components) | ✅ | ❓ netbox.pcfae.com | [open](https://netbox.pcfae.com) |
-| Oauth2 Proxy | ✅ | ❓ books.optcp.com | [open](https://books.optcp.com) |
-| OpenBao | ✅ | 🔒 secrets.optcp.com | [open](https://secrets.optcp.com) |
-| Semaphore | ✅ | 🔒 ansible.pcfae.com | [open](https://ansible.pcfae.com) |
-| Twofauth | ✅ | 🔒 authenticator.optcp.com | [open](https://authenticator.optcp.com) |
-| Unifi (2 components) | ✅ | 🔒 unifi.pcfae.com | [open](https://unifi.pcfae.com) |
-| Vaultwarden | ✅ | ✅ passwords.optcp.com | [open](https://passwords.optcp.com) |
-| Zitadel (5 components) | ✅ | 🌐 sso.optcp.com | [open](https://sso.optcp.com) |
+| Netbox (3 components) | ✅ | 🏠 netbox.pcfae.com | [open](https://netbox.pcfae.com) |
+| Oauth2 Proxy | ✅ | 🏠 books.optcp.com | [open](https://books.optcp.com) |
+| Semaphore | ✅ | 🏠 ansible.pcfae.com | [open](https://ansible.pcfae.com) |
+| Twofauth | ✅ | 🏠 authenticator.optcp.com | [open](https://authenticator.optcp.com) |
+| Unifi Network Application (2 components) | ✅ | 🔒 unifi.pcfae.com | [open](https://unifi.pcfae.com) |
+| Vault | ✅ | 🏠 secrets.optcp.com | [open](https://secrets.optcp.com) |
+| Vaultwarden | ✅ | 🏠 passwords.optcp.com | [open](https://passwords.optcp.com) |
+| Zitadel (5 components) | ✅ | 🏠 sso.optcp.com | [open](https://sso.optcp.com) |
 
 ### Bot Protection (Wallmaster🖐️)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Anubis | ✅ | 🔒 anubis.pcfae.com | [open](https://anubis.pcfae.com) |
+| Anubis | ✅ | 🏠 anubis.pcfae.com | [open](https://anubis.pcfae.com) |
 | Endlessh Go | ✅ | 🔒 |  |
 
 ### Business Apps (Hyrule Castle🏰)
@@ -34,51 +34,52 @@
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Apt Cacher Ng | ✅ | 🔒 apt.pcfae.com | [open](https://apt.pcfae.com) |
-| Bagisto (2 components) | ✅ | 🔒 bagisto.pcfae.com | [open](https://bagisto.pcfae.com) |
-| Bookstack (2 components) | ✅ | 🌐 kb.precisionplanit.com | [open](https://kb.precisionplanit.com) |
-| Calcom | ✅ | 🌐 cal.prplanit.com | [open](https://cal.prplanit.com) |
-| Frappe Suite (9 components) | ✅ | 🔒 hq.prplanit.com | [open](https://hq.prplanit.com) |
-| Gitlab (11 components) | ✅ | 🌐 git.prplanit.com | [open](https://git.prplanit.com) |
-| Harbor (6 components) | ✅ | 🔒 cr.optcp.com | [open](https://cr.optcp.com) |
-| Harbor Proxy Cache Proxy | ✅ | 🔒 docker.cr.optcp.com | [open](https://docker.cr.optcp.com) |
-| Invoiceninja (3 components) | ✅ | ❓ invoice.pcfae.com | [open](https://invoice.pcfae.com) |
-| Opnform (7 components) | ✅ | 🌐 form.prplanit.com | [open](https://form.prplanit.com) |
-| Osticket App | ✅ | ❓ support.pcfae.com | [open](https://support.pcfae.com) |
+| Bagisto (2 components) | ✅ | 🏠 bagisto.pcfae.com | [open](https://bagisto.pcfae.com) |
+| Bookstack (2 components) | ✅ | 🏠 kb.precisionplanit.com | [open](https://kb.precisionplanit.com) |
+| Calcom | ✅ | 🏠 cal.prplanit.com | [open](https://cal.prplanit.com) |
+| Frappe Suite (9 components) | ✅ | 🏠 hq.prplanit.com | [open](https://hq.prplanit.com) |
+| Gitlab (11 components) | ✅ | 🏠 git.prplanit.com | [open](https://git.prplanit.com) |
+| Harbor (6 components) | ✅ | 🏠 cr.optcp.com | [open](https://cr.optcp.com) |
+| Harbor Proxy Cache Proxy | ✅ | 🏠 docker.cr.optcp.com | [open](https://docker.cr.optcp.com) |
+| Invoiceninja (3 components) | ✅ | 🏠 invoice.pcfae.com | [open](https://invoice.pcfae.com) |
+| Opnform (7 components) | ✅ | 🏠 form.prplanit.com | [open](https://form.prplanit.com) |
+| Osticket App | ✅ | 🏠 support.pcfae.com | [open](https://support.pcfae.com) |
 
 ### Cloud & Collaboration (OpTCP)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Nextcloud (9 components) | ✅ | 🌐 cloud.optcp.com | [open](https://cloud.optcp.com) |
-| Openproject (3 components) | ✅ | 🔒 projects.optcp.com | [open](https://projects.optcp.com) |
-| Wikijs Sops | ✅ | 🔒 sops.optcp.com | [open](https://sops.optcp.com) |
+| Nextcloud (9 components) | ✅ | 🏠 cloud.optcp.com | [open](https://cloud.optcp.com) |
+| Openproject (3 components) | ✅ | 🏠 projects.optcp.com | [open](https://projects.optcp.com) |
+| Wikijs Sops | ✅ | 🏠 sops.optcp.com | [open](https://sops.optcp.com) |
 
 ### Cluster Infrastructure (Kube System⚙️)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Hubble Ui | ✅ | 🔒 hubble.pcfae.com | [open](https://hubble.pcfae.com) |
+| Hubble Ui | ✅ | 🏠 hubble.pcfae.com | [open](https://hubble.pcfae.com) |
 
 ### Content & Media (Temple of Time🏛️)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Appflowy (8 components) | ✅ | 🌐 flwy.prplanit.com | [open](https://flwy.prplanit.com) |
-| Calibre Web | ✅ | ❓ books.optcp.com | [open](https://books.optcp.com) |
-| Ghost (2 components) | ✅ | ❓ blog.pcfae.com | [open](https://blog.pcfae.com) |
-| Immich | ✅ | 🔒 images.pcfae.com | [open](https://images.pcfae.com) |
-| Jellyfin | ✅ | 🌐 flix.optcp.com | [open](https://flix.optcp.com) |
-| Joplin (2 components) | ✅ | 🔒 joplin.pcfae.com | [open](https://joplin.pcfae.com) |
-| Kimai (2 components) | ✅ | 🔒 kimai.pcfae.com | [open](https://kimai.pcfae.com) |
-| Linkwarden (3 components) | ✅ | ❓ bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
-| Mealie (2 components) | ✅ | ❓ meals.yesimvegan.com | [open](https://meals.yesimvegan.com) |
-| Open (3 components) | ✅ | 🔒 ai.pcfae.com | [open](https://ai.pcfae.com) |
-| Penpot (5 components) | ✅ | ❓ design.pcfae.com | [open](https://design.pcfae.com) |
-| Photoprism (2 components) | ✅ | 🔒 photos.pcfae.com | [open](https://photos.pcfae.com) |
-| Plex | ✅ | 🌐 plex.optcp.com | [open](https://plex.optcp.com) |
-| Reactive Resume (3 components) | ✅ | 🌐 resume.sofmeright.com | [open](https://resume.sofmeright.com) |
-| Shlink (3 components) | ✅ | ❓ sh.pcfae.com | [open](https://sh.pcfae.com) |
-| Wikijs (2 components) | ✅ | 🌐 wiki.yesimvegan.com | [open](https://wiki.yesimvegan.com) |
+| Appflowy (8 components) | ✅ | 🏠 flwy.prplanit.com | [open](https://flwy.prplanit.com) |
+| Calibre Web | ✅ | 🏠 books.internal.optcp.com | [open](https://books.internal.optcp.com) |
+| Ghost (2 components) | ✅ | 🏠 blog.pcfae.com | [open](https://blog.pcfae.com) |
+| Immich | ✅ | 🏠 images.pcfae.com | [open](https://images.pcfae.com) |
+| Jellyfin | ✅ | 🔒 flix.optcp.com | [open](https://flix.optcp.com) |
+| Joplin (2 components) | ✅ | 🏠 joplin.pcfae.com | [open](https://joplin.pcfae.com) |
+| Kimai (2 components) | ✅ | 🏠 kimai.pcfae.com | [open](https://kimai.pcfae.com) |
+| Linkwarden (3 components) | ✅ | 🏠 bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
+| Mealie (2 components) | ✅ | 🏠 meals.yesimvegan.com | [open](https://meals.yesimvegan.com) |
+| Open (3 components) | ✅ | 🏠 ai.pcfae.com | [open](https://ai.pcfae.com) |
+| Penpot (5 components) | ✅ | 🏠 design.pcfae.com | [open](https://design.pcfae.com) |
+| Photoprism (2 components) | ✅ | 🏠 photos.pcfae.com | [open](https://photos.pcfae.com) |
+| Plex | ✅ | 🔒 plex.optcp.com | [open](https://plex.optcp.com) |
+| Reactive Resume (3 components) | ✅ | 🏠 resume.sofmeright.com | [open](https://resume.sofmeright.com) |
+| Romm (2 components) | ✅ | 🏠 romm.pcfae.com | [open](https://romm.pcfae.com) |
+| Shlink (3 components) | ✅ | 🏠 sh.pcfae.com | [open](https://sh.pcfae.com) |
+| Wikijs (2 components) | ✅ | 🏠 wiki.yesimvegan.com | [open](https://wiki.yesimvegan.com) |
 
 ### DNS & Network (Compass🧭)
 
@@ -86,67 +87,67 @@
 | --- | --- | --- | --- |
 | Adguard | ✅ | 🔒 |  |
 | Chrony | ✅ | 🔒 |  |
-| Echo Ip | ✅ | 🌐 ipleek.com | [open](https://ipleek.com) |
-| Librespeed Speedtest | ✅ | 🔒 speedtester.pcfae.com | [open](https://speedtester.pcfae.com) |
+| Echo Ip | ✅ | 🏠 ipleek.com | [open](https://ipleek.com) |
+| Librespeed Speedtest | ✅ | 🏠 speedtester.pcfae.com | [open](https://speedtester.pcfae.com) |
 | Netbootxyz | ✅ | 🔒 netboot.pcfae.com | [open](https://netboot.pcfae.com) |
-| Openspeedtest | ✅ | 🔒 speedtest.pcfae.com | [open](https://speedtest.pcfae.com) |
-| Searxng (2 components) | ✅ | 🔒 search.pcfae.com | [open](https://search.pcfae.com) |
+| Openspeedtest | ✅ | 🏠 speedtest.pcfae.com | [open](https://speedtest.pcfae.com) |
+| Searxng (2 components) | ✅ | 🏠 search.pcfae.com | [open](https://search.pcfae.com) |
 
 ### Discovery & Dashboards (Lost Woods🌲)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Astralfocal Site | ✅ | 🌐 astralfocal.com | [open](https://astralfocal.com) |
-| Enamorafoto Site | ✅ | 🌐 enamorafoto.operationtimecapsule.com | [open](https://enamorafoto.operationtimecapsule.com) |
-| Etherealclique Site | ✅ | 🌐 etherealclique.com | [open](https://etherealclique.com) |
-| Ferdium | ✅ | 🔒 ferdium.pcfae.com | [open](https://ferdium.pcfae.com) |
-| Homarr (3 components) | ✅ | 🔒 apptray.pcfae.com | [open](https://apptray.pcfae.com) |
-| Homelabhelpdesk Site | ✅ | 🌐 homelabhelpdesk.com | [open](https://homelabhelpdesk.com) |
-| Kai Hamilton Site | ✅ | 🌐 kai-hamilton.com | [open](https://kai-hamilton.com) |
-| Organizr | ✅ | ❓ apps.pcfae.com | [open](https://apps.pcfae.com) |
-| Precisionplanit Site | ✅ | 🌐 precisionplanit.com | [open](https://precisionplanit.com) |
-| Sofmeright Site | ✅ | 🌐 sofmeright.com | [open](https://sofmeright.com) |
-| Yesimvegan Site | ✅ | 🌐 yesimvegan.com | [open](https://yesimvegan.com) |
+| Astralfocal Site | ✅ | 🏠 astralfocal.com | [open](https://astralfocal.com) |
+| Enamorafoto Site | ✅ | 🏠 enamorafoto.operationtimecapsule.com | [open](https://enamorafoto.operationtimecapsule.com) |
+| Etherealclique Site | ✅ | 🏠 etherealclique.com | [open](https://etherealclique.com) |
+| Ferdium | ✅ | 🏠 ferdium.pcfae.com | [open](https://ferdium.pcfae.com) |
+| Homarr (3 components) | ⚠️ | 🏠 apptray.pcfae.com | [open](https://apptray.pcfae.com) |
+| Homelabhelpdesk Site | ✅ | 🏠 homelabhelpdesk.com | [open](https://homelabhelpdesk.com) |
+| Kai Hamilton Site | ✅ | 🏠 kai-hamilton.com | [open](https://kai-hamilton.com) |
+| Organizr | ✅ | 🏠 apps.pcfae.com | [open](https://apps.pcfae.com) |
+| Precisionplanit Site | ✅ | 🏠 precisionplanit.com | [open](https://precisionplanit.com) |
+| Sofmeright Site | ✅ | 🏠 sofmeright.com | [open](https://sofmeright.com) |
+| Yesimvegan Site | ✅ | 🏠 yesimvegan.com | [open](https://yesimvegan.com) |
 
 ### Downloads & Media (Swift Sail⛵)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Anirra | ✅ | 🔒 anime.pcfae.com | [open](https://anime.pcfae.com) |
-| Bazarr | ✅ | 🔒 bazarr.pcfae.com | [open](https://bazarr.pcfae.com) |
+| Anirra | ✅ | 🏠 anime.pcfae.com | [open](https://anime.pcfae.com) |
+| Bazarr | ✅ | 🏠 bazarr.pcfae.com | [open](https://bazarr.pcfae.com) |
 | Byparr | ✅ | 🏠 |  |
-| Downloadarrs | ✅ | 🔒 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
-| Jellyseerr | ✅ | 🌐 jseer.optcp.com | [open](https://jseer.optcp.com) |
-| Overseerr | ✅ | 🔒 overseer.pcfae.com | [open](https://overseer.pcfae.com) |
-| Pinchflat | ✅ | 🔒 pinchflat.pcfae.com | [open](https://pinchflat.pcfae.com) |
-| Prowlarr | ✅ | 🔒 prowlarr.pcfae.com | [open](https://prowlarr.pcfae.com) |
+| Downloadarrs | ✅ | 🏠 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
+| Jellyseerr | ✅ | 🏠 jseer.optcp.com | [open](https://jseer.optcp.com) |
+| Overseerr | ✅ | 🏠 overseer.pcfae.com | [open](https://overseer.pcfae.com) |
+| Pinchflat | ✅ | 🏠 pinchflat.pcfae.com | [open](https://pinchflat.pcfae.com) |
+| Prowlarr | ✅ | 🏠 prowlarr.pcfae.com | [open](https://prowlarr.pcfae.com) |
 | Py Kms | ✅ | 🔒 kms.pcfae.com | [open](https://kms.pcfae.com) |
-| Pyload Ng | ✅ | 🔒 dl.pcfae.com | [open](https://dl.pcfae.com) |
-| Sabnzbd | ✅ | 🔒 sabnzbd.pcfae.com | [open](https://sabnzbd.pcfae.com) |
-| Supermicro License Generator | ✅ | 🔒 smkeygen.pcfae.com | [open](https://smkeygen.pcfae.com) |
-| Thelounge | ✅ | 🔒 thelounge.pcfae.com | [open](https://thelounge.pcfae.com) |
+| Pyload Ng | ✅ | 🏠 dl.pcfae.com | [open](https://dl.pcfae.com) |
+| Sabnzbd | ✅ | 🏠 sabnzbd.pcfae.com | [open](https://sabnzbd.pcfae.com) |
+| Supermicro License Generator | ✅ | 🏠 smkeygen.pcfae.com | [open](https://smkeygen.pcfae.com) |
+| Thelounge | ✅ | 🏠 thelounge.pcfae.com | [open](https://thelounge.pcfae.com) |
 
 ### Game Servers (Shooting Gallery🎯)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Ark (4 components) | ⚠️ | 🌐 |  |
+| Ark (4 components) | ✅ | 🌐 |  |
 | Minecraft | ✅ | 🌐 |  |
 | Palworld | ✅ | 🌐 |  |
-| Romm (2 components) | ✅ | 🔒 romm.pcfae.com | [open](https://romm.pcfae.com) |
 
 ### Infrastructure (Aryll's Lookout🔭)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Pbs Cluster Proxy | ✅ | 🔒 pbs.pcfae.com | [open](https://pbs.pcfae.com) |
-| Pve Cluster Proxy | ✅ | 🔒 pve.pcfae.com | [open](https://pve.pcfae.com) |
+| Pbs Cluster Proxy | ✅ | 🏠 pbs.pcfae.com | [open](https://pbs.pcfae.com) |
+| Pve Cluster Proxy | ✅ | 🏠 pve.pcfae.com | [open](https://pve.pcfae.com) |
 
 ### Mail (OpTCP)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Stalwart | ✅ | 🔒 mail-admin.optcp.com | [open](https://mail-admin.optcp.com) |
+| Bulwark | ✅ | 🏠 mail.optcp.com | [open](https://mail.optcp.com) |
+| Stalwart (4 components) | ✅ | 🔒 mail-admin.optcp.com | [open](https://mail-admin.optcp.com) |
 
 ### Notifications (Delivery Bag📬)
 
@@ -159,83 +160,83 @@
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Alertmanager | ✅ | 🏠 |  |
-| Beszel | ✅ | 🔒 beszel.pcfae.com | [open](https://beszel.pcfae.com) |
-| Gatus | ✅ | ❓ status.pcfae.com | [open](https://status.pcfae.com) |
-| Grafana | ✅ | 🔒 grafana.pcfae.com | [open](https://grafana.pcfae.com) |
-| Headlamp | ✅ | 🔒 headlamp.pcfae.com | [open](https://headlamp.pcfae.com) |
-| Loki (3 components) | ✅ | 🔒 logging.pcfae.com | [open](https://logging.pcfae.com) |
+| Beszel | ✅ | 🏠 beszel.pcfae.com | [open](https://beszel.pcfae.com) |
+| Gatus | ✅ | 🏠 status.pcfae.com | [open](https://status.pcfae.com) |
+| Grafana | ✅ | 🏠 grafana.pcfae.com | [open](https://grafana.pcfae.com) |
+| Headlamp | ✅ | 🏠 headlamp.pcfae.com | [open](https://headlamp.pcfae.com) |
+| Loki (3 components) | ✅ | 🏠 logging.pcfae.com | [open](https://logging.pcfae.com) |
 | Nutify | ✅ | 🔒 nut.pcfae.com | [open](https://nut.pcfae.com) |
 | Prometheus Exporter (2 components) | ✅ | 🔒 |  |
-| Speedtest (2 components) | ✅ | 🔒 isptest.pcfae.com | [open](https://isptest.pcfae.com) |
-| Umami (2 components) | ✅ | 🌐 analytics.prplanit.com | [open](https://analytics.prplanit.com) |
-| Uptime Kuma | ✅ | ❓ uptime.pcfae.com | [open](https://uptime.pcfae.com) |
+| Speedtest (2 components) | ✅ | 🏠 isptest.pcfae.com | [open](https://isptest.pcfae.com) |
+| Umami | ✅ | 🏠 analytics.prplanit.com | [open](https://analytics.prplanit.com) |
+| Uptime Kuma | ✅ | 🏠 uptime.pcfae.com | [open](https://uptime.pcfae.com) |
 | Vmalert | ✅ | 🏠 |  |
-| Vminsert | ✅ | 🔒 metrics.pcfae.com | [open](https://metrics.pcfae.com) |
-| Weave Gitops | ✅ | 🔒 flux.pcfae.com | [open](https://flux.pcfae.com) |
+| Vminsert | ✅ | 🏠 metrics.pcfae.com | [open](https://metrics.pcfae.com) |
+| Weave Gitops | ✅ | 🏠 flux.pcfae.com | [open](https://flux.pcfae.com) |
 
 ### Personal Sites (Kokiri Forest🌿)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Linkstack (2 components) | ✅ | 🌐 bio.outspokekin.com | [open](https://bio.outspokekin.com) |
+| Linkstack (2 components) | ✅ | 🏠 bio.outspokekin.com | [open](https://bio.outspokekin.com) |
 
 ### Private Apps (Pedestal of Time⚔️)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Actualbudget | ✅ | 🔒 budget.pcfae.com | [open](https://budget.pcfae.com) |
-| Dailytxt | ✅ | 🔒 shiplog.pcfae.com | [open](https://shiplog.pcfae.com) |
-| Homebox | ✅ | 🔒 inventory.pcfae.com | [open](https://inventory.pcfae.com) |
-| Lubelogger | ✅ | 🔒 lubelogger.pcfae.com | [open](https://lubelogger.pcfae.com) |
-| Monica (2 components) | ✅ | 🔒 monica.pcfae.com | [open](https://monica.pcfae.com) |
-| Paperless (3 components) | ✅ | 🔒 paperless.pcfae.com | [open](https://paperless.pcfae.com) |
-| Photoprism (2 components) | ✅ | 🔒 fotos.pcfae.com | [open](https://fotos.pcfae.com) |
+| Actualbudget | ✅ | 🏠 budget.pcfae.com | [open](https://budget.pcfae.com) |
+| Dailytxt | ✅ | 🏠 shiplog.pcfae.com | [open](https://shiplog.pcfae.com) |
+| Homebox | ✅ | 🏠 inventory.pcfae.com | [open](https://inventory.pcfae.com) |
+| Lubelogger | ✅ | 🏠 lubelogger.pcfae.com | [open](https://lubelogger.pcfae.com) |
+| Monica (2 components) | ✅ | 🏠 monica.pcfae.com | [open](https://monica.pcfae.com) |
+| Paperless (3 components) | ✅ | 🏠 paperless.pcfae.com | [open](https://paperless.pcfae.com) |
+| Photoprism (2 components) | ✅ | 🏠 fotos.pcfae.com | [open](https://fotos.pcfae.com) |
 | Plex Ms X | ✅ | 🔒 plexx.pcfae.com | [open](https://plexx.pcfae.com) |
-| Roundcube Primary (2 components) | ✅ | 🔒 mail.pcfae.com | [open](https://mail.pcfae.com) |
+| Roundcube Primary (2 components) | ✅ | 🏠 mail.pcfae.com | [open](https://mail.pcfae.com) |
 
 ### Privileged Telemetry (Lakitu☁️)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Netalertx | ✅ | 🔒 hosts.pcfae.com | [open](https://hosts.pcfae.com) |
+| Netalertx | ✅ | 🏠 hosts.optcp.com | [open](https://hosts.optcp.com) |
 
 ### Public Apps (Temple of Time🕰️)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Navidrome | ✅ | 🌐 music.optcp.com | [open](https://music.optcp.com) |
+| Navidrome | ✅ | 🏠 music.optcp.com | [open](https://music.optcp.com) |
 
 ### Remote Access (Hookshot🪝)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Boundary (2 components) | ✅ | 🌐 access.optcp.com | [open](https://access.optcp.com) |
-| Guacamole (3 components) | ✅ | 🔒 guacamole.pcfae.com | [open](https://guacamole.pcfae.com) |
+| Boundary (2 components) | ✅ | 🏠 access.optcp.com | [open](https://access.optcp.com) |
+| Guacamole (3 components) | ✅ | 🏠 guacamole.pcfae.com | [open](https://guacamole.pcfae.com) |
 | Rustdesk | ✅ | 🔒 |  |
-| Tactical (11 components) | ✅ | 🌐 meshc.prplanit.com | [open](https://meshc.prplanit.com) |
+| Tactical (11 components) | ✅ | 🏠 meshc.prplanit.com | [open](https://meshc.prplanit.com) |
 
 ### Security & IoT (Lens of Truth🔍)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Crowdsec (4 components) | ✅ | 🔒 crowdsec-lapi.pcfae.com | [open](https://crowdsec-lapi.pcfae.com) |
+| Crowdsec (4 components) | ✅ | 🏠 crowdsec-lapi.pcfae.com | [open](https://crowdsec-lapi.pcfae.com) |
 | Frigate | ✅ | 🔒 nvr.pcfae.com | [open](https://nvr.pcfae.com) |
-| Home Assistant | ✅ | ❓ hass.arbitorium.com | [open](https://hass.arbitorium.com) |
+| Home Assistant | ✅ | 🏠 hass.arbitorium.com | [open](https://hass.arbitorium.com) |
 | Mosquitto | ✅ | 🏠 |  |
 | Wazuh (3 components) | ✅ | 🔒 siem.prplanit.com | [open](https://siem.prplanit.com) |
-| Zigbee2mqtt | ✅ | ❓ z2m.arbitorium.com | [open](https://z2m.arbitorium.com) |
+| Zigbee2mqtt | ✅ | 🏠 z2m.arbitorium.com | [open](https://z2m.arbitorium.com) |
 
 ### Security (OpTCP)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Dependency Track Api Server (2 components) | ✅ | 🔒 dtrack.optcp.com | [open](https://dtrack.optcp.com) |
+| Dependency Track Api Server (2 components) | ✅ | 🏠 dtrack.optcp.com | [open](https://dtrack.optcp.com) |
 
 ### Social (Temple of Time⏳)
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Hubzilla (3 components) | ✅ | 🌐 social.outspokekin.com | [open](https://social.outspokekin.com) |
+| Hubzilla (3 components) | ✅ | 🏠 social.outspokekin.com | [open](https://social.outspokekin.com) |
 | Matrix (8 components) | ✅ | 🌐 chat.outspokekin.com | [open](https://chat.outspokekin.com) |
 
 ### Storage (Goron's Bracelet💪)
@@ -248,26 +249,26 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Convertx | ✅ | 🔒 convertx.pcfae.com | [open](https://convertx.pcfae.com) |
-| Draw Io | ✅ | 🔒 draw.pcfae.com | [open](https://draw.pcfae.com) |
-| Fairer Pages | ✅ | ❓ *.arbitorium.com | [open](https://*.arbitorium.com) |
+| Convertx | ✅ | 🏠 convertx.pcfae.com | [open](https://convertx.pcfae.com) |
+| Draw Io | ✅ | 🏠 draw.pcfae.com | [open](https://draw.pcfae.com) |
+| Fairer Pages | ✅ | 🏠 *.arbitorium.com | [open](https://*.arbitorium.com) |
 | Faster Whisper | ✅ | 🏠 |  |
-| Google Webfonts Helper | ✅ | 🔒 gwfonts.pcfae.com | [open](https://gwfonts.pcfae.com) |
-| Hrconvert2 | ✅ | 🔒 hrconvert2.pcfae.com | [open](https://hrconvert2.pcfae.com) |
-| It Tools | ✅ | 🔒 ittools.pcfae.com | [open](https://ittools.pcfae.com) |
-| Libretranslate | ✅ | 🔒 translate.pcfae.com | [open](https://translate.pcfae.com) |
-| Mazanoke | ✅ | 🔒 mazanoke.pcfae.com | [open](https://mazanoke.pcfae.com) |
+| Google Webfonts Helper | ✅ | 🏠 gwfonts.pcfae.com | [open](https://gwfonts.pcfae.com) |
+| Hrconvert2 | ✅ | 🏠 hrconvert2.pcfae.com | [open](https://hrconvert2.pcfae.com) |
+| It Tools | ✅ | 🏠 ittools.pcfae.com | [open](https://ittools.pcfae.com) |
+| Libretranslate | ✅ | 🏠 translate.pcfae.com | [open](https://translate.pcfae.com) |
+| Mazanoke | ✅ | 🏠 mazanoke.pcfae.com | [open](https://mazanoke.pcfae.com) |
 | Neko (2 components) | ✅ | 🔒 web.pcfae.com | [open](https://web.pcfae.com) |
-| Ollama | ✅ | 🔒 ollama.pcfae.com | [open](https://ollama.pcfae.com) |
+| Ollama | ✅ | 🏠 ollama.pcfae.com | [open](https://ollama.pcfae.com) |
 | Openwakeword | ✅ | 🏠 |  |
 | Piper | ✅ | 🏠 |  |
-| Stable Diffusion Webui | ✅ | 🔒 sdiff.pcfae.com | [open](https://sdiff.pcfae.com) |
+| Stable Diffusion Webui | ✅ | 🏠 sdiff.pcfae.com | [open](https://sdiff.pcfae.com) |
 
 <details>
 <summary>App details</summary>
 
 **Netbird — 5 components** — Mixed — 
-- Namespace: zeldas-lullaby
+- Namespace: optcp-remote-access
 - Replicas: 9/9
 - Hosts: vpn.optcp.com
 - Components:
@@ -278,59 +279,51 @@
   - netbird-turn (Deployment)
 
 **Netbox — 3 components** — StatefulSet — 
-- Namespace: zeldas-lullaby
+- Namespace: optcp-ipam
 - Replicas: 3/3
 - Hosts: netbox.pcfae.com, netbox.prplanit.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - netbox-postgres (StatefulSet, database)
   - netbox-redis (StatefulSet, cache)
   - netbox-server (StatefulSet)
 
 **Oauth2 Proxy** — Deployment — v7.15.5
-- Namespace: zeldas-lullaby
+- Namespace: optcp-identity
 - Replicas: 1/1
-- Hosts: books.optcp.com, books.pcfae.com, music.optcp.com, oa2p.pcfae.com, z2m.arbitorium.com
-- Gateway: cell-membrane-ingress-gateway
-
-**OpenBao** — StatefulSet — 
-- Namespace: zeldas-lullaby
-- Replicas: 3/3
-- Hosts: secrets.optcp.com
-- Gateway: phloem-ingress-gateway
+- Hosts: books.optcp.com, books.pcfae.com, hosts.optcp.com, mail.optcp.com, music.optcp.com, oa2p.pcfae.com, support.prplanit.com, z2m.arbitorium.com, zigbee.arbitorium.com
 
 **Semaphore** — StatefulSet — 
-- Namespace: zeldas-lullaby
+- Namespace: optcp-infrastructure-management
 - Replicas: 1/1
 - Hosts: ansible.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Twofauth** — StatefulSet — 8.0.3
-- Namespace: zeldas-lullaby
+- Namespace: optcp-keyring
 - Replicas: 1/1
 - Hosts: authenticator.optcp.com
-- Gateway: phloem-ingress-gateway
 
-**Unifi — 2 components** — StatefulSet — 
-- Namespace: zeldas-lullaby
+**Unifi Network Application — 2 components** — StatefulSet — 
+- Namespace: optcp-infrastructure-management
 - Replicas: 2/2
 - Hosts: unifi.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
-  - unifi-app (StatefulSet)
-  - unifi-db (StatefulSet, database)
+  - unifi-network-application-app (StatefulSet)
+  - unifi-network-application-mongodb (StatefulSet)
 
-**Vaultwarden** — Deployment — 1.37.4
-- Namespace: zeldas-lullaby
+**Vault** — StatefulSet — 
+- Namespace: optcp-secrets
+- Replicas: 3/3
+- Hosts: secrets.optcp.com
+
+**Vaultwarden** — Deployment — 1.37.5
+- Namespace: optcp-keyring
 - Replicas: 3/3
 - Hosts: passwords.optcp.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Zitadel — 5 components** — Mixed — 
-- Namespace: zeldas-lullaby
+- Namespace: optcp-identity
 - Replicas: 8/8
-- Hosts: sso.optcp.com
-- Gateway: cell-membrane-ingress-gateway
+- Hosts: sso.optcp.com, sso.prplanit.com
 - Components:
   - zitadel (StatefulSet)
   - zitadel-flatroles (Deployment)
@@ -338,36 +331,32 @@
   - zitadel-redis (StatefulSet, cache)
   - zitadel-sentinel-sentinel (StatefulSet, cache)
 
-**Anubis** — Deployment — v1.28.1
+**Anubis** — Deployment — v1.28.2
 - Namespace: wallmaster
 - Replicas: 1/1
 - Hosts: anubis.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Endlessh Go** — StatefulSet — 2026.0730.0
 - Namespace: tingle-tuner
 - Replicas: 1/1
 
 **Apt Cacher Ng** — StatefulSet — 3.7.4-v0.1
-- Namespace: hyrule-castle
+- Namespace: optcp-supply-chain
 - Replicas: 1/1
 - Hosts: apt.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Bagisto — 2 components** — StatefulSet — 
 - Namespace: hyrule-castle
 - Replicas: 2/2
 - Hosts: bagisto.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - bagisto-demo (StatefulSet)
   - bagisto-demo-db (StatefulSet, database)
 
-**Bookstack — 2 components** — StatefulSet — 26.09.2
-- Namespace: hyrule-castle
+**Bookstack — 2 components** — StatefulSet — v26.09.2-ls293
+- Namespace: optcp-cloud
 - Replicas: 1/1
 - Hosts: kb.precisionplanit.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - bookstack (StatefulSet)
   - bookstack-db (StatefulSet, database)
@@ -376,13 +365,11 @@
 - Namespace: optcp-cloud
 - Replicas: 3/3
 - Hosts: cal.prplanit.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Frappe Suite — 9 components** — Mixed — 
 - Namespace: hyrule-castle
 - Replicas: 9/9
 - Hosts: hq.prplanit.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - frappe-suite-frontend (Deployment)
   - frappe-suite-mariadb (StatefulSet, database)
@@ -394,11 +381,10 @@
   - frappe-suite-sites (StatefulSet)
   - frappe-suite-websocket (Deployment)
 
-**Gitlab — 11 components** — Mixed — v19.4.3
-- Namespace: hyrule-castle
+**Gitlab — 11 components** — Mixed — v19.5.3
+- Namespace: optcp-supply-chain
 - Replicas: 22/22
 - Hosts: git.prplanit.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - gitlab-gitlab-exporter (Deployment)
   - gitlab-gitlab-shell (Deployment)
@@ -412,11 +398,10 @@
   - gitlab-redis (StatefulSet, cache)
   - gitlab-sentinel-sentinel (StatefulSet, cache)
 
-**Harbor — 6 components** — Deployment — 2.15.2
-- Namespace: hyrule-castle
+**Harbor — 6 components** — Deployment — 2.15.4
+- Namespace: optcp-supply-chain
 - Replicas: 13/13
 - Hosts: cr.optcp.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - harbor-core (Deployment)
   - harbor-jobservice (Deployment)
@@ -425,17 +410,15 @@
   - harbor-registry (Deployment)
   - harbor-redis (StatefulSet, cache)
 
-**Harbor Proxy Cache Proxy** — Deployment — 1.31.1.1-alpine
-- Namespace: hyrule-castle
+**Harbor Proxy Cache Proxy** — Deployment — 1.31.8.1-alpine
+- Namespace: optcp-supply-chain
 - Replicas: 2/2
 - Hosts: docker.cr.optcp.com, ghcr.cr.optcp.com, lscr.cr.optcp.com, quay.cr.optcp.com
-- Gateway: phloem-ingress-gateway
 
 **Invoiceninja — 3 components** — StatefulSet — 
 - Namespace: hyrule-castle
 - Replicas: 3/3
 - Hosts: invoice.pcfae.com, invoiceninja.prplanit.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - invoiceninja-app (StatefulSet)
   - invoiceninja-mysql (StatefulSet, database)
@@ -445,7 +428,6 @@
 - Namespace: optcp-cloud
 - Replicas: 7/7
 - Hosts: form.prplanit.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - opnform-api (Deployment)
   - opnform-api-scheduler (Deployment)
@@ -456,16 +438,14 @@
   - opnform-redis (StatefulSet, cache)
 
 **Osticket App** — Deployment — v1.18.4
-- Namespace: hyrule-castle
+- Namespace: prplanit-support
 - Replicas: 3/3
 - Hosts: support.pcfae.com, support.prplanit.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Nextcloud — 9 components** — Deployment — 
 - Namespace: optcp-cloud
 - Replicas: 5/5
 - Hosts: cloud.optcp.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - nextcloud (Deployment)
   - nextcloud-collabora (Deployment)
@@ -478,32 +458,28 @@
   - nextcloud-whiteboard (Deployment, extension)
 
 **Openproject — 3 components** — Deployment — 
-- Namespace: optcp-cloud
+- Namespace: optcp-staff-suite
 - Replicas: 4/4
 - Hosts: projects.optcp.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - openproject-memcached (Deployment, cache)
   - openproject-web (Deployment)
   - openproject-worker (Deployment)
 
-**Wikijs Sops** — Deployment — 2.5.315
-- Namespace: optcp-cloud
+**Wikijs Sops** — Deployment — 2.5.317
+- Namespace: optcp-staff-suite
 - Replicas: 1/1
 - Hosts: sops.optcp.com
-- Gateway: phloem-ingress-gateway
 
 **Hubble Ui** — Deployment — 
 - Namespace: kube-system
 - Replicas: 1/1
 - Hosts: hubble.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Appflowy — 8 components** — Mixed — 
 - Namespace: optcp-cloud
 - Replicas: 9/9
 - Hosts: flwy.prplanit.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - appflowy-admin-frontend (Deployment)
   - appflowy-ai (Deployment)
@@ -514,17 +490,15 @@
   - appflowy-web (Deployment)
   - appflowy-worker (Deployment)
 
-**Calibre Web** — Deployment — 0.6.27
+**Calibre Web** — Deployment — 0.6.27-ls407
 - Namespace: optcp-media
 - Replicas: 1/1
-- Hosts: books.optcp.com, books.pcfae.com
-- Gateway: cell-membrane-ingress-gateway
+- Hosts: books.internal.optcp.com, books.optcp.com, books.pcfae.com
 
 **Ghost — 2 components** — StatefulSet — 6-alpine
-- Namespace: temple-of-time
+- Namespace: optcp-web
 - Replicas: 1/1
 - Hosts: blog.pcfae.com, blog.sofmeright.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - ghost (StatefulSet)
   - ghost-mysql (StatefulSet, database)
@@ -533,28 +507,24 @@
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: images.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Jellyfin** — StatefulSet — 10.11.11
 - Namespace: optcp-media
 - Replicas: 1/1
 - Hosts: flix.optcp.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Joplin — 2 components** — StatefulSet — 
 - Namespace: optcp-cloud
 - Replicas: 2/2
 - Hosts: joplin.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - joplin-app (StatefulSet)
   - joplin-postgres (StatefulSet, database)
 
 **Kimai — 2 components** — StatefulSet — apache
-- Namespace: temple-of-time
+- Namespace: optcp-staff-suite
 - Replicas: 3/3
 - Hosts: kimai.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - kimai (StatefulSet)
   - kimai-mariadb (StatefulSet, database)
@@ -563,17 +533,15 @@
 - Namespace: optcp-cloud
 - Replicas: 3/3
 - Hosts: bookmarks.pcfae.com, lwd.optcp.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - linkwarden (StatefulSet)
   - linkwarden-meilisearch (StatefulSet)
   - linkwarden-postgres (StatefulSet, database)
 
-**Mealie — 2 components** — StatefulSet — v3.28.0
-- Namespace: temple-of-time
+**Mealie — 2 components** — StatefulSet — v3.29.0
+- Namespace: yesimvegan-web
 - Replicas: 1/1
 - Hosts: meals.yesimvegan.com, recipes.pcfae.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - mealie (StatefulSet)
   - mealie-postgres (StatefulSet, database)
@@ -582,7 +550,6 @@
 - Namespace: temple-of-time
 - Replicas: 9/9
 - Hosts: ai.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - open-webui (StatefulSet)
   - open-webui-redis (StatefulSet, cache)
@@ -592,7 +559,6 @@
 - Namespace: optcp-cloud
 - Replicas: 5/5
 - Hosts: design.pcfae.com, penpot.prplanit.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - penpot-backend (StatefulSet)
   - penpot-exporter (StatefulSet)
@@ -600,46 +566,49 @@
   - penpot-postgres (StatefulSet, database)
   - penpot-redis (StatefulSet, cache)
 
-**Photoprism — 2 components** — StatefulSet — 261007
+**Photoprism — 2 components** — StatefulSet — 261029
 - Namespace: temple-of-time
 - Replicas: 1/1
 - Hosts: photos.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - photoprism (StatefulSet)
   - photoprism-mariadb (StatefulSet, database)
 
-**Plex** — StatefulSet — 1.43.4.10903-e5521bd8c
+**Plex** — StatefulSet — 1.43.6.11085-d1e52e169
 - Namespace: optcp-media
 - Replicas: 1/1
 - Hosts: plex.optcp.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Reactive Resume — 3 components** — Mixed — 
 - Namespace: optcp-cloud
 - Replicas: 3/3
 - Hosts: resume.sofmeright.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - reactive-resume-app (Deployment)
   - reactive-resume-chrome (Deployment)
   - reactive-resume-postgres (StatefulSet, database)
 
+**Romm — 2 components** — StatefulSet — 5.4.1
+- Namespace: optcp-media
+- Replicas: 1/1
+- Hosts: romm.pcfae.com
+- Components:
+  - romm (StatefulSet)
+  - romm-db (StatefulSet, database)
+
 **Shlink — 3 components** — Mixed — 
-- Namespace: temple-of-time
+- Namespace: optcp-cloud
 - Replicas: 3/3
 - Hosts: sh.pcfae.com, sh.uni2.cc, shlink.pcfae.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - shlink-app (StatefulSet)
   - shlink-db (StatefulSet, database)
   - shlink-web-client (Deployment)
 
 **Wikijs — 2 components** — StatefulSet — 
-- Namespace: temple-of-time
+- Namespace: yesimvegan-web
 - Replicas: 2/2
 - Hosts: wiki.yesimvegan.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - wikijs-vegan (StatefulSet)
   - wikijs-vegan-db (StatefulSet, database)
@@ -656,116 +625,98 @@
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: ipleek.com, www.ipleek.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Librespeed Speedtest** — Deployment — 6.3.1-alpine
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: speedtester.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Netbootxyz** — StatefulSet — 0.7.6-nbxyz10
 - Namespace: compass
 - Replicas: 1/1
 - Hosts: netboot.pcfae.com
-- Gateway: phloem-ingress-gateway
 
-**Openspeedtest** — Deployment — v2.0.6
+**Openspeedtest** — Deployment — v2.0.8
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: speedtest.pcfae.com
-- Gateway: phloem-ingress-gateway
 
-**Searxng — 2 components** — Deployment — 2026.10.11-ad46ebd7d
+**Searxng — 2 components** — Deployment — 2026.11.5-3e95f6cd2
 - Namespace: compass
 - Replicas: 3/3
 - Hosts: search.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - searxng (Deployment)
   - searxng-redis (Deployment, cache)
 
 **Astralfocal Site** — Deployment — v0.0.3
-- Namespace: kokiri-forest
+- Namespace: optcp-web
 - Replicas: 1/1
 - Hosts: astralfocal.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Enamorafoto Site** — Deployment — v0.0.3
-- Namespace: kokiri-forest
+- Namespace: optcp-web
 - Replicas: 1/1
 - Hosts: enamorafoto.operationtimecapsule.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Etherealclique Site** — Deployment — v0.0.3
-- Namespace: kokiri-forest
+- Namespace: outspokekin-web
 - Replicas: 1/1
 - Hosts: etherealclique.com
-- Gateway: cell-membrane-ingress-gateway
 
-**Ferdium** — StatefulSet — 7.2.3
+**Ferdium** — StatefulSet — v7.2.3-ls165
 - Namespace: lost-woods
 - Replicas: 1/1
 - Hosts: ferdium.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Homarr — 3 components** — StatefulSet — v1.77.2
 - Namespace: optcp-app-directory
-- Replicas: 3/3
+- Replicas: 1/3
 - Hosts: apptray.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - homarr (StatefulSet)
   - homarr-redis (StatefulSet, cache)
   - homarr-sentinel-sentinel (StatefulSet, cache)
 
 **Homelabhelpdesk Site** — Deployment — v0.0.3
-- Namespace: kokiri-forest
+- Namespace: prplanit-web
 - Replicas: 1/1
 - Hosts: homelabhelpdesk.com, www.homelabhelpdesk.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Kai Hamilton Site** — Deployment — v0.0.3
-- Namespace: kokiri-forest
+- Namespace: optcp-web
 - Replicas: 1/1
 - Hosts: kai-hamilton.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Organizr** — StatefulSet — 
 - Namespace: lost-woods
 - Replicas: 1/1
 - Hosts: apps.pcfae.com, apps.prplanit.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Precisionplanit Site** — Deployment — v0.0.3
-- Namespace: kokiri-forest
+- Namespace: prplanit-web
 - Replicas: 1/1
 - Hosts: precisionplanit.com, www.precisionplanit.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Sofmeright Site** — Deployment — v0.0.6
-- Namespace: kokiri-forest
+- Namespace: optcp-web
 - Replicas: 1/1
 - Hosts: sofmeright.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Yesimvegan Site** — Deployment — v0.1.0
-- Namespace: kokiri-forest
+- Namespace: yesimvegan-web
 - Replicas: 1/1
 - Hosts: yesimvegan.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Anirra** — StatefulSet — xiFwhijN
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: anime.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Bazarr** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: bazarr.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Byparr** — StatefulSet — 
 - Namespace: swift-sail
@@ -775,65 +726,55 @@
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: lidarr.pcfae.com, qbitt.pcfae.com, radarr.pcfae.com, readarr.pcfae.com, sonarr.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Jellyseerr** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: jseer.optcp.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Overseerr** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: overseer.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Pinchflat** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: pinchflat.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Prowlarr** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: prowlarr.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Py Kms** — StatefulSet — python3-next
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: kms.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Pyload Ng** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: dl.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Sabnzbd** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: sabnzbd.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Supermicro License Generator** — Deployment — v0.0.5
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: smkeygen.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Thelounge** — StatefulSet — 
 - Namespace: swift-sail
 - Replicas: 1/1
 - Hosts: thelounge.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Ark — 4 components** — Mixed — 
 - Namespace: optcp-shooting-gallery
-- Replicas: 3/4
+- Replicas: 4/4
 - Components:
   - ark-sa-tmc-admin-list-server (Deployment)
   - ark-sa-tmc-theisland (StatefulSet)
@@ -844,38 +785,36 @@
 - Namespace: optcp-shooting-gallery
 - Replicas: 1/1
 
-**Palworld** — StatefulSet — v2.8.0
+**Palworld** — StatefulSet — v2.8.1
 - Namespace: optcp-shooting-gallery
 - Replicas: 1/1
 
-**Romm — 2 components** — StatefulSet — 5.4.0
-- Namespace: optcp-media
-- Replicas: 1/1
-- Hosts: romm.pcfae.com
-- Gateway: phloem-ingress-gateway
-- Components:
-  - romm (StatefulSet)
-  - romm-db (StatefulSet, database)
-
-**Pbs Cluster Proxy** — Deployment — 1.31.5-alpine
+**Pbs Cluster Proxy** — Deployment — 1.31.8-alpine
 - Namespace: gossip-stone
 - Replicas: 2/2
 - Hosts: pbs.pcfae.com
-- Gateway: phloem-ingress-gateway
 
-**Pve Cluster Proxy** — Deployment — 1.31.5-alpine
+**Pve Cluster Proxy** — Deployment — 1.31.8-alpine
 - Namespace: gossip-stone
 - Replicas: 2/2
 - Hosts: pve.pcfae.com
-- Gateway: phloem-ingress-gateway
 
-**Stalwart** — Deployment — v0.16.27
+**Bulwark** — StatefulSet — 1.19.1
 - Namespace: optcp-delivery-bag
 - Replicas: 1/1
-- Hosts: mail-admin.optcp.com
-- Gateway: phloem-ingress-gateway
+- Hosts: mail.optcp.com
 
-**Ntfy** — StatefulSet — v2.29.0
+**Stalwart — 4 components** — Deployment — v1.0.3
+- Namespace: optcp-delivery-bag
+- Replicas: 1/1
+- Hosts: mail-admin.optcp.com, mail.optcp.com
+- Components:
+  - stalwart (Deployment)
+  - stalwart-elasticsearch (StatefulSet, search)
+  - stalwart-redis (StatefulSet, cache)
+  - stalwart-sentinel-sentinel (StatefulSet, cache)
+
+**Ntfy** — StatefulSet — v2.37.1
 - Namespace: delivery-bag
 - Replicas: 1/1
 - Hosts: ntfy.pcfae.com, ntfy.prplanit.com
@@ -884,35 +823,30 @@
 - Namespace: gossip-stone
 - Replicas: 2/2
 
-**Beszel** — StatefulSet — 0.21.0
+**Beszel** — StatefulSet — 0.21.1
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: beszel.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Gatus** — Deployment — 
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: status.pcfae.com, status.sofmeright.com
-- Gateway: cell-membrane-ingress-gateway
 
-**Grafana** — Deployment — 12.4.12
+**Grafana** — Deployment — 12.4.14
 - Namespace: gossip-stone
 - Replicas: 3/3
 - Hosts: grafana.pcfae.com
-- Gateway: phloem-ingress-gateway
 
-**Headlamp** — StatefulSet — v0.45.0
+**Headlamp** — StatefulSet — v0.46.0
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: headlamp.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Loki — 3 components** — Mixed — 
 - Namespace: gossip-stone
 - Replicas: 11/11
 - Hosts: logging.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - loki-gateway (Deployment)
   - loki (StatefulSet)
@@ -922,7 +856,6 @@
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: nut.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Prometheus Exporter — 2 components** — Deployment — 
 - Namespace: gossip-stone
@@ -935,25 +868,19 @@
 - Namespace: gossip-stone
 - Replicas: 2/2
 - Hosts: isptest.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - speedtest-tracker (StatefulSet)
   - speedtest-tracker-postgres (StatefulSet, database)
 
-**Umami — 2 components** — StatefulSet — postgresql-latest
+**Umami** — StatefulSet — postgresql-latest
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: analytics.prplanit.com
-- Gateway: cell-membrane-ingress-gateway
-- Components:
-  - umami (StatefulSet)
-  - umami-postgres (StatefulSet, database)
 
-**Uptime Kuma** — StatefulSet — 2.5.6
+**Uptime Kuma** — StatefulSet — 2.5.8
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: uptime.pcfae.com, uptime.sofmeright.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Vmalert** — Deployment — v1.97.1
 - Namespace: gossip-stone
@@ -963,19 +890,16 @@
 - Namespace: gossip-stone
 - Replicas: 2/2
 - Hosts: metrics.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Weave Gitops** — Deployment — v0.39.1
 - Namespace: gossip-stone
 - Replicas: 1/1
 - Hosts: flux.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Linkstack — 2 components** — StatefulSet — v4.8.8
-- Namespace: kokiri-forest
+- Namespace: outspokekin-social
 - Replicas: 1/1
 - Hosts: bio.outspokekin.com, bio.sofmeright.com, bio.uni2.cc
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - linkstack (StatefulSet)
   - linkstack-db (StatefulSet, database)
@@ -984,31 +908,26 @@
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: budget.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Dailytxt** — StatefulSet — 2.6.4
-- Namespace: pedestal-of-time
+- Namespace: optcp-cloud
 - Replicas: 1/1
 - Hosts: shiplog.pcfae.com
-- Gateway: phloem-ingress-gateway
 
-**Homebox** — StatefulSet — 0.26.2
+**Homebox** — StatefulSet — 0.27.1
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: inventory.pcfae.com
-- Gateway: phloem-ingress-gateway
 
-**Lubelogger** — StatefulSet — v1.7.3
+**Lubelogger** — StatefulSet — v1.7.4
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: lubelogger.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Monica — 2 components** — StatefulSet — 
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: monica.pcfae.com
-- Gateway: xylem-ingress-gateway
 - Components:
   - monica (StatefulSet)
   - monica-db (StatefulSet, database)
@@ -1017,7 +936,6 @@
 - Namespace: pedestal-of-time
 - Replicas: 3/3
 - Hosts: paperless.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - paperless-db (StatefulSet, database)
   - paperless-redis (StatefulSet, cache)
@@ -1027,66 +945,58 @@
 - Namespace: pedestal-of-time
 - Replicas: 2/2
 - Hosts: fotos.pcfae.com
-- Gateway: xylem-ingress-gateway
 - Components:
   - photoprism-x (StatefulSet)
   - photoprism-x-mariadb (StatefulSet, database)
 
-**Plex Ms X** — StatefulSet — 1.43.4.10903-e5521bd8c
+**Plex Ms X** — StatefulSet — 1.43.6.11085-d1e52e169
 - Namespace: pedestal-of-time
 - Replicas: 1/1
 - Hosts: plexx.pcfae.com
-- Gateway: xylem-ingress-gateway
 
 **Roundcube Primary — 2 components** — StatefulSet — 
-- Namespace: pedestal-of-time
+- Namespace: optcp-delivery-bag
 - Replicas: 2/2
 - Hosts: mail.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - roundcube-primary-gmail (StatefulSet)
   - roundcube-primary-gmail-db (StatefulSet, database)
 
-**Netalertx** — StatefulSet — 26.10.0
+**Netalertx** — StatefulSet — 26.10.28
 - Namespace: lakitu
 - Replicas: 1/1
-- Hosts: hosts.pcfae.com
-- Gateway: phloem-ingress-gateway
+- Hosts: hosts.optcp.com, hosts.pcfae.com, hosts.private.optcp.com
 
 **Navidrome** — Deployment — 0.64.2
 - Namespace: optcp-media
 - Replicas: 1/1
 - Hosts: music.optcp.com
-- Gateway: cell-membrane-ingress-gateway
 
-**Boundary — 2 components** — Deployment — 0.21.3
-- Namespace: hookshot
+**Boundary — 2 components** — Mixed — 0.21.3
+- Namespace: optcp-remote-access
 - Replicas: 5/5
 - Hosts: access.optcp.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - boundary-controller (Deployment)
-  - boundary-worker (Deployment)
+  - boundary-worker (StatefulSet)
 
 **Guacamole — 3 components** — Mixed — 15-alpine
-- Namespace: hookshot
+- Namespace: optcp-remote-access
 - Replicas: 3/3
 - Hosts: guacamole.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - guacamole (Deployment)
   - guacamole-guacd (Deployment)
   - guacamole-postgres (StatefulSet, database)
 
 **Rustdesk** — StatefulSet — 1.1.16
-- Namespace: hookshot
+- Namespace: optcp-remote-access
 - Replicas: 1/1
 
 **Tactical — 11 components** — Mixed — 
 - Namespace: hookshot
 - Replicas: 11/11
 - Hosts: meshc.prplanit.com, trmm-api.prplanit.com, trmm.prplanit.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - tactical-backend (Deployment)
   - tactical-celery (Deployment)
@@ -1104,7 +1014,6 @@
 - Namespace: lens-of-truth
 - Replicas: 4/4
 - Hosts: crowdsec-lapi.pcfae.com, crowdsec.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - crowdsec (StatefulSet)
   - crowdsec-cloudflare-bouncer (StatefulSet)
@@ -1115,48 +1024,42 @@
 - Namespace: lens-of-truth
 - Replicas: 1/1
 - Hosts: nvr.pcfae.com
-- Gateway: phloem-ingress-gateway
 
-**Home Assistant** — StatefulSet — 2026.10.1
+**Home Assistant** — StatefulSet — 2026.10.4
 - Namespace: lens-of-truth
 - Replicas: 1/1
 - Hosts: hass.arbitorium.com, hass.pcfae.com
-- Gateway: cell-membrane-ingress-gateway
 
 **Mosquitto** — StatefulSet — 2.1.2-alpine
 - Namespace: lens-of-truth
 - Replicas: 1/1
 
-**Wazuh — 3 components** — StatefulSet — 4.14.8
+**Wazuh — 3 components** — StatefulSet — 4.14.9
 - Namespace: lens-of-truth
 - Replicas: 3/3
 - Hosts: siem.prplanit.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - wazuh-dashboard (StatefulSet)
   - wazuh-indexer (StatefulSet)
   - wazuh-manager (StatefulSet)
 
-**Zigbee2mqtt** — StatefulSet — 2.14.2
+**Zigbee2mqtt** — StatefulSet — 2.14.3
 - Namespace: lens-of-truth
 - Replicas: 1/1
-- Hosts: z2m.arbitorium.com, z2m.pcfae.com
-- Gateway: cell-membrane-ingress-gateway
+- Hosts: z2m.arbitorium.com, z2m.pcfae.com, zigbee.arbitorium.com, zigbee.private.arbitorium.com
 
 **Dependency Track Api Server — 2 components** — Deployment — 5.2.0
 - Namespace: optcp-sibyl-system
 - Replicas: 2/2
 - Hosts: dtrack.optcp.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - dependency-track-api-server (Deployment)
   - dependency-track-frontend (Deployment)
 
 **Hubzilla — 3 components** — Mixed — 
-- Namespace: temple-of-time
+- Namespace: outspokekin-social
 - Replicas: 4/4
 - Hosts: social.outspokekin.com
-- Gateway: cell-membrane-ingress-gateway
 - Components:
   - hubzilla (Deployment)
   - hubzilla-cron (Deployment)
@@ -1180,27 +1083,23 @@
 - Namespace: gorons-bracelet
 - Replicas: 2/2
 - Hosts: s3.optcp.com
-- Gateway: phloem-ingress-gateway
 
-**Convertx** — StatefulSet — v0.19.0
+**Convertx** — StatefulSet — v0.20.0
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: convertx.pcfae.com
-- Gateway: phloem-ingress-gateway
 
-**Draw Io** — StatefulSet — 31.7.0
+**Draw Io** — StatefulSet — 32.6.10
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: draw.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Fairer Pages** — Deployment — v0.0.14
 - Namespace: tingle-tuner
 - Replicas: 3/3
-- Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.outspokekin.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, authenticator.optcp.com, ai.pcfae.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, bitwarden.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, chat.outspokekin.com, cloud.optcp.com, code.pcfae.com, convertx.pcfae.com, cr.optcp.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, docker.cr.optcp.com, dolibarr.prplanit.com, draw.pcfae.com, dtrack.optcp.com, erpnext.prplanit.com, fairer-pages.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, ghcr.cr.optcp.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, hass.arbitorium.com, hass.pcfae.com, homelabhelpdesk.com, hosts.pcfae.com, hq.prplanit.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, joplin.pcfae.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, livekit.outspokekin.com, ls.sofmeright.com, lscr.cr.optcp.com, lubelogger.pcfae.com, lwd.optcp.com, mail-admin.optcp.com, mail.pcfae.com, mail.precisionplanit.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, mazanoke.pcfae.com, meals.yesimvegan.com, monica.pcfae.com, netalertx.pcfae.com, vpn.optcp.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, optcp.com, orangehrm.prplanit.com, outspokekin.com, overseer.pcfae.com, paperless.pcfae.com, pbx.pcfae.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, projects.optcp.com, prowlarr.pcfae.com, prplanit.com, qbitt.pcfae.com, quay.cr.optcp.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.pcfae.com, search.pcfae.com, sh.pcfae.com, sh.uni2.cc, shiplog.pcfae.com, shlink.pcfae.com, siem.prplanit.com, smkeygen.pcfae.com, social.outspokekin.com, sofmeright.com, sonarr.pcfae.com, sops.optcp.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.optcp.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.pcfae.com, trmm.prplanit.com, uni2.cc, uptime.pcfae.com, uptime.sofmeright.com, vault.pcfae.com, vw.prplanit.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.pcfae.com
-- Gateway: cell-membrane-ingress-gateway
+- Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.outspokekin.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, ai.pcfae.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, authenticator.optcp.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.internal.optcp.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, chat.outspokekin.com, cloud.optcp.com, code.pcfae.com, convertx.pcfae.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, dolibarr.prplanit.com, draw.pcfae.com, dtrack.optcp.com, erpnext.prplanit.com, fairer-pages.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, hass.arbitorium.com, hass.pcfae.com, homelabhelpdesk.com, hosts.optcp.com, hosts.pcfae.com, hosts.private.optcp.com, hq.prplanit.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, joplin.pcfae.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, livekit.outspokekin.com, ls.sofmeright.com, lubelogger.pcfae.com, lwd.optcp.com, mail-admin.optcp.com, mail.pcfae.com, mail.precisionplanit.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, mazanoke.pcfae.com, meals.yesimvegan.com, monica.pcfae.com, netalertx.pcfae.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, optcp.com, orangehrm.prplanit.com, outspokekin.com, overseer.pcfae.com, paperless.pcfae.com, passwords.optcp.com, pbx.pcfae.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, projects.optcp.com, prowlarr.pcfae.com, prplanit.com, qbitt.pcfae.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.pcfae.com, search.pcfae.com, secrets.optcp.com, sh.pcfae.com, sh.uni2.cc, shiplog.pcfae.com, shlink.pcfae.com, siem.prplanit.com, smkeygen.pcfae.com, social.outspokekin.com, sofmeright.com, sonarr.pcfae.com, sops.optcp.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.prplanit.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.pcfae.com, trmm.prplanit.com, uni2.cc, uptime.pcfae.com, uptime.sofmeright.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.arbitorium.com, z2m.pcfae.com, zigbee.arbitorium.com, zigbee.private.arbitorium.com
 
-**Faster Whisper** — StatefulSet — gpu
+**Faster Whisper** — StatefulSet — gpu-v3.8.1-ls73
 - Namespace: tingle-tuner
 - Replicas: 1/1
 
@@ -1208,46 +1107,39 @@
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: gwfonts.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Hrconvert2** — StatefulSet — v3.8.4
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: hrconvert2.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **It Tools** — Deployment — 2024.10.22-7ca5933
 - Namespace: tingle-tuner
 - Replicas: 3/3
 - Hosts: ittools.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Libretranslate** — StatefulSet — v1.9.6-cuda
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: translate.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Mazanoke** — Deployment — v1.1.7
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: mazanoke.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Neko — 2 components** — Mixed — 
 - Namespace: swift-sail
 - Replicas: 2/2
 - Hosts: web.pcfae.com
-- Gateway: phloem-ingress-gateway
 - Components:
   - neko-gateway (Deployment)
   - neko-vpn (StatefulSet)
 
-**Ollama** — StatefulSet — 0.40.2
+**Ollama** — StatefulSet — 0.40.13
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: ollama.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 **Openwakeword** — StatefulSet — 2.1.0
 - Namespace: tingle-tuner
@@ -1261,28 +1153,16 @@
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: sdiff.pcfae.com
-- Gateway: phloem-ingress-gateway
 
 </details>
 
-## Platform Components (56)
+## Platform Components (43)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
-| External Secrets (3 components) | zeldas-lullaby | ✅ |
-| Vault Configurator | zeldas-lullaby | ✅ |
-| Vault Operator | zeldas-lullaby | ✅ |
-| Snapshot Controller | optcp-fairy-bottle | ✅ |
-| Velero (2 components) | optcp-fairy-bottle | ✅ |
-| Gitlab Gitlab Runner | hyrule-castle | ❌ |
-| Mariadb | hyrule-castle | ✅ |
-| Renovate Redis | hyrule-castle | ✅ |
 | Adguardhome Sync | compass | ✅ |
 | Bulkvs Ip Sync | compass | ✅ |
 | Cloudflare Ddns | compass | ✅ |
-| Phloem Gateway Istio | optcp-ingress-internal | ✅ |
-| Reflector | gerudo-crest | ✅ |
-| Reloader | gerudo-crest | ✅ |
 | Alloy | lakitu | ✅ |
 | Alloy | lakitu | ✅ |
 | Alloy Syslog | lakitu | ✅ |
@@ -1290,6 +1170,7 @@
 | Kube State Metrics | gossip-stone | ✅ |
 | Netconsole Collector | lakitu | ✅ |
 | Node (2 components) | lakitu | ✅ |
+| Umami Postgres | gossip-stone | ✅ |
 | Vmauth | gossip-stone | ✅ |
 | Vmselect | gossip-stone | ✅ |
 | Vmstorage | gossip-stone | ✅ |
@@ -1302,66 +1183,31 @@
 | Kube Vip | kube-system | ✅ |
 | Metrics Server | kube-system | ✅ |
 | Kyverno Admission Controller (4 components) | mr-resetti | ✅ |
-| Xylem Ingress Gateway Istio | kai-ingress-private | ✅ |
-| Cell Membrane Gateway Istio | optcp-ingress-public | ✅ |
 | Cert Manager (3 components) | king-of-red-lions | ✅ |
 | Istio (2 components) | king-of-red-lions | ✅ |
 | Istio Cni | king-of-red-lions | ✅ |
 | Istiod | king-of-red-lions | ✅ |
-| Netbird Router Dungeon | optcp-vpn | ✅ |
 | Stunner (2 components) | king-of-red-lions | ✅ |
 | Ztunnel | king-of-red-lions | ✅ |
 | Ztunnel | king-of-red-lions | ✅ |
 | Ceph Csi (2 components) | gorons-bracelet | ✅ |
-| Cloudnative Pg | gorons-bracelet | ✅ |
 | Csi Addons | gorons-bracelet | ✅ |
 | Csi Driver Smb (3 components) | gorons-bracelet | ✅ |
 | Generic Device Plugin | gorons-bracelet | ✅ |
 | Gorons Bracelet.cephfs.csi.ceph.com (2 components) | gorons-bracelet | ✅ |
 | Gorons Bracelet.rbd.csi.ceph.com (3 components) | gorons-bracelet | ✅ |
 | Gpu Operator (11 components) | gorons-bracelet | ✅ |
-| Mariadb Operator (3 components) | gorons-bracelet | ✅ |
-| Plugin Barman Cloud | gorons-bracelet | ✅ |
 | Rbd Toolbox | gorons-bracelet | ✅ |
-| Redis Operator | gorons-bracelet | ✅ |
+| Mariadb Operator (3 components) | optcp-operators-baseline | ✅ |
+| Redis Operator | optcp-operators-baseline | ✅ |
 | Sbom Operator | optcp-sibyl-system | ✅ |
+| Snapshot Controller | optcp-fairy-bottle | ✅ |
+| Vault Operator | optcp-secrets | ✅ |
 
 <details>
 <summary>Platform details</summary>
 
-**External Secrets** — Deployment — v2.12.0
-- Namespace: zeldas-lullaby
-- Replicas: 5/5
-
-**Vault Configurator** — Deployment — v1.33.2
-- Namespace: zeldas-lullaby
-- Replicas: 1/1
-
-**Vault Operator** — Deployment — v1.24.1
-- Namespace: zeldas-lullaby
-- Replicas: 1/1
-
-**Snapshot Controller** — Deployment — v8.6.0
-- Namespace: optcp-fairy-bottle
-- Replicas: 2/2
-
-**Velero** — Mixed — 1.18.2
-- Namespace: optcp-fairy-bottle
-- Replicas: 6/6
-
-**Gitlab Gitlab Runner** — Deployment — alpine-v19.4.0
-- Namespace: hyrule-castle
-- Replicas: 0/1
-
-**Mariadb** — StatefulSet — 
-- Namespace: hyrule-castle
-- Replicas: 3/3
-
-**Renovate Redis** — Deployment — 8.10-alpine
-- Namespace: hyrule-castle
-- Replicas: 1/1
-
-**Adguardhome Sync** — Deployment — 0.9.4
+**Adguardhome Sync** — Deployment — v0.9.6-ls181
 - Namespace: compass
 - Replicas: 1/1
 
@@ -1373,18 +1219,6 @@
 - Namespace: compass
 - Replicas: 1/1
 
-**Phloem Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
-- Namespace: optcp-ingress-internal
-- Replicas: 1/1
-
-**Reflector** — Deployment — 10.0.69
-- Namespace: gerudo-crest
-- Replicas: 1/1
-
-**Reloader** — Deployment — v1.4.23
-- Namespace: gerudo-crest
-- Replicas: 1/1
-
 **Alloy** — DaemonSet — 
 - Namespace: lakitu
 - Replicas: 5/5
@@ -1393,7 +1227,7 @@
 - Namespace: lakitu
 - Replicas: 5/5
 
-**Alloy Syslog** — Deployment — v1.20.1
+**Alloy Syslog** — Deployment — v1.21.3
 - Namespace: lakitu
 - Replicas: 2/2
 
@@ -1412,6 +1246,10 @@
 **Node** — DaemonSet — v1.9.1
 - Namespace: lakitu
 - Replicas: 10/10
+
+**Umami Postgres** — StatefulSet — 18-alpine
+- Namespace: gossip-stone
+- Replicas: 1/1
 
 **Vmauth** — Deployment — v1.97.1
 - Namespace: gossip-stone
@@ -1441,7 +1279,7 @@
 - Namespace: kube-system
 - Replicas: 2/2
 
-**Flux System** — Deployment — v2.7.5
+**Flux System** — Deployment — v2.10.0
 - Namespace: flux-system
 - Replicas: 4/4
 
@@ -1449,7 +1287,7 @@
 - Namespace: kube-system
 - Replicas: 1/1
 
-**Kube Vip** — DaemonSet — v1.2.4
+**Kube Vip** — DaemonSet — v1.3.1
 - Namespace: kube-system
 - Replicas: 5/5
 
@@ -1457,19 +1295,11 @@
 - Namespace: kube-system
 - Replicas: 2/2
 
-**Kyverno Admission Controller** — Deployment — 3.9.1
+**Kyverno Admission Controller** — Deployment — 3.9.2
 - Namespace: mr-resetti
 - Replicas: 5/5
 
-**Xylem Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
-- Namespace: kai-ingress-private
-- Replicas: 1/1
-
-**Cell Membrane Gateway Istio** — Deployment — 1.32.0-alpha.0-distroless
-- Namespace: optcp-ingress-public
-- Replicas: 1/1
-
-**Cert Manager** — Deployment — v1.21.2
+**Cert Manager** — Deployment — v1.21.3
 - Namespace: king-of-red-lions
 - Replicas: 3/3
 
@@ -1477,27 +1307,23 @@
 - Namespace: king-of-red-lions
 - Replicas: 10/10
 
-**Istio Cni** — DaemonSet — 1.31.2
+**Istio Cni** — DaemonSet — 1.31.3
 - Namespace: king-of-red-lions
 - Replicas: 10/10
 
-**Istiod** — Deployment — 1.31.2
+**Istiod** — Deployment — 1.31.3
 - Namespace: king-of-red-lions
 - Replicas: 1/1
-
-**Netbird Router Dungeon** — StatefulSet — 0.78.1
-- Namespace: optcp-vpn
-- Replicas: 3/3
 
 **Stunner** — Deployment — 1.2.1
 - Namespace: king-of-red-lions
 - Replicas: 2/2
 
-**Ztunnel** — DaemonSet — 1.31.2
+**Ztunnel** — DaemonSet — 1.31.3
 - Namespace: king-of-red-lions
 - Replicas: 5/5
 
-**Ztunnel** — DaemonSet — 1.31.2
+**Ztunnel** — DaemonSet — 1.31.3
 - Namespace: king-of-red-lions
 - Replicas: 5/5
 
@@ -1505,15 +1331,11 @@
 - Namespace: gorons-bracelet
 - Replicas: 2/2
 
-**Cloudnative Pg** — Deployment — 1.30.1
-- Namespace: gorons-bracelet
-- Replicas: 1/1
-
 **Csi Addons** — Deployment — v0.15.1
 - Namespace: gorons-bracelet
 - Replicas: 1/1
 
-**Csi Driver Smb** — Mixed — 1.20.3
+**Csi Driver Smb** — Mixed — 1.20.4
 - Namespace: gorons-bracelet
 - Replicas: 7/7
 
@@ -1533,35 +1355,57 @@
 - Namespace: gorons-bracelet
 - Replicas: 20/20
 
-**Mariadb Operator** — Deployment — 26.10.1
-- Namespace: gorons-bracelet
-- Replicas: 5/5
-
-**Plugin Barman Cloud** — Deployment — v0.15.1
-- Namespace: gorons-bracelet
-- Replicas: 1/1
-
 **Rbd Toolbox** — Deployment — v19.2.7
 - Namespace: gorons-bracelet
 - Replicas: 1/1
 
+**Mariadb Operator** — Deployment — 26.10.2
+- Namespace: optcp-operators-baseline
+- Replicas: 5/5
+
 **Redis Operator** — Deployment — v0.27.0
-- Namespace: gorons-bracelet
+- Namespace: optcp-operators-baseline
 - Replicas: 1/1
 
 **Sbom Operator** — Deployment — 0.45.4
 - Namespace: optcp-sibyl-system
 - Replicas: 1/1
 
+**Snapshot Controller** — Deployment — v8.7.0
+- Namespace: optcp-fairy-bottle
+- Replicas: 2/2
+
+**Vault Operator** — Deployment — v1.24.1
+- Namespace: optcp-secrets
+- Replicas: 1/1
+
 </details>
 
-## Unclassified (1)
+## Unclassified (19)
 
 Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
 
 | Workload | Namespace | Status |
 | --- | --- | --- |
-| Steam Headless | arbitorium-game-streaming | ✅ |
+| Buildkitd | optcp-ci-runners | ✅ |
+| Cell Membrane Ingress Gateway Istio | optcp-ingress-public | ✅ |
+| Cloudnative Pg | optcp-operators-baseline | ✅ |
+| Enshrouded | optcp-shooting-gallery | ✅ |
+| External Secrets | optcp-secrets | ✅ |
+| Gitlab Runner | optcp-ci-runners | ✅ |
+| Mariadb | prplanit-support | ✅ |
+| Netbird Router Dungeon | optcp-vpn | ✅ |
+| Openbao Snapshot | optcp-secrets | ✅ |
+| Phloem Ingress Gateway Istio | optcp-ingress-internal | ✅ |
+| Plugin Barman Cloud | optcp-operators-baseline | ✅ |
+| Reflector | optcp-operators-baseline | ✅ |
+| Reloader | optcp-operators-baseline | ✅ |
+| Renovate Redis | optcp-ci-runners | ✅ |
+| Steam Headless | arbitorium-game-streaming | ⚠️ |
+| Valheim | optcp-shooting-gallery | ✅ |
+| Vault Configurator | optcp-secrets | ✅ |
+| Velero | optcp-fairy-bottle | ✅ |
+| Xylem Ingress Gateway Istio | kai-ingress-private | ✅ |
 
 <details>
 <summary>Retired / Graveyard (10)</summary>
