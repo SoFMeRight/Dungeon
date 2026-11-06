@@ -42,7 +42,7 @@ gitops:
           - gorons-bracelet
       - name: Backup Services
         namespaces:
-          - optcp-fairy-bottle
+          - fairy-bottle
       - name: "Observability (Gossip Stone\U0001F4AC)"
         namespaces:
           - gossip-stone
@@ -195,9 +195,7 @@ metadata:
   category: infrastructure
   description:
     - Source of truth for the Dungeon Kubernetes cluster and the Ad_Arbitorium Proxmox cluster.
-    - >-
-      This repository seeks to be the source of truth regarding the active state of my Kubernetes cluster "Dungeon" and my Proxmox Cluster "Ad_Arbitorium".
-      All system state, automation routines, and backup strategies should be declared within this repository.
+    - This repository seeks to be the source of truth regarding the active state of my Kubernetes cluster "Dungeon" and my Proxmox Cluster "Ad_Arbitorium". All system state, automation routines, and backup strategies should be declared within this repository.
   license: GPL-3.0-only
   org: SoFMeRight
   title: Dungeon
