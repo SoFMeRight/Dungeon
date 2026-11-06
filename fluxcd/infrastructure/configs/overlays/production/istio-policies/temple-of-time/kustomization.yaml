@@ -20,8 +20,6 @@ resources:
   - allow-matrix-postgres-replication.yaml
   - allow-matrix-to-matrix-postgres.yaml
   - allow-photoprism-to-photoprism-mariadb.yaml
-  - allow-kimai-to-kimai-mariadb.yaml
-  - allow-kimai-mariadb-backup-to-kimai-mariadb.yaml
   - allow-joplin-app-to-joplin-postgres.yaml
   - allow-shlink-app-to-shlink-db.yaml
   - allow-shlink-web-client-to-shlink-app.yaml
@@ -33,7 +31,6 @@ resources:
   - allow-open-webui-to-open-webui-sentinel.yaml
   - allow-appflowy-postgres-replication.yaml
   - allow-open-webui-postgres-replication.yaml
-  - allow-kimai-mariadb-galera.yaml
   - allow-open-webui-redis-intra-cluster.yaml
   - allow-jellyfin-loadbalancer.yaml
   - allow-plex-loadbalancer.yaml

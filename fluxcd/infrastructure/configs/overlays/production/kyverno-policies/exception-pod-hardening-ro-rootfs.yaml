@@ -97,7 +97,7 @@ spec:
             - "sabnzbd-*"
             - "thelounge-*"
       # temple-of-time — appflowy web/admin (NOT cloud/ai, which are hardened), calibre-web LSIO,
-      # immich, kimai apache + sidecars, linkwarden root, photoprism/plex vendor, DBs.
+      # immich, linkwarden root, photoprism/plex vendor, DBs.
       - resources:
           kinds: [Pod]
           namespaces: [temple-of-time]
@@ -106,7 +106,6 @@ spec:
             - "appflowy-web-*"
             - "calibre-web-*"
             - "immich-*"
-            - "kimai-*"
             - "linkwarden-*"
             - "open-webui-*"
             - "penpot-frontend-*"

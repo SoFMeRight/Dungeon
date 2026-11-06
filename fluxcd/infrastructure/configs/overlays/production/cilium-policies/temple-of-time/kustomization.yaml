@@ -8,6 +8,5 @@ resources:
   - cnp-media-servers.yaml
   - cnp-egress-navidrome.yaml
   - cnp-overseerr-to-plex.yaml
-  - cnp-galera-replication.yaml
   - cnp-matrix-turn.yaml
   - cnp-matrix-turn-to-livekit.yaml

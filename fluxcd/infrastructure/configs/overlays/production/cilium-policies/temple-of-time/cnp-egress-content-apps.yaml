@@ -8,7 +8,7 @@ spec:
     function — metadata/artwork providers (jellyfin, plex, calibre-web,
     photoprism), arbitrary user URLs to archive/scrape/shorten (linkwarden,
     shlink), LLM/AI and web-RAG endpoints (open-webui, appflowy-cloud/
-    worker), photo maps + ML models (immich), integrations + email (kimai),
+    worker), photo maps + ML models (immich),
     collab signaling (nextcloud-talk-hpb), external assets for PDF rendering
     (reactive-resume-chrome), and Matrix federation plus the identity
     provider hairpin (matrix-synapse, matrix-auth — sso.optcp.com resolves to the
@@ -41,7 +41,6 @@ spec:
           - appflowy-cloud
           - appflowy-worker
           - nextcloud-talk-hpb
-          - kimai
           - reactive-resume-chrome
   egress:
     - toEntities:
