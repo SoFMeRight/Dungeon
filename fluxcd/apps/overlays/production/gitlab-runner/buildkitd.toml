@@ -9,7 +9,7 @@
   mirrors = ["lscr.cr.optcp.com"]
 
 # Pruning order: easily-rebuilt classes past 512MB, then anything unused for 7 days,
-# then unshared, then everything — the cache held under 12GB with 3GB free, never below
+# then unshared, then everything — the cache held under 30GB with 8GB free, never below
 # a 2GB floor.
 [worker.oci]
   gc = true
@@ -23,16 +23,16 @@
   [[worker.oci.gcpolicy]]
     keepDuration = "168h"
     reservedSpace = "2GB"
-    maxUsedSpace = "12GB"
-    minFreeSpace = "3GB"
+    maxUsedSpace = "30GB"
+    minFreeSpace = "8GB"
 
   [[worker.oci.gcpolicy]]
     reservedSpace = "2GB"
-    maxUsedSpace = "12GB"
-    minFreeSpace = "3GB"
+    maxUsedSpace = "30GB"
+    minFreeSpace = "8GB"
 
   [[worker.oci.gcpolicy]]
     all = true
     reservedSpace = "2GB"
-    maxUsedSpace = "12GB"
-    minFreeSpace = "3GB"
+    maxUsedSpace = "30GB"
+    minFreeSpace = "8GB"
