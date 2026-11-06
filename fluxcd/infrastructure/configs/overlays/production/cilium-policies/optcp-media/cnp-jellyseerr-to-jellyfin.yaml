@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-jellyseerr-to-jellyfin
+spec:
+  description: >-
+    Allow jellyseerr (swift-sail) to reach Jellyfin on 8096/TCP. jellyseerr's
+    pod IP falls in the media-server LAN policy's fromCIDRSet `except`
+    (pod CIDR), so it needs an explicit app-to-app allow.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: jellyfin
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: swift-sail
+            app: jellyseerr
+      toPorts:
+        - ports:
+            - port: "8096"
+              protocol: TCP

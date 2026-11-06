@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-content-apps-egress
+spec:
+  description: >-
+    These media apps fetch from an open-ended external set as their core
+    function — metadata/artwork providers (jellyfin, plex, calibre-web). That
+    set cannot be allowlisted, so world+cluster is granted (cluster covers
+    in-cluster deps beyond the mesh). DNS + intra-namespace mesh ride the
+    universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - jellyfin
+          - plex
+          - calibre-web
+  egress:
+    - toEntities:
+        - world
+        - cluster

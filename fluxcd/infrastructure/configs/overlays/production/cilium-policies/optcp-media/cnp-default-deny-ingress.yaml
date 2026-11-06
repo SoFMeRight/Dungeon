@@ -5,9 +5,11 @@ metadata:
 spec:
   description: >-
     Default-deny ingress AND egress for optcp-media namespace.
-    Ingress: RoMM DB via cnp-romm-db; CCNPs cover kubelet-probes, istio-ambient,
-    prometheus-scrape, ingress-gw.
-    Egress: romm and romm-db are DNS + mesh-only (romm->romm-db rides HBONE).
+    Ingress: RoMM DB via cnp-romm-db, Jellyfin and Plex LAN via cnp-media-servers,
+    jellyseerr and overseerr via their app-to-app allows; CCNPs cover
+    kubelet-probes, istio-ambient, prometheus-scrape, ingress-gw.
+    Egress: romm and romm-db are DNS + mesh-only (romm->romm-db rides HBONE);
+    per-app cnp-egress-* grant the content apps (world+cluster) and navidrome.
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true

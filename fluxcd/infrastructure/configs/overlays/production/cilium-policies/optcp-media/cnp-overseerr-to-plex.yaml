@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-overseerr-to-plex
+spec:
+  description: >-
+    Allow overseerr (swift-sail) to reach Plex on 32400/TCP. overseerr's
+    pod IP falls in the media-server LAN policy's fromCIDRSet `except`
+    (pod CIDR), so it needs an explicit app-to-app allow.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: plex
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: swift-sail
+            app: overseerr
+      toPorts:
+        - ports:
+            - port: "32400"
+              protocol: TCP

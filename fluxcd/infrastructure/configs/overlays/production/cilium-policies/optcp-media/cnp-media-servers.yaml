@@ -1,0 +1,69 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-jellyfin-lan
+spec:
+  description: >-
+    Allow LAN clients to reach Jellyfin on media ports. LB IP
+    172.22.30.123 (sharing-key: song-of-storms).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: jellyfin
+  ingress:
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except: ["192.168.144.0/20"]
+      toPorts:
+        - ports:
+            - port: "8096"
+              protocol: TCP
+            - port: "8920"
+              protocol: TCP
+            - port: "7359"
+              protocol: UDP
+            - port: "1900"
+              protocol: UDP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-plex-lan
+spec:
+  description: >-
+    Allow LAN clients to reach Plex on media ports. LB IP
+    172.22.30.123 (sharing-key: song-of-storms).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: plex
+  ingress:
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except: ["192.168.144.0/20"]
+      toPorts:
+        - ports:
+            - port: "32400"
+              protocol: TCP
+            - port: "8324"
+              protocol: TCP
+            - port: "32469"
+              protocol: TCP
+            - port: "1900"
+              protocol: UDP
+            - port: "32410"
+              protocol: UDP
+            - port: "32412"
+              protocol: UDP
+            - port: "32413"
+              protocol: UDP
+            - port: "32414"
+              protocol: UDP

@@ -58,11 +58,11 @@ spec:
           kinds: [Pod]
           namespaces: [pedestal-of-time]
           names: ["lubelogger-*", "monica-*", "paperless-webserver-*", "plex-ms-x-*"]
-      # optcp-media — romm(+db) root vendor
+      # optcp-media — calibre-web LSIO, plex s6, romm(+db) root vendor
       - resources:
           kinds: [Pod]
           namespaces: [optcp-media]
-          names: ["romm-*"]
+          names: ["calibre-web-*", "plex-*", "romm-*"]
       # optcp-shooting-gallery — ark-se (root/sudo game)
       - resources:
           kinds: [Pod]

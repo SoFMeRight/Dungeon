@@ -73,7 +73,7 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [optcp-media]
-          names: ["romm-*"]
+          names: ["calibre-web-*", "plex-*", "romm-*"]
       - resources:
           kinds: [Pod]
           namespaces: [optcp-shooting-gallery]

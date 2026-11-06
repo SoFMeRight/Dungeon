@@ -5,5 +5,7 @@ resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
   - allow-romm-to-romm-db.yaml
+  - allow-jellyfin-loadbalancer.yaml
+  - allow-plex-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml

@@ -4,6 +4,11 @@ namespace: optcp-media
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-romm-db.yaml
+  - cnp-media-servers.yaml
+  - cnp-overseerr-to-plex.yaml
+  - cnp-jellyseerr-to-jellyfin.yaml
   # Egress allows (inert until egress default-deny is enabled for the namespace).
   # romm-db is DNS/mesh-only (no allow needed).
   - cnp-egress-romm.yaml
+  - cnp-egress-content-apps.yaml
+  - cnp-egress-navidrome.yaml
