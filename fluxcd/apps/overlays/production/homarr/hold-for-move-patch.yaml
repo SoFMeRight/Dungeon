@@ -1,23 +1,5 @@
 $patch: delete
 apiVersion: postgresql.cnpg.io/v1
-kind: Cluster
-metadata:
-  name: homarr-postgres
----
-$patch: delete
-apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
   name: homarr-postgres-daily
----
-$patch: delete
-apiVersion: redis.redis.opstreelabs.in/v1beta2
-kind: RedisReplication
-metadata:
-  name: homarr-redis
----
-$patch: delete
-apiVersion: redis.redis.opstreelabs.in/v1beta2
-kind: RedisSentinel
-metadata:
-  name: homarr-sentinel
