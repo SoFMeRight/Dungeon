@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: steam-headless
+  annotations:
+    # force-replace on immutable-field change (e.g. volumeClaimTemplates); PVC retained
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
 spec:
   selector:
     matchLabels:
@@ -70,6 +73,9 @@ spec:
             # Writable CephFS-HDD for the recomps' state (WWHD's XDG dirs, rac-rs's build), off the home PVC.
             - name: recomp-hdd
               mountPath: /mnt/recomp-hdd
+            - name: recomp-hdd
+              mountPath: /home/steamheadless/.local/share/xemu/xemu/hdd
+              subPath: xemu-hdd
           resources:
             requests:
               cpu: 4000m
@@ -95,4 +101,4 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 20Gi
+            storage: 25Gi

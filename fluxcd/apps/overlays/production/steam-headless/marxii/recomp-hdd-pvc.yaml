@@ -1,6 +1,7 @@
 # Writable CephFS-HDD volume for the recomps' state (WWHD: built game, extracted files, saves,
 # settings, shader caches; rac-rs: its toolchain, build and saves), kept off the capacity-bound
 # home PVC. The port launchers point the recomps here. Mounted read-write at /mnt/recomp-hdd.
+# xemu-hdd/ holds xemu's virtual Xbox disk, mounted over xemu's hdd directory in the home.
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
