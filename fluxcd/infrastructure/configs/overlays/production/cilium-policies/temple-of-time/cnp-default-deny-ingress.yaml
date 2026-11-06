@@ -11,7 +11,7 @@ spec:
     universal CCNP baseline; per-app cnp-egress-* grant the content/media apps
     (world+cluster — open-ended external fetch), nextcloud, clamav (freshclam),
     and collabora (WOPI to nextcloud). DB/cache/frontend and internal-only apps
-    (penpot, whiteboard, joplin) need nothing beyond the mesh.
+    (penpot, whiteboard) need nothing beyond the mesh.
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true
