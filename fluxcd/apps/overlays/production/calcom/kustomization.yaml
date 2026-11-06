@@ -9,7 +9,6 @@ resources:
   - externalsecret-postgres-backup.yaml
 
 patches:
-  - path: hold-for-move-patch.yaml
   - path: deployment-patch.yaml
     target:
       kind: Deployment
