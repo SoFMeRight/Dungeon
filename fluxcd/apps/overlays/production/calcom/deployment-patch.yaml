@@ -15,7 +15,7 @@ spec:
         # Not cap.oidc: calcom has no IdP of its own to reach — SSO is a paid feature here.
         policy.prplanit.com/cap.self-origin: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: hyrule-castle.calcom.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-cloud.calcom.postgres
     spec:
       securityContext:
         runAsNonRoot: true

@@ -23,7 +23,7 @@ spec:
     labels:
       policy.prplanit.com/cnpg: "managed"
       policy.prplanit.com/access-class: postgres
-      policy.prplanit.com/service-scope: hyrule-castle.calcom.postgres
+      policy.prplanit.com/service-scope: optcp-cloud.calcom.postgres
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 

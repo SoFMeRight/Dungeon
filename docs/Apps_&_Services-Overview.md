@@ -373,7 +373,7 @@
   - bookstack-db (StatefulSet, database)
 
 **Calcom** — Deployment — v6.2.0
-- Namespace: hyrule-castle
+- Namespace: optcp-cloud
 - Replicas: 3/3
 - Hosts: cal.prplanit.com
 - Gateway: cell-membrane-ingress-gateway
