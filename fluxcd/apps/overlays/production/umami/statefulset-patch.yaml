@@ -3,8 +3,7 @@ kind: StatefulSet
 metadata:
   name: umami
 spec:
-  # Held at zero for the volume re-bind into optcp-web-analytics.
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:
@@ -49,8 +48,7 @@ kind: StatefulSet
 metadata:
   name: umami-postgres
 spec:
-  # Held at zero for the volume re-bind into optcp-web-analytics.
-  replicas: 0
+  replicas: 1
   template:
     spec:
       securityContext:
