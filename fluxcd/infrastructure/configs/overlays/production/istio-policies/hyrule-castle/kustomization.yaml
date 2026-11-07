@@ -3,15 +3,6 @@ kind: Kustomization
 namespace: hyrule-castle
 resources:
   - ../../../../base/istio-policies
-  - allow-invoiceninja-app-to-invoiceninja-mysql.yaml
-  - allow-invoiceninja-app-to-invoiceninja-redis.yaml
-  - allow-invoiceninja-nginx-to-invoiceninja-app.yaml
-  - allow-bagisto-demo-to-bagisto-demo-db.yaml
-  - allow-frappe-suite-to-frappe-suite-mariadb.yaml
-  - allow-frappe-suite-to-frappe-suite-redis-cache.yaml
-  - allow-frappe-suite-to-frappe-suite-redis-queue.yaml
-  - allow-frappe-suite-frontend-to-frappe-suite-sites.yaml
-  - allow-frappe-suite-frontend-to-frappe-suite-websocket.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml

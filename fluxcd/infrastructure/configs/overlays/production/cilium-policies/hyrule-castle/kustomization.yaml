@@ -3,5 +3,4 @@ kind: Kustomization
 namespace: hyrule-castle
 resources:
   - cnp-default-deny-ingress.yaml
-  - cnp-egress-external-apps.yaml
   - cnp-egress-to-gateway.yaml

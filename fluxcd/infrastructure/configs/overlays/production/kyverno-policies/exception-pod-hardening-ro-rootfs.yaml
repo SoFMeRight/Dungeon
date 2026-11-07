@@ -30,15 +30,7 @@ spec:
           kinds: [Pod]
           namespaces: [hookshot]
           names: ["tactical-*"]
-      # hyrule-castle — bagisto/invoiceninja apache+root,
-      # frappe-suite (writes /home/frappe + sites).
-      - resources:
-          kinds: [Pod]
-          namespaces: [hyrule-castle]
-          names:
-            - "bagisto-demo-*"
-            - "frappe-suite-*"
-            - "invoiceninja-app-*"
+      # bagisto/invoiceninja apache+root, frappe-suite (writes /home/frappe + sites).
       - resources:
           kinds: [Pod]
           namespaces: [prplanit-billing]

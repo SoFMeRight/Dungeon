@@ -4,6 +4,7 @@ namespace: prplanit-staff-suite
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-frappe-suite-to-frappe-suite-mariadb.yaml
   - allow-frappe-suite-to-frappe-suite-redis-cache.yaml
   - allow-frappe-suite-to-frappe-suite-redis-queue.yaml

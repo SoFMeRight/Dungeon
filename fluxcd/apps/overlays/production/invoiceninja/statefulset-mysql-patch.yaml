@@ -7,7 +7,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: mariadb
-        policy.prplanit.com/service-scope: hyrule-castle.invoiceninja.mariadb
+        policy.prplanit.com/service-scope: prplanit-billing.invoiceninja.mariadb
     spec:
       securityContext:
         runAsUser: 999
@@ -29,7 +29,7 @@ spec:
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_MYSQL_DATA
-            - name: hyrule-castle-invoiceninja-mysql-data
+            - name: invoiceninja-mysql-data
               mountPath: /var/lib/mysql
             - name: mysql-run
               mountPath: /run/mysqld
@@ -49,7 +49,7 @@ spec:
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
-        name: hyrule-castle-invoiceninja-mysql-data
+        name: invoiceninja-mysql-data
       spec:
         accessModes:
           - ReadWriteOnce

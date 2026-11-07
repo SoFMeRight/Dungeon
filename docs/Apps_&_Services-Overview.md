@@ -346,7 +346,7 @@
 - Hosts: apt.pcfae.com
 
 **Bagisto — 2 components** — StatefulSet — 
-- Namespace: hyrule-castle
+- Namespace: prplanit-commerce
 - Replicas: 2/2
 - Hosts: bagisto.pcfae.com
 - Components:
@@ -367,7 +367,7 @@
 - Hosts: cal.prplanit.com
 
 **Frappe Suite — 9 components** — Mixed — 
-- Namespace: hyrule-castle
+- Namespace: prplanit-staff-suite
 - Replicas: 9/9
 - Hosts: hq.prplanit.com
 - Components:
@@ -416,7 +416,7 @@
 - Hosts: docker.cr.optcp.com, ghcr.cr.optcp.com, lscr.cr.optcp.com, quay.cr.optcp.com
 
 **Invoiceninja — 3 components** — StatefulSet — 
-- Namespace: hyrule-castle
+- Namespace: prplanit-billing
 - Replicas: 3/3
 - Hosts: invoice.pcfae.com, invoiceninja.prplanit.com
 - Components:

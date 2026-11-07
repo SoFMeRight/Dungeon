@@ -9,10 +9,8 @@ spec:
     namespace-specific CNPs below.
     Egress: DNS + intra-namespace mesh (app->db, gitaly/praefect, redis) +
     kube-apiserver ride the universal CCNP baseline; cnp-egress-cell-membrane-
-    gateway grants the gateway world+cluster (proxies all-namespace backends),
-    and cnp-egress-external-apps grants the ERPNext/InvoiceNinja/etc. components
-    world+cluster. DBs and internal-only
-    components ride the mesh.
+    gateway grants the gateway world+cluster (proxies all-namespace backends).
+    DBs and internal-only components ride the mesh.
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true

@@ -26,12 +26,7 @@ spec:
           kinds: [Pod]
           namespaces: [gossip-stone]
           names: ["nutify-*", "speedtest-tracker-*"]
-      # hyrule-castle — bagisto (root-start chown), invoiceninja
-      # apache-root, harbor (Helm openresty/redis)
-      - resources:
-          kinds: [Pod]
-          namespaces: [hyrule-castle]
-          names: ["bagisto-demo-*", "invoiceninja-app-*"]
+      # bagisto (root-start chown), invoiceninja apache-root
       - resources:
           kinds: [Pod]
           namespaces: [prplanit-billing]

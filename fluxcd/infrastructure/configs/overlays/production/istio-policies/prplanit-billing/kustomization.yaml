@@ -4,6 +4,8 @@ namespace: prplanit-billing
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-cell-membrane.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-invoiceninja-app-to-invoiceninja-mysql.yaml
   - allow-invoiceninja-app-to-invoiceninja-redis.yaml
   - allow-invoiceninja-nginx-to-invoiceninja-app.yaml

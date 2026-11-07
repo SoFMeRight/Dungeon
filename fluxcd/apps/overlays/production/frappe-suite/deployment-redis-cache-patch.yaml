@@ -7,7 +7,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: hyrule-castle.frappe-suite.redis
+        policy.prplanit.com/service-scope: prplanit-staff-suite.frappe-suite.redis
     spec:
       securityContext:
         runAsUser: 999

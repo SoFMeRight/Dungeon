@@ -7,7 +7,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: hyrule-castle.invoiceninja.redis
+        policy.prplanit.com/service-scope: prplanit-billing.invoiceninja.redis
     spec:
       securityContext:
         runAsUser: 999
@@ -28,7 +28,7 @@ spec:
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_REDIS_DATA
-            - name: hyrule-castle-invoiceninja-redis-data
+            - name: invoiceninja-redis-data
               mountPath: /data
           resources:
             requests:
@@ -39,7 +39,7 @@ spec:
               memory: "112Mi"
   volumeClaimTemplates:
     - metadata:
-        name: hyrule-castle-invoiceninja-redis-data
+        name: invoiceninja-redis-data
       spec:
         accessModes:
           - ReadWriteOnce

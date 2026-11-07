@@ -30,7 +30,7 @@ spec:
               cpu: 500m
               memory: 512Mi
           volumeMounts:
-            - name: hyrule-castle-bagisto-demo-mysql
+            - name: bagisto-demo-mysql
               mountPath: /var/lib/mysql
             - name: mysql-run
               mountPath: /run/mysqld
@@ -43,7 +43,7 @@ spec:
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
-        name: hyrule-castle-bagisto-demo-mysql
+        name: bagisto-demo-mysql
       spec:
         accessModes:
           - ReadWriteOnce

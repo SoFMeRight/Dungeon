@@ -13,19 +13,19 @@ spec:
         - name: copy-app
           image: docker.io/webkul/bagisto:2.5.0
           volumeMounts:
-            - name: hyrule-castle-bagisto-demo-app
+            - name: bagisto-demo-app
               mountPath: /data
         - name: configure-env
           env:
             - name: APP_URL
               value: "https://bagisto.pcfae.com"
           volumeMounts:
-            - name: hyrule-castle-bagisto-demo-app
+            - name: bagisto-demo-app
               mountPath: /data
         - name: setup-db
           image: docker.io/webkul/bagisto:2.5.0
           volumeMounts:
-            - name: hyrule-castle-bagisto-demo-app
+            - name: bagisto-demo-app
               mountPath: /var/www/html
       containers:
         - name: bagisto-demo
@@ -38,11 +38,11 @@ spec:
               cpu: 279m
               memory: 768Mi
           volumeMounts:
-            - name: hyrule-castle-bagisto-demo-app
+            - name: bagisto-demo-app
               mountPath: /var/www/html
   volumeClaimTemplates:
     - metadata:
-        name: hyrule-castle-bagisto-demo-app
+        name: bagisto-demo-app
       spec:
         accessModes:
           - ReadWriteOnce

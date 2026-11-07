@@ -7,7 +7,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: mariadb
-        policy.prplanit.com/service-scope: hyrule-castle.frappe-suite.mariadb
+        policy.prplanit.com/service-scope: prplanit-staff-suite.frappe-suite.mariadb
     spec:
       securityContext:
         runAsUser: 999
@@ -34,7 +34,7 @@ spec:
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_MARIADB_DATA
-            - name: hyrule-castle-frappe-suite-mariadb-data
+            - name: frappe-suite-mariadb-data
               mountPath: /var/lib/mysql
             - name: mysql-run
               mountPath: /run/mysqld
@@ -54,7 +54,7 @@ spec:
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
-        name: hyrule-castle-frappe-suite-mariadb-data
+        name: frappe-suite-mariadb-data
       spec:
         accessModes:
           - ReadWriteOnce

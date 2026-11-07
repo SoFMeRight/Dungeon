@@ -8,11 +8,11 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.mariadb: "true"
-        policy.prplanit.com/access-scope-mariadb: hyrule-castle.invoiceninja.mariadb
+        policy.prplanit.com/access-scope-mariadb: prplanit-billing.invoiceninja.mariadb
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: hyrule-castle.invoiceninja.redis
+        policy.prplanit.com/access-scope-redis: prplanit-billing.invoiceninja.redis
       annotations:
-        backup.velero.io/backup-volumes-excludes: hyrule-castle-invoiceninja-app-cache
+        backup.velero.io/backup-volumes-excludes: invoiceninja-app-cache
     spec:
       securityContext:
         fsGroup: 82
@@ -28,11 +28,11 @@ spec:
               name: PLACEHOLDER_APP_PUBLIC
             - $patch: delete
               name: PLACEHOLDER_APP_STORAGE
-            - name: hyrule-castle-invoiceninja-app-cache
+            - name: invoiceninja-app-cache
               mountPath: /cache
-            - name: hyrule-castle-invoiceninja-app-public
+            - name: invoiceninja-app-public
               mountPath: /public
-            - name: hyrule-castle-invoiceninja-app-storage
+            - name: invoiceninja-app-storage
               mountPath: /storage
         - name: wait-for-mysql
           image: docker.io/busybox:1.38
@@ -51,11 +51,11 @@ spec:
               name: PLACEHOLDER_APP_PUBLIC
             - $patch: delete
               name: PLACEHOLDER_APP_STORAGE
-            - name: hyrule-castle-invoiceninja-app-cache
+            - name: invoiceninja-app-cache
               mountPath: /var/www/html/bootstrap/cache
-            - name: hyrule-castle-invoiceninja-app-public
+            - name: invoiceninja-app-public
               mountPath: /var/www/html/public
-            - name: hyrule-castle-invoiceninja-app-storage
+            - name: invoiceninja-app-storage
               mountPath: /var/www/html/storage
           resources:
             requests:
@@ -79,10 +79,10 @@ spec:
               readOnly: true
             - name: tmp
               mountPath: /tmp
-            - name: hyrule-castle-invoiceninja-app-public
+            - name: invoiceninja-app-public
               mountPath: /var/www/html/public
               readOnly: true
-            - name: hyrule-castle-invoiceninja-app-storage
+            - name: invoiceninja-app-storage
               mountPath: /var/www/html/storage
               readOnly: true
           resources:
@@ -94,7 +94,7 @@ spec:
               memory: "96Mi"
   volumeClaimTemplates:
     - metadata:
-        name: hyrule-castle-invoiceninja-app-cache
+        name: invoiceninja-app-cache
       spec:
         accessModes:
           - ReadWriteOnce
@@ -103,7 +103,7 @@ spec:
           requests:
             storage: 5Gi
     - metadata:
-        name: hyrule-castle-invoiceninja-app-public
+        name: invoiceninja-app-public
       spec:
         accessModes:
           - ReadWriteOnce
@@ -112,7 +112,7 @@ spec:
           requests:
             storage: 5Gi
     - metadata:
-        name: hyrule-castle-invoiceninja-app-storage
+        name: invoiceninja-app-storage
       spec:
         accessModes:
           - ReadWriteOnce
