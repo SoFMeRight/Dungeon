@@ -4,5 +4,8 @@ namespace: arbitorium-home
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-xylem.yaml
+  - allow-gateway-ingress-phloem.yaml
+  - allow-gateway-ingress-cell-membrane.yaml
   - allow-home-assistant-to-mosquitto.yaml
   - allow-zigbee2mqtt-to-mosquitto.yaml

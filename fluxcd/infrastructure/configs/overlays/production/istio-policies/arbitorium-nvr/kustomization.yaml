@@ -4,5 +4,6 @@ namespace: arbitorium-nvr
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-frigate-loadbalancer.yaml
   - allow-home-assistant-to-frigate.yaml

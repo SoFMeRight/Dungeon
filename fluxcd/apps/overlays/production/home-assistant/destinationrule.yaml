@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: home-assistant
 spec:
-  host: home-assistant.lens-of-truth.svc.cluster.local
+  host: home-assistant.arbitorium-home.svc.cluster.local
   trafficPolicy:
     connectionPool:
       http:

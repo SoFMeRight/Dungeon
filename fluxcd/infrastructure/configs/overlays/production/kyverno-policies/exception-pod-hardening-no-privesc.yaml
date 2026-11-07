@@ -19,10 +19,6 @@ spec:
       # frigate: privileged NVR (privileged implies allowPrivEsc).
       - resources:
           kinds: [Pod]
-          namespaces: [lens-of-truth]
-          names: ["frigate-*"]
-      - resources:
-          kinds: [Pod]
           namespaces: [arbitorium-nvr]
           names: ["frigate-*"]
       # ark-se: arkmanager uses sudo. stable-diffusion-webui: ai-dock init.sh sudo/sudoers.

@@ -65,7 +65,7 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [lens-of-truth]
-          names: ["crowdsec-*", "frigate-*", "home-assistant-*", "wazuh-*"]
+          names: ["crowdsec-*", "wazuh-*"]
       - resources:
           kinds: [Pod]
           namespaces: [arbitorium-home]

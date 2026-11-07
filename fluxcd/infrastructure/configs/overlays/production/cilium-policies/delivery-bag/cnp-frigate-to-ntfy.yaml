@@ -4,7 +4,7 @@ metadata:
   name: allow-frigate-to-ntfy
 spec:
   description: >-
-    Allow Frigate's frigate-notify sidecar (lens-of-truth) to reach ntfy on
+    Allow Frigate's frigate-notify sidecar (arbitorium-nvr) to reach ntfy on
     80/TCP for camera alert notifications via the internal service — avoids
     hairpinning to the public cell-membrane gateway VIP (which drops in-cluster
     pods).
@@ -17,7 +17,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: lens-of-truth
+            k8s:io.kubernetes.pod.namespace: arbitorium-nvr
             app: frigate
       toPorts:
         - ports:

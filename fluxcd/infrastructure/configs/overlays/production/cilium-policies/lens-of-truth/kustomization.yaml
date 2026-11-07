@@ -5,10 +5,8 @@ resources:
   - cnp-default-deny.yaml
   - cnp-egress-crowdsec.yaml
   - cnp-egress-crowdsec-cloudflare-bouncer.yaml
-  - cnp-egress-frigate.yaml
-  - cnp-egress-home-assistant.yaml
   - cnp-egress-wazuh-manager.yaml
   - cnp-egress-wazuh.yaml
   - cnp-loadbalancers.yaml
   - cnp-wazuh-syslog-from-alloy.yaml
-  - cnp-iot-mesh.yaml
+  - cnp-wazuh-to-indexer.yaml

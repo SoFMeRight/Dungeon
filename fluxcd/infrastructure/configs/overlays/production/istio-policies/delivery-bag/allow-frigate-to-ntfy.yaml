@@ -13,7 +13,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/lens-of-truth/sa/frigate
+              - cluster.local/ns/arbitorium-nvr/sa/frigate
       to:
         - operation:
             ports: ["8080"]

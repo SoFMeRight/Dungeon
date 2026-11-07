@@ -1021,17 +1021,17 @@
   - crowdsec-postgres (StatefulSet, database)
 
 **Frigate** — StatefulSet — 
-- Namespace: lens-of-truth
+- Namespace: arbitorium-nvr
 - Replicas: 1/1
 - Hosts: nvr.pcfae.com
 
 **Home Assistant** — StatefulSet — 2026.10.4
-- Namespace: lens-of-truth
+- Namespace: arbitorium-home
 - Replicas: 1/1
 - Hosts: hass.arbitorium.com, hass.pcfae.com
 
 **Mosquitto** — StatefulSet — 2.1.2-alpine
-- Namespace: lens-of-truth
+- Namespace: arbitorium-home
 - Replicas: 1/1
 
 **Wazuh — 3 components** — StatefulSet — 4.14.9
@@ -1044,7 +1044,7 @@
   - wazuh-manager (StatefulSet)
 
 **Zigbee2mqtt** — StatefulSet — 2.14.3
-- Namespace: lens-of-truth
+- Namespace: arbitorium-home
 - Replicas: 1/1
 - Hosts: z2m.arbitorium.com, z2m.pcfae.com, zigbee.arbitorium.com, zigbee.private.arbitorium.com
 

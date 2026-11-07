@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/lens-of-truth/sa/home-assistant
+              - cluster.local/ns/arbitorium-home/sa/home-assistant
       to:
         - operation:
             ports: ["10300"]

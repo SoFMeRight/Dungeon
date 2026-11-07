@@ -1,11 +1,16 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: lens-of-truth
+namespace: arbitorium-nvr
 resources:
   - ../../../base/frigate
   - httproute-xylem.yaml
   - frigate-notify-config.yaml
 # Frigate enabled - primary NVR (replaced Shinobi)
+# Held at zero for the volume re-bind into arbitorium-nvr.
+replicas:
+  - name: frigate
+    count: 0
+
 patches:
   - path: statefulset-patch.yaml
   - path: config-patch.yaml

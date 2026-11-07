@@ -1,37 +1,6 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: allow-frigate-lan
-spec:
-  description: >-
-    LAN-only ingress to frigate (172.22.30.119).
-  enableDefaultDeny:
-    ingress: false
-    egress: false
-  endpointSelector:
-    matchLabels:
-      app: frigate
-  ingress:
-    - fromCIDRSet:
-        - cidr: "10.0.0.0/8"
-        - cidr: "172.16.0.0/12"
-        - cidr: "192.168.0.0/16"
-          except:
-            - "192.168.144.0/20"
-      toPorts:
-        - ports:
-            - port: "5000"
-              protocol: TCP
-            - port: "8554"
-              protocol: TCP
-            - port: "8555"
-              protocol: TCP
-            - port: "8555"
-              protocol: UDP
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
   name: allow-wazuh-manager-lan
 spec:
   description: >-
