@@ -44,7 +44,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: buildkitd
-          image: docker.io/moby/buildkit:v0.34.1-rootless
+          image: docker.io/moby/buildkit:v0.34.2-rootless
           args:
             - --addr
             - unix:///run/user/1000/buildkit/buildkitd.sock
