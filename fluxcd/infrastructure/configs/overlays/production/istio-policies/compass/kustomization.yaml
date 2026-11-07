@@ -8,6 +8,5 @@ resources:
   - allow-dns-loadbalancer.yaml
   - allow-adguardhome-sync-to-adguard.yaml
   - allow-ntp-loadbalancer.yaml
-  - allow-netbootxyz-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml

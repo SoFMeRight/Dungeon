@@ -16,11 +16,11 @@ spec:
         - require-run-as-non-root
   match:
     any:
-      # compass — host network/DNS/time services (bind :53/:123, need host access) + LSIO netbootxyz
+      # compass — host network/DNS/time services (bind :53/:123, need host access)
       - resources:
           kinds: [Pod]
           namespaces: [compass]
-          names: ["adguard-*", "adguardhome-sync-*", "chrony-*", "netbootxyz-*"]
+          names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
       # gossip-stone — nutify (UPS, needs device) + speedtest-tracker (LSIO s6)
       - resources:
           kinds: [Pod]

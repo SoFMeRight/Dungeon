@@ -21,7 +21,7 @@ spec:
       - resources:
           kinds: [Pod]
           namespaces: [compass]
-          names: ["adguard-*", "adguardhome-sync-*", "chrony-*", "netbootxyz-*"]
+          names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
       - resources:
           kinds: [Pod]
           namespaces: [gossip-stone]
