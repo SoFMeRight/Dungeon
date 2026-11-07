@@ -53,6 +53,7 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
+                - optcp-tingle-tuner
                 - wallmaster
       preconditions:
         all:
@@ -130,6 +131,7 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
+                - optcp-tingle-tuner
                 - wallmaster
       preconditions:
         all:
@@ -207,6 +209,7 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
+                - optcp-tingle-tuner
                 - wallmaster
               operations: [UPDATE]
       preconditions:

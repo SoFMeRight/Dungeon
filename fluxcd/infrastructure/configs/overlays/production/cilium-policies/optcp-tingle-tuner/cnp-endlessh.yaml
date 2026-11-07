@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-endlessh-go-world
+spec:
+  description: >-
+    World-facing SSH tarpit endlessh-go (172.22.30.107) on 2222/TCP.
+    Intentionally open to the internet.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: endlessh-go
+  ingress:
+    - fromEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "2222"
+              protocol: TCP
+    - fromEntities:
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "2112"
+              protocol: TCP

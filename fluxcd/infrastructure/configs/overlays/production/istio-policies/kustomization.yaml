@@ -33,6 +33,7 @@ resources:
   - optcp-sibyl-system/
   - optcp-staff-suite/
   - optcp-supply-chain/
+  - optcp-tingle-tuner/
   - optcp-web/
   - optcp-web-analytics/
   - outspokekin-social/

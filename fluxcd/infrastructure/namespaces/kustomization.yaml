@@ -26,6 +26,7 @@ resources:
   - optcp-sibyl-system.yaml
   - optcp-staff-suite.yaml
   - optcp-supply-chain.yaml
+  - optcp-tingle-tuner.yaml
   - optcp-vpn.yaml
   - optcp-web.yaml
   - optcp-web-analytics.yaml

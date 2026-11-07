@@ -125,6 +125,11 @@ spec:
           kinds: [Pod]
           namespaces: [tingle-tuner]
           names: ["faster-whisper-*", "hrconvert2-*", "stable-diffusion-webui-*"]
+      # optcp-tingle-tuner — hrconvert2 apache-root
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-tingle-tuner]
+          names: ["hrconvert2-*"]
       # optcp-secrets — bank-vaults/openbao (Vault operator).
       - resources:
           kinds: [Pod]

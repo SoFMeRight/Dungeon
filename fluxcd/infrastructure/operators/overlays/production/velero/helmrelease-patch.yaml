@@ -160,6 +160,7 @@ spec:
             - wallmaster
             # Tools w/o userdata
             - tingle-tuner
+            - optcp-tingle-tuner
             # Storage services
             - gorons-bracelet
             # Operators: CNPG, barman, MariaDB, Redis (namespace plan, group B).

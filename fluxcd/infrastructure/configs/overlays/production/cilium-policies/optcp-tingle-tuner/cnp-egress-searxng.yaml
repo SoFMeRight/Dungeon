@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-searxng-egress
+spec:
+  description: >-
+    searxng is a metasearch aggregator whose entire function is proxying
+    user queries out to dozens of arbitrary external engines (web, code,
+    academic, media, torrent). Its egress set is unbounded by design and
+    cannot be allowlisted, so this is a documented broad world grant on
+    443/80 TCP. In-cluster redis rides the mesh (HBONE 15008 baseline).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: searxng
+  egress:
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP

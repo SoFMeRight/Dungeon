@@ -59,6 +59,7 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
+                - optcp-tingle-tuner
                 - wallmaster
       validate:
         message: >-
@@ -146,6 +147,7 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
+                - optcp-tingle-tuner
                 - wallmaster
       validate:
         message: >-
@@ -237,6 +239,7 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
+                - optcp-tingle-tuner
                 - wallmaster
       validate:
         message: >-
@@ -327,6 +330,7 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
+                - optcp-tingle-tuner
                 - wallmaster
       validate:
         message: >-

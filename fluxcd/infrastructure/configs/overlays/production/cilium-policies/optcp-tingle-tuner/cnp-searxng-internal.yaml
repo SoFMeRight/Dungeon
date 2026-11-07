@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-searxng-to-redis
+spec:
+  description: >-
+    Allow searxng app to access searxng-redis on 6379/TCP.
+    searxng app pods lack cap.redis contract labels, so this
+    explicit CNP is needed instead of the redis contract CCNP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: searxng-redis
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: searxng
+      toPorts:
+        - ports:
+            - port: "6379"
+              protocol: TCP

@@ -1,0 +1,40 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-echo-ip-egress
+spec:
+  description: >-
+    echo-ip (echoip) downloads MaxMind GeoLite2 databases via geoipupdate (the
+    STS init container + the weekly echo-ip-geoip-update CronJob, both labelled
+    app=echo-ip): the account API at updates.maxmind.com issues a signed URL and
+    the database blobs download from MaxMind's Cloudflare R2 bucket
+    (mm-prod-geoip-databases.*.r2.cloudflarestorage.com). Reverse-DNS (PTR)
+    lookups at request time ride the DNS baseline. Allow egress to both hosts on
+    443/TCP, with L7 DNS.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: echo-ip
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "updates.maxmind.com"
+        - matchPattern: "mm-prod-geoip-databases.*.r2.cloudflarestorage.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
