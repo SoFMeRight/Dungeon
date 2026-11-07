@@ -38,6 +38,7 @@ resources:
   - outspokekin-web.yaml
   - prplanit-billing.yaml
   - prplanit-commerce.yaml
+  - prplanit-remote-access.yaml
   - prplanit-staff-suite.yaml
   - prplanit-support.yaml
   - prplanit-web.yaml

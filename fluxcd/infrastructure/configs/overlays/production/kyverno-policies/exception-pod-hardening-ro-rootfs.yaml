@@ -30,6 +30,10 @@ spec:
           kinds: [Pod]
           namespaces: [hookshot]
           names: ["tactical-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-remote-access]
+          names: ["tactical-*"]
       # bagisto/invoiceninja apache+root, frappe-suite (writes /home/frappe + sites).
       - resources:
           kinds: [Pod]

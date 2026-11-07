@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: prplanit-remote-access
+resources:
+  - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml
+  - allow-tactical-to-tactical-postgres.yaml
+  - allow-tactical-to-tactical-redis.yaml
+  - allow-tactical-to-tactical-mongodb.yaml
+  - allow-tactical-backend-to-tactical-nats.yaml
+  - allow-tactical-nginx-to-tactical-backend.yaml
+  - allow-tactical-nginx-to-tactical-frontend.yaml
+  - allow-tactical-nginx-to-tactical-websockets.yaml
+  - allow-tactical-nginx-to-tactical-nats.yaml
+  - allow-tactical-nginx-to-tactical-meshcentral.yaml

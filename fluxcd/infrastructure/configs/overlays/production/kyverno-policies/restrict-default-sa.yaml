@@ -53,6 +53,7 @@ spec:
                 - pedestal-of-time
                 - prplanit-billing
                 - prplanit-commerce
+                - prplanit-remote-access
                 - prplanit-staff-suite
                 - prplanit-support
                 - optcp-management-dashboards
@@ -130,6 +131,7 @@ spec:
                 - pedestal-of-time
                 - prplanit-billing
                 - prplanit-commerce
+                - prplanit-remote-access
                 - prplanit-staff-suite
                 - prplanit-support
                 - optcp-management-dashboards

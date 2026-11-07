@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-tactical-nginx-to-tactical-backend
+spec:
+  selector:
+    matchLabels:
+      app: tactical-backend
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/prplanit-remote-access/sa/tactical-nginx
+      to:
+        - operation:
+            ports: ["8080"]

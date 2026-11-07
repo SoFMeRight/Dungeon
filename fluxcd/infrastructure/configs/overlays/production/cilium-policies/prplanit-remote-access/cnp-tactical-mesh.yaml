@@ -1,0 +1,117 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-tactical-nats-internal
+spec:
+  description: >-
+    Allow tactical-backend, tactical-celery, and tactical-celerybeat
+    to reach tactical-nats on 4222/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: tactical-nats
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: tactical-backend
+        - matchLabels:
+            app: tactical-celery
+        - matchLabels:
+            app: tactical-celerybeat
+      toPorts:
+        - ports:
+            - port: "4222"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-tactical-mongodb-internal
+spec:
+  description: >-
+    Allow tactical-backend and tactical-meshcentral to reach
+    tactical-mongodb on 27017/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: tactical-mongodb
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: tactical-backend
+        - matchLabels:
+            app: tactical-meshcentral
+      toPorts:
+        - ports:
+            - port: "27017"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-tactical-frontend-from-nginx
+spec:
+  description: >-
+    Allow tactical-nginx to reach tactical-frontend on 8080/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: tactical-frontend
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: tactical-nginx
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-tactical-backend-from-nginx
+spec:
+  description: >-
+    Allow tactical-nginx to reach tactical-backend on 8080/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: tactical-backend
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: tactical-nginx
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-tactical-websockets-from-nginx
+spec:
+  description: >-
+    Allow tactical-nginx to reach tactical-websockets on 8383/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: tactical-websockets
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: tactical-nginx
+      toPorts:
+        - ports:
+            - port: "8383"
+              protocol: TCP

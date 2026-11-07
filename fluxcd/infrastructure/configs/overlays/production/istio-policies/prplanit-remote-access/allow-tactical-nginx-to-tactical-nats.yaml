@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-tactical-nginx-to-tactical-nats
+spec:
+  selector:
+    matchLabels:
+      app: tactical-nats
+  action: ALLOW
+  rules:
+    # nginx proxies NATS WebSocket connections on port 9235
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/prplanit-remote-access/sa/tactical-nginx
+      to:
+        - operation:
+            ports: ["9235"]

@@ -60,6 +60,7 @@ resources:
   - outspokekin-web
   - prplanit-billing
   - prplanit-commerce
+  - prplanit-remote-access
   - prplanit-staff-suite
   - prplanit-support
   - prplanit-web

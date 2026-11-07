@@ -146,9 +146,10 @@ spec:
             - optcp-ci-runners
             # PrPlanIT support (namespace plan, group A)
             - prplanit-support
-            # PrPlanIT billing, commerce and staff suite (namespace plan, groups D-F)
+            # PrPlanIT MSP, billing, commerce and staff suite (namespace plan, groups C-F)
             - prplanit-billing
             - prplanit-commerce
+            - prplanit-remote-access
             - prplanit-staff-suite
             # Routing & Gateway infrastructure
             - king-of-red-lions
