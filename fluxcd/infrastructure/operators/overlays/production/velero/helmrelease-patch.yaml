@@ -159,7 +159,6 @@ spec:
             # Arr apps & downloaders
             - swift-sail
             # Restricted/privileged services
-            - pedestal-of-time
             - kai-private
             - optcp-restricted
             # Mail services

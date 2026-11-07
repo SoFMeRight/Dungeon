@@ -52,7 +52,6 @@ spec:
                 - optcp-sibyl-system
                 - optcp-staff-suite
                 - optcp-supply-chain
-                - pedestal-of-time
                 - prplanit-billing
                 - prplanit-commerce
                 - prplanit-remote-access
@@ -132,7 +131,6 @@ spec:
                 - optcp-sibyl-system
                 - optcp-staff-suite
                 - optcp-supply-chain
-                - pedestal-of-time
                 - prplanit-billing
                 - prplanit-commerce
                 - prplanit-remote-access

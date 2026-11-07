@@ -41,7 +41,6 @@ resources:
   - optcp-web-analytics/
   - outspokekin-social/
   - outspokekin-web/
-  - pedestal-of-time/
   - optcp-ingress-public/
   - prplanit-billing/
   - prplanit-commerce/

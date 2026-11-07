@@ -24,7 +24,6 @@ spec:
               - arbitorium-home
               - arbitorium-restricted
               - optcp-app-directory
-              - pedestal-of-time
               - kai-private
               - optcp-cloud
               - optcp-management-dashboards
