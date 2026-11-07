@@ -20,6 +20,7 @@ resources:
   - compass
   - swift-sail
   # Batch 3 — Mixed
+  - kai-personal
   - lost-woods
   - optcp-address-sync
   - optcp-app-directory

@@ -39,6 +39,7 @@ spec:
                 - prplanit-web
                 - yesimvegan-web
                 - lens-of-truth
+                - kai-personal
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
@@ -125,6 +126,7 @@ spec:
                 - prplanit-web
                 - yesimvegan-web
                 - lens-of-truth
+                - kai-personal
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
@@ -215,6 +217,7 @@ spec:
                 - prplanit-web
                 - yesimvegan-web
                 - lens-of-truth
+                - kai-personal
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
@@ -304,6 +307,7 @@ spec:
                 - prplanit-web
                 - yesimvegan-web
                 - lens-of-truth
+                - kai-personal
                 - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud

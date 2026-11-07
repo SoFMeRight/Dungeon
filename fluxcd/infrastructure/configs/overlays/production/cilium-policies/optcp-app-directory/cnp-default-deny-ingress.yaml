@@ -8,8 +8,8 @@ spec:
     Ingress: homarr DB access covered by contract CCNPs (has labels); CCNPs cover
     kubelet-probes, istio-ambient, prometheus-scrape, and ingress-gateway traffic.
     Egress: DNS + intra-namespace mesh (homarr->postgres/redis) + kube-apiserver
-    ride the universal CCNP baseline; cnp-egress-homarr grants the dashboard's
-    broad, user-configured egress.
+    ride the universal CCNP baseline; cnp-egress-homarr and cnp-egress-organizr
+    grant the dashboards' broad, user-configured egress.
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true

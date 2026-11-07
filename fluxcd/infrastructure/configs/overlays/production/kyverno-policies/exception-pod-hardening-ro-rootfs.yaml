@@ -64,12 +64,16 @@ spec:
           names: ["crowdsec-*", "frigate-*", "home-assistant-*", "wazuh-*"]
       - resources:
           kinds: [Pod]
+          namespaces: [kai-personal]
+          names: ["ferdium-*"]
+      - resources:
+          kinds: [Pod]
           namespaces: [lost-woods]
           names: ["ferdium-*", "organizr-*"]
       - resources:
           kinds: [Pod]
           namespaces: [optcp-app-directory]
-          names: ["homarr-*"]
+          names: ["homarr-*", "organizr-*"]
       - resources:
           kinds: [Pod]
           namespaces: [pedestal-of-time]

@@ -4,3 +4,4 @@ namespace: optcp-app-directory
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-homarr.yaml
+  - cnp-egress-organizr.yaml

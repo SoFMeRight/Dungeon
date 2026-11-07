@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for kai-personal namespace.
+    Ingress: CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, and
+    ingress-gateway traffic.
+    Egress: DNS + mesh + kube-apiserver ride the universal CCNP baseline;
+    cnp-egress-ferdium grants the aggregator's broad, user-configured egress.
+    Both directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor

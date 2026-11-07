@@ -111,6 +111,8 @@ spec:
             - optcp-cloud
             # Staff suite (namespace plan, group AO)
             - optcp-staff-suite
+            # Personal comms (namespace plan, group B)
+            - kai-personal
             # Discovery & Dashboards
             - lost-woods
             - optcp-app-directory

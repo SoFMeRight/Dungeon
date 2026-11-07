@@ -4,6 +4,7 @@ resources:
   - tingle-tuner.yaml
   - compass.yaml
   - gossip-stone.yaml
+  - kai-personal.yaml
   - lost-woods.yaml
   - temple-of-time.yaml
   - optcp-address-sync.yaml
