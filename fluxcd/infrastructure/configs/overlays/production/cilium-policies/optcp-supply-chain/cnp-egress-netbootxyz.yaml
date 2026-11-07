@@ -6,7 +6,8 @@ spec:
   description: >-
     netbootxyz pulls its iPXE menus from boot.netboot.xyz and downloads
     kernel/initrd boot assets from the netbootxyz GitHub releases on demand
-    into its assets PVC. Allow egress to those hosts on 443/TCP, with L7 DNS.
+    into its assets PVC. Allow egress to those hosts on 443/TCP, with L7 DNS,
+    and to the LAN for TFTP data, sent from ephemeral UDP ports.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -37,3 +38,17 @@ spec:
         - ports:
             - port: "443"
               protocol: TCP
+    - toCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.144.0/20"
+        - cidr: "fc00:f1::/32"
+          except:
+            - "fc00:f1:0ca4:15a0::/56"
+      toPorts:
+        - ports:
+            - port: "1024"
+              endPort: 65535
+              protocol: UDP
