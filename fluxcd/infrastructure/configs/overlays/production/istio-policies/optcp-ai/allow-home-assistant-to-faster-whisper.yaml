@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-home-assistant-to-faster-whisper
+spec:
+  selector:
+    matchLabels:
+      app: faster-whisper
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/arbitorium-home/sa/home-assistant
+      to:
+        - operation:
+            ports: ["10300"]

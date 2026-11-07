@@ -20,6 +20,7 @@ spec:
               - cluster.local/ns/optcp-cloud/sa/calcom-postgres
               - cluster.local/ns/optcp-cloud/sa/nextcloud-postgres
               - cluster.local/ns/temple-of-time/sa/open-webui-postgres
+              - cluster.local/ns/optcp-ai/sa/open-webui-postgres
               - cluster.local/ns/optcp-staff-suite/sa/openproject-postgres
               - cluster.local/ns/optcp-staff-suite/sa/wikijs-sops-postgres
               - cluster.local/ns/optcp-sibyl-system/sa/dependency-track-postgres

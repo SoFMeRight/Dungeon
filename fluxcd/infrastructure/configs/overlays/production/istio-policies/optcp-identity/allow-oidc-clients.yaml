@@ -26,6 +26,7 @@ spec:
               - optcp-app-directory
               - kai-private
               - optcp-cloud
+              - optcp-ai
               - optcp-management-dashboards
               - optcp-media
               - swift-sail

@@ -7,6 +7,7 @@ resources:
   - kai-private.yaml
   - temple-of-time.yaml
   - optcp-address-sync.yaml
+  - optcp-ai.yaml
   - optcp-app-directory.yaml
   - optcp-ci-runners.yaml
   - optcp-cloud.yaml

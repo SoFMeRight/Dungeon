@@ -135,6 +135,11 @@ spec:
           kinds: [Pod]
           namespaces: [tingle-tuner]
           names: ["faster-whisper-*", "stable-diffusion-webui-*"]
+      # optcp-ai — faster-whisper LSIO, stable-diffusion-webui ai-dock root
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-ai]
+          names: ["faster-whisper-*", "stable-diffusion-webui-*"]
       # optcp-tools — hrconvert2 apache-root
       - resources:
           kinds: [Pod]

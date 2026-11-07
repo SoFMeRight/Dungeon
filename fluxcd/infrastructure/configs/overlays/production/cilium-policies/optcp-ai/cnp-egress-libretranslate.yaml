@@ -1,0 +1,40 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-libretranslate-egress
+spec:
+  description: >-
+    libretranslate refreshes Argos language models on every start
+    (LT_UPDATE_MODELS=true), then serves from the models PVC. Allow egress
+    to the Argos model index/CDN and its GitHub-hosted release assets on
+    443/TCP, with L7 DNS so Cilium learns the FQDN addresses.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: libretranslate
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "argosopentech.com"
+        - matchPattern: "*.argosopentech.com"
+        - matchName: "github.com"
+        - matchName: "objects.githubusercontent.com"
+        - matchName: "raw.githubusercontent.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

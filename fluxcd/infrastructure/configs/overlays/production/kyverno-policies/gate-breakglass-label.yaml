@@ -19,6 +19,7 @@ spec:
                 - optcp-restricted
                 - delivery-bag
                 - optcp-address-sync
+                - optcp-ai
                 - optcp-app-directory
                 - optcp-fairy-bottle
                 - gorons-bracelet
@@ -105,6 +106,7 @@ spec:
                 - optcp-restricted
                 - delivery-bag
                 - optcp-address-sync
+                - optcp-ai
                 - optcp-app-directory
                 - optcp-fairy-bottle
                 - gorons-bracelet
@@ -191,6 +193,7 @@ spec:
                 - optcp-restricted
                 - delivery-bag
                 - optcp-address-sync
+                - optcp-ai
                 - optcp-app-directory
                 - optcp-fairy-bottle
                 - gorons-bracelet

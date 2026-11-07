@@ -1,0 +1,39 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-ollama-egress
+spec:
+  description: >-
+    ollama pulls models from the Ollama registry on demand, then serves
+    inference from the data PVC. Allow egress to the Ollama registry hosts
+    on 443/TCP, with L7 DNS so Cilium learns the FQDN addresses. If pulls
+    redirect to an object-store CDN, audit-mode will surface it.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: ollama
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "registry.ollama.ai"
+        - matchPattern: "*.ollama.ai"
+        - matchName: "ollama.com"
+        - matchPattern: "*.ollama.com"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

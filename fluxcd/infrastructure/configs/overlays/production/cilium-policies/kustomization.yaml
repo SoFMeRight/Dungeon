@@ -24,6 +24,7 @@ resources:
   - kai-personal
   - kai-private
   - optcp-address-sync
+  - optcp-ai
   - optcp-app-directory
   - arbitorium-game-streaming
   - arbitorium-home

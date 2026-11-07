@@ -168,6 +168,7 @@ spec:
             # Bot protection & security services
             # Tools w/o userdata
             - tingle-tuner
+            - optcp-ai
             - optcp-tools
             # Storage services
             - gorons-bracelet

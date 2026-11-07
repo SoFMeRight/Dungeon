@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-ai
+resources:
+  - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml
+  - allow-home-assistant-to-faster-whisper.yaml
+  - allow-home-assistant-to-piper.yaml
+  - allow-home-assistant-to-openwakeword.yaml
+  - allow-open-webui-to-open-webui-postgres.yaml
+  - allow-open-webui-to-open-webui-redis.yaml
+  - allow-open-webui-to-open-webui-sentinel.yaml
+  - allow-open-webui-postgres-replication.yaml
+  - allow-open-webui-redis-intra-cluster.yaml

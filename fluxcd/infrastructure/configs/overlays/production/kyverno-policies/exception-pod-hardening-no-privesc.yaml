@@ -30,6 +30,10 @@ spec:
           kinds: [Pod]
           namespaces: [tingle-tuner]
           names: ["stable-diffusion-webui-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-ai]
+          names: ["stable-diffusion-webui-*"]
       # photoprism + photoprism-x: same app/image, two instances. Both start NON-ROOT (uid 2432)
       # with added caps (CHOWN/DAC_OVERRIDE/FOWNER/SETUID/SETGID) that a non-root process needs in
       # its effective set — NoNewPrivs blocks raising them, so both genuinely require privesc:true.

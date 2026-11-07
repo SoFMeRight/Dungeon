@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-open-webui-egress
+spec:
+  description: >-
+    open-webui fetches from an open-ended external set as its core function:
+    LLM/AI and web-RAG endpoints. That set cannot be allowlisted, so world+cluster
+    is granted (cluster covers in-cluster deps beyond the mesh). DNS +
+    intra-namespace mesh (app->db) ride the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: open-webui
+  egress:
+    - toEntities:
+        - world
+        - cluster

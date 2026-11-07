@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-stable-diffusion-webui-egress
+spec:
+  description: >-
+    stable-diffusion-webui fetches models/VAEs/embeddings and installs
+    extensions (git + pip) on demand from HuggingFace, GitHub, PyPI and
+    CivitAI, whose model downloads redirect to rotating object-store CDN
+    hosts that cannot be allowlisted. Documented broad world grant on
+    443/80 TCP; steady-state inference reads from the data PVC.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: stable-diffusion-webui
+  egress:
+    - toEntities:
+        - world
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
