@@ -9,11 +9,18 @@ data:
   # them to the NAS's own S3 (SeaweedFS) is pointless self-backup and was the
   # entire 331Ti / ~14TB blowup. This driver match catches ALL current AND future
   # SMB volumes, replacing the fragile per-PVC-name excludedResources blocklist.
+  # emptyDir is scratch that a pod restart discards, so it is skipped too. The
+  # openbao-raft-snapshot schedule takes its emptyDir without this policy.
   policy.yaml: |
     version: v1
     volumePolicies:
       - conditions:
           csi:
             driver: smb.csi.k8s.io
+        action:
+          type: skip
+      - conditions:
+          volumeTypes:
+            - emptyDir
         action:
           type: skip
