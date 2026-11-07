@@ -10,4 +10,4 @@ spec:
     gitlabUrl: https://git.optcp.com/
     jobScratch:
       storageClass: ceph-rbd-delete
-      size: 5Gi
+      size: 15Gi
