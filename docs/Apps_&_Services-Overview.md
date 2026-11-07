@@ -6,7 +6,7 @@
 
 ## Apps & Services (135)
 
-✅ 135 healthy
+✅ 134 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -74,7 +74,7 @@
 | Mealie (2 components) | ✅ | 🏠 meals.yesimvegan.com | [open](https://meals.yesimvegan.com) |
 | Open (3 components) | ✅ | 🏠 ai.pcfae.com | [open](https://ai.pcfae.com) |
 | Penpot (5 components) | ✅ | 🏠 design.pcfae.com | [open](https://design.pcfae.com) |
-| Photoprism (2 components) | ✅ | 🏠 photos.pcfae.com | [open](https://photos.pcfae.com) |
+| Photoprism (2 components) | ❓ | 🏠 photos.pcfae.com | [open](https://photos.pcfae.com) |
 | Plex | ✅ | 🔒 plex.optcp.com | [open](https://plex.optcp.com) |
 | Reactive Resume (3 components) | ✅ | 🏠 resume.sofmeright.com | [open](https://resume.sofmeright.com) |
 | Romm (2 components) | ✅ | 🏠 romm.pcfae.com | [open](https://romm.pcfae.com) |
@@ -567,7 +567,7 @@
 
 **Photoprism — 2 components** — StatefulSet — 261029
 - Namespace: temple-of-time
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: photos.pcfae.com
 - Components:
   - photoprism (StatefulSet)
