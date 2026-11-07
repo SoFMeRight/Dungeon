@@ -4,6 +4,7 @@ namespace: prplanit-remote-access
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-cell-membrane.yaml
   - allow-tactical-to-tactical-postgres.yaml
   - allow-tactical-to-tactical-redis.yaml
   - allow-tactical-to-tactical-mongodb.yaml

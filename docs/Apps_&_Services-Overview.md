@@ -994,7 +994,7 @@
 - Replicas: 1/1
 
 **Tactical — 11 components** — Mixed — 
-- Namespace: hookshot
+- Namespace: prplanit-remote-access
 - Replicas: 11/11
 - Hosts: meshc.prplanit.com, trmm-api.prplanit.com, trmm.prplanit.com
 - Components:

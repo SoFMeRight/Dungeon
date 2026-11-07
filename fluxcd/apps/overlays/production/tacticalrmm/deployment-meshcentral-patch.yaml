@@ -110,7 +110,7 @@ spec:
         - $patch: replace
         - name: tactical-data
           persistentVolumeClaim:
-            claimName: hookshot-tactical-data-pvc
+            claimName: tactical-data-pvc
         - name: meshcentral-data
           persistentVolumeClaim:
-            claimName: hookshot-meshcentral-data-pvc
+            claimName: tactical-meshcentral-data-pvc

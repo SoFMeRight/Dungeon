@@ -59,4 +59,4 @@ spec:
         - $patch: replace
         - name: tactical-data
           persistentVolumeClaim:
-            claimName: hookshot-tactical-data-pvc
+            claimName: tactical-data-pvc

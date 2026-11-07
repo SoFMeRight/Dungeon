@@ -3,7 +3,7 @@ kind: AuthorizationPolicy
 metadata:
   name: deny-tacticalrmm-operator-from-internet
 spec:
-  # Selected on the gateway, not the workload: hookshot is ambient with no waypoint, so a
+  # Selected on the gateway, not the workload: its namespace is ambient with no waypoint, so a
   # path rule on the pod would never be consulted.
   selector:
     matchLabels:

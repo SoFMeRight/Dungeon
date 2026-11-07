@@ -42,7 +42,7 @@ spec:
       volumes:
         - name: mongo-init
           persistentVolumeClaim:
-            claimName: hookshot-mongo-init-pvc
+            claimName: tactical-mongo-init-pvc
   volumeClaimTemplates:
     - metadata:
         name: mongodb-data

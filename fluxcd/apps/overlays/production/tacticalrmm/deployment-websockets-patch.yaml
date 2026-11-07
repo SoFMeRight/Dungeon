@@ -9,9 +9,9 @@ spec:
         # websockets connects to postgres + redis; without these the Cilium deny-default
         # policy blocked egress to :5432/:6379, so wait-for-postgres init hung indefinitely.
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: hookshot.tacticalrmm.postgres
+        policy.prplanit.com/access-scope-postgres: prplanit-remote-access.tacticalrmm.postgres
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: hookshot.tacticalrmm.redis
+        policy.prplanit.com/access-scope-redis: prplanit-remote-access.tacticalrmm.redis
     spec:
       automountServiceAccountToken: false
       securityContext:
@@ -103,4 +103,4 @@ spec:
           emptyDir: {}
         - name: tactical-data
           persistentVolumeClaim:
-            claimName: hookshot-tactical-data-pvc
+            claimName: tactical-data-pvc

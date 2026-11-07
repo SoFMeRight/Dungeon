@@ -7,7 +7,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: hookshot.tacticalrmm.redis
+        policy.prplanit.com/service-scope: prplanit-remote-access.tacticalrmm.redis
     spec:
       automountServiceAccountToken: false
       securityContext:
@@ -47,7 +47,7 @@ spec:
       volumes:
         - name: redis-init
           persistentVolumeClaim:
-            claimName: hookshot-redis-init-pvc
+            claimName: tactical-redis-init-pvc
   volumeClaimTemplates:
     - metadata:
         name: redis-data

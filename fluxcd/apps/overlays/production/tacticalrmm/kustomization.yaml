@@ -1,10 +1,35 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: hookshot
+namespace: prplanit-remote-access
 resources:
   - ../../../base/tacticalrmm
   - httproute.yaml
   - cephfs-pvs.yaml
+# Held at zero for the volume re-bind into prplanit-remote-access.
+replicas:
+  - name: tactical-backend
+    count: 0
+  - name: tactical-celery
+    count: 0
+  - name: tactical-celerybeat
+    count: 0
+  - name: tactical-frontend
+    count: 0
+  - name: tactical-meshcentral
+    count: 0
+  - name: tactical-nats
+    count: 0
+  - name: tactical-nginx
+    count: 0
+  - name: tactical-websockets
+    count: 0
+  - name: tactical-mongodb
+    count: 0
+  - name: tactical-postgres
+    count: 0
+  - name: tactical-redis
+    count: 0
+
 patches:
   # ExternalSecrets
   - path: externalsecret-patch.yaml

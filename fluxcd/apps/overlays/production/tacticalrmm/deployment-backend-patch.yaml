@@ -7,9 +7,9 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: hookshot.tacticalrmm.postgres
+        policy.prplanit.com/access-scope-postgres: prplanit-remote-access.tacticalrmm.postgres
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: hookshot.tacticalrmm.redis
+        policy.prplanit.com/access-scope-redis: prplanit-remote-access.tacticalrmm.redis
     spec:
       automountServiceAccountToken: false
       securityContext:
@@ -175,16 +175,16 @@ spec:
           emptyDir: {}
         - name: tactical-data
           persistentVolumeClaim:
-            claimName: hookshot-tactical-data-pvc
+            claimName: tactical-data-pvc
         - name: meshcentral-data
           persistentVolumeClaim:
-            claimName: hookshot-meshcentral-data-pvc
+            claimName: tactical-meshcentral-data-pvc
         - name: mongo-data
           persistentVolumeClaim:
-            claimName: hookshot-mongo-init-pvc
+            claimName: tactical-mongo-init-pvc
         - name: redis-data
           persistentVolumeClaim:
-            claimName: hookshot-redis-init-pvc
+            claimName: tactical-redis-init-pvc
         - name: init-wrapper
           configMap:
             name: tactical-init-wrapper

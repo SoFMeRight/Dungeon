@@ -33,15 +33,15 @@ spec:
             - name: NGINX_RESOLVER
               value: "10.144.0.10"
             - name: BACKEND_SERVICE
-              value: "tactical-backend.hookshot.svc.cluster.local"
+              value: "tactical-backend.prplanit-remote-access.svc.cluster.local"
             - name: FRONTEND_SERVICE
-              value: "tactical-frontend.hookshot.svc.cluster.local"
+              value: "tactical-frontend.prplanit-remote-access.svc.cluster.local"
             - name: WEBSOCKETS_SERVICE
-              value: "tactical-websockets.hookshot.svc.cluster.local"
+              value: "tactical-websockets.prplanit-remote-access.svc.cluster.local"
             - name: NATS_SERVICE
-              value: "tactical-nats.hookshot.svc.cluster.local"
+              value: "tactical-nats.prplanit-remote-access.svc.cluster.local"
             - name: MESH_SERVICE
-              value: "tactical-meshcentral.hookshot.svc.cluster.local"
+              value: "tactical-meshcentral.prplanit-remote-access.svc.cluster.local"
           resources:
             requests:
               cpu: 2m
@@ -53,7 +53,7 @@ spec:
         - $patch: replace
         - name: tactical-data
           persistentVolumeClaim:
-            claimName: hookshot-tactical-data-pvc
+            claimName: tactical-data-pvc
         - name: entrypoint
           configMap:
             name: tactical-nginx-entrypoint
