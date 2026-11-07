@@ -547,7 +547,7 @@
 
 **Open — 3 components** — StatefulSet — 
 - Namespace: temple-of-time
-- Replicas: 9/9
+- Replicas: 6/6
 - Hosts: ai.pcfae.com
 - Components:
   - open-webui (StatefulSet)
