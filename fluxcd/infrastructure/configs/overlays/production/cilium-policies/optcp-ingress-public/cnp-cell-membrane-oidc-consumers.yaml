@@ -72,9 +72,6 @@ spec:
             k8s:io.kubernetes.pod.namespace: optcp-media
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: hookshot
-            policy.prplanit.com/cap.oidc: "true"
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-remote-access
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:

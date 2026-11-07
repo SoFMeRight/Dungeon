@@ -153,8 +153,6 @@ spec:
             - prplanit-staff-suite
             # Routing & Gateway infrastructure
             - king-of-red-lions
-            # RDP/remote control services
-            - hookshot
             # Arr apps & downloaders
             - swift-sail
             # Restricted/privileged services

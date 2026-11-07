@@ -30,7 +30,6 @@ spec:
                 - gorons-bracelet
                 - optcp-operators-baseline
                 - gossip-stone
-                - hookshot
                 - optcp-remote-access
                 - hyrule-castle
                 - optcp-web
@@ -108,7 +107,6 @@ spec:
                 - gorons-bracelet
                 - optcp-operators-baseline
                 - gossip-stone
-                - hookshot
                 - optcp-remote-access
                 - hyrule-castle
                 - optcp-web

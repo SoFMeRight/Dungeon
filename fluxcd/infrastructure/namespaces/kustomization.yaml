@@ -51,7 +51,6 @@ resources:
   - swift-sail.yaml
   - delivery-bag.yaml
   - wallmaster.yaml
-  - hookshot.yaml
   - optcp-remote-access.yaml
   - lakitu.yaml
   - mr-resetti.yaml
