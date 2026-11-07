@@ -3,11 +3,6 @@ kind: Kustomization
 namespace: optcp-ai
 resources:
   - ../../../base/openwakeword
-# Held at zero for the volume re-bind into optcp-ai.
-replicas:
-  - name: openwakeword
-    count: 0
-
 patches:
   - path: statefulset-patch.yaml
     target:
