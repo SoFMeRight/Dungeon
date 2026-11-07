@@ -4,9 +4,9 @@
 > Generated from live Kubernetes state
 > Cluster: dungeon
 
-## Apps & Services (136)
+## Apps & Services (135)
 
-✅ 136 healthy
+✅ 135 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -222,7 +222,6 @@
 | Crowdsec (4 components) | ✅ | 🏠 crowdsec-lapi.pcfae.com | [open](https://crowdsec-lapi.pcfae.com) |
 | Frigate | ✅ | 🔒 nvr.pcfae.com | [open](https://nvr.pcfae.com) |
 | Home Assistant | ✅ | 🏠 hass.arbitorium.com | [open](https://hass.arbitorium.com) |
-| Mosquitto | ✅ | 🏠 |  |
 | Wazuh (3 components) | ✅ | 🔒 siem.prplanit.com | [open](https://siem.prplanit.com) |
 | Zigbee2mqtt | ✅ | 🏠 z2m.arbitorium.com | [open](https://z2m.arbitorium.com) |
 
@@ -287,7 +286,7 @@
   - netbox-redis (StatefulSet, cache)
   - netbox-server (StatefulSet)
 
-**Oauth2 Proxy** — Deployment — v7.15.5
+**Oauth2 Proxy** — Deployment — v7.15.6
 - Namespace: optcp-identity
 - Replicas: 1/1
 - Hosts: books.optcp.com, books.pcfae.com, hosts.optcp.com, mail.optcp.com, music.optcp.com, oa2p.pcfae.com, support.prplanit.com, z2m.arbitorium.com, zigbee.arbitorium.com
@@ -613,7 +612,7 @@
   - wikijs-vegan (StatefulSet)
   - wikijs-vegan-db (StatefulSet, database)
 
-**Adguard** — StatefulSet — v0.107.79
+**Adguard** — StatefulSet — v0.107.80
 - Namespace: optcp-network-services
 - Replicas: 2/2
 
@@ -641,7 +640,7 @@
 - Replicas: 1/1
 - Hosts: speedtest.pcfae.com
 
-**Searxng — 2 components** — Deployment — 2026.11.5-3e95f6cd2
+**Searxng — 2 components** — Deployment — 2026.11.6-ac11e14c5
 - Namespace: optcp-tools
 - Replicas: 3/3
 - Hosts: search.pcfae.com
@@ -799,7 +798,7 @@
 - Replicas: 2/2
 - Hosts: pve.pcfae.com
 
-**Bulwark** — StatefulSet — 1.19.1
+**Bulwark** — StatefulSet — 1.20.0
 - Namespace: optcp-delivery-bag
 - Replicas: 1/1
 - Hosts: mail.optcp.com
@@ -814,7 +813,7 @@
   - stalwart-redis (StatefulSet, cache)
   - stalwart-sentinel-sentinel (StatefulSet, cache)
 
-**Ntfy** — StatefulSet — v2.37.1
+**Ntfy** — StatefulSet — v2.37.2
 - Namespace: delivery-bag
 - Replicas: 1/1
 - Hosts: ntfy.pcfae.com, ntfy.prplanit.com
@@ -1025,16 +1024,12 @@
 - Replicas: 1/1
 - Hosts: nvr.pcfae.com
 
-**Home Assistant** — StatefulSet — 2026.10.4
+**Home Assistant** — StatefulSet — 2026.11.0
 - Namespace: arbitorium-home
 - Replicas: 1/1
 - Hosts: hass.arbitorium.com, hass.pcfae.com
 
-**Mosquitto** — StatefulSet — 2.1.2-alpine
-- Namespace: arbitorium-home
-- Replicas: 1/1
-
-**Wazuh — 3 components** — StatefulSet — 4.14.9
+**Wazuh — 3 components** — StatefulSet — 4.14.10
 - Namespace: lens-of-truth
 - Replicas: 3/3
 - Hosts: siem.prplanit.com
@@ -1136,7 +1131,7 @@
   - neko-gateway (Deployment)
   - neko-vpn (StatefulSet)
 
-**Ollama** — StatefulSet — 0.40.13
+**Ollama** — StatefulSet — 0.40.15
 - Namespace: tingle-tuner
 - Replicas: 1/1
 - Hosts: ollama.pcfae.com
@@ -1156,15 +1151,13 @@
 
 </details>
 
-## Platform Components (40)
+## Platform Components (39)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
-| Adguardhome Sync | optcp-network-services | ✅ |
 | Alloy | lakitu | ✅ |
 | Alloy | lakitu | ✅ |
 | Alloy Syslog | lakitu | ✅ |
-| Graphite Exporter Truenas | gossip-stone | ✅ |
 | Kube State Metrics | gossip-stone | ✅ |
 | Netconsole Collector | lakitu | ✅ |
 | Node (2 components) | lakitu | ✅ |
@@ -1195,6 +1188,7 @@
 | Gorons Bracelet.rbd.csi.ceph.com (3 components) | gorons-bracelet | ✅ |
 | Gpu Operator (11 components) | gorons-bracelet | ✅ |
 | Rbd Toolbox | gorons-bracelet | ✅ |
+| Graphite Exporter Truenas | optcp-monitoring-agents | ✅ |
 | Mariadb Operator (3 components) | optcp-operators-baseline | ✅ |
 | Redis Operator | optcp-operators-baseline | ✅ |
 | Sbom Operator | optcp-sibyl-system | ✅ |
@@ -1203,10 +1197,6 @@
 
 <details>
 <summary>Platform details</summary>
-
-**Adguardhome Sync** — Deployment — v0.9.6-ls181
-- Namespace: optcp-network-services
-- Replicas: 1/1
 
 **Alloy** — DaemonSet — 
 - Namespace: lakitu
@@ -1219,10 +1209,6 @@
 **Alloy Syslog** — Deployment — v1.21.3
 - Namespace: lakitu
 - Replicas: 2/2
-
-**Graphite Exporter Truenas** — Deployment — v0.17.0
-- Namespace: optcp-monitoring-agents
-- Replicas: 1/1
 
 **Kube State Metrics** — Deployment — v2.20.0
 - Namespace: gossip-stone
@@ -1292,11 +1278,11 @@
 - Namespace: king-of-red-lions
 - Replicas: 10/10
 
-**Istio Cni** — DaemonSet — 1.31.3
+**Istio Cni** — DaemonSet — 1.31.4
 - Namespace: king-of-red-lions
 - Replicas: 10/10
 
-**Istiod** — Deployment — 1.31.3
+**Istiod** — Deployment — 1.31.4
 - Namespace: king-of-red-lions
 - Replicas: 1/1
 
@@ -1304,11 +1290,11 @@
 - Namespace: king-of-red-lions
 - Replicas: 2/2
 
-**Ztunnel** — DaemonSet — 1.31.3
+**Ztunnel** — DaemonSet — 1.31.4
 - Namespace: king-of-red-lions
 - Replicas: 5/5
 
-**Ztunnel** — DaemonSet — 1.31.3
+**Ztunnel** — DaemonSet — 1.31.4
 - Namespace: king-of-red-lions
 - Replicas: 5/5
 
@@ -1344,6 +1330,10 @@
 - Namespace: gorons-bracelet
 - Replicas: 1/1
 
+**Graphite Exporter Truenas** — Deployment — v0.17.0
+- Namespace: optcp-monitoring-agents
+- Replicas: 1/1
+
 **Mariadb Operator** — Deployment — 26.10.2
 - Namespace: optcp-operators-baseline
 - Replicas: 5/5
@@ -1366,12 +1356,13 @@
 
 </details>
 
-## Unclassified (22)
+## Unclassified (24)
 
 Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
 
 | Workload | Namespace | Status |
 | --- | --- | --- |
+| Adguardhome Sync | optcp-network-services | ✅ |
 | Buildkitd | optcp-ci-runners | ✅ |
 | Bulkvs Ip Sync | optcp-address-sync | ✅ |
 | Cell Membrane Ingress Gateway Istio | optcp-ingress-public | ✅ |
@@ -1381,6 +1372,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | External Secrets | optcp-secrets | ✅ |
 | Gitlab Runner | optcp-ci-runners | ✅ |
 | Mariadb | prplanit-support | ✅ |
+| Mosquitto | arbitorium-home | ✅ |
 | Netbird Router Dungeon | optcp-vpn | ✅ |
 | Openbao Snapshot | optcp-secrets | ✅ |
 | Phloem Ingress Gateway Istio | optcp-ingress-internal | ✅ |
