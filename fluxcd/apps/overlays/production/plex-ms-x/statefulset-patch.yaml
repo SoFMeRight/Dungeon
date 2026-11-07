@@ -3,8 +3,7 @@ kind: StatefulSet
 metadata:
   name: plex-ms-x
 spec:
-  # Held at zero for the volume re-bind into optcp-restricted.
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:

@@ -18,8 +18,6 @@ kind: StatefulSet
 metadata:
   name: photoprism-x-mariadb
 spec:
-  # Held at zero for the volume re-bind into kai-private.
-  replicas: 0
   volumeClaimTemplates:
     - metadata:
         name: database
