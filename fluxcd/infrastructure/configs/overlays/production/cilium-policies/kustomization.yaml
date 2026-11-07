@@ -18,9 +18,11 @@ resources:
   - optcp-ingress-public
   - delivery-bag
   - optcp-network-services
+  - optcp-restricted
   - swift-sail
   # Batch 3 — Mixed
   - kai-personal
+  - kai-private
   - optcp-address-sync
   - optcp-app-directory
   - arbitorium-game-streaming

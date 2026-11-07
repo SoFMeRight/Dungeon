@@ -152,6 +152,8 @@ spec:
             - swift-sail
             # Restricted/privileged services
             - pedestal-of-time
+            - kai-private
+            - optcp-restricted
             # Mail services
             - delivery-bag
             # Comms and mail: stalwart, bulwark (namespace plan, group AD)

@@ -76,6 +76,14 @@ spec:
           names: ["lubelogger-*", "monica-*", "paperless-webserver-*", "photoprism-x-*", "plex-ms-x-*"]
       - resources:
           kinds: [Pod]
+          namespaces: [kai-private]
+          names: ["photoprism-x-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-restricted]
+          names: ["plex-ms-x-*"]
+      - resources:
+          kinds: [Pod]
           namespaces: [optcp-media]
           names: ["calibre-web-*", "plex-*", "romm-*"]
       - resources:

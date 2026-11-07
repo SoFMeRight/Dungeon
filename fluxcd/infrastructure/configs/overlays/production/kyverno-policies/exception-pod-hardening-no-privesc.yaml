@@ -47,6 +47,12 @@ spec:
           selector:
             matchLabels:
               app: photoprism-x
+      - resources:
+          kinds: [Pod]
+          namespaces: [kai-private]
+          selector:
+            matchLabels:
+              app: photoprism-x
       # bank-vaults operator + openbao (Vault) pods — openbao's sidecars are hardened by the
       # mutate-vault-sidecar-hardening policy on create; this exception is the safety belt for that
       # policy's failurePolicy:Ignore (a Kyverno blip must not block Vault pod creation).

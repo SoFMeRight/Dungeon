@@ -21,6 +21,7 @@ spec:
                 - optcp-ingress-internal
                 - kai-ingress-private
                 - optcp-network-services
+                - optcp-restricted
                 - delivery-bag
                 - optcp-address-sync
                 - optcp-app-directory
@@ -39,6 +40,7 @@ spec:
                 - yesimvegan-web
                 - lens-of-truth
                 - kai-personal
+                - kai-private
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-delivery-bag
@@ -91,6 +93,7 @@ spec:
                 - optcp-ingress-internal
                 - kai-ingress-private
                 - optcp-network-services
+                - optcp-restricted
                 - delivery-bag
                 - optcp-address-sync
                 - optcp-app-directory
@@ -109,6 +112,7 @@ spec:
                 - yesimvegan-web
                 - lens-of-truth
                 - kai-personal
+                - kai-private
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-delivery-bag

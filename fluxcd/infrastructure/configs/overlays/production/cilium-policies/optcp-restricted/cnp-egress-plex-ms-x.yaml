@@ -1,0 +1,40 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-plex-ms-x-egress
+spec:
+  description: >-
+    plex-ms-x is a secondary Plex Media Server: it authenticates the account,
+    fetches metadata/artwork, and does discovery against the Plex cloud, all
+    under *.plex.tv and *.plex.direct on 443. Allow egress to those hosts, with
+    L7 DNS so Cilium learns their addresses. LAN clients reach it inbound
+    (allow-plex-ms-x-lan) and the main Plex is reached over the mesh (universal
+    ambient CCNP). Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: plex-ms-x
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "plex.tv"
+        - matchPattern: "*.plex.tv"
+        - matchPattern: "*.plex.direct"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

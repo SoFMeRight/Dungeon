@@ -11,6 +11,7 @@ resources:
   - optcp-remote-access/
   - hyrule-castle/
   - kai-personal/
+  - kai-private/
   - king-of-red-lions/
   - lakitu/
   - lens-of-truth/
@@ -28,6 +29,7 @@ resources:
   - optcp-media/
   - optcp-network-services/
   - optcp-operators-baseline/
+  - optcp-restricted/
   - optcp-secrets/
   - optcp-shooting-gallery/
   - optcp-sibyl-system/

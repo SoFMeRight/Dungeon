@@ -23,6 +23,7 @@ spec:
               - lens-of-truth
               - optcp-app-directory
               - pedestal-of-time
+              - kai-private
               - optcp-cloud
               - optcp-media
               - swift-sail

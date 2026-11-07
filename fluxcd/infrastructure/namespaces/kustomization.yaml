@@ -4,6 +4,7 @@ resources:
   - tingle-tuner.yaml
   - gossip-stone.yaml
   - kai-personal.yaml
+  - kai-private.yaml
   - temple-of-time.yaml
   - optcp-address-sync.yaml
   - optcp-app-directory.yaml
@@ -20,6 +21,7 @@ resources:
   - optcp-keyring.yaml
   - optcp-media.yaml
   - optcp-network-services.yaml
+  - optcp-restricted.yaml
   - optcp-operators-baseline.yaml
   - optcp-secrets.yaml
   - optcp-shooting-gallery.yaml

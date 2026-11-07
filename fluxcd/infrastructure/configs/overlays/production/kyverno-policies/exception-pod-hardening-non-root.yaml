@@ -63,6 +63,10 @@ spec:
           kinds: [Pod]
           namespaces: [pedestal-of-time]
           names: ["lubelogger-*", "monica-*", "paperless-webserver-*", "plex-ms-x-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-restricted]
+          names: ["plex-ms-x-*"]
       # optcp-media — calibre-web LSIO, plex s6, romm(+db) root vendor
       - resources:
           kinds: [Pod]

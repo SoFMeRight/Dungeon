@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for optcp-restricted namespace.
+    Ingress: CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, ingress-gw;
+    cnp-plex-lb grants LAN clients.
+    Egress: DNS + mesh + kube-apiserver ride the universal CCNP baseline; cnp-egress-plex-ms-x grants the Plex cloud.
+    Both directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
