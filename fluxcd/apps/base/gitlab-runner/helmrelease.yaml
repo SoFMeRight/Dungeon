@@ -127,7 +127,7 @@ spec:
                   fsGroupChangePolicy: OnRootMismatch
                 initContainers:
                   - name: scratch-init
-                    image: docker.io/library/alpine:3.22
+                    image: docker.io/library/alpine:3.24
                     command: ["mkdir", "-p", "/scratch/builds", "/scratch/tmp", "/scratch/home"]
                     securityContext:
                       runAsNonRoot: true
