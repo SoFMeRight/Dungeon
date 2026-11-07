@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: arbitorium-nvr
+resources:
+  - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml
+  - allow-frigate-loadbalancer.yaml
+  - allow-home-assistant-to-frigate.yaml

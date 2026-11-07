@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for arbitorium-home namespace.
+    Ingress: CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, ingress-gw;
+    cnp-iot-mesh grants MQTT clients.
+    Egress: DNS + mesh + kube-apiserver ride the universal CCNP baseline; cnp-egress-home-assistant
+    grants its unbounded integrations and cnp-iot-mesh the Zigbee coordinator.
+    Both directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor

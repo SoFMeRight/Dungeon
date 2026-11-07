@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-zigbee2mqtt-to-mosquitto
+spec:
+  selector:
+    matchLabels:
+      app: mosquitto
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/arbitorium-home/sa/zigbee2mqtt
+      to:
+        - operation:
+            ports: ["1883"]

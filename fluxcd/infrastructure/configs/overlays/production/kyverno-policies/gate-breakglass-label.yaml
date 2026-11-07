@@ -36,6 +36,8 @@ spec:
                 - lens-of-truth
                 - kai-personal
                 - kai-private
+                - arbitorium-home
+                - arbitorium-nvr
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-delivery-bag
@@ -121,6 +123,8 @@ spec:
                 - lens-of-truth
                 - kai-personal
                 - kai-private
+                - arbitorium-home
+                - arbitorium-nvr
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-delivery-bag
@@ -206,6 +210,8 @@ spec:
                 - lens-of-truth
                 - kai-personal
                 - kai-private
+                - arbitorium-home
+                - arbitorium-nvr
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-delivery-bag

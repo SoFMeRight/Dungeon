@@ -50,6 +50,14 @@ spec:
           kinds: [Pod]
           namespaces: [lens-of-truth]
           names: ["crowdsec-*", "frigate-*", "home-assistant-*", "wazuh-manager-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [arbitorium-home]
+          names: ["home-assistant-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [arbitorium-nvr]
+          names: ["frigate-*"]
       # kai-personal — ferdium LSIO s6
       - resources:
           kinds: [Pod]

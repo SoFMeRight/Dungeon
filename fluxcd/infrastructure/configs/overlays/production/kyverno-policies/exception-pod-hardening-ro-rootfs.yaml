@@ -68,6 +68,14 @@ spec:
           names: ["crowdsec-*", "frigate-*", "home-assistant-*", "wazuh-*"]
       - resources:
           kinds: [Pod]
+          namespaces: [arbitorium-home]
+          names: ["home-assistant-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [arbitorium-nvr]
+          names: ["frigate-*"]
+      - resources:
+          kinds: [Pod]
           namespaces: [kai-personal]
           names: ["ferdium-*"]
       - resources:

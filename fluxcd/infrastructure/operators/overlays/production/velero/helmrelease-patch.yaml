@@ -121,6 +121,8 @@ spec:
             - optcp-monitoring-agents
             # IDS/IPS/SIEM security monitoring
             - lens-of-truth
+            - arbitorium-home
+            - arbitorium-nvr
             # Game servers and media libraries
             - optcp-media
             - optcp-shooting-gallery

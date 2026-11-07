@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for arbitorium-nvr namespace.
+    Ingress: CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, ingress-gw;
+    cnp-frigate-lb grants LAN clients.
+    Egress: DNS + mesh + kube-apiserver ride the universal CCNP baseline; cnp-egress-frigate
+    grants LAN cameras, Frigate+ and notify targets.
+    Both directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor

@@ -27,6 +27,8 @@ resources:
   - optcp-address-sync
   - optcp-app-directory
   - arbitorium-game-streaming
+  - arbitorium-home
+  - arbitorium-nvr
   - pedestal-of-time
   - lens-of-truth
   - tingle-tuner

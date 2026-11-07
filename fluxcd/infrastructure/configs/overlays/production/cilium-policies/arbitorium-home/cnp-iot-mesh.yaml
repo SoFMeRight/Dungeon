@@ -1,0 +1,53 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-mqtt-clients-to-mosquitto
+spec:
+  description: >-
+    Allow home-assistant and zigbee2mqtt to access the mosquitto MQTT broker
+    on 1883/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: mosquitto
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: home-assistant
+        - matchLabels:
+            app: zigbee2mqtt
+      toPorts:
+        - ports:
+            - port: "1883"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-zigbee2mqtt-egress
+spec:
+  description: >-
+    Allow zigbee2mqtt to reach SLZB-06 Zigbee coordinator on
+    10.20.20.196:6638/TCP and mosquitto on 1883/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: zigbee2mqtt
+  egress:
+    - toCIDR:
+        - "10.20.20.196/32"
+      toPorts:
+        - ports:
+            - port: "6638"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app: mosquitto
+      toPorts:
+        - ports:
+            - port: "1883"
+              protocol: TCP

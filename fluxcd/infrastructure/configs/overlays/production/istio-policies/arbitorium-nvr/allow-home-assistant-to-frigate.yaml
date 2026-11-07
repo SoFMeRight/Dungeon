@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-home-assistant-to-frigate
+spec:
+  selector:
+    matchLabels:
+      app: frigate
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/arbitorium-home/sa/home-assistant
+      to:
+        - operation:
+            ports: ["5000", "8554", "8555"]

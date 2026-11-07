@@ -49,6 +49,8 @@ resources:
   - prplanit-staff-suite/
   - prplanit-support/
   - prplanit-web/
+  - arbitorium-home/
+  - arbitorium-nvr/
   - swift-sail/
   - temple-of-time/
   - tingle-tuner/

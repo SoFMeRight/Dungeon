@@ -1,0 +1,7 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: arbitorium-home
+resources:
+  - cnp-default-deny-ingress.yaml
+  - cnp-egress-home-assistant.yaml
+  - cnp-iot-mesh.yaml
