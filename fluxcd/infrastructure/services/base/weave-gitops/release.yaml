@@ -8,7 +8,7 @@ metadata:
   name: weave-gitops
 spec:
   releaseName: weave-gitops
-  targetNamespace: gossip-stone
+  targetNamespace: optcp-management-dashboards
   chart:
     spec:
       chart: weave-gitops

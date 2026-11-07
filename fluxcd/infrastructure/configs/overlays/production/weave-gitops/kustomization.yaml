@@ -21,4 +21,4 @@ patches:
     patch: |-
       - op: replace
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-management-dashboards

@@ -12,7 +12,7 @@ spec:
     the universal kube-apiserver CCNP; eaton/pve exporters via cnp-monitoring-lb;
     per-app cnp-egress-* grant nutify (SNMP/SSH), the broad monitors
     (uptime-kuma/speedtest/beszel), and the gateway-hairpin apps (grafana/
-    weave-gitops/gatus). Both directions use a reserved-label anchor.
+    gatus). Both directions use a reserved-label anchor.
   enableDefaultDeny:
     ingress: true
     egress: true

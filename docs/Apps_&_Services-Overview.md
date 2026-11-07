@@ -790,12 +790,12 @@
 - Replicas: 1/1
 
 **Pbs Cluster Proxy** — Deployment — 1.31.8-alpine
-- Namespace: gossip-stone
+- Namespace: optcp-management-dashboards
 - Replicas: 2/2
 - Hosts: pbs.pcfae.com
 
 **Pve Cluster Proxy** — Deployment — 1.31.8-alpine
-- Namespace: gossip-stone
+- Namespace: optcp-management-dashboards
 - Replicas: 2/2
 - Hosts: pve.pcfae.com
 
@@ -839,7 +839,7 @@
 - Hosts: grafana.pcfae.com
 
 **Headlamp** — StatefulSet — v0.46.0
-- Namespace: gossip-stone
+- Namespace: optcp-management-dashboards
 - Replicas: 1/1
 - Hosts: headlamp.pcfae.com
 
@@ -892,7 +892,7 @@
 - Hosts: metrics.pcfae.com
 
 **Weave Gitops** — Deployment — v0.39.1
-- Namespace: gossip-stone
+- Namespace: optcp-management-dashboards
 - Replicas: 1/1
 - Hosts: flux.pcfae.com
 

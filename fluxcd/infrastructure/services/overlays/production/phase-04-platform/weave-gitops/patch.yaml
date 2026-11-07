@@ -3,7 +3,7 @@ kind: HelmRelease
 metadata:
   name: weave-gitops
 spec:
-  targetNamespace: gossip-stone
+  targetNamespace: optcp-management-dashboards
   valuesFrom:
     - kind: ConfigMap
       name: weave-gitops-values
