@@ -8,8 +8,8 @@ spec:
     Ingress: paperless DB access covered by contract CCNPs (has labels);
     CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape, ingress-gw.
     Egress: DNS + intra-namespace mesh (app->db) + kube-apiserver ride the
-    universal CCNP baseline; cnp-egress-content-apps grants immich and photoprism.
-    The other apps are self-contained and need nothing external.
+    universal CCNP baseline; cnp-egress-content-apps grants immich and photoprism,
+    cnp-egress-oidc-consumers grants cap.oidc pods the IdP. The rest need nothing external.
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true

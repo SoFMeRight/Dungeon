@@ -4,4 +4,5 @@ namespace: arbitorium-restricted
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-content-apps.yaml
+  - cnp-egress-oidc-consumers.yaml
   - cnp-unlabeled-dbs.yaml

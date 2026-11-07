@@ -328,6 +328,9 @@ filtering:
     - domain: fotos.pcfae.com
       answer: 172.22.30.69
       enabled: true
+    - domain: monica.pcfae.com
+      answer: 172.22.30.69
+      enabled: true
     - domain: plexx.pcfae.com
       answer: 172.22.30.69
       enabled: true
