@@ -19,7 +19,7 @@ spec:
         context: GATEWAY
         routeConfiguration:
           vhost:
-            name: hass.arbitorium.com:443
+            name: home.arbitorium.com:443
             route:
               action: ANY
       patch:

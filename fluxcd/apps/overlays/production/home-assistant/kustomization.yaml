@@ -5,6 +5,7 @@ resources:
   - ../../../base/home-assistant
   - httproute.yaml
   - httproute-xylem.yaml
+  - httproute-private.yaml
   - destinationrule.yaml
 patches:
   - path: statefulset-patch.yaml

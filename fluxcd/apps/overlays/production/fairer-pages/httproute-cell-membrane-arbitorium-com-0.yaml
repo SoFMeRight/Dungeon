@@ -17,7 +17,7 @@ spec:
     # arbitorium.com
     - "arbitorium.com"
     - "*.arbitorium.com"
-    - "hass.arbitorium.com"
+    - "home.arbitorium.com"
     - "zigbee.arbitorium.com"
     - "z2m.arbitorium.com"
   rules:

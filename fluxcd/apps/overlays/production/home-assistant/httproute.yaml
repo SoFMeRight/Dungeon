@@ -10,7 +10,7 @@ spec:
     - name: cell-membrane-ingress-gateway
       namespace: optcp-ingress-public
   hostnames:
-    - "hass.arbitorium.com"
+    - "home.arbitorium.com"
   rules:
     - matches:
         - path:

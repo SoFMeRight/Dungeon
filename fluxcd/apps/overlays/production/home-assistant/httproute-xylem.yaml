@@ -10,7 +10,7 @@ spec:
     - name: phloem-ingress-gateway
       namespace: optcp-ingress-internal
   hostnames:
-    - "hass.pcfae.com"
+    - "home.pcfae.com"
   rules:
     - matches:
         - path:

@@ -221,7 +221,7 @@
 | --- | --- | --- | --- |
 | Crowdsec (4 components) | ✅ | 🏠 crowdsec-lapi.pcfae.com | [open](https://crowdsec-lapi.pcfae.com) |
 | Frigate | ✅ | 🔒 nvr.pcfae.com | [open](https://nvr.pcfae.com) |
-| Home Assistant | ✅ | 🏠 hass.arbitorium.com | [open](https://hass.arbitorium.com) |
+| Home Assistant | ✅ | 🏠 home.arbitorium.com | [open](https://home.arbitorium.com) |
 | Wazuh (3 components) | ✅ | 🔒 siem.prplanit.com | [open](https://siem.prplanit.com) |
 | Zigbee2mqtt | ✅ | 🏠 z2m.arbitorium.com | [open](https://z2m.arbitorium.com) |
 
@@ -1027,7 +1027,7 @@
 **Home Assistant** — StatefulSet — 2026.11.0
 - Namespace: arbitorium-home
 - Replicas: 1/1
-- Hosts: hass.arbitorium.com, hass.pcfae.com
+- Hosts: home.arbitorium.com, home.private.arbitorium.com, home.pcfae.com
 
 **Wazuh — 3 components** — StatefulSet — 4.14.10
 - Namespace: lens-of-truth
