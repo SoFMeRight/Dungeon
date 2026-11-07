@@ -70,8 +70,8 @@ data:
   # gateway/pods from first boot without the deprecated YAML block. Managed thereafter via HA's UI.
   storage-http.json: |
     {
-      "version": 2,
-      "minor_version": 2,
+      "version": 3,
+      "minor_version": 1,
       "key": "http",
       "data": {
         "stable": {
@@ -81,7 +81,7 @@ data:
             "172.22.30.71/32",
             "172.22.144.0/24"
           ],
-          "ssl_profile": "modern",
+          "ssl_profile": "modern_v4",
           "cors_allowed_origins": [
             "https://cast.home-assistant.io"
           ],
