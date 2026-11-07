@@ -3,8 +3,6 @@ kind: StatefulSet
 metadata:
   name: echo-ip
 spec:
-  # Held at zero for the volume re-bind into optcp-tools.
-  replicas: 0
   template:
     metadata:
       labels:
