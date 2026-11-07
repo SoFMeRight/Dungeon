@@ -28,6 +28,7 @@ resources:
   - optcp-keyring/
   - optcp-management-dashboards/
   - optcp-media/
+  - optcp-monitoring-agents/
   - optcp-network-services/
   - optcp-operators-baseline/
   - optcp-restricted/

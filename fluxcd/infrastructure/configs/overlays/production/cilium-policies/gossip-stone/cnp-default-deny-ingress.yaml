@@ -9,7 +9,7 @@ spec:
     postgres/redis contracts, and ingress-gateway traffic for labeled pods.
     Egress: in-cluster monitoring traffic (VictoriaMetrics, Loki, Grafana
     datasources, DBs) rides the mesh (HBONE); sidecars/ksm reach the API via
-    the universal kube-apiserver CCNP; eaton/pve exporters via cnp-monitoring-lb;
+    the universal kube-apiserver CCNP;
     per-app cnp-egress-* grant nutify (SNMP/SSH), the broad monitors
     (uptime-kuma/speedtest/beszel), and the gateway-hairpin apps (grafana/
     gatus). Both directions use a reserved-label anchor.

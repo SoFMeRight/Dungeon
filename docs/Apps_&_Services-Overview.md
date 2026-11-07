@@ -858,7 +858,7 @@
 - Hosts: nut.pcfae.com
 
 **Prometheus Exporter — 2 components** — Deployment — 
-- Namespace: gossip-stone
+- Namespace: optcp-monitoring-agents
 - Replicas: 2/2
 - Components:
   - prometheus-exporter-eaton-ups (Deployment)
@@ -1221,7 +1221,7 @@
 - Replicas: 2/2
 
 **Graphite Exporter Truenas** — Deployment — v0.17.0
-- Namespace: gossip-stone
+- Namespace: optcp-monitoring-agents
 - Replicas: 1/1
 
 **Kube State Metrics** — Deployment — v2.20.0

@@ -118,6 +118,7 @@ spec:
             # Monitoring services
             - gossip-stone
             - optcp-management-dashboards
+            - optcp-monitoring-agents
             # IDS/IPS/SIEM security monitoring
             - lens-of-truth
             # Game servers and media libraries

@@ -780,7 +780,7 @@ data:
       }
       rule {
         target_label = "__address__"
-        replacement  = "prometheus-exporter-pve.gossip-stone.svc.cluster.local:9221"
+        replacement  = "prometheus-exporter-pve.optcp-monitoring-agents.svc.cluster.local:9221"
       }
       rule {
         target_label = "job"
@@ -825,7 +825,7 @@ data:
       }
       rule {
         target_label = "__address__"
-        replacement  = "prometheus-exporter-pve.gossip-stone.svc.cluster.local:9221"
+        replacement  = "prometheus-exporter-pve.optcp-monitoring-agents.svc.cluster.local:9221"
       }
       rule {
         target_label = "job"

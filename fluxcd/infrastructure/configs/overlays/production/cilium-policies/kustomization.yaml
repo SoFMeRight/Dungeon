@@ -17,6 +17,7 @@ resources:
   - kai-ingress-private
   - optcp-ingress-public
   - delivery-bag
+  - optcp-monitoring-agents
   - optcp-network-services
   - optcp-restricted
   - swift-sail

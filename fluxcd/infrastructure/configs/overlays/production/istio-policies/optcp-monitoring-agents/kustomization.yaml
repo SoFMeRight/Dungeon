@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-monitoring-agents
+resources:
+  - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml
+  - allow-graphite-exporter-loadbalancer.yaml
+  - allow-prom-exporter-eaton-ups-loadbalancer.yaml
+  - allow-prom-exporter-pve-loadbalancer.yaml

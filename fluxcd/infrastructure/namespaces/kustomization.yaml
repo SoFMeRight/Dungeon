@@ -21,6 +21,7 @@ resources:
   - optcp-keyring.yaml
   - optcp-management-dashboards.yaml
   - optcp-media.yaml
+  - optcp-monitoring-agents.yaml
   - optcp-network-services.yaml
   - optcp-restricted.yaml
   - optcp-operators-baseline.yaml

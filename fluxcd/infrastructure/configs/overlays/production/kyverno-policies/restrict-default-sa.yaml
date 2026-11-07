@@ -20,6 +20,7 @@ spec:
               namespaces:
                 - optcp-ingress-internal
                 - kai-ingress-private
+                - optcp-monitoring-agents
                 - optcp-network-services
                 - optcp-restricted
                 - delivery-bag
@@ -93,6 +94,7 @@ spec:
               namespaces:
                 - optcp-ingress-internal
                 - kai-ingress-private
+                - optcp-monitoring-agents
                 - optcp-network-services
                 - optcp-restricted
                 - delivery-bag
