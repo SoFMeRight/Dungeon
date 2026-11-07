@@ -12,6 +12,9 @@ spec:
         - source:
             principals:
               - cluster.local/ns/prplanit-remote-access/sa/tactical-backend
+              - cluster.local/ns/prplanit-remote-access/sa/tactical-celery
+              - cluster.local/ns/prplanit-remote-access/sa/tactical-nats
+              - cluster.local/ns/prplanit-remote-access/sa/tactical-websockets
       to:
         - operation:
             ports: ["4222"]
