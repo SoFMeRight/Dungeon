@@ -43,7 +43,7 @@ spec:
                   name: convertx-secrets
                   key: jwt-secret
           volumeMounts:
-            - name: tingle-tuner-convertx-data
+            - name: convertx-data
               mountPath: /app/data
           resources:
             requests:
@@ -54,7 +54,7 @@ spec:
               memory: 1Gi
   volumeClaimTemplates:
     - metadata:
-        name: tingle-tuner-convertx-data
+        name: convertx-data
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: PLACEHOLDER_STORAGE_CLASS

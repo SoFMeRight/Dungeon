@@ -3,6 +3,8 @@ kind: StatefulSet
 metadata:
   name: echo-ip
 spec:
+  # Held at zero for the volume re-bind into optcp-tools.
+  replicas: 0
   template:
     metadata:
       labels:
@@ -15,7 +17,7 @@ spec:
       initContainers:
         - name: geoip-update
           volumeMounts:
-            - name: tingle-tuner-echo-ip-data
+            - name: echo-ip-data
               mountPath: /usr/share/GeoIP
       containers:
         - name: echo-ip
@@ -45,7 +47,7 @@ spec:
           volumeMounts:
             - name: tmp
               mountPath: /tmp
-            - name: tingle-tuner-echo-ip-data
+            - name: echo-ip-data
               mountPath: /data
               readOnly: true
             # Drop the base's vestigial /html mount (the fork bakes templates at
@@ -60,7 +62,7 @@ spec:
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
-        name: tingle-tuner-echo-ip-data
+        name: echo-ip-data
       spec:
         accessModes:
           - ReadWriteOnce

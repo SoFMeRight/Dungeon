@@ -3,7 +3,8 @@ kind: StatefulSet
 metadata:
   name: hrconvert2
 spec:
-  replicas: 1
+  # Held at zero for the volume re-bind into optcp-tools.
+  replicas: 0
   template:
     metadata:
       labels:
@@ -24,14 +25,14 @@ spec:
               cpu: 248m
               memory: "256Mi"
           volumeMounts:
-            - name: tingle-tuner-hrconvert2-config
+            - name: hrconvert2-config
               mountPath: /var/www/html/HRProprietary/HRConvert2/config.php
               subPath: config.php
-            - name: tingle-tuner-hrconvert2-files
+            - name: hrconvert2-files
               mountPath: /home/converter
   volumeClaimTemplates:
     - metadata:
-        name: tingle-tuner-hrconvert2-config
+        name: hrconvert2-config
       spec:
         accessModes:
           - ReadWriteOnce
@@ -40,7 +41,7 @@ spec:
           requests:
             storage: 1Gi
     - metadata:
-        name: tingle-tuner-hrconvert2-files
+        name: hrconvert2-files
       spec:
         accessModes:
           - ReadWriteOnce

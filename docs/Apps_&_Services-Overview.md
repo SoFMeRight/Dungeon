@@ -622,7 +622,7 @@
 - Replicas: 1/1
 
 **Echo Ip** — StatefulSet — v2026.9.0
-- Namespace: tingle-tuner
+- Namespace: optcp-tools
 - Replicas: 1/1
 - Hosts: ipleek.com, www.ipleek.com
 
@@ -1085,7 +1085,7 @@
 - Hosts: s3.optcp.com
 
 **Convertx** — StatefulSet — v0.20.0
-- Namespace: tingle-tuner
+- Namespace: optcp-tools
 - Replicas: 1/1
 - Hosts: convertx.pcfae.com
 
@@ -1109,7 +1109,7 @@
 - Hosts: gwfonts.pcfae.com
 
 **Hrconvert2** — StatefulSet — v3.8.4
-- Namespace: tingle-tuner
+- Namespace: optcp-tools
 - Replicas: 1/1
 - Hosts: hrconvert2.pcfae.com
 
