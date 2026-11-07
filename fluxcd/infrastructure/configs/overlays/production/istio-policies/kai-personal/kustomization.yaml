@@ -4,3 +4,4 @@ namespace: kai-personal
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-phloem.yaml

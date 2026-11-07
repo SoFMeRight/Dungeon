@@ -3,7 +3,8 @@ kind: StatefulSet
 metadata:
   name: ferdium
 spec:
-  replicas: 1
+  # Held at zero for the volume re-bind into kai-personal.
+  replicas: 0
   template:
     metadata:
       labels:
@@ -27,11 +28,11 @@ spec:
               cpu: 636m
               memory: 1200Mi
           volumeMounts:
-            - name: lost-woods-ferdium-config
+            - name: ferdium-config
               mountPath: /config
   volumeClaimTemplates:
     - metadata:
-        name: lost-woods-ferdium-config
+        name: ferdium-config
       spec:
         accessModes:
           - ReadWriteOnce

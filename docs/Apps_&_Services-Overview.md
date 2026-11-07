@@ -665,7 +665,7 @@
 - Hosts: etherealclique.com
 
 **Ferdium** — StatefulSet — v7.2.3-ls165
-- Namespace: lost-woods
+- Namespace: kai-personal
 - Replicas: 1/1
 - Hosts: ferdium.pcfae.com
 
@@ -689,7 +689,7 @@
 - Hosts: kai-hamilton.com
 
 **Organizr** — StatefulSet — 
-- Namespace: lost-woods
+- Namespace: optcp-app-directory
 - Replicas: 1/1
 - Hosts: apps.pcfae.com, apps.prplanit.com
 
