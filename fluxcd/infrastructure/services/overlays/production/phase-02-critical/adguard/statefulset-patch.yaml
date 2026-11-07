@@ -3,8 +3,7 @@ kind: StatefulSet
 metadata:
   name: adguard
 spec:
-  # Held at zero for the volume re-bind into optcp-network-services.
-  replicas: 0
+  replicas: 2
   template:
     metadata:
       labels:

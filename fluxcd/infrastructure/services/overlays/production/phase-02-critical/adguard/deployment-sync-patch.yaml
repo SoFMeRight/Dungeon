@@ -3,8 +3,7 @@ kind: Deployment
 metadata:
   name: adguardhome-sync
 spec:
-  # Held at zero until adguard is back in optcp-network-services.
-  replicas: 0
+  replicas: 1
   template:
     spec:
       imagePullSecrets:
