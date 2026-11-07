@@ -4,6 +4,7 @@ namespace: optcp-ai
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-home-assistant-to-faster-whisper.yaml
   - allow-home-assistant-to-piper.yaml
   - allow-home-assistant-to-openwakeword.yaml

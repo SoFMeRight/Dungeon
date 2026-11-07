@@ -1,9 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: tingle-tuner
+namespace: optcp-ai
 resources:
   - ../../../base/libretranslate
   - httproute.yaml
+# Held at zero for the volume re-bind into optcp-ai.
+replicas:
+  - name: libretranslate
+    count: 0
+
 patches:
   - path: statefulset-patch.yaml
     target:

@@ -5,8 +5,7 @@ metadata:
 spec:
   description: >-
     These content/media apps fetch from an open-ended external set as their core
-    function — LLM/AI and web-RAG endpoints (open-webui),
-    collab signaling (nextcloud-talk-hpb), and Matrix federation plus the identity
+    function — collab signaling (nextcloud-talk-hpb), and Matrix federation plus the identity
     provider hairpin (matrix-synapse, matrix-auth — sso.optcp.com resolves to the
     gateway VIP from inside, so this is a cluster destination, not a world one).
     matrix-lk-jwt joins them because authorising a caller means verifying their
@@ -23,7 +22,6 @@ spec:
       - key: app
         operator: In
         values:
-          - open-webui
           - matrix-synapse
           - matrix-auth
           - matrix-lk-jwt

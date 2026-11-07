@@ -115,12 +115,6 @@ spec:
             - "pyload-ng-*"
             - "sabnzbd-*"
             - "thelounge-*"
-      # temple-of-time — open-webui.
-      - resources:
-          kinds: [Pod]
-          namespaces: [temple-of-time]
-          names:
-            - "open-webui-*"
       - resources:
           kinds: [Pod]
           namespaces: [arbitorium-restricted]

@@ -21,7 +21,7 @@ spec:
               cp /tmp/sentinel/sentinel.conf /etc/redis/sentinel.conf
 
               # Find the current Redis master by checking replication info
-              nodes="open-webui-redis-0.open-webui-redis-headless.temple-of-time.svc.cluster.local,open-webui-redis-1.open-webui-redis-headless.temple-of-time.svc.cluster.local,open-webui-redis-2.open-webui-redis-headless.temple-of-time.svc.cluster.local"
+              nodes="open-webui-redis-0.open-webui-redis-headless.optcp-ai.svc.cluster.local,open-webui-redis-1.open-webui-redis-headless.optcp-ai.svc.cluster.local,open-webui-redis-2.open-webui-redis-headless.optcp-ai.svc.cluster.local"
 
               MASTER_HOST=""
               for node in $(echo $nodes | tr ',' ' '); do
@@ -36,7 +36,7 @@ spec:
 
               # If no master found, default to redis-0
               if [ -z "$MASTER_HOST" ]; then
-                MASTER_HOST="open-webui-redis-0.open-webui-redis-headless.temple-of-time.svc.cluster.local"
+                MASTER_HOST="open-webui-redis-0.open-webui-redis-headless.optcp-ai.svc.cluster.local"
                 echo "No master found, defaulting to $MASTER_HOST"
               fi
 

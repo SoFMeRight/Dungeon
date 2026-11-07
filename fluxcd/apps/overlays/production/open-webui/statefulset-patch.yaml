@@ -10,9 +10,9 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: temple-of-time.open-webui.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-ai.open-webui.postgres
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: temple-of-time.open-webui.redis
+        policy.prplanit.com/access-scope-redis: optcp-ai.open-webui.redis
     spec:
       containers:
         - name: open-webui
@@ -31,19 +31,19 @@ spec:
             - name: OLLAMA_BASE_URLS
               value: "http://glicynia:11434,http://wisteria:11434,http://dock:11434,http://Leaf-Cutter:11434,http://anchorage:11434,http://172.22.30.107:11434"
             - name: DATABASE_URL
-              value: "postgresql://openwebui:$(POSTGRES_PASSWORD)@open-webui-postgres-rw.temple-of-time.svc.cluster.local:5432/openwebui"
+              value: "postgresql://openwebui:$(POSTGRES_PASSWORD)@open-webui-postgres-rw.optcp-ai.svc.cluster.local:5432/openwebui"
             - name: REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@open-webui-redis:6379/0"
             - name: REDIS_SENTINEL_HOSTS
               # yamllint disable-line rule:line-length
-              value: "open-webui-sentinel-0.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,open-webui-sentinel-1.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,open-webui-sentinel-2.open-webui-sentinel-headless.temple-of-time.svc.cluster.local"
+              value: "open-webui-sentinel-0.open-webui-sentinel-headless.optcp-ai.svc.cluster.local,open-webui-sentinel-1.open-webui-sentinel-headless.optcp-ai.svc.cluster.local,open-webui-sentinel-2.open-webui-sentinel-headless.optcp-ai.svc.cluster.local"
             - name: REDIS_SENTINEL_PORT
               value: "26379"
             - name: WEBSOCKET_REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@open-webui-redis:6379/0"
             - name: WEBSOCKET_SENTINEL_HOSTS
               # yamllint disable-line rule:line-length
-              value: "open-webui-sentinel-0.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,open-webui-sentinel-1.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,open-webui-sentinel-2.open-webui-sentinel-headless.temple-of-time.svc.cluster.local"
+              value: "open-webui-sentinel-0.open-webui-sentinel-headless.optcp-ai.svc.cluster.local,open-webui-sentinel-1.open-webui-sentinel-headless.optcp-ai.svc.cluster.local,open-webui-sentinel-2.open-webui-sentinel-headless.optcp-ai.svc.cluster.local"
             - name: WEBSOCKET_SENTINEL_PORT
               value: "26379"
             - name: ENABLE_WEBSOCKET_SUPPORT
@@ -53,7 +53,7 @@ spec:
           volumeMounts:
             - $patch: delete
               name: PLACEHOLDER_DATA
-            - name: temple-of-time-open-webui-data
+            - name: open-webui-data
               mountPath: /app/backend/data
             # readOnlyRootFilesystem: /tmp must be a writable emptyDir (Python tempfile,
             # uploads). Declared here in the overlay because this patch's volumeMounts list
@@ -69,7 +69,7 @@ spec:
               memory: "1472Mi"
   volumeClaimTemplates:
     - metadata:
-        name: temple-of-time-open-webui-data
+        name: open-webui-data
       spec:
         accessModes:
           - ReadWriteOnce

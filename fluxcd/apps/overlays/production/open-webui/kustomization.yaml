@@ -1,12 +1,19 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: temple-of-time
+namespace: optcp-ai
 
 resources:
   - ../../../base/open-webui
   - httproute.yaml
   - externalsecret-postgres-backup.yaml
+
+# Held at zero for the volume re-bind into optcp-ai.
+replicas:
+  - name: open-webui-redis
+    count: 0
+  - name: open-webui-sentinel
+    count: 0
 
 patches:
   - path: statefulset-patch.yaml
@@ -26,3 +33,4 @@ patches:
     target:
       kind: Service
       name: open-webui
+  - path: hold-for-move-patch.yaml
