@@ -44,6 +44,7 @@ spec:
                 - kai-private
                 - arbitorium-home
                 - arbitorium-nvr
+                - arbitorium-restricted
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-delivery-bag
@@ -141,6 +142,7 @@ spec:
                 - kai-private
                 - arbitorium-home
                 - arbitorium-nvr
+                - arbitorium-restricted
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-delivery-bag
@@ -242,6 +244,7 @@ spec:
                 - kai-private
                 - arbitorium-home
                 - arbitorium-nvr
+                - arbitorium-restricted
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-delivery-bag
@@ -342,6 +345,7 @@ spec:
                 - kai-private
                 - arbitorium-home
                 - arbitorium-nvr
+                - arbitorium-restricted
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-delivery-bag

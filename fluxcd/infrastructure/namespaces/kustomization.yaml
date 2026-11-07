@@ -58,4 +58,5 @@ resources:
   - arbitorium-game-streaming.yaml
   - arbitorium-home.yaml
   - arbitorium-nvr.yaml
+  - arbitorium-restricted.yaml
   - kai-ingress-private.yaml

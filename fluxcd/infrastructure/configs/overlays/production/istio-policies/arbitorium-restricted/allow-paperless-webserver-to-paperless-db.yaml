@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-paperless-webserver-to-paperless-db
+spec:
+  selector:
+    matchLabels:
+      app: paperless-db
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/arbitorium-restricted/sa/paperless-webserver
+      to:
+        - operation:
+            ports: ["5432"]

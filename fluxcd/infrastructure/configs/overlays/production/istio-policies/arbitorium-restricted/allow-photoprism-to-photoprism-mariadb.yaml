@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-photoprism-to-photoprism-mariadb
+spec:
+  selector:
+    matchLabels:
+      app: photoprism-mariadb
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/arbitorium-restricted/sa/photoprism
+      to:
+        - operation:
+            ports: ["3306"]

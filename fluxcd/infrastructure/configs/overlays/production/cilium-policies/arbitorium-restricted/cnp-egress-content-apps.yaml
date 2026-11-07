@@ -1,0 +1,25 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-content-apps-egress
+spec:
+  description: >-
+    These apps fetch from an open-ended external set as their core function:
+    metadata/artwork providers (photoprism), photo maps + ML models (immich).
+    That set cannot be allowlisted, so world+cluster is granted (cluster covers
+    in-cluster deps beyond the mesh). DNS + intra-namespace mesh (app->db) ride
+    the universal CCNP baseline.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - immich
+          - photoprism
+  egress:
+    - toEntities:
+        - world
+        - cluster

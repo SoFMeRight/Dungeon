@@ -123,6 +123,7 @@ spec:
             - lens-of-truth
             - arbitorium-home
             - arbitorium-nvr
+            - arbitorium-restricted
             # Game servers and media libraries
             - optcp-media
             - optcp-shooting-gallery

@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-monica-to-monica-db
+spec:
+  description: >-
+    Allow monica app to access monica-db MariaDB on 3306/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: monica-db
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: monica
+      toPorts:
+        - ports:
+            - port: "3306"
+              protocol: TCP

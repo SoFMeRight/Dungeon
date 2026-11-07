@@ -73,6 +73,11 @@ spec:
           kinds: [Pod]
           namespaces: [pedestal-of-time]
           names: ["lubelogger-*", "monica-*", "paperless-webserver-*"]
+      # arbitorium-restricted — lubelogger (DataProtection keys), monica (php-fpm root), paperless (root init)
+      - resources:
+          kinds: [Pod]
+          namespaces: [arbitorium-restricted]
+          names: ["lubelogger-*", "monica-*", "paperless-webserver-*"]
       # optcp-restricted — plex-ms-x (s6 root-start)
       - resources:
           kinds: [Pod]

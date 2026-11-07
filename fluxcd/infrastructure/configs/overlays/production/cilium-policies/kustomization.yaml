@@ -29,6 +29,7 @@ resources:
   - arbitorium-game-streaming
   - arbitorium-home
   - arbitorium-nvr
+  - arbitorium-restricted
   - pedestal-of-time
   - lens-of-truth
   - tingle-tuner

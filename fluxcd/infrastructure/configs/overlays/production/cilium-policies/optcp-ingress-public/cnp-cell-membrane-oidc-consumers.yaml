@@ -72,6 +72,9 @@ spec:
             k8s:io.kubernetes.pod.namespace: arbitorium-home
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: arbitorium-restricted
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-media
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:

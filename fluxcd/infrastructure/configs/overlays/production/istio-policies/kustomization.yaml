@@ -51,6 +51,7 @@ resources:
   - prplanit-web/
   - arbitorium-home/
   - arbitorium-nvr/
+  - arbitorium-restricted/
   - swift-sail/
   - temple-of-time/
   - tingle-tuner/

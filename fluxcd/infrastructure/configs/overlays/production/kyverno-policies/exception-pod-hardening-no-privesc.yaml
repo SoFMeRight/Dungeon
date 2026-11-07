@@ -43,6 +43,12 @@ spec:
               app: photoprism
       - resources:
           kinds: [Pod]
+          namespaces: [arbitorium-restricted]
+          selector:
+            matchLabels:
+              app: photoprism
+      - resources:
+          kinds: [Pod]
           namespaces: [kai-private]
           selector:
             matchLabels:

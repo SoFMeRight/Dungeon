@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: arbitorium-restricted
+  labels:
+    name: arbitorium-restricted
+    purpose: restricted
+    tenant: arbitorium
+    docker-io-pull-secret: "enabled"
+    istio.io/dataplane-mode: ambient
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/enforce-version: "latest"
+    pod-security.kubernetes.io/audit: baseline
+    pod-security.kubernetes.io/audit-version: "latest"
+    pod-security.kubernetes.io/warn: baseline
+    pod-security.kubernetes.io/warn-version: "latest"

@@ -22,6 +22,7 @@ spec:
               - outspokekin-social
               - lens-of-truth
               - arbitorium-home
+              - arbitorium-restricted
               - optcp-app-directory
               - pedestal-of-time
               - kai-private
