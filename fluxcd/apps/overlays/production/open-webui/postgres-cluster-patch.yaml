@@ -37,7 +37,8 @@ spec:
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 
-  instances: 3
+  # One instance for the namespace move; the primary re-binds and the replicas re-clone.
+  instances: 1
 
   imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
 
