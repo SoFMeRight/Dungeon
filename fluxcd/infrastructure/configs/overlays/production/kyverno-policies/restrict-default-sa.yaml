@@ -20,7 +20,6 @@ spec:
               namespaces:
                 - optcp-ingress-internal
                 - kai-ingress-private
-                - compass
                 - optcp-network-services
                 - delivery-bag
                 - optcp-address-sync
@@ -91,7 +90,6 @@ spec:
               namespaces:
                 - optcp-ingress-internal
                 - kai-ingress-private
-                - compass
                 - optcp-network-services
                 - delivery-bag
                 - optcp-address-sync

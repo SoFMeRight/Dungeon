@@ -20,10 +20,6 @@ spec:
     any:
       - resources:
           kinds: [Pod]
-          namespaces: [compass]
-          names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
-      - resources:
-          kinds: [Pod]
           namespaces: [optcp-network-services]
           names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
       - resources:
@@ -127,12 +123,11 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-cloud]
           names: ["appflowy-admin-frontend-*", "appflowy-web-*", "bookstack-*", "linkwarden-*", "nextcloud-*", "penpot-frontend-*", "shlink-db-*"]
-      # tingle-tuner — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp), apache
-      # (hrconvert2). searxng is hardened.
+      # tingle-tuner — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp)
       - resources:
           kinds: [Pod]
           namespaces: [tingle-tuner]
-          names: ["faster-whisper-*", "hrconvert2-*", "librespeed-speedtest-*", "libretranslate-*", "stable-diffusion-webui-*"]
+          names: ["faster-whisper-*", "libretranslate-*", "stable-diffusion-webui-*"]
       # optcp-tools — apache (hrconvert2), librespeed. searxng is hardened.
       - resources:
           kinds: [Pod]

@@ -6,7 +6,7 @@ spec:
   description: >-
     Default-deny ingress AND egress for tingle-tuner namespace.
     Ingress: CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape,
-    and ingress-gateway traffic; searxng-redis via the redis contract CCNP.
+    and ingress-gateway traffic.
     Egress: universal CCNPs cover DNS + mesh HBONE; per-app cnp-egress-*
     grant model-fetcher (toFQDNs) and documented-broad (world) egress.
     Both directions use a reserved-label anchor to trigger enforcement.

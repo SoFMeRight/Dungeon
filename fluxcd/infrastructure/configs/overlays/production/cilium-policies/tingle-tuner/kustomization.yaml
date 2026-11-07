@@ -3,13 +3,10 @@ kind: Kustomization
 namespace: tingle-tuner
 resources:
   - cnp-default-deny-ingress.yaml
-  - cnp-endlessh.yaml
   # Egress allows (inert until egress default-deny is enabled for the namespace).
   # Tier: model-fetchers (FQDN) → external CDN; broad (world) → documented wide egress.
   - cnp-egress-faster-whisper.yaml
   - cnp-egress-piper.yaml
   - cnp-egress-libretranslate.yaml
   - cnp-egress-ollama.yaml
-  - cnp-egress-google-webfonts-helper.yaml
   - cnp-egress-stable-diffusion-webui.yaml
-  - cnp-egress-echo-ip.yaml

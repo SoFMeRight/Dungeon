@@ -13,7 +13,6 @@ spec:
             namespaces:
               - optcp-ingress-internal
               - kai-ingress-private
-              - compass
               - delivery-bag
               - optcp-fairy-bottle
               - gorons-bracelet

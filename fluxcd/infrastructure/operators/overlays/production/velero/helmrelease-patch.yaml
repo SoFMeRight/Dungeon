@@ -168,7 +168,6 @@ spec:
             # were never backed up in gerudo-crest.
             - optcp-operators-baseline
             # DNS & NTP services
-            - compass
             - optcp-network-services
           excludedResources:
             - events

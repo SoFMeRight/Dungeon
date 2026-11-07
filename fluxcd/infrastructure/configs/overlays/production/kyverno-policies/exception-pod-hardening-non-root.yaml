@@ -16,11 +16,6 @@ spec:
         - require-run-as-non-root
   match:
     any:
-      # compass — host network/DNS/time services (bind :53/:123, need host access)
-      - resources:
-          kinds: [Pod]
-          namespaces: [compass]
-          names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
       # optcp-network-services — host network/DNS/time services (bind :53/:123, need host access)
       - resources:
           kinds: [Pod]
@@ -120,11 +115,11 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-cloud]
           names: ["appflowy-admin-frontend-*", "appflowy-web-*", "bookstack-*", "linkwarden-*", "nextcloud-*", "shlink-db-*"]
-      # tingle-tuner — faster-whisper LSIO, hrconvert2 apache-root, stable-diffusion-webui ai-dock root
+      # tingle-tuner — faster-whisper LSIO, stable-diffusion-webui ai-dock root
       - resources:
           kinds: [Pod]
           namespaces: [tingle-tuner]
-          names: ["faster-whisper-*", "hrconvert2-*", "stable-diffusion-webui-*"]
+          names: ["faster-whisper-*", "stable-diffusion-webui-*"]
       # optcp-tools — hrconvert2 apache-root
       - resources:
           kinds: [Pod]
