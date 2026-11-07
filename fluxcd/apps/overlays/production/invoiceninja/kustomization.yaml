@@ -8,15 +8,6 @@ resources:
   - httproute.yaml
   - httproute-xylem.yaml
 
-# Held at zero for the volume re-bind into prplanit-billing.
-replicas:
-  - name: invoiceninja-app
-    count: 0
-  - name: invoiceninja-mysql
-    count: 0
-  - name: invoiceninja-redis
-    count: 0
-
 patches:
   - path: statefulset-mysql-patch.yaml
   - path: statefulset-redis-patch.yaml

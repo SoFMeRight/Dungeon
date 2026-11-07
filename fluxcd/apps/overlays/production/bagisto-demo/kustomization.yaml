@@ -4,13 +4,6 @@ namespace: prplanit-commerce
 resources:
   - ../../../base/bagisto-demo
   - httproute-xylem.yaml
-# Held at zero for the volume re-bind into prplanit-commerce.
-replicas:
-  - name: bagisto-demo
-    count: 0
-  - name: bagisto-demo-db
-    count: 0
-
 patches:
   - patch: |-
       - op: replace
