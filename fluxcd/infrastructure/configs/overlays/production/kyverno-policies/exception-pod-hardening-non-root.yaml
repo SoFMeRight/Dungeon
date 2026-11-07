@@ -32,6 +32,14 @@ spec:
           kinds: [Pod]
           namespaces: [hyrule-castle]
           names: ["bagisto-demo-*", "invoiceninja-app-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-billing]
+          names: ["invoiceninja-app-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-commerce]
+          names: ["bagisto-demo-*"]
       # optcp-supply-chain — apt-cacher-ng (root-start chown), LSIO netbootxyz
       - resources:
           kinds: [Pod]

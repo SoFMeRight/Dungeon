@@ -44,6 +44,9 @@ resources:
   - outspokekin-web/
   - pedestal-of-time/
   - optcp-ingress-public/
+  - prplanit-billing/
+  - prplanit-commerce/
+  - prplanit-staff-suite/
   - prplanit-support/
   - prplanit-web/
   - swift-sail/

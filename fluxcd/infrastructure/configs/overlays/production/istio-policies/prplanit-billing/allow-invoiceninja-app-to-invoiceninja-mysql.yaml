@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-invoiceninja-app-to-invoiceninja-mysql
+spec:
+  selector:
+    matchLabels:
+      app: invoiceninja-mysql
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/prplanit-billing/sa/invoiceninja-app
+      to:
+        - operation:
+            ports: ["3306"]

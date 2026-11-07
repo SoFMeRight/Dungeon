@@ -1,0 +1,32 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-egress-to-gateway
+spec:
+  description: >-
+    prplanit-billing workloads reach in-cluster services by their PUBLIC URL, which
+    resolves to the cell-membrane gateway (and xylem for internal names). The
+    gateway pods are non-meshed (ambient=none), so the `cluster` entity does not
+    match them. Grant every namespace pod egress to the
+    gateway pods on 443/80/15021 explicitly (the same pattern used for monitors
+    elsewhere).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector: {}
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-ingress-public
+            gateway.networking.k8s.io/gateway-name: cell-membrane-ingress-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kai-ingress-private
+            gateway.networking.k8s.io/gateway-name: xylem-ingress-gateway
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "80"
+              protocol: TCP
+            - port: "15021"
+              protocol: TCP

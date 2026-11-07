@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: prplanit-billing
+resources:
+  - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml
+  - allow-invoiceninja-app-to-invoiceninja-mysql.yaml
+  - allow-invoiceninja-app-to-invoiceninja-redis.yaml
+  - allow-invoiceninja-nginx-to-invoiceninja-app.yaml

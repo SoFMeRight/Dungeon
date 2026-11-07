@@ -36,6 +36,9 @@ resources:
   - optcp-web-analytics.yaml
   - outspokekin-social.yaml
   - outspokekin-web.yaml
+  - prplanit-billing.yaml
+  - prplanit-commerce.yaml
+  - prplanit-staff-suite.yaml
   - prplanit-support.yaml
   - prplanit-web.yaml
   - yesimvegan-web.yaml

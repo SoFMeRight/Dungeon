@@ -58,6 +58,9 @@ resources:
   - optcp-web-analytics
   - outspokekin-social
   - outspokekin-web
+  - prplanit-billing
+  - prplanit-commerce
+  - prplanit-staff-suite
   - prplanit-support
   - prplanit-web
   - yesimvegan-web

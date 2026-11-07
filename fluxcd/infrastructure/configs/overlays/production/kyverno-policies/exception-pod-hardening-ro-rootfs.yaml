@@ -39,6 +39,18 @@ spec:
             - "bagisto-demo-*"
             - "frappe-suite-*"
             - "invoiceninja-app-*"
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-billing]
+          names: ["invoiceninja-app-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-commerce]
+          names: ["bagisto-demo-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-staff-suite]
+          names: ["frappe-suite-*"]
       # optcp-supply-chain — apt-cacher apache+root, gitlab and harbor Helm charts, LSIO netbootxyz.
       - resources:
           kinds: [Pod]

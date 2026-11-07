@@ -46,6 +46,9 @@ spec:
                 - optcp-staff-suite
                 - optcp-supply-chain
                 - pedestal-of-time
+                - prplanit-billing
+                - prplanit-commerce
+                - prplanit-staff-suite
                 - prplanit-support
                 - optcp-management-dashboards
                 - optcp-media
@@ -128,6 +131,9 @@ spec:
                 - optcp-staff-suite
                 - optcp-supply-chain
                 - pedestal-of-time
+                - prplanit-billing
+                - prplanit-commerce
+                - prplanit-staff-suite
                 - prplanit-support
                 - optcp-management-dashboards
                 - optcp-media
@@ -210,6 +216,9 @@ spec:
                 - optcp-staff-suite
                 - optcp-supply-chain
                 - pedestal-of-time
+                - prplanit-billing
+                - prplanit-commerce
+                - prplanit-staff-suite
                 - prplanit-support
                 - optcp-management-dashboards
                 - optcp-media
