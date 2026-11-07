@@ -614,11 +614,11 @@
   - wikijs-vegan-db (StatefulSet, database)
 
 **Adguard** — StatefulSet — v0.107.79
-- Namespace: compass
+- Namespace: optcp-network-services
 - Replicas: 2/2
 
 **Chrony** — Deployment — 0.9.2
-- Namespace: compass
+- Namespace: optcp-network-services
 - Replicas: 1/1
 
 **Echo Ip** — StatefulSet — v2026.9.0
@@ -1160,7 +1160,7 @@
 
 | Component | Namespace | Status |
 | --- | --- | --- |
-| Adguardhome Sync | compass | ✅ |
+| Adguardhome Sync | optcp-network-services | ✅ |
 | Alloy | lakitu | ✅ |
 | Alloy | lakitu | ✅ |
 | Alloy Syslog | lakitu | ✅ |
@@ -1205,7 +1205,7 @@
 <summary>Platform details</summary>
 
 **Adguardhome Sync** — Deployment — v0.9.6-ls181
-- Namespace: compass
+- Namespace: optcp-network-services
 - Replicas: 1/1
 
 **Alloy** — DaemonSet — 

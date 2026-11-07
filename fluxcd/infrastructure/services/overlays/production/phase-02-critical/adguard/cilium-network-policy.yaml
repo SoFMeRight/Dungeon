@@ -2,7 +2,7 @@ apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
   name: adguard-dns-policy
-  namespace: prplanit-dns
+  namespace: optcp-network-services
 spec:
   endpointSelector:
     matchLabels:
