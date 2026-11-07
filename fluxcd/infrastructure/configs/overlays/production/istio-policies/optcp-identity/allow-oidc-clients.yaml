@@ -25,6 +25,7 @@ spec:
               - pedestal-of-time
               - kai-private
               - optcp-cloud
+              - optcp-management-dashboards
               - optcp-media
               - swift-sail
               - temple-of-time

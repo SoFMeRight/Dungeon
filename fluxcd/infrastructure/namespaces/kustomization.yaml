@@ -19,6 +19,7 @@ resources:
   - optcp-ingress-public.yaml
   - optcp-ipam.yaml
   - optcp-keyring.yaml
+  - optcp-management-dashboards.yaml
   - optcp-media.yaml
   - optcp-network-services.yaml
   - optcp-restricted.yaml

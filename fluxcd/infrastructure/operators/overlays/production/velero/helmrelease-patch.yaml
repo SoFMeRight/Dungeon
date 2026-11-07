@@ -117,6 +117,7 @@ spec:
             - optcp-app-directory
             # Monitoring services
             - gossip-stone
+            - optcp-management-dashboards
             # IDS/IPS/SIEM security monitoring
             - lens-of-truth
             # Game servers and media libraries

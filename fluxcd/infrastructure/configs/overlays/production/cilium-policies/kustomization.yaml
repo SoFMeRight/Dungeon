@@ -46,6 +46,7 @@ resources:
   - optcp-infrastructure-management
   - optcp-ipam
   - optcp-keyring
+  - optcp-management-dashboards
   - optcp-media
   - optcp-secrets
   - optcp-shooting-gallery

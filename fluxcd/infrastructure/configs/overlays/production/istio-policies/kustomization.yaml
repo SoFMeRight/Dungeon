@@ -26,6 +26,7 @@ resources:
   - optcp-infrastructure-management/
   - optcp-ipam/
   - optcp-keyring/
+  - optcp-management-dashboards/
   - optcp-media/
   - optcp-network-services/
   - optcp-operators-baseline/

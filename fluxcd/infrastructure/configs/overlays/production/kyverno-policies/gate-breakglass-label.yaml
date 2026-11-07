@@ -46,6 +46,7 @@ spec:
                 - optcp-supply-chain
                 - pedestal-of-time
                 - prplanit-support
+                - optcp-management-dashboards
                 - optcp-media
                 - optcp-secrets
                 - optcp-infrastructure-management
@@ -126,6 +127,7 @@ spec:
                 - optcp-supply-chain
                 - pedestal-of-time
                 - prplanit-support
+                - optcp-management-dashboards
                 - optcp-media
                 - optcp-secrets
                 - optcp-infrastructure-management
@@ -206,6 +208,7 @@ spec:
                 - optcp-supply-chain
                 - pedestal-of-time
                 - prplanit-support
+                - optcp-management-dashboards
                 - optcp-media
                 - optcp-secrets
                 - optcp-infrastructure-management
