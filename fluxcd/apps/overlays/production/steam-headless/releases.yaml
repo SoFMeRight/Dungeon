@@ -300,7 +300,7 @@ releases:
     tag: "v{version}"
     asset: "rclone-v{version}-linux-amd64.zip"
     # renovate: datasource=github-releases depName=rclone/rclone extractVersion=^v(?<version>.+)$
-    version: "1.75.2"
+    version: "1.76.0"
     layout: zip
     subdir: "rclone-v{version}-linux-amd64"
     include: ["rclone"]
