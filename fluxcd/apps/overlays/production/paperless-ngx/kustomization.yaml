@@ -4,15 +4,6 @@ namespace: arbitorium-restricted
 resources:
   - ../../../base/paperless-ngx
   - httproute-xylem.yaml
-# Held at zero for the volume re-bind into arbitorium-restricted.
-replicas:
-  - name: paperless-db
-    count: 0
-  - name: paperless-redis
-    count: 0
-  - name: paperless-webserver
-    count: 0
-
 patches:
   - path: statefulset-redis-patch.yaml
     target:

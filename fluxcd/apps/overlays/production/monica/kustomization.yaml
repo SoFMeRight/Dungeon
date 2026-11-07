@@ -4,13 +4,6 @@ namespace: arbitorium-restricted
 resources:
   - ../../../base/monica
   - httproute-xylem.yaml
-# Held at zero for the volume re-bind into arbitorium-restricted.
-replicas:
-  - name: monica
-    count: 0
-  - name: monica-db
-    count: 0
-
 patches:
   - path: statefulset-app-patch.yaml
     target:
