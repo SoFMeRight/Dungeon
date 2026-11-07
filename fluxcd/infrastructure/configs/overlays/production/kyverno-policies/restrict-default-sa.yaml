@@ -39,7 +39,6 @@ spec:
                 - yesimvegan-web
                 - lens-of-truth
                 - kai-personal
-                - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-delivery-bag
@@ -108,7 +107,6 @@ spec:
                 - yesimvegan-web
                 - lens-of-truth
                 - kai-personal
-                - lost-woods
                 - optcp-ci-runners
                 - optcp-cloud
                 - optcp-delivery-bag

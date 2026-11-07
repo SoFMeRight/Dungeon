@@ -114,7 +114,6 @@ spec:
             # Personal comms (namespace plan, group B)
             - kai-personal
             # Discovery & Dashboards
-            - lost-woods
             - optcp-app-directory
             # Monitoring services
             - gossip-stone

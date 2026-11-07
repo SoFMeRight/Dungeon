@@ -52,11 +52,6 @@ spec:
           kinds: [Pod]
           namespaces: [kai-personal]
           names: ["ferdium-*"]
-      # lost-woods — ferdium/organizr LSIO s6
-      - resources:
-          kinds: [Pod]
-          namespaces: [lost-woods]
-          names: ["ferdium-*", "organizr-*"]
       # optcp-app-directory — homarr (RE-EVALUATE: node app, possibly hardenable), organizr LSIO s6
       - resources:
           kinds: [Pod]

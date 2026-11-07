@@ -68,10 +68,6 @@ spec:
           names: ["ferdium-*"]
       - resources:
           kinds: [Pod]
-          namespaces: [lost-woods]
-          names: ["ferdium-*", "organizr-*"]
-      - resources:
-          kinds: [Pod]
           namespaces: [optcp-app-directory]
           names: ["homarr-*", "organizr-*"]
       - resources:

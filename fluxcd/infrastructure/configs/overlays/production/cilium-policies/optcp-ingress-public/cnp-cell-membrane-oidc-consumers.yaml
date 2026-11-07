@@ -57,9 +57,6 @@ spec:
             k8s:io.kubernetes.pod.namespace: hyrule-castle
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: lost-woods
-            policy.prplanit.com/cap.oidc: "true"
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-app-directory
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
