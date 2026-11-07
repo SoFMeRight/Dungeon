@@ -503,7 +503,7 @@
   - ghost-mysql (StatefulSet, database)
 
 **Immich** — StatefulSet — 
-- Namespace: temple-of-time
+- Namespace: arbitorium-restricted
 - Replicas: 1/1
 - Hosts: images.pcfae.com
 
@@ -566,7 +566,7 @@
   - penpot-redis (StatefulSet, cache)
 
 **Photoprism — 2 components** — StatefulSet — 261029
-- Namespace: temple-of-time
+- Namespace: arbitorium-restricted
 - Replicas: 0/0
 - Hosts: photos.pcfae.com
 - Components:
@@ -904,7 +904,7 @@
   - linkstack-db (StatefulSet, database)
 
 **Actualbudget** — StatefulSet — sha-37e807f-alpine
-- Namespace: pedestal-of-time
+- Namespace: arbitorium-restricted
 - Replicas: 1/1
 - Hosts: budget.pcfae.com
 
@@ -914,17 +914,17 @@
 - Hosts: shiplog.pcfae.com
 
 **Homebox** — StatefulSet — 0.27.1
-- Namespace: pedestal-of-time
+- Namespace: arbitorium-restricted
 - Replicas: 1/1
 - Hosts: inventory.pcfae.com
 
 **Lubelogger** — StatefulSet — v1.7.4
-- Namespace: pedestal-of-time
+- Namespace: arbitorium-restricted
 - Replicas: 1/1
 - Hosts: lubelogger.pcfae.com
 
 **Monica — 2 components** — StatefulSet — 
-- Namespace: pedestal-of-time
+- Namespace: arbitorium-restricted
 - Replicas: 1/1
 - Hosts: monica.pcfae.com
 - Components:
@@ -932,7 +932,7 @@
   - monica-db (StatefulSet, database)
 
 **Paperless — 3 components** — StatefulSet — 
-- Namespace: pedestal-of-time
+- Namespace: arbitorium-restricted
 - Replicas: 3/3
 - Hosts: paperless.pcfae.com
 - Components:

@@ -21,13 +21,13 @@ spec:
             - name: APP_URL
               value: "https://monica.pcfae.com"
           volumeMounts:
-            - name: pedestal-of-time-monica-data
+            - name: monica-data
               mountPath: /var/www/html/storage
             - name: app-files
               mountPath: /var/www/html
   volumeClaimTemplates:
     - metadata:
-        name: pedestal-of-time-monica-data
+        name: monica-data
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain

@@ -5,8 +5,7 @@ metadata:
 spec:
   description: >-
     These content/media apps fetch from an open-ended external set as their core
-    function — metadata/artwork providers (photoprism),
-    LLM/AI and web-RAG endpoints (open-webui), photo maps + ML models (immich),
+    function — LLM/AI and web-RAG endpoints (open-webui),
     collab signaling (nextcloud-talk-hpb), and Matrix federation plus the identity
     provider hairpin (matrix-synapse, matrix-auth — sso.optcp.com resolves to the
     gateway VIP from inside, so this is a cluster destination, not a world one).
@@ -24,12 +23,10 @@ spec:
       - key: app
         operator: In
         values:
-          - immich
           - open-webui
           - matrix-synapse
           - matrix-auth
           - matrix-lk-jwt
-          - photoprism
           - nextcloud-talk-hpb
   egress:
     - toEntities:

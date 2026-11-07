@@ -68,11 +68,6 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-app-directory]
           names: ["homarr-*", "organizr-*"]
-      # pedestal-of-time — lubelogger (DataProtection keys), monica (php-fpm root), paperless (root init)
-      - resources:
-          kinds: [Pod]
-          namespaces: [pedestal-of-time]
-          names: ["lubelogger-*", "monica-*", "paperless-webserver-*"]
       # arbitorium-restricted — lubelogger (DataProtection keys), monica (php-fpm root), paperless (root init)
       - resources:
           kinds: [Pod]

@@ -13,19 +13,19 @@ spec:
         - name: lubelogger
           image: ghcr.io/hargata/lubelogger:v1.7.4
           volumeMounts:
-            - name: pedestal-of-time-lubelogger-config
+            - name: lubelogger-config
               mountPath: /App/config
-            - name: pedestal-of-time-lubelogger-data
+            - name: lubelogger-data
               mountPath: /App/data
-            - name: pedestal-of-time-lubelogger-documents
+            - name: lubelogger-documents
               mountPath: /App/wwwroot/documents
-            - name: pedestal-of-time-lubelogger-images
+            - name: lubelogger-images
               mountPath: /App/wwwroot/images
-            - name: pedestal-of-time-lubelogger-keys
+            - name: lubelogger-keys
               mountPath: /root/.aspnet/DataProtection-Keys
   volumeClaimTemplates:
     - metadata:
-        name: pedestal-of-time-lubelogger-config
+        name: lubelogger-config
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
@@ -33,7 +33,7 @@ spec:
           requests:
             storage: 1Gi
     - metadata:
-        name: pedestal-of-time-lubelogger-data
+        name: lubelogger-data
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
@@ -41,7 +41,7 @@ spec:
           requests:
             storage: 5Gi
     - metadata:
-        name: pedestal-of-time-lubelogger-documents
+        name: lubelogger-documents
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
@@ -49,7 +49,7 @@ spec:
           requests:
             storage: 5Gi
     - metadata:
-        name: pedestal-of-time-lubelogger-images
+        name: lubelogger-images
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
@@ -57,7 +57,7 @@ spec:
           requests:
             storage: 5Gi
     - metadata:
-        name: pedestal-of-time-lubelogger-keys
+        name: lubelogger-keys
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain

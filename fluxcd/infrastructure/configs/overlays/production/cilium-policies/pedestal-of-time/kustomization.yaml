@@ -3,4 +3,3 @@ kind: Kustomization
 namespace: pedestal-of-time
 resources:
   - cnp-default-deny-ingress.yaml
-  - cnp-unlabeled-dbs.yaml

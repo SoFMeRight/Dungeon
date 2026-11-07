@@ -84,10 +84,6 @@ spec:
           names: ["homarr-*", "organizr-*"]
       - resources:
           kinds: [Pod]
-          namespaces: [pedestal-of-time]
-          names: ["lubelogger-*", "monica-*", "paperless-webserver-*"]
-      - resources:
-          kinds: [Pod]
           namespaces: [kai-private]
           names: ["photoprism-x-*"]
       - resources:
@@ -119,14 +115,12 @@ spec:
             - "pyload-ng-*"
             - "sabnzbd-*"
             - "thelounge-*"
-      # temple-of-time — immich, photoprism vendor, DBs.
+      # temple-of-time — open-webui.
       - resources:
           kinds: [Pod]
           namespaces: [temple-of-time]
           names:
-            - "immich-*"
             - "open-webui-*"
-            - "photoprism-*"
       - resources:
           kinds: [Pod]
           namespaces: [arbitorium-restricted]

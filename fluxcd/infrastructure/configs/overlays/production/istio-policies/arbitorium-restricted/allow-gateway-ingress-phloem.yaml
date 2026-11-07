@@ -5,7 +5,7 @@
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
-  name: allow-gateway-ingress-xylem
+  name: allow-gateway-ingress-phloem
 spec:
   selector:
     matchLabels:
@@ -15,7 +15,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/kai-ingress-private/sa/xylem-ingress-gateway-istio
+              - cluster.local/ns/optcp-ingress-internal/sa/phloem-ingress-gateway-istio
       to:
         - operation:
-            ports: ["2283", "2342", "2368", "3000", "8001", "8080", "8083", "9000", "22300"]
+            ports: ["2283", "2342", "5006", "7745", "8000", "8080"]

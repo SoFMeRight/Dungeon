@@ -9,9 +9,9 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: pedestal-of-time.paperless.postgres
+        policy.prplanit.com/access-scope-postgres: arbitorium-restricted.paperless.postgres
         policy.prplanit.com/cap.redis: "true"
-        policy.prplanit.com/access-scope-redis: pedestal-of-time.paperless.redis
+        policy.prplanit.com/access-scope-redis: arbitorium-restricted.paperless.redis
     spec:
       containers:
         - name: paperless
@@ -28,17 +28,17 @@ spec:
             - name: PAPERLESS_ADMIN_USER
               value: "kai.hamil@gmail.com"
           volumeMounts:
-            - name: pedestal-of-time-paperless-data
+            - name: paperless-data
               mountPath: /usr/src/paperless/data
-            - name: pedestal-of-time-paperless-media
+            - name: paperless-media
               mountPath: /usr/src/paperless/media
-            - name: pedestal-of-time-paperless-export
+            - name: paperless-export
               mountPath: /usr/src/paperless/export
-            - name: pedestal-of-time-paperless-consume
+            - name: paperless-consume
               mountPath: /usr/src/paperless/consume
   volumeClaimTemplates:
     - metadata:
-        name: pedestal-of-time-paperless-data
+        name: paperless-data
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
@@ -46,7 +46,7 @@ spec:
           requests:
             storage: 10Gi
     - metadata:
-        name: pedestal-of-time-paperless-media
+        name: paperless-media
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
@@ -54,7 +54,7 @@ spec:
           requests:
             storage: 20Gi
     - metadata:
-        name: pedestal-of-time-paperless-export
+        name: paperless-export
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain
@@ -62,7 +62,7 @@ spec:
           requests:
             storage: 5Gi
     - metadata:
-        name: pedestal-of-time-paperless-consume
+        name: paperless-consume
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain

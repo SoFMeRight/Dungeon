@@ -1,4 +1,4 @@
-# Static PersistentVolumeClaims for Immich (temple-of-time)
+# Static PersistentVolumeClaims for Immich (arbitorium-restricted)
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

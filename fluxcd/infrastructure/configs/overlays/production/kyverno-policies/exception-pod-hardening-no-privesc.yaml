@@ -37,12 +37,6 @@ spec:
       # Matched by app label to exclude the compliant mariadb sidecars.
       - resources:
           kinds: [Pod]
-          namespaces: [temple-of-time]
-          selector:
-            matchLabels:
-              app: photoprism
-      - resources:
-          kinds: [Pod]
           namespaces: [arbitorium-restricted]
           selector:
             matchLabels:

@@ -8,7 +8,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: postgres
-        policy.prplanit.com/service-scope: pedestal-of-time.paperless.postgres
+        policy.prplanit.com/service-scope: arbitorium-restricted.paperless.postgres
     spec:
       securityContext:
         runAsUser: 70
@@ -27,7 +27,7 @@ spec:
               drop:
                 - ALL
           volumeMounts:
-            - name: pedestal-of-time-paperless-postgres
+            - name: paperless-postgres
               mountPath: /var/lib/postgresql/data
             - name: postgres-run
               mountPath: /var/run/postgresql
@@ -40,7 +40,7 @@ spec:
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
-        name: pedestal-of-time-paperless-postgres
+        name: paperless-postgres
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain

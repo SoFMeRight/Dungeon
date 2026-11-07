@@ -1,11 +1,16 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: temple-of-time
+namespace: arbitorium-restricted
 resources:
   - ../../../base/immich
   - httproute.yaml
   - persistent-volumes.yaml
   - persistent-volume-claims.yaml
+# Held at zero for the volume re-bind into arbitorium-restricted.
+replicas:
+  - name: immich
+    count: 0
+
 patches:
   - path: statefulset-patch.yaml
     target:

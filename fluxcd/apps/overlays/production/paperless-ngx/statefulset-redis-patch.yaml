@@ -8,7 +8,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: pedestal-of-time.paperless.redis
+        policy.prplanit.com/service-scope: arbitorium-restricted.paperless.redis
     spec:
       securityContext:
         runAsUser: 999
@@ -27,11 +27,11 @@ spec:
               drop:
                 - ALL
           volumeMounts:
-            - name: pedestal-of-time-paperless-redis-data
+            - name: paperless-redis-data
               mountPath: /data
   volumeClaimTemplates:
     - metadata:
-        name: pedestal-of-time-paperless-redis-data
+        name: paperless-redis-data
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain

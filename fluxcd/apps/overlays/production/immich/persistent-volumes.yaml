@@ -1,4 +1,4 @@
-# Static PersistentVolumes for Immich (temple-of-time)
+# Static PersistentVolumes for Immich (arbitorium-restricted)
 ---
 apiVersion: v1
 kind: PersistentVolume

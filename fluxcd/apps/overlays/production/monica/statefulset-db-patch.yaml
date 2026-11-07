@@ -23,7 +23,7 @@ spec:
               drop:
                 - ALL
           volumeMounts:
-            - name: pedestal-of-time-monica-mysql
+            - name: monica-mysql
               mountPath: /var/lib/mysql
             - name: mysql-run
               mountPath: /run/mysqld
@@ -36,7 +36,7 @@ spec:
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
-        name: pedestal-of-time-monica-mysql
+        name: monica-mysql
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain

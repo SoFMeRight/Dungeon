@@ -4,8 +4,3 @@ namespace: pedestal-of-time
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
-  - allow-paperless-webserver-to-paperless-db.yaml
-  - allow-paperless-webserver-to-paperless-redis.yaml
-  - allow-monica-to-monica-db.yaml
-  - allow-gateway-ingress-xylem.yaml
-  - allow-gateway-ingress-phloem.yaml
