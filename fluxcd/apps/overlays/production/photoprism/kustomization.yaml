@@ -4,6 +4,13 @@ namespace: temple-of-time
 resources:
   - ../../../base/photoprism
   - httproute-xylem.yaml
+# Held at zero for the move to arbitorium-restricted.
+replicas:
+  - name: photoprism
+    count: 0
+  - name: photoprism-mariadb
+    count: 0
+
 patches:
   - path: statefulset-patch.yaml
     target:
