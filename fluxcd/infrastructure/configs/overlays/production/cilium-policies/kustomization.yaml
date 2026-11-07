@@ -18,6 +18,7 @@ resources:
   - optcp-ingress-public
   - delivery-bag
   - compass
+  - optcp-network-services
   - swift-sail
   # Batch 3 — Mixed
   - kai-personal

@@ -1,0 +1,43 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-adguardhome-sync-egress
+spec:
+  description: >-
+    adguardhome-sync pushes AdGuardHome config from the cluster origin (adguard-0,
+    rendered from git) to its replica, The-Usual-Suspect (dns1.prplanit.internal), over
+    80/TCP on a 10m cron. Allow egress to the origin pod and to dns1, with
+    L7 DNS so Cilium learns whatever address they resolve to.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: adguardhome-sync
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:io.cilium.k8s.policy.serviceaccount: coredns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "dns1.prplanit.internal"
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
+            app: adguard
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP

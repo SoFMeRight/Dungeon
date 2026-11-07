@@ -21,6 +21,11 @@ spec:
           kinds: [Pod]
           namespaces: [compass]
           names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
+      # optcp-network-services — host network/DNS/time services (bind :53/:123, need host access)
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-network-services]
+          names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
       # gossip-stone — nutify (UPS, needs device) + speedtest-tracker (LSIO s6)
       - resources:
           kinds: [Pod]

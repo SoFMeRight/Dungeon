@@ -168,6 +168,7 @@ spec:
             - optcp-operators-baseline
             # DNS & NTP services
             - compass
+            - optcp-network-services
           excludedResources:
             - events
             - events.events.k8s.io

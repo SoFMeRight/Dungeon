@@ -15,6 +15,7 @@ spec:
                 - optcp-ingress-internal
                 - kai-ingress-private
                 - compass
+                - optcp-network-services
                 - delivery-bag
                 - optcp-address-sync
                 - optcp-app-directory
@@ -91,6 +92,7 @@ spec:
                 - optcp-ingress-internal
                 - kai-ingress-private
                 - compass
+                - optcp-network-services
                 - delivery-bag
                 - optcp-address-sync
                 - optcp-app-directory
@@ -167,6 +169,7 @@ spec:
                 - optcp-ingress-internal
                 - kai-ingress-private
                 - compass
+                - optcp-network-services
                 - delivery-bag
                 - optcp-address-sync
                 - optcp-app-directory

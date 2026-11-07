@@ -19,6 +19,7 @@ resources:
   - optcp-ipam.yaml
   - optcp-keyring.yaml
   - optcp-media.yaml
+  - optcp-network-services.yaml
   - optcp-operators-baseline.yaml
   - optcp-secrets.yaml
   - optcp-shooting-gallery.yaml

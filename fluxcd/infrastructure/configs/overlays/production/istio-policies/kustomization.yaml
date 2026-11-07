@@ -26,6 +26,7 @@ resources:
   - optcp-ipam/
   - optcp-keyring/
   - optcp-media/
+  - optcp-network-services/
   - optcp-operators-baseline/
   - optcp-secrets/
   - optcp-shooting-gallery/

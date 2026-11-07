@@ -24,6 +24,10 @@ spec:
           names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
       - resources:
           kinds: [Pod]
+          namespaces: [optcp-network-services]
+          names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
+      - resources:
+          kinds: [Pod]
           namespaces: [gossip-stone]
           names: ["grafana-*", "nutify-*", "speedtest-tracker-*"]
       - resources:
