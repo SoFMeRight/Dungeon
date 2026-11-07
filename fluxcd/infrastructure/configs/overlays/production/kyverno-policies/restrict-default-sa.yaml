@@ -58,7 +58,8 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
-                - optcp-tingle-tuner
+                - optcp-tools
+                - optcp-edge-defenses
                 - wallmaster
       exclude:
         any:
@@ -128,7 +129,8 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
-                - optcp-tingle-tuner
+                - optcp-tools
+                - optcp-edge-defenses
                 - wallmaster
       exclude:
         any:

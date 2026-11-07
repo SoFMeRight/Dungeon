@@ -133,10 +133,10 @@ spec:
           kinds: [Pod]
           namespaces: [tingle-tuner]
           names: ["faster-whisper-*", "hrconvert2-*", "librespeed-speedtest-*", "libretranslate-*", "stable-diffusion-webui-*"]
-      # optcp-tingle-tuner — apache (hrconvert2), librespeed. searxng is hardened.
+      # optcp-tools — apache (hrconvert2), librespeed. searxng is hardened.
       - resources:
           kinds: [Pod]
-          namespaces: [optcp-tingle-tuner]
+          namespaces: [optcp-tools]
           names: ["hrconvert2-*", "librespeed-speedtest-*"]
       # optcp-secrets — Vault operator and the OpenBao pods.
       - resources:

@@ -4,7 +4,7 @@ metadata:
   name: default-deny-ingress
 spec:
   description: >-
-    Default-deny ingress AND egress for optcp-tingle-tuner namespace.
+    Default-deny ingress AND egress for optcp-tools namespace.
     Ingress: CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape,
     and ingress-gateway traffic; searxng-redis via the redis contract CCNP.
     Egress: universal CCNPs cover DNS + mesh HBONE; per-app cnp-egress-*

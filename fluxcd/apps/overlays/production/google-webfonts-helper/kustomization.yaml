@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: tingle-tuner
+namespace: optcp-tools
 resources:
   - ../../../base/google-webfonts-helper
   - httproute-xylem.yaml

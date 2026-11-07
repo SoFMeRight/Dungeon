@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: searxng-settings
-  namespace: tingle-tuner
+  namespace: optcp-tools
 data:
   settings.yml: |
     general:

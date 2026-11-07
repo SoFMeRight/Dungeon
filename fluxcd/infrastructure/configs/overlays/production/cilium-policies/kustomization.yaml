@@ -28,7 +28,8 @@ resources:
   - pedestal-of-time
   - lens-of-truth
   - tingle-tuner
-  - optcp-tingle-tuner
+  - optcp-tools
+  - optcp-edge-defenses
   # Batch 4 — Heavy
   - gorons-bracelet
   - gossip-stone

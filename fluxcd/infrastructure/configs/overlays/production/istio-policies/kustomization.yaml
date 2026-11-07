@@ -21,6 +21,7 @@ resources:
   - optcp-ci-runners/
   - optcp-cloud/
   - optcp-delivery-bag/
+  - optcp-edge-defenses/
   - optcp-identity/
   - optcp-infrastructure-management/
   - optcp-ipam/
@@ -33,7 +34,7 @@ resources:
   - optcp-sibyl-system/
   - optcp-staff-suite/
   - optcp-supply-chain/
-  - optcp-tingle-tuner/
+  - optcp-tools/
   - optcp-web/
   - optcp-web-analytics/
   - outspokekin-social/

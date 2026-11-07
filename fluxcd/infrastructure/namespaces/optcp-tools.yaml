@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: optcp-tingle-tuner
+  name: optcp-tools
   labels:
-    name: optcp-tingle-tuner
+    name: optcp-tools
     purpose: tools-utilities
     tenant: optcp                          # openbao-optcp ClusterSecretStore condition
     docker-io-pull-secret: "enabled"

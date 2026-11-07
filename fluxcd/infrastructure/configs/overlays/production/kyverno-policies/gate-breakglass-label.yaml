@@ -53,7 +53,8 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
-                - optcp-tingle-tuner
+                - optcp-tools
+                - optcp-edge-defenses
                 - wallmaster
       preconditions:
         all:
@@ -131,7 +132,8 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
-                - optcp-tingle-tuner
+                - optcp-tools
+                - optcp-edge-defenses
                 - wallmaster
       preconditions:
         all:
@@ -209,7 +211,8 @@ spec:
                 - swift-sail
                 - temple-of-time
                 - tingle-tuner
-                - optcp-tingle-tuner
+                - optcp-tools
+                - optcp-edge-defenses
                 - wallmaster
               operations: [UPDATE]
       preconditions:

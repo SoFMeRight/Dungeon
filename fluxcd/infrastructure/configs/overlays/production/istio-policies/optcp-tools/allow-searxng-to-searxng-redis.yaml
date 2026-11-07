@@ -11,7 +11,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/optcp-tingle-tuner/sa/searxng
+              - cluster.local/ns/optcp-tools/sa/searxng
       to:
         - operation:
             ports: ["6379"]

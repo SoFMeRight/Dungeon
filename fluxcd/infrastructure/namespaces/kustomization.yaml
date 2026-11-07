@@ -11,6 +11,7 @@ resources:
   - optcp-ci-runners.yaml
   - optcp-cloud.yaml
   - optcp-delivery-bag.yaml
+  - optcp-edge-defenses.yaml
   - optcp-fairy-bottle.yaml
   - optcp-identity.yaml
   - optcp-infrastructure-management.yaml
@@ -26,7 +27,7 @@ resources:
   - optcp-sibyl-system.yaml
   - optcp-staff-suite.yaml
   - optcp-supply-chain.yaml
-  - optcp-tingle-tuner.yaml
+  - optcp-tools.yaml
   - optcp-vpn.yaml
   - optcp-web.yaml
   - optcp-web-analytics.yaml

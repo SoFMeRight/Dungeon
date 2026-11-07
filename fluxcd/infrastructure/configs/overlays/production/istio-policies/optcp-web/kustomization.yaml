@@ -7,3 +7,4 @@ resources:
   - allow-ghost-to-ghost-mysql.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-gateway-ingress-cell-membrane.yaml
+  - allow-gateway-ingress-xylem.yaml

@@ -337,7 +337,7 @@
 - Hosts: anubis.pcfae.com
 
 **Endlessh Go** — StatefulSet — 2026.0730.0
-- Namespace: tingle-tuner
+- Namespace: optcp-edge-defenses
 - Replicas: 1/1
 
 **Apt Cacher Ng** — StatefulSet — 3.7.4-v0.1
@@ -627,7 +627,7 @@
 - Hosts: ipleek.com, www.ipleek.com
 
 **Librespeed Speedtest** — Deployment — 6.3.1-alpine
-- Namespace: tingle-tuner
+- Namespace: optcp-tools
 - Replicas: 1/1
 - Hosts: speedtester.pcfae.com
 
@@ -637,12 +637,12 @@
 - Hosts: netboot.pcfae.com
 
 **Openspeedtest** — Deployment — v2.0.8
-- Namespace: tingle-tuner
+- Namespace: optcp-tools
 - Replicas: 1/1
 - Hosts: speedtest.pcfae.com
 
 **Searxng — 2 components** — Deployment — 2026.11.5-3e95f6cd2
-- Namespace: compass
+- Namespace: optcp-tools
 - Replicas: 3/3
 - Hosts: search.pcfae.com
 - Components:
@@ -1090,12 +1090,12 @@
 - Hosts: convertx.pcfae.com
 
 **Draw Io** — StatefulSet — 32.6.10
-- Namespace: tingle-tuner
+- Namespace: optcp-tools
 - Replicas: 1/1
 - Hosts: draw.pcfae.com
 
 **Fairer Pages** — Deployment — v0.0.14
-- Namespace: tingle-tuner
+- Namespace: optcp-web
 - Replicas: 3/3
 - Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.outspokekin.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, ai.pcfae.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, authenticator.optcp.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.internal.optcp.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, chat.outspokekin.com, cloud.optcp.com, code.pcfae.com, convertx.pcfae.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, dolibarr.prplanit.com, draw.pcfae.com, dtrack.optcp.com, erpnext.prplanit.com, fairer-pages.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, hass.arbitorium.com, hass.pcfae.com, homelabhelpdesk.com, hosts.optcp.com, hosts.pcfae.com, hosts.private.optcp.com, hq.prplanit.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, joplin.pcfae.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, livekit.outspokekin.com, ls.sofmeright.com, lubelogger.pcfae.com, lwd.optcp.com, mail-admin.optcp.com, mail.pcfae.com, mail.precisionplanit.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, mazanoke.pcfae.com, meals.yesimvegan.com, monica.pcfae.com, netalertx.pcfae.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, optcp.com, orangehrm.prplanit.com, outspokekin.com, overseer.pcfae.com, paperless.pcfae.com, passwords.optcp.com, pbx.pcfae.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, projects.optcp.com, prowlarr.pcfae.com, prplanit.com, qbitt.pcfae.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.pcfae.com, search.pcfae.com, secrets.optcp.com, sh.pcfae.com, sh.uni2.cc, shiplog.pcfae.com, shlink.pcfae.com, siem.prplanit.com, smkeygen.pcfae.com, social.outspokekin.com, sofmeright.com, sonarr.pcfae.com, sops.optcp.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.prplanit.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.pcfae.com, trmm.prplanit.com, uni2.cc, uptime.pcfae.com, uptime.sofmeright.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.arbitorium.com, z2m.pcfae.com, zigbee.arbitorium.com, zigbee.private.arbitorium.com
 
@@ -1104,7 +1104,7 @@
 - Replicas: 1/1
 
 **Google Webfonts Helper** — StatefulSet — v1.7.2
-- Namespace: tingle-tuner
+- Namespace: optcp-tools
 - Replicas: 1/1
 - Hosts: gwfonts.pcfae.com
 
@@ -1114,7 +1114,7 @@
 - Hosts: hrconvert2.pcfae.com
 
 **It Tools** — Deployment — 2024.10.22-7ca5933
-- Namespace: tingle-tuner
+- Namespace: optcp-tools
 - Replicas: 3/3
 - Hosts: ittools.pcfae.com
 
@@ -1124,7 +1124,7 @@
 - Hosts: translate.pcfae.com
 
 **Mazanoke** — Deployment — v1.1.7
-- Namespace: tingle-tuner
+- Namespace: optcp-tools
 - Replicas: 1/1
 - Hosts: mazanoke.pcfae.com
 

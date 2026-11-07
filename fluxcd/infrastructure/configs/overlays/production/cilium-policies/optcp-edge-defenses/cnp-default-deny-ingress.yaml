@@ -1,0 +1,23 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for optcp-edge-defenses namespace.
+    Ingress: CCNPs cover kubelet-probes, istio-ambient and prometheus-scrape;
+    cnp-endlessh opens the honeypot to the world.
+    Egress: universal CCNPs cover DNS + mesh HBONE.
+    Both directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
