@@ -33,4 +33,3 @@ patches:
     target:
       kind: Service
       name: open-webui
-  - path: hold-for-move-patch.yaml
