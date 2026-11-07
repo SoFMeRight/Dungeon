@@ -15,12 +15,12 @@ spec:
         runAsGroup: 1001
       initContainers:
         - name: generate-initdb
-          image: docker.io/guacamole/guacamole@sha256:b46d017891da0cdc137b63e9b1fb6a39617c6c486db4e864a272c2d9ad04774b
+          image: docker.io/guacamole/guacamole@sha256:7ed49c003098fdeeee22a6fc3f41ca2d11143dfc26eab26e59e3ff531cf3641f
         - name: init-db
           image: docker.io/postgres:15-alpine
       containers:
         - name: guacamole
-          image: docker.io/guacamole/guacamole@sha256:b46d017891da0cdc137b63e9b1fb6a39617c6c486db4e864a272c2d9ad04774b
+          image: docker.io/guacamole/guacamole@sha256:7ed49c003098fdeeee22a6fc3f41ca2d11143dfc26eab26e59e3ff531cf3641f
           securityContext:
             readOnlyRootFilesystem: true
           resources:
