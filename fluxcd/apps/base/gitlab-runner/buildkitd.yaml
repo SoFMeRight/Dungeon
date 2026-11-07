@@ -67,11 +67,13 @@ spec:
               command: ["buildctl", "debug", "workers"]
             initialDelaySeconds: 5
             periodSeconds: 30
+            timeoutSeconds: 10
           livenessProbe:
             exec:
               command: ["buildctl", "debug", "workers"]
             initialDelaySeconds: 5
             periodSeconds: 30
+            timeoutSeconds: 10
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
