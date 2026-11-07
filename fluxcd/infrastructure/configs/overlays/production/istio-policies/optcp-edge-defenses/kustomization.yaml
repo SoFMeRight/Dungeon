@@ -4,4 +4,5 @@ namespace: optcp-edge-defenses
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-phloem.yaml
   - allow-endlessh-go-loadbalancer.yaml

@@ -69,7 +69,6 @@ spec:
                 - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
-                - wallmaster
       validate:
         message: >-
           Images must be pinned to a non-latest tag or an immutable digest.
@@ -166,7 +165,6 @@ spec:
                 - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
-                - wallmaster
       validate:
         message: >-
           Images must be pinned to a non-latest tag or an immutable digest.
@@ -267,7 +265,6 @@ spec:
                 - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
-                - wallmaster
       validate:
         message: >-
           Image registry is not allowlisted. Use an approved registry,
@@ -367,7 +364,6 @@ spec:
                 - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
-                - wallmaster
       validate:
         message: >-
           Image registry is not allowlisted. Use an approved registry,

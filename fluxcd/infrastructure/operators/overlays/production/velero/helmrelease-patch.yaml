@@ -166,7 +166,6 @@ spec:
             # Comms and mail: stalwart, bulwark (namespace plan, group AD)
             - optcp-delivery-bag
             # Bot protection & security services
-            - wallmaster
             # Tools w/o userdata
             - tingle-tuner
             - optcp-tools

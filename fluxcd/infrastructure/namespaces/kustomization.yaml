@@ -49,7 +49,6 @@ resources:
   - lens-of-truth.yaml
   - swift-sail.yaml
   - delivery-bag.yaml
-  - wallmaster.yaml
   - optcp-remote-access.yaml
   - lakitu.yaml
   - mr-resetti.yaml

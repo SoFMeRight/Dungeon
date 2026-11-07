@@ -5,9 +5,10 @@ metadata:
 spec:
   description: >-
     Default-deny ingress AND egress for optcp-edge-defenses namespace.
-    Ingress: CCNPs cover kubelet-probes, istio-ambient and prometheus-scrape;
+    Ingress: CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape and ingress-gw;
     cnp-endlessh opens the honeypot to the world.
-    Egress: universal CCNPs cover DNS + mesh HBONE.
+    Egress: universal CCNPs cover DNS + mesh HBONE; cnp-egress-anubis grants anubis
+    the upstream it protects.
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true

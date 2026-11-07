@@ -68,7 +68,6 @@ spec:
                 - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
-                - wallmaster
       exclude:
         any:
           - resources:
@@ -147,7 +146,6 @@ spec:
                 - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
-                - wallmaster
       exclude:
         any:
           - resources:

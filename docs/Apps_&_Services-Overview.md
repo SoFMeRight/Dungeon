@@ -331,7 +331,7 @@
   - zitadel-sentinel-sentinel (StatefulSet, cache)
 
 **Anubis** — Deployment — v1.28.2
-- Namespace: wallmaster
+- Namespace: optcp-edge-defenses
 - Replicas: 1/1
 - Hosts: anubis.pcfae.com
 

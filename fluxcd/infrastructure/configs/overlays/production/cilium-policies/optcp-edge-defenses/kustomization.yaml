@@ -4,3 +4,4 @@ namespace: optcp-edge-defenses
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-endlessh.yaml
+  - cnp-egress-anubis.yaml

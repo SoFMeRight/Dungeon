@@ -32,7 +32,6 @@ spec:
               - temple-of-time
               - yesimvegan-web
               - tingle-tuner
-              - wallmaster
               - optcp-identity
               - optcp-remote-access
       to:

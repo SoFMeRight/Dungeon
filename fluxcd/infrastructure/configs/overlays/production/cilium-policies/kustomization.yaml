@@ -6,7 +6,6 @@ resources:
   - ../../../base/cilium-policies
   # Phase 3: Per-namespace contract CNPs (incremental rollout)
   # Batch 1 — Minimal
-  - wallmaster
   - optcp-operators-baseline
   - mr-resetti
   - optcp-fairy-bottle

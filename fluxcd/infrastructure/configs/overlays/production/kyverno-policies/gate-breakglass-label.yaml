@@ -63,7 +63,6 @@ spec:
                 - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
-                - wallmaster
       preconditions:
         all:
           - key: "{{ request.object.metadata.labels.\"zt.breakglass/pod\" || '' }}"
@@ -150,7 +149,6 @@ spec:
                 - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
-                - wallmaster
       preconditions:
         all:
           - key: "{{ request.object.spec.template.metadata.labels.\"zt.breakglass/pod\" || '' }}"
@@ -237,7 +235,6 @@ spec:
                 - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
-                - wallmaster
               operations: [UPDATE]
       preconditions:
         all:
