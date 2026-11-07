@@ -43,12 +43,6 @@ spec:
               app: photoprism
       - resources:
           kinds: [Pod]
-          namespaces: [pedestal-of-time]
-          selector:
-            matchLabels:
-              app: photoprism-x
-      - resources:
-          kinds: [Pod]
           namespaces: [kai-private]
           selector:
             matchLabels:

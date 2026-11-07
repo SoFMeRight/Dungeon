@@ -1,4 +1,4 @@
-# Static PersistentVolumeClaims for Plex MS-X (pedestal-of-time)
+# Static PersistentVolumeClaims for Plex MS-X (optcp-restricted)
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

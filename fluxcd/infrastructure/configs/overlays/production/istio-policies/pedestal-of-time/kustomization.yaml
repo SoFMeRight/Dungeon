@@ -7,7 +7,5 @@ resources:
   - allow-paperless-webserver-to-paperless-db.yaml
   - allow-paperless-webserver-to-paperless-redis.yaml
   - allow-monica-to-monica-db.yaml
-  - allow-photoprism-x-to-photoprism-x-mariadb.yaml
-  - allow-plex-ms-x-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml

@@ -24,7 +24,7 @@ spec:
       source: "//gringotts/xylem-media/Movies"
     nodeStageSecretRef:
       name: plex-ms-x-smb-secret
-      namespace: pedestal-of-time
+      namespace: optcp-restricted
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -64,7 +64,7 @@ spec:
       source: "//gringotts/xylem-media/Photos"
     nodeStageSecretRef:
       name: plex-ms-x-smb-secret
-      namespace: pedestal-of-time
+      namespace: optcp-restricted
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

@@ -8,7 +8,7 @@ spec:
     volumeAttributes:
       source: "//gringotts/xylem-gallery/Photos/Library"
     nodeStageSecretRef:
-      namespace: pedestal-of-time
+      namespace: kai-private
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -19,4 +19,4 @@ spec:
     volumeAttributes:
       source: "//gringotts/xylem-gallery/Photos/Import"
     nodeStageSecretRef:
-      namespace: pedestal-of-time
+      namespace: kai-private

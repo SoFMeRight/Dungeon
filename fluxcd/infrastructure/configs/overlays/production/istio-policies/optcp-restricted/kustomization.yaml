@@ -4,4 +4,5 @@ namespace: optcp-restricted
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-xylem.yaml
   - allow-plex-ms-x-loadbalancer.yaml

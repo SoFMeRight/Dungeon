@@ -942,7 +942,7 @@
   - paperless-webserver (StatefulSet)
 
 **Photoprism — 2 components** — StatefulSet — 
-- Namespace: pedestal-of-time
+- Namespace: kai-private
 - Replicas: 2/2
 - Hosts: fotos.pcfae.com
 - Components:
@@ -950,7 +950,7 @@
   - photoprism-x-mariadb (StatefulSet, database)
 
 **Plex Ms X** — StatefulSet — 1.43.6.11085-d1e52e169
-- Namespace: pedestal-of-time
+- Namespace: optcp-restricted
 - Replicas: 1/1
 - Hosts: plexx.pcfae.com
 

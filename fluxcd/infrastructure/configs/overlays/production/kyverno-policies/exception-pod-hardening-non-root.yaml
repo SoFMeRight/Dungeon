@@ -57,12 +57,12 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-app-directory]
           names: ["homarr-*", "organizr-*"]
-      # pedestal-of-time — lubelogger (DataProtection keys), monica (php-fpm root), paperless (root init),
-      # plex-ms-x (s6 root-start)
+      # pedestal-of-time — lubelogger (DataProtection keys), monica (php-fpm root), paperless (root init)
       - resources:
           kinds: [Pod]
           namespaces: [pedestal-of-time]
-          names: ["lubelogger-*", "monica-*", "paperless-webserver-*", "plex-ms-x-*"]
+          names: ["lubelogger-*", "monica-*", "paperless-webserver-*"]
+      # optcp-restricted — plex-ms-x (s6 root-start)
       - resources:
           kinds: [Pod]
           namespaces: [optcp-restricted]

@@ -4,4 +4,5 @@ namespace: kai-private
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
+  - allow-gateway-ingress-xylem.yaml
   - allow-photoprism-x-to-photoprism-x-mariadb.yaml
