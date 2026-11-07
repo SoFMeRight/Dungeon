@@ -6,11 +6,6 @@ resources:
   - httproute.yaml
   - httproute-xylem.yaml
   - destinationrule.yaml
-# Held at zero for the volume re-bind into arbitorium-home.
-replicas:
-  - name: home-assistant
-    count: 0
-
 patches:
   - path: statefulset-patch.yaml
     target:

@@ -5,11 +5,6 @@ resources:
   - ../../../base/zigbee2mqtt
   - httproute-xylem.yaml
   - httproute-cell-membrane.yaml
-# Held at zero for the volume re-bind into arbitorium-home.
-replicas:
-  - name: zigbee2mqtt
-    count: 0
-
 patches:
   - path: statefulset-patch.yaml
     target:

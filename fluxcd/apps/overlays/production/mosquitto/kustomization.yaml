@@ -3,11 +3,6 @@ kind: Kustomization
 namespace: arbitorium-home
 resources:
   - ../../../base/mosquitto
-# Held at zero for the volume re-bind into arbitorium-home.
-replicas:
-  - name: mosquitto
-    count: 0
-
 patches:
   - path: statefulset-patch.yaml
     target:

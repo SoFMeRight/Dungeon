@@ -6,11 +6,6 @@ resources:
   - httproute-xylem.yaml
   - frigate-notify-config.yaml
 # Frigate enabled - primary NVR (replaced Shinobi)
-# Held at zero for the volume re-bind into arbitorium-nvr.
-replicas:
-  - name: frigate
-    count: 0
-
 patches:
   - path: statefulset-patch.yaml
   - path: config-patch.yaml
