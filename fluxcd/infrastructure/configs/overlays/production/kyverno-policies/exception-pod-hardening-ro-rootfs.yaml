@@ -135,11 +135,6 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-cloud]
           names: ["appflowy-admin-frontend-*", "appflowy-web-*", "bookstack-*", "linkwarden-*", "nextcloud-*", "penpot-frontend-*", "shlink-db-*"]
-      # tingle-tuner — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp)
-      - resources:
-          kinds: [Pod]
-          namespaces: [tingle-tuner]
-          names: ["faster-whisper-*", "libretranslate-*", "stable-diffusion-webui-*"]
       # optcp-ai — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp), open-webui
       - resources:
           kinds: [Pod]

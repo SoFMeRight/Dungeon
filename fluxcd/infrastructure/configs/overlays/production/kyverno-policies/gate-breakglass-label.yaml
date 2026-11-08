@@ -61,7 +61,6 @@ spec:
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
-                - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
       preconditions:
@@ -148,7 +147,6 @@ spec:
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
-                - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
       preconditions:
@@ -235,7 +233,6 @@ spec:
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
-                - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
               operations: [UPDATE]

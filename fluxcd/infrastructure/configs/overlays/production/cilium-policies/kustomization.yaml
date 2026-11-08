@@ -31,7 +31,6 @@ resources:
   - arbitorium-nvr
   - arbitorium-restricted
   - lens-of-truth
-  - tingle-tuner
   - optcp-tools
   - optcp-edge-defenses
   # Batch 4 — Heavy

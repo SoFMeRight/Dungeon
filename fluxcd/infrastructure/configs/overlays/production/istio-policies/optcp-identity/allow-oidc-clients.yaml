@@ -32,7 +32,6 @@ spec:
               - swift-sail
               - temple-of-time
               - yesimvegan-web
-              - tingle-tuner
               - optcp-identity
               - optcp-remote-access
       to:

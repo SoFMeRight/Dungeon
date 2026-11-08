@@ -67,7 +67,6 @@ spec:
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
-                - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
       validate:
@@ -164,7 +163,6 @@ spec:
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
-                - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
       validate:
@@ -265,7 +263,6 @@ spec:
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
-                - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
       validate:
@@ -365,7 +362,6 @@ spec:
                 - optcp-shooting-gallery
                 - swift-sail
                 - temple-of-time
-                - tingle-tuner
                 - optcp-tools
                 - optcp-edge-defenses
       validate:
