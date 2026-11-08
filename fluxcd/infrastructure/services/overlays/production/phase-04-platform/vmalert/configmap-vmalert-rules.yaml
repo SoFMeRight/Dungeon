@@ -317,3 +317,33 @@ data:
               summary: Gatus is not reporting endpoint results, so a service outage would go unnoticed
               resolved_title: Service checks reported again
               resolved: Gatus is reporting endpoint results again
+
+  logging.yaml: |
+    groups:
+      - name: Log Pipeline Health
+        interval: 1m
+        rules:
+          # Each Loki replica's view of its memberlist cluster against the number of
+          # replicas reporting. A replica that sees fewer peers has split off: queries
+          # it serves fail "too many unhealthy instances in the ring", and CrowdSec's
+          # Loki acquisition exits on that error.
+          - alert: LokiClusterSplit
+            expr: loki_memberlist_client_cluster_members_count < scalar(count(loki_memberlist_client_cluster_members_count))
+            for: 10m
+            labels:
+              severity: warning
+            annotations:
+              title: Loki cluster split
+              summary: '{{ $labels.pod }} sees {{ $value }} Loki members of the replicas reporting - log queries through it fail'
+              resolved_title: Loki cluster whole again
+              resolved: '{{ $labels.pod }} sees every Loki replica again'
+          - alert: LokiClusterStatusMissing
+            expr: absent(loki_memberlist_client_cluster_members_count)
+            for: 30m
+            labels:
+              severity: warning
+            annotations:
+              title: Loki cluster not reported
+              summary: Loki is not reporting its memberlist cluster, so a split would go unnoticed
+              resolved_title: Loki cluster reported again
+              resolved: Loki is reporting its memberlist cluster again

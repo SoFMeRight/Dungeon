@@ -29,6 +29,12 @@ spec:
       commonConfig:
         replication_factor: 3
 
+      # Memberlist joins only at start; a replica that started without peers stays a
+      # cluster of one and its queries fail "too many unhealthy instances in the ring".
+      structuredConfig:
+        memberlist:
+          rejoin_interval: 1m
+
       storage:
         type: 's3'
         bucketNames:
