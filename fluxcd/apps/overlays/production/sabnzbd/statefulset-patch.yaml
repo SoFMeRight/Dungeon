@@ -3,6 +3,8 @@ kind: StatefulSet
 metadata:
   name: sabnzbd
 spec:
+  # Held at zero for the volume re-bind into optcp-swift-sail-privileged.
+  replicas: 0
   template:
     metadata:
       labels:

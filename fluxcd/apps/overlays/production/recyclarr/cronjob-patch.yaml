@@ -3,6 +3,8 @@ kind: CronJob
 metadata:
   name: recyclarr
 spec:
+  # Suspended for the move into optcp-swift-sail.
+  suspend: true
   schedule: "0 4 * * *"
   jobTemplate:
     spec:
