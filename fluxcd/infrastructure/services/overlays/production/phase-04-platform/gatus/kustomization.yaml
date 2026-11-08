@@ -15,4 +15,3 @@ patches:
   - path: objectstore-postgres-patch.yaml
   - path: objectstore-postgres-prior-patch.yaml
   - path: externalsecret-postgres-patch.yaml
-  - path: hold-for-move-patch.yaml

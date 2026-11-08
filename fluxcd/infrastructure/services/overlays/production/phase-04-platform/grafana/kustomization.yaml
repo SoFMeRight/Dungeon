@@ -121,4 +121,3 @@ patches:
       - op: add
         path: /metadata/namespace
         value: optcp-gossip-stone
-  - path: hold-for-move-patch.yaml
