@@ -954,7 +954,7 @@
   - roundcube-primary-gmail-db (StatefulSet, database)
 
 **Netalertx** — StatefulSet — 26.10.28
-- Namespace: lakitu
+- Namespace: optcp-telemetry
 - Replicas: 0/0
 - Hosts: hosts.optcp.com, hosts.pcfae.com, hosts.private.optcp.com
 
@@ -1131,15 +1131,10 @@
 
 </details>
 
-## Platform Components (35)
+## Platform Components (33)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
-| Alloy | lakitu | ✅ |
-| Alloy | lakitu | ✅ |
-| Alloy Syslog | lakitu | ✅ |
-| Netconsole Collector | lakitu | ✅ |
-| Node (2 components) | lakitu | ✅ |
 | Cilium Agent | kube-system | ✅ |
 | Cilium Envoy | kube-system | ✅ |
 | Cilium Operator | kube-system | ✅ |
@@ -1164,8 +1159,11 @@
 | Gorons Bracelet.rbd.csi.ceph.com (3 components) | gorons-bracelet | ✅ |
 | Gpu Operator (11 components) | gorons-bracelet | ✅ |
 | Rbd Toolbox | gorons-bracelet | ✅ |
+| Alloy | optcp-telemetry | ✅ |
+| Alloy | optcp-telemetry | ✅ |
 | Graphite Exporter Truenas | optcp-monitoring-agents | ✅ |
 | Mariadb Operator (3 components) | optcp-operators-baseline | ✅ |
+| Node (2 components) | optcp-telemetry | ✅ |
 | Redis Operator | optcp-operators-baseline | ✅ |
 | Sbom Operator | optcp-sibyl-system | ✅ |
 | Snapshot Controller | optcp-fairy-bottle | ✅ |
@@ -1173,26 +1171,6 @@
 
 <details>
 <summary>Platform details</summary>
-
-**Alloy** — DaemonSet — 
-- Namespace: lakitu
-- Replicas: 5/5
-
-**Alloy** — DaemonSet — 
-- Namespace: lakitu
-- Replicas: 5/5
-
-**Alloy Syslog** — Deployment — v1.21.3
-- Namespace: lakitu
-- Replicas: 2/2
-
-**Netconsole Collector** — Deployment — 1.8.1.3
-- Namespace: lakitu
-- Replicas: 1/1
-
-**Node** — DaemonSet — v1.9.1
-- Namespace: lakitu
-- Replicas: 10/10
 
 **Cilium Agent** — DaemonSet — 
 - Namespace: kube-system
@@ -1290,6 +1268,14 @@
 - Namespace: gorons-bracelet
 - Replicas: 1/1
 
+**Alloy** — DaemonSet — 
+- Namespace: optcp-telemetry
+- Replicas: 5/5
+
+**Alloy** — DaemonSet — 
+- Namespace: optcp-telemetry
+- Replicas: 5/5
+
 **Graphite Exporter Truenas** — Deployment — v0.17.0
 - Namespace: optcp-monitoring-agents
 - Replicas: 1/1
@@ -1297,6 +1283,10 @@
 **Mariadb Operator** — Deployment — 26.10.2
 - Namespace: optcp-operators-baseline
 - Replicas: 5/5
+
+**Node** — DaemonSet — v1.9.1
+- Namespace: optcp-telemetry
+- Replicas: 10/10
 
 **Redis Operator** — Deployment — v0.27.0
 - Namespace: optcp-operators-baseline
@@ -1316,13 +1306,14 @@
 
 </details>
 
-## Unclassified (32)
+## Unclassified (34)
 
 Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
 
 | Workload | Namespace | Status |
 | --- | --- | --- |
 | Adguardhome Sync | optcp-network-services | ✅ |
+| Alloy Syslog | optcp-telemetry | ✅ |
 | Buildkitd | optcp-ci-runners | ✅ |
 | Bulkvs Ip Sync | optcp-address-sync | ✅ |
 | Byparr | optcp-swift-sail-privileged | ✅ |
@@ -1337,6 +1328,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Mariadb | prplanit-support | ✅ |
 | Mosquitto | arbitorium-home | ✅ |
 | Netbird Router Dungeon | optcp-vpn | ✅ |
+| Netconsole Collector | optcp-telemetry | ✅ |
 | Openbao Snapshot | optcp-secrets | ✅ |
 | Openwakeword | optcp-ai | ✅ |
 | Phloem Ingress Gateway Istio | optcp-ingress-internal | ✅ |
