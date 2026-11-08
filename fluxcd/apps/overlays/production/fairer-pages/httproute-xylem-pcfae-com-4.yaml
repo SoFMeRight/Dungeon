@@ -27,7 +27,6 @@ spec:
     - "recipes.pcfae.com"
     - "romm.pcfae.com"
     - "sabnzbd.pcfae.com"
-    - "sdiff.pcfae.com"
     - "search.pcfae.com"
     - "sh.pcfae.com"
   rules:

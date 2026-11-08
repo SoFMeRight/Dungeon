@@ -10,7 +10,7 @@ spec:
     - name: phloem-ingress-gateway
       namespace: optcp-ingress-internal
   hostnames:
-    - "sdiff.pcfae.com"
+    - "sdiff.optcp.com"
   rules:
     - matches:
         - path:

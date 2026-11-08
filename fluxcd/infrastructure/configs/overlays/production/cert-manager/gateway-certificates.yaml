@@ -506,6 +506,30 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
+  name: ai-optcp-com-phloem-tls
+spec:
+  secretName: ai-optcp-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "ai.optcp.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: sdiff-optcp-com-phloem-tls
+spec:
+  secretName: sdiff-optcp-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "sdiff.optcp.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
   name: hosts-optcp-com-phloem-tls
 spec:
   secretName: hosts-optcp-com-tls

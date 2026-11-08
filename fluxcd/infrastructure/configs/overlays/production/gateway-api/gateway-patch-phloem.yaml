@@ -208,3 +208,27 @@ spec:
         certificateRefs:
           - kind: Secret
             name: secrets-optcp-com-tls
+    - name: https-ai-optcp
+      protocol: HTTPS
+      port: 443
+      hostname: "ai.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: ai-optcp-com-tls
+    - name: https-sdiff-optcp
+      protocol: HTTPS
+      port: 443
+      hostname: "sdiff.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: sdiff-optcp-com-tls

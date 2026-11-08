@@ -117,6 +117,20 @@ patches:
   - patch: |-
       - op: add
         path: /metadata/namespace
+        value: optcp-ingress-internal
+    target:
+      kind: Certificate
+      name: ai-optcp-com-phloem-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
+        value: optcp-ingress-internal
+    target:
+      kind: Certificate
+      name: sdiff-optcp-com-phloem-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
         value: optcp-ingress-public
     target:
       kind: Certificate

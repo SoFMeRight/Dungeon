@@ -277,6 +277,9 @@ filtering:
     - domain: '*.optcp.com'
       answer: 172.22.30.71
       enabled: true
+    - domain: ai.optcp.com
+      answer: 172.22.30.70
+      enabled: true
     - domain: authenticator.optcp.com
       answer: fc00:f1:ada:30::70
       enabled: true
@@ -293,6 +296,9 @@ filtering:
       answer: 172.22.30.70
       enabled: true
     - domain: s3.optcp.com
+      answer: 172.22.30.70
+      enabled: true
+    - domain: sdiff.optcp.com
       answer: 172.22.30.70
       enabled: true
     - domain: sops.optcp.com
