@@ -12,6 +12,18 @@ spec:
   hostnames:
     - "hrconvert2.pcfae.com"
   rules:
+    # The app lives under /HRProprietary/HRConvert2/; the webroot has no index.
+    - matches:
+        - path:
+            type: Exact
+            value: /
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            path:
+              type: ReplaceFullPath
+              replaceFullPath: /HRProprietary/HRConvert2/
+            statusCode: 302
     - matches:
         - path:
             type: PathPrefix

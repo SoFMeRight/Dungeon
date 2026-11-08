@@ -5,6 +5,7 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Security (OpTCP)"
+      url: https://dtrack.optcp.com/api/version
 spec:
   parentRefs:
     - name: phloem-ingress-gateway
