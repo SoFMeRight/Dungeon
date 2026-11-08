@@ -65,6 +65,8 @@ spec:
                 - optcp-ipam
                 - optcp-shooting-gallery
                 - swift-sail
+                - optcp-swift-sail
+                - optcp-swift-sail-privileged
                 - optcp-tools
                 - optcp-edge-defenses
       validate:
@@ -159,6 +161,8 @@ spec:
                 - optcp-ipam
                 - optcp-shooting-gallery
                 - swift-sail
+                - optcp-swift-sail
+                - optcp-swift-sail-privileged
                 - optcp-tools
                 - optcp-edge-defenses
       validate:
@@ -257,6 +261,8 @@ spec:
                 - optcp-ipam
                 - optcp-shooting-gallery
                 - swift-sail
+                - optcp-swift-sail
+                - optcp-swift-sail-privileged
                 - optcp-tools
                 - optcp-edge-defenses
       validate:
@@ -354,6 +360,8 @@ spec:
                 - optcp-ipam
                 - optcp-shooting-gallery
                 - swift-sail
+                - optcp-swift-sail
+                - optcp-swift-sail-privileged
                 - optcp-tools
                 - optcp-edge-defenses
       validate:

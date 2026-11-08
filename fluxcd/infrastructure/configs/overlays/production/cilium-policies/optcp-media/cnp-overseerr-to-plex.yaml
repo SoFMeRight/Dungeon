@@ -18,6 +18,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: swift-sail
             app: overseerr
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-swift-sail-privileged
+            app: overseerr
       toPorts:
         - ports:
             - port: "32400"

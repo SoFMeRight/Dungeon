@@ -117,6 +117,26 @@ spec:
             - "thelounge-*"
       - resources:
           kinds: [Pod]
+          namespaces: [optcp-swift-sail-privileged]
+          names:
+            - "bazarr-*"
+            - "byparr-*"
+            - "downloadarrs-*"
+            - "jellyseerr-*"
+            - "neko-*"
+            - "overseerr-*"
+            - "pinchflat-*"
+            - "prowlarr-*"
+            - "pyload-ng-*"
+            - "sabnzbd-*"
+            - "thelounge-*"
+      # optcp-swift-sail — anirra (root-vendor).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-swift-sail]
+          names: ["anirra-*"]
+      - resources:
+          kinds: [Pod]
           namespaces: [arbitorium-restricted]
           names: ["immich-*", "lubelogger-*", "monica-*", "paperless-webserver-*", "photoprism-*"]
       # optcp-staff-suite — kimai apache + sidecars.

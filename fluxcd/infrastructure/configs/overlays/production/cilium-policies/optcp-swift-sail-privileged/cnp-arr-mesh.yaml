@@ -1,0 +1,44 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-arr-mesh
+spec:
+  description: >-
+    Allow arr apps to communicate within optcp-swift-sail-privileged.
+    jellyseerr/overseerr forward requests to sonarr/radarr/lidarr.
+    downloadarrs aggregates multiple arr backends. anirra and recyclarr reach
+    radarr/sonarr on downloadarrs from optcp-swift-sail.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      policy.prplanit.com/ingress: "true"
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/ingress: "true"
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-swift-sail
+            app.kubernetes.io/name: anirra
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-swift-sail
+            app.kubernetes.io/name: recyclarr
+      toPorts:
+        - ports:
+            - port: "5055"
+              protocol: TCP
+            - port: "6767"
+              protocol: TCP
+            - port: "7878"
+              protocol: TCP
+            - port: "8686"
+              protocol: TCP
+            - port: "8787"
+              protocol: TCP
+            - port: "8989"
+              protocol: TCP
+            - port: "9696"
+              protocol: TCP
+            - port: "6887"
+              protocol: TCP

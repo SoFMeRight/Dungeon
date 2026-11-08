@@ -35,6 +35,8 @@ resources:
   - optcp-sibyl-system/
   - optcp-staff-suite/
   - optcp-supply-chain/
+  - optcp-swift-sail/
+  - optcp-swift-sail-privileged/
   - optcp-tools/
   - optcp-web/
   - optcp-web-analytics/

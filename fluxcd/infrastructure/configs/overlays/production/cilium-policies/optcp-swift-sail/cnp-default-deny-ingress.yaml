@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for optcp-swift-sail.
+    Ingress: apps get ingress from ingress-backend CCNP; py-kms's LB gets a
+    LAN-only CIDR rule.
+    Egress: DNS + intra-namespace mesh + kube-apiserver ride the universal CCNP
+    baseline; anirra and recyclarr get world+cluster for their external work and
+    the arr stack in optcp-swift-sail-privileged. py-kms and
+    supermicro-license-generator are serve-only and need nothing external.
+    Both directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor

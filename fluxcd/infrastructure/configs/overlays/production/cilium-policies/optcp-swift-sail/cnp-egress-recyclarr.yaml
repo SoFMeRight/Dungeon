@@ -1,0 +1,21 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-recyclarr-egress
+spec:
+  description: >-
+    recyclarr is a scheduled TRaSH-Guides sync CronJob: it clones the TRaSH metadata
+    from GitHub on 443 (world) and pushes custom formats / quality profiles to
+    radarr+sonarr on the downloadarrs pod (cluster). Reaching downloadarrs 7878/8989
+    rides the arr-mesh ingress contract (recyclarr carries policy.prplanit.com/ingress);
+    DNS rides the universal CCNP baseline. Inert until egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: recyclarr
+  egress:
+    - toEntities:
+        - world
+        - cluster

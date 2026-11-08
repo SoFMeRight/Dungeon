@@ -18,6 +18,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: swift-sail
             app: jellyseerr
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-swift-sail-privileged
+            app: jellyseerr
       toPorts:
         - ports:
             - port: "8096"

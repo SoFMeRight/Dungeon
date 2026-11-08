@@ -1,0 +1,22 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-stunner-egress
+spec:
+  description: >-
+    stunner (neko-gateway) is a STUN/TURN gateway: it relays WebRTC media
+    between browsers and neko to an open-ended set of external peer addresses on
+    arbitrary ports, and coordinates with the STUNner control plane in
+    king-of-red-lions in-cluster. world+cluster covers external peers and the
+    in-cluster control plane; DNS rides the universal CCNP baseline. Inert until
+    egress default-deny is enabled.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: stunner
+  egress:
+    - toEntities:
+        - world
+        - cluster

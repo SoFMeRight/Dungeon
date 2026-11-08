@@ -51,6 +51,8 @@ resources:
   - optcp-sibyl-system
   - optcp-staff-suite
   - optcp-supply-chain
+  - optcp-swift-sail
+  - optcp-swift-sail-privileged
   - optcp-web
   - optcp-web-analytics
   - outspokekin-delivery-bag

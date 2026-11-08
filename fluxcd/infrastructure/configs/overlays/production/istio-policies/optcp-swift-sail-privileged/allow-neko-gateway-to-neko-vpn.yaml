@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-neko-gateway-to-neko-vpn
+spec:
+  selector:
+    matchLabels:
+      app: neko-vpn
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-swift-sail-privileged/sa/neko-gateway
+      to:
+        - operation:
+            ports: ["62001", "62002"]

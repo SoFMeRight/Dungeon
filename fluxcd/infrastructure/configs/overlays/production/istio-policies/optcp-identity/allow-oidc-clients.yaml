@@ -29,6 +29,8 @@ spec:
               - optcp-management-dashboards
               - optcp-media
               - swift-sail
+              - optcp-swift-sail
+              - optcp-swift-sail-privileged
               - yesimvegan-web
               - optcp-identity
               - optcp-remote-access

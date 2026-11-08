@@ -64,6 +64,8 @@ spec:
                 - optcp-ipam
                 - optcp-shooting-gallery
                 - swift-sail
+                - optcp-swift-sail
+                - optcp-swift-sail-privileged
                 - optcp-tools
                 - optcp-edge-defenses
       exclude:
@@ -140,6 +142,8 @@ spec:
                 - optcp-ipam
                 - optcp-shooting-gallery
                 - swift-sail
+                - optcp-swift-sail
+                - optcp-swift-sail-privileged
                 - optcp-tools
                 - optcp-edge-defenses
       exclude:

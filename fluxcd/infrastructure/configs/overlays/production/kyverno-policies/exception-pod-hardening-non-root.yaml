@@ -110,6 +110,27 @@ spec:
             - "pyload-ng-*"
             - "sabnzbd-*"
             - "thelounge-*"
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-swift-sail-privileged]
+          names:
+            - "bazarr-*"
+            - "byparr-*"
+            - "downloadarrs-*"
+            - "jellyseerr-*"
+            - "neko-gateway-*"
+            - "neko-vpn-*"
+            - "overseerr-*"
+            - "pinchflat-*"
+            - "prowlarr-*"
+            - "pyload-ng-*"
+            - "sabnzbd-*"
+            - "thelounge-*"
+      # optcp-swift-sail — anirra (root-vendor).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-swift-sail]
+          names: ["anirra-*"]
       # outspokekin-delivery-bag — matrix-turn (STUNner dataplane;
       # inherits root from the shared stunner-hardened Dataplane, which NetBird's :3478 requires.
       # This gateway listens on 3479 and would run unprivileged, but the Dataplane is

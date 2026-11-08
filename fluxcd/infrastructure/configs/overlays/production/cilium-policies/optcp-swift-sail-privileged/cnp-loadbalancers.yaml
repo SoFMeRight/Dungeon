@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-neko-gateway-lan
+spec:
+  description: >-
+    LAN-only TURN/STUN ingress to neko-gateway (172.22.30.120).
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    # STUNner dataplane pods are labeled app=stunner; the old app=neko-gateway matched
+    # zero pods, so default-deny-ingress silently blocked all TURN to this gateway.
+    # Scope to this gateway's dataplane with the related-gateway-name label.
+    matchLabels:
+      app: stunner
+      stunner.l7mp.io/related-gateway-name: neko-gateway
+  ingress:
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.144.0/20"
+      toPorts:
+        - ports:
+            - port: "3478"
+              protocol: UDP

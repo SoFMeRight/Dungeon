@@ -1,0 +1,26 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny-ingress
+spec:
+  description: >-
+    Default-deny ingress AND egress for optcp-swift-sail-privileged.
+    Ingress: arr apps get ingress from ingress-backend CCNP (gateway → 8080);
+    LB services get LAN-only CIDR rules.
+    Egress: DNS + intra-namespace mesh + kube-apiserver ride the universal CCNP
+    baseline; cnp-egress-vpn-workloads grants the gluetun-sidecar pods world
+    (tunnel to PIA — app traffic is inside the tunnel, kill-switch enforced) +
+    cluster; stunner gets world+cluster for its external work.
+    Both directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
