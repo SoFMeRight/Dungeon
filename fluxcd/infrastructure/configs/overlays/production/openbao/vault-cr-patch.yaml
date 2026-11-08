@@ -319,22 +319,6 @@ spec:
           path "sys/storage/raft/snapshot" {
             capabilities = ["read"]
           }
-      # pki-intermediate (one-off): has optcp-pki's root sign optcp-pki-int's intermediate,
-      # which bank-vaults cannot chain itself. Removed once run.
-      - name: pki-intermediate
-        rules: |
-          path "optcp-pki-int/issuers" {
-            capabilities = ["list"]
-          }
-          path "optcp-pki-int/intermediate/generate/internal" {
-            capabilities = ["create", "update"]
-          }
-          path "optcp-pki/root/sign-intermediate" {
-            capabilities = ["create", "update"]
-          }
-          path "optcp-pki-int/intermediate/set-signed" {
-            capabilities = ["create", "update"]
-          }
       # cert-manager signs wazuh's certificate requests, through the Vault Issuer in
       # optcp-siem, with the wazuh role and nothing else.
       - name: cert-manager-wazuh
@@ -452,11 +436,6 @@ spec:
             bound_service_account_names: ["stalwart-configuration"]
             bound_service_account_namespaces: ["optcp-delivery-bag"]
             policies: ["stalwart-configuration"]
-            ttl: 1h
-          - name: pki-intermediate
-            bound_service_account_names: ["pki-intermediate"]
-            bound_service_account_namespaces: ["optcp-secrets"]
-            policies: ["pki-intermediate"]
             ttl: 1h
           # cert-manager logs in as optcp-siem's wazuh-pki ServiceAccount with a token it
           # requests for the Issuer, whose audience is always vault://<namespace>/<issuer>.
@@ -706,9 +685,9 @@ spec:
             - name: urls
               issuing_certificates: ["https://secrets.optcp.com/v1/optcp-pki/ca"]
               crl_distribution_points: ["https://secrets.optcp.com/v1/optcp-pki/crl"]
-      # optcp's issuing CA, signed by optcp-pki's root through the one-off pki-intermediate
-      # Job. cert-manager signs workload certificates here through a Vault Issuer in the
-      # workload's namespace; roles are named for the workload.
+      # optcp's issuing CA, signed by optcp-pki's root (dungeon d6f90613, the one-off
+      # pki-intermediate Job). cert-manager signs workload certificates here through a Vault
+      # Issuer in the workload's namespace; roles are named for the workload.
       - path: optcp-pki-int
         type: pki
         description: optcp issuing certificate authority
