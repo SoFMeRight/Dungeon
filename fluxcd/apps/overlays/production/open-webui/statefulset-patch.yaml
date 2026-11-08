@@ -31,6 +31,9 @@ spec:
               value: "http://glicynia:11434,http://wisteria:11434,http://dock:11434,http://Leaf-Cutter:11434,http://anchorage:11434,http://172.22.30.107:11434"
             - name: DATABASE_URL
               value: "postgresql://openwebui:$(POSTGRES_PASSWORD)@open-webui-postgres-rw.optcp-ai.svc.cluster.local:5432/openwebui"
+            # HOME is /root (mode 700) under uid 1000; libpq fails on EACCES at ~/.postgresql.
+            - name: PGSSLCERT
+              value: /tmp/postgresql.crt
             - name: REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@open-webui-redis:6379/0"
             - name: REDIS_SENTINEL_HOSTS
