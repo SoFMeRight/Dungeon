@@ -98,23 +98,7 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-shooting-gallery]
           names: ["ark-sa-*", "ark-se-*"]
-      # swift-sail — gluetun cohort + LSIO *arr + root-vendor.
-      - resources:
-          kinds: [Pod]
-          namespaces: [swift-sail]
-          names:
-            - "anirra-*"
-            - "bazarr-*"
-            - "byparr-*"
-            - "downloadarrs-*"
-            - "jellyseerr-*"
-            - "neko-*"
-            - "overseerr-*"
-            - "pinchflat-*"
-            - "prowlarr-*"
-            - "pyload-ng-*"
-            - "sabnzbd-*"
-            - "thelounge-*"
+      # optcp-swift-sail-privileged — gluetun cohort + LSIO *arr + root-vendor.
       - resources:
           kinds: [Pod]
           namespaces: [optcp-swift-sail-privileged]

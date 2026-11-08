@@ -4,7 +4,7 @@ metadata:
   name: allow-jellyseerr-to-jellyfin
 spec:
   description: >-
-    Allow jellyseerr (swift-sail) to reach Jellyfin on 8096/TCP. jellyseerr's
+    Allow jellyseerr (optcp-swift-sail-privileged) to reach Jellyfin on 8096/TCP. jellyseerr's
     pod IP falls in the media-server LAN policy's fromCIDRSet `except`
     (pod CIDR), so it needs an explicit app-to-app allow.
   enableDefaultDeny:
@@ -15,9 +15,6 @@ spec:
       app: jellyfin
   ingress:
     - fromEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: swift-sail
-            app: jellyseerr
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-swift-sail-privileged
             app: jellyseerr

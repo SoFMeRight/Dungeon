@@ -18,7 +18,6 @@ resources:
   - optcp-monitoring-agents
   - optcp-network-services
   - optcp-restricted
-  - swift-sail
   # Batch 3 — Mixed
   - kai-personal
   - kai-private

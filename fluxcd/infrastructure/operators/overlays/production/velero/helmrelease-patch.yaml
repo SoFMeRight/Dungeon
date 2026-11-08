@@ -154,7 +154,6 @@ spec:
             # Routing & Gateway infrastructure
             - king-of-red-lions
             # Arr apps & downloaders
-            - swift-sail
             - optcp-swift-sail
             - optcp-swift-sail-privileged
             # Restricted/privileged services

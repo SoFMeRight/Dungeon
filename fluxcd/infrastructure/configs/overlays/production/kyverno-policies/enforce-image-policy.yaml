@@ -64,7 +64,6 @@ spec:
                 - optcp-infrastructure-management
                 - optcp-ipam
                 - optcp-shooting-gallery
-                - swift-sail
                 - optcp-swift-sail
                 - optcp-swift-sail-privileged
                 - optcp-tools
@@ -160,7 +159,6 @@ spec:
                 - optcp-infrastructure-management
                 - optcp-ipam
                 - optcp-shooting-gallery
-                - swift-sail
                 - optcp-swift-sail
                 - optcp-swift-sail-privileged
                 - optcp-tools
@@ -260,7 +258,6 @@ spec:
                 - optcp-infrastructure-management
                 - optcp-ipam
                 - optcp-shooting-gallery
-                - swift-sail
                 - optcp-swift-sail
                 - optcp-swift-sail-privileged
                 - optcp-tools
@@ -359,7 +356,6 @@ spec:
                 - optcp-infrastructure-management
                 - optcp-ipam
                 - optcp-shooting-gallery
-                - swift-sail
                 - optcp-swift-sail
                 - optcp-swift-sail-privileged
                 - optcp-tools

@@ -28,7 +28,6 @@ spec:
               - optcp-ai
               - optcp-management-dashboards
               - optcp-media
-              - swift-sail
               - optcp-swift-sail
               - optcp-swift-sail-privileged
               - yesimvegan-web

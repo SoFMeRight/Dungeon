@@ -4,7 +4,7 @@ metadata:
   name: allow-overseerr-to-plex
 spec:
   description: >-
-    Allow overseerr (swift-sail) to reach Plex on 32400/TCP. overseerr's
+    Allow overseerr (optcp-swift-sail-privileged) to reach Plex on 32400/TCP. overseerr's
     pod IP falls in the media-server LAN policy's fromCIDRSet `except`
     (pod CIDR), so it needs an explicit app-to-app allow.
   enableDefaultDeny:
@@ -15,9 +15,6 @@ spec:
       app: plex
   ingress:
     - fromEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: swift-sail
-            app: overseerr
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-swift-sail-privileged
             app: overseerr
