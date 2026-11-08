@@ -6,7 +6,7 @@
 
 ## Apps & Services (132)
 
-✅ 131 healthy
+✅ 132 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -161,7 +161,7 @@
 | --- | --- | --- | --- |
 | Alertmanager | ✅ | 🏠 |  |
 | Beszel | ✅ | 🏠 beszel.pcfae.com | [open](https://beszel.pcfae.com) |
-| Gatus | ❓ | 🏠 status.pcfae.com | [open](https://status.pcfae.com) |
+| Gatus | ✅ | 🏠 status.pcfae.com | [open](https://status.pcfae.com) |
 | Grafana | ✅ | 🏠 grafana.pcfae.com | [open](https://grafana.pcfae.com) |
 | Headlamp | ✅ | 🏠 headlamp.pcfae.com | [open](https://headlamp.pcfae.com) |
 | Loki (3 components) | ✅ | 🏠 logging.pcfae.com | [open](https://logging.pcfae.com) |
@@ -826,7 +826,7 @@
 
 **Gatus** — Deployment — 
 - Namespace: optcp-gossip-stone
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: status.pcfae.com, status.sofmeright.com
 
 **Grafana** — Deployment — 12.4.14
