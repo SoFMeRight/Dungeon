@@ -72,6 +72,10 @@ spec:
               value: "cloudflared,jupyter,sshd,syncthing,caddy,serviceportal,quicktunnel"
             - name: WEBUI_PORT
               value: "7860"
+            - name: WEBUI_PORT_LOCAL
+              value: "7860"
+            - name: WEBUI_ARGS
+              value: "--allow-code --medvram --xformers --enable-insecure-extension-access --api --listen"
             - name: DIRECT_ADDRESS
               value: "0.0.0.0"
             - name: DIRECT_ADDRESS_GET_WAN
