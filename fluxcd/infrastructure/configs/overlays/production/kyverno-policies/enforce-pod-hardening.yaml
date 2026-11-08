@@ -101,6 +101,7 @@ spec:
                 - king-of-red-lions
                 - optcp-operators-baseline
                 - lakitu
+                - optcp-telemetry
                 - optcp-ingress-internal
                 - kai-ingress-private
           # Repo-manifest exceptions (self-documenting label on the workload).
@@ -155,6 +156,7 @@ spec:
                 - king-of-red-lions
                 - optcp-operators-baseline
                 - lakitu
+                - optcp-telemetry
                 - optcp-ingress-internal
                 - kai-ingress-private
           # Repo-manifest self-documenting exceptions.
@@ -198,6 +200,7 @@ spec:
                 - king-of-red-lions
                 - optcp-operators-baseline
                 - lakitu
+                - optcp-telemetry
                 - optcp-ingress-internal
                 - kai-ingress-private
           # Repo-manifest self-documenting exceptions.
@@ -244,6 +247,7 @@ spec:
                 - king-of-red-lions
                 - optcp-operators-baseline
                 - lakitu
+                - optcp-telemetry
                 - optcp-ingress-internal
                 - kai-ingress-private
           # Repo-manifest self-documenting exceptions.

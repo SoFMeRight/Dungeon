@@ -31,6 +31,7 @@ resources:
   - optcp-supply-chain.yaml
   - optcp-swift-sail.yaml
   - optcp-swift-sail-privileged.yaml
+  - optcp-telemetry.yaml
   - optcp-tools.yaml
   - optcp-vpn.yaml
   - optcp-web.yaml

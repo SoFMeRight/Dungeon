@@ -37,6 +37,7 @@ resources:
   - optcp-supply-chain/
   - optcp-swift-sail/
   - optcp-swift-sail-privileged/
+  - optcp-telemetry/
   - optcp-tools/
   - optcp-web/
   - optcp-web-analytics/

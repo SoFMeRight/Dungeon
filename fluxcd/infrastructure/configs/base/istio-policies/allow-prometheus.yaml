@@ -21,6 +21,7 @@ spec:
         - source:
             principals:
               - cluster.local/ns/lakitu/sa/alloy
+              - cluster.local/ns/optcp-telemetry/sa/alloy
       to:
         - operation:
             ports: ["6060", "9090", "9091", "9100", "9108", "9115", "9153", "9187", "9216", "9221", "9795", "15020"]
