@@ -4,7 +4,7 @@
 > Generated from live Kubernetes state
 > Cluster: dungeon
 
-## Apps & Services (132)
+## Apps & Services (131)
 
 ✅ 120 healthy
 
@@ -115,7 +115,6 @@
 | --- | --- | --- | --- |
 | Anirra | ❓ | 🏠 anime.pcfae.com | [open](https://anime.pcfae.com) |
 | Bazarr | ❓ | 🏠 bazarr.pcfae.com | [open](https://bazarr.pcfae.com) |
-| Byparr | ❓ | 🏠 |  |
 | Downloadarrs | ❓ | 🏠 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
 | Jellyseerr | ❓ | 🏠 jseer.optcp.com | [open](https://jseer.optcp.com) |
 | Overseerr | ❓ | 🏠 overseer.pcfae.com | [open](https://overseer.pcfae.com) |
@@ -705,66 +704,62 @@
 - Hosts: yesimvegan.com
 
 **Anirra** — StatefulSet — xiFwhijN
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail
 - Replicas: 0/0
 - Hosts: anime.pcfae.com
 
 **Bazarr** — StatefulSet — 
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail-privileged
 - Replicas: 0/0
 - Hosts: bazarr.pcfae.com
 
-**Byparr** — StatefulSet — 
-- Namespace: swift-sail
-- Replicas: 0/0
-
 **Downloadarrs** — StatefulSet — 
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail-privileged
 - Replicas: 0/0
 - Hosts: lidarr.pcfae.com, qbitt.pcfae.com, radarr.pcfae.com, readarr.pcfae.com, sonarr.pcfae.com
 
 **Jellyseerr** — StatefulSet — 
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail-privileged
 - Replicas: 0/0
 - Hosts: jseer.optcp.com
 
 **Overseerr** — StatefulSet — 
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail-privileged
 - Replicas: 0/0
 - Hosts: overseer.pcfae.com
 
 **Pinchflat** — StatefulSet — 
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail-privileged
 - Replicas: 0/0
 - Hosts: pinchflat.pcfae.com
 
 **Prowlarr** — StatefulSet — 
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail-privileged
 - Replicas: 0/0
 - Hosts: prowlarr.pcfae.com
 
 **Py Kms** — StatefulSet — python3-next
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail
 - Replicas: 0/0
 - Hosts: kms.pcfae.com
 
 **Pyload Ng** — StatefulSet — 
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail-privileged
 - Replicas: 0/0
 - Hosts: dl.pcfae.com
 
 **Sabnzbd** — StatefulSet — 
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail-privileged
 - Replicas: 0/0
 - Hosts: sabnzbd.pcfae.com
 
 **Supermicro License Generator** — Deployment — v0.0.5
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail
 - Replicas: 1/1
 - Hosts: smkeygen.pcfae.com
 
 **Thelounge** — StatefulSet — 
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail-privileged
 - Replicas: 0/0
 - Hosts: thelounge.pcfae.com
 
@@ -1117,7 +1112,7 @@
 - Hosts: mazanoke.pcfae.com
 
 **Neko — 2 components** — Mixed — 
-- Namespace: swift-sail
+- Namespace: optcp-swift-sail-privileged
 - Replicas: 1/1
 - Hosts: web.pcfae.com
 - Components:
@@ -1321,7 +1316,7 @@
 
 </details>
 
-## Unclassified (31)
+## Unclassified (32)
 
 Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
 
@@ -1330,6 +1325,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Adguardhome Sync | optcp-network-services | ✅ |
 | Buildkitd | optcp-ci-runners | ✅ |
 | Bulkvs Ip Sync | optcp-address-sync | ✅ |
+| Byparr | optcp-swift-sail-privileged | ❓ |
 | Cell Membrane Ingress Gateway Istio | optcp-ingress-public | ✅ |
 | Cloudflare Ddns | optcp-address-sync | ✅ |
 | Cloudnative Pg | optcp-operators-baseline | ✅ |
