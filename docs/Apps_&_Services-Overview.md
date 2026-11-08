@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 120 healthy
+✅ 131 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -113,18 +113,18 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Anirra | ❓ | 🏠 anime.pcfae.com | [open](https://anime.pcfae.com) |
-| Bazarr | ❓ | 🏠 bazarr.pcfae.com | [open](https://bazarr.pcfae.com) |
-| Downloadarrs | ❓ | 🏠 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
-| Jellyseerr | ❓ | 🏠 jseer.optcp.com | [open](https://jseer.optcp.com) |
-| Overseerr | ❓ | 🏠 overseer.pcfae.com | [open](https://overseer.pcfae.com) |
-| Pinchflat | ❓ | 🏠 pinchflat.pcfae.com | [open](https://pinchflat.pcfae.com) |
-| Prowlarr | ❓ | 🏠 prowlarr.pcfae.com | [open](https://prowlarr.pcfae.com) |
-| Py Kms | ❓ | 🔒 kms.pcfae.com | [open](https://kms.pcfae.com) |
-| Pyload Ng | ❓ | 🏠 dl.pcfae.com | [open](https://dl.pcfae.com) |
-| Sabnzbd | ❓ | 🏠 sabnzbd.pcfae.com | [open](https://sabnzbd.pcfae.com) |
+| Anirra | ✅ | 🏠 anime.pcfae.com | [open](https://anime.pcfae.com) |
+| Bazarr | ✅ | 🏠 bazarr.pcfae.com | [open](https://bazarr.pcfae.com) |
+| Downloadarrs | ✅ | 🏠 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
+| Jellyseerr | ✅ | 🏠 jseer.optcp.com | [open](https://jseer.optcp.com) |
+| Overseerr | ✅ | 🏠 overseer.pcfae.com | [open](https://overseer.pcfae.com) |
+| Pinchflat | ✅ | 🏠 pinchflat.pcfae.com | [open](https://pinchflat.pcfae.com) |
+| Prowlarr | ✅ | 🏠 prowlarr.pcfae.com | [open](https://prowlarr.pcfae.com) |
+| Py Kms | ✅ | 🔒 kms.pcfae.com | [open](https://kms.pcfae.com) |
+| Pyload Ng | ✅ | 🏠 dl.pcfae.com | [open](https://dl.pcfae.com) |
+| Sabnzbd | ✅ | 🏠 sabnzbd.pcfae.com | [open](https://sabnzbd.pcfae.com) |
 | Supermicro License Generator | ✅ | 🏠 smkeygen.pcfae.com | [open](https://smkeygen.pcfae.com) |
-| Thelounge | ❓ | 🏠 thelounge.pcfae.com | [open](https://thelounge.pcfae.com) |
+| Thelounge | ✅ | 🏠 thelounge.pcfae.com | [open](https://thelounge.pcfae.com) |
 
 ### Game Servers (Shooting Gallery🎯)
 
@@ -705,52 +705,52 @@
 
 **Anirra** — StatefulSet — xiFwhijN
 - Namespace: optcp-swift-sail
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: anime.pcfae.com
 
 **Bazarr** — StatefulSet — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: bazarr.pcfae.com
 
 **Downloadarrs** — StatefulSet — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: lidarr.pcfae.com, qbitt.pcfae.com, radarr.pcfae.com, readarr.pcfae.com, sonarr.pcfae.com
 
 **Jellyseerr** — StatefulSet — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: jseer.optcp.com
 
 **Overseerr** — StatefulSet — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: overseer.pcfae.com
 
 **Pinchflat** — StatefulSet — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: pinchflat.pcfae.com
 
 **Prowlarr** — StatefulSet — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: prowlarr.pcfae.com
 
 **Py Kms** — StatefulSet — python3-next
 - Namespace: optcp-swift-sail
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: kms.pcfae.com
 
 **Pyload Ng** — StatefulSet — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: dl.pcfae.com
 
 **Sabnzbd** — StatefulSet — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: sabnzbd.pcfae.com
 
 **Supermicro License Generator** — Deployment — v0.0.5
@@ -760,7 +760,7 @@
 
 **Thelounge** — StatefulSet — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: thelounge.pcfae.com
 
 **Ark — 4 components** — Mixed — 
@@ -1113,7 +1113,7 @@
 
 **Neko — 2 components** — Mixed — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 1/1
+- Replicas: 2/2
 - Hosts: web.pcfae.com
 - Components:
   - neko-gateway (Deployment)
@@ -1325,7 +1325,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Adguardhome Sync | optcp-network-services | ✅ |
 | Buildkitd | optcp-ci-runners | ✅ |
 | Bulkvs Ip Sync | optcp-address-sync | ✅ |
-| Byparr | optcp-swift-sail-privileged | ❓ |
+| Byparr | optcp-swift-sail-privileged | ✅ |
 | Cell Membrane Ingress Gateway Istio | optcp-ingress-public | ✅ |
 | Cloudflare Ddns | optcp-address-sync | ✅ |
 | Cloudnative Pg | optcp-operators-baseline | ✅ |
