@@ -5,13 +5,6 @@ resources:
   - ../../../base/speedtest-tracker
   - httproute-xylem.yaml
   - nginx-configmap.yaml
-# Held at zero for the volume re-bind into optcp-gossip-stone.
-replicas:
-  - name: speedtest-tracker
-    count: 0
-  - name: speedtest-tracker-postgres
-    count: 0
-
 patches:
   - path: statefulset-patch.yaml
     target:

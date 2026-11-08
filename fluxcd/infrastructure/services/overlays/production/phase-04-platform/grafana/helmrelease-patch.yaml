@@ -21,7 +21,7 @@ spec:
       backup.velero.io/backup-volumes-excludes: grafana-plugins-shared
 
     # HA configuration
-    replicas: 0
+    replicas: 3
 
     # Gives the alerting replicas stable per-pod addresses to gossip over; without
     # it ha_peers has nothing to resolve.

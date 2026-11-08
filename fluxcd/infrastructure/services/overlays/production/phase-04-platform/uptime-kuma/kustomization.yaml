@@ -4,11 +4,6 @@ namespace: optcp-gossip-stone
 resources:
   - ../../../../base/uptime-kuma
   - httproute-xylem.yaml
-# Held at zero for the volume re-bind into optcp-gossip-stone.
-replicas:
-  - name: uptime-kuma
-    count: 0
-
 patches:
   - path: statefulset-patch.yaml
   - path: httproute-patch.yaml

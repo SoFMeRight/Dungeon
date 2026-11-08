@@ -3,11 +3,6 @@ kind: Kustomization
 namespace: optcp-gossip-stone
 resources:
   - ../../../base/beszel
-# Held at zero for the volume re-bind into optcp-gossip-stone.
-replicas:
-  - name: beszel
-    count: 0
-
 patches:
   - path: statefulset-patch.yaml
   - path: httproute-patch.yaml
