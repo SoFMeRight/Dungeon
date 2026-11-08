@@ -20,7 +20,7 @@ spec:
     group: "stunner.l7mp.io"
     kind: GatewayConfig
     name: matrix-turn
-    namespace: temple-of-time
+    namespace: outspokekin-delivery-bag
   description: "STUNner TURN gateway for Matrix calls (LiveKit SFU)"
 ---
 apiVersion: stunner.l7mp.io/v1
@@ -35,7 +35,7 @@ spec:
   # leaked pair buys an attacker no relay to anywhere they could not already reach.
   authRef:
     name: matrix-turn-auth
-    namespace: temple-of-time
+    namespace: outspokekin-delivery-bag
   dataplane: stunner-hardened
 ---
 apiVersion: gateway.networking.k8s.io/v1

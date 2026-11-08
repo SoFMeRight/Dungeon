@@ -7,7 +7,7 @@ spec:
   template:
     metadata:
       labels:
-        policy.prplanit.com/access-scope-postgres: temple-of-time.matrix.postgres
+        policy.prplanit.com/access-scope-postgres: outspokekin-delivery-bag.matrix.postgres
     spec:
       initContainers:
         - name: migrate

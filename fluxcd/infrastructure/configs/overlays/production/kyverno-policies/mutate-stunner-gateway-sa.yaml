@@ -62,9 +62,9 @@ spec:
         any:
           - resources:
               kinds: [Service]
-              namespaces: ["temple-of-time"]
+              namespaces: ["outspokekin-delivery-bag"]
               annotations:
-                stunner.l7mp.io/related-gateway-name: "temple-of-time/matrix-turn"
+                stunner.l7mp.io/related-gateway-name: "outspokekin-delivery-bag/matrix-turn"
       mutate:
         patchStrategicMerge:
           metadata:

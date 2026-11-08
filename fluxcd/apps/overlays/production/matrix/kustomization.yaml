@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: temple-of-time
+namespace: outspokekin-delivery-bag
 
 resources:
   - ../../../base/matrix
@@ -21,3 +21,4 @@ patches:
   - path: deployment-mas-patch.yaml
   - path: deployment-element-patch.yaml
   - path: deployment-rtc-patch.yaml
+  - path: hold-for-move-patch.yaml
