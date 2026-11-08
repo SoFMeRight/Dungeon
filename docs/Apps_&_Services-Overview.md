@@ -1150,7 +1150,7 @@
 | Cilium Operator | kube-system | ✅ |
 | Coredns | kube-system | ✅ |
 | Flux System (4 components) | flux-system | ✅ |
-| Hubble Relay | kube-system | ✅ |
+| Hubble Relay | kube-system | ❌ |
 | Kube Vip | kube-system | ✅ |
 | Metrics Server | kube-system | ✅ |
 | Kyverno Admission Controller (4 components) | mr-resetti | ✅ |
@@ -1221,7 +1221,7 @@
 
 **Hubble Relay** — Deployment — 
 - Namespace: kube-system
-- Replicas: 1/1
+- Replicas: 0/1
 
 **Kube Vip** — DaemonSet — v1.3.1
 - Namespace: kube-system
