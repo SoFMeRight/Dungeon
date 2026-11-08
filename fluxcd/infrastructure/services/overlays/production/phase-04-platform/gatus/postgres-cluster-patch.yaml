@@ -23,7 +23,7 @@ spec:
   # third blocks the operator's switchover off the cordoned node. Restore
   # the fleet-standard 3 (with right-sized requests) once the fleet
   # converges and chest-001's capacity returns.
-  instances: 2
+  instances: 1
 
   imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
 
