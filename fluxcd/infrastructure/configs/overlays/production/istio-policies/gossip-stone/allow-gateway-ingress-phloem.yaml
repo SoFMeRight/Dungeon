@@ -18,4 +18,4 @@ spec:
               - cluster.local/ns/optcp-ingress-internal/sa/phloem-ingress-gateway-istio
       to:
         - operation:
-            ports: ["443", "3000", "3001", "5050", "8080", "8090", "8443", "8480"]
+            ports: ["3000", "3001", "5050", "8080", "8090", "8480"]
