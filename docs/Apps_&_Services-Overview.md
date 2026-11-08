@@ -6,7 +6,7 @@
 
 ## Apps & Services (132)
 
-✅ 132 healthy
+✅ 120 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -113,19 +113,19 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Anirra | ✅ | 🏠 anime.pcfae.com | [open](https://anime.pcfae.com) |
-| Bazarr | ✅ | 🏠 bazarr.pcfae.com | [open](https://bazarr.pcfae.com) |
-| Byparr | ✅ | 🏠 |  |
-| Downloadarrs | ✅ | 🏠 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
-| Jellyseerr | ✅ | 🏠 jseer.optcp.com | [open](https://jseer.optcp.com) |
-| Overseerr | ✅ | 🏠 overseer.pcfae.com | [open](https://overseer.pcfae.com) |
-| Pinchflat | ✅ | 🏠 pinchflat.pcfae.com | [open](https://pinchflat.pcfae.com) |
-| Prowlarr | ✅ | 🏠 prowlarr.pcfae.com | [open](https://prowlarr.pcfae.com) |
-| Py Kms | ✅ | 🔒 kms.pcfae.com | [open](https://kms.pcfae.com) |
-| Pyload Ng | ✅ | 🏠 dl.pcfae.com | [open](https://dl.pcfae.com) |
-| Sabnzbd | ✅ | 🏠 sabnzbd.pcfae.com | [open](https://sabnzbd.pcfae.com) |
+| Anirra | ❓ | 🏠 anime.pcfae.com | [open](https://anime.pcfae.com) |
+| Bazarr | ❓ | 🏠 bazarr.pcfae.com | [open](https://bazarr.pcfae.com) |
+| Byparr | ❓ | 🏠 |  |
+| Downloadarrs | ❓ | 🏠 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
+| Jellyseerr | ❓ | 🏠 jseer.optcp.com | [open](https://jseer.optcp.com) |
+| Overseerr | ❓ | 🏠 overseer.pcfae.com | [open](https://overseer.pcfae.com) |
+| Pinchflat | ❓ | 🏠 pinchflat.pcfae.com | [open](https://pinchflat.pcfae.com) |
+| Prowlarr | ❓ | 🏠 prowlarr.pcfae.com | [open](https://prowlarr.pcfae.com) |
+| Py Kms | ❓ | 🔒 kms.pcfae.com | [open](https://kms.pcfae.com) |
+| Pyload Ng | ❓ | 🏠 dl.pcfae.com | [open](https://dl.pcfae.com) |
+| Sabnzbd | ❓ | 🏠 sabnzbd.pcfae.com | [open](https://sabnzbd.pcfae.com) |
 | Supermicro License Generator | ✅ | 🏠 smkeygen.pcfae.com | [open](https://smkeygen.pcfae.com) |
-| Thelounge | ✅ | 🏠 thelounge.pcfae.com | [open](https://thelounge.pcfae.com) |
+| Thelounge | ❓ | 🏠 thelounge.pcfae.com | [open](https://thelounge.pcfae.com) |
 
 ### Game Servers (Shooting Gallery🎯)
 
@@ -706,56 +706,56 @@
 
 **Anirra** — StatefulSet — xiFwhijN
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: anime.pcfae.com
 
 **Bazarr** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: bazarr.pcfae.com
 
 **Byparr** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 
 **Downloadarrs** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: lidarr.pcfae.com, qbitt.pcfae.com, radarr.pcfae.com, readarr.pcfae.com, sonarr.pcfae.com
 
 **Jellyseerr** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: jseer.optcp.com
 
 **Overseerr** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: overseer.pcfae.com
 
 **Pinchflat** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: pinchflat.pcfae.com
 
 **Prowlarr** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: prowlarr.pcfae.com
 
 **Py Kms** — StatefulSet — python3-next
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: kms.pcfae.com
 
 **Pyload Ng** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: dl.pcfae.com
 
 **Sabnzbd** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: sabnzbd.pcfae.com
 
 **Supermicro License Generator** — Deployment — v0.0.5
@@ -765,7 +765,7 @@
 
 **Thelounge** — StatefulSet — 
 - Namespace: swift-sail
-- Replicas: 1/1
+- Replicas: 0/0
 - Hosts: thelounge.pcfae.com
 
 **Ark — 4 components** — Mixed — 
@@ -1118,7 +1118,7 @@
 
 **Neko — 2 components** — Mixed — 
 - Namespace: swift-sail
-- Replicas: 2/2
+- Replicas: 1/1
 - Hosts: web.pcfae.com
 - Components:
   - neko-gateway (Deployment)
