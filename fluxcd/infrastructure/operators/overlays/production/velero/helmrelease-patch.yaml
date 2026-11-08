@@ -134,7 +134,8 @@ spec:
             - optcp-web
             # Web analytics (namespace plan)
             - optcp-web-analytics
-            # OutspokeKin social platform and brand site
+            # OutspokeKin chat, social platform and brand site
+            - outspokekin-delivery-bag
             - outspokekin-social
             - outspokekin-web
             # PrPlanIT business sites

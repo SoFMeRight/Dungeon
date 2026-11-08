@@ -56,6 +56,7 @@ resources:
   - optcp-supply-chain
   - optcp-web
   - optcp-web-analytics
+  - outspokekin-delivery-bag
   - outspokekin-social
   - outspokekin-web
   - prplanit-billing

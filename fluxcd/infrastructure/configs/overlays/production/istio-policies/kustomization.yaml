@@ -40,6 +40,7 @@ resources:
   - optcp-tools/
   - optcp-web/
   - optcp-web-analytics/
+  - outspokekin-delivery-bag/
   - outspokekin-social/
   - outspokekin-web/
   - optcp-ingress-public/

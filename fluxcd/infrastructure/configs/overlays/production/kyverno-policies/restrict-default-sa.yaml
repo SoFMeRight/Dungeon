@@ -35,6 +35,7 @@ spec:
                 - hyrule-castle
                 - optcp-web
                 - optcp-web-analytics
+                - outspokekin-delivery-bag
                 - outspokekin-social
                 - outspokekin-web
                 - prplanit-web
@@ -113,6 +114,7 @@ spec:
                 - hyrule-castle
                 - optcp-web
                 - optcp-web-analytics
+                - outspokekin-delivery-bag
                 - outspokekin-social
                 - outspokekin-web
                 - prplanit-web

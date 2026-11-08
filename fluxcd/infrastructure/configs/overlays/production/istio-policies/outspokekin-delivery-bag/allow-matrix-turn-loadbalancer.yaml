@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-matrix-turn-loadbalancer
+spec:
+  selector:
+    matchLabels:
+      app: stunner
+      stunner.l7mp.io/related-gateway-name: matrix-turn
+  action: ALLOW
+  rules:
+    # Internet-facing TURN gateway — source IPs are unpredictable. UDP passes straight
+    # through ztunnel (ambient captures TCP only), but keep the L4 ALLOW explicit and
+    # consistent with the other STUNner gateways.
+    - to:
+        - operation:
+            ports: ["3479"]

@@ -119,6 +119,10 @@ spec:
           kinds: [Pod]
           namespaces: [temple-of-time]
           names: ["matrix-turn-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [outspokekin-delivery-bag]
+          names: ["matrix-turn-*"]
       # optcp-staff-suite — kimai apache-root (+ its cronjobs/sidecars).
       - resources:
           kinds: [Pod]
