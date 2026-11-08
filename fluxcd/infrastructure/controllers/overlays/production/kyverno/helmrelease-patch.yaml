@@ -82,6 +82,19 @@ spec:
           registry: ghcr.io
           repository: kyverno/kyvernopre
     backgroundController:
+      # generate-redis-sentinel-repair-access binds redis-sentinel-repair's pod-delete
+      # role in each Sentinel namespace. Granted here, not beside the policy, because
+      # Kyverno's webhook checks these permissions when the policy is admitted.
+      rbac:
+        clusterRole:
+          extraResources:
+            - apiGroups: ["rbac.authorization.k8s.io"]
+              resources: ["rolebindings"]
+              verbs: ["get", "list", "watch"]
+            - apiGroups: ["rbac.authorization.k8s.io"]
+              resources: ["clusterroles"]
+              resourceNames: ["redis-sentinel-repair"]
+              verbs: ["bind"]
       resources:
         limits:
           cpu: 658m
