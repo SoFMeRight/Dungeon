@@ -3,6 +3,7 @@ kind: StatefulSet
 metadata:
   name: matrix-synapse
 spec:
+  replicas: 0
   template:
     metadata:
       labels:

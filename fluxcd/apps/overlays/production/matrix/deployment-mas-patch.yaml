@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: matrix-auth
 spec:
-  replicas: 2
+  replicas: 0
   template:
     metadata:
       labels:
