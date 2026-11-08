@@ -1059,7 +1059,7 @@
 
 **Matrix — 8 components** — Mixed — 
 - Namespace: outspokekin-delivery-bag
-- Replicas: 10/10
+- Replicas: 13/13
 - Hosts: chat.outspokekin.com, livekit.outspokekin.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, outspokekin.com
 - Components:
   - matrix-auth (Deployment)
