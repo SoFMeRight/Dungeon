@@ -50,6 +50,8 @@ spec:
     recovery:
       database: openwebui
       owner: openwebui
+      secret:
+        name: open-webui-postgres-credentials
 
   enableSuperuserAccess: true
 
