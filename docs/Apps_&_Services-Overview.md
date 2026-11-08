@@ -4,9 +4,9 @@
 > Generated from live Kubernetes state
 > Cluster: dungeon
 
-## Apps & Services (135)
+## Apps & Services (132)
 
-✅ 135 healthy
+✅ 131 healthy · ⚠️ 1 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -72,7 +72,7 @@
 | Kimai (2 components) | ✅ | 🏠 kimai.pcfae.com | [open](https://kimai.pcfae.com) |
 | Linkwarden (3 components) | ✅ | 🏠 bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
 | Mealie (2 components) | ✅ | 🏠 meals.yesimvegan.com | [open](https://meals.yesimvegan.com) |
-| Open (3 components) | ✅ | 🏠 ai.pcfae.com | [open](https://ai.pcfae.com) |
+| Open (3 components) | ⚠️ | 🏠 ai.pcfae.com | [open](https://ai.pcfae.com) |
 | Penpot (5 components) | ✅ | 🏠 design.pcfae.com | [open](https://design.pcfae.com) |
 | Photoprism (2 components) | ✅ | 🏠 photos.pcfae.com | [open](https://photos.pcfae.com) |
 | Plex | ✅ | 🔒 plex.optcp.com | [open](https://plex.optcp.com) |
@@ -251,7 +251,6 @@
 | Convertx | ✅ | 🏠 convertx.pcfae.com | [open](https://convertx.pcfae.com) |
 | Draw Io | ✅ | 🏠 draw.pcfae.com | [open](https://draw.pcfae.com) |
 | Fairer Pages | ✅ | 🏠 *.arbitorium.com | [open](https://*.arbitorium.com) |
-| Faster Whisper | ✅ | 🏠 |  |
 | Google Webfonts Helper | ✅ | 🏠 gwfonts.pcfae.com | [open](https://gwfonts.pcfae.com) |
 | Hrconvert2 | ✅ | 🏠 hrconvert2.pcfae.com | [open](https://hrconvert2.pcfae.com) |
 | It Tools | ✅ | 🏠 ittools.pcfae.com | [open](https://ittools.pcfae.com) |
@@ -259,8 +258,6 @@
 | Mazanoke | ✅ | 🏠 mazanoke.pcfae.com | [open](https://mazanoke.pcfae.com) |
 | Neko (2 components) | ✅ | 🔒 web.pcfae.com | [open](https://web.pcfae.com) |
 | Ollama | ✅ | 🏠 ollama.pcfae.com | [open](https://ollama.pcfae.com) |
-| Openwakeword | ✅ | 🏠 |  |
-| Piper | ✅ | 🏠 |  |
 | Stable Diffusion Webui | ✅ | 🏠 sdiff.pcfae.com | [open](https://sdiff.pcfae.com) |
 
 <details>
@@ -546,8 +543,8 @@
   - mealie-postgres (StatefulSet, database)
 
 **Open — 3 components** — StatefulSet — 
-- Namespace: temple-of-time
-- Replicas: 6/6
+- Namespace: optcp-ai
+- Replicas: 6/9
 - Hosts: ai.pcfae.com
 - Components:
   - open-webui (StatefulSet)
@@ -1094,10 +1091,6 @@
 - Replicas: 3/3
 - Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.outspokekin.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, ai.pcfae.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, authenticator.optcp.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.internal.optcp.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, chat.outspokekin.com, cloud.optcp.com, code.pcfae.com, convertx.pcfae.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, dolibarr.prplanit.com, draw.pcfae.com, dtrack.optcp.com, erpnext.prplanit.com, fairer-pages.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, home.arbitorium.com, home.pcfae.com, home.private.arbitorium.com, homelabhelpdesk.com, hosts.optcp.com, hosts.pcfae.com, hosts.private.optcp.com, hq.prplanit.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, joplin.pcfae.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, livekit.outspokekin.com, ls.sofmeright.com, lubelogger.pcfae.com, lwd.optcp.com, mail-admin.optcp.com, mail.pcfae.com, mail.precisionplanit.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, mazanoke.pcfae.com, meals.yesimvegan.com, monica.pcfae.com, netalertx.pcfae.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, optcp.com, orangehrm.prplanit.com, outspokekin.com, overseer.pcfae.com, paperless.pcfae.com, passwords.optcp.com, pbx.pcfae.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, projects.optcp.com, prowlarr.pcfae.com, prplanit.com, qbitt.pcfae.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.pcfae.com, search.pcfae.com, secrets.optcp.com, sh.pcfae.com, sh.uni2.cc, shiplog.pcfae.com, shlink.pcfae.com, siem.prplanit.com, smkeygen.pcfae.com, social.outspokekin.com, sofmeright.com, sonarr.pcfae.com, sops.optcp.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.prplanit.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.pcfae.com, trmm.prplanit.com, uni2.cc, uptime.pcfae.com, uptime.sofmeright.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.arbitorium.com, z2m.pcfae.com, zigbee.arbitorium.com, zigbee.private.arbitorium.com
 
-**Faster Whisper** — StatefulSet — gpu-v3.8.1-ls73
-- Namespace: optcp-ai
-- Replicas: 1/1
-
 **Google Webfonts Helper** — StatefulSet — v1.7.2
 - Namespace: optcp-tools
 - Replicas: 1/1
@@ -1135,14 +1128,6 @@
 - Namespace: optcp-ai
 - Replicas: 1/1
 - Hosts: ollama.pcfae.com
-
-**Openwakeword** — StatefulSet — 2.1.0
-- Namespace: optcp-ai
-- Replicas: 1/1
-
-**Piper** — StatefulSet — 2.5.2
-- Namespace: optcp-ai
-- Replicas: 1/1
 
 **Stable Diffusion Webui** — StatefulSet — v2-cuda-12.1.1-base-22.04-v1.10.1
 - Namespace: optcp-ai
@@ -1356,7 +1341,7 @@
 
 </details>
 
-## Unclassified (24)
+## Unclassified (27)
 
 Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
 
@@ -1370,12 +1355,15 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Cloudnative Pg | optcp-operators-baseline | ✅ |
 | Enshrouded | optcp-shooting-gallery | ✅ |
 | External Secrets | optcp-secrets | ✅ |
+| Faster Whisper | optcp-ai | ✅ |
 | Gitlab Runner | optcp-ci-runners | ✅ |
 | Mariadb | prplanit-support | ✅ |
 | Mosquitto | arbitorium-home | ✅ |
 | Netbird Router Dungeon | optcp-vpn | ✅ |
 | Openbao Snapshot | optcp-secrets | ✅ |
+| Openwakeword | optcp-ai | ✅ |
 | Phloem Ingress Gateway Istio | optcp-ingress-internal | ✅ |
+| Piper | optcp-ai | ✅ |
 | Plugin Barman Cloud | optcp-operators-baseline | ✅ |
 | Reflector | optcp-operators-baseline | ✅ |
 | Reloader | optcp-operators-baseline | ✅ |
