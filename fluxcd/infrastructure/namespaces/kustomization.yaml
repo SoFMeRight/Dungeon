@@ -1,7 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - gossip-stone.yaml
   - optcp-gossip-stone.yaml
   - kai-personal.yaml
   - kai-private.yaml
@@ -49,7 +48,6 @@ resources:
   - king-of-red-lions.yaml
   - lens-of-truth.yaml
   - swift-sail.yaml
-  - delivery-bag.yaml
   - optcp-remote-access.yaml
   - lakitu.yaml
   - mr-resetti.yaml

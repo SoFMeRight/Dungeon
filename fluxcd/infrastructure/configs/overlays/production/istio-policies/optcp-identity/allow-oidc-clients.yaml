@@ -13,10 +13,8 @@ spec:
             namespaces:
               - optcp-ingress-internal
               - kai-ingress-private
-              - delivery-bag
               - optcp-fairy-bottle
               - gorons-bracelet
-              - gossip-stone
               - optcp-gossip-stone
               - prplanit-staff-suite
               - hyrule-castle

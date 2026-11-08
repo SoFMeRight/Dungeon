@@ -44,10 +44,6 @@ spec:
             policy.prplanit.com/cap.s3: "true"
             policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: gossip-stone
-            policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-gossip-stone
             policy.prplanit.com/cap.s3: "true"
             policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
@@ -82,14 +78,8 @@ spec:
     # Cross-namespace monitoring probes
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: gossip-stone
-            app.kubernetes.io/name: gatus
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-gossip-stone
             app.kubernetes.io/name: gatus
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: gossip-stone
-            app.kubernetes.io/name: uptime-kuma
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-gossip-stone
             app.kubernetes.io/name: uptime-kuma

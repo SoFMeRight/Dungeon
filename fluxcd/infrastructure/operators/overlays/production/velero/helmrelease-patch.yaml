@@ -114,7 +114,6 @@ spec:
             # Discovery & Dashboards
             - optcp-app-directory
             # Monitoring services
-            - gossip-stone
             - optcp-gossip-stone
             - optcp-management-dashboards
             - optcp-monitoring-agents
@@ -161,8 +160,6 @@ spec:
             # Restricted/privileged services
             - kai-private
             - optcp-restricted
-            # Mail services
-            - delivery-bag
             # Comms and mail: stalwart, bulwark (namespace plan, group AD)
             - optcp-delivery-bag
             # Bot protection & security services

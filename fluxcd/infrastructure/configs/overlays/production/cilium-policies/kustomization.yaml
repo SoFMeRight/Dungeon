@@ -15,7 +15,6 @@ resources:
   - optcp-ingress-internal
   - kai-ingress-private
   - optcp-ingress-public
-  - delivery-bag
   - optcp-monitoring-agents
   - optcp-network-services
   - optcp-restricted
@@ -35,7 +34,6 @@ resources:
   - optcp-edge-defenses
   # Batch 4 — Heavy
   - gorons-bracelet
-  - gossip-stone
   - optcp-gossip-stone
   - optcp-remote-access
   # Batch 5 — Most complex

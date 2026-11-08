@@ -4,7 +4,7 @@ metadata:
   name: allow-monitoring-to-cell-membrane
 spec:
   description: >-
-    Allow gatus / uptime-kuma (gossip-stone) to probe business services behind
+    Allow gatus / uptime-kuma (optcp-gossip-stone) to probe business services behind
     the cell-membrane gateway on 443. Parity with allow-xylem-ingress-gateway-lan, which
     already whitelists these monitors; cell-membrane was missing it, so probes
     to sso.optcp.com and other cell-membrane hosts were being dropped.
@@ -17,14 +17,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: gossip-stone
-            app.kubernetes.io/name: gatus
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-gossip-stone
             app.kubernetes.io/name: gatus
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: gossip-stone
-            app.kubernetes.io/name: uptime-kuma
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-gossip-stone
             app.kubernetes.io/name: uptime-kuma

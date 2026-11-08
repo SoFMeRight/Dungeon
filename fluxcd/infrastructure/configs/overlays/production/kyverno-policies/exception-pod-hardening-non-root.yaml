@@ -21,10 +21,10 @@ spec:
           kinds: [Pod]
           namespaces: [optcp-network-services]
           names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
-      # gossip-stone — nutify (UPS, needs device) + speedtest-tracker (LSIO s6)
+      # optcp-gossip-stone — nutify (UPS, needs device) + speedtest-tracker (LSIO s6)
       - resources:
           kinds: [Pod]
-          namespaces: [gossip-stone, optcp-gossip-stone]
+          namespaces: [optcp-gossip-stone]
           names: ["nutify-*", "speedtest-tracker-*"]
       # bagisto (root-start chown), invoiceninja apache-root
       - resources:
