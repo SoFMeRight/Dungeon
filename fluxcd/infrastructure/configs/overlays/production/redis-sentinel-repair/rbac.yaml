@@ -1,12 +1,12 @@
-# Scoped per namespace rather than cluster-wide: pod deletion is only
-# granted where a Sentinel StatefulSet actually runs. Adding a Sentinel
-# elsewhere means adding it here and to TARGET_NAMESPACES on the CronJob.
+# Pod deletion is granted only where a RedisSentinel runs: this ClusterRole grants
+# nothing on its own, and Kyverno binds it in each namespace that holds a
+# RedisSentinel (generate-redis-sentinel-repair-access), so a Sentinel that moves
+# or appears is covered without a list to keep in step.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
   name: redis-sentinel-repair
-  namespace: hyrule-castle
   labels:
     app: redis-sentinel-repair
 rules:
@@ -17,110 +17,28 @@ rules:
     resources: ["pods/log"]
     verbs: ["get"]
 ---
+# The job finds its namespaces from the RedisSentinel objects.
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRole
 metadata:
-  name: redis-sentinel-repair
-  namespace: hyrule-castle
-  labels:
-    app: redis-sentinel-repair
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: redis-sentinel-repair
-subjects:
-  - kind: ServiceAccount
-    name: redis-sentinel-repair
-    namespace: optcp-operators-baseline
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: redis-sentinel-repair
-  namespace: optcp-app-directory
+  name: redis-sentinel-repair-discover
   labels:
     app: redis-sentinel-repair
 rules:
-  - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list", "delete"]
-  - apiGroups: [""]
-    resources: ["pods/log"]
-    verbs: ["get"]
+  - apiGroups: ["redis.redis.opstreelabs.in"]
+    resources: ["redissentinels"]
+    verbs: ["list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
-  name: redis-sentinel-repair
-  namespace: optcp-app-directory
+  name: redis-sentinel-repair-discover
   labels:
     app: redis-sentinel-repair
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: redis-sentinel-repair
-subjects:
-  - kind: ServiceAccount
-    name: redis-sentinel-repair
-    namespace: optcp-operators-baseline
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: redis-sentinel-repair
-  namespace: optcp-identity
-  labels:
-    app: redis-sentinel-repair
-rules:
-  - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list", "delete"]
-  - apiGroups: [""]
-    resources: ["pods/log"]
-    verbs: ["get"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: redis-sentinel-repair
-  namespace: optcp-identity
-  labels:
-    app: redis-sentinel-repair
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: redis-sentinel-repair
-subjects:
-  - kind: ServiceAccount
-    name: redis-sentinel-repair
-    namespace: optcp-operators-baseline
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: redis-sentinel-repair
-  namespace: optcp-ai
-  labels:
-    app: redis-sentinel-repair
-rules:
-  - apiGroups: [""]
-    resources: ["pods"]
-    verbs: ["get", "list", "delete"]
-  - apiGroups: [""]
-    resources: ["pods/log"]
-    verbs: ["get"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: redis-sentinel-repair
-  namespace: optcp-ai
-  labels:
-    app: redis-sentinel-repair
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: redis-sentinel-repair
+  kind: ClusterRole
+  name: redis-sentinel-repair-discover
 subjects:
   - kind: ServiceAccount
     name: redis-sentinel-repair

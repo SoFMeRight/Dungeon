@@ -14,7 +14,14 @@ data:
     # Upstream: OT-CONTAINER-KIT/redis-operator#1917 (open, no fix as of v0.26.0).
     set -u
 
-    : "${TARGET_NAMESPACES:?TARGET_NAMESPACES must be set}"
+    # Every namespace that holds a RedisSentinel; Kyverno grants pod deletion in each.
+    if ! sentinels=$(kubectl get redissentinels -A \
+          -o jsonpath='{range .items[*]}{.metadata.namespace}{"\n"}{end}'); then
+      echo "ERROR: could not list RedisSentinels"
+      exit 1
+    fi
+    TARGET_NAMESPACES=$(echo "$sentinels" | sort -u)
+    echo "namespaces with a RedisSentinel: $(echo $TARGET_NAMESPACES)"
     MIN_RESTARTS="${MIN_RESTARTS:-3}"
     MAX_DELETES="${MAX_DELETES:-3}"
     LOG_TAIL="${LOG_TAIL:-80}"

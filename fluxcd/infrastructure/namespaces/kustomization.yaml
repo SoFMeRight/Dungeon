@@ -44,7 +44,6 @@ resources:
   - prplanit-web.yaml
   - yesimvegan-web.yaml
   - gorons-bracelet.yaml
-  - hyrule-castle.yaml
   - king-of-red-lions.yaml
   - lens-of-truth.yaml
   - swift-sail.yaml

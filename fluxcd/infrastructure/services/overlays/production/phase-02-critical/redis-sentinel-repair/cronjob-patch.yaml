@@ -11,7 +11,5 @@ spec:
             - name: repair
               image: docker.io/alpine/k8s:1.37.1
               env:
-                - name: TARGET_NAMESPACES
-                  value: "hyrule-castle optcp-ai optcp-app-directory optcp-identity"
                 - name: DRY_RUN
                   value: "false"

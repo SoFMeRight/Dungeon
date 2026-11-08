@@ -31,7 +31,6 @@ spec:
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access
-                - hyrule-castle
                 - king-of-red-lions
                 - optcp-web
                 - optcp-web-analytics
@@ -126,7 +125,6 @@ spec:
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access
-                - hyrule-castle
                 - king-of-red-lions
                 - optcp-web
                 - optcp-web-analytics
@@ -225,7 +223,6 @@ spec:
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access
-                - hyrule-castle
                 - king-of-red-lions
                 - optcp-web
                 - optcp-web-analytics
@@ -323,7 +320,6 @@ spec:
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access
-                - hyrule-castle
                 - king-of-red-lions
                 - optcp-web
                 - optcp-web-analytics

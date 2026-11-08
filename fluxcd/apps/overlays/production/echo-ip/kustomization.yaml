@@ -7,7 +7,6 @@ resources:
   - ../../../base/echo-ip
   - configmap-branding.yaml
   - httproute.yaml
-  - referencegrant.yaml
 
 patches:
   - path: statefulset-patch.yaml

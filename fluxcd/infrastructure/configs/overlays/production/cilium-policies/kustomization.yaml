@@ -37,7 +37,6 @@ resources:
   - optcp-gossip-stone
   - optcp-remote-access
   # Batch 5 — Most complex
-  - hyrule-castle
   - optcp-ci-runners
   - optcp-cloud
   - optcp-delivery-bag

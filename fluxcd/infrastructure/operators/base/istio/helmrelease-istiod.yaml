@@ -102,7 +102,7 @@ spec:
               - "location"
               - "www-authenticate"
         # JSON access-log provider for the cell-membrane gateway (referenced by the
-        # cell-membrane-access-log Telemetry in hyrule-castle). Emits the fields CrowdSec
+        # cell-membrane-access-log Telemetry in optcp-ingress-public). Emits the fields CrowdSec
         # needs to derive the real client IP: direct_remote_ip is the physical L3 peer
         # (Cilium DSR preserves it, unspoofable) used to decide whether the request came
         # through Cloudflare; cf_connecting_ip is Cloudflare's authoritative client IP,

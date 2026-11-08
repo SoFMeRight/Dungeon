@@ -140,8 +140,6 @@ spec:
             - prplanit-web
             # YesImVegan site and public resources
             - yesimvegan-web
-            # Gateway for business/work services
-            - hyrule-castle
             # Supply chain: GitLab (namespace plan, group V)
             - optcp-supply-chain
             # CI runners: gitlab-runner, buildkitd, renovate (namespace plan, group AL)

@@ -46,8 +46,6 @@ spec:
               env:
                 - name: HOME
                   value: /tmp
-                - name: TARGET_NAMESPACES
-                  value: PLACEHOLDER_TARGET_NAMESPACES
                 # A healthy Sentinel restarts cleanly; only a wedged one accumulates
                 # restarts, so this keeps a single transient crash out of scope.
                 - name: MIN_RESTARTS

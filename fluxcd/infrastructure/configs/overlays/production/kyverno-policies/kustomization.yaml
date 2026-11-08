@@ -23,3 +23,4 @@ resources:
   - mutate-openbao-service-not-ready.yaml
   - mutate-smb-pv-mount-options.yaml
   - generate-cnpg-peer-authz.yaml
+  - generate-redis-sentinel-repair-access.yaml

@@ -1,0 +1,47 @@
+# Binds redis-sentinel-repair's pod-delete ClusterRole in every namespace that holds a
+# RedisSentinel, and removes the binding with the last one, so the repair job follows
+# Sentinels through namespace moves. Binding a ClusterRole the controller does not
+# itself hold needs `bind` on it.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno:generate-redis-sentinel-repair-access
+  labels:
+    rbac.kyverno.io/aggregate-to-background-controller: "true"
+rules:
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources: ["clusterroles"]
+    resourceNames: ["redis-sentinel-repair"]
+    verbs: ["bind"]
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: generate-redis-sentinel-repair-access
+spec:
+  rules:
+    - name: bind-repair-job
+      match:
+        any:
+          - resources:
+              kinds:
+                - redis.redis.opstreelabs.in/v1beta2/RedisSentinel
+      generate:
+        generateExisting: true
+        synchronize: true
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: RoleBinding
+        name: redis-sentinel-repair-access
+        namespace: "{{request.object.metadata.namespace}}"
+        data:
+          metadata:
+            labels:
+              app: redis-sentinel-repair
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: redis-sentinel-repair
+          subjects:
+            - kind: ServiceAccount
+              name: redis-sentinel-repair
+              namespace: optcp-operators-baseline

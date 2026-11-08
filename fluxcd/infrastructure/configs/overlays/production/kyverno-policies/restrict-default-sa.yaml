@@ -31,7 +31,6 @@ spec:
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access
-                - hyrule-castle
                 - optcp-web
                 - optcp-web-analytics
                 - outspokekin-delivery-bag
@@ -108,7 +107,6 @@ spec:
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access
-                - hyrule-castle
                 - optcp-web
                 - optcp-web-analytics
                 - outspokekin-delivery-bag

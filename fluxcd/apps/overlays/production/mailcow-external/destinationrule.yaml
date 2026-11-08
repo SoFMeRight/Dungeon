@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: mailcow-external
 spec:
-  host: mailcow-external.hyrule-castle.svc.cluster.local
+  host: mailcow-external.optcp-delivery-bag.svc.cluster.local
   trafficPolicy:
     tls:
       mode: SIMPLE
