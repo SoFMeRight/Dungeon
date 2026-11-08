@@ -8,3 +8,4 @@ resources:
   - cnp-vault.yaml
   - cnp-egress-openbao-snapshot.yaml
   - cnp-egress-security-core.yaml
+  - cnp-egress-pki-intermediate.yaml

@@ -11,6 +11,7 @@ resources:
   - allow-external-secrets-to-vault.yaml
   - allow-node-converge-to-vault.yaml
   - allow-openbao-snapshot-to-vault.yaml
+  - allow-pki-intermediate-to-vault.yaml
   - allow-stalwart-configuration-to-vault.yaml
   - allow-vault-to-vault.yaml
   - allow-zitadel-configuration-to-vault.yaml

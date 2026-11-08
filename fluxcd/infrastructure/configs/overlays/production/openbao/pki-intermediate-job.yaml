@@ -1,0 +1,102 @@
+# One-off: optcp-pki-int generates its key and CSR inside OpenBao, optcp-pki's root
+# signs it, and the signed certificate with the root goes back as the intermediate's
+# chain. Nothing leaves OpenBao but the CSR and certificates. Skips the signing when
+# the intermediate already has an issuer. Removed, with its role and policy, once run.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pki-intermediate
+  labels:
+    app: pki-intermediate
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pki-intermediate
+  labels:
+    app: pki-intermediate
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: pki-intermediate
+    spec:
+      serviceAccountName: pki-intermediate
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: sign
+          image: docker.io/alpine/k8s:1.37.1
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              # The configurer creates the mounts and this role after Flux applies the
+              # Job, so wait for the root and for the login to work.
+              i=0
+              until curl -fsS -o /dev/null "$VAULT_ADDR/v1/optcp-pki/ca/pem"; do
+                i=$((i+1)); [ "$i" -lt 60 ] || { echo "optcp-pki has no root after 10m"; exit 1; }; sleep 10
+              done
+              JWT=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+              i=0
+              until TOKEN=$(curl -fsS -X POST "$VAULT_ADDR/v1/auth/kubernetes/login" \
+                -d "{\"jwt\":\"$JWT\",\"role\":\"$VAULT_ROLE\"}" | jq -er .auth.client_token); do
+                i=$((i+1)); [ "$i" -lt 30 ] || { echo "login as $VAULT_ROLE failed for 5m"; exit 1; }; sleep 10
+              done
+              unset JWT
+              h="X-Vault-Token: $TOKEN"
+              issuers=$(curl -fsS -H "$h" -X LIST "$VAULT_ADDR/v1/optcp-pki-int/issuers" 2>/dev/null \
+                | jq -r '.data.keys | length' || true)
+              issuers=${issuers:-0}
+              if [ "$issuers" -gt 0 ]; then
+                echo "optcp-pki-int already has $issuers issuer(s), not signing"
+              else
+                curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/optcp-pki-int/intermediate/generate/internal" \
+                  -d '{"common_name":"optcp Intermediate CA","key_type":"ec","key_bits":384}' \
+                  | jq '{csr: .data.csr, common_name: "optcp Intermediate CA", ttl: "87600h", format: "pem"}' > /tmp/sign.json
+                curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/optcp-pki/root/sign-intermediate" --data @/tmp/sign.json \
+                  | jq '{certificate: (.data.certificate + "\n" + .data.issuing_ca)}' > /tmp/signed.json
+                curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/optcp-pki-int/intermediate/set-signed" --data @/tmp/signed.json >/dev/null
+                rm -f /tmp/sign.json /tmp/signed.json
+                echo "optcp-pki-int signed by optcp-pki"
+              fi
+              certs=$(curl -fsS "$VAULT_ADDR/v1/optcp-pki-int/cert/ca_chain" | jq -r .data.certificate | grep -c 'BEGIN CERTIFICATE')
+              echo "optcp-pki-int chain: $certs certificates"
+              curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/auth/token/revoke-self" >/dev/null || true
+              [ "$certs" -eq 2 ]
+          env:
+            - name: VAULT_ADDR
+              value: http://openbao.optcp-secrets.svc.cluster.local:8200
+            - name: VAULT_ROLE
+              value: pki-intermediate
+            - name: HOME
+              value: /tmp
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 64Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 1Mi

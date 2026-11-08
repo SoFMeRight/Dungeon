@@ -58,6 +58,14 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
+    # pki-intermediate (one-off) has optcp-pki sign optcp-pki-int's intermediate.
+    - fromEndpoints:
+        - matchLabels:
+            app: pki-intermediate
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
     - fromEntities:
         - host
         - remote-node

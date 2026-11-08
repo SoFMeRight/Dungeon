@@ -319,6 +319,29 @@ spec:
           path "sys/storage/raft/snapshot" {
             capabilities = ["read"]
           }
+      # pki-intermediate (one-off): has optcp-pki's root sign optcp-pki-int's intermediate,
+      # which bank-vaults cannot chain itself. Removed once run.
+      - name: pki-intermediate
+        rules: |
+          path "optcp-pki-int/issuers" {
+            capabilities = ["list"]
+          }
+          path "optcp-pki-int/intermediate/generate/internal" {
+            capabilities = ["create", "update"]
+          }
+          path "optcp-pki/root/sign-intermediate" {
+            capabilities = ["create", "update"]
+          }
+          path "optcp-pki-int/intermediate/set-signed" {
+            capabilities = ["create", "update"]
+          }
+      # cert-manager signs wazuh's certificate requests, through the Vault Issuer in
+      # optcp-siem, with the wazuh role and nothing else.
+      - name: cert-manager-wazuh
+        rules: |
+          path "optcp-pki-int/sign/wazuh" {
+            capabilities = ["create", "update"]
+          }
     auth:
       - type: kubernetes
         config:
@@ -430,6 +453,19 @@ spec:
             bound_service_account_namespaces: ["optcp-delivery-bag"]
             policies: ["stalwart-configuration"]
             ttl: 1h
+          - name: pki-intermediate
+            bound_service_account_names: ["pki-intermediate"]
+            bound_service_account_namespaces: ["optcp-secrets"]
+            policies: ["pki-intermediate"]
+            ttl: 1h
+          # cert-manager logs in as optcp-siem's wazuh-pki ServiceAccount with a token it
+          # requests for the Issuer, whose audience is always vault://<namespace>/<issuer>.
+          - name: cert-manager-wazuh
+            bound_service_account_names: ["wazuh-pki"]
+            bound_service_account_namespaces: ["optcp-siem"]
+            audience: "vault://optcp-siem/optcp-pki"
+            policies: ["cert-manager-wazuh"]
+            ttl: 10m
       - type: oidc
         config:
           oidc_discovery_url: https://sso.optcp.com
@@ -645,3 +681,62 @@ spec:
               type: "ecdsa-p256"
               exportable: "false"
               allow_plaintext_backup: "false"
+      # optcp's X.509 root CA, the same custody model as optcp-ssh: the key is generated
+      # once inside OpenBao and never leaves. It signs only optcp-pki-int's intermediate,
+      # never a leaf. Its certificate, served unauthenticated at /v1/optcp-pki/ca/pem, is
+      # committed at ansible/files/optcp-pki-ca.pem and is what optcp clients trust, so a
+      # workload's namespace can be moved or rebuilt without touching its clients.
+      - path: optcp-pki
+        type: pki
+        description: optcp root certificate authority
+        config:
+          max_lease_ttl: 175200h
+        configuration:
+          root/generate:
+            - name: internal
+              common_name: optcp Root CA
+              issuer_name: optcp-root
+              key_type: ec
+              key_bits: 384
+              ttl: 175200h
+              # bank-vaults skips the generate once /v1/optcp-pki/ca answers; without it
+              # every reconcile would mint a new root.
+              create_only: "true"
+          config:
+            - name: urls
+              issuing_certificates: ["https://secrets.optcp.com/v1/optcp-pki/ca"]
+              crl_distribution_points: ["https://secrets.optcp.com/v1/optcp-pki/crl"]
+      # optcp's issuing CA, signed by optcp-pki's root through the one-off pki-intermediate
+      # Job. cert-manager signs workload certificates here through a Vault Issuer in the
+      # workload's namespace; roles are named for the workload.
+      - path: optcp-pki-int
+        type: pki
+        description: optcp issuing certificate authority
+        config:
+          max_lease_ttl: 87600h
+        configuration:
+          config:
+            - name: urls
+              issuing_certificates: ["https://secrets.optcp.com/v1/optcp-pki-int/ca"]
+              crl_distribution_points: ["https://secrets.optcp.com/v1/optcp-pki-int/crl"]
+          roles:
+            # wazuh's indexer, manager, dashboard and securityadmin certificates. The
+            # subject fields reproduce the DNs the indexer matches in nodes_dn / admin_dn;
+            # OpenBao takes them from the role, never from the request.
+            - name: wazuh
+              allowed_domains: ["admin", "wazuh-indexer", "wazuh-manager", "wazuh-dashboard", "wazuh-manager.prplanit.com", "localhost"]
+              allow_bare_domains: true
+              allow_subdomains: false
+              allow_localhost: true
+              allow_ip_sans: true
+              server_flag: true
+              client_flag: true
+              key_type: ec
+              key_bits: 384
+              key_usage: ["DigitalSignature"]
+              organization: ["Wazuh"]
+              ou: ["Wazuh"]
+              locality: ["California"]
+              country: ["US"]
+              ttl: 8760h
+              max_ttl: 8760h

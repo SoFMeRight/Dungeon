@@ -1,0 +1,20 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-pki-intermediate-egress
+spec:
+  description: The one-off pki-intermediate Job reaching OpenBao, nothing else.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: pki-intermediate
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app: vault
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
