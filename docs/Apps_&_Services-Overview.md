@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 130 healthy
+✅ 131 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -197,7 +197,7 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Netalertx | ❓ | 🏠 hosts.optcp.com | [open](https://hosts.optcp.com) |
+| Netalertx | ✅ | 🏠 hosts.optcp.com | [open](https://hosts.optcp.com) |
 
 ### Public Apps (Temple of Time🕰️)
 
@@ -955,7 +955,7 @@
 
 **Netalertx** — StatefulSet — 26.10.28
 - Namespace: optcp-telemetry
-- Replicas: 0/0
+- Replicas: 1/1
 - Hosts: hosts.optcp.com, hosts.pcfae.com, hosts.private.optcp.com
 
 **Navidrome** — Deployment — 0.64.2
