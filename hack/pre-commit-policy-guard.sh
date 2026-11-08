@@ -14,7 +14,16 @@ if [ "${SKIP_GENERATED_POLICY_GUARD:-}" = "1" ]; then
   exit 0
 fi
 
-IMAGE="docker.io/prplanit/polysieve:v0.0.3"
+IMAGE="docker.io/prplanit/polysieve:v0.1.0"
+
+# The repo's own label model; everything else PolySieve derives from the repo.
+POLYSIEVE_ARGS=(
+  --ingress-label policy.prplanit.com/ingress
+  --probe-label policy.prplanit.com/probe
+  --gateway-selector policy.prplanit.com/client-class=ingress-gateway
+  --gateway-instance-label policy.prplanit.com/ingress-instance
+  --gateway-pod-selector policy.prplanit.com/client-class=ingress-gateway
+)
 
 if ! command -v docker >/dev/null 2>&1; then
   echo "policy guard: docker unavailable — skipping (install docker to enable the PolySieve check)"
@@ -33,7 +42,7 @@ if [ -f "$kube_conf" ]; then
 fi
 
 if docker run --rm "${user_args[@]}" "${kube_args[@]}" -v "$PWD:/repo" -w /repo "$IMAGE" \
-    check --profile dungeon --cluster; then
+    check --cluster "${POLYSIEVE_ARGS[@]}"; then
   exit 0
 fi
 
@@ -46,7 +55,7 @@ Regenerate it, review the diff, stage the intended changes, and commit again
   docker run --rm --network host \\
     --user "\$(id -u):\$(id -g)" -e HOME=/tmp \\
     -v "\$HOME/.kube/config:/tmp/kubeconfig:ro" -e KUBECONFIG=/tmp/kubeconfig \\
-    -v "\$PWD:/repo" -w /repo $IMAGE generate --profile dungeon --cluster
+    -v "\$PWD:/repo" -w /repo $IMAGE generate --cluster ${POLYSIEVE_ARGS[*]}
 
 Override:
   SKIP_GENERATED_POLICY_GUARD=1 git commit ...

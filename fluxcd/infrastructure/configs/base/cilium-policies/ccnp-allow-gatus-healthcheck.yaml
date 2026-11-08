@@ -1,6 +1,5 @@
 # DERIVED: resolved pod targetPorts from Gatus-annotated services and probe-labelled pods.
 # Inputs: Gatus annotations → Services (targetPort resolution) → probe-labelled pod containerPorts
-# Source of truth: hack/gen-cilium-backend-ports.sh
 # Regenerate; do not hand-edit.
 apiVersion: "cilium.io/v2"
 kind: CiliumClusterwideNetworkPolicy
@@ -8,8 +7,7 @@ metadata:
   name: allow-gatus-healthcheck
 spec:
   description: >-
-    Allows Gatus health checker to reach probe-labelled endpoints.
-    Gatus runs in gossip-stone namespace and probes service health
+    Allows the health prober to reach probe-labelled endpoints
     across the cluster on application and infrastructure ports.
   enableDefaultDeny:
     egress: false
@@ -20,7 +18,7 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: gossip-stone
+            k8s:io.kubernetes.pod.namespace: optcp-gossip-stone
             app.kubernetes.io/name: gatus
       toPorts:
         - ports:
