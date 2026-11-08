@@ -33,9 +33,6 @@ spec:
             k8s:io.kubernetes.pod.namespace: optcp-secrets
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: temple-of-time
-            policy.prplanit.com/cap.oidc: "true"
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: outspokekin-delivery-bag
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:

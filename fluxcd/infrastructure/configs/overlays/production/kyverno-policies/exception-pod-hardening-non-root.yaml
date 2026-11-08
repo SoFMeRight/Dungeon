@@ -110,15 +110,11 @@ spec:
             - "pyload-ng-*"
             - "sabnzbd-*"
             - "thelounge-*"
-      # temple-of-time — matrix-turn (STUNner dataplane;
+      # outspokekin-delivery-bag — matrix-turn (STUNner dataplane;
       # inherits root from the shared stunner-hardened Dataplane, which NetBird's :3478 requires.
       # This gateway listens on 3479 and would run unprivileged, but the Dataplane is
       # cluster-scoped and one spec serves every gateway. Otherwise fully hardened by that CR:
       # RO-rootfs, no-privesc, drop-all-caps + NET_BIND_SERVICE.)
-      - resources:
-          kinds: [Pod]
-          namespaces: [temple-of-time]
-          names: ["matrix-turn-*"]
       - resources:
           kinds: [Pod]
           namespaces: [outspokekin-delivery-bag]

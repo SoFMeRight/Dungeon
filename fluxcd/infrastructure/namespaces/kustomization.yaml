@@ -4,7 +4,6 @@ resources:
   - gossip-stone.yaml
   - kai-personal.yaml
   - kai-private.yaml
-  - temple-of-time.yaml
   - optcp-address-sync.yaml
   - optcp-ai.yaml
   - optcp-app-directory.yaml

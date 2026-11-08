@@ -10,7 +10,7 @@ spec:
         any:
           - resources:
               kinds: [Deployment]
-              namespaces: ["swift-sail", "optcp-remote-access", "temple-of-time", "outspokekin-delivery-bag"]
+              namespaces: ["swift-sail", "optcp-remote-access", "outspokekin-delivery-bag"]
               selector:
                 matchLabels:
                   stunner.l7mp.io/owned-by: stunner

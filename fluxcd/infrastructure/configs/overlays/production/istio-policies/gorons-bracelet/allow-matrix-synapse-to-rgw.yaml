@@ -11,7 +11,6 @@ spec:
     - from:
         - source:
             principals:
-              - "cluster.local/ns/temple-of-time/sa/matrix-synapse"
               - "cluster.local/ns/outspokekin-delivery-bag/sa/matrix-synapse"
       to:
         - operation:

@@ -105,8 +105,6 @@ spec:
             - optcp-identity
             # Credential vaults: vaultwarden, twofauth (namespace plan, group AH)
             - optcp-keyring
-            # Archival/Content Management & Media Servers
-            - temple-of-time
             # Cloud & collaboration (namespace plan rev1, group Y/Z)
             - optcp-cloud
             # Staff suite (namespace plan, group AO)

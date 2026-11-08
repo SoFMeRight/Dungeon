@@ -39,7 +39,6 @@ resources:
   - optcp-remote-access
   # Batch 5 — Most complex
   - hyrule-castle
-  - temple-of-time
   - optcp-ci-runners
   - optcp-cloud
   - optcp-delivery-bag
