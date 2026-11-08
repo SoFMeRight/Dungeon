@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-gossip-stone
+resources:
+  - cnp-default-deny-ingress.yaml
+  - cnp-monitoring-lb.yaml
+  - cnp-victoria-metrics.yaml
+  - cnp-alertmanager.yaml
+  - cnp-vmauth.yaml
+  - cnp-loki.yaml
+  - cnp-kube-state-metrics.yaml
+  # Egress allows (inert until egress default-deny is enabled for the namespace).
+  # The in-cluster apps (VM cluster, loki, grafana datasources, DBs) ride the mesh/apiserver baseline.
+  - cnp-egress-nutify.yaml
+  - cnp-egress-uptime-kuma.yaml
+  - cnp-egress-speedtest-tracker.yaml
+  - cnp-egress-beszel.yaml
+  - cnp-egress-grafana.yaml
+  - cnp-egress-gatus.yaml
+  - cnp-grafana-alerting-gossip.yaml
+  - cnp-ntfy-smtp.yaml
+  - cnp-grafana-to-ntfy.yaml
+  - cnp-alertmanager-to-ntfy.yaml
+  - cnp-gatus-to-ntfy.yaml
+  - cnp-frigate-to-ntfy.yaml
+  - cnp-dependency-track-to-ntfy.yaml

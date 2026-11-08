@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-crowdsec-to-loki
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: single-binary
+      app.kubernetes.io/name: loki
+  action: ALLOW
+  rules:
+    # CrowdSec engine reads logs from Loki's HTTP API on port 3100
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/lens-of-truth/sa/crowdsec
+      to:
+        - operation:
+            ports: ["3100"]

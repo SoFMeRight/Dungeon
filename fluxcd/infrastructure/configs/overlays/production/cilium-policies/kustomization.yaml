@@ -36,6 +36,7 @@ resources:
   # Batch 4 — Heavy
   - gorons-bracelet
   - gossip-stone
+  - optcp-gossip-stone
   - optcp-remote-access
   # Batch 5 — Most complex
   - hyrule-castle

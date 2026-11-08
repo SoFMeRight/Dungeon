@@ -84,6 +84,9 @@ spec:
             k8s:io.kubernetes.pod.namespace: gossip-stone
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-gossip-stone
+            policy.prplanit.com/cap.oidc: "true"
+        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-management-dashboards
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:

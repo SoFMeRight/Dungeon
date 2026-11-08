@@ -12,6 +12,7 @@ spec:
         - source:
             principals:
               - "cluster.local/ns/gossip-stone/sa/loki"
+              - "cluster.local/ns/optcp-gossip-stone/sa/loki"
       to:
         - operation:
             ports: ["8080"]

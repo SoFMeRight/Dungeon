@@ -12,6 +12,7 @@ spec:
         - source:
             principals:
               - cluster.local/ns/gossip-stone/sa/gatus
+              - cluster.local/ns/optcp-gossip-stone/sa/gatus
       to:
         - operation:
             ports: ["55000"]

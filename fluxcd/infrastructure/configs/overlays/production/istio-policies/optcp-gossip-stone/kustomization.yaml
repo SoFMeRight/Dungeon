@@ -1,0 +1,40 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-gossip-stone
+resources:
+  - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml
+  - allow-gatus-to-gatus-postgres.yaml
+  - allow-grafana-to-grafana-postgres.yaml
+  - allow-grafana-to-vmselect.yaml
+  - allow-vmalert-to-vmselect.yaml
+  - allow-vmalert-to-vminsert.yaml
+  - allow-vmalert-to-alertmanager.yaml
+  - allow-alertmanager-cluster-gossip.yaml
+  - allow-grafana-to-alertmanager.yaml
+  - allow-gatus-to-vmalert.yaml
+  - allow-gatus-to-alertmanager.yaml
+  - allow-vmauth-to-vmselect.yaml
+  - allow-freelens-to-vmauth.yaml
+  - allow-grafana-to-loki.yaml
+  - allow-speedtest-tracker-to-speedtest-tracker-postgres.yaml
+  - allow-vminsert-to-vmstorage.yaml
+  - allow-alloy-to-loki.yaml
+  - allow-alloy-syslog-to-loki.yaml
+  - allow-alloy-to-vminsert.yaml
+  - allow-nutify-loadbalancer.yaml
+  - allow-grafana-postgres-replication.yaml
+  - allow-gatus-postgres-replication.yaml
+  - allow-loki-intra-cluster.yaml
+  - allow-vmstorage-intra-cluster.yaml
+  - allow-gateway-ingress-xylem.yaml
+  - allow-gateway-ingress-phloem.yaml
+  - allow-crowdsec-to-loki.yaml
+  - allow-gateway-ingress-cell-membrane.yaml
+  - allow-grafana-alerting-gossip.yaml
+  - allow-ntfy-smtp-loadbalancer.yaml
+  - allow-grafana-to-ntfy.yaml
+  - allow-alertmanager-to-ntfy.yaml
+  - allow-gatus-to-ntfy.yaml
+  - allow-frigate-to-ntfy.yaml
+  - allow-dependency-track-to-ntfy.yaml

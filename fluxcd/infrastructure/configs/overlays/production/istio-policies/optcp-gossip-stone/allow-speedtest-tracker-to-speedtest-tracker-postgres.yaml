@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-speedtest-tracker-to-speedtest-tracker-postgres
+spec:
+  selector:
+    matchLabels:
+      app: speedtest-tracker-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-gossip-stone/sa/speedtest-tracker
+      to:
+        - operation:
+            ports: ["5432"]

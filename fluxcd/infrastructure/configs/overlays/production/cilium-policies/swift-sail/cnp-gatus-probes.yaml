@@ -16,6 +16,9 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: gossip-stone
             app.kubernetes.io/name: gatus
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-gossip-stone
+            app.kubernetes.io/name: gatus
       toPorts:
         - ports:
             - port: "8945"

@@ -25,6 +25,7 @@ spec:
                 - gorons-bracelet
                 - optcp-operators-baseline
                 - gossip-stone
+                - optcp-gossip-stone
                 - optcp-remote-access
                 - hyrule-castle
                 - king-of-red-lions
@@ -111,6 +112,7 @@ spec:
                 - gorons-bracelet
                 - optcp-operators-baseline
                 - gossip-stone
+                - optcp-gossip-stone
                 - optcp-remote-access
                 - hyrule-castle
                 - king-of-red-lions
@@ -197,6 +199,7 @@ spec:
                 - gorons-bracelet
                 - optcp-operators-baseline
                 - gossip-stone
+                - optcp-gossip-stone
                 - optcp-remote-access
                 - hyrule-castle
                 - king-of-red-lions

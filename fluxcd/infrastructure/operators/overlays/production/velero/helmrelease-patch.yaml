@@ -115,6 +115,7 @@ spec:
             - optcp-app-directory
             # Monitoring services
             - gossip-stone
+            - optcp-gossip-stone
             - optcp-management-dashboards
             - optcp-monitoring-agents
             # IDS/IPS/SIEM security monitoring

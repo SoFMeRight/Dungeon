@@ -1,0 +1,32 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-alloy-to-loki
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: single-binary
+      app.kubernetes.io/name: loki
+  action: ALLOW
+  rules:
+    # Alloy DaemonSet runs with hostNetwork=true, so it has no mTLS
+    # identity in ambient mesh. Traffic originates from node IPs.
+    # In-cluster Alloy writes directly to loki:3100 bypassing the gateway.
+    - from:
+        - source:
+            ipBlocks:
+              # dungeon-map-001 through 005
+              - "172.22.144.150/32"
+              - "172.22.144.151/32"
+              - "172.22.144.152/32"
+              - "172.22.144.153/32"
+              - "172.22.144.154/32"
+              # dungeon-chest-001 through 005
+              - "172.22.144.170/32"
+              - "172.22.144.171/32"
+              - "172.22.144.172/32"
+              - "172.22.144.173/32"
+              - "172.22.144.174/32"
+      to:
+        - operation:
+            ports: ["3100"]

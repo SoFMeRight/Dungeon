@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-grafana-to-grafana-postgres
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: grafana-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-gossip-stone/sa/grafana
+      to:
+        - operation:
+            ports: ["5432"]

@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-grafana-postgres-replication
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: grafana-postgres
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-gossip-stone/sa/grafana-postgres
+      to:
+        - operation:
+            # 5432: streaming replication; 8000: instance-manager peer /failsafe (CNPG >=1.30)
+            ports: ["5432", "8000"]

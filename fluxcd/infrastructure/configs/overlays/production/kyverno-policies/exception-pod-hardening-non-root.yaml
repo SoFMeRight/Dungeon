@@ -24,7 +24,7 @@ spec:
       # gossip-stone — nutify (UPS, needs device) + speedtest-tracker (LSIO s6)
       - resources:
           kinds: [Pod]
-          namespaces: [gossip-stone]
+          namespaces: [gossip-stone, optcp-gossip-stone]
           names: ["nutify-*", "speedtest-tracker-*"]
       # bagisto (root-start chown), invoiceninja apache-root
       - resources:
