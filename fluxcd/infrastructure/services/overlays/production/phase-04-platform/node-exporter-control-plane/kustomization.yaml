@@ -12,7 +12,7 @@ patches:
       kind: ServiceAccount
       metadata:
         name: node-exporter
-        namespace: lakitu
+        namespace: optcp-telemetry
   - target:
       kind: DaemonSet
       name: node-exporter

@@ -22,7 +22,7 @@ resources:
   - loki  # Loki S3 credentials for log storage
   - loki-ingest  # Loki gateway basic auth for external ingest
   - vminsert-ingest  # VictoriaMetrics vminsert basic auth for external ingest
-  - alloy-ingest  # Alloy vminsert auth credentials (lakitu namespace)
+  - alloy-ingest  # Alloy vminsert auth credentials (optcp-telemetry namespace)
   - prometheus  # Prometheus S3 credentials for metric storage
   - prometheus-exporter-eaton-ups  # Eaton UPS exporter credentials
   - prometheus-exporter-pve  # Proxmox VE exporter credentials

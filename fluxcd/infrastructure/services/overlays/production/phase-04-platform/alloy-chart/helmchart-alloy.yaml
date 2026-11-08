@@ -1,5 +1,5 @@
 # Shared by the alloy and alloy-control-plane HelmReleases; bump the version here only.
-# Outside alloy/ (namespace: lakitu): a HelmChart must sit in its HelmRepository's namespace.
+# Outside alloy/ (namespace: optcp-telemetry): a HelmChart must sit in its HelmRepository's namespace.
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmChart
 metadata:

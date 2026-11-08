@@ -5,4 +5,4 @@ metadata:
   annotations:
     # Shares the host-telemetry address with netconsole-collector (6666/udp).
     lbipam.cilium.io/ips: "172.22.30.240"
-    lbipam.cilium.io/sharing-key: "lakitu"
+    lbipam.cilium.io/sharing-key: "optcp-telemetry"

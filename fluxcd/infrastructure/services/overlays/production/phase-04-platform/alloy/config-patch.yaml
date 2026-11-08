@@ -220,7 +220,7 @@ data:
     // NODE-LOCAL METRICS (no clustering - each DaemonSet pod scrapes its own node)
     // ==========================================================================
 
-    // Node metrics come from the dedicated node-exporter DaemonSet (lakitu),
+    // Node metrics come from the dedicated node-exporter DaemonSet (optcp-telemetry),
     // which — unlike Alloy's built-in unix exporter — sees the host filesystems
     // (host / mounted read-only) and is a standard, well-audited exporter.
     //
