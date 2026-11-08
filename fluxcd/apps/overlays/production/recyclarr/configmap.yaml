@@ -27,7 +27,7 @@ data:
 
     radarr:
       movies:
-        base_url: http://downloadarrs.swift-sail.svc.cluster.local:7878
+        base_url: http://downloadarrs.optcp-swift-sail-privileged.svc.cluster.local:7878
         api_key: !env_var RADARR_API_KEY
         quality_profiles:
           # TRaSH "UHD Bluray + WEB" base (keeps all the UHD custom-format prefs: DV/HDR,
@@ -58,7 +58,7 @@ data:
 
     sonarr:
       tv:
-        base_url: http://downloadarrs.swift-sail.svc.cluster.local:8989
+        base_url: http://downloadarrs.optcp-swift-sail-privileged.svc.cluster.local:8989
         api_key: !env_var SONARR_API_KEY
         quality_profiles:
           # General TV — WEB-2160p base (keeps CF-compatibility + HDR/audio/codec scoring),

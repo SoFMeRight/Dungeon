@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: anirra-config
 data:
-  sonarr-url: "http://sonarr.swift-sail.svc.cluster.local:8989"
-  radarr-url: "http://radarr.swift-sail.svc.cluster.local:7878"
+  sonarr-url: "http://downloadarrs.optcp-swift-sail-privileged.svc.cluster.local:8989"
+  radarr-url: "http://downloadarrs.optcp-swift-sail-privileged.svc.cluster.local:7878"

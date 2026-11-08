@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: swift-sail
+namespace: optcp-swift-sail-privileged
 resources:
   - ../../../base/downloadarrs
   - httproutes.yaml

@@ -14,7 +14,7 @@ spec:
     group: "stunner.l7mp.io"
     kind: GatewayConfig
     name: stunner-gatewayconfig
-    namespace: swift-sail
+    namespace: optcp-swift-sail-privileged
   description: "STUNner WebRTC gateway for neko-vpn"
 
 ---

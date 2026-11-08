@@ -25,7 +25,7 @@ spec:
       source: "//gringotts/timecapsule/Media/TV_Shows/Automated-Seeding"
     nodeStageSecretRef:
       name: qbittorrent-smb-secret
-      namespace: swift-sail
+      namespace: optcp-swift-sail-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -65,7 +65,7 @@ spec:
       source: "//gringotts/timecapsule/Media/Movies/2D-Automated-Seeding"
     nodeStageSecretRef:
       name: qbittorrent-smb-secret
-      namespace: swift-sail
+      namespace: optcp-swift-sail-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -105,7 +105,7 @@ spec:
       source: "//gringotts/timecapsule/Media/Download/__qbittorrent"
     nodeStageSecretRef:
       name: qbittorrent-smb-secret
-      namespace: swift-sail
+      namespace: optcp-swift-sail-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -145,7 +145,7 @@ spec:
       source: "//gringotts/timecapsule/Media/Movies"
     nodeStageSecretRef:
       name: radarr-smb-secret
-      namespace: swift-sail
+      namespace: optcp-swift-sail-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -185,7 +185,7 @@ spec:
       source: "//gringotts/timecapsule/Media/TV_Shows"
     nodeStageSecretRef:
       name: sonarr-smb-secret
-      namespace: swift-sail
+      namespace: optcp-swift-sail-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -225,7 +225,7 @@ spec:
       source: "//gringotts/timecapsule/Media/Music"
     nodeStageSecretRef:
       name: lidarr-smb-secret
-      namespace: swift-sail
+      namespace: optcp-swift-sail-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -265,7 +265,7 @@ spec:
       source: "//gringotts/timecapsule/Media/Books"
     nodeStageSecretRef:
       name: readarr-smb-secret
-      namespace: swift-sail
+      namespace: optcp-swift-sail-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

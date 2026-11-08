@@ -56,7 +56,7 @@ spec:
               cat > /config/config.js << CONFIGEOF
               module.exports = {
                 delay: 30,
-                torznab: ["http://prowlarr.swift-sail.svc.cluster.local:9696/1/api?apikey=$PROWLARR_API_KEY"],
+                torznab: ["http://prowlarr.optcp-swift-sail-privileged.svc.cluster.local:9696/1/api?apikey=$PROWLARR_API_KEY"],
                 torrentClients: ["qbittorrent:http://$QBITTORRENT_USERNAME:$QBITTORRENT_PASSWORD@localhost:6887"],
                 port: 2468,
                 host: "0.0.0.0",
