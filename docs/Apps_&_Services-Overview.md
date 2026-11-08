@@ -6,7 +6,7 @@
 
 ## Apps & Services (132)
 
-✅ 132 healthy
+✅ 131 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -161,7 +161,7 @@
 | --- | --- | --- | --- |
 | Alertmanager | ✅ | 🏠 |  |
 | Beszel | ✅ | 🏠 beszel.pcfae.com | [open](https://beszel.pcfae.com) |
-| Gatus | ✅ | 🏠 status.pcfae.com | [open](https://status.pcfae.com) |
+| Gatus | ❓ | 🏠 status.pcfae.com | [open](https://status.pcfae.com) |
 | Grafana | ✅ | 🏠 grafana.pcfae.com | [open](https://grafana.pcfae.com) |
 | Headlamp | ✅ | 🏠 headlamp.pcfae.com | [open](https://headlamp.pcfae.com) |
 | Loki (3 components) | ✅ | 🏠 logging.pcfae.com | [open](https://logging.pcfae.com) |
@@ -811,26 +811,26 @@
   - stalwart-sentinel-sentinel (StatefulSet, cache)
 
 **Ntfy** — StatefulSet — v2.37.2
-- Namespace: delivery-bag
+- Namespace: optcp-gossip-stone
 - Replicas: 1/1
 - Hosts: ntfy.pcfae.com, ntfy.prplanit.com
 
 **Alertmanager** — StatefulSet — v0.28.1
-- Namespace: gossip-stone
+- Namespace: optcp-gossip-stone
 - Replicas: 2/2
 
 **Beszel** — StatefulSet — 0.21.1
-- Namespace: gossip-stone
+- Namespace: optcp-gossip-stone
 - Replicas: 1/1
 - Hosts: beszel.pcfae.com
 
 **Gatus** — Deployment — 
-- Namespace: gossip-stone
-- Replicas: 1/1
+- Namespace: optcp-gossip-stone
+- Replicas: 0/0
 - Hosts: status.pcfae.com, status.sofmeright.com
 
 **Grafana** — Deployment — 12.4.14
-- Namespace: gossip-stone
+- Namespace: optcp-gossip-stone
 - Replicas: 3/3
 - Hosts: grafana.pcfae.com
 
@@ -840,7 +840,7 @@
 - Hosts: headlamp.pcfae.com
 
 **Loki — 3 components** — Mixed — 
-- Namespace: gossip-stone
+- Namespace: optcp-gossip-stone
 - Replicas: 11/11
 - Hosts: logging.pcfae.com
 - Components:
@@ -849,7 +849,7 @@
   - loki-canary (DaemonSet)
 
 **Nutify** — StatefulSet — 
-- Namespace: gossip-stone
+- Namespace: optcp-gossip-stone
 - Replicas: 1/1
 - Hosts: nut.pcfae.com
 
@@ -861,7 +861,7 @@
   - prometheus-exporter-pve (Deployment)
 
 **Speedtest — 2 components** — StatefulSet — 
-- Namespace: gossip-stone
+- Namespace: optcp-gossip-stone
 - Replicas: 2/2
 - Hosts: isptest.pcfae.com
 - Components:
@@ -874,16 +874,16 @@
 - Hosts: analytics.prplanit.com
 
 **Uptime Kuma** — StatefulSet — 2.5.8
-- Namespace: gossip-stone
+- Namespace: optcp-gossip-stone
 - Replicas: 1/1
 - Hosts: uptime.pcfae.com, uptime.sofmeright.com
 
 **Vmalert** — Deployment — v1.97.1
-- Namespace: gossip-stone
+- Namespace: optcp-gossip-stone
 - Replicas: 2/2
 
 **Vminsert** — Deployment — v1.97.1-cluster
-- Namespace: gossip-stone
+- Namespace: optcp-gossip-stone
 - Replicas: 2/2
 - Hosts: metrics.pcfae.com
 
@@ -1136,19 +1136,15 @@
 
 </details>
 
-## Platform Components (39)
+## Platform Components (35)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
 | Alloy | lakitu | ✅ |
 | Alloy | lakitu | ✅ |
 | Alloy Syslog | lakitu | ✅ |
-| Kube State Metrics | gossip-stone | ✅ |
 | Netconsole Collector | lakitu | ✅ |
 | Node (2 components) | lakitu | ✅ |
-| Vmauth | gossip-stone | ✅ |
-| Vmselect | gossip-stone | ✅ |
-| Vmstorage | gossip-stone | ✅ |
 | Cilium Agent | kube-system | ✅ |
 | Cilium Envoy | kube-system | ✅ |
 | Cilium Operator | kube-system | ✅ |
@@ -1195,10 +1191,6 @@
 - Namespace: lakitu
 - Replicas: 2/2
 
-**Kube State Metrics** — Deployment — v2.20.0
-- Namespace: gossip-stone
-- Replicas: 1/1
-
 **Netconsole Collector** — Deployment — 1.8.1.3
 - Namespace: lakitu
 - Replicas: 1/1
@@ -1206,18 +1198,6 @@
 **Node** — DaemonSet — v1.9.1
 - Namespace: lakitu
 - Replicas: 10/10
-
-**Vmauth** — Deployment — v1.97.1
-- Namespace: gossip-stone
-- Replicas: 2/2
-
-**Vmselect** — Deployment — v1.97.1-cluster
-- Namespace: gossip-stone
-- Replicas: 2/2
-
-**Vmstorage** — StatefulSet — v1.97.1-cluster
-- Namespace: gossip-stone
-- Replicas: 3/3
 
 **Cilium Agent** — DaemonSet — 
 - Namespace: kube-system
@@ -1341,7 +1321,7 @@
 
 </details>
 
-## Unclassified (27)
+## Unclassified (31)
 
 Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
 
@@ -1357,6 +1337,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | External Secrets | optcp-secrets | ✅ |
 | Faster Whisper | optcp-ai | ✅ |
 | Gitlab Runner | optcp-ci-runners | ✅ |
+| Kube State Metrics | optcp-gossip-stone | ✅ |
 | Mariadb | prplanit-support | ✅ |
 | Mosquitto | arbitorium-home | ✅ |
 | Netbird Router Dungeon | optcp-vpn | ✅ |
@@ -1373,6 +1354,9 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Valheim | optcp-shooting-gallery | ✅ |
 | Vault Configurator | optcp-secrets | ✅ |
 | Velero | optcp-fairy-bottle | ✅ |
+| Vmauth | optcp-gossip-stone | ✅ |
+| Vmselect | optcp-gossip-stone | ✅ |
+| Vmstorage | optcp-gossip-stone | ✅ |
 | Xylem Ingress Gateway Istio | kai-ingress-private | ✅ |
 
 <details>
