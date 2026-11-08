@@ -12,7 +12,6 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/lakitu/sa/alloy-syslog
               - cluster.local/ns/optcp-telemetry/sa/alloy-syslog
       to:
         - operation:

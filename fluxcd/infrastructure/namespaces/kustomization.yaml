@@ -50,7 +50,6 @@ resources:
   - king-of-red-lions.yaml
   - lens-of-truth.yaml
   - optcp-remote-access.yaml
-  - lakitu.yaml
   - mr-resetti.yaml
   - training-dummy.yaml
   - arbitorium-game-streaming.yaml

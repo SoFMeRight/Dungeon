@@ -1,9 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-namespace: lakitu
-resources:
-  - ../../../../base/istio-policies
-  - allow-gateway-ingress-xylem.yaml
-  - allow-gateway-ingress-phloem.yaml
-  - allow-intra-breakglass.yaml
-  - allow-alloy-syslog-loadbalancer.yaml

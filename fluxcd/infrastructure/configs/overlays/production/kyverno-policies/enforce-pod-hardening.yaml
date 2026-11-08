@@ -100,7 +100,6 @@ spec:
                 - optcp-fairy-bottle
                 - king-of-red-lions
                 - optcp-operators-baseline
-                - lakitu
                 - optcp-telemetry
                 - optcp-ingress-internal
                 - kai-ingress-private
@@ -155,7 +154,6 @@ spec:
                 - optcp-fairy-bottle
                 - king-of-red-lions
                 - optcp-operators-baseline
-                - lakitu
                 - optcp-telemetry
                 - optcp-ingress-internal
                 - kai-ingress-private
@@ -199,7 +197,6 @@ spec:
                 - optcp-fairy-bottle
                 - king-of-red-lions
                 - optcp-operators-baseline
-                - lakitu
                 - optcp-telemetry
                 - optcp-ingress-internal
                 - kai-ingress-private
@@ -246,7 +243,6 @@ spec:
                 - optcp-fairy-bottle
                 - king-of-red-lions
                 - optcp-operators-baseline
-                - lakitu
                 - optcp-telemetry
                 - optcp-ingress-internal
                 - kai-ingress-private

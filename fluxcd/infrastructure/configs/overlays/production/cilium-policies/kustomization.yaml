@@ -65,5 +65,3 @@ resources:
   - prplanit-support
   - prplanit-web
   - yesimvegan-web
-  # lakitu: netconsole collector ingress only (no contract CNPs here)
-  - lakitu

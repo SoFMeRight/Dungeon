@@ -15,9 +15,6 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: lakitu
-            app: alloy-syslog
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-telemetry
             app: alloy-syslog
       toPorts:

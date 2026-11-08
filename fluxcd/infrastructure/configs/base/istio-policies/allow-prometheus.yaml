@@ -20,7 +20,6 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/lakitu/sa/alloy
               - cluster.local/ns/optcp-telemetry/sa/alloy
       to:
         - operation:
