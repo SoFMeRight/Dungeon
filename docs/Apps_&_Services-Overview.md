@@ -6,7 +6,7 @@
 
 ## Apps & Services (132)
 
-✅ 131 healthy · ⚠️ 1 degraded
+✅ 132 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -72,7 +72,7 @@
 | Kimai (2 components) | ✅ | 🏠 kimai.pcfae.com | [open](https://kimai.pcfae.com) |
 | Linkwarden (3 components) | ✅ | 🏠 bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
 | Mealie (2 components) | ✅ | 🏠 meals.yesimvegan.com | [open](https://meals.yesimvegan.com) |
-| Open (3 components) | ⚠️ | 🏠 ai.optcp.com | [open](https://ai.optcp.com) |
+| Open (3 components) | ✅ | 🏠 ai.optcp.com | [open](https://ai.optcp.com) |
 | Penpot (5 components) | ✅ | 🏠 design.pcfae.com | [open](https://design.pcfae.com) |
 | Photoprism (2 components) | ✅ | 🏠 photos.pcfae.com | [open](https://photos.pcfae.com) |
 | Plex | ✅ | 🔒 plex.optcp.com | [open](https://plex.optcp.com) |
@@ -544,7 +544,7 @@
 
 **Open — 3 components** — StatefulSet — 
 - Namespace: optcp-ai
-- Replicas: 7/9
+- Replicas: 9/9
 - Hosts: ai.optcp.com
 - Components:
   - open-webui (StatefulSet)
@@ -1058,8 +1058,8 @@
   - hubzilla-mariadb (StatefulSet, database)
 
 **Matrix — 8 components** — Mixed — 
-- Namespace: temple-of-time
-- Replicas: 13/13
+- Namespace: outspokekin-delivery-bag
+- Replicas: 10/10
 - Hosts: chat.outspokekin.com, livekit.outspokekin.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, outspokekin.com
 - Components:
   - matrix-auth (Deployment)
