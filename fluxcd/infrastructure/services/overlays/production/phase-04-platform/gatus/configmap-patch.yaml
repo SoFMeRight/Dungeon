@@ -20,7 +20,7 @@ data:
     # (vmalert, Alertmanager): Gatus is what notices when those are down.
     alerting:
       ntfy:
-        url: "http://ntfy.delivery-bag.svc.cluster.local"
+        url: "http://ntfy.optcp-gossip-stone.svc.cluster.local"
         topic: "Arbitorium-Prod-Alert"
         priority: 5
         token: "${NTFY_TOKEN}"

@@ -5,7 +5,7 @@ metadata:
 data:
   90-gitlab-loki.yaml: |
     source: loki
-    url: http://loki.gossip-stone.svc.cluster.local:3100
+    url: http://loki.optcp-gossip-stone.svc.cluster.local:3100
     limit: 1000
     query: |
       {namespace="optcp-supply-chain", container="webservice"} |~ "/users/sign_in|ldapmain/callback"

@@ -9,7 +9,7 @@ spec:
       policy.prplanit.com/ingress: "true"
       policy.prplanit.com/metrics: "true"
       policy.prplanit.com/cap.postgres: "true"
-      policy.prplanit.com/access-scope-postgres: gossip-stone.grafana.postgres
+      policy.prplanit.com/access-scope-postgres: optcp-gossip-stone.grafana.postgres
       # Grafana does server-side OIDC token/userinfo exchange with Zitadel
       # (sso.optcp.com) — needs the cell-membrane gateway hairpin allow.
       policy.prplanit.com/cap.oidc: "true"
@@ -48,7 +48,7 @@ spec:
         serve_from_sub_path: false
       database:
         type: postgres
-        host: grafana-postgres-rw.gossip-stone.svc.cluster.local:5432
+        host: grafana-postgres-rw.optcp-gossip-stone.svc.cluster.local:5432
         name: grafana
         ssl_mode: disable
       unified_alerting:
@@ -60,7 +60,7 @@ spec:
         # headless service enabled below.
         ha_listen_address: "${POD_IP}:9094"
         ha_advertise_address: "${POD_IP}:9094"
-        ha_peers: "grafana-headless.gossip-stone.svc.cluster.local:9094"
+        ha_peers: "grafana-headless.optcp-gossip-stone.svc.cluster.local:9094"
       # Zitadel SSO (generic OAuth). client_id/secret come from env
       # (GF_AUTH_GENERIC_OAUTH_CLIENT_ID/SECRET) so they stay out of values.
       auth.generic_oauth:
@@ -124,7 +124,7 @@ spec:
             uid: victoriametrics
             type: prometheus
             access: proxy
-            url: http://vmselect.gossip-stone.svc.cluster.local:8481/select/0/prometheus
+            url: http://vmselect.optcp-gossip-stone.svc.cluster.local:8481/select/0/prometheus
             isDefault: true
             editable: false
             jsonData:
@@ -134,7 +134,7 @@ spec:
             uid: loki
             type: loki
             access: proxy
-            url: http://loki.gossip-stone.svc.cluster.local:3100
+            url: http://loki.optcp-gossip-stone.svc.cluster.local:3100
             editable: false
             jsonData:
               maxLines: 1000
@@ -144,7 +144,7 @@ spec:
             uid: alertmanager
             type: alertmanager
             access: proxy
-            url: http://alertmanager.gossip-stone.svc.cluster.local:9093
+            url: http://alertmanager.optcp-gossip-stone.svc.cluster.local:9093
             editable: false
             jsonData:
               implementation: prometheus
@@ -224,7 +224,7 @@ spec:
     # Add RWX volume for shared plugins
     extraVolumes:
       - name: grafana-plugins-shared
-        existingClaim: gossip-stone-grafana-plugins
+        existingClaim: grafana-plugins
 
     extraVolumeMounts:
       - name: grafana-plugins-shared
@@ -264,7 +264,7 @@ spec:
                   #
                   # The braces are percent-encoded, so the chart's tpl pass never sees
                   # a template action here and nothing has to be escaped against it.
-                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Warn?tpl=yes\
+                  url: "http://ntfy.optcp-gossip-stone.svc.cluster.local/Arbitorium-Prod-Warn?tpl=yes\
                     &t=%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7B%28index+.alerts+0%29.annotations.resolved_title%7D%7D%7B%7Belse%7D%7D%7B%7B.groupLabels.alertname%7D%7D%7B%7Bend%7D%7D\
                     &m=%7B%7Brange+.alerts%7D%7D%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7Bif+.annotations.resolved%7D%7D%7B%7B.annotations.resolved%7D%7D%7B%7Belse%7D%7DBack+to+normal.%7B%7Bend%7D%7D%7B%7Belse%7D%7D%7B%7B.annotations.summary%7D%7D%7B%7Bend%7D%7D%0A%7B%7Bend%7D%7D\
                     &p=4"
@@ -296,7 +296,7 @@ spec:
                   #
                   # The braces are percent-encoded, so the chart's tpl pass never sees
                   # a template action here and nothing has to be escaped against it.
-                  url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Alert?tpl=yes\
+                  url: "http://ntfy.optcp-gossip-stone.svc.cluster.local/Arbitorium-Prod-Alert?tpl=yes\
                     &t=%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7B%28index+.alerts+0%29.annotations.resolved_title%7D%7D%7B%7Belse%7D%7D%7B%7B.groupLabels.alertname%7D%7D%7B%7Bend%7D%7D\
                     &m=%7B%7Brange+.alerts%7D%7D%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7Bif+.annotations.resolved%7D%7D%7B%7B.annotations.resolved%7D%7D%7B%7Belse%7D%7DBack+to+normal.%7B%7Bend%7D%7D%7B%7Belse%7D%7D%7B%7B.annotations.summary%7D%7D%7B%7Bend%7D%7D%0A%7B%7Bend%7D%7D\
                     &p=5"

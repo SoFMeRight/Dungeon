@@ -13,7 +13,7 @@ data:
   # acquired and then silently unparsed.
   30-istio-loki.yaml: |
     source: loki
-    url: http://loki.gossip-stone.svc.cluster.local:3100
+    url: http://loki.optcp-gossip-stone.svc.cluster.local:3100
     limit: 1000
     query: |
       {namespace=~"optcp-ingress-internal|kai-ingress-private|optcp-ingress-public", pod=~"(cell-membrane-ingress-gateway|xylem-ingress-gateway|phloem-ingress-gateway)-istio-.*"} |= "HTTP/"

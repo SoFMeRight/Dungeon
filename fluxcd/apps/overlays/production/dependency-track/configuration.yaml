@@ -62,7 +62,7 @@ dependency_track:
       priority: 4
 
   rule_publisher_config:
-    destinationUrl: http://ntfy.delivery-bag.svc.cluster.local/
+    destinationUrl: http://ntfy.optcp-gossip-stone.svc.cluster.local/
     authHeaderName: Authorization
     authHeaderValue: NTFY_AUTH
 

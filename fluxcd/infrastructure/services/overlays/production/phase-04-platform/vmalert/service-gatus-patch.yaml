@@ -7,7 +7,7 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Observability (Gossip Stone💬)"
-      url: http://vmalert.gossip-stone.svc.cluster.local:8880/health
+      url: http://vmalert.optcp-gossip-stone.svc.cluster.local:8880/health
       interval: 1m
       conditions:
         - "[STATUS] == 200"
@@ -22,7 +22,7 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Observability (Gossip Stone💬)"
-      url: http://alertmanager.gossip-stone.svc.cluster.local:9093/-/healthy
+      url: http://alertmanager.optcp-gossip-stone.svc.cluster.local:9093/-/healthy
       interval: 1m
       conditions:
         - "[STATUS] == 200"

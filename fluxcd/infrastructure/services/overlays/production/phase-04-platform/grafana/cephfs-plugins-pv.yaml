@@ -12,8 +12,8 @@ spec:
   claimRef:
     apiVersion: v1
     kind: PersistentVolumeClaim
-    name: gossip-stone-grafana-plugins
-    namespace: gossip-stone
+    name: grafana-plugins
+    namespace: optcp-gossip-stone
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
     nodeStageSecretRef:
@@ -29,7 +29,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: gossip-stone-grafana-plugins
+  name: grafana-plugins
 spec:
   accessModes:
     - ReadWriteMany

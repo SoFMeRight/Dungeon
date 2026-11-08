@@ -29,7 +29,7 @@ spec:
               drop:
                 - ALL
           volumeMounts:
-            - name: gossip-stone-beszel-data
+            - name: beszel-data
               mountPath: /beszel_data
             - name: tmp
               mountPath: /tmp
@@ -46,7 +46,7 @@ spec:
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
-        name: gossip-stone-beszel-data
+        name: beszel-data
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain

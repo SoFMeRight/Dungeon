@@ -3,7 +3,7 @@ kind: HelmRelease
 metadata:
   name: loki
 spec:
-  targetNamespace: gossip-stone
+  targetNamespace: optcp-gossip-stone
   timeout: 15m
   values:
     # Prometheus scraping annotations
@@ -51,7 +51,7 @@ spec:
     resultsCache:
       enabled: false
     singleBinary:
-      replicas: 3
+      replicas: 0
       # The storage PVC is the log TSDB: high-churn, reconstructs forward, and only worth
       # restoring if logs were shipped to WORM off-cluster for a full-compromise case
       # (they are not). Kept out of Velero fs-backup.

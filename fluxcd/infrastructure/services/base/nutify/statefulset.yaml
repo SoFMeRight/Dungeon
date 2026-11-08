@@ -65,11 +65,11 @@ spec:
               chmod 640 /etc/nut/*
               exec /usr/local/bin/generate-settings.sh /usr/local/bin/docker-entrypoint /usr/local/bin/start-services.sh
           volumeMounts:
-            - name: gossip-stone-nutify-logs
+            - name: nutify-logs
               mountPath: /app/nutify/logs
-            - name: gossip-stone-nutify-instance
+            - name: nutify-instance
               mountPath: /app/nutify/instance
-            - name: gossip-stone-nutify-ssl
+            - name: nutify-ssl
               mountPath: /app/ssl
             - name: nut-config-templates
               mountPath: /etc/nut-templates
@@ -103,7 +103,7 @@ spec:
                 path: known_hosts
   volumeClaimTemplates:
     - metadata:
-        name: gossip-stone-nutify-logs
+        name: nutify-logs
       spec:
         accessModes:
           - ReadWriteOnce
@@ -111,7 +111,7 @@ spec:
           requests:
             storage: 1Gi
     - metadata:
-        name: gossip-stone-nutify-instance
+        name: nutify-instance
       spec:
         accessModes:
           - ReadWriteOnce
@@ -119,7 +119,7 @@ spec:
           requests:
             storage: 2Gi
     - metadata:
-        name: gossip-stone-nutify-ssl
+        name: nutify-ssl
       spec:
         accessModes:
           - ReadWriteOnce

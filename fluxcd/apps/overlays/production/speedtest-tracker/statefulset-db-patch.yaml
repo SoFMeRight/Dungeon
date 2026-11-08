@@ -8,7 +8,7 @@ spec:
     metadata:
       labels:
         policy.prplanit.com/access-class: postgres
-        policy.prplanit.com/service-scope: gossip-stone.speedtest-tracker.postgres
+        policy.prplanit.com/service-scope: optcp-gossip-stone.speedtest-tracker.postgres
     spec:
       securityContext:
         fsGroup: 999
@@ -18,7 +18,7 @@ spec:
         - name: init-permissions
           image: docker.io/busybox:1.38.0
           volumeMounts:
-            - name: gossip-stone-speedtest-tracker-postgres
+            - name: speedtest-tracker-postgres
               mountPath: /var/lib/postgresql/data
       containers:
         - name: postgres
@@ -43,7 +43,7 @@ spec:
               cpu: 500m
               memory: 144Mi
           volumeMounts:
-            - name: gossip-stone-speedtest-tracker-postgres
+            - name: speedtest-tracker-postgres
               mountPath: /var/lib/postgresql/data
             - name: postgres-run
               mountPath: /var/run/postgresql
@@ -56,7 +56,7 @@ spec:
           emptyDir: {}
   volumeClaimTemplates:
     - metadata:
-        name: gossip-stone-speedtest-tracker-postgres
+        name: speedtest-tracker-postgres
       spec:
         accessModes:
           - ReadWriteOnce

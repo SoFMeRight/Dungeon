@@ -50,74 +50,75 @@ patches:
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-gossip-stone
   - target:
       kind: ExternalSecret
       name: grafana-postgres-credentials
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-gossip-stone
   - target:
       kind: ExternalSecret
       name: grafana-postgres-backup-s3
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-gossip-stone
   - target:
       kind: ScheduledBackup
       name: grafana-postgres-daily
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-gossip-stone
   - target:
       kind: ObjectStore
       name: grafana-postgres-store
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-gossip-stone
   - target:
       kind: ObjectStore
       name: grafana-postgres-prior
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-gossip-stone
   - target:
       kind: PersistentVolumeClaim
-      name: gossip-stone-grafana-plugins
+      name: grafana-plugins
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-gossip-stone
   - target:
       kind: HTTPRoute
       name: grafana-xylem
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-gossip-stone
   - target:
       kind: ConfigMap
       name: grafana-dashboards-.*
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-gossip-stone
   - target:
       kind: ExternalSecret
       name: grafana-ntfy-token
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-gossip-stone
   - target:
       kind: ExternalSecret
       name: grafana-oidc
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: gossip-stone
+        value: optcp-gossip-stone
+  - path: hold-for-move-patch.yaml

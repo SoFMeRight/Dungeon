@@ -1,9 +1,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: gossip-stone
+namespace: optcp-gossip-stone
 resources:
   - ../../../../base/victoria-metrics
   - httproute-ingest.yaml
+# Held at zero for the volume re-bind into optcp-gossip-stone.
+replicas:
+  - name: vmstorage
+    count: 0
+
 patches:
   - target:
       kind: StatefulSet

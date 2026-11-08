@@ -5,4 +5,4 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: gatus
-    namespace: gossip-stone
+    namespace: optcp-gossip-stone

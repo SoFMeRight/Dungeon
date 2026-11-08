@@ -41,7 +41,7 @@ spec:
             - name: NTFY_SMTP_SERVER_ADDR_PREFIX
               value: "ntfy-"
           volumeMounts:
-            - name: delivery-bag-ntfy-data
+            - name: ntfy-data
               mountPath: /var/lib/ntfy
           resources:
             requests:
@@ -52,7 +52,7 @@ spec:
               memory: 768Mi
   volumeClaimTemplates:
     - metadata:
-        name: delivery-bag-ntfy-data
+        name: ntfy-data
       spec:
         accessModes: ["ReadWriteOnce"]
         storageClassName: ceph-rbd-retain

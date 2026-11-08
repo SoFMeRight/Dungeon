@@ -2,7 +2,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: grafana-postgres
-  namespace: gossip-stone
+  namespace: optcp-gossip-stone
 spec:
   # Requests lift this out of BestEffort so the kubelet does not reclaim the database
   # first under node pressure. Sized from observed use (~81Mi resident): memory is what
@@ -26,7 +26,7 @@ spec:
     labels:
       policy.prplanit.com/cnpg: "managed"
       policy.prplanit.com/access-class: postgres
-      policy.prplanit.com/service-scope: gossip-stone.grafana.postgres
+      policy.prplanit.com/service-scope: optcp-gossip-stone.grafana.postgres
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 

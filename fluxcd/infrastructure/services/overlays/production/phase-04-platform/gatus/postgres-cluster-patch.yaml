@@ -14,7 +14,7 @@ spec:
     labels:
       policy.prplanit.com/cnpg: "managed"
       policy.prplanit.com/access-class: postgres
-      policy.prplanit.com/service-scope: gossip-stone.gatus.postgres
+      policy.prplanit.com/service-scope: optcp-gossip-stone.gatus.postgres
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 

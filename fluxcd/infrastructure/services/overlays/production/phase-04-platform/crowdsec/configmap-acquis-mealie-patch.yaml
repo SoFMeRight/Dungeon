@@ -5,7 +5,7 @@ metadata:
 data:
   60-mealie-loki.yaml: |
     source: loki
-    url: http://loki.gossip-stone.svc.cluster.local:3100
+    url: http://loki.optcp-gossip-stone.svc.cluster.local:3100
     limit: 1000
     query: |
       {service_name="mealie"} |= "Incorrect username or password"

@@ -9,7 +9,7 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: gossip-stone.gatus.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-gossip-stone.gatus.postgres
         policy.prplanit.com/metrics: "true"
       annotations:
         prometheus.io/scrape: "true"

@@ -21,7 +21,7 @@ spec:
               memory: 238Mi
   volumeClaimTemplates:
     - metadata:
-        name: gossip-stone-nutify-logs
+        name: nutify-logs
       spec:
         accessModes:
           - ReadWriteOnce
@@ -30,7 +30,7 @@ spec:
           requests:
             storage: 1Gi
     - metadata:
-        name: gossip-stone-nutify-instance
+        name: nutify-instance
       spec:
         accessModes:
           - ReadWriteOnce
@@ -39,7 +39,7 @@ spec:
           requests:
             storage: 2Gi
     - metadata:
-        name: gossip-stone-nutify-ssl
+        name: nutify-ssl
       spec:
         accessModes:
           - ReadWriteOnce
@@ -48,7 +48,7 @@ spec:
           requests:
             storage: 100Mi
     - metadata:
-        name: gossip-stone-nutify-nut-config
+        name: nutify-nut-config
       spec:
         accessModes:
           - ReadWriteOnce
@@ -57,7 +57,7 @@ spec:
           requests:
             storage: 100Mi
     - metadata:
-        name: gossip-stone-nutify-ssh
+        name: nutify-ssh
       spec:
         accessModes:
           - ReadWriteOnce
@@ -66,7 +66,7 @@ spec:
           requests:
             storage: 100Mi
     - metadata:
-        name: gossip-stone-nutify-script
+        name: nutify-script
       spec:
         accessModes:
           - ReadWriteOnce

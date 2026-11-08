@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: gossip-stone
+namespace: optcp-gossip-stone
 resources:
   - ../../../../base/gatus
   - httproute-xylem.yaml
@@ -15,3 +15,4 @@ patches:
   - path: objectstore-postgres-patch.yaml
   - path: objectstore-postgres-prior-patch.yaml
   - path: externalsecret-postgres-patch.yaml
+  - path: hold-for-move-patch.yaml

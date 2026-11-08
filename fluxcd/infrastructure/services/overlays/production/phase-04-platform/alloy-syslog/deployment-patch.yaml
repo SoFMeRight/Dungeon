@@ -10,6 +10,6 @@ spec:
           image: docker.io/grafana/alloy:v1.21.3
           env:
             - name: LOKI_PUSH_URL
-              value: http://loki.gossip-stone.svc.cluster.local:3100/loki/api/v1/push
+              value: http://loki.optcp-gossip-stone.svc.cluster.local:3100/loki/api/v1/push
             - name: WAZUH_SYSLOG_HOST
               value: wazuh-manager.lens-of-truth.svc.cluster.local

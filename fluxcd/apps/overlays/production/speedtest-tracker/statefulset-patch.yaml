@@ -9,7 +9,7 @@ spec:
       labels:
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: gossip-stone.speedtest-tracker.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-gossip-stone.speedtest-tracker.postgres
     spec:
       # s6-overlay (LinuxServer image) MUST init as root — s6-applyuidgid can
       # only run as root — then it drops the speedtest-tracker app to PUID/PGID
@@ -88,9 +88,9 @@ spec:
               cpu: 500m
               memory: 352Mi
           volumeMounts:
-            - name: gossip-stone-speedtest-tracker-config
+            - name: speedtest-tracker-config
               mountPath: /config
-            - name: gossip-stone-speedtest-tracker-keys
+            - name: speedtest-tracker-keys
               mountPath: /config/keys
             - name: run
               mountPath: /run
@@ -111,7 +111,7 @@ spec:
             sizeLimit: 50Mi
   volumeClaimTemplates:
     - metadata:
-        name: gossip-stone-speedtest-tracker-config
+        name: speedtest-tracker-config
       spec:
         accessModes:
           - ReadWriteOnce
@@ -120,7 +120,7 @@ spec:
           requests:
             storage: 1Gi
     - metadata:
-        name: gossip-stone-speedtest-tracker-keys
+        name: speedtest-tracker-keys
       spec:
         accessModes:
           - ReadWriteOnce

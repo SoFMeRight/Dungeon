@@ -12,7 +12,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: cluster-repair
-  namespace: gossip-stone
+  namespace: optcp-gossip-stone
   labels:
     app.kubernetes.io/part-of: cluster-agent-rbac
 rules:
@@ -30,7 +30,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: cluster-repair
-  namespace: gossip-stone
+  namespace: optcp-gossip-stone
   labels:
     app.kubernetes.io/part-of: cluster-agent-rbac
 roleRef:

@@ -1,3 +1,4 @@
+# yamllint disable rule:line-length
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -22,7 +23,7 @@ data:
     receivers:
       - name: ntfy-prod-warn
         webhook_configs:
-          - url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Warn?tpl=yes&t=%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7B%28index+.alerts+0%29.annotations.resolved_title%7D%7D%7B%7Belse%7D%7D%7B%7B%28index+.alerts+0%29.annotations.title%7D%7D%7B%7Bend%7D%7D&m=%7B%7Brange+.alerts%7D%7D%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7Bif+.annotations.resolved%7D%7D%7B%7B.annotations.resolved%7D%7D%7B%7Belse%7D%7DBack+to+normal.%7B%7Bend%7D%7D%7B%7Belse%7D%7D%7B%7B.annotations.summary%7D%7D%7B%7Bend%7D%7D%0A%7B%7Bend%7D%7D&p=4"
+          - url: "http://ntfy.optcp-gossip-stone.svc.cluster.local/Arbitorium-Prod-Warn?tpl=yes&t=%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7B%28index+.alerts+0%29.annotations.resolved_title%7D%7D%7B%7Belse%7D%7D%7B%7B%28index+.alerts+0%29.annotations.title%7D%7D%7B%7Bend%7D%7D&m=%7B%7Brange+.alerts%7D%7D%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7Bif+.annotations.resolved%7D%7D%7B%7B.annotations.resolved%7D%7D%7B%7Belse%7D%7DBack+to+normal.%7B%7Bend%7D%7D%7B%7Belse%7D%7D%7B%7B.annotations.summary%7D%7D%7B%7Bend%7D%7D%0A%7B%7Bend%7D%7D&p=4"
             send_resolved: true
             http_config:
               authorization:
@@ -30,7 +31,7 @@ data:
                 credentials_file: /etc/alertmanager-secrets/ntfy/token
       - name: ntfy-prod-alert
         webhook_configs:
-          - url: "http://ntfy.delivery-bag.svc.cluster.local/Arbitorium-Prod-Alert?tpl=yes&t=%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7B%28index+.alerts+0%29.annotations.resolved_title%7D%7D%7B%7Belse%7D%7D%7B%7B%28index+.alerts+0%29.annotations.title%7D%7D%7B%7Bend%7D%7D&m=%7B%7Brange+.alerts%7D%7D%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7Bif+.annotations.resolved%7D%7D%7B%7B.annotations.resolved%7D%7D%7B%7Belse%7D%7DBack+to+normal.%7B%7Bend%7D%7D%7B%7Belse%7D%7D%7B%7B.annotations.summary%7D%7D%7B%7Bend%7D%7D%0A%7B%7Bend%7D%7D&p=5"
+          - url: "http://ntfy.optcp-gossip-stone.svc.cluster.local/Arbitorium-Prod-Alert?tpl=yes&t=%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7B%28index+.alerts+0%29.annotations.resolved_title%7D%7D%7B%7Belse%7D%7D%7B%7B%28index+.alerts+0%29.annotations.title%7D%7D%7B%7Bend%7D%7D&m=%7B%7Brange+.alerts%7D%7D%7B%7Bif+eq+.status+%22resolved%22%7D%7D%7B%7Bif+.annotations.resolved%7D%7D%7B%7B.annotations.resolved%7D%7D%7B%7Belse%7D%7DBack+to+normal.%7B%7Bend%7D%7D%7B%7Belse%7D%7D%7B%7B.annotations.summary%7D%7D%7B%7Bend%7D%7D%0A%7B%7Bend%7D%7D&p=5"
             send_resolved: true
             http_config:
               authorization:
