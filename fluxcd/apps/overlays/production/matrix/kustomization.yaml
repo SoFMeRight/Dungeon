@@ -21,4 +21,3 @@ patches:
   - path: deployment-mas-patch.yaml
   - path: deployment-element-patch.yaml
   - path: deployment-rtc-patch.yaml
-  - path: hold-for-move-patch.yaml
