@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-wazuh-manager-lan
+spec:
+  description: >-
+    LAN-only agent ingress to wazuh-manager (172.22.30.119). Syslog arrives only
+    through alloy-syslog, and the API stays in-cluster.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: wazuh-manager
+  ingress:
+    - fromCIDRSet:
+        - cidr: "10.0.0.0/8"
+        - cidr: "172.16.0.0/12"
+        - cidr: "192.168.0.0/16"
+          except:
+            - "192.168.144.0/20"
+      toPorts:
+        - ports:
+            - port: "1514"
+              protocol: TCP
+            - port: "1515"
+              protocol: TCP

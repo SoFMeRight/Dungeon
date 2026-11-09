@@ -20,6 +20,7 @@ spec:
               - outspokekin-delivery-bag
               - outspokekin-social
               - lens-of-truth
+              - optcp-siem
               - arbitorium-home
               - arbitorium-restricted
               - optcp-app-directory

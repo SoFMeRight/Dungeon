@@ -14,6 +14,7 @@ spec:
         - source:
             principals:
               - cluster.local/ns/lens-of-truth/sa/crowdsec
+              - cluster.local/ns/optcp-ids-ips/sa/crowdsec
       to:
         - operation:
             ports: ["3100"]

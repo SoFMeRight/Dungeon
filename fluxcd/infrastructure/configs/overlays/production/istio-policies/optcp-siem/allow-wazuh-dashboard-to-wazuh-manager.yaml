@@ -1,0 +1,17 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-wazuh-dashboard-to-wazuh-manager
+spec:
+  selector:
+    matchLabels:
+      app: wazuh-manager
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-siem/sa/wazuh-dashboard
+      to:
+        - operation:
+            ports: ["55000"]

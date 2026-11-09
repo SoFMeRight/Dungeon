@@ -52,6 +52,14 @@ spec:
           names: ["crowdsec-*", "wazuh-manager-*"]
       - resources:
           kinds: [Pod]
+          namespaces: [optcp-ids-ips]
+          names: ["crowdsec-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-siem]
+          names: ["wazuh-manager-*"]
+      - resources:
+          kinds: [Pod]
           namespaces: [arbitorium-home]
           names: ["home-assistant-*"]
       - resources:

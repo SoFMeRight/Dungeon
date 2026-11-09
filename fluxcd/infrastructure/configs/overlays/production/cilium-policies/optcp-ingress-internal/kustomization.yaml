@@ -7,5 +7,6 @@ resources:
   - cnp-phloem-ingress-gateway-from-ci-runners.yaml
   - cnp-phloem-ingress-gateway-from-netbird-router.yaml
   - cnp-phloem-ingress-gateway-from-renovate.yaml
+  - cnp-phloem-ingress-gateway-from-cert-manager.yaml
   - cnp-phloem-ingress-gateway-from-sbom-operator.yaml
   - cnp-egress-phloem-ingress-gateway.yaml

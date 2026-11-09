@@ -1,0 +1,27 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-phloem-ingress-gateway-from-cert-manager
+spec:
+  description: >-
+    cert-manager's controller (king-of-red-lions) ingress to phloem-ingress-gateway on :443,
+    where its Vault Issuers reach OpenBao at secrets.optcp.com to sign certificates from
+    optcp-pki-int. cert-manager runs outside the mesh, so OpenBao admits the gateway's
+    identity, not cert-manager's. Identity-based: the gateway's LAN rule excepts the pod
+    CIDR, so in-cluster callers need an explicit allow.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: phloem-ingress-gateway
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: king-of-red-lions
+            app.kubernetes.io/name: cert-manager
+            app.kubernetes.io/component: controller
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

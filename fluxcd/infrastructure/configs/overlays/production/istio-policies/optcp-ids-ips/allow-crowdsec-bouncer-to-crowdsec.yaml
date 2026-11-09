@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-crowdsec-bouncer-to-crowdsec
+spec:
+  selector:
+    matchLabels:
+      app: crowdsec
+      component: engine
+  action: ALLOW
+  rules:
+    # Cloudflare bouncer streams decisions from CrowdSec LAPI on port 8080
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-ids-ips/sa/crowdsec-cloudflare-bouncer
+      to:
+        - operation:
+            ports: ["8080"]

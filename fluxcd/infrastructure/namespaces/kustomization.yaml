@@ -13,6 +13,7 @@ resources:
   - optcp-edge-defenses.yaml
   - optcp-fairy-bottle.yaml
   - optcp-identity.yaml
+  - optcp-ids-ips.yaml
   - optcp-infrastructure-management.yaml
   - optcp-ingress-internal.yaml
   - optcp-ingress-public.yaml
@@ -26,6 +27,7 @@ resources:
   - optcp-operators-baseline.yaml
   - optcp-secrets.yaml
   - optcp-shooting-gallery.yaml
+  - optcp-siem.yaml
   - optcp-sibyl-system.yaml
   - optcp-staff-suite.yaml
   - optcp-supply-chain.yaml

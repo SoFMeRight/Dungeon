@@ -119,6 +119,8 @@ spec:
             - optcp-monitoring-agents
             # IDS/IPS/SIEM security monitoring
             - lens-of-truth
+            - optcp-ids-ips
+            - optcp-siem
             - arbitorium-home
             - arbitorium-nvr
             - arbitorium-restricted

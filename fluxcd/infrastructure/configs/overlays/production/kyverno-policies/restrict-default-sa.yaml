@@ -39,6 +39,8 @@ spec:
                 - prplanit-web
                 - yesimvegan-web
                 - lens-of-truth
+                - optcp-ids-ips
+                - optcp-siem
                 - kai-personal
                 - kai-private
                 - arbitorium-home
@@ -116,6 +118,8 @@ spec:
                 - prplanit-web
                 - yesimvegan-web
                 - lens-of-truth
+                - optcp-ids-ips
+                - optcp-siem
                 - kai-personal
                 - kai-private
                 - arbitorium-home

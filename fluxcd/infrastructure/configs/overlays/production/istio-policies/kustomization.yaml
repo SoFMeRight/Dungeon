@@ -11,6 +11,8 @@ resources:
   - kai-private/
   - king-of-red-lions/
   - lens-of-truth/
+  - optcp-ids-ips/
+  - optcp-siem/
   - optcp-address-sync/
   - optcp-ai/
   - optcp-app-directory/

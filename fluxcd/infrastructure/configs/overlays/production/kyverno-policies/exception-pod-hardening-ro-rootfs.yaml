@@ -68,6 +68,14 @@ spec:
           names: ["crowdsec-*", "wazuh-*"]
       - resources:
           kinds: [Pod]
+          namespaces: [optcp-ids-ips]
+          names: ["crowdsec-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-siem]
+          names: ["wazuh-*"]
+      - resources:
+          kinds: [Pod]
           namespaces: [arbitorium-home]
           names: ["home-assistant-*"]
       - resources:

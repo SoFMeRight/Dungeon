@@ -1,0 +1,25 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+spec:
+  description: >-
+    Default-deny ingress AND egress for optcp-ids-ips namespace.
+    Ingress: internal communication covered by explicit CNPs; CCNPs cover
+    kubelet-probes, istio-ambient, prometheus-scrape, ingress-gw.
+    Egress: DNS + intra-namespace mesh + kube-apiserver ride the universal CCNP
+    baseline; per-app cnp-egress-* grant crowdsec (CTI/CAPI) and the Cloudflare
+    bouncer. crowdsec-dashboard is internal and needs nothing external.
+    Both directions use a reserved-label anchor to trigger enforcement.
+  enableDefaultDeny:
+    ingress: true
+    egress: true
+  endpointSelector: {}
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            policy.prplanit.com/reserved: default-deny-anchor
