@@ -310,6 +310,9 @@ filtering:
     - domain: '*.outspokekin.com'
       answer: 172.22.30.71
       enabled: true
+    - domain: turn.outspokekin.com
+      answer: 172.22.30.87
+      enabled: true
     - domain: pcfae.com
       answer: 172.22.30.70
       enabled: true
