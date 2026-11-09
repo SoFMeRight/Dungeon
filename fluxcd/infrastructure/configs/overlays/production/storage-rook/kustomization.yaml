@@ -1,6 +1,3 @@
-# STAGED — the RBD-on-Rook migration target. This kustomization is intentionally NOT referenced
-# by any parent (the production configs overlay does NOT include storage-rook), so Flux does not
-# reconcile it and there is ZERO live effect until the flip. See FLIP.md to activate.
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:

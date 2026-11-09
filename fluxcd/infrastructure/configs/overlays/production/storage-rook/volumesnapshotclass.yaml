@@ -1,6 +1,3 @@
-# STAGED operator-driver RBD VolumeSnapshotClass — the Rook equivalent of csi-rbdplugin-snapclass.
-# Same name + clusterID + deletionPolicy; driver and snapshotter secret repointed to the operator.
-# NOT reconciled until the flip (see FLIP.md).
 apiVersion: snapshot.storage.k8s.io/v1
 kind: VolumeSnapshotClass
 metadata:

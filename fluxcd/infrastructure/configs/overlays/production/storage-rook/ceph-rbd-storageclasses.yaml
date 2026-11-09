@@ -1,11 +1,3 @@
-# STAGED operator-driver RBD StorageClasses — the Rook ceph-csi-operator equivalents of the
-# six live ceph-rbd* classes. IDENTICAL in every parameter (clusterID, pool, imageFeatures,
-# fstype, reclaim, mountOptions, annotations, binding mode, templated naming) EXCEPT:
-#   provisioner: rbd.csi.ceph.com            -> gorons-bracelet.rbd.csi.ceph.com
-#   secrets:     ceph-secret[-user]/kube-system -> csi-rbd-provisioner / csi-rbd-node / gorons-bracelet
-# Both drivers are the same ceph-csi RBD binary against the same external ceph (clusterID
-# 0985467c..., pool dungeon/dungeon_hdd); provisioning+mount validated end-to-end on this driver.
-# NOT reconciled until the flip (see FLIP.md) — this directory is referenced by no active kustomization.
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
