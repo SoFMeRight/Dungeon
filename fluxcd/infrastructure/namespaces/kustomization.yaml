@@ -27,6 +27,7 @@ resources:
   - optcp-operators-baseline.yaml
   - optcp-policy-engine.yaml
   - optcp-secrets.yaml
+  - optcp-service-mesh.yaml
   - optcp-shooting-gallery.yaml
   - optcp-siem.yaml
   - optcp-sibyl-system.yaml

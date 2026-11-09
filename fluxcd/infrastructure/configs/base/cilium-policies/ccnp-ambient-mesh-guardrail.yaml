@@ -41,6 +41,12 @@ spec:
             - key: app
               operator: In
               values: [ztunnel, ztunnel-control-plane]
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-service-mesh
+          matchExpressions:
+            - key: app
+              operator: In
+              values: [ztunnel, ztunnel-control-plane]
       toPorts:
         - ports:
             - port: "15008"

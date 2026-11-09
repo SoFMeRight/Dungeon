@@ -47,6 +47,7 @@ resources:
   - optcp-media
   - optcp-policy-engine
   - optcp-secrets
+  - optcp-service-mesh
   - optcp-shooting-gallery
   - optcp-sibyl-system
   - optcp-staff-suite

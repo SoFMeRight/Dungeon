@@ -21,6 +21,10 @@ spec:
             k8s:io.kubernetes.pod.namespace: king-of-red-lions
             app.kubernetes.io/name: cert-manager
             app.kubernetes.io/component: controller
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-service-mesh
+            app.kubernetes.io/name: cert-manager
+            app.kubernetes.io/component: controller
       toPorts:
         - ports:
             - port: "443"

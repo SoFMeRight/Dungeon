@@ -26,6 +26,7 @@ spec:
                 - optcp-gossip-stone
                 - optcp-remote-access
                 - king-of-red-lions
+                - optcp-service-mesh
                 - optcp-web
                 - optcp-web-analytics
                 - outspokekin-delivery-bag
@@ -112,6 +113,7 @@ spec:
                 - optcp-gossip-stone
                 - optcp-remote-access
                 - king-of-red-lions
+                - optcp-service-mesh
                 - optcp-web
                 - optcp-web-analytics
                 - outspokekin-delivery-bag
@@ -198,6 +200,7 @@ spec:
                 - optcp-gossip-stone
                 - optcp-remote-access
                 - king-of-red-lions
+                - optcp-service-mesh
                 - optcp-web
                 - optcp-web-analytics
                 - outspokekin-delivery-bag

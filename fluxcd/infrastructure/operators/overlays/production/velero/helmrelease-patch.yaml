@@ -154,6 +154,7 @@ spec:
             - prplanit-staff-suite
             # Routing & Gateway infrastructure
             - king-of-red-lions
+            - optcp-service-mesh
             # Arr apps & downloaders
             - optcp-swift-sail
             - optcp-swift-sail-privileged

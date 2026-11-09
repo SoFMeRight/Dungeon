@@ -99,6 +99,7 @@ spec:
                 - gorons-bracelet
                 - optcp-fairy-bottle
                 - king-of-red-lions
+                - optcp-service-mesh
                 - optcp-operators-baseline
                 - optcp-telemetry
                 - optcp-ingress-internal
@@ -153,6 +154,7 @@ spec:
                 - gorons-bracelet
                 - optcp-fairy-bottle
                 - king-of-red-lions
+                - optcp-service-mesh
                 - optcp-operators-baseline
                 - optcp-telemetry
                 - optcp-ingress-internal
@@ -196,6 +198,7 @@ spec:
                 - gorons-bracelet
                 - optcp-fairy-bottle
                 - king-of-red-lions
+                - optcp-service-mesh
                 - optcp-operators-baseline
                 - optcp-telemetry
                 - optcp-ingress-internal
@@ -242,6 +245,7 @@ spec:
                 - gorons-bracelet
                 - optcp-fairy-bottle
                 - king-of-red-lions
+                - optcp-service-mesh
                 - optcp-operators-baseline
                 - optcp-telemetry
                 - optcp-ingress-internal
