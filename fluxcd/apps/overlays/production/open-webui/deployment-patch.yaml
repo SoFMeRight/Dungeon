@@ -21,23 +21,23 @@ spec:
                   name: open-webui-redis-password
                   key: password
             - name: DATABASE_URL
-              value: "postgresql://openwebui:$(POSTGRES_PASSWORD)@open-webui-postgres-rw.temple-of-time.svc.cluster.local:5432/openwebui"
+              value: "postgresql://openwebui:$(POSTGRES_PASSWORD)@open-webui-postgres-rw:5432/openwebui"
             - name: REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@open-webui-redis:6379/0"
             - name: REDIS_SENTINEL_HOSTS
               value: >-
-                open-webui-sentinel-0.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,
-                open-webui-sentinel-1.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,
-                open-webui-sentinel-2.open-webui-sentinel-headless.temple-of-time.svc.cluster.local
+                open-webui-sentinel-0.open-webui-sentinel-headless,
+                open-webui-sentinel-1.open-webui-sentinel-headless,
+                open-webui-sentinel-2.open-webui-sentinel-headless
             - name: REDIS_SENTINEL_PORT
               value: "26379"
             - name: WEBSOCKET_REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@open-webui-redis:6379/0"
             - name: WEBSOCKET_SENTINEL_HOSTS
               value: >-
-                open-webui-sentinel-0.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,
-                open-webui-sentinel-1.open-webui-sentinel-headless.temple-of-time.svc.cluster.local,
-                open-webui-sentinel-2.open-webui-sentinel-headless.temple-of-time.svc.cluster.local
+                open-webui-sentinel-0.open-webui-sentinel-headless,
+                open-webui-sentinel-1.open-webui-sentinel-headless,
+                open-webui-sentinel-2.open-webui-sentinel-headless
             - name: WEBSOCKET_SENTINEL_PORT
               value: "26379"
             - name: ENABLE_WEBSOCKET_SUPPORT
