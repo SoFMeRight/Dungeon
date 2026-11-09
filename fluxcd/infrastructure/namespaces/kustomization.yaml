@@ -37,6 +37,7 @@ resources:
   - optcp-swift-sail-privileged.yaml
   - optcp-telemetry.yaml
   - optcp-tools.yaml
+  - optcp-training-dummy.yaml
   - optcp-vpn.yaml
   - optcp-web.yaml
   - optcp-web-analytics.yaml

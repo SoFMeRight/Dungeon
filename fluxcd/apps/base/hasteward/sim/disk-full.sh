@@ -2,7 +2,7 @@
 # Fill a CNPG instance's data PVC until postgres can't write WAL -> disk-full crash-loop:
 # the exact deadlock `deadlock-recover` exists for (too full to start -> can't checkpoint to
 # recycle its own WAL -> stays full). Targets the current primary by default.
-#   ./disk-full.sh -c training-dummy-postgres -n training-dummy
+#   ./disk-full.sh -c training-dummy-postgres -n optcp-training-dummy
 set -euo pipefail
 
 CLUSTER=""; NS=""; POD=""

@@ -4,7 +4,7 @@
 # cannot demote the vanished old primary) and will NOT recreate the primary. This is the
 # state deadlock-recover leaves behind on a disk-full primary — reproduced in seconds,
 # without filling a disk, so the SETTLE fix can be iterated deterministically.
-#   ./wedge-failover.sh -c training-dummy-postgres -n training-dummy
+#   ./wedge-failover.sh -c training-dummy-postgres -n optcp-training-dummy
 set -euo pipefail
 
 CLUSTER=""; NS=""

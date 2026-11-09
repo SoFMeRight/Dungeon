@@ -8,7 +8,7 @@ apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
   name: allow-cnpg-operator
-  namespace: training-dummy
+  namespace: optcp-training-dummy
 spec:
   action: ALLOW
   selector:
@@ -29,7 +29,7 @@ apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
   name: allow-training-dummy-postgres-replication
-  namespace: training-dummy
+  namespace: optcp-training-dummy
 spec:
   action: ALLOW
   selector:
@@ -39,7 +39,7 @@ spec:
     - from:
         - source:
             principals:
-              - cluster.local/ns/training-dummy/sa/training-dummy-postgres
+              - cluster.local/ns/optcp-training-dummy/sa/training-dummy-postgres
       to:
         - operation:
             # 5432: streaming replication; 8000: instance-manager peer /failsafe (CNPG >=1.30)

@@ -7,7 +7,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: training-dummy-postgres
-  namespace: training-dummy
+  namespace: optcp-training-dummy
 spec:
   # Shutdown has to fit the node's grace budget: 150s total, 30s reserved for
   # critical pods, so 120s for ordinary ones. Postgres does not checkpoint until

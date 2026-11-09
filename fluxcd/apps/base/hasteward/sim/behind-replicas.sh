@@ -6,8 +6,8 @@
 # actually caught up. To make a standby unable to promote to the primary's position we stop it
 # RECEIVING: SIGSTOP its walreceiver, then write a burst to the primary. The standbys'
 # pg_last_wal_receive_lsn (what safeToReleaseRecoveredPrimary compares) then lags the primary.
-#   ./behind-replicas.sh -c training-dummy-postgres -n training-dummy          # induce receive-lag
-#   ./behind-replicas.sh -c training-dummy-postgres -n training-dummy --resume # undo (resume receiving)
+#   ./behind-replicas.sh -c training-dummy-postgres -n optcp-training-dummy          # induce receive-lag
+#   ./behind-replicas.sh -c training-dummy-postgres -n optcp-training-dummy --resume # undo (resume receiving)
 set -euo pipefail
 
 CLUSTER=""; NS=""; RESUME=0
