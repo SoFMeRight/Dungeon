@@ -1,0 +1,45 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisSentinel
+metadata:
+  name: harbor-sentinel
+spec:
+  clusterSize: 3
+  serviceAccountName: harbor-sentinel
+  # One sentinel per node, so a single node loss cannot take two of the three votes.
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app: harbor-sentinel-sentinel
+          topologyKey: kubernetes.io/hostname
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    runAsNonRoot: true
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  kubernetesConfig:
+    image: PLACEHOLDER_SENTINEL_IMAGE
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 80Mi
+  redisSentinelConfig:
+    redisReplicationName: harbor-redis
+    masterGroupName: harbor-redis
+    redisPort: "6379"
+    quorum: "2"
+    parallelSyncs: "1"
+    failoverTimeout: "180000"
+    downAfterMilliseconds: "30000"

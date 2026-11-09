@@ -136,11 +136,15 @@ spec:
         notaryServerDatabase: notaryserver
         notarySignerDatabase: notarysigner
 
-    # External Redis (our 3-replica StatefulSet)
+    # External Redis through its sentinels: whichever replica the sentinels name master is the
+    # one Harbor uses, so no single Redis pod is a dependency of Harbor starting.
     redis:
       type: external
       external:
-        addr: harbor-redis-0.harbor-redis.optcp-supply-chain.svc.cluster.local:6379
+        # The operator's Service fronts whichever sentinels are ready; a per-pod name would
+        # not resolve while its pod is down.
+        addr: harbor-sentinel-sentinel:26379
+        sentinelMasterSet: harbor-redis
 
     # Storage configuration - Ceph RGW (S3 compatible)
     persistence:

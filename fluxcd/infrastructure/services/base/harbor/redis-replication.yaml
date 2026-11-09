@@ -1,0 +1,44 @@
+# Harbor's cache, job queue and registry blob-descriptor cache. A replicated set behind
+# sentinels, not a lone server: core refuses to start without Redis, and Harbor serves the
+# images every node pulls, so a Redis pinned to one pod turns one node's outage into a
+# cluster-wide pull failure. No password: the chart renders the Redis password into plain
+# ConfigMaps, and Harbor's sentinel client cannot authenticate to sentinels. The mesh
+# AuthorizationPolicies admit only Harbor's own service accounts.
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: harbor-redis
+spec:
+  clusterSize: 3
+  serviceAccountName: harbor-redis
+  podSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  kubernetesConfig:
+    image: PLACEHOLDER_REDIS_IMAGE
+    imagePullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 17m
+        memory: 74Mi
+      limits:
+        cpu: 179m
+        memory: 74Mi
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: PLACEHOLDER_STORAGE_SIZE

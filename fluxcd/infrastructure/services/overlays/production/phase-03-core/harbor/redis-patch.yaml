@@ -1,32 +1,22 @@
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
 metadata:
   name: harbor-redis
 spec:
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        policy.prplanit.com/access-class: redis
-        policy.prplanit.com/service-scope: optcp-supply-chain.harbor.redis
-    spec:
-      containers:
-        - name: redis
-          image: docker.io/library/redis:8.10-alpine
-          resources:
-            requests:
-              cpu: 17m
-              memory: 74Mi
-            limits:
-              cpu: 179m
-              memory: 74Mi
-  volumeClaimTemplates:
-    - metadata:
-        name: data
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v7.4.11
+  storage:
+    volumeClaimTemplate:
       spec:
-        accessModes:
-          - ReadWriteOnce
         storageClassName: ceph-rbd-retain
         resources:
           requests:
             storage: 10Gi
+---
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisSentinel
+metadata:
+  name: harbor-sentinel
+spec:
+  kubernetesConfig:
+    image: quay.io/opstree/redis-sentinel:v7.4.11

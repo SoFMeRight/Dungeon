@@ -6,6 +6,7 @@ resources:
   - postgres-cluster.yaml
   - objectstore-postgres.yaml
   - objectstore-postgres-prior.yaml
-  - redis-statefulset.yaml
+  - redis-replication.yaml
+  - redis-sentinel.yaml
   - helmrelease.yaml
   - scheduledbackup-postgres.yaml
