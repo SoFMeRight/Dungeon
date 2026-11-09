@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 131 healthy
+✅ 129 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -218,10 +218,10 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Crowdsec (4 components) | ✅ | 🏠 crowdsec-lapi.pcfae.com | [open](https://crowdsec-lapi.pcfae.com) |
+| Crowdsec (4 components) | ❓ | 🏠 crowdsec-lapi.pcfae.com | [open](https://crowdsec-lapi.pcfae.com) |
 | Frigate | ✅ | 🔒 nvr.pcfae.com | [open](https://nvr.pcfae.com) |
 | Home Assistant | ✅ | 🏠 home.arbitorium.com | [open](https://home.arbitorium.com) |
-| Wazuh (3 components) | ✅ | 🔒 siem.prplanit.com | [open](https://siem.prplanit.com) |
+| Wazuh (3 components) | ❓ | 🔒 siem.prplanit.com | [open](https://siem.prplanit.com) |
 | Zigbee2mqtt | ✅ | 🏠 z2m.arbitorium.com | [open](https://z2m.arbitorium.com) |
 
 ### Security (OpTCP)
@@ -1003,7 +1003,7 @@
 
 **Crowdsec — 4 components** — Mixed — 
 - Namespace: lens-of-truth
-- Replicas: 4/4
+- Replicas: 0/0
 - Hosts: crowdsec-lapi.pcfae.com, crowdsec.pcfae.com
 - Components:
   - crowdsec (StatefulSet)
@@ -1023,7 +1023,7 @@
 
 **Wazuh — 3 components** — StatefulSet — 4.14.10
 - Namespace: lens-of-truth
-- Replicas: 3/3
+- Replicas: 0/0
 - Hosts: siem.prplanit.com
 - Components:
   - wazuh-dashboard (StatefulSet)
