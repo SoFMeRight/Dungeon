@@ -25,7 +25,7 @@ metadata:
           exceptions carry the except-drop-caps label; Helm/operator workloads that can't be
           pod-labelled are excluded by name pattern (predates PolicyExceptions being enabled).
         - no-privesc (2026-08-31): app namespaces only. Exceptions now use a PolicyException CR
-          (exception-pod-hardening-no-privesc, in mr-resetti) — the scalable model for the
+          (exception-pod-hardening-no-privesc, in optcp-policy-engine) — the scalable model for the
           large phases ahead — plus the except-no-privesc label for repo-manifest self-documentation.
         - non-root (2026-08-31): app namespaces only. ~63 genuinely root-required workloads exempted
           via exception-pod-hardening-non-root (LSIO/s6/apache/gluetun/vendor/security/operator).
@@ -163,7 +163,7 @@ spec:
                 matchLabels:
                   policy.prplanit.com/except-no-privesc: "true"
       # Genuine escalators (sudo / file-cap binaries / privileged) + operator/Helm pods are
-      # exempted via the PolicyException exception-pod-hardening-no-privesc (mr-resetti).
+      # exempted via the PolicyException exception-pod-hardening-no-privesc (optcp-policy-engine).
       validate:
         message: "SEC-5: allowPrivilegeEscalation must be false on every container. Exempt a genuine escalator via the no-privesc PolicyException or except-no-privesc label."
         pattern:
@@ -206,7 +206,7 @@ spec:
                 matchLabels:
                   policy.prplanit.com/except-non-root: "true"
       # ~63 genuinely root-required workloads are exempted via the PolicyException
-      # exception-pod-hardening-non-root (mr-resetti).
+      # exception-pod-hardening-non-root (optcp-policy-engine).
       validate:
         message: "SEC-1/2: runAsNonRoot must be true (pod-level or every container). Exempt a root-required workload via the non-root PolicyException or except-non-root label."
         anyPattern:
@@ -252,7 +252,7 @@ spec:
                 matchLabels:
                   policy.prplanit.com/except-ro-rootfs: "true"
       # ~124 workloads that genuinely can't run a read-only rootfs are exempted via the
-      # PolicyException exception-pod-hardening-ro-rootfs (mr-resetti).
+      # PolicyException exception-pod-hardening-ro-rootfs (optcp-policy-engine).
       validate:
         message: "SEC-4: readOnlyRootFilesystem must be true on every container (mount emptyDir for writable paths). Exempt via the ro-rootfs PolicyException or except-ro-rootfs label."
         pattern:
