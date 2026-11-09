@@ -1131,7 +1131,7 @@
 
 </details>
 
-## Platform Components (33)
+## Platform Components (29)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
@@ -1143,14 +1143,6 @@
 | Hubble Relay | kube-system | ❌ |
 | Kube Vip | kube-system | ✅ |
 | Metrics Server | kube-system | ✅ |
-| Kyverno Admission Controller (4 components) | mr-resetti | ✅ |
-| Cert Manager (3 components) | king-of-red-lions | ✅ |
-| Istio (2 components) | king-of-red-lions | ✅ |
-| Istio Cni | king-of-red-lions | ✅ |
-| Istiod | king-of-red-lions | ✅ |
-| Stunner (2 components) | king-of-red-lions | ✅ |
-| Ztunnel | king-of-red-lions | ✅ |
-| Ztunnel | king-of-red-lions | ✅ |
 | Ceph Csi (2 components) | gorons-bracelet | ✅ |
 | Csi Addons | gorons-bracelet | ✅ |
 | Csi Driver Smb (3 components) | gorons-bracelet | ✅ |
@@ -1162,12 +1154,16 @@
 | Alloy | optcp-telemetry | ✅ |
 | Alloy | optcp-telemetry | ✅ |
 | Graphite Exporter Truenas | optcp-monitoring-agents | ✅ |
+| Istio (2 components) | optcp-service-mesh | ✅ |
+| Istio Cni | optcp-service-mesh | ✅ |
 | Mariadb Operator (3 components) | optcp-operators-baseline | ✅ |
 | Node (2 components) | optcp-telemetry | ✅ |
 | Redis Operator | optcp-operators-baseline | ✅ |
 | Sbom Operator | optcp-sibyl-system | ✅ |
 | Snapshot Controller | optcp-fairy-bottle | ✅ |
 | Vault Operator | optcp-secrets | ✅ |
+| Ztunnel | optcp-service-mesh | ✅ |
+| Ztunnel | optcp-service-mesh | ✅ |
 
 <details>
 <summary>Platform details</summary>
@@ -1203,38 +1199,6 @@
 **Metrics Server** — Deployment — v0.9.0
 - Namespace: kube-system
 - Replicas: 2/2
-
-**Kyverno Admission Controller** — Deployment — 3.9.2
-- Namespace: mr-resetti
-- Replicas: 5/5
-
-**Cert Manager** — Deployment — v1.21.3
-- Namespace: king-of-red-lions
-- Replicas: 3/3
-
-**Istio** — DaemonSet — v0.0.2
-- Namespace: king-of-red-lions
-- Replicas: 10/10
-
-**Istio Cni** — DaemonSet — 1.31.4
-- Namespace: king-of-red-lions
-- Replicas: 10/10
-
-**Istiod** — Deployment — 1.31.4
-- Namespace: king-of-red-lions
-- Replicas: 1/1
-
-**Stunner** — Deployment — 1.2.1
-- Namespace: king-of-red-lions
-- Replicas: 2/2
-
-**Ztunnel** — DaemonSet — 1.31.4
-- Namespace: king-of-red-lions
-- Replicas: 5/5
-
-**Ztunnel** — DaemonSet — 1.31.4
-- Namespace: king-of-red-lions
-- Replicas: 5/5
 
 **Ceph Csi** — Deployment — 
 - Namespace: gorons-bracelet
@@ -1280,6 +1244,14 @@
 - Namespace: optcp-monitoring-agents
 - Replicas: 1/1
 
+**Istio** — DaemonSet — v0.0.2
+- Namespace: optcp-service-mesh
+- Replicas: 10/10
+
+**Istio Cni** — DaemonSet — 1.31.4
+- Namespace: optcp-service-mesh
+- Replicas: 10/10
+
 **Mariadb Operator** — Deployment — 26.10.2
 - Namespace: optcp-operators-baseline
 - Replicas: 5/5
@@ -1304,9 +1276,17 @@
 - Namespace: optcp-secrets
 - Replicas: 1/1
 
+**Ztunnel** — DaemonSet — 1.31.4
+- Namespace: optcp-service-mesh
+- Replicas: 5/5
+
+**Ztunnel** — DaemonSet — 1.31.4
+- Namespace: optcp-service-mesh
+- Replicas: 5/5
+
 </details>
 
-## Unclassified (34)
+## Unclassified (38)
 
 Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
 
@@ -1318,13 +1298,16 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Bulkvs Ip Sync | optcp-address-sync | ✅ |
 | Byparr | optcp-swift-sail-privileged | ✅ |
 | Cell Membrane Ingress Gateway Istio | optcp-ingress-public | ✅ |
+| Cert Manager | optcp-service-mesh | ✅ |
 | Cloudflare Ddns | optcp-address-sync | ✅ |
 | Cloudnative Pg | optcp-operators-baseline | ✅ |
 | Enshrouded | optcp-shooting-gallery | ✅ |
 | External Secrets | optcp-secrets | ✅ |
 | Faster Whisper | optcp-ai | ✅ |
 | Gitlab Runner | optcp-ci-runners | ✅ |
+| Istiod | optcp-service-mesh | ✅ |
 | Kube State Metrics | optcp-gossip-stone | ✅ |
+| Kyverno Admission Controller | optcp-policy-engine | ✅ |
 | Mariadb | prplanit-support | ✅ |
 | Mosquitto | arbitorium-home | ✅ |
 | Netbird Router Dungeon | optcp-vpn | ✅ |
@@ -1338,6 +1321,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Reloader | optcp-operators-baseline | ✅ |
 | Renovate Redis | optcp-ci-runners | ✅ |
 | Steam Headless | arbitorium-game-streaming | ⚠️ |
+| Stunner | optcp-service-mesh | ✅ |
 | Umami Postgres | optcp-web-analytics | ✅ |
 | Valheim | optcp-shooting-gallery | ✅ |
 | Vault Configurator | optcp-secrets | ✅ |
