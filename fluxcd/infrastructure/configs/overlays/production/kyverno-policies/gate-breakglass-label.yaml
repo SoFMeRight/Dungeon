@@ -25,7 +25,6 @@ spec:
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access
-                - king-of-red-lions
                 - optcp-service-mesh
                 - optcp-web
                 - optcp-web-analytics
@@ -112,7 +111,6 @@ spec:
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access
-                - king-of-red-lions
                 - optcp-service-mesh
                 - optcp-web
                 - optcp-web-analytics
@@ -199,7 +197,6 @@ spec:
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access
-                - king-of-red-lions
                 - optcp-service-mesh
                 - optcp-web
                 - optcp-web-analytics

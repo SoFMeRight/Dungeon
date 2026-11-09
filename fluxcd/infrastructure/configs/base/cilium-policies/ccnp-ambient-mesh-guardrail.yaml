@@ -30,17 +30,11 @@ spec:
         - ports:
             - port: "15008"
               protocol: TCP
-    # HBONE from ztunnel (king-of-red-lions — not ambient-labelled).
+    # HBONE from ztunnel (optcp-service-mesh — not ambient-labelled).
     # Needed for cross-node HBONE where Cilium may see ztunnel as
     # the source identity on the destination node's ingress path.
     # Matches both ztunnel DaemonSets: ztunnel and ztunnel-cp.
     - fromEndpoints:
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: king-of-red-lions
-          matchExpressions:
-            - key: app
-              operator: In
-              values: [ztunnel, ztunnel-control-plane]
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-service-mesh
           matchExpressions:

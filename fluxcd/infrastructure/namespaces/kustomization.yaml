@@ -51,7 +51,6 @@ resources:
   - prplanit-web.yaml
   - yesimvegan-web.yaml
   - gorons-bracelet.yaml
-  - king-of-red-lions.yaml
   - optcp-remote-access.yaml
   - training-dummy.yaml
   - arbitorium-game-streaming.yaml

@@ -98,7 +98,6 @@ spec:
               namespaces:
                 - gorons-bracelet
                 - optcp-fairy-bottle
-                - king-of-red-lions
                 - optcp-service-mesh
                 - optcp-operators-baseline
                 - optcp-telemetry
@@ -153,7 +152,6 @@ spec:
               namespaces:
                 - gorons-bracelet
                 - optcp-fairy-bottle
-                - king-of-red-lions
                 - optcp-service-mesh
                 - optcp-operators-baseline
                 - optcp-telemetry
@@ -197,7 +195,6 @@ spec:
               namespaces:
                 - gorons-bracelet
                 - optcp-fairy-bottle
-                - king-of-red-lions
                 - optcp-service-mesh
                 - optcp-operators-baseline
                 - optcp-telemetry
@@ -244,7 +241,6 @@ spec:
               namespaces:
                 - gorons-bracelet
                 - optcp-fairy-bottle
-                - king-of-red-lions
                 - optcp-service-mesh
                 - optcp-operators-baseline
                 - optcp-telemetry

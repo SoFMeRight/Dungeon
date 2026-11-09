@@ -9,7 +9,6 @@ resources:
   - optcp-remote-access/
   - kai-personal/
   - kai-private/
-  - king-of-red-lions/
   - optcp-ids-ips/
   - optcp-siem/
   - optcp-address-sync/

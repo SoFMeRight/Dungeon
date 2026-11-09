@@ -17,14 +17,14 @@ spec:
     # power failure cold-boots all ten nodes at once, which is strictly worse.
     #
     # kube-system is excluded by the chart for exactly this reason. These two
-    # belong beside it: king-of-red-lions runs istiod, ztunnel and istio-cni,
+    # belong beside it: optcp-service-mesh runs istiod, ztunnel and istio-cni,
     # which every other pod's networking depends on; optcp-policy-engine runs Kyverno,
     # which must never be able to gate its own recovery.
     #
     # The cost is admission-time enforcement in those two namespaces only, and it
     # is close to nothing here:
     #   - the pod-hardening policies are scoped to istio.io/dataplane-mode=ambient
-    #     namespaces. king-of-red-lions carries no such label, so they never
+    #     namespaces. optcp-service-mesh carries no such label, so they never
     #     applied there at all.
     #   - mutate-pod-hardening already excludes app.kubernetes.io/name=kyverno.
     #   - istiod, ztunnel, cert-manager and kyverno already run with dedicated
@@ -47,7 +47,6 @@ spec:
               operator: NotIn
               values:
                 - kube-system
-                - king-of-red-lions
                 - optcp-service-mesh
                 - optcp-policy-engine
 

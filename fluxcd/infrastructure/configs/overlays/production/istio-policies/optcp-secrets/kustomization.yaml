@@ -9,7 +9,6 @@ resources:
   - allow-boundary-to-vault.yaml
   - allow-dependency-track-configuration-to-vault.yaml
   - allow-external-secrets-to-vault.yaml
-  - allow-istio-mesh-ca-to-vault.yaml
   - allow-node-converge-to-vault.yaml
   - allow-openbao-snapshot-to-vault.yaml
   - allow-stalwart-configuration-to-vault.yaml
