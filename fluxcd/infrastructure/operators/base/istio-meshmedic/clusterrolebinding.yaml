@@ -9,4 +9,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: istio-meshmedic
-    namespace: king-of-red-lions
+    namespace: optcp-service-mesh

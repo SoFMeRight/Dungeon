@@ -4,7 +4,7 @@ metadata:
   name: ztunnel
 spec:
   releaseName: ztunnel
-  targetNamespace: king-of-red-lions
+  targetNamespace: optcp-service-mesh
   interval: 30m
   # ztunnel is also a per-node DaemonSet — same rollout-timeout need as istio-cni, else
   # its upgrade hits helm's 5m default wait and reports a false timeout.
@@ -31,9 +31,9 @@ spec:
     imagePullSecrets:
       - docker-io-pull-secret
 
-    # Override namespace to king-of-red-lions instead of istio-system
+    # Override namespace to optcp-service-mesh instead of istio-system
     global:
-      istioNamespace: king-of-red-lions
+      istioNamespace: optcp-service-mesh
 
     # Resources for ztunnel DaemonSet
     resources:

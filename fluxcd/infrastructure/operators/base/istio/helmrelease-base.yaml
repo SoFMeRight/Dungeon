@@ -4,7 +4,7 @@ metadata:
   name: istio-base
 spec:
   releaseName: istio-base
-  targetNamespace: king-of-red-lions
+  targetNamespace: optcp-service-mesh
   interval: 30m
   chart:
     spec:
@@ -21,6 +21,6 @@ spec:
     # Minimal base configuration
     defaultRevision: default
 
-    # Override namespace to king-of-red-lions instead of istio-system
+    # Override namespace to optcp-service-mesh instead of istio-system
     global:
-      istioNamespace: king-of-red-lions
+      istioNamespace: optcp-service-mesh

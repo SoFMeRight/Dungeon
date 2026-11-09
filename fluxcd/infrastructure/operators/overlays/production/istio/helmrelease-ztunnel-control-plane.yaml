@@ -1,6 +1,6 @@
 # ztunnel on the control-plane nodes, with its own CPU limit; the main release stays off them.
 # Runs as the main release's ServiceAccount "ztunnel": istiod issues workload certificates only to
-# CA_TRUSTED_NODE_ACCOUNTS=king-of-red-lions/ztunnel. resourceScope: namespace leaves the
+# CA_TRUSTED_NODE_ACCOUNTS=optcp-service-mesh/ztunnel. resourceScope: namespace leaves the
 # cluster-scoped objects to the main release.
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -8,7 +8,7 @@ metadata:
   name: ztunnel-control-plane
 spec:
   releaseName: ztunnel-control-plane
-  targetNamespace: king-of-red-lions
+  targetNamespace: optcp-service-mesh
   interval: 30m
   timeout: 20m
   install:
@@ -49,7 +49,7 @@ spec:
     imagePullSecrets:
       - docker-io-pull-secret
     global:
-      istioNamespace: king-of-red-lions
+      istioNamespace: optcp-service-mesh
     nodeSelector:
       node-role.kubernetes.io/control-plane: ""
     podAnnotations:

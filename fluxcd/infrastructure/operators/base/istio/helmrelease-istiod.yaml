@@ -4,7 +4,7 @@ metadata:
   name: istiod
 spec:
   releaseName: istiod
-  targetNamespace: king-of-red-lions
+  targetNamespace: optcp-service-mesh
   interval: 30m
   dependsOn:
     - name: istio-base
@@ -21,9 +21,9 @@ spec:
     # Ambient mode configuration
     profile: ambient
 
-    # Override namespace to king-of-red-lions instead of istio-system
+    # Override namespace to optcp-service-mesh instead of istio-system
     global:
-      istioNamespace: king-of-red-lions
+      istioNamespace: optcp-service-mesh
       # Also sets the kube-gateway proxyv2 image, not just pilot.
       hub: docker.io/istio
       variant: distroless

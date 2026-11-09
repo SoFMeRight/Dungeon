@@ -4,7 +4,7 @@ metadata:
   name: istio-cni
 spec:
   releaseName: istio-cni
-  targetNamespace: king-of-red-lions
+  targetNamespace: optcp-service-mesh
   interval: 30m
   # A per-node CNI DaemonSet rolls node-by-node and routinely exceeds helm's 5m default
   # wait, so the upgrade converges on-cluster but helm reports a timeout and the release
@@ -69,7 +69,7 @@ spec:
 
       # Exclude namespaces from Istio CNI
       excludeNamespaces:
-        - king-of-red-lions
+        - optcp-service-mesh
         - kube-system
         - kube-public
         - kube-node-lease

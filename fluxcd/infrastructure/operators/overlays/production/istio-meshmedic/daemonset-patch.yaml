@@ -5,7 +5,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: istio-meshmedic
-  namespace: king-of-red-lions
+  namespace: optcp-service-mesh
 spec:
   template:
     spec:
