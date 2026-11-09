@@ -10,7 +10,7 @@ spec:
       labels:
         # Policy Contract Standard: client capability + instance scope for its postgres.
         policy.prplanit.com/cap.postgres: "true"
-        policy.prplanit.com/access-scope-postgres: lens-of-truth.crowdsec.postgres
+        policy.prplanit.com/access-scope-postgres: optcp-ids-ips.crowdsec.postgres
     spec:
       initContainers:
         # Seed the crowdsec Postgres DB with the Vault-declared bouncers + log-processor

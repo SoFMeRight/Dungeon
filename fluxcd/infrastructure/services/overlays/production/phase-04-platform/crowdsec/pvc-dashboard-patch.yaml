@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: crowdsec-dashboard-data
 spec:
+  # Pinned to its volume so the claim re-binds to its data wherever it is created.
+  volumeName: pvc-91d8f53a-aaae-4c52-a16e-39c9e4986033-rook
   storageClassName: ceph-rbd
   resources:
     requests:
@@ -13,6 +15,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: crowdsec-metabase-data
 spec:
+  # Pinned to its volume so the claim re-binds to its data wherever it is created.
+  volumeName: pvc-bd0a14f8-5a9d-4d6c-9436-ae379e8aa8e8-rook
   storageClassName: ceph-rbd
   resources:
     requests:

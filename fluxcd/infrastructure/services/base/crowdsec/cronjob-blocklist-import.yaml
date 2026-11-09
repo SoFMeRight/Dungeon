@@ -66,7 +66,7 @@ spec:
                 - -c
                 - |
                   set -u
-                  NS=lens-of-truth; POD=crowdsec-0; CTR=crowdsec; DUR=26h; BATCH=2000
+                  NS=optcp-ids-ips; POD=crowdsec-0; CTR=crowdsec; DUR=26h; BATCH=2000
                   # cscli decisions import BYPASSES CrowdSec's whitelist pipeline, so pre-filter every
                   # feed against the whitelist ranges (WAN + RFC1918 + loopback) or we can self-ban.
                   # Fail closed if the whitelist is missing/empty -- never import unfiltered.

@@ -5,7 +5,7 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Security & IoT (Lens of Truth🔍)"
-      url: https://wazuh-manager.lens-of-truth.svc.cluster.local:55000/
+      url: https://wazuh-manager.optcp-siem.svc.cluster.local:55000/
       interval: 60s
       client:
         insecure: true

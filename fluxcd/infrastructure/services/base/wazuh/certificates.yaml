@@ -1,39 +1,53 @@
-# cert-manager PKI for the wazuh cluster: one self-signed root CA signs the
-# indexer node cert, the manager/filebeat node cert, the dashboard cert, and the
-# securityadmin admin cert. Subjects reproduce the DNs OpenSearch matches in
-# nodes_dn / admin_dn. Every leaf carries digitalSignature so ECDHE works.
+# wazuh's certificates come from optcp's issuing CA (optcp-pki-int) in OpenBao, through
+# the Vault Issuer below, so the CA the indexer, manager, dashboard and agents trust lives
+# outside this namespace and survives a move or rebuild of it. Each secret's ca.crt is
+# optcp's root. Subjects reproduce the DNs OpenSearch matches in nodes_dn / admin_dn;
+# OpenBao's wazuh role sets them. Every leaf carries digitalSignature so ECDHE works.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: wazuh-pki
+---
+# cert-manager logs in to OpenBao as wazuh-pki with a token it requests for the Issuer.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: wazuh-pki-token
+rules:
+  - apiGroups: [""]
+    resources: ["serviceaccounts/token"]
+    resourceNames: ["wazuh-pki"]
+    verbs: ["create"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: wazuh-pki-token
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: wazuh-pki-token
+subjects:
+  - kind: ServiceAccount
+    name: cert-manager
+    namespace: king-of-red-lions
+---
+# Reached through phloem at secrets.optcp.com: cert-manager runs outside the mesh, and
+# OpenBao admits the gateway's identity.
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: wazuh-selfsigned
+  name: optcp-pki
 spec:
-  selfSigned: {}
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: wazuh-root-ca
-spec:
-  isCA: true
-  commonName: wazuh-root-ca
-  secretName: wazuh-root-ca-tls
-  duration: 87600h # 10y
-  renewBefore: 8760h # 1y
-  privateKey:
-    algorithm: ECDSA
-    size: 384
-    encoding: PKCS8
-  issuerRef:
-    name: wazuh-selfsigned
-    kind: Issuer
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: wazuh-ca
-spec:
-  ca:
-    secretName: wazuh-root-ca-tls
+  vault:
+    server: https://secrets.optcp.com
+    path: optcp-pki-int/sign/wazuh
+    auth:
+      kubernetes:
+        role: cert-manager-wazuh
+        mountPath: /v1/auth/kubernetes
+        serviceAccountRef:
+          name: wazuh-pki
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -55,7 +69,7 @@ spec:
     size: 384
     encoding: PKCS8
   issuerRef:
-    name: wazuh-ca
+    name: optcp-pki
     kind: Issuer
 ---
 apiVersion: cert-manager.io/v1
@@ -80,7 +94,7 @@ spec:
     size: 384
     encoding: PKCS8
   issuerRef:
-    name: wazuh-ca
+    name: optcp-pki
     kind: Issuer
 ---
 apiVersion: cert-manager.io/v1
@@ -105,7 +119,7 @@ spec:
     size: 384
     encoding: PKCS8
   issuerRef:
-    name: wazuh-ca
+    name: optcp-pki
     kind: Issuer
 ---
 apiVersion: cert-manager.io/v1
@@ -130,5 +144,5 @@ spec:
     size: 384
     encoding: PKCS8
   issuerRef:
-    name: wazuh-ca
+    name: optcp-pki
     kind: Issuer

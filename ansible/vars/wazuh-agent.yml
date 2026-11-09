@@ -6,9 +6,9 @@ wazuh_manager: wazuh-manager.prplanit.com
 wazuh_agent_version: "4.14.8-1"
 wazuh_apt_repo: https://packages.wazuh.com/4.x/apt/
 wazuh_apt_key: https://packages.wazuh.com/key/GPG-KEY-WAZUH
-# Public certificate of the CA that signs the manager's enrollment certificate
-# (lens-of-truth wazuh-root-ca-tls, ca.crt). Replace it when that CA rotates.
-wazuh_manager_ca_file: ../files/wazuh-manager-ca.pem
+# optcp's root CA (OpenBao optcp-pki), which signs the manager's enrollment certificate
+# through optcp-pki-int. Enrolled agents never use it again; it is checked at enrollment.
+wazuh_manager_ca_file: ../files/optcp-pki-ca.pem
 # Seconds an apt step may take before the host fails instead of stalling the run.
 wazuh_apt_timeout: 600
 # Windows installs the same version from its MSI.

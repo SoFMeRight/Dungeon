@@ -37,7 +37,7 @@ spec:
         # CCNP admits cap.postgres clients (crowdsec) to any access-class=postgres server
         # on 5432; instance binding is enforced by the per-service istio authz.
         policy.prplanit.com/access-class: postgres
-        policy.prplanit.com/service-scope: lens-of-truth.crowdsec.postgres
+        policy.prplanit.com/service-scope: optcp-ids-ips.crowdsec.postgres
     spec:
       serviceAccountName: crowdsec-postgres
       securityContext:
