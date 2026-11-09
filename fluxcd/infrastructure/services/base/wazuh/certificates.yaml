@@ -30,9 +30,6 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: cert-manager
-    namespace: king-of-red-lions
-  - kind: ServiceAccount
-    name: cert-manager
     namespace: optcp-service-mesh
 ---
 # Reached through phloem at secrets.optcp.com: cert-manager runs outside the mesh, and

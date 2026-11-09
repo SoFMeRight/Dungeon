@@ -4,4 +4,3 @@ namespace: king-of-red-lions
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-istiod.yaml
-  - cnp-stunner.yaml

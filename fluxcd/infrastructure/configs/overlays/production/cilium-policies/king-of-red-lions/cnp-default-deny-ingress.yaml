@@ -6,6 +6,6 @@ spec:
   description: >-
     Default deny all ingress for king-of-red-lions. Allows are additive
     from CCNPs (DNS, probes, webhooks) and namespace-specific CNPs
-    (istiod xDS, stunner internal).
+    (istiod xDS).
   endpointSelector: {}
   ingress: []
