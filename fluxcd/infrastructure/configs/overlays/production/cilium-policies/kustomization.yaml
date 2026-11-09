@@ -8,7 +8,6 @@ resources:
   # Batch 1 — Minimal
   - optcp-operators-baseline
   - optcp-fairy-bottle
-  - training-dummy
   - optcp-training-dummy
   # Batch 2 — Simple
   - optcp-ingress-internal

@@ -53,7 +53,6 @@ resources:
   - yesimvegan-web.yaml
   - gorons-bracelet.yaml
   - optcp-remote-access.yaml
-  - training-dummy.yaml
   - arbitorium-game-streaming.yaml
   - arbitorium-home.yaml
   - arbitorium-nvr.yaml
