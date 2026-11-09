@@ -18,7 +18,6 @@ resources:
   - exception-pod-hardening-gitlab-selfsign.yaml
   - exception-restrict-default-sa-galera-jobs.yaml
   - exception-restrict-default-sa-gitlab-upgrade-check.yaml
-  - mr-resetti
   - mutate-velero-maintenance-hardening.yaml
   - mutate-vault-sidecar-hardening.yaml
   - mutate-openbao-service-not-ready.yaml

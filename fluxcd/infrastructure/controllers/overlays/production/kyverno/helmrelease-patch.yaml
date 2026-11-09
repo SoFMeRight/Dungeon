@@ -48,7 +48,6 @@ spec:
               values:
                 - kube-system
                 - king-of-red-lions
-                - mr-resetti
                 - optcp-policy-engine
 
     # PolicyExceptions: the scalable exception model for enforce-pod-hardening's larger phases
@@ -116,6 +115,8 @@ spec:
       resources:
         limits:
           cpu: 2835m
+          # A cold start rescans the whole cluster; the chart's 128Mi OOMs it until the scan ends.
+          memory: 256Mi
       image:
         registry: ghcr.io
         repository: kyverno/reports-controller

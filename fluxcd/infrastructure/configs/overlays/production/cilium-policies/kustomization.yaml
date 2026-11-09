@@ -7,7 +7,6 @@ resources:
   # Phase 3: Per-namespace contract CNPs (incremental rollout)
   # Batch 1 — Minimal
   - optcp-operators-baseline
-  - mr-resetti
   - optcp-fairy-bottle
   - king-of-red-lions
   - training-dummy
