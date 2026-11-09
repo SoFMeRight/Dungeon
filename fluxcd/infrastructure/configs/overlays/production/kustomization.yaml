@@ -12,6 +12,7 @@ resources:
   - ceph-rgw  # Ceph RGW keyring for S3 object storage
   - s3-buckets-provisioning-gringotts  # velero + CNPG backup-target buckets: COMPLIANCE object lock + lifecycle
   - ceph-rook-ceph  # Rook external Ceph cluster connection secrets
+  - ceph-rook-ceph-gorons-bracelet  # The Ceph secrets bound PVs reference in gorons-bracelet
   # RBD VolumeSnapshotClass now ships with the RBD StorageClasses in storage/../storage-rook (Rook driver)
   - openbao  # Bank-Vaults (openbao) with SOPS-encrypted keys
   - velero  # Backup and disaster recovery credentials

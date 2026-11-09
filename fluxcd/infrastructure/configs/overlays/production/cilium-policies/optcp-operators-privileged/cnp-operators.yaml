@@ -1,0 +1,42 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-gpu-operator-apiserver
+spec:
+  description: >-
+    Allow kube-apiserver to reach gpu-operator for webhook/metrics on 8080/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: gpu-operator
+  ingress:
+    - fromEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-nvidia-exporter-metrics
+spec:
+  description: >-
+    Allow prometheus scraping of nvidia-node-status-exporter on 8000/TCP.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: nvidia-node-status-exporter
+  ingress:
+    - fromEntities:
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP

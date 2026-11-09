@@ -168,6 +168,7 @@ spec:
             - optcp-tools
             # Storage services
             - gorons-bracelet
+            - optcp-operators-privileged
             # Operators: CNPG, barman, MariaDB, Redis (namespace plan, group B).
             # reflector and reloader carry velero.io/exclude-from-backup: they
             # were never backed up in gerudo-crest.

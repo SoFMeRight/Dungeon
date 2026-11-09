@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: optcp-operators-privileged
+resources:
+  - ../../../../base/istio-policies
+  - allow-intra-breakglass.yaml
+  - allow-csi-addons-to-rbd-sidecars.yaml
+  - allow-harbor-to-rgw.yaml
+  - allow-reactive-resume-to-rgw.yaml
+  - allow-loki-to-rgw.yaml
+  - allow-renovate-to-rgw.yaml
+  - allow-matrix-synapse-to-rgw.yaml
+  - allow-nextcloud-to-rgw.yaml
+  - allow-rgw-admin-jobs.yaml
+  - allow-gateway-ingress-xylem.yaml
+  - allow-gateway-ingress-phloem.yaml

@@ -22,6 +22,7 @@ spec:
                 - optcp-app-directory
                 - optcp-fairy-bottle
                 - gorons-bracelet
+                - optcp-operators-privileged
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access
@@ -108,6 +109,7 @@ spec:
                 - optcp-app-directory
                 - optcp-fairy-bottle
                 - gorons-bracelet
+                - optcp-operators-privileged
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access
@@ -194,6 +196,7 @@ spec:
                 - optcp-app-directory
                 - optcp-fairy-bottle
                 - gorons-bracelet
+                - optcp-operators-privileged
                 - optcp-operators-baseline
                 - optcp-gossip-stone
                 - optcp-remote-access

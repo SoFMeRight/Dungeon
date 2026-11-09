@@ -42,6 +42,7 @@ spec:
           - resources:
               namespaces:
                 - gorons-bracelet
+                - optcp-operators-privileged
                 - optcp-fairy-bottle
                 - optcp-service-mesh
                 - optcp-operators-baseline

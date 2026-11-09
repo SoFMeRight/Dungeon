@@ -32,6 +32,7 @@ resources:
   - optcp-edge-defenses
   # Batch 4 — Heavy
   - gorons-bracelet
+  - optcp-operators-privileged
   - optcp-gossip-stone
   - optcp-remote-access
   # Batch 5 — Most complex
