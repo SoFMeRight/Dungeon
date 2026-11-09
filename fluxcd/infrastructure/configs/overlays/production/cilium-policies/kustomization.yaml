@@ -28,7 +28,6 @@ resources:
   - arbitorium-home
   - arbitorium-nvr
   - arbitorium-restricted
-  - lens-of-truth
   - optcp-ids-ips
   - optcp-siem
   - optcp-tools

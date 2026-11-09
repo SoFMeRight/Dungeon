@@ -63,9 +63,6 @@ spec:
             k8s:io.kubernetes.pod.namespace: optcp-app-directory
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: lens-of-truth
-            policy.prplanit.com/cap.oidc: "true"
-        - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-siem
             policy.prplanit.com/cap.oidc: "true"
         - matchLabels:

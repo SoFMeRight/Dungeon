@@ -64,10 +64,6 @@ spec:
           names: ["linkstack-*"]
       - resources:
           kinds: [Pod]
-          namespaces: [lens-of-truth]
-          names: ["crowdsec-*", "wazuh-*"]
-      - resources:
-          kinds: [Pod]
           namespaces: [optcp-ids-ips]
           names: ["crowdsec-*"]
       - resources:

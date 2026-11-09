@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: lens-of-truth
-  labels:
-    name: lens-of-truth
-    docker-io-pull-secret: "enabled"
-    pod-security.kubernetes.io/enforce: privileged
-    istio.io/dataplane-mode: ambient

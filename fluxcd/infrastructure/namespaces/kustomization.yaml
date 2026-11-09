@@ -50,7 +50,6 @@ resources:
   - yesimvegan-web.yaml
   - gorons-bracelet.yaml
   - king-of-red-lions.yaml
-  - lens-of-truth.yaml
   - optcp-remote-access.yaml
   - mr-resetti.yaml
   - training-dummy.yaml
