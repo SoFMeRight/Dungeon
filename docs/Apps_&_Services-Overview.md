@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 130 healthy · ⚠️ 1 degraded
+✅ 131 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -218,7 +218,7 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Crowdsec (4 components) | ⚠️ | 🏠 crowdsec-lapi.pcfae.com | [open](https://crowdsec-lapi.pcfae.com) |
+| Crowdsec (4 components) | ✅ | 🏠 crowdsec-lapi.pcfae.com | [open](https://crowdsec-lapi.pcfae.com) |
 | Frigate | ✅ | 🔒 nvr.pcfae.com | [open](https://nvr.pcfae.com) |
 | Home Assistant | ✅ | 🏠 home.arbitorium.com | [open](https://home.arbitorium.com) |
 | Wazuh (3 components) | ✅ | 🔒 siem.prplanit.com | [open](https://siem.prplanit.com) |
@@ -1003,7 +1003,7 @@
 
 **Crowdsec — 4 components** — Mixed — 
 - Namespace: optcp-ids-ips
-- Replicas: 2/4
+- Replicas: 4/4
 - Hosts: crowdsec-lapi.pcfae.com, crowdsec.pcfae.com
 - Components:
   - crowdsec (StatefulSet)
