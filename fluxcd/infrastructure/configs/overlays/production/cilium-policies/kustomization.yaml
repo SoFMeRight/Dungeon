@@ -46,6 +46,7 @@ resources:
   - optcp-keyring
   - optcp-management-dashboards
   - optcp-media
+  - optcp-policy-engine
   - optcp-secrets
   - optcp-shooting-gallery
   - optcp-sibyl-system

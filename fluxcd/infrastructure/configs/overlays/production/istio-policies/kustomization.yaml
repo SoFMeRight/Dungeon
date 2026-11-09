@@ -29,6 +29,7 @@ resources:
   - optcp-monitoring-agents/
   - optcp-network-services/
   - optcp-operators-baseline/
+  - optcp-policy-engine/
   - optcp-restricted/
   - optcp-secrets/
   - optcp-shooting-gallery/

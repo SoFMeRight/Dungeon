@@ -49,6 +49,7 @@ spec:
                 - kube-system
                 - king-of-red-lions
                 - mr-resetti
+                - optcp-policy-engine
 
     # PolicyExceptions: the scalable exception model for enforce-pod-hardening's larger phases
     # (no-privesc / non-root / RO-root have 25 / 67 / 127 exceptions — name patterns don't scale).
