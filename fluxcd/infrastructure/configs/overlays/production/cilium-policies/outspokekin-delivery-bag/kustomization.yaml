@@ -4,5 +4,6 @@ namespace: outspokekin-delivery-bag
 resources:
   - cnp-default-deny-ingress.yaml
   - cnp-egress-content-apps.yaml
+  - cnp-matrix-livekit-to-turn.yaml
   - cnp-matrix-turn.yaml
   - cnp-matrix-turn-to-livekit.yaml

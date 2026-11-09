@@ -1,0 +1,28 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-matrix-livekit-to-matrix-turn
+spec:
+  description: >-
+    Relayed call media, SFU to TURN dataplane: the egress half of
+    allow-matrix-turn-to-matrix-livekit. A caller's relayed candidate is the dataplane's
+    relay port, and the SFU opens ICE checks and media to it. The namespace denies egress
+    by default and the mesh baseline carries only TCP, so without this the SFU never
+    reaches the relay and the call fails to connect. Scoped to this gateway's dataplane
+    and to the relay range its ingress already admits from the SFU.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: matrix-livekit
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            app: stunner
+            stunner.l7mp.io/related-gateway-name: matrix-turn
+      toPorts:
+        - ports:
+            - port: "32768"
+              endPort: 65535
+              protocol: UDP
