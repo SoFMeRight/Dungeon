@@ -18,8 +18,16 @@ spec:
         namespace: flux-system
   values:
     fullnameOverride: kyverno
+    # Uninstalling the release (a namespace move does) must never delete the CRDs, or every
+    # ClusterPolicy, PolicyException and policy report goes with them. The policies.kyverno.io
+    # CRDs come from the kyverno-api subchart, which takes its own annotations.
     crds:
       install: true
+      annotations:
+        helm.sh/resource-policy: keep
+    kyverno-api:
+      annotations:
+        helm.sh/resource-policy: keep
     admissionController:
       replicas: 2
     config:
