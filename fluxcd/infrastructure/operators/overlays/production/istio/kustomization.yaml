@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - ../../../base/istio
   - helmrelease-ztunnel-control-plane.yaml
+  - externalsecret-cacerts.yaml
 patches:
   # Set namespace for HelmReleases to flux-system
   - patch: |-

@@ -20,6 +20,7 @@ resources:
   - clustersecretstore-optcp-docker-io.yaml  # every namespace; reads only the Docker Hub pull token
   - clustersecretstore-optcp-k8s-dungeon-public.yaml  # every namespace; reads only the public registry pull token
   - clustersecretstore-prplanit.yaml  # prplanit tenant mount, apps/<app>/<issuer>; tenant=prplanit namespaces only
+  - istio-mesh-ca-job.yaml  # one-off, removed once run
 
 patches:
   - path: vault-cr-patch.yaml

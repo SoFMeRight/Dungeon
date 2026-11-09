@@ -326,6 +326,25 @@ spec:
           path "optcp-pki-int/sign/wazuh" {
             capabilities = ["create", "update"]
           }
+      # istio-mesh-ca (one-off): has optcp-pki's root sign optcp-mesh-ca's key and stores
+      # the result for istiod's cacerts. Removed once run.
+      - name: istio-mesh-ca
+        rules: |
+          path "optcp/metadata/apps/istio-mesh-ca" {
+            capabilities = ["read"]
+          }
+          path "optcp/data/apps/istio-mesh-ca" {
+            capabilities = ["create", "update"]
+          }
+          path "optcp-mesh-ca/intermediate/generate/exported" {
+            capabilities = ["create", "update"]
+          }
+          path "optcp-pki/root/sign-intermediate" {
+            capabilities = ["create", "update"]
+          }
+          path "optcp-mesh-ca/intermediate/set-signed" {
+            capabilities = ["create", "update"]
+          }
     auth:
       - type: kubernetes
         config:
@@ -445,6 +464,11 @@ spec:
             audience: "vault://optcp-siem/optcp-pki"
             policies: ["cert-manager-wazuh"]
             ttl: 10m
+          - name: istio-mesh-ca
+            bound_service_account_names: ["istio-mesh-ca"]
+            bound_service_account_namespaces: ["optcp-secrets"]
+            policies: ["istio-mesh-ca"]
+            ttl: 15m
       - type: oidc
         config:
           oidc_discovery_url: https://sso.optcp.com
@@ -719,3 +743,16 @@ spec:
               country: ["US"]
               ttl: 8760h
               max_ttl: 8760h
+      # istiod's plugged-in CA, signed by optcp-pki's root through the one-off istio-mesh-ca
+      # Job. Its key is exported to optcp/apps/istio-mesh-ca, because istiod signs workload
+      # certificates itself; this mount records the CA and publishes its CRL.
+      - path: optcp-mesh-ca
+        type: pki
+        description: optcp service-mesh certificate authority
+        config:
+          max_lease_ttl: 87600h
+        configuration:
+          config:
+            - name: urls
+              issuing_certificates: ["https://secrets.optcp.com/v1/optcp-mesh-ca/ca"]
+              crl_distribution_points: ["https://secrets.optcp.com/v1/optcp-mesh-ca/crl"]

@@ -58,6 +58,14 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
+    # istio-mesh-ca (one-off) has optcp-pki sign istiod's plugged-in CA.
+    - fromEndpoints:
+        - matchLabels:
+            app: istio-mesh-ca
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
     - fromEntities:
         - host
         - remote-node

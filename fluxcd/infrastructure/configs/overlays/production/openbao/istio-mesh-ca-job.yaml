@@ -1,0 +1,111 @@
+# One-off: optcp-mesh-ca generates istiod's plugged-in CA key, optcp-pki's root signs it,
+# and the CA, its key, its chain and the roots go to optcp/apps/istio-mesh-ca for the
+# cacerts ExternalSecret beside istiod. The key leaves OpenBao because istiod signs with
+# it locally. The previous mesh root (public) rides along for the trust transition.
+# Skips when the KV entry already exists. Removed, with its role and policy, once run.
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: istio-mesh-ca
+  labels:
+    app: istio-mesh-ca
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: istio-mesh-ca
+  labels:
+    app: istio-mesh-ca
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app: istio-mesh-ca
+    spec:
+      serviceAccountName: istio-mesh-ca
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: issue
+          image: docker.io/alpine/k8s:1.37.1
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              # The configurer creates the mount and this role after Flux applies the
+              # Job, so wait for the login to work.
+              JWT=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+              i=0
+              until TOKEN=$(curl -fsS -X POST "$VAULT_ADDR/v1/auth/kubernetes/login" \
+                -d "{\"jwt\":\"$JWT\",\"role\":\"$VAULT_ROLE\"}" | jq -er .auth.client_token); do
+                i=$((i+1)); [ "$i" -lt 30 ] || { echo "login as $VAULT_ROLE failed for 5m"; exit 1; }; sleep 10
+              done
+              unset JWT
+              h="X-Vault-Token: $TOKEN"
+              if curl -fsS -o /dev/null -H "$h" "$VAULT_ADDR/v1/optcp/metadata/apps/istio-mesh-ca"; then
+                echo "optcp/apps/istio-mesh-ca already exists, not issuing"
+              else
+                i=0
+                until curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/optcp-mesh-ca/intermediate/generate/exported" \
+                  -d '{"common_name":"optcp Mesh CA","key_type":"rsa","key_bits":4096}' > /tmp/gen.json; do
+                  i=$((i+1)); [ "$i" -lt 30 ] || { echo "optcp-mesh-ca not mounted after 5m"; exit 1; }; sleep 10
+                done
+                jq -r .data.private_key /tmp/gen.json > /tmp/key.pem
+                jq '{csr: .data.csr, common_name: "optcp Mesh CA", ttl: "87600h", max_path_length: 0, use_csr_values: false, format: "pem"}' /tmp/gen.json > /tmp/sign.json
+                rm -f /tmp/gen.json
+                curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/optcp-pki/root/sign-intermediate" --data @/tmp/sign.json > /tmp/signed.json
+                jq -r .data.certificate /tmp/signed.json > /tmp/ca.pem
+                jq -r .data.issuing_ca /tmp/signed.json > /tmp/root.pem
+                jq -n --rawfile c /tmp/ca.pem --rawfile r /tmp/root.pem '{certificate: ($c + $r)}' > /tmp/set.json
+                curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/optcp-mesh-ca/intermediate/set-signed" --data @/tmp/set.json >/dev/null
+                jq -n --rawfile c /tmp/ca.pem --rawfile k /tmp/key.pem --rawfile r /tmp/root.pem --rawfile l /etc/legacy/root-cert.pem \
+                  '{data: {"ca-cert.pem": $c, "ca-key.pem": $k, "cert-chain.pem": ($c + $r), "root-cert.pem": $r, "root-cert-legacy.pem": $l}}' > /tmp/kv.json
+                curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/optcp/data/apps/istio-mesh-ca" --data @/tmp/kv.json >/dev/null
+                certs=$(jq -r .certificate /tmp/set.json | grep -c 'BEGIN CERTIFICATE')
+                rm -f /tmp/key.pem /tmp/sign.json /tmp/signed.json /tmp/ca.pem /tmp/root.pem /tmp/set.json /tmp/kv.json
+                echo "optcp Mesh CA issued by optcp-pki ($certs certificates in its chain) and stored"
+              fi
+              curl -fsS -H "$h" -X POST "$VAULT_ADDR/v1/auth/token/revoke-self" >/dev/null || true
+          env:
+            - name: VAULT_ADDR
+              value: http://openbao.optcp-secrets.svc.cluster.local:8200
+            - name: VAULT_ROLE
+              value: istio-mesh-ca
+            - name: HOME
+              value: /tmp
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 64Mi
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: legacy
+              mountPath: /etc/legacy
+              readOnly: true
+      volumes:
+        - name: tmp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Mi
+        - name: legacy
+          configMap:
+            name: istio-ca-root-cert
