@@ -7,7 +7,7 @@ spec:
     stunner (neko-gateway) is a STUN/TURN gateway: it relays WebRTC media
     between browsers and neko to an open-ended set of external peer addresses on
     arbitrary ports, and coordinates with the STUNner control plane in
-    king-of-red-lions in-cluster. world+cluster covers external peers and the
+    optcp-service-mesh in-cluster. world+cluster covers external peers and the
     in-cluster control plane; DNS rides the universal CCNP baseline. Inert until
     egress default-deny is enabled.
   enableDefaultDeny:

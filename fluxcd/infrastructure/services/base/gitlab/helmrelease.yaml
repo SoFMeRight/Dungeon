@@ -195,7 +195,7 @@ spec:
     nginx-ingress:
       enabled: false
     # Don't install GitLab's bundled cert-manager — the cluster already runs a
-    # single cluster-wide cert-manager (king-of-red-lions). Two installs contend
+    # single cluster-wide cert-manager (optcp-service-mesh). Two installs contend
     # for the same kube-system/cert-manager-controller lease, and the GitLab one
     # was winning it while lacking the Cloudflare token + DNS-01 resolver config,
     # silently failing every renewal cluster-wide. One controller, one owner.

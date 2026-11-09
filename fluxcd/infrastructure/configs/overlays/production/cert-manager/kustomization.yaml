@@ -7,11 +7,11 @@ patches:
   - path: clusterissuer-patch.yaml
     target:
       kind: ClusterIssuer
-  # Set namespace for ExternalSecrets to king-of-red-lions (where cert-manager runs)
+  # Set namespace for ExternalSecrets to optcp-service-mesh (where cert-manager runs)
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: king-of-red-lions
+        value: optcp-service-mesh
     target:
       kind: ExternalSecret
   # Set namespaces for gateway certificates to match their gateway locations

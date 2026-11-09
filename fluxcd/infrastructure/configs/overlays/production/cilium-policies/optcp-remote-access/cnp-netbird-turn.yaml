@@ -36,7 +36,7 @@ spec:
   description: >-
     The NetBird STUNner dataplane relays media out to peer addresses anywhere on
     the internet and coordinates with the STUNner control plane in
-    king-of-red-lions in-cluster. world+cluster covers both. Inert until egress
+    optcp-service-mesh in-cluster. world+cluster covers both. Inert until egress
     default-deny is enabled.
   enableDefaultDeny:
     ingress: false

@@ -3,7 +3,9 @@ kind: HelmRelease
 metadata:
   name: stunner
 spec:
-  targetNamespace: king-of-red-lions
+  # Held suspended until the king-of-red-lions release has uninstalled.
+  suspend: true
+  targetNamespace: optcp-service-mesh
   chart:
     spec:
       # renovate: datasource=helm depName=stunner registryUrl=https://l7mp.io/stunner

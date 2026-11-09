@@ -3,7 +3,9 @@ kind: HelmRelease
 metadata:
   name: cert-manager
 spec:
-  targetNamespace: king-of-red-lions
+  # Held suspended until the king-of-red-lions release has uninstalled.
+  suspend: true
+  targetNamespace: optcp-service-mesh
   # Note: Chart already sets prometheus.io/scrape annotations by default
   values:
     webhook:

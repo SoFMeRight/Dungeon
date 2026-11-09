@@ -42,7 +42,7 @@ metadata:
 spec:
   description: >-
     This dataplane relays only to the LiveKit SFU in-cluster and talks to the STUNner
-    control plane in king-of-red-lions, so cluster alone is enough — unlike NetBird's TURN,
+    control plane in optcp-service-mesh, so cluster alone is enough — unlike NetBird's TURN,
     which must reach peers out on the internet. Inert until egress default-deny is enabled.
   enableDefaultDeny:
     ingress: false
