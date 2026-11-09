@@ -8,8 +8,6 @@ metadata:
     app: crowdsec
     component: blocklist-import
 spec:
-  # Suspended for the move into optcp-ids-ips.
-  suspend: true
   schedule: "17 */12 * * *"
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 3
