@@ -12,6 +12,26 @@ spec:
         - source:
             principals:
               - cluster.local/ns/optcp-supply-chain/sa/harbor-redis
+              - cluster.local/ns/optcp-supply-chain/sa/harbor-sentinel
       to:
         - operation:
             ports: ["6379"]
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-harbor-sentinel-intra-cluster
+spec:
+  selector:
+    matchLabels:
+      app: harbor-sentinel-sentinel
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/optcp-supply-chain/sa/harbor-sentinel
+              - cluster.local/ns/optcp-supply-chain/sa/harbor-redis
+      to:
+        - operation:
+            ports: ["26379"]

@@ -29,3 +29,4 @@ resources:
   - allow-harbor-to-harbor-portal.yaml
   - allow-harbor-to-harbor-postgres.yaml
   - allow-harbor-to-harbor-redis.yaml
+  - allow-harbor-to-harbor-sentinel.yaml
