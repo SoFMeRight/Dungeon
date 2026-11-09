@@ -24,7 +24,8 @@ metadata:
 spec:
   revisionHistoryLimit: 5
   serviceName: crowdsec-postgres
-  replicas: 1
+  # Held at zero for the volume re-bind into optcp-ids-ips.
+  replicas: 0
   selector:
     matchLabels:
       app: crowdsec-postgres
