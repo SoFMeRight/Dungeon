@@ -2,7 +2,7 @@ apiVersion: kyverno.io/v2
 kind: PolicyException
 metadata:
   name: restrict-default-sa-gitlab-upgrade-check
-  namespace: mr-resetti
+  namespace: optcp-policy-engine
   annotations:
     policies.kyverno.io/description: >-
       The GitLab chart's pre-upgrade upgrade-check hook Job has no serviceAccountName

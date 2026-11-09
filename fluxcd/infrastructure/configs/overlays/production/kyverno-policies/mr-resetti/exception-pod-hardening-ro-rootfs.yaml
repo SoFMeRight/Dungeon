@@ -1,0 +1,196 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: enforce-pod-hardening-ro-rootfs
+  namespace: mr-resetti
+  annotations:
+    policies.kyverno.io/description: >-
+      Workloads exempt from enforce-pod-hardening's require-readonly-root-fs rule. The vast
+      majority genuinely cannot run a read-only rootfs: databases (write data/conf/PID),
+      LSIO/s6 (write /run + /config), gitlab/harbor Helm charts, apache-root apps (write app
+      dir), GPU workloads (writable /tmp/CUDA), ai-dock, gluetun cohort, and root-vendor images.
+      The ~10 genuinely RO-root-clean workloads (stateless exporters, VictoriaMetrics, appflowy
+      rust services, uptime-kuma, searxng) are hardened instead of listed here.
+spec:
+  exceptions:
+    - policyName: enforce-pod-hardening
+      ruleNames:
+        - require-readonly-root-fs
+  match:
+    any:
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-network-services]
+          names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-gossip-stone]
+          names: ["grafana-*", "nutify-*", "speedtest-tracker-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-remote-access]
+          names: ["tactical-*"]
+      # bagisto/invoiceninja apache+root, frappe-suite (writes /home/frappe + sites).
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-billing]
+          names: ["invoiceninja-app-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-commerce]
+          names: ["bagisto-demo-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-staff-suite]
+          names: ["frappe-suite-*"]
+      # optcp-supply-chain — apt-cacher apache+root, gitlab and harbor Helm charts, LSIO netbootxyz.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-supply-chain]
+          names: ["apt-cacher-ng-*", "gitlab-*", "harbor-*", "netbootxyz-*"]
+      # optcp-ci-runners — renovate (containerbase installs toolchains at runtime).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-ci-runners]
+          names: ["renovate-*"]
+      # prplanit-support — osticket apache+root.
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-support]
+          names: ["osticket-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [outspokekin-social]
+          names: ["linkstack-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-ids-ips]
+          names: ["crowdsec-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-siem]
+          names: ["wazuh-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [arbitorium-home]
+          names: ["home-assistant-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [arbitorium-nvr]
+          names: ["frigate-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [kai-personal]
+          names: ["ferdium-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-app-directory]
+          names: ["homarr-*", "organizr-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [kai-private]
+          names: ["photoprism-x-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-restricted]
+          names: ["plex-ms-x-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-media]
+          names: ["calibre-web-*", "plex-*", "romm-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-shooting-gallery]
+          names: ["ark-sa-*", "ark-se-*"]
+      # optcp-swift-sail-privileged — gluetun cohort + LSIO *arr + root-vendor.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-swift-sail-privileged]
+          names:
+            - "bazarr-*"
+            - "byparr-*"
+            - "downloadarrs-*"
+            - "jellyseerr-*"
+            - "neko-*"
+            - "overseerr-*"
+            - "pinchflat-*"
+            - "prowlarr-*"
+            - "pyload-ng-*"
+            - "sabnzbd-*"
+            - "thelounge-*"
+      # optcp-swift-sail — anirra (root-vendor).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-swift-sail]
+          names: ["anirra-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [arbitorium-restricted]
+          names: ["immich-*", "lubelogger-*", "monica-*", "paperless-webserver-*", "photoprism-*"]
+      # optcp-staff-suite — kimai apache + sidecars.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-staff-suite]
+          names: ["kimai-*"]
+      # optcp-delivery-bag — opstree redis/sentinel render their config at start; elasticsearch
+      # writes its keystore under the install dir.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-delivery-bag]
+          names: ["stalwart-redis-*", "stalwart-sentinel-*", "stalwart-elasticsearch-*"]
+      # optcp-cloud — appflowy web/admin (NOT cloud/ai, which are hardened), bookstack LSIO, linkwarden root, nextcloud apache + sidecars, penpot-frontend, shlink-db LSIO
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-cloud]
+          names: ["appflowy-admin-frontend-*", "appflowy-web-*", "bookstack-*", "linkwarden-*", "nextcloud-*", "penpot-frontend-*", "shlink-db-*"]
+      # optcp-ai — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp), open-webui
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-ai]
+          names: ["faster-whisper-*", "libretranslate-*", "open-webui-*", "stable-diffusion-webui-*"]
+      # optcp-tools — apache (hrconvert2), librespeed. searxng is hardened.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-tools]
+          names: ["hrconvert2-*", "librespeed-speedtest-*"]
+      # optcp-secrets — Vault operator and the OpenBao pods.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-secrets]
+          names:
+            - "bank-vaults-operator-*"
+            - "openbao-*"
+      # optcp-infrastructure-management — unifi-network-application LSIO and its MongoDB, semaphore.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-infrastructure-management]
+          names:
+            - "semaphore-*"
+            - "unifi-network-application-*"
+      # optcp-ipam — netbox-server LSIO.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-ipam]
+          names: ["netbox-server-*"]
+      # optcp-remote-access — netbird-dashboard supervisord.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-remote-access]
+          names:
+            - "netbird-dashboard-*"
+      # optcp-identity — zitadel's configuration Job and Redis.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-identity]
+          names: ["zitadel-*"]
+      # optcp-keyring — twofauth's entrypoint symlinks its database into the baked app tree.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-keyring]
+          names: ["twofauth-*"]
+      # optcp-vpn — netbird-router (WireGuard subnet router needs a writable rootfs for the agent).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-vpn]
+          names:
+            - "netbird-router-*"

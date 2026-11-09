@@ -1,0 +1,178 @@
+apiVersion: kyverno.io/v2
+kind: PolicyException
+metadata:
+  name: enforce-pod-hardening-non-root
+  namespace: mr-resetti
+  annotations:
+    policies.kyverno.io/description: >-
+      Workloads exempt from enforce-pod-hardening's require-run-as-non-root rule. All are
+      genuinely root-required (LSIO/s6 root-start, apache/php-fpm bind+chown, gluetun shared-netns,
+      root-only vendor images, host-level network/security tools, operator/Helm pods). RE-EVALUATE
+      tags mark node/elixir apps that MIGHT harden with more work — follow-ups, not dead ends.
+spec:
+  exceptions:
+    - policyName: enforce-pod-hardening
+      ruleNames:
+        - require-run-as-non-root
+  match:
+    any:
+      # optcp-network-services — host network/DNS/time services (bind :53/:123, need host access)
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-network-services]
+          names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
+      # optcp-gossip-stone — nutify (UPS, needs device) + speedtest-tracker (LSIO s6)
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-gossip-stone]
+          names: ["nutify-*", "speedtest-tracker-*"]
+      # bagisto (root-start chown), invoiceninja apache-root
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-billing]
+          names: ["invoiceninja-app-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [prplanit-commerce]
+          names: ["bagisto-demo-*"]
+      # optcp-supply-chain — apt-cacher-ng (root-start chown), LSIO netbootxyz
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-supply-chain]
+          names: ["apt-cacher-ng-*", "netbootxyz-*"]
+      # outspokekin-social — linkstack (apache-root, regenerates /etc/apache2 + binds :443)
+      - resources:
+          kinds: [Pod]
+          namespaces: [outspokekin-social]
+          names: ["linkstack-*"]
+      # optcp-ids-ips, optcp-siem — crowdsec/wazuh (SIEM, host access), frigate (privileged), home-assistant (devices)
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-ids-ips]
+          names: ["crowdsec-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-siem]
+          names: ["wazuh-manager-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [arbitorium-home]
+          names: ["home-assistant-*"]
+      - resources:
+          kinds: [Pod]
+          namespaces: [arbitorium-nvr]
+          names: ["frigate-*"]
+      # kai-personal — ferdium LSIO s6
+      - resources:
+          kinds: [Pod]
+          namespaces: [kai-personal]
+          names: ["ferdium-*"]
+      # optcp-app-directory — homarr (RE-EVALUATE: node app, possibly hardenable), organizr LSIO s6
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-app-directory]
+          names: ["homarr-*", "organizr-*"]
+      # arbitorium-restricted — lubelogger (DataProtection keys), monica (php-fpm root), paperless (root init)
+      - resources:
+          kinds: [Pod]
+          namespaces: [arbitorium-restricted]
+          names: ["lubelogger-*", "monica-*", "paperless-webserver-*"]
+      # optcp-restricted — plex-ms-x (s6 root-start)
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-restricted]
+          names: ["plex-ms-x-*"]
+      # optcp-media — calibre-web LSIO, plex s6, romm(+db) root vendor
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-media]
+          names: ["calibre-web-*", "plex-*", "romm-*"]
+      # optcp-shooting-gallery — ark-se (root/sudo game)
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-shooting-gallery]
+          names: ["ark-se-tmc-*"]
+      # optcp-swift-sail-privileged — gluetun cohort (shared netns, can't pod-level non-root) + LSIO *arr + root-vendor.
+      # downloadarrs is a dead end, not a follow-up: gluetun holds NET_ADMIN over the shared
+      # netns and the five LSIO *arr containers start as root so s6 can drop to PUID/PGID.
+      # Its sidecars that COULD harden already have — qsticky and cross-seed run non-root.
+      # RE-EVALUATE: byparr/pinchflat/jellyseerr/overseerr (node/elixir) may harden with work.
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-swift-sail-privileged]
+          names:
+            - "bazarr-*"
+            - "byparr-*"
+            - "downloadarrs-*"
+            - "jellyseerr-*"
+            - "neko-gateway-*"
+            - "neko-vpn-*"
+            - "overseerr-*"
+            - "pinchflat-*"
+            - "prowlarr-*"
+            - "pyload-ng-*"
+            - "sabnzbd-*"
+            - "thelounge-*"
+      # optcp-swift-sail — anirra (root-vendor).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-swift-sail]
+          names: ["anirra-*"]
+      # outspokekin-delivery-bag — matrix-turn (STUNner dataplane;
+      # inherits root from the shared stunner-hardened Dataplane, which NetBird's :3478 requires.
+      # This gateway listens on 3479 and would run unprivileged, but the Dataplane is
+      # cluster-scoped and one spec serves every gateway. Otherwise fully hardened by that CR:
+      # RO-rootfs, no-privesc, drop-all-caps + NET_BIND_SERVICE.)
+      - resources:
+          kinds: [Pod]
+          namespaces: [outspokekin-delivery-bag]
+          names: ["matrix-turn-*"]
+      # optcp-staff-suite — kimai apache-root (+ its cronjobs/sidecars).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-staff-suite]
+          names: ["kimai-*"]
+      # optcp-cloud — appflowy web/admin (entrypoint sed-writes root-owned /app), bookstack(+db) LSIO, linkwarden (deliberately root), nextcloud apache-root
+      # (+ its cron/notify-push sidecars, collabora, clamav), shlink-db LSIO mariadb
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-cloud]
+          names: ["appflowy-admin-frontend-*", "appflowy-web-*", "bookstack-*", "linkwarden-*", "nextcloud-*", "shlink-db-*"]
+      # optcp-ai — faster-whisper LSIO, stable-diffusion-webui ai-dock root
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-ai]
+          names: ["faster-whisper-*", "stable-diffusion-webui-*"]
+      # optcp-tools — hrconvert2 apache-root
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-tools]
+          names: ["hrconvert2-*"]
+      # optcp-secrets — bank-vaults/openbao (Vault operator).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-secrets]
+          names: ["bank-vaults-operator-*", "openbao-*"]
+      # optcp-infrastructure-management — unifi-network-application-app LSIO (s6-overlay).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-infrastructure-management]
+          names: ["unifi-network-application-app-*"]
+      # optcp-ipam — netbox-server LSIO (s6-overlay).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-ipam]
+          names: ["netbox-server-*"]
+      # optcp-remote-access — netbird-dashboard (supervisord), netbird-turn (STUNner dataplane binds
+      # :3478 — root-required under CRI-O; otherwise fully hardened via its Dataplane CR: RO-rootfs,
+      # no-privesc, drop-all-caps + NET_BIND_SERVICE. This is its ONLY exception — unlike neko it
+      # doesn't need no-privesc.)
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-remote-access]
+          names: ["netbird-dashboard-*", "netbird-turn-*"]
+      # optcp-vpn — netbird-router (WireGuard subnet router: NET_ADMIN/MKNOD, runs as root).
+      - resources:
+          kinds: [Pod]
+          namespaces: [optcp-vpn]
+          names: ["netbird-router-*"]
