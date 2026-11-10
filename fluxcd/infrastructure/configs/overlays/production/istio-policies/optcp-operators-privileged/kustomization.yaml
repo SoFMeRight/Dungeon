@@ -12,5 +12,6 @@ resources:
   - allow-matrix-synapse-to-rgw.yaml
   - allow-nextcloud-to-rgw.yaml
   - allow-rgw-admin-jobs.yaml
+  - allow-ceph-rgw-loadbalancer.yaml
   - allow-gateway-ingress-xylem.yaml
   - allow-gateway-ingress-phloem.yaml

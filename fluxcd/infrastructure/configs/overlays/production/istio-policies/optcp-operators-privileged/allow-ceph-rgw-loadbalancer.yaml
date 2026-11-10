@@ -1,0 +1,19 @@
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-ceph-rgw-loadbalancer
+spec:
+  selector:
+    matchLabels:
+      app: ceph-rgw
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            ipBlocks:
+              - "10.0.0.0/8"
+              - "172.16.0.0/12"
+              - "192.168.0.0/16"
+      to:
+        - operation:
+            ports: ["8080"]

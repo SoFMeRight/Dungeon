@@ -2,6 +2,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: appflowy-nginx
+  annotations:
+    # The config is a subPath mount, which never updates in a running pod.
+    configmap.reloader.stakater.com/reload: appflowy-nginx-config
   labels:
     app: appflowy
     component: nginx

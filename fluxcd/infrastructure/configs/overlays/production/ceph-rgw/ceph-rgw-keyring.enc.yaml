@@ -2,13 +2,18 @@ apiVersion: v1
 kind: Secret
 metadata:
     name: ceph-rgw-keyring
-    namespace: gorons-bracelet
+    namespace: optcp-operators-privileged
 type: Opaque
 stringData:
     keyring: ENC[AES256_GCM,data:EjBMfp3dPTzjJvcr2h4W2jJtFnPF4WZNz0SMLMFDU0bOb4ESPK18As72ranaYru255UYnqKE/ybH1Vl7LOJE/5xMi3I1xvkWG2eP3cUTNqmQWUIvs8Nolt5j4/I=,iv:rUITWJnH5GAC4S9yBCNRNx7OjfjLr7Oz0iCrggLnqPc=,tag:rnJyDtpGgFH7OSObI9YeeQ==,type:str]
 sops:
+    kms: []
+    gcp_kms: []
+    azure_kv: []
+    hc_vault: []
     age:
-        - enc: |
+        - recipient: age1y8vegwlhcdgerrtn5947j5lcsswcu0zz6ukhs0hvvhsp79sa99nsn82dkr
+          enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
             YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBiZVhTZVk0Y1FXWmRIWWZu
             OTZTWEhwQ0p5eE9TcWlYV29ZbFpFRGQ1SUhFCjJjditUVi82WjRyNFo5R09BNTFB
@@ -16,8 +21,8 @@ sops:
             VFc3cUlTUFpmYUhzUnhjTTRNb003LzAKh/3VHsPS1O5olBSSazxarglLGnNMOGrS
             W+0c2vOC4dSdUYGX7HHhouSvMI5qLsV7h0c3qo2DFAis086aGD1hDQ==
             -----END AGE ENCRYPTED FILE-----
-          recipient: age1y8vegwlhcdgerrtn5947j5lcsswcu0zz6ukhs0hvvhsp79sa99nsn82dkr
+    lastmodified: "2026-11-10T03:23:49Z"
+    mac: ENC[AES256_GCM,data:Z8ps7DKqq6i1yfUXRDHS2foc2UPFb6on6QFV67C+eJDl51RmkBOS7fTLVroTamtfHiVpYyLZM8TOvHIQhktXlQ6zPVmIU4addla7Bdva6wlQa0uGKYoHUmQRXA67gvi0pE1Z8QiNKvxvWrfNQNXEAwKBz/97mRDeI+vgB0dNbGA=,iv:SA0sD+RywvEIJRjiiFIX9fqt2OBZnjArTz3VxkFLKes=,tag:Jt7ZAdoPFUNzvvzKpN1e5g==,type:str]
+    pgp: []
     encrypted_regex: ^(data|stringData)$
-    lastmodified: "2026-10-25T12:31:51Z"
-    mac: ENC[AES256_GCM,data:Fiif7Sntp/ui31P2Re/K4mWYboRUFsfCEQgbN6JE1erIYEezGeQ0QQIOiI8MwU7NgOqKPpai85RP5c4NCb6gJnwZORo8MpEE4z3E6c7SbPruhrUKuqgHAINGAapYkeSuR75hJRtj1af47pOKtE2HXizUbQJXHyOTdUMrJ267rY8=,iv:689ShET7rFZOG9gP8adCnInslMBEvYj76ZQ4wfhIQ4U=,tag:MYhM4RMnjmkNXbAOcWNgbQ==,type:str]
     version: 3.13.3
