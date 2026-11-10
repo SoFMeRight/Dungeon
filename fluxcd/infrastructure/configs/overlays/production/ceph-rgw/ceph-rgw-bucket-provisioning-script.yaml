@@ -143,7 +143,7 @@ data:
     # Create buckets with a signed S3 PUT (signature v2, which Ceph RGW accepts).
     # Uses only curl + openssl (already in the ceph image) — no package install,
     # no rootfs writes — so the Job stays a pure non-root, read-only-rootfs client.
-    RGW_HOST="ceph-rgw.gorons-bracelet.svc.cluster.local"
+    RGW_HOST="ceph-rgw.optcp-operators-privileged.svc.cluster.local"
 
     create_bucket() {
       local bucket="$1" date sig

@@ -24,7 +24,7 @@
     rgw_zone: "default"
 
     # K8s RGW endpoint (where RGW actually runs)
-    rgw_endpoint: "http://ceph-rgw.gorons-bracelet.svc.cluster.local"
+    rgw_endpoint: "http://ceph-rgw.optcp-operators-privileged.svc.cluster.local"
 
     # Pool Configuration
     rgw_metadata_pool: "dungeon-rgw"

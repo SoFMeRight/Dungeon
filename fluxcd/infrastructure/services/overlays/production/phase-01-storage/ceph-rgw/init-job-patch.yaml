@@ -38,7 +38,7 @@ spec:
             - name: RGW_ZONE
               value: default
             - name: RGW_ENDPOINT
-              value: http://ceph-rgw.gorons-bracelet.svc.cluster.local
+              value: http://ceph-rgw.optcp-operators-privileged.svc.cluster.local
             - name: RGW_METADATA_POOL
               value: dungeon-rgw
             - name: RGW_DATA_POOL

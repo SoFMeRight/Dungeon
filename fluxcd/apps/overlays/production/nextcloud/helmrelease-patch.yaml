@@ -57,7 +57,7 @@ spec:
       objectStore:
         s3:
           enabled: true
-          host: ceph-rgw.gorons-bracelet.svc.cluster.local
+          host: ceph-rgw.optcp-operators-privileged.svc.cluster.local
           ssl: false
           port: "80"
           region: us-east-1

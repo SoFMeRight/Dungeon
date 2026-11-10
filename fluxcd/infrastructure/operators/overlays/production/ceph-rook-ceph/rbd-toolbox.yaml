@@ -38,6 +38,17 @@ spec:
           projected:
             sources:
               - configMap:
-                  name: ceph-config
+                  name: rbd-toolbox-ceph-config
               - secret:
                   name: rbd-toolbox-keyring
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rbd-toolbox-ceph-config
+  namespace: gorons-bracelet
+data:
+  ceph.conf: |
+    [global]
+    fsid = 0985467c-d8f3-4483-b27f-f0a512397ec2
+    mon_host = [fc00:f1:ada:104e:1ace::1]:6789,[fc00:f1:ada:104e:1ace::2]:6789,[fc00:f1:ada:104e:1ace::3]:6789,[fc00:f1:ada:104e:1ace::4]:6789,[fc00:f1:ada:104e:1ace::5]:6789

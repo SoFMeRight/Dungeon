@@ -59,7 +59,7 @@ spec:
             - name: MAIL_FROM
               value: PLACEHOLDER_MAIL_FROM
             - name: STORAGE_ENDPOINT
-              value: ceph-rgw.gorons-bracelet.svc.cluster.local
+              value: ceph-rgw.optcp-operators-privileged.svc.cluster.local
             - name: STORAGE_PORT
               value: "80"
             - name: STORAGE_REGION

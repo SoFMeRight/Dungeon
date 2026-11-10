@@ -91,7 +91,7 @@ spec:
                 # (ECONNRESET/timeout). This is the same address every other in-cluster
                 # S3 consumer (loki, cnpg barman, the ceph-rgw-bucket-provisioning jobs) uses.
                 - name: RENOVATE_S3_ENDPOINT
-                  value: "http://ceph-rgw.gorons-bracelet.svc.cluster.local"
+                  value: "http://ceph-rgw.optcp-operators-privileged.svc.cluster.local"
                 - name: RENOVATE_S3_PATH_STYLE
                   value: "true"
                 - name: AWS_REGION

@@ -8,7 +8,7 @@ data:
         "name": "default",
         "api_name": "default",
         "is_master": true,
-        "endpoints": ["http://ceph-rgw.gorons-bracelet.svc.cluster.local"],
+        "endpoints": ["http://ceph-rgw.optcp-operators-privileged.svc.cluster.local"],
         "hostnames": [],
         "hostnames_s3website": [],
         "master_zone": "default",

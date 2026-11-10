@@ -4,10 +4,10 @@ metadata:
   name: ceph-rgw
   annotations:
     lbipam.cilium.io/ips: "172.22.30.101"
-    lbipam.cilium.io/sharing-key: "gorons-bracelet"
+    lbipam.cilium.io/sharing-key: "optcp-operators-privileged"
     gatus.home-operations.com/endpoint: |
       group: "Storage (Goron's Bracelet💪)"
-      url: http://ceph-rgw.gorons-bracelet.svc.cluster.local
+      url: http://ceph-rgw.optcp-operators-privileged.svc.cluster.local
       interval: 60s
       conditions:
         - "[STATUS] == any(200, 403)"

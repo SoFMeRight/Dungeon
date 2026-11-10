@@ -43,7 +43,7 @@ data:
         }
 
         upstream ceph_rgw {
-            server ceph-rgw.gorons-bracelet.svc.cluster.local:80;
+            server ceph-rgw.optcp-operators-privileged.svc.cluster.local:80;
         }
 
         server {
@@ -176,7 +176,7 @@ data:
             # Ceph RGW for file storage (presigned URLs)
             location /files/ {
                 proxy_pass http://ceph_rgw/;
-                proxy_set_header Host ceph-rgw.gorons-bracelet.svc.cluster.local;
+                proxy_set_header Host ceph-rgw.optcp-operators-privileged.svc.cluster.local;
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header X-Forwarded-Proto $scheme;

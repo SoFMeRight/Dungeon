@@ -573,7 +573,7 @@ Provides S3 API for:
 
 ## Endpoints
 
-- Internal: `http://ceph-rgw.gorons-bracelet.svc.cluster.local`
+- Internal: `http://ceph-rgw.optcp-operators-privileged.svc.cluster.local`
 - External LoadBalancer: `172.22.30.101` (shared with storage services)
 ```
 

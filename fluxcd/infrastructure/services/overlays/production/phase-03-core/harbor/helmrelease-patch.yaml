@@ -164,7 +164,7 @@ spec:
         s3:
           region: us-east-1
           bucket: harbor-registry
-          regionendpoint: http://ceph-rgw.gorons-bracelet.svc.cluster.local
+          regionendpoint: http://ceph-rgw.optcp-operators-privileged.svc.cluster.local
           forcepathstyle: true
         disableredirect: true
     # Admin password from existing secret
