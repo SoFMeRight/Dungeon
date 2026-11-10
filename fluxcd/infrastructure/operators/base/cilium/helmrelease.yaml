@@ -84,6 +84,11 @@ spec:
 
     hubble:
       enabled: true
+      # Helm-issued certs are only re-issued on a chart upgrade, so a release left alone for a
+      # year lets them expire and the relay loses every node. certgen reissues them on schedule.
+      tls:
+        auto:
+          method: cronJob
       relay:
         enabled: true
       ui:
