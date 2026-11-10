@@ -3,8 +3,6 @@ kind: HelmRelease
 metadata:
   name: rook-ceph-operator
 spec:
-  # Held suspended until the gorons-bracelet release has uninstalled.
-  suspend: true
   targetNamespace: optcp-operators-privileged
   chart:
     spec:
