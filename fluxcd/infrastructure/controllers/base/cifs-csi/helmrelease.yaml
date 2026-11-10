@@ -4,7 +4,7 @@ metadata:
   name: cifs-csi-driver
 spec:
   releaseName: cifs-csi-driver
-  targetNamespace: gorons-bracelet
+  targetNamespace: optcp-operators-privileged
   chart:
     spec:
       chart: csi-driver-smb
