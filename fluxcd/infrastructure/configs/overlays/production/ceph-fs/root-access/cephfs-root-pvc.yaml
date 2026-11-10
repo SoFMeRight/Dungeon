@@ -13,7 +13,7 @@ spec:
     apiVersion: v1
     kind: PersistentVolumeClaim
     name: gorons-bracelet-cephfs-root
-    namespace: gorons-bracelet
+    namespace: optcp-operators-privileged
   csi:
     driver: gorons-bracelet.cephfs.csi.ceph.com
     nodeStageSecretRef:
@@ -35,7 +35,7 @@ metadata:
     # looks the class up unconditionally and fails with "resource name may not be
     # empty"; excludedResources does not stop it, this does.
     velero.io/exclude-from-backup: "true"
-  namespace: gorons-bracelet
+  namespace: optcp-operators-privileged
 spec:
   accessModes:
     - ReadWriteMany

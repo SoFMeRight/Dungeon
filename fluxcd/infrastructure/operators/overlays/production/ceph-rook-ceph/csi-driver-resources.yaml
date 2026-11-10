@@ -1,16 +1,24 @@
-# Resources for the Ceph CSI containers, on the Driver CRs Rook created (it writes them only at
-# creation). ssa: Merge applies only these fields; prune: disabled keeps the Drivers if this file goes.
+# The gorons-bracelet.* names are bound into every existing PV: renaming a Driver orphans its volumes.
 apiVersion: csi.ceph.io/v1
 kind: Driver
 metadata:
   name: gorons-bracelet.rbd.csi.ceph.com
-  namespace: gorons-bracelet
-  annotations:
-    kustomize.toolkit.fluxcd.io/ssa: Merge
-    kustomize.toolkit.fluxcd.io/prune: disabled
+  namespace: optcp-operators-privileged
 spec:
+  clusterName: rook-ceph-external
+  cephFsClientType: kernel
+  enableMetadata: false
+  fsGroupPolicy: File
+  generateOMapInfo: false
+  imageSet:
+    name: rook-csi-operator-image-set-configmap
+  liveness:
+    metricsPort: 9080
   deployCsiAddons: true
   controllerPlugin:
+    hostNetwork: false
+    priorityClassName: system-node-critical
+    replicas: 2
     resources:
       plugin:
         requests:
@@ -62,6 +70,11 @@ spec:
           cpu: 214m
           memory: 74Mi
   nodePlugin:
+    enableSeLinuxHostMount: false
+    kubeletDirPath: /var/lib/kubelet
+    priorityClassName: system-cluster-critical
+    updateStrategy:
+      type: RollingUpdate
     resources:
       plugin:
         requests:
@@ -96,12 +109,22 @@ apiVersion: csi.ceph.io/v1
 kind: Driver
 metadata:
   name: gorons-bracelet.cephfs.csi.ceph.com
-  namespace: gorons-bracelet
-  annotations:
-    kustomize.toolkit.fluxcd.io/ssa: Merge
-    kustomize.toolkit.fluxcd.io/prune: disabled
+  namespace: optcp-operators-privileged
 spec:
+  clusterName: rook-ceph-external
+  cephFsClientType: kernel
+  enableMetadata: false
+  fsGroupPolicy: File
+  generateOMapInfo: false
+  imageSet:
+    name: rook-csi-operator-image-set-configmap
+  liveness:
+    metricsPort: 9081
+  deployCsiAddons: false
   controllerPlugin:
+    hostNetwork: false
+    priorityClassName: system-node-critical
+    replicas: 2
     resources:
       plugin:
         requests:
@@ -146,6 +169,11 @@ spec:
           cpu: 335m
           memory: 79Mi
   nodePlugin:
+    enableSeLinuxHostMount: false
+    kubeletDirPath: /var/lib/kubelet
+    priorityClassName: system-cluster-critical
+    updateStrategy:
+      type: RollingUpdate
     resources:
       plugin:
         requests:

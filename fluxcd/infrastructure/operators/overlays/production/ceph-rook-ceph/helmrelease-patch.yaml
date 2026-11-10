@@ -3,7 +3,9 @@ kind: HelmRelease
 metadata:
   name: rook-ceph-operator
 spec:
-  targetNamespace: gorons-bracelet
+  # Held suspended until the gorons-bracelet release has uninstalled.
+  suspend: true
+  targetNamespace: optcp-operators-privileged
   chart:
     spec:
       # renovate: datasource=helm depName=rook-ceph registryUrl=https://charts.rook.io/release

@@ -7,4 +7,4 @@ deletionPolicy: Delete
 parameters:
   clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
   csi.storage.k8s.io/snapshotter-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/snapshotter-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/snapshotter-secret-namespace: optcp-operators-privileged

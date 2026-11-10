@@ -4,6 +4,7 @@ kind: StorageClass
 metadata:
   name: ceph-rbd
   annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
     reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
     storageclass.kubernetes.io/is-default-class: "true"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
@@ -12,11 +13,11 @@ parameters:
   pool: "dungeon"
   imageFeatures: layering
   csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/provisioner-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
-  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/fstype: ext4
 reclaimPolicy: Retain
 allowVolumeExpansion: true
@@ -28,6 +29,7 @@ kind: StorageClass
 metadata:
   name: ceph-rbd-hdd
   annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
     reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
 parameters:
@@ -35,11 +37,11 @@ parameters:
   pool: "dungeon_hdd"
   imageFeatures: layering
   csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/provisioner-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
-  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/fstype: ext4
 reclaimPolicy: Retain
 allowVolumeExpansion: true
@@ -51,6 +53,7 @@ kind: StorageClass
 metadata:
   name: ceph-rbd-templated
   annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
     reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
 parameters:
@@ -58,11 +61,11 @@ parameters:
   pool: "dungeon"
   imageFeatures: layering
   csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/provisioner-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
-  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/fstype: ext4
   # Templated volume naming - uses PVC name for predictable RBD image names.
   # Driver-agnostic (external-reprovisioner acts at the PVC/PV layer) — re-verify at flip.
@@ -79,6 +82,7 @@ kind: StorageClass
 metadata:
   name: ceph-rbd-delete
   annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
     reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
     storageclass.kubernetes.io/is-default-class: "false"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
@@ -87,11 +91,11 @@ parameters:
   pool: dungeon
   imageFeatures: layering
   csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/provisioner-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
-  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/fstype: ext4
 reclaimPolicy: Delete
 volumeBindingMode: Immediate
@@ -104,6 +108,7 @@ kind: StorageClass
 metadata:
   name: ceph-rbd-retain
   annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
     reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
 parameters:
@@ -111,11 +116,11 @@ parameters:
   pool: dungeon
   imageFeatures: layering
   csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/provisioner-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
-  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/fstype: ext4
 reclaimPolicy: Retain
 volumeBindingMode: Immediate
@@ -128,6 +133,7 @@ kind: StorageClass
 metadata:
   name: ceph-rbd-static
   annotations:
+    kustomize.toolkit.fluxcd.io/force: "Enabled"
     reclaimspace.csiaddons.openshift.io/schedule: "0 22 * * 6"
 provisioner: gorons-bracelet.rbd.csi.ceph.com
 parameters:
@@ -135,11 +141,11 @@ parameters:
   pool: dungeon
   imageFeatures: layering
   csi.storage.k8s.io/provisioner-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/provisioner-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/provisioner-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/controller-expand-secret-name: csi-rbd-provisioner
-  csi.storage.k8s.io/controller-expand-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/controller-expand-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/node-stage-secret-name: csi-rbd-node
-  csi.storage.k8s.io/node-stage-secret-namespace: gorons-bracelet
+  csi.storage.k8s.io/node-stage-secret-namespace: optcp-operators-privileged
   csi.storage.k8s.io/fstype: ext4
 reclaimPolicy: Retain
 volumeBindingMode: Immediate

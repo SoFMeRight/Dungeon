@@ -13,7 +13,7 @@ patches:
     patch: |-
       - op: replace
         path: /metadata/namespace
-        value: gorons-bracelet
+        value: optcp-operators-privileged
       - op: replace
         path: /spec/targetNamespace
-        value: gorons-bracelet
+        value: optcp-operators-privileged
