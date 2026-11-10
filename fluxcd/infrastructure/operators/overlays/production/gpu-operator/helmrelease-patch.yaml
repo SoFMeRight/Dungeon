@@ -3,6 +3,8 @@ kind: HelmRelease
 metadata:
   name: gpu-operator
 spec:
+  # Held suspended until the gorons-bracelet release has uninstalled.
+  suspend: true
   values:
     # Prometheus scraping for operator
     # Kept off the control plane; the chart defaults tolerate and prefer it.
