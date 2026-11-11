@@ -6,10 +6,19 @@ crio_version: "1.35.11"
 kubernetes_version: "1.35.10"
 
 # Kernel flavour on every k8s node, and the Canonical-signed NVIDIA modules built
-# for it on GPU nodes. The 24.04 HWE line is on 7.0: ceph-csi's kernel RBD and
-# CephFS clients need >= 7.0 to authenticate with aes256k cephx keys.
-k8s_kernel_package: "linux-generic-hwe-24.04"
-k8s_nvidia_modules_package: "linux-modules-nvidia-580-server-generic-hwe-24.04"
+# for it on GPU nodes. ceph-csi's kernel RBD and CephFS clients need >= 7.0 to
+# authenticate with aes256k cephx keys: 24.04 reaches 7.0 through its HWE line,
+# 26.04 ships 7.0 as its GA kernel. Chosen by the node's own release, so a fleet
+# half way through maintenance/release-upgrade.yml converges each node correctly.
+k8s_kernel_package: >-
+  {{ 'linux-generic' if ansible_facts['distribution_version'] is version('26.04', '>=')
+     else 'linux-generic-hwe-24.04' }}
+k8s_nvidia_modules_package: >-
+  {{ 'linux-modules-nvidia-580-server-generic' if ansible_facts['distribution_version'] is version('26.04', '>=')
+     else 'linux-modules-nvidia-580-server-generic-hwe-24.04' }}
+
+# The Ubuntu LTS maintenance/release-upgrade.yml brings every Ubuntu host to.
+release_upgrade_target: "26.04"
 
 # ── Fleet OS-patch wiring ────────────────────────────────────────────────────
 # Environment-specific values the maintenance play reads — override per-inventory

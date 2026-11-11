@@ -1,0 +1,127 @@
+---
+# One Ubuntu LTS-to-LTS hop: do-release-upgrade to the next LTS with the
+# third-party repos carried across, held packages proven unchanged, then a
+# reboot into the new release. A 22.04 host needs two hops to reach 26.04, so
+# maintenance/release-upgrade.yml includes this once per hop; a host already at
+# release_upgrade_target skips it. On a k8s node the caller has already drained it.
+
+- name: Read the release before this hop
+  ansible.builtin.setup:
+
+# Decided once: a block's condition is re-evaluated on every task in it, and the
+# facts change part way through.
+- name: Is a hop due?
+  ansible.builtin.set_fact:
+    hop_due: "{{ ansible_facts['distribution_version'] is version(release_upgrade_target, '<') }}"
+
+- name: Hop {{ ansible_facts['hostname'] }} from {{ ansible_facts['distribution_version'] }} to the next LTS
+  when: hop_due | bool
+  block:
+    - name: Record the release this hop leaves
+      ansible.builtin.set_fact:
+        hop_from_version: "{{ ansible_facts['distribution_version'] }}"
+        hop_from_codename: "{{ ansible_facts['distribution_release'] }}"
+
+    # do-release-upgrade refuses to start while the current release has updates pending.
+    - ansible.builtin.import_tasks: os-upgrade.yml
+    - ansible.builtin.import_tasks: reboot-if-required.yml
+
+    # cri-o, kubelet, kubeadm and kubectl are held at their pins; the upgrade must
+    # not move them, and this is the proof it did not.
+    - name: Record held package versions
+      ansible.builtin.shell: |
+        set -o pipefail
+        apt-mark showhold | sort | xargs -r dpkg-query -W -f='${Package}=${Version}\n'
+      args:
+        executable: /bin/bash
+      register: hop_held_before
+      changed_when: false
+
+    - name: Install the release upgrader
+      ansible.builtin.apt:
+        name: ubuntu-release-upgrader-core
+        state: present
+
+    - name: Offer only LTS releases
+      ansible.builtin.lineinfile:
+        path: /etc/update-manager/release-upgrades
+        regexp: '^Prompt='
+        line: Prompt=lts
+
+    # RELEASE_UPGRADER_ALLOW_THIRD_PARTY keeps the third-party sources enabled, so
+    # their packages stay installable through the upgrade instead of being disabled
+    # and offered for removal as obsolete. The flat repos (pkgs.k8s.io, cri-o,
+    # nvidia-container-toolkit) are release-independent; the codename-pinned ones
+    # are moved to the new release below.
+    - name: do-release-upgrade from {{ hop_from_version }}
+      ansible.builtin.command: do-release-upgrade -f DistUpgradeViewNonInteractive
+      environment:
+        DEBIAN_FRONTEND: noninteractive
+        RELEASE_UPGRADER_ALLOW_THIRD_PARTY: "1"
+      async: 7200
+      poll: 30
+      register: hop_upgrade
+
+    - name: Read the release the upgrade installed
+      ansible.builtin.setup:
+
+    - name: Confirm the release moved
+      ansible.builtin.assert:
+        that: ansible_facts['distribution_version'] is version(hop_from_version, '>')
+        fail_msg: >-
+          do-release-upgrade left {{ ansible_facts['hostname'] }} on
+          {{ ansible_facts['distribution_version'] }}: {{ hop_upgrade.stdout_lines | default([]) | last | default('') }}
+
+    # docker (codename in the suite) and CUDA (ubuntuNNNN in the path) publish per
+    # release; point them at the one now installed.
+    - name: Find third-party sources
+      ansible.builtin.find:
+        paths: /etc/apt/sources.list.d
+        patterns: ["*.list", "*.sources"]
+        excludes: ["ubuntu.sources"]
+      register: hop_sources
+
+    - name: Move codename-pinned sources from {{ hop_from_codename }} to {{ ansible_facts['distribution_release'] }}
+      ansible.builtin.replace:
+        path: "{{ item.0.path }}"
+        regexp: "{{ item.1.from }}"
+        replace: "{{ item.1.to }}"
+      loop: >-
+        {{ hop_sources.files | product([
+             {'from': '\\b' ~ hop_from_codename ~ '\\b', 'to': ansible_facts['distribution_release']},
+             {'from': '\\bubuntu' ~ (hop_from_version | replace('.', '')) ~ '\\b',
+              'to': 'ubuntu' ~ (ansible_facts['distribution_version'] | replace('.', ''))}
+           ]) | list }}
+      loop_control:
+        label: "{{ item.0.path }}"
+
+    # Pulls the new release's builds from the sources just moved.
+    - ansible.builtin.import_tasks: os-upgrade.yml
+
+    - name: Read held package versions after the upgrade
+      ansible.builtin.shell: |
+        set -o pipefail
+        apt-mark showhold | sort | xargs -r dpkg-query -W -f='${Package}=${Version}\n'
+      args:
+        executable: /bin/bash
+      register: hop_held_after
+      changed_when: false
+
+    - name: Confirm the held packages did not move
+      ansible.builtin.assert:
+        that: hop_held_after.stdout == hop_held_before.stdout
+        fail_msg: >-
+          held packages changed on {{ ansible_facts['hostname'] }}:
+          before {{ hop_held_before.stdout_lines }}, after {{ hop_held_after.stdout_lines }}
+
+    # Installs the kernel and NVIDIA modules for the new release before the
+    # reboot, so a k8s node never boots a kernel ceph-csi cannot authenticate with.
+    - name: Converge the kernel for {{ ansible_facts['distribution_version'] }}
+      ansible.builtin.include_tasks: ../k8s/tasks/kernel-converge.yml
+      when: inventory_hostname in groups['k8s_master'] + groups['k8s_worker']
+
+    - name: Reboot into {{ ansible_facts['distribution_version'] }}
+      ansible.builtin.reboot:
+        msg: "Reboot initiated by ansible after release upgrade"
+        reboot_timeout: "{{ reboot_timeout_s | default(900) }}"
+        test_command: uptime

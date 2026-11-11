@@ -1,0 +1,111 @@
+---
+# Ubuntu LTS-to-LTS release upgrade: brings every Ubuntu host to
+# release_upgrade_target (group_vars/all.yml), one host at a time, through
+# tasks/release-upgrade-hop.yml. A 22.04 host takes two hops (22.04 → 24.04 →
+# 26.04); a host already at the target, and every non-Ubuntu host, is skipped.
+#
+# Order:
+#   1. k8s workers, then control plane — node-drain.yml → hops → kernel >= 7.0
+#      check → node-undrain.yml. Workers first so a failed upgrade costs
+#      capacity, not a control-plane member.
+#   2. standalone Ubuntu hosts — hops with plain reboots, skipping the host this
+#      run executes from (its reboot would kill the run).
+#
+# Any failure stops the run before the next host (max_fail_percentage: 0). A k8s
+# node that fails stays CORDONED, unlike update-hosts.yml's fail-open: a node
+# part way through a release upgrade is not fit to take workloads.
+#
+# Canary first, then the rest:
+#   ansible-playbook -i inventory maintenance/release-upgrade.yml -l dungeon_worker_005
+#   ansible-playbook -i inventory maintenance/release-upgrade.yml
+# Override the host classes per run (Semaphore extra-vars / -e):
+#   release_upgrade_k8s_workers     (default k8s_worker)
+#   release_upgrade_k8s_masters     (default k8s_master)
+#   release_upgrade_standalone      (default ubuntu_24_04_unclustered:freightyard:ansible)
+
+- name: Release upgrade — Kubernetes workers (drain-wrapped)
+  hosts: "{{ release_upgrade_k8s_workers | default('k8s_worker') }}"
+  serial: 1
+  max_fail_percentage: 0
+  gather_facts: true
+  become: true
+  tasks: &k8s_release_upgrade
+    # Decided once: a block's condition is re-evaluated on every task in it, and
+    # the hops change the facts it reads.
+    - name: Is {{ ansible_facts['hostname'] }} behind {{ release_upgrade_target }}?
+      ansible.builtin.set_fact:
+        release_upgrade_due: >-
+          {{ ansible_facts['distribution'] == 'Ubuntu'
+             and ansible_facts['distribution_version'] is version(release_upgrade_target, '<') }}
+
+    - name: Drain-wrapped release upgrade
+      when: release_upgrade_due | bool
+      vars:
+        k8s_delegate: "{{ groups[control_plane_group] | reject('equalto', inventory_hostname) | first }}"
+      block:
+        - name: Empty {{ ansible_facts['hostname'] }}
+          ansible.builtin.include_tasks: ../k8s/tasks/node-drain.yml
+
+        - name: Upgrade one LTS at a time
+          ansible.builtin.include_tasks: ../tasks/release-upgrade-hop.yml
+          loop: [1, 2]
+          loop_control:
+            loop_var: release_hop
+
+        - name: Read the release and kernel the node booted
+          ansible.builtin.setup:
+
+        - name: Confirm {{ release_upgrade_target }} and a kernel ceph-csi can authenticate with
+          ansible.builtin.assert:
+            that:
+              - ansible_facts['distribution_version'] is version(release_upgrade_target, '==')
+              - ansible_facts['kernel'] is version('7.0', '>=')
+            fail_msg: >-
+              {{ ansible_facts['hostname'] }} booted {{ ansible_facts['distribution_version'] }}
+              on kernel {{ ansible_facts['kernel'] }}
+
+        - name: Return {{ ansible_facts['hostname'] }} to service
+          ansible.builtin.include_tasks: ../k8s/tasks/node-undrain.yml
+          vars:
+            ready_timeout: 900
+      rescue:
+        - name: Surface the release-upgrade failure
+          ansible.builtin.fail:
+            msg: >-
+              Release upgrade failed on {{ ansible_facts['hostname'] }} — node left
+              CORDONED; see the failed task above. Uncordon only once it is healthy.
+
+- name: Release upgrade — Kubernetes control plane (drain-wrapped)
+  hosts: "{{ release_upgrade_k8s_masters | default('k8s_master') }}"
+  serial: 1
+  max_fail_percentage: 0
+  gather_facts: true
+  become: true
+  tasks: *k8s_release_upgrade
+
+- name: Release upgrade — standalone Ubuntu hosts
+  hosts: "{{ release_upgrade_standalone | default('ubuntu_24_04_unclustered:freightyard:ansible') }}"
+  serial: 1
+  max_fail_percentage: 0
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Is this the host the run executes from?
+      ansible.builtin.set_fact:
+        release_upgrade_self: "{{ (lookup('pipe', 'hostname') | lower) == (ansible_facts['hostname'] | lower) }}"
+
+    - name: Skip the controller
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }} runs this play — upgrade it from another
+          controller (ant-parade ↔ leaf-cutter).
+      when: release_upgrade_self | bool
+
+    - name: Upgrade one LTS at a time
+      ansible.builtin.include_tasks: ../tasks/release-upgrade-hop.yml
+      loop: [1, 2]
+      loop_control:
+        loop_var: release_hop
+      when:
+        - ansible_facts['distribution'] == 'Ubuntu'
+        - not (release_upgrade_self | bool)
