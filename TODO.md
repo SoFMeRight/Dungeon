@@ -155,19 +155,6 @@ CLAUDE.md specifies PVC naming pattern for StatefulSets: `<namespace>-<app>-<pur
 
 **Decision:** Keep running on dedicated Docker host - AIO provides superior experience and functionality
 
-### Mailcow
-**Status:** Architecture incompatible with Kubernetes
-**Reason:** Mailcow (18 containers) is designed specifically for Docker and Docker Compose with similar issues to Nextcloud AIO:
-- Docker socket access for container management and monitoring
-- Complex inter-container dependencies with hardcoded names and network aliases
-- Integrated watchdog/monitoring system managing container lifecycle
-- Email infrastructure requires stable networking - Kubernetes pod churn would break delivery
-- Self-managed backup system tied to Docker volume structure
-
-**Current deployment:** Production email stack on dedicated Docker host
-
-**Decision:** Keep running on dedicated Docker host - email infrastructure is too critical to risk migration
-
 ## Infrastructure Modernization
 
 ### Standardize Ceph CSI Provisioner Naming

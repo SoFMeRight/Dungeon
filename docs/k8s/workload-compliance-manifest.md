@@ -289,7 +289,7 @@ Query to refresh: `kubectl get policyreport -A -o json | jq -r '[.items[].result
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
-| mailcow | multiple | ? | ? | ? | ? | ? | ? | ? | ? | Complex multi-container |
+| stalwart | stalwart, elasticsearch, redis, sentinel | ? | ? | ? | ? | ? | ? | ? | ? | Mail server; replaced Mailcow |
 
 ### fairy-bottle (Backup Services)
 

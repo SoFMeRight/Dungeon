@@ -166,7 +166,7 @@
 | Namespace | Applications | Total CPU | Notes |
 |-----------|-------------|-----------|-------|
 | **compass** | AdGuard (2), DNS/NTP, Speed Tests | ~800m | Keep (networking) |
-| **delivery-bag** | Ntfy, Mailcow | ~500m | Keep (mail/notifications) |
+| **delivery-bag** | Stalwart | ~500m | Keep (mail/notifications) |
 | **optcp-fairy-bottle** | Velero, Node Agents | ~600m | Keep (backups) |
 | **flux-system** | Flux Controllers | ~350m | Keep (GitOps) |
 | **optcp-ingress-internal** | Phloem Gateway (Istio) | ~300m | Keep (internal gateway) |
