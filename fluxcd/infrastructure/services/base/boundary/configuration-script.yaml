@@ -34,9 +34,16 @@ data:
     # The initial login role lets anyone list global auth methods; the password one is found by type.
     PW_AM_ID=$(anon auth-methods list -scope-id global | ids ampw | head -1 || true)
     [ -n "$PW_AM_ID" ] || { echo "no password auth method in the global scope"; exit 1; }
-    SESSION_TOKEN=$(anon authenticate password -auth-method-id "$PW_AM_ID" -login-name "$ADMIN_LOGIN_NAME" \
-      -password env://ADMIN_PASSWORD | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+    AUTH=$(anon authenticate password -auth-method-id "$PW_AM_ID" -login-name "$ADMIN_LOGIN_NAME" \
+      -password env://ADMIN_PASSWORD)
+    SESSION_TOKEN=$(printf '%s' "$AUTH" | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+    SESSION_TOKEN_ID=$(printf '%s' "$AUTH" | grep -o '"id":"at_[^"]*"' | head -1 | cut -d'"' -f4)
+    unset AUTH
+    [ -n "$SESSION_TOKEN" ] && [ -n "$SESSION_TOKEN_ID" ] || { echo "admin login returned no token"; exit 1; }
     export SESSION_TOKEN
+    # Every run logs in afresh, so the run revokes its own session on any exit; left alive, each one
+    # would stay a usable admin credential for the token lifetime.
+    trap 'b auth-tokens delete -id "$SESSION_TOKEN_ID" >/dev/null 2>&1 && echo "revoked session $SESSION_TOKEN_ID"' EXIT
 
     echo "=== Auth method '$OIDC_AUTH_METHOD_NAME' ==="
     OIDC_AM_ID=$(b scopes read -id global | grep -o '"primary_auth_method_id":"amoidc_[^"]*"' | cut -d'"' -f4 || true)
