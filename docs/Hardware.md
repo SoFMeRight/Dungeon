@@ -48,11 +48,13 @@ The datacenter is powered by Proxmox VE and consists of five clustered nodes:
 
 | Host           | CPU                                         | RAM                | GPU                        | Notes |
 | -------------- | ------------------------------------------- | ------------------ | -------------------------- | ----- |
-| 🥑 Avocado     | 2× Xeon E5-2618L v4 (20C/40T) 2.20–3.20 GHz | 256GB (8×32GB ECC) | NVIDIA RTX A2000 12GB      | Hosts pfSense HA primary |
-| 🎍 Bamboo      | 2× Xeon E5-2618L v4 (20C/40T) 2.20–3.20 GHz | 96GB (6×16GB ECC)  | -                          | Hosts pfSense HA secondary |
-| 🌌 Cosmos      | 2× Xeon E5-2618L v4 (20C/40T) 2.20–3.20 GHz | 256GB (8×32GB ECC) | -                          | |
-| 🐉 Dragonfruit | AMD Ryzen 7 2700X (8C/16T) 3.7–4.35GHz      | 64GB (2×32GB ECC)  | NVIDIA GTX 980 Ti          | |
-| 🍆 Eggplant    | 2× Xeon E5-2618L v4 (20C/40T) 2.20–3.20 GHz | 128GB (16×8GB ECC) | -                          | |
+| 🥑 Avocado     | 2× Xeon E5-2618L v4 (20C, SMT off) 2.20–3.20 GHz | 320GB (10×32GB ECC) | NVIDIA RTX A2000 12GB      | Hosts pfSense HA primary |
+| 🎍 Bamboo      | 2× Xeon E5-2618L v4 (20C, SMT off) 2.20–3.20 GHz | 320GB (10×32GB ECC) | -                          | Hosts pfSense HA secondary |
+| 🌌 Cosmos      | 2× Xeon E5-2618L v4 (20C, SMT off) 2.20–3.20 GHz | 320GB (10×32GB ECC) | -                          | |
+| 🐉 Dragonfruit | AMD Ryzen 7 2700X (8C/16T) 3.7–4.35GHz      | 64GB (2×32GB ECC)  | NVIDIA RTX 3080 Ti         | |
+| 🍆 Eggplant    | 2× Xeon E5-2618L v4 (20C, SMT off) 2.20–3.20 GHz | 224GB (6×16GB + 16×8GB ECC) | -                          | |
+
+96 threads and 1.2 TiB (1,248GB) of RAM across the cluster. SMT is off on the Xeon hosts (see [proxmox-cpu-configuration.md](./proxmox-cpu-configuration.md)).
 
 ### Kubernetes VMs (Hosted on Proxmox)
 
@@ -78,6 +80,7 @@ The datacenter is powered by Proxmox VE and consists of five clustered nodes:
 | **Chassis** | SuperChassis 826BE1C-R920LPB | May 10, 2024 | $630.87 | 2U 12 Bay, SAS3 12gbps |
 | **CPU** | 2× Intel Xeon E5-2680 v3 | - | - | Came with chassis |
 | **PSU** | 2× Supermicro PWS-920P-SQ | - | - | Came with chassis, 920W 80+ Platinum |
+| **RAM** | 10× Samsung M386A4G40DM0-CPB | - | - | 32GB DDR4-2133 ECC LRDIMM, 320GB, 10 of 16 slots |
 | **GPU** | NVIDIA RTX A2000 12GB | Jul 1, 2024 | $440.40 | Warranty through 03/2025 |
 | **NIC** | Silicom PE310G4SPI9L-XR-CX3 | Nov 9, 2024 | $40.78 | Quad Port 10GB SFP+ |
 | **NIC Bracket** | Low Bracket for PE310G4SPI9L | Nov 13, 2024 | $4.35 | |
@@ -91,6 +94,7 @@ The datacenter is powered by Proxmox VE and consists of five clustered nodes:
 | **CPU** | 2× Intel Xeon E5-2680 v4 SR2N7 2.40GHz | Dec 23, 2024 / Dec 30, 2024 | $19.81 / $17.38 | 28 cores/56 threads total |
 | **CPU Cooler** | Supermicro SNK-P0048PS | Dec 30, 2024 | $12.06 | Screw down heatsink |
 | **Motherboard** | Supermicro X10DRH-iT | Dec 31, 2024 | $131.02 | Dual LGA2011-3, onboard 10GbE |
+| **RAM** | 10× Samsung M386A4G40DM0-CPB | - | - | 32GB DDR4-2133 ECC LRDIMM, 320GB, 10 of 16 slots |
 | **PSU** | 2× Supermicro PWS-920P-SQ | Nov 9, 2023 | $75.18 | 920W 80+ Platinum |
 | **HBA** | LSI Lenovo 9240-8i | Nov 2, 2024 | $19.81 | 8-port SAS/SATA controller |
 | **NIC** | Silicom PE310G4SPI9L-XR-CX3 | Nov 9, 2024 | $40.78 | Quad Port 10GB SFP+ |
@@ -104,6 +108,7 @@ The datacenter is powered by Proxmox VE and consists of five clustered nodes:
 | Component | Part | Purchase Date | Cost | Notes |
 |-----------|------|---------------|------|-------|
 | **Chassis** | SuperChassis 826BE1C-R920LPB | Jan 4, 2025 | $448.77 | 2U 12 Bay, SAS3 12gbps |
+| **RAM** | 8× Samsung M386A4G40DM0-CPB + 2× SK Hynix HMA84GL7MMR4N-TF | - | - | 32GB DDR4-2133 ECC LRDIMM, 320GB, 10 of 16 slots |
 | **NIC** | Intel X520-DA2 | Sep 21, 2023 | $24.21 | Dual Port SFP+, Low Profile |
 | **Ceph SSD** | Samsung F320 NVMe 3.2TB (MZ-PLK3T20) | Jun 20, 2024 | $157.39 | PCIe 3.0 x8 |
 
@@ -115,7 +120,7 @@ The datacenter is powered by Proxmox VE and consists of five clustered nodes:
 | **Rails** | iStarUSA TC-RAIL-26 | Jul 22, 2024 | $44.49 | 26" sliding rails |
 | **CPU** | AMD Ryzen 7 2700X | Oct 27, 2018 | $309.89 | 8C/16T, with Wraith Prism cooler |
 | **Motherboard** | ASUS Prime X370-Pro | Oct 21, 2018 | $79.21 | AM4, DDR4, Aura Sync RGB |
-| **RAM** | 64GB DDR4 ECC | - | - | Samsung B-die 3200MHz CL14 (2×32GB) |
+| **RAM** | 2× Micron 18ASF4G72AZ-3G2F1 | - | - | 32GB DDR4-3200 ECC UDIMM, 64GB, 2 of 4 slots |
 | **NIC** | Silicom PE310G4SPI9L-XR-CX3 | Oct 27, 2024 | $38.52 | 4-Port 10GB SFP+ |
 
 ### 🍆 Eggplant - Detailed Component List
@@ -123,6 +128,7 @@ The datacenter is powered by Proxmox VE and consists of five clustered nodes:
 | Component | Part | Purchase Date | Cost | Notes |
 |-----------|------|---------------|------|-------|
 | **Chassis** | Supermicro 4U 36 Bay | Dec 20, 2024 | $527.38 | TruNAS Storage Server, Xeon 28 core, 64GB |
+| **RAM** | 6× Micron 18ASF2G72PZ-2G3B1 + 16× Micron 18ASF1G72PZ-2G1A2 | - | - | 16GB DDR4-2400 + 8GB DDR4-2133 ECC RDIMM, 224GB, 22 of 24 slots |
 | **HBA** | 2× Supermicro AOC-S3008L-L8E | Dec 20, 2024 | $18.71 | SAS3 12Gbps 8-port internal PCIe 3.0 |
 | **HBA** | LSI SAS9207-8e | Jun 5, 2024 | $27.50 | 8-port external 6Gb/s |
 | **Backup SSD** | Crucial MX500 2TB | May 29, 2024 | $176.47 | SATA SSD |

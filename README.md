@@ -68,11 +68,13 @@ Our peak hours are typically 6:00AM – 10:00PM PST. Backups are scheduled to mi
 
 | Host           | CPU                                         | RAM                |
 | -------------- | ------------------------------------------- | ------------------ |
-| 🥑 Avocado     | 2× Xeon E5-2618L v4 (20C/40T) 2.20–3.20 GHz | 256GB (8×32GB ECC) |
-| 🎍 Bamboo      | 2× Xeon E5-2618L v4 (20C/40T) 2.20–3.20 GHz | 96GB (6×16GB ECC)  |
-| 🌌 Cosmos      | 2× Xeon E5-2618L v4 (20C/40T) 2.20–3.20 GHz | 256GB (8×32GB ECC) |
+| 🥑 Avocado     | 2× Xeon E5-2618L v4 (20C, SMT off) 2.20–3.20 GHz | 320GB (10×32GB ECC) |
+| 🎍 Bamboo      | 2× Xeon E5-2618L v4 (20C, SMT off) 2.20–3.20 GHz | 320GB (10×32GB ECC) |
+| 🌌 Cosmos      | 2× Xeon E5-2618L v4 (20C, SMT off) 2.20–3.20 GHz | 320GB (10×32GB ECC) |
 | 🐉 Dragonfruit | AMD Ryzen 7 2700X (8C/16T) 3.7–4.35GHz      | 64GB (2×32GB ECC)  |
-| 🍆 Eggplant    | 2× Xeon E5-2618L v4 (20C/40T) 2.20–3.20 GHz | 128GB (16×8GB ECC) |
+
+96 threads and 1.2 TiB (1,248GB) of RAM across the cluster.
+| 🍆 Eggplant    | 2× Xeon E5-2618L v4 (20C, SMT off) 2.20–3.20 GHz | 224GB (6×16GB + 16×8GB ECC) |
 
 ####  Unclustered Hosts
 
@@ -89,7 +91,7 @@ Our peak hours are typically 6:00AM – 10:00PM PST. Backups are scheduled to mi
 - Kubernetes – 5-node cluster
 - PBS (Proxmox Backup Server)
 - Portainer – Jump node: harbormaster
-- Shinobi – CCTV & surveillance
+- Frigate – CCTV & surveillance (Kubernetes)
 - TrueNAS
 - Windows Server – Active Directory 3-node forest
 
