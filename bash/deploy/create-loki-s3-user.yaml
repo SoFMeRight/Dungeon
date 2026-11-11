@@ -2,47 +2,47 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: rgw-create-loki-user
-  namespace: gorons-bracelet
+  namespace: optcp-operators-privileged
 spec:
   ttlSecondsAfterFinished: 300
   template:
     spec:
       restartPolicy: Never
       containers:
-      - name: create-user
-        image: quay.io/ceph/ceph:v18
-        command:
-        - /bin/bash
-        - -c
-        - |
-          set -e
+        - name: create-user
+          image: quay.io/ceph/ceph:v18
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
 
-          echo "Creating RGW S3 user for Loki..."
+              echo "Creating RGW S3 user for Loki..."
 
-          radosgw-admin user create \
-            --uid=loki \
-            --display-name="Loki Log Storage" \
-            --rgw-realm=dungeon \
-            --rgw-zonegroup=default \
-            --rgw-zone=default || echo "User may already exist"
+              radosgw-admin user create \
+                --uid=loki \
+                --display-name="Loki Log Storage" \
+                --rgw-realm=dungeon \
+                --rgw-zonegroup=default \
+                --rgw-zone=default || echo "User may already exist"
 
-          echo ""
-          echo "Retrieving credentials..."
-          radosgw-admin user info --uid=loki
+              echo ""
+              echo "Retrieving credentials..."
+              radosgw-admin user info --uid=loki
 
-        volumeMounts:
-        - name: ceph-config
-          mountPath: /etc/ceph/ceph.conf
-          subPath: ceph.conf
-          readOnly: true
-        - name: ceph-keyring
-          mountPath: /etc/ceph/ceph.keyring
-          subPath: keyring
-          readOnly: true
+          volumeMounts:
+            - name: ceph-config
+              mountPath: /etc/ceph/ceph.conf
+              subPath: ceph.conf
+              readOnly: true
+            - name: ceph-keyring
+              mountPath: /etc/ceph/ceph.keyring
+              subPath: keyring
+              readOnly: true
       volumes:
-      - name: ceph-config
-        configMap:
-          name: ceph-config
-      - name: ceph-keyring
-        secret:
-          secretName: ceph-rgw-keyring
+        - name: ceph-config
+          configMap:
+            name: ceph-config
+        - name: ceph-keyring
+          secret:
+            secretName: ceph-rgw-keyring

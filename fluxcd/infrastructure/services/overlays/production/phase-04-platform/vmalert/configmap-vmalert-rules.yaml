@@ -192,7 +192,7 @@ data:
           - alert: AppSecurityRelaxed
             expr: |
               kube_namespace_labels{label_policy_prplanit_com_restrict_default_sa="suspended",
-                namespace!~"gorons-bracelet|optcp-operators-privileged|optcp-training-dummy"} > 0
+                namespace!~"optcp-operators-privileged|optcp-training-dummy"} > 0
             labels:
               severity: warning
             annotations:

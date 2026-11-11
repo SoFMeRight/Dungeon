@@ -166,10 +166,10 @@
       allow rwx pool=dungeon, allow rwx pool=dungeon_hdd', mgr 'allow rw')
     - `client.dungeon-rgw` - RADOS Gateway user (caps: mon 'allow rw', osd 'allow rwx', mgr 'allow rw')
   - **RGW (S3) Configuration**:
-    - Deployed in `gorons-bracelet` namespace as StatefulSet
-    - **Canonical S3 endpoint**: `https://s3.optcp.com` (all clients)
+    - Deployed in `optcp-operators-privileged` namespace as StatefulSet
+    - **S3 endpoint**: `http://ceph-rgw.optcp-operators-privileged.svc.cluster.local` in-cluster; `https://s3.optcp.com` for URLs handed to browsers or off-cluster clients
     - TLS terminated at phloem-ingress-gateway (172.22.30.70) with the `s3-optcp-com-phloem-tls` certificate
-    - HTTPRoute `ceph-rgw-s3` in gorons-bracelet routes `s3.optcp.com` → ceph-rgw service (port 80)
+    - HTTPRoute `ceph-rgw-s3` in optcp-operators-privileged routes `s3.optcp.com` → ceph-rgw service (port 80)
     - All S3 clients MUST use path-style addressing (`s3ForcePathStyle: true`)
     - LoadBalancer IP: 172.22.30.101 (direct RGW access, admin/monitoring only)
     - Uses Ceph RBD for local cache/WAL (ReadWriteOnce PVCs)
@@ -248,7 +248,7 @@
       - Tools w/o userdata (xbackbone, neko-vpn, vlmcsd, endlessh-go, searxng): 172.22.30.107 (sharing-key: tingle-tuner)
       - Archival/Content Management (linkwarden, calibre-web, mealie): 172.22.30.222 (sharing-key: song-of-time)
       - Backup services (urbackup): 172.22.30.117 (sharing-key: fairy-bottle)
-      - Storage services (ceph-rgw): 172.22.30.101 (sharing-key: gorons-bracelet)
+      - Storage services (ceph-rgw): 172.22.30.101 (sharing-key: optcp-operators-privileged)
       - Game servers (ark-sa, ark-se, minecraft): 172.22.30.231 (sharing-key: shooting-gallery)
       - VPN-routed *arr apps & tools (prowlarr, radarr, sonarr, py-kms): 172.22.30.33 (sharing-key: great-sea)
       - SIEM/IDS/IPS & cameras (wazuh-manager, frigate): 172.22.30.119 (sharing-key: lens-of-truth)

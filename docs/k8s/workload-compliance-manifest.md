@@ -309,7 +309,7 @@ Query to refresh: `kubectl get policyreport -A -o json | jq -r '[.items[].result
 | umami | umami | Y (1001) | ? | Y | ? | ? | ? | Y | ? | Hardened non-root 1001, fsGroup, drop ALL, seccomp |
 | umami | postgres | ? | ? | ? | ? | ? | ? | Y | ? | |
 
-### gorons-bracelet (Storage Services)
+### optcp-operators-privileged (Storage Services)
 
 | App | Container | SEC-1/2 | SEC-4 | SEC-5/6 | RES | OBS-1 | OBS-2/3 | IMG-1/2 | TZ | Notes |
 |-----|-----------|---------|-------|---------|-----|-------|---------|---------|----|----|
@@ -648,7 +648,7 @@ root-required vendor images) or external no-pod services. Counts are per deploye
 | delivery-bag | None | baseline | ? | Mail services complex |
 | fairy-bottle | None | restricted | ? | Backup agents |
 | flux-system | None | restricted | ? | GitOps controllers |
-| gorons-bracelet | None | baseline | ? | Storage services |
+| optcp-operators-privileged | None | baseline | ? | Storage services |
 | gossip-stone | None | restricted | ? | Monitoring |
 | hookshot | None | baseline | ? | Remote access services |
 | hyrule-castle | None | baseline | ? | Business apps, many root exceptions |

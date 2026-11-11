@@ -3,3 +3,29 @@ kind: Kustomization
 namespace: gorons-bracelet
 resources:
   - ../ceph-rook-ceph
+# The csi-* Secrets stay: existing PVs reference them here.
+patches:
+  - patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: rook-ceph-mon
+  - patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: rook-ceph-mon-endpoints
+  - patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: rgw-admin-ops-user
+  - patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: ceph-csi-config

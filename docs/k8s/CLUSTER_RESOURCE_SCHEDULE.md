@@ -136,7 +136,7 @@
 
 ---
 
-### 🟤 **gorons-bracelet** (Storage Infrastructure) - **~3,000m CPU**
+### 🟤 **optcp-operators-privileged** (Storage Infrastructure) - **~3,000m CPU**
 
 | Application | Replicas | CPU/pod | Mem/pod | Total CPU | Total Mem | Notes | Optimization |
 |------------|----------|---------|---------|-----------|-----------|-------|--------------|

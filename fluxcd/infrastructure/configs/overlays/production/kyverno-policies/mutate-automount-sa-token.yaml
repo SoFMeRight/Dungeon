@@ -41,7 +41,6 @@ spec:
           # Infra namespaces: root CSI/backup/gateway/reflector controllers need the API.
           - resources:
               namespaces:
-                - gorons-bracelet
                 - optcp-operators-privileged
                 - optcp-fairy-bottle
                 - optcp-service-mesh

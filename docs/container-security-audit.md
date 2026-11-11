@@ -456,7 +456,7 @@ the corrected template (git stays source-of-truth; the patch only matches the fi
 ## Privileged Init/Maintenance Jobs
 
 A class of infra `Job`s legitimately needs root — they chown/mkdir across shared storage
-on behalf of many apps (e.g. `cephfs-init-*` in gorons-bracelet) or manage a repo owned by
+on behalf of many apps (e.g. `cephfs-init-*` in optcp-operators-privileged) or manage a repo owned by
 root (e.g. velero kopia maintenance). They can't be non-root, but everything else is locked
 down. Target = **4/5**, with `runAsNonRoot` (SEC-1) the sole documented exception.
 

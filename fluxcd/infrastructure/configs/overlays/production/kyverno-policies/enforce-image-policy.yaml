@@ -27,7 +27,6 @@ spec:
                 - optcp-ai
                 - optcp-app-directory
                 - optcp-fairy-bottle
-                - gorons-bracelet
                 - optcp-operators-privileged
                 - optcp-operators-baseline
                 - optcp-gossip-stone
@@ -124,7 +123,6 @@ spec:
                 - optcp-ai
                 - optcp-app-directory
                 - optcp-fairy-bottle
-                - gorons-bracelet
                 - optcp-operators-privileged
                 - optcp-operators-baseline
                 - optcp-gossip-stone
@@ -225,7 +223,6 @@ spec:
                 - optcp-ai
                 - optcp-app-directory
                 - optcp-fairy-bottle
-                - gorons-bracelet
                 - optcp-operators-privileged
                 - optcp-operators-baseline
                 - optcp-gossip-stone
@@ -325,7 +322,6 @@ spec:
                 - optcp-ai
                 - optcp-app-directory
                 - optcp-fairy-bottle
-                - gorons-bracelet
                 - optcp-operators-privileged
                 - optcp-operators-baseline
                 - optcp-gossip-stone

@@ -96,7 +96,6 @@ spec:
           # daemonsets that legitimately hold caps — they stay audit-only.
           - resources:
               namespaces:
-                - gorons-bracelet
                 - optcp-operators-privileged
                 - optcp-fairy-bottle
                 - optcp-service-mesh
@@ -151,7 +150,6 @@ spec:
           # App namespaces only: infra namespaces (root CSI/backup/gateway/reflector) stay audit-only.
           - resources:
               namespaces:
-                - gorons-bracelet
                 - optcp-operators-privileged
                 - optcp-fairy-bottle
                 - optcp-service-mesh
@@ -195,7 +193,6 @@ spec:
           # App namespaces only: infra namespaces (root CSI/backup/gateway/reflector) stay audit-only.
           - resources:
               namespaces:
-                - gorons-bracelet
                 - optcp-operators-privileged
                 - optcp-fairy-bottle
                 - optcp-service-mesh
@@ -242,7 +239,6 @@ spec:
           # App namespaces only: infra namespaces (root CSI/backup/gateway/reflector) stay audit-only.
           - resources:
               namespaces:
-                - gorons-bracelet
                 - optcp-operators-privileged
                 - optcp-fairy-bottle
                 - optcp-service-mesh

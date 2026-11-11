@@ -30,7 +30,7 @@
   vars:
     old_driver: rbd.csi.ceph.com
     new_driver: gorons-bracelet.rbd.csi.ceph.com
-    operator_ns: gorons-bracelet
+    operator_ns: optcp-operators-privileged
     node_secret: csi-rbd-node
     provisioner_secret: csi-rbd-provisioner
     escrow_dir: /escrow

@@ -72,9 +72,9 @@ CLAUDE.md specifies PVC naming pattern for StatefulSets: `<namespace>-<app>-<pur
 - [ ] AdGuard: `adguard-conf-adguard-0` → `compass-adguard-conf-adguard-0`
 - [ ] AdGuard: `adguard-data-adguard-0` → `compass-adguard-data-adguard-0`
 
-### gorons-bracelet namespace:
-- [ ] Ceph RGW: `rgw-data-ceph-rgw-0` → `gorons-bracelet-ceph-rgw-data-ceph-rgw-0`
-- [ ] Ceph RGW: `rgw-data-ceph-rgw-1` → `gorons-bracelet-ceph-rgw-data-ceph-rgw-1`
+### optcp-operators-privileged namespace:
+- [ ] Ceph RGW: `rgw-data-ceph-rgw-0` → `optcp-operators-privileged-ceph-rgw-data-ceph-rgw-0`
+- [ ] Ceph RGW: `rgw-data-ceph-rgw-1` → `optcp-operators-privileged-ceph-rgw-data-ceph-rgw-1`
 
 ### shooting-gallery namespace:
 - [ ] Minecraft: `data-minecraft-0` → `shooting-gallery-minecraft-data-minecraft-0`
@@ -209,7 +209,7 @@ Enable static pod IP for CrowdSec cloudflare-bouncer to prevent duplicate LAPI r
 #### IPv4 Pod CIDR: 192.168.144.0/20 (4096 IPs total)
 
 **Tier 0: Core Infrastructure** - `192.168.144.0/22` (1024 IPs)
-- Namespaces: `kube-system`, `flux-system`, `gorons-bracelet`
+- Namespaces: `kube-system`, `flux-system`, `optcp-operators-privileged`
 - Purpose: K8s control plane, storage operators, CSI drivers, core CNI
 
 **Tier 1: Security & Administrative** - `192.168.148.0/23` (512 IPs)

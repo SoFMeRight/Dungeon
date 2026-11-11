@@ -25,12 +25,12 @@
 #   NO rbd children (no live volume was restored from it) AND NO watchers (not in use).
 #
 # Usage:  ./ceph-rbd-reclaim-orphan-velero-snapshots-dryrun.sh [orphan-list-file]
-#   env:  POOL (default dungeon), OPERATOR_NS (default gorons-bracelet), KUBECONFIG
+#   env:  POOL (default dungeon), OPERATOR_NS (default optcp-operators-privileged), KUBECONFIG
 #
 set -o pipefail
 export KUBECONFIG="${KUBECONFIG:-$HOME/.kube/config}"
 POOL="${POOL:-dungeon}"
-OPERATOR_NS="${OPERATOR_NS:-gorons-bracelet}"
+OPERATOR_NS="${OPERATOR_NS:-optcp-operators-privileged}"
 LIST="${1:-/tmp/prune_snaps.txt}"
 
 [ -r "$LIST" ] || { echo "ERROR: orphan list not found/readable: $LIST" >&2

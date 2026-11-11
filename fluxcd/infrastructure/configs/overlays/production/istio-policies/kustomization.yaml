@@ -4,7 +4,6 @@ resources:
   - optcp-ingress-internal/
   - kai-ingress-private/
   - optcp-fairy-bottle/
-  - gorons-bracelet/
   - optcp-operators-privileged/
   - optcp-gossip-stone/
   - optcp-remote-access/

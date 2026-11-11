@@ -1,7 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-namespace: gorons-bracelet
-resources:
-  - cnp-default-deny-ingress.yaml
-  - cnp-ceph-egress.yaml
-  - cnp-csi-addons.yaml

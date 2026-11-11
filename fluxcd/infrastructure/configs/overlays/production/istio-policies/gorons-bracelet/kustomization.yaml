@@ -1,7 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-namespace: gorons-bracelet
-resources:
-  - ../../../../base/istio-policies
-  - allow-intra-breakglass.yaml
-  - allow-csi-addons-to-rbd-sidecars.yaml

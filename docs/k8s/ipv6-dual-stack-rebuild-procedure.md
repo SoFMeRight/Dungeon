@@ -162,8 +162,8 @@ The kube-vip DaemonSet may need updating to advertise the IPv6 VIP `fc00:f1:ada:
 ### 2. Verify Ceph Connectivity
 ```bash
 # Check Ceph CSI pods can reach IPv6 monitors
-kubectl -n gorons-bracelet get pods -l app=ceph-csi-rbd
-kubectl -n gorons-bracelet logs <ceph-csi-pod> | grep -i "fc00:f1:ada:104e:1ace"
+kubectl -n optcp-operators-privileged get pods -l app=ceph-csi-rbd
+kubectl -n optcp-operators-privileged logs <ceph-csi-pod> | grep -i "fc00:f1:ada:104e:1ace"
 ```
 
 ### 3. Test Application Connectivity

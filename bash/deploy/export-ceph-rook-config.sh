@@ -8,7 +8,7 @@ echo "Run this script on a Proxmox node with Ceph access"
 echo ""
 
 # Configuration
-NAMESPACE="gorons-bracelet"
+NAMESPACE="optcp-operators-privileged"
 RBD_DATA_POOL="dungeon"
 # Get the first IP address of the host
 HOST_IP=$(hostname -I | awk '{print $1}')

@@ -13,7 +13,7 @@ There are two approaches for GPU drivers in Kubernetes:
 
 ### Current Status
 
-- **GPU Operator Version**: v25.10.1 (namespace: `gorons-bracelet`)
+- **GPU Operator Version**: v25.10.1 (namespace: `optcp-operators-privileged`)
 - **Driver Mode**: `driver.enabled: false` (host-installed drivers)
 - **Reason**: Originally, precompiled drivers weren't available for Ubuntu 24.04 kernel 6.8
 
@@ -122,10 +122,10 @@ If the GPU isn't detected, restart the GPU operator components on that node:
 
 ```bash
 # Delete GPU feature discovery pod to force re-detection
-kubectl delete pod -n gorons-bracelet -l app=gpu-feature-discovery --field-selector spec.nodeName=dungeon-chest-00X
+kubectl delete pod -n optcp-operators-privileged -l app=gpu-feature-discovery --field-selector spec.nodeName=dungeon-chest-00X
 
 # Wait for new pod to become ready
-kubectl get pods -n gorons-bracelet -l app=gpu-feature-discovery -o wide -w
+kubectl get pods -n optcp-operators-privileged -l app=gpu-feature-discovery -o wide -w
 ```
 
 ## Option 2: GPU Operator Managed Drivers
@@ -158,10 +158,10 @@ The GPU Operator will then install and manage drivers via container.
 
 ## Time-Slicing Configuration
 
-GPU time-slicing is configured via ConfigMap in the `gorons-bracelet` namespace:
+GPU time-slicing is configured via ConfigMap in the `optcp-operators-privileged` namespace:
 
 ```bash
-kubectl get configmap time-slicing-config -n gorons-bracelet -o yaml
+kubectl get configmap time-slicing-config -n optcp-operators-privileged -o yaml
 ```
 
 Current profiles:
@@ -211,9 +211,9 @@ If GPU operator pods enter `Init:CrashLoopBackOff` after a kernel update:
 
 4. Delete crashed GPU pods to trigger recreation:
    ```bash
-   kubectl delete pods -n gorons-bracelet --field-selector spec.nodeName=dungeon-chest-00X \
+   kubectl delete pods -n optcp-operators-privileged --field-selector spec.nodeName=dungeon-chest-00X \
      -l app.kubernetes.io/component=nvidia-container-toolkit-daemonset
-   kubectl delete pods -n gorons-bracelet --field-selector spec.nodeName=dungeon-chest-00X \
+   kubectl delete pods -n optcp-operators-privileged --field-selector spec.nodeName=dungeon-chest-00X \
      -l app=gpu-feature-discovery
    ```
 
@@ -221,7 +221,7 @@ If GPU operator pods enter `Init:CrashLoopBackOff` after a kernel update:
 
 1. Check if device plugin is running:
    ```bash
-   kubectl get pods -n gorons-bracelet -l app=nvidia-device-plugin-daemonset -o wide
+   kubectl get pods -n optcp-operators-privileged -l app=nvidia-device-plugin-daemonset -o wide
    ```
 
 2. Check pod events:
@@ -269,7 +269,7 @@ ssh dungeon-chest-00X "nvidia-smi"
 
 - Setup script: `/srv/dungeon/bash/_importing_from_sibling_repo/setup-gpu-node.sh`
 - GPU Operator Helm release: `/srv/dungeon/fluxcd/infrastructure/operators/overlays/production/gpu-operator/`
-- Time-slicing ConfigMap: `gorons-bracelet/time-slicing-config`
+- Time-slicing ConfigMap: `optcp-operators-privileged/time-slicing-config`
 
 ## References
 

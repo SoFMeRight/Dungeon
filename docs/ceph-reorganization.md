@@ -13,7 +13,7 @@ This document outlines the reorganization of Ceph-related resources in the FluxC
 ### Active Ceph Systems
 
 1. **Rook Operator** - Manages CephFS CSI drivers
-   - Deployed: ✅ Running in `gorons-bracelet` namespace
+   - Deployed: ✅ Running in `optcp-operators-privileged` namespace
    - Purpose: Provides CephFS CSI driver (`gorons-bracelet.cephfs.csi.ceph.com`)
    - Used by: `cephfs-nvme` StorageClass
 
@@ -213,7 +213,7 @@ fluxcd/infrastructure/
 - Risk: Application namespaces have root access
 
 **After**:
-- Single `gorons-bracelet-cephfs-root` PVC in `gorons-bracelet` namespace
+- Single `gorons-bracelet-cephfs-root` PVC in `optcp-operators-privileged` namespace
 - Init jobs run in storage namespace
 - Application namespaces only get specific subdirectories
 
@@ -355,7 +355,7 @@ resources:
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: gorons-bracelet
+namespace: optcp-operators-privileged
 resources:
   - ../../../../base/rook-ceph/operator
 patches:
@@ -366,7 +366,7 @@ patches:
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: gorons-bracelet
+namespace: optcp-operators-privileged
 resources:
   - ../../../../base/rook-ceph/external-cluster
 patches:
@@ -416,7 +416,7 @@ resources:
 
 **Split existing file**:
 - Create `cluster-config-kube-system.yaml` with ceph-csi-config for kube-system namespace
-- Create `cluster-config-gorons-bracelet.yaml` with ceph-csi-config for gorons-bracelet namespace
+- Create `cluster-config-gorons-bracelet.yaml` with ceph-csi-config for optcp-operators-privileged namespace
 
 #### Step 3.6: Update ceph-rbd kustomization
 
@@ -438,7 +438,7 @@ Note: Remove storage class references (moved to storage/)
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: gorons-bracelet
+namespace: optcp-operators-privileged
 resources:
   - ceph-cephfs-secret.enc.yaml
   - root-access/
@@ -449,7 +449,7 @@ resources:
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: gorons-bracelet
+namespace: optcp-operators-privileged
 resources:
   - cephfs-root-pvc.yaml
   - cephfs-init-grafana.yaml
@@ -471,7 +471,7 @@ resources:
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: gorons-bracelet
+namespace: optcp-operators-privileged
 resources:
   - ceph-rgw-keyring.enc.yaml
   - ceph-rgw-gitlab-user.enc.yaml
@@ -628,7 +628,7 @@ Shared Ceph cluster connection configuration for both direct CSI and Rook CSI dr
 ## Files
 
 - **cluster-config-kube-system.yaml**: ConfigMap for direct RBD CSI (kube-system namespace)
-- **cluster-config-gorons-bracelet.yaml**: ConfigMap for Rook CephFS CSI (gorons-bracelet namespace)
+- **cluster-config-gorons-bracelet.yaml**: ConfigMap for Rook CephFS CSI (optcp-operators-privileged namespace)
 
 ## Cluster Details
 
@@ -656,7 +656,7 @@ Centralized root filesystem access for running initialization jobs.
 
 ## Security Model
 
-Root CephFS access is restricted to the `gorons-bracelet` namespace (storage namespace). Application namespaces only receive access to specific subdirectories via static PVs.
+Root CephFS access is restricted to the `optcp-operators-privileged` namespace (storage namespace). Application namespaces only receive access to specific subdirectories via static PVs.
 
 ## Resources
 
@@ -666,7 +666,7 @@ Root CephFS access is restricted to the `gorons-bracelet` namespace (storage nam
 
 ## Init Job Pattern
 
-1. Job runs in `gorons-bracelet` namespace
+1. Job runs in `optcp-operators-privileged` namespace
 2. Mounts `gorons-bracelet-cephfs-root` PVC
 3. Creates directory structure with proper ownership
 4. TTL cleanup after 300 seconds
@@ -810,7 +810,7 @@ flux reconcile kustomization infrastructure-configs
 #### Step 6.4: Verify running resources unchanged
 ```bash
 # Check CSI drivers still running
-kubectl get pods -n gorons-bracelet | grep -E "ceph|rook"
+kubectl get pods -n optcp-operators-privileged | grep -E "ceph|rook"
 
 # Check storage classes still exist
 kubectl get storageclass | grep ceph

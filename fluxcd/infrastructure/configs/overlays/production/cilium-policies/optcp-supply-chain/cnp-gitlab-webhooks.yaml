@@ -6,7 +6,7 @@ spec:
   description: >-
     Allow kube-apiserver to reach GitLab's bundled cert-manager webhook
     on 443/TCP and 9402/TCP. This is separate from the cluster-wide
-    cert-manager in gorons-bracelet — GitLab ships its own.
+    cert-manager in optcp-service-mesh — GitLab ships its own.
   enableDefaultDeny:
     ingress: false
     egress: false

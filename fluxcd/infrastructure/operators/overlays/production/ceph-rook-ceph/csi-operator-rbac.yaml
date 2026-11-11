@@ -1,18 +1,5 @@
-# ServiceAccounts + RBAC for the ceph-csi-operator-driven CSI plugins.
-#
-# The ceph-csi-operator (run by rook-ceph-operator) renders the *-ctrlplugin / *-nodeplugin
-# workloads but does NOT create their ServiceAccounts or bindings. The rook 1.18->1.20
-# migration dropped these, and the rook-ceph Helm chart does not template them, so they are
-# codified here as source (NOT healed by driftDetection — the chart never owned them).
-#
-# CephFS was previously restored out-of-band via `kubectl create` (live-but-not-in-git drift);
-# it is codified here so the whole operator CSI RBAC is declarative. RBD is added to match,
-# bringing the operator RBD ctrlplugin/nodeplugin healthy (idle until the ceph-rbd StorageClasses
-# are cut over to gorons-bracelet.rbd.csi.ceph.com — a separate, deliberate data-path change).
-#
-# ctrlplugin SAs bind the ceph-csi-rbd-provisioner ClusterRole + Role; nodeplugin SAs bind the
-# ceph-csi-rbd-nodeplugin ClusterRole. Those roles are Helm-managed by the ceph-csi-rbd release
-# and shared by both drivers (matching the live cephfs bindings).
+# ServiceAccounts and RBAC for the CSI plugins ceph-csi-operator renders; it creates neither.
+# Both drivers' ctrlplugins bind ceph-csi-rbd-provisioner, their nodeplugins ceph-csi-rbd-nodeplugin.
 
 # ---- RBD ----
 apiVersion: v1
@@ -341,7 +328,10 @@ rules:
     verbs:
       - get
       - list
+      - watch
+      - update
       - patch
+      - create
   - apiGroups:
       - snapshot.storage.k8s.io
     resources:

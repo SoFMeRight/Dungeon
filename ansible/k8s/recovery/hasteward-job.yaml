@@ -79,7 +79,7 @@ spec:
     driver: gorons-bracelet.cephfs.csi.ceph.com
     nodeStageSecretRef:
       name: csi-cephfs-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
     volumeAttributes:
       clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
       fsName: Seed_Bank
