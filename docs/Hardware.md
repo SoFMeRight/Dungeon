@@ -78,7 +78,7 @@ The datacenter is powered by Proxmox VE and consists of five clustered nodes:
 | Component | Part | Purchase Date | Cost | Notes |
 |-----------|------|---------------|------|-------|
 | **Chassis** | SuperChassis 826BE1C-R920LPB | May 10, 2024 | $630.87 | 2U 12 Bay, SAS3 12gbps |
-| **CPU** | 2× Intel Xeon E5-2680 v3 | - | - | Came with chassis |
+| **CPU** | 2× Intel Xeon E5-2618L v4 | - | - | 20 cores, SMT off |
 | **PSU** | 2× Supermicro PWS-920P-SQ | - | - | Came with chassis, 920W 80+ Platinum |
 | **RAM** | 10× Samsung M386A4G40DM0-CPB | - | - | 32GB DDR4-2133 ECC LRDIMM, 320GB, 10 of 16 slots |
 | **GPU** | NVIDIA RTX A2000 12GB | Jul 1, 2024 | $440.40 | Warranty through 03/2025 |
@@ -91,7 +91,7 @@ The datacenter is powered by Proxmox VE and consists of five clustered nodes:
 | Component | Part | Purchase Date | Cost | Notes |
 |-----------|------|---------------|------|-------|
 | **Chassis** | Supermicro CSE-826 | Feb 12, 2022 | $275.00 | 2U 12 Bay (no rear 2.5" SSD slots) |
-| **CPU** | 2× Intel Xeon E5-2680 v4 SR2N7 2.40GHz | Dec 23, 2024 / Dec 30, 2024 | $19.81 / $17.38 | 28 cores/56 threads total |
+| **CPU** | 2× Intel Xeon E5-2618L v4 | - | - | 20 cores, SMT off |
 | **CPU Cooler** | Supermicro SNK-P0048PS | Dec 30, 2024 | $12.06 | Screw down heatsink |
 | **Motherboard** | Supermicro X10DRH-iT | Dec 31, 2024 | $131.02 | Dual LGA2011-3, onboard 10GbE |
 | **RAM** | 10× Samsung M386A4G40DM0-CPB | - | - | 32GB DDR4-2133 ECC LRDIMM, 320GB, 10 of 16 slots |
@@ -121,6 +121,7 @@ The datacenter is powered by Proxmox VE and consists of five clustered nodes:
 | **CPU** | AMD Ryzen 7 2700X | Oct 27, 2018 | $309.89 | 8C/16T, with Wraith Prism cooler |
 | **Motherboard** | ASUS Prime X370-Pro | Oct 21, 2018 | $79.21 | AM4, DDR4, Aura Sync RGB |
 | **RAM** | 2× Micron 18ASF4G72AZ-3G2F1 | - | - | 32GB DDR4-3200 ECC UDIMM, 64GB, 2 of 4 slots |
+| **GPU** | NVIDIA RTX 3080 Ti | - | - | Swapped in from Wisteria |
 | **NIC** | Silicom PE310G4SPI9L-XR-CX3 | Oct 27, 2024 | $38.52 | 4-Port 10GB SFP+ |
 
 ### 🍆 Eggplant - Detailed Component List
@@ -169,7 +170,7 @@ The datacenter is powered by Proxmox VE and consists of five clustered nodes:
 |-----------|------|---------------|------|-------|
 | **CPU** | AMD Ryzen 9 5950X | Dec 23, 2022 | $546.67 | 16C/32T, 4th gen |
 | **RAM** | NEMIX 64GB DDR4 ECC 3200MHz | Feb 5, 2022 | $402.60 | 2×32GB PC4-25600 CL22 |
-| **GPU** | NVIDIA RTX 3080 Ti | - | - | Primary GPU |
+| **GPU** | NVIDIA GTX 980 Ti | - | - | Primary GPU, swapped in from Dragonfruit |
 | **GPU** | NVIDIA GTX 1080 Ti | - | - | Secondary GPU |
 | **PSU** | Corsair RM750e | Apr 16, 2023 | $110.29 | 750W 80+ Gold, ATX 3.0/PCIe 5.0 |
 | **Keyboard** | Corsair K95 RGB Platinum | Aug 11, 2024 | $55.04 | Cherry MX Speed, main workstation |
