@@ -34,10 +34,10 @@ rules:
   - apiGroups: ["storage.k8s.io"]
     resources: ["storageclasses"]
     verbs: ["get", "list", "watch"]
-  # MariaDB CRs — watch, get, list, patch annotations
+  # MariaDB CRs — watch, get, list, patch annotations; update takes the bootstrap fence lock
   - apiGroups: ["k8s.mariadb.com"]
     resources: ["mariadbs"]
-    verbs: ["get", "list", "watch", "patch"]
+    verbs: ["get", "list", "watch", "patch", "update"]
   # Hasteward CRDs — full access
   - apiGroups: ["clinic.hasteward.prplanit.com"]
     resources: ["backuprepositories", "backuppolicies"]
