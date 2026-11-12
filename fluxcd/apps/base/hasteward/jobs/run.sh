@@ -14,11 +14,13 @@
 #                    a donor when authority is ambiguous (split-brain) because picking the
 #                    surviving lineage is unrecoverable and therefore a human's call; this
 #                    flag is how that decision is handed back to the tool once made.
+#        -d donor    (repair) the instance ordinal declared authoritative: the source the
+#                    target is healed from when HASteward cannot determine one itself.
 # Follow logs after it starts:  kubectl -n optcp-fairy-bottle logs -f job/<printed-name>
 set -euo pipefail
 
 VERB="${1:-}"
-[ -n "$VERB" ] || { echo "usage: run.sh <verb> -c <cluster> -n <namespace> [-i <instance>] [-e <engine>] [--image <ref>] [-f|--force] [-- <hasteward flags>]"; exit 2; }
+[ -n "$VERB" ] || { echo "usage: run.sh <verb> -c <cluster> -n <namespace> [-i <instance>] [-e <engine>] [--image <ref>] [-f|--force] [-d <donor>] [-- <hasteward flags>]"; exit 2; }
 shift
 
 ENGINE=cnpg
@@ -27,6 +29,7 @@ IMAGE="docker.io/prplanit/hasteward:latest-dev"
 CLUSTER=""
 NAMESPACE=""
 FORCE=""
+DONOR=""
 EXTRA_ARGS=""
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -36,6 +39,7 @@ while [ $# -gt 0 ]; do
     -e) ENGINE="$2"; shift 2 ;;
     --image) IMAGE="$2"; shift 2 ;;
     -f|--force) FORCE=true; shift ;;
+    -d) DONOR="$2"; shift 2 ;;
     # Everything after -- goes to HASteward verbatim, for verbs whose own flags carry the
     # policy (backup-prune: -t, --keep-*, --dry-run). The template holds one quoted slot,
     # "${EXTRA_ARGS}", so it stays valid YAML; the items are joined into it with '", "'.
@@ -64,6 +68,10 @@ if grep -q '\${INSTANCE}' "$TEMPLATE" && [ -z "$INSTANCE" ]; then
 fi
 if [ -n "$FORCE" ] && ! grep -q '\${FORCE}' "$TEMPLATE"; then
   echo "verb '$VERB' does not accept --force" >&2
+  exit 2
+fi
+if [ -n "$DONOR" ] && ! grep -q '\${DONOR}' "$TEMPLATE"; then
+  echo "verb '$VERB' does not accept -d" >&2
   exit 2
 fi
 if [ -n "$EXTRA_ARGS" ] && ! grep -q '\${EXTRA_ARGS}' "$TEMPLATE"; then
@@ -176,11 +184,11 @@ else
   echo "         Verify before trusting a result: kubectl -n optcp-fairy-bottle get job/<name> -o jsonpath='{.spec.template.spec.containers[0].image}'" >&2
 fi
 
-export ENGINE CLUSTER NAMESPACE INSTANCE IMAGE FORCE PULL_POLICY EXTRA_ARGS
+export ENGINE CLUSTER NAMESPACE INSTANCE IMAGE FORCE DONOR PULL_POLICY EXTRA_ARGS
 # create (not apply): generateName gives each run a unique Job name, so repeated runs never
 # collide and the history is auditable until ttlSecondsAfterFinished reaps it.
 # No arguments after -- drops the slot entirely rather than passing HASteward an empty one.
 if [ -n "$EXTRA_ARGS" ]; then RENDERED="$(cat "$TEMPLATE")"; else RENDERED="$(sed 's/, "\${EXTRA_ARGS}"//' "$TEMPLATE")"; fi
 printf '%s\n' "$RENDERED" \
-  | envsubst '${ENGINE} ${CLUSTER} ${NAMESPACE} ${INSTANCE} ${IMAGE} ${FORCE} ${PULL_POLICY} ${EXTRA_ARGS}' \
+  | envsubst '${ENGINE} ${CLUSTER} ${NAMESPACE} ${INSTANCE} ${IMAGE} ${FORCE} ${DONOR} ${PULL_POLICY} ${EXTRA_ARGS}' \
   | kubectl create -f -
