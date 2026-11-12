@@ -61,6 +61,13 @@ spec:
               mountPath: /var/cache/apt-cacher-ng
             - name: compass-apt-cacher-ng-logs
               mountPath: /var/log/apt-cacher-ng
+            - name: config
+              mountPath: /etc/apt-cacher-ng/zz-volatile-whole.conf
+              subPath: zz-volatile-whole.conf
+      volumes:
+        - name: config
+          configMap:
+            name: apt-cacher-ng-config
   volumeClaimTemplates:
     - metadata:
         name: compass-apt-cacher-ng-cache

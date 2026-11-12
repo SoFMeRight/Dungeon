@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apt-cacher-ng-config
+data:
+  # Read after acng.conf (every *.conf in /etc/apt-cacher-ng is). Range-resuming
+  # a volatile file (InRelease, Release, Packages) that changed upstream splices
+  # the new tail onto the cached head: same size, BADSIG, and apt silently keeps
+  # stale indexes. 0 fetches a changed volatile file whole (If-Modified-Since).
+  zz-volatile-whole.conf: |
+    VfileUseRangeOps: 0
