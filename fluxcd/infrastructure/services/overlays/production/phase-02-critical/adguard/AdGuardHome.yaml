@@ -223,6 +223,9 @@ filtering:
     - domain: ntp
       answer: 172.22.30.122
       enabled: true
+    - domain: apt-cache.prplanit.internal
+      answer: 172.22.30.122
+      enabled: true
     - domain: dns
       answer: The-Usual-Suspect.prplanit.internal
       enabled: true
