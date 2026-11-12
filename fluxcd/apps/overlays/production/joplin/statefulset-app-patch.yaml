@@ -22,7 +22,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: joplin
-          image: docker.io/joplin/server:3.7.4
+          image: docker.io/joplin/server:3.7.5
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
