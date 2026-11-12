@@ -3,8 +3,23 @@
   hosts: "linux"
 
   tasks:
+    # apt asks this before each fetch: the cluster apt-cacher-ng when it answers,
+    # straight to the mirrors when it does not (cold boot, cluster down), so the
+    # cache only ever speeds apt up and never stops it.
+    - name: Install the apt-cacher-ng detect script
+      ansible.builtin.copy:
+        content: |
+          #!/bin/bash
+          if timeout 2 bash -c '</dev/tcp/apt-cache.prplanit.internal/3142' 2>/dev/null; then
+            echo http://apt-cache.prplanit.internal:3142
+          else
+            echo DIRECT
+          fi
+        dest: /usr/local/bin/apt-proxy-detect
+        mode: "0755"
+
     - name: Configure Debian/Ubuntu (apt managed) Hosts to use apt-cacher-ng
       ansible.builtin.copy:
         content: |
-          Acquire::http::Proxy "http://gringotts.prplanit.internal:3142";
+          Acquire::http::Proxy-Auto-Detect "/usr/local/bin/apt-proxy-detect";
         dest: /etc/apt/apt.conf.d/00cacher
