@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: zitadel-login-v2
-          image: ghcr.io/homelabhd/zitadel-login:v4.19.4
+          image: ghcr.io/homelabhd/zitadel-login:v4.20.2
           env:
             - name: ZITADEL_EXTERNAL_DOMAIN
               value: "sso.optcp.com"
