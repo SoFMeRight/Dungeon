@@ -69,6 +69,8 @@ spec:
     providerOptions:
       gcs.fc_limit: '64'
       gcs.fc_master_slave: 'YES'
+      # Off: only the operator's recovery bootstraps a primary, never a view saved in gvwstate.dat.
+      pc.recovery: 'false'
 
   # Storage configuration
   storage:
