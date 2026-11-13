@@ -21,7 +21,7 @@ spec:
         - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: beszel
-          image: docker.io/henrygd/beszel:0.21.1
+          image: docker.io/henrygd/beszel:0.21.2
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
