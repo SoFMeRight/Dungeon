@@ -17,9 +17,9 @@
     },
     {
       "name": "grype",
-      "resolved": "0.121.1",
+      "resolved": "0.121.2",
       "sha256": {
-        "linux/amd64": "bc3ea3f9e6fd56ac781c08c6c5e614271b79f438200757f6932085c19b0a4657"
+        "linux/amd64": "9c8965ced9df657e5e851c14021bae838802f711edd7a48f9bc3c923a8d28f12"
       }
     },
     {
@@ -52,9 +52,9 @@
     },
     {
       "name": "syft",
-      "resolved": "1.56.0",
+      "resolved": "1.57.0",
       "sha256": {
-        "linux/amd64": "1c2493cfcf52d3367d6cb25780d9190c111c2219c34c820574c43e8bae15c528"
+        "linux/amd64": "9c077a7d43029b3b13e98a8db720661e700c4d58db6352153a06395ae4a2a704"
       }
     },
     {
