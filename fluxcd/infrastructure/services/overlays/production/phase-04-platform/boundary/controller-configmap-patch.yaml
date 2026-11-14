@@ -26,6 +26,9 @@ data:
     controller {
       name               = "boundary-controller"
       public_cluster_addr = "boundary-controller.optcp-remote-access.svc.cluster.local:9201"
+      # Outlasts a boundary-postgres primary switchover or restart; equal to the
+      # workers' successful_status_grace_period (worker-configmap-patch.yaml).
+      worker_status_grace_period = "2m"
       database {
         url = "${BOUNDARY_PG_URL}"
       }
