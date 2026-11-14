@@ -13,7 +13,8 @@
 # without rebooting; maintenance/update-hosts.yml boots it inside a drain.
 #
 # The first play makes every node trust optcp's SSH CA (../tasks/ssh-ca-trust.yml),
-# which node-converge signs its per-run certificate with.
+# which node-converge signs its per-run certificate with. The second leaves package
+# upgrades to maintenance/update-hosts.yml's drain-wrapped roll.
 
 - name: Trust optcp's SSH CA
   hosts: k8s_worker:k8s_master
@@ -25,6 +26,30 @@
       ansible.builtin.systemd_service:
         name: ssh
         state: reloaded
+
+- name: Upgrade packages only inside a drain
+  hosts: k8s_worker:k8s_master
+  become: true
+  tasks:
+    - name: Turn off apt's timer-driven unattended upgrades
+      ansible.builtin.copy:
+        dest: /etc/apt/apt.conf.d/90unattended-upgrades-off
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          APT::Periodic::Unattended-Upgrade "0";
+
+    # An apt run outside the roll lists stale daemons instead of restarting kubelet,
+    # cri-o and the network under live pods.
+    - name: Keep needrestart to listing
+      ansible.builtin.copy:
+        dest: /etc/needrestart/conf.d/list-only.conf
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          $nrconf{restart} = 'l';
 
 - name: Converge cri-o on workers
   hosts: k8s_worker

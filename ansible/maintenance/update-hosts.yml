@@ -25,7 +25,7 @@
 #   os_patch_proxmox_group   (default proxmox)
 #   os_patch_standalone_group   (default linux_unclustered)
 # OS patching ONLY; cri-o + kubelet version convergence are separate version-
-# gated plays. Run on its own cadence:
+# gated plays. node-converge runs the k8s class nightly; by hand:
 #   ansible-playbook -i inventory maintenance/update-hosts.yml
 # One hypervisor only:
 #   ansible-playbook -i inventory maintenance/update-hosts.yml \
@@ -38,7 +38,25 @@
   gather_facts: true
   become: true
   tasks:
+    # A node with nothing to install and nothing to boot into is not drained.
+    - name: Look for pending upgrades or a pending reboot
+      when: ansible_os_family == "Debian"
+      ansible.builtin.shell: |
+        set -eo pipefail
+        apt-get -qq update
+        upgrades=$(apt-get -s dist-upgrade | { grep -c '^Inst ' || true; })
+        newest=$(ls /boot/vmlinuz-* | sed 's|^/boot/vmlinuz-||' | sort -V | tail -1)
+        if [ "$upgrades" -gt 0 ] || [ -e /var/run/reboot-required ] || [ "$newest" != "$(uname -r)" ]; then
+          echo due
+        fi
+      args:
+        executable: /bin/bash
+      register: os_patch_pending
+      changed_when: false
+      check_mode: false
+
     - name: Drain-wrapped OS upgrade + reboot
+      when: ansible_os_family != "Debian" or os_patch_pending.stdout == "due"
       vars:
         k8s_delegate: "{{ groups[control_plane_group] | reject('equalto', inventory_hostname) | first }}"
       block:
@@ -46,6 +64,12 @@
           ansible.builtin.include_tasks: ../k8s/tasks/node-drain.yml
 
         - ansible.builtin.import_tasks: ../tasks/os-upgrade.yml
+
+        # The nodes keep needrestart to listing; drained, the stale daemons restart.
+        - name: Restart the daemons the upgrade left on old libraries
+          ansible.builtin.command: needrestart -r a -q
+          when: ansible_os_family == "Debian" and not node_reboot_required | default(false) | bool
+
         - ansible.builtin.import_tasks: ../tasks/reboot-if-required.yml
 
         - name: Return {{ ansible_facts['hostname'] }} to service

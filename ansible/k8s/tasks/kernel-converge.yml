@@ -4,20 +4,6 @@
 # GPU driver loads on the first boot of the new kernel. Installs only; the reboot
 # into the new kernel is maintenance/update-hosts.yml's drain-wrapped roll.
 
-# Only this file moves the kernel and its NVIDIA modules.
-- name: Keep the kernel and NVIDIA modules out of unattended-upgrades
-  ansible.builtin.copy:
-    dest: /etc/apt/apt.conf.d/51unattended-upgrades-kernel
-    owner: root
-    group: root
-    mode: "0644"
-    content: |
-      Unattended-Upgrade::Package-Blacklist {
-          "linux-.*-hwe-24\.04$";
-          "linux-(image-|headers-)?generic$";
-          "linux-modules-nvidia-";
-      };
-
 - name: Install {{ k8s_kernel_package }}
   ansible.builtin.apt:
     name: "{{ k8s_kernel_package }}"

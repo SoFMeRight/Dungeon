@@ -55,11 +55,11 @@ self=$(ansible-inventory -i "$inventory" --list \
   | IP="$HOST_IP" yq -p json -r '._meta.hostvars | to_entries | .[] | select(.value.ansible_host == strenv(IP)) | .key')
 [ -n "$self" ] || { echo "no inventory host has ansible_host ${HOST_IP} (node ${NODE_NAME})"; exit 1; }
 
-# The same playbooks, in the same order, that CI's converge set ran. Every one runs;
-# the phase fails if any did.
+# The same playbooks, in the same order, that CI's converge set ran, then the
+# drain-wrapped OS patch roll. Every one runs; the phase fails if any did.
 converge() {
   failed=""
-  for pb in ansible/k8s/kubelet-provision.yml ansible/k8s/provision-hosts.yml ansible/services/wazuh-agent.yaml; do
+  for pb in ansible/k8s/kubelet-provision.yml ansible/k8s/provision-hosts.yml ansible/services/wazuh-agent.yaml ansible/maintenance/update-hosts.yml; do
     echo "== ${pb} --limit $1"
     ansible-playbook -i "$inventory" "$pb" --limit "$1" || failed="${failed} ${pb}"
   done
