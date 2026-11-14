@@ -13,7 +13,7 @@ spec:
         - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: uptime-kuma
-          image: docker.io/louislam/uptime-kuma:2.5.8
+          image: docker.io/louislam/uptime-kuma:2.5.11
           volumeMounts:
             - name: uptime-kuma-data
               mountPath: /app/data
