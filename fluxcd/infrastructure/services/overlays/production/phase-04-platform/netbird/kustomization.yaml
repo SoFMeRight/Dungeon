@@ -81,7 +81,7 @@ patches:
   - patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/image
-        value: docker.io/netbirdio/dashboard:v2.96.0
+        value: docker.io/netbirdio/dashboard:v2.97.0
     target:
       kind: Deployment
       name: netbird-dashboard
