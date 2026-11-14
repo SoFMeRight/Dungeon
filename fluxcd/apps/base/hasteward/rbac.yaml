@@ -38,6 +38,12 @@ rules:
   - apiGroups: ["k8s.mariadb.com"]
     resources: ["mariadbs"]
     verbs: ["get", "list", "watch", "patch", "update"]
+  # MariaDB status subresource — bootstrap clears status.galeraRecovery once the cluster
+  # is up; left in place, the operator re-runs recovery against the healed cluster. The
+  # "mariadbs" patch verb above does NOT cover the subresource.
+  - apiGroups: ["k8s.mariadb.com"]
+    resources: ["mariadbs/status"]
+    verbs: ["get", "patch"]
   # Hasteward CRDs — full access
   - apiGroups: ["clinic.hasteward.prplanit.com"]
     resources: ["backuprepositories", "backuppolicies"]
