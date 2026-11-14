@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 128 healthy · ⚠️ 3 degraded
+✅ 131 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -38,7 +38,7 @@
 | Bookstack (2 components) | ✅ | 🏠 kb.precisionplanit.com | [open](https://kb.precisionplanit.com) |
 | Calcom | ✅ | 🏠 cal.prplanit.com | [open](https://cal.prplanit.com) |
 | Frappe Suite (9 components) | ✅ | 🏠 hq.prplanit.com | [open](https://hq.prplanit.com) |
-| Gitlab (11 components) | ⚠️ | 🏠 git.prplanit.com | [open](https://git.prplanit.com) |
+| Gitlab (11 components) | ✅ | 🏠 git.prplanit.com | [open](https://git.prplanit.com) |
 | Harbor (7 components) | ✅ | 🏠 cr.optcp.com | [open](https://cr.optcp.com) |
 | Harbor Proxy Cache Proxy | ✅ | 🏠 docker.cr.optcp.com | [open](https://docker.cr.optcp.com) |
 | Invoiceninja (3 components) | ✅ | 🏠 invoice.pcfae.com | [open](https://invoice.pcfae.com) |
@@ -49,7 +49,7 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Nextcloud (9 components) | ⚠️ | 🏠 cloud.optcp.com | [open](https://cloud.optcp.com) |
+| Nextcloud (9 components) | ✅ | 🏠 cloud.optcp.com | [open](https://cloud.optcp.com) |
 | Openproject (3 components) | ✅ | 🏠 projects.optcp.com | [open](https://projects.optcp.com) |
 | Wikijs Sops | ✅ | 🏠 sops.optcp.com | [open](https://sops.optcp.com) |
 
@@ -163,7 +163,7 @@
 | Gatus | ✅ | 🏠 status.pcfae.com | [open](https://status.pcfae.com) |
 | Grafana | ✅ | 🏠 grafana.pcfae.com | [open](https://grafana.pcfae.com) |
 | Headlamp | ✅ | 🏠 headlamp.pcfae.com | [open](https://headlamp.pcfae.com) |
-| Loki (3 components) | ⚠️ | 🏠 logging.pcfae.com | [open](https://logging.pcfae.com) |
+| Loki (3 components) | ✅ | 🏠 logging.pcfae.com | [open](https://logging.pcfae.com) |
 | Nutify | ✅ | 🔒 nut.pcfae.com | [open](https://nut.pcfae.com) |
 | Prometheus Exporter (2 components) | ✅ | 🔒 |  |
 | Speedtest (2 components) | ✅ | 🏠 isptest.pcfae.com | [open](https://isptest.pcfae.com) |
@@ -378,7 +378,7 @@
 
 **Gitlab — 11 components** — Mixed — v19.5.5
 - Namespace: optcp-supply-chain
-- Replicas: 19/22
+- Replicas: 22/22
 - Hosts: git.prplanit.com
 - Components:
   - gitlab-gitlab-exporter (Deployment)
@@ -440,7 +440,7 @@
 
 **Nextcloud — 9 components** — Deployment — 
 - Namespace: optcp-cloud
-- Replicas: 4/5
+- Replicas: 5/5
 - Hosts: cloud.optcp.com
 - Components:
   - nextcloud (Deployment)
@@ -837,7 +837,7 @@
 
 **Loki — 3 components** — Mixed — 
 - Namespace: optcp-gossip-stone
-- Replicas: 10/11
+- Replicas: 11/11
 - Hosts: logging.pcfae.com
 - Components:
   - loki-gateway (Deployment)
