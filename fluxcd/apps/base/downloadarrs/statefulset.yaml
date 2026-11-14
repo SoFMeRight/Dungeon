@@ -230,6 +230,8 @@ spec:
           volumeMounts:
             - name: qbittorrent-config
               mountPath: /config
+            - name: qbittorrent-logs
+              mountPath: /config/qBittorrent/logs
             - name: downloads
               mountPath: /downloads
             - name: tv-shows-seeding
@@ -503,6 +505,9 @@ spec:
         - name: qbittorrent-config
           persistentVolumeClaim:
             claimName: PLACEHOLDER_QBITTORRENT_CONFIG_PVC
+        - name: qbittorrent-logs
+          emptyDir:
+            sizeLimit: 16Mi
         - name: downloads
           persistentVolumeClaim:
             claimName: PLACEHOLDER_DOWNLOADS_PVC

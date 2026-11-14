@@ -7,7 +7,7 @@ metadata:
   name: swift-sail-qbittorrent-config-0
 spec:
   capacity:
-    storage: 5Gi
+    storage: 96Mi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
@@ -47,7 +47,7 @@ metadata:
   name: swift-sail-qbittorrent-downloads-0
 spec:
   capacity:
-    storage: 500Gi
+    storage: 336Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
@@ -167,7 +167,7 @@ metadata:
   name: swift-sail-sonarr-config-0
 spec:
   capacity:
-    storage: 5Gi
+    storage: 2Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
@@ -247,7 +247,7 @@ metadata:
   name: swift-sail-readarr-config-0
 spec:
   capacity:
-    storage: 5Gi
+    storage: 2Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
