@@ -64,10 +64,11 @@ data:
         source_labels = ["__meta_kubernetes_pod_name"]
         target_label  = "pod"
       }
-      rule {
-        source_labels = ["__meta_kubernetes_pod_container_name"]
-        target_label  = "container"
-      }
+      // No container label: the pod role yields one target per container (init
+      // containers included) and per port, and the prometheus.io/port rewrite above
+      // points every one of them at the same endpoint. The metrics are the pod's, so
+      // leaving the container out collapses them into a single target per pod instead
+      // of one duplicate scrape per container.
       rule {
         source_labels = ["__meta_kubernetes_pod_node_name"]
         target_label  = "node"
