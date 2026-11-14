@@ -13,7 +13,8 @@ data:
       "requireConfig": "ignored",
       "repositories": ["SoFMeRight/dungeon"],
 
-      "ignorePaths": ["docker-compose/**", "**/zz-graveyard/**", "**/*\\(disabled\\)*/**", "**/*not-deployed*"],
+      // Replaces Renovate's default list; installed dependency trees are restated here.
+      "ignorePaths": ["**/node_modules/**", "**/bower_components/**", "**/vendor/**", "docker-compose/**", "**/zz-graveyard/**", "**/*\\(disabled\\)*/**", "**/*not-deployed*"],
 
       // No docker.io registryAlias: Renovate must query Docker Hub DIRECTLY to
       // discover image tags. Routing it through the Harbor pull-through cache
