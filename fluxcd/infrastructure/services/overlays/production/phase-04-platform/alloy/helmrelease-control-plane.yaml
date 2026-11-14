@@ -34,7 +34,7 @@ spec:
     image:
       registry: docker.io
       repository: grafana/alloy
-      tag: "v1.21.3"
+      tag: "v1.22.0"
     alloy:
       extraAnnotations:
         prometheus.io/scrape: "true"
