@@ -24,7 +24,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: setup
-          image: docker.io/amazon/aws-cli:2.39.6
+          image: docker.io/amazon/aws-cli:2.40.3
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
