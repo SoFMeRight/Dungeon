@@ -19,7 +19,7 @@ spec:
               done
       containers:
         - name: zitadel-init
-          image: ghcr.io/homelabhd/zitadel:v4.19.4
+          image: ghcr.io/homelabhd/zitadel:v4.20.2
 ---
 apiVersion: batch/v1
 kind: Job
@@ -33,7 +33,7 @@ spec:
           image: docker.io/alpine/k8s:1.37.1
       containers:
         - name: zitadel-setup
-          image: ghcr.io/homelabhd/zitadel:v4.19.4
+          image: ghcr.io/homelabhd/zitadel:v4.20.2
         - name: machine-pat-writer
           image: docker.io/alpine/k8s:1.37.1
         - name: login-client-pat-writer
