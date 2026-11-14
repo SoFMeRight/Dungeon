@@ -64,7 +64,7 @@ patches:
   - patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/image
-        value: docker.io/netbirdio/management:0.82.0
+        value: docker.io/netbirdio/management:0.83.1
       - op: replace
         path: /spec/template/spec/containers/0/env/3/value
         value: "86400"
@@ -74,7 +74,7 @@ patches:
   - patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/image
-        value: docker.io/netbirdio/signal:0.82.0
+        value: docker.io/netbirdio/signal:0.83.1
     target:
       kind: StatefulSet
       name: netbird-signal
@@ -88,7 +88,7 @@ patches:
   - patch: |-
       - op: replace
         path: /spec/template/spec/containers/0/image
-        value: docker.io/netbirdio/relay:0.82.0
+        value: docker.io/netbirdio/relay:0.83.1
     target:
       kind: Deployment
       name: netbird-relay
