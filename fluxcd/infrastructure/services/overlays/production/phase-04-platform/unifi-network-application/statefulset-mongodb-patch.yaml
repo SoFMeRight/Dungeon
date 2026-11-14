@@ -10,7 +10,7 @@ spec:
         - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: mongo
-          image: docker.io/library/mongo:7.0.45
+          image: docker.io/library/mongo:7.0.48
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
