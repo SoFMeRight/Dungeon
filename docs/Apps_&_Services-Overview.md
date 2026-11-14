@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 131 healthy
+✅ 128 healthy · ⚠️ 3 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -38,8 +38,8 @@
 | Bookstack (2 components) | ✅ | 🏠 kb.precisionplanit.com | [open](https://kb.precisionplanit.com) |
 | Calcom | ✅ | 🏠 cal.prplanit.com | [open](https://cal.prplanit.com) |
 | Frappe Suite (9 components) | ✅ | 🏠 hq.prplanit.com | [open](https://hq.prplanit.com) |
-| Gitlab (11 components) | ✅ | 🏠 git.prplanit.com | [open](https://git.prplanit.com) |
-| Harbor (6 components) | ✅ | 🏠 cr.optcp.com | [open](https://cr.optcp.com) |
+| Gitlab (11 components) | ⚠️ | 🏠 git.prplanit.com | [open](https://git.prplanit.com) |
+| Harbor (7 components) | ✅ | 🏠 cr.optcp.com | [open](https://cr.optcp.com) |
 | Harbor Proxy Cache Proxy | ✅ | 🏠 docker.cr.optcp.com | [open](https://docker.cr.optcp.com) |
 | Invoiceninja (3 components) | ✅ | 🏠 invoice.pcfae.com | [open](https://invoice.pcfae.com) |
 | Opnform (7 components) | ✅ | 🏠 form.prplanit.com | [open](https://form.prplanit.com) |
@@ -49,7 +49,7 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Nextcloud (9 components) | ✅ | 🏠 cloud.optcp.com | [open](https://cloud.optcp.com) |
+| Nextcloud (9 components) | ⚠️ | 🏠 cloud.optcp.com | [open](https://cloud.optcp.com) |
 | Openproject (3 components) | ✅ | 🏠 projects.optcp.com | [open](https://projects.optcp.com) |
 | Wikijs Sops | ✅ | 🏠 sops.optcp.com | [open](https://sops.optcp.com) |
 
@@ -163,7 +163,7 @@
 | Gatus | ✅ | 🏠 status.pcfae.com | [open](https://status.pcfae.com) |
 | Grafana | ✅ | 🏠 grafana.pcfae.com | [open](https://grafana.pcfae.com) |
 | Headlamp | ✅ | 🏠 headlamp.pcfae.com | [open](https://headlamp.pcfae.com) |
-| Loki (3 components) | ✅ | 🏠 logging.pcfae.com | [open](https://logging.pcfae.com) |
+| Loki (3 components) | ⚠️ | 🏠 logging.pcfae.com | [open](https://logging.pcfae.com) |
 | Nutify | ✅ | 🔒 nut.pcfae.com | [open](https://nut.pcfae.com) |
 | Prometheus Exporter (2 components) | ✅ | 🔒 |  |
 | Speedtest (2 components) | ✅ | 🏠 isptest.pcfae.com | [open](https://isptest.pcfae.com) |
@@ -348,7 +348,7 @@
   - bagisto-demo (StatefulSet)
   - bagisto-demo-db (StatefulSet, database)
 
-**Bookstack — 2 components** — StatefulSet — v26.09.2-ls293
+**Bookstack — 2 components** — StatefulSet — v26.09.3-ls297
 - Namespace: optcp-cloud
 - Replicas: 1/1
 - Hosts: kb.precisionplanit.com
@@ -376,9 +376,9 @@
   - frappe-suite-sites (StatefulSet)
   - frappe-suite-websocket (Deployment)
 
-**Gitlab — 11 components** — Mixed — v19.5.3
+**Gitlab — 11 components** — Mixed — v19.5.5
 - Namespace: optcp-supply-chain
-- Replicas: 22/22
+- Replicas: 19/22
 - Hosts: git.prplanit.com
 - Components:
   - gitlab-gitlab-exporter (Deployment)
@@ -393,7 +393,7 @@
   - gitlab-redis (StatefulSet, cache)
   - gitlab-sentinel-sentinel (StatefulSet, cache)
 
-**Harbor — 6 components** — Deployment — 2.15.4
+**Harbor — 7 components** — Deployment — 2.15.4
 - Namespace: optcp-supply-chain
 - Replicas: 13/13
 - Hosts: cr.optcp.com
@@ -404,6 +404,7 @@
   - harbor-portal (Deployment)
   - harbor-registry (Deployment)
   - harbor-redis (StatefulSet, cache)
+  - harbor-sentinel-sentinel (StatefulSet, cache)
 
 **Harbor Proxy Cache Proxy** — Deployment — 1.31.8.1-alpine
 - Namespace: optcp-supply-chain
@@ -439,7 +440,7 @@
 
 **Nextcloud — 9 components** — Deployment — 
 - Namespace: optcp-cloud
-- Replicas: 5/5
+- Replicas: 4/5
 - Hosts: cloud.optcp.com
 - Components:
   - nextcloud (Deployment)
@@ -533,7 +534,7 @@
   - linkwarden-meilisearch (StatefulSet)
   - linkwarden-postgres (StatefulSet, database)
 
-**Mealie — 2 components** — StatefulSet — v3.29.0
+**Mealie — 2 components** — StatefulSet — v3.31.0
 - Namespace: yesimvegan-web
 - Replicas: 1/1
 - Hosts: meals.yesimvegan.com, recipes.pcfae.com
@@ -636,7 +637,7 @@
 - Replicas: 1/1
 - Hosts: speedtest.pcfae.com
 
-**Searxng — 2 components** — Deployment — 2026.11.6-ac11e14c5
+**Searxng — 2 components** — Deployment — 2026.11.14-a7128d5d1
 - Namespace: optcp-tools
 - Replicas: 3/3
 - Hosts: search.pcfae.com
@@ -790,12 +791,12 @@
 - Replicas: 2/2
 - Hosts: pve.pcfae.com
 
-**Bulwark** — StatefulSet — 1.20.0
+**Bulwark** — StatefulSet — 1.21.2
 - Namespace: optcp-delivery-bag
 - Replicas: 1/1
 - Hosts: mail.optcp.com
 
-**Stalwart — 4 components** — Deployment — v1.0.3
+**Stalwart — 4 components** — Deployment — v1.1.0
 - Namespace: optcp-delivery-bag
 - Replicas: 1/1
 - Hosts: mail-admin.optcp.com, mail.optcp.com
@@ -805,7 +806,7 @@
   - stalwart-redis (StatefulSet, cache)
   - stalwart-sentinel-sentinel (StatefulSet, cache)
 
-**Ntfy** — StatefulSet — v2.37.2
+**Ntfy** — StatefulSet — v2.38.0
 - Namespace: optcp-gossip-stone
 - Replicas: 1/1
 - Hosts: ntfy.pcfae.com, ntfy.prplanit.com
@@ -814,7 +815,7 @@
 - Namespace: optcp-gossip-stone
 - Replicas: 2/2
 
-**Beszel** — StatefulSet — 0.21.1
+**Beszel** — StatefulSet — 0.21.2
 - Namespace: optcp-gossip-stone
 - Replicas: 1/1
 - Hosts: beszel.pcfae.com
@@ -824,7 +825,7 @@
 - Replicas: 1/1
 - Hosts: status.pcfae.com, status.sofmeright.com
 
-**Grafana** — Deployment — 12.4.14
+**Grafana** — Deployment — 12.4.15
 - Namespace: optcp-gossip-stone
 - Replicas: 3/3
 - Hosts: grafana.pcfae.com
@@ -836,7 +837,7 @@
 
 **Loki — 3 components** — Mixed — 
 - Namespace: optcp-gossip-stone
-- Replicas: 11/11
+- Replicas: 10/11
 - Hosts: logging.pcfae.com
 - Components:
   - loki-gateway (Deployment)
@@ -868,7 +869,7 @@
 - Replicas: 1/1
 - Hosts: analytics.prplanit.com
 
-**Uptime Kuma** — StatefulSet — 2.5.8
+**Uptime Kuma** — StatefulSet — 2.5.11
 - Namespace: optcp-gossip-stone
 - Replicas: 1/1
 - Hosts: uptime.pcfae.com, uptime.sofmeright.com
@@ -1016,7 +1017,7 @@
 - Replicas: 1/1
 - Hosts: nvr.pcfae.com
 
-**Home Assistant** — StatefulSet — 2026.11.0
+**Home Assistant** — StatefulSet — 2026.11.1
 - Namespace: arbitorium-home
 - Replicas: 1/1
 - Hosts: home.arbitorium.com, home.pcfae.com, home.private.arbitorium.com
@@ -1067,7 +1068,7 @@
   - matrix-wellknown (Deployment)
 
 **Ceph Rgw** — StatefulSet — v19.2.7
-- Namespace: gorons-bracelet
+- Namespace: optcp-operators-privileged
 - Replicas: 2/2
 - Hosts: s3.optcp.com
 
@@ -1119,7 +1120,7 @@
   - neko-gateway (Deployment)
   - neko-vpn (StatefulSet)
 
-**Ollama** — StatefulSet — 0.40.15
+**Ollama** — StatefulSet — 0.40.16
 - Namespace: optcp-ai
 - Replicas: 1/1
 - Hosts: ollama.pcfae.com
@@ -1131,7 +1132,7 @@
 
 </details>
 
-## Platform Components (29)
+## Platform Components (26)
 
 | Component | Namespace | Status |
 | --- | --- | --- |
@@ -1140,19 +1141,16 @@
 | Cilium Operator | kube-system | ✅ |
 | Coredns | kube-system | ✅ |
 | Flux System (4 components) | flux-system | ✅ |
-| Hubble Relay | kube-system | ❌ |
+| Hubble Relay | kube-system | ✅ |
 | Kube Vip | kube-system | ✅ |
 | Metrics Server | kube-system | ✅ |
-| Ceph Csi (2 components) | gorons-bracelet | ✅ |
-| Csi Addons | gorons-bracelet | ✅ |
-| Csi Driver Smb (3 components) | gorons-bracelet | ✅ |
-| Generic Device Plugin | gorons-bracelet | ✅ |
-| Gorons Bracelet.cephfs.csi.ceph.com (2 components) | gorons-bracelet | ✅ |
-| Gorons Bracelet.rbd.csi.ceph.com (3 components) | gorons-bracelet | ✅ |
-| Gpu Operator (11 components) | gorons-bracelet | ✅ |
-| Rbd Toolbox | gorons-bracelet | ✅ |
 | Alloy | optcp-telemetry | ✅ |
 | Alloy | optcp-telemetry | ✅ |
+| Ceph Csi (2 components) | optcp-operators-privileged | ✅ |
+| Csi Addons | optcp-operators-privileged | ✅ |
+| Csi Driver Smb (3 components) | optcp-operators-privileged | ✅ |
+| Generic Device Plugin | optcp-operators-privileged | ✅ |
+| Gpu Operator (11 components) | optcp-operators-privileged | ✅ |
 | Graphite Exporter Truenas | optcp-monitoring-agents | ✅ |
 | Istio (2 components) | optcp-service-mesh | ✅ |
 | Istio Cni | optcp-service-mesh | ✅ |
@@ -1190,7 +1188,7 @@
 
 **Hubble Relay** — Deployment — 
 - Namespace: kube-system
-- Replicas: 0/1
+- Replicas: 1/1
 
 **Kube Vip** — DaemonSet — v1.3.1
 - Namespace: kube-system
@@ -1200,45 +1198,33 @@
 - Namespace: kube-system
 - Replicas: 2/2
 
+**Alloy** — DaemonSet — 
+- Namespace: optcp-telemetry
+- Replicas: 5/5
+
+**Alloy** — DaemonSet — 
+- Namespace: optcp-telemetry
+- Replicas: 5/5
+
 **Ceph Csi** — Deployment — 
-- Namespace: gorons-bracelet
+- Namespace: optcp-operators-privileged
 - Replicas: 2/2
 
 **Csi Addons** — Deployment — v0.15.1
-- Namespace: gorons-bracelet
+- Namespace: optcp-operators-privileged
 - Replicas: 1/1
 
 **Csi Driver Smb** — Mixed — 1.20.4
-- Namespace: gorons-bracelet
+- Namespace: optcp-operators-privileged
 - Replicas: 7/7
 
 **Generic Device Plugin** — DaemonSet — 0.2.0
-- Namespace: gorons-bracelet
+- Namespace: optcp-operators-privileged
 - Replicas: 1/1
-
-**Gorons Bracelet.cephfs.csi.ceph.com** — Mixed — 
-- Namespace: gorons-bracelet
-- Replicas: 7/7
-
-**Gorons Bracelet.rbd.csi.ceph.com** — Mixed — 
-- Namespace: gorons-bracelet
-- Replicas: 12/12
 
 **Gpu Operator** — Mixed — v26.7.0
-- Namespace: gorons-bracelet
+- Namespace: optcp-operators-privileged
 - Replicas: 20/20
-
-**Rbd Toolbox** — Deployment — v19.2.7
-- Namespace: gorons-bracelet
-- Replicas: 1/1
-
-**Alloy** — DaemonSet — 
-- Namespace: optcp-telemetry
-- Replicas: 5/5
-
-**Alloy** — DaemonSet — 
-- Namespace: optcp-telemetry
-- Replicas: 5/5
 
 **Graphite Exporter Truenas** — Deployment — v0.17.0
 - Namespace: optcp-monitoring-agents
@@ -1248,7 +1234,7 @@
 - Namespace: optcp-service-mesh
 - Replicas: 10/10
 
-**Istio Cni** — DaemonSet — 1.31.4
+**Istio Cni** — DaemonSet — 1.32.0
 - Namespace: optcp-service-mesh
 - Replicas: 10/10
 
@@ -1276,17 +1262,17 @@
 - Namespace: optcp-secrets
 - Replicas: 1/1
 
-**Ztunnel** — DaemonSet — 1.31.4
+**Ztunnel** — DaemonSet — 1.32.0
 - Namespace: optcp-service-mesh
 - Replicas: 5/5
 
-**Ztunnel** — DaemonSet — 1.31.4
+**Ztunnel** — DaemonSet — 1.32.0
 - Namespace: optcp-service-mesh
 - Replicas: 5/5
 
 </details>
 
-## Unclassified (38)
+## Unclassified (41)
 
 Not yet placed: declare their namespaces under `gitops.dungeon.categories` to list them as apps or platform.
 
@@ -1305,6 +1291,8 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | External Secrets | optcp-secrets | ✅ |
 | Faster Whisper | optcp-ai | ✅ |
 | Gitlab Runner | optcp-ci-runners | ✅ |
+| Gorons Bracelet.cephfs.csi.ceph.com | optcp-operators-privileged | ✅ |
+| Gorons Bracelet.rbd.csi.ceph.com | optcp-operators-privileged | ✅ |
 | Istiod | optcp-service-mesh | ✅ |
 | Kube State Metrics | optcp-gossip-stone | ✅ |
 | Kyverno Admission Controller | optcp-policy-engine | ✅ |
@@ -1317,6 +1305,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Phloem Ingress Gateway Istio | optcp-ingress-internal | ✅ |
 | Piper | optcp-ai | ✅ |
 | Plugin Barman Cloud | optcp-operators-baseline | ✅ |
+| Rbd Toolbox | optcp-operators-privileged | ✅ |
 | Reflector | optcp-operators-baseline | ✅ |
 | Reloader | optcp-operators-baseline | ✅ |
 | Renovate Redis | optcp-ci-runners | ✅ |
