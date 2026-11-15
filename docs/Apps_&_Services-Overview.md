@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 121 healthy · ⚠️ 5 degraded · ❌ 5 down
+✅ 127 healthy · ⚠️ 4 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -50,7 +50,7 @@
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Nextcloud (9 components) | ⚠️ | 🏠 cloud.optcp.com | [open](https://cloud.optcp.com) |
-| Openproject (3 components) | ⚠️ | 🏠 projects.optcp.com | [open](https://projects.optcp.com) |
+| Openproject (3 components) | ✅ | 🏠 projects.optcp.com | [open](https://projects.optcp.com) |
 | Wikijs Sops | ✅ | 🏠 sops.optcp.com | [open](https://sops.optcp.com) |
 
 ### Cluster Infrastructure (Kube System⚙️)
@@ -67,7 +67,7 @@
 | Calibre Web | ✅ | 🏠 books.internal.optcp.com | [open](https://books.internal.optcp.com) |
 | Ghost (2 components) | ✅ | 🏠 blog.pcfae.com | [open](https://blog.pcfae.com) |
 | Immich | ✅ | 🏠 images.pcfae.com | [open](https://images.pcfae.com) |
-| Jellyfin | ❌ | 🔒 flix.optcp.com | [open](https://flix.optcp.com) |
+| Jellyfin | ✅ | 🔒 flix.optcp.com | [open](https://flix.optcp.com) |
 | Joplin (2 components) | ✅ | 🏠 joplin.pcfae.com | [open](https://joplin.pcfae.com) |
 | Kimai (2 components) | ✅ | 🏠 kimai.pcfae.com | [open](https://kimai.pcfae.com) |
 | Linkwarden (3 components) | ✅ | 🏠 bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
@@ -87,7 +87,7 @@
 | --- | --- | --- | --- |
 | Adguard | ✅ | 🔒 |  |
 | Chrony | ✅ | 🔒 |  |
-| Echo Ip | ❌ | 🏠 ipleek.com | [open](https://ipleek.com) |
+| Echo Ip | ✅ | 🏠 ipleek.com | [open](https://ipleek.com) |
 | Librespeed Speedtest | ✅ | 🏠 speedtester.pcfae.com | [open](https://speedtester.pcfae.com) |
 | Netbootxyz | ✅ | 🔒 netboot.pcfae.com | [open](https://netboot.pcfae.com) |
 | Openspeedtest | ✅ | 🏠 speedtest.pcfae.com | [open](https://speedtest.pcfae.com) |
@@ -100,7 +100,7 @@
 | Astralfocal Site | ✅ | 🏠 astralfocal.com | [open](https://astralfocal.com) |
 | Enamorafoto Site | ✅ | 🏠 enamorafoto.operationtimecapsule.com | [open](https://enamorafoto.operationtimecapsule.com) |
 | Etherealclique Site | ✅ | 🏠 etherealclique.com | [open](https://etherealclique.com) |
-| Ferdium | ❌ | 🏠 ferdium.pcfae.com | [open](https://ferdium.pcfae.com) |
+| Ferdium | ✅ | 🏠 ferdium.pcfae.com | [open](https://ferdium.pcfae.com) |
 | Homarr (3 components) | ✅ | 🏠 apptray.pcfae.com | [open](https://apptray.pcfae.com) |
 | Homelabhelpdesk Site | ✅ | 🏠 homelabhelpdesk.com | [open](https://homelabhelpdesk.com) |
 | Kai Hamilton Site | ✅ | 🏠 kai-hamilton.com | [open](https://kai-hamilton.com) |
@@ -113,7 +113,7 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Anirra | ❌ | 🏠 anime.pcfae.com | [open](https://anime.pcfae.com) |
+| Anirra | ✅ | 🏠 anime.pcfae.com | [open](https://anime.pcfae.com) |
 | Bazarr | ✅ | 🏠 bazarr.pcfae.com | [open](https://bazarr.pcfae.com) |
 | Downloadarrs | ✅ | 🏠 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
 | Jellyseerr | ✅ | 🏠 jseer.optcp.com | [open](https://jseer.optcp.com) |
@@ -122,7 +122,7 @@
 | Prowlarr | ✅ | 🏠 prowlarr.pcfae.com | [open](https://prowlarr.pcfae.com) |
 | Py Kms | ✅ | 🔒 kms.pcfae.com | [open](https://kms.pcfae.com) |
 | Pyload Ng | ✅ | 🏠 dl.pcfae.com | [open](https://dl.pcfae.com) |
-| Sabnzbd | ❌ | 🏠 sabnzbd.pcfae.com | [open](https://sabnzbd.pcfae.com) |
+| Sabnzbd | ✅ | 🏠 sabnzbd.pcfae.com | [open](https://sabnzbd.pcfae.com) |
 | Supermicro License Generator | ✅ | 🏠 smkeygen.pcfae.com | [open](https://smkeygen.pcfae.com) |
 | Thelounge | ✅ | 🏠 thelounge.pcfae.com | [open](https://thelounge.pcfae.com) |
 
@@ -378,7 +378,7 @@
 
 **Gitlab — 11 components** — Mixed — v19.5.5
 - Namespace: optcp-supply-chain
-- Replicas: 19/22
+- Replicas: 20/22
 - Hosts: git.prplanit.com
 - Components:
   - gitlab-gitlab-exporter (Deployment)
@@ -455,7 +455,7 @@
 
 **Openproject — 3 components** — Deployment — 
 - Namespace: optcp-staff-suite
-- Replicas: 3/4
+- Replicas: 4/4
 - Hosts: projects.optcp.com
 - Components:
   - openproject-memcached (Deployment, cache)
@@ -506,7 +506,7 @@
 
 **Jellyfin** — StatefulSet — 10.11.11
 - Namespace: optcp-media
-- Replicas: 0/1
+- Replicas: 1/1
 - Hosts: flix.optcp.com
 
 **Joplin — 2 components** — StatefulSet — 
@@ -619,7 +619,7 @@
 
 **Echo Ip** — StatefulSet — v2026.9.0
 - Namespace: optcp-tools
-- Replicas: 0/1
+- Replicas: 1/1
 - Hosts: ipleek.com, www.ipleek.com
 
 **Librespeed Speedtest** — Deployment — 6.3.1-alpine
@@ -662,7 +662,7 @@
 
 **Ferdium** — StatefulSet — v7.2.3-ls165
 - Namespace: kai-personal
-- Replicas: 0/1
+- Replicas: 1/1
 - Hosts: ferdium.pcfae.com
 
 **Homarr — 3 components** — StatefulSet — v1.77.2
@@ -706,7 +706,7 @@
 
 **Anirra** — StatefulSet — xiFwhijN
 - Namespace: optcp-swift-sail
-- Replicas: 0/1
+- Replicas: 1/1
 - Hosts: anime.pcfae.com
 
 **Bazarr** — StatefulSet — 
@@ -751,7 +751,7 @@
 
 **Sabnzbd** — StatefulSet — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 0/1
+- Replicas: 1/1
 - Hosts: sabnzbd.pcfae.com
 
 **Supermicro License Generator** — Deployment — v0.0.5
@@ -1301,7 +1301,7 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | Netbird Router Dungeon | optcp-vpn | ✅ |
 | Netconsole Collector | optcp-telemetry | ✅ |
 | Openbao Snapshot | optcp-secrets | ✅ |
-| Openwakeword | optcp-ai | ❌ |
+| Openwakeword | optcp-ai | ✅ |
 | Phloem Ingress Gateway Istio | optcp-ingress-internal | ✅ |
 | Piper | optcp-ai | ✅ |
 | Plugin Barman Cloud | optcp-operators-baseline | ✅ |
