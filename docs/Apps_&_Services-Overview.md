@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 127 healthy · ⚠️ 4 degraded
+✅ 128 healthy · ⚠️ 3 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -209,7 +209,7 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Boundary (2 components) | ⚠️ | 🏠 access.optcp.com | [open](https://access.optcp.com) |
+| Boundary (2 components) | ✅ | 🏠 access.optcp.com | [open](https://access.optcp.com) |
 | Guacamole (3 components) | ✅ | 🏠 guacamole.pcfae.com | [open](https://guacamole.pcfae.com) |
 | Rustdesk | ✅ | 🔒 |  |
 | Tactical (11 components) | ✅ | 🏠 meshc.prplanit.com | [open](https://meshc.prplanit.com) |
@@ -966,7 +966,7 @@
 
 **Boundary — 2 components** — Mixed — 0.21.3
 - Namespace: optcp-remote-access
-- Replicas: 3/5
+- Replicas: 5/5
 - Hosts: access.optcp.com
 - Components:
   - boundary-controller (Deployment)
@@ -1154,7 +1154,7 @@
 | Graphite Exporter Truenas | optcp-monitoring-agents | ✅ |
 | Istio (2 components) | optcp-service-mesh | ✅ |
 | Istio Cni | optcp-service-mesh | ✅ |
-| Mariadb Operator (3 components) | optcp-operators-baseline | ✅ |
+| Mariadb Operator (3 components) | optcp-operators-baseline | ⚠️ |
 | Node (2 components) | optcp-telemetry | ✅ |
 | Redis Operator | optcp-operators-baseline | ✅ |
 | Sbom Operator | optcp-sibyl-system | ✅ |
@@ -1240,7 +1240,7 @@
 
 **Mariadb Operator** — Deployment — 26.10.2
 - Namespace: optcp-operators-baseline
-- Replicas: 5/5
+- Replicas: 4/5
 
 **Node** — DaemonSet — v1.9.1
 - Namespace: optcp-telemetry
