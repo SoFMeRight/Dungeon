@@ -24,6 +24,8 @@ data:
       # Outlasts a boundary-postgres primary switchover or restart; equal to the
       # controllers' worker_status_grace_period (controller-configmap-patch.yaml).
       successful_status_grace_period = "2m"
+      # Boundary requires this with successful_status_grace_period, and no longer than it.
+      status_call_timeout = "5s"
     }
 
     kms "aead" {
