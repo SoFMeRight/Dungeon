@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 129 healthy · ⚠️ 2 degraded
+✅ 127 healthy · ⚠️ 3 degraded · ❌ 1 down
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -73,7 +73,7 @@
 | Linkwarden (3 components) | ✅ | 🏠 bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
 | Mealie (2 components) | ✅ | 🏠 meals.yesimvegan.com | [open](https://meals.yesimvegan.com) |
 | Open (3 components) | ✅ | 🏠 ai.optcp.com | [open](https://ai.optcp.com) |
-| Penpot (5 components) | ✅ | 🏠 design.pcfae.com | [open](https://design.pcfae.com) |
+| Penpot (5 components) | ⚠️ | 🏠 design.pcfae.com | [open](https://design.pcfae.com) |
 | Photoprism (2 components) | ✅ | 🏠 photos.pcfae.com | [open](https://photos.pcfae.com) |
 | Plex | ✅ | 🔒 plex.optcp.com | [open](https://plex.optcp.com) |
 | Reactive Resume (3 components) | ✅ | 🏠 resume.sofmeright.com | [open](https://resume.sofmeright.com) |
@@ -131,7 +131,7 @@
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Ark (4 components) | ✅ | 🌐 |  |
-| Minecraft | ✅ | 🌐 |  |
+| Minecraft | ❌ | 🌐 |  |
 | Palworld | ✅ | 🌐 |  |
 
 ### Infrastructure (Aryll's Lookout🔭)
@@ -553,7 +553,7 @@
 
 **Penpot — 5 components** — StatefulSet — 
 - Namespace: optcp-cloud
-- Replicas: 5/5
+- Replicas: 4/5
 - Hosts: design.pcfae.com, penpot.prplanit.com
 - Components:
   - penpot-backend (StatefulSet)
@@ -637,7 +637,7 @@
 - Replicas: 1/1
 - Hosts: speedtest.pcfae.com
 
-**Searxng — 2 components** — Deployment — 2026.11.14-a7128d5d1
+**Searxng — 2 components** — Deployment — 2026.11.15-2d500cb6b
 - Namespace: optcp-tools
 - Replicas: 3/3
 - Hosts: search.pcfae.com
@@ -775,7 +775,7 @@
 
 **Minecraft** — StatefulSet — java25
 - Namespace: optcp-shooting-gallery
-- Replicas: 1/1
+- Replicas: 0/1
 
 **Palworld** — StatefulSet — v2.8.1
 - Namespace: optcp-shooting-gallery
