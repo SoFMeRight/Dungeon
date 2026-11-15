@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 128 healthy · ⚠️ 3 degraded
+✅ 129 healthy · ⚠️ 2 degraded
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -73,7 +73,7 @@
 | Linkwarden (3 components) | ✅ | 🏠 bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
 | Mealie (2 components) | ✅ | 🏠 meals.yesimvegan.com | [open](https://meals.yesimvegan.com) |
 | Open (3 components) | ✅ | 🏠 ai.optcp.com | [open](https://ai.optcp.com) |
-| Penpot (5 components) | ⚠️ | 🏠 design.pcfae.com | [open](https://design.pcfae.com) |
+| Penpot (5 components) | ✅ | 🏠 design.pcfae.com | [open](https://design.pcfae.com) |
 | Photoprism (2 components) | ✅ | 🏠 photos.pcfae.com | [open](https://photos.pcfae.com) |
 | Plex | ✅ | 🔒 plex.optcp.com | [open](https://plex.optcp.com) |
 | Reactive Resume (3 components) | ✅ | 🏠 resume.sofmeright.com | [open](https://resume.sofmeright.com) |
@@ -553,7 +553,7 @@
 
 **Penpot — 5 components** — StatefulSet — 
 - Namespace: optcp-cloud
-- Replicas: 4/5
+- Replicas: 5/5
 - Hosts: design.pcfae.com, penpot.prplanit.com
 - Components:
   - penpot-backend (StatefulSet)
@@ -1154,7 +1154,7 @@
 | Graphite Exporter Truenas | optcp-monitoring-agents | ✅ |
 | Istio (2 components) | optcp-service-mesh | ✅ |
 | Istio Cni | optcp-service-mesh | ✅ |
-| Mariadb Operator (3 components) | optcp-operators-baseline | ⚠️ |
+| Mariadb Operator (3 components) | optcp-operators-baseline | ✅ |
 | Node (2 components) | optcp-telemetry | ✅ |
 | Redis Operator | optcp-operators-baseline | ✅ |
 | Sbom Operator | optcp-sibyl-system | ✅ |
@@ -1240,7 +1240,7 @@
 
 **Mariadb Operator** — Deployment — 26.10.2
 - Namespace: optcp-operators-baseline
-- Replicas: 4/5
+- Replicas: 5/5
 
 **Node** — DaemonSet — v1.9.1
 - Namespace: optcp-telemetry
