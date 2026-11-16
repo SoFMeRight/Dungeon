@@ -17,9 +17,9 @@
     },
     {
       "name": "grype",
-      "resolved": "0.121.2",
+      "resolved": "0.121.3",
       "sha256": {
-        "linux/amd64": "9c8965ced9df657e5e851c14021bae838802f711edd7a48f9bc3c923a8d28f12"
+        "linux/amd64": "e9da18cc1429e786722e32161288103600efffd8e483c90761f90485bd1bec85"
       }
     },
     {
@@ -45,16 +45,16 @@
     },
     {
       "name": "osv-scanner",
-      "resolved": "2.7.0",
+      "resolved": "2.7.1",
       "sha256": {
-        "linux/amd64": "160c6253e2922e9e0a6a9771c5c4c40a4b3c6090b34a3cdd5e80c96cc2e4218b"
+        "linux/amd64": "fb7dab19a8bd9bbe5c3189f09d4b7ee1820c9553a23bac202648a56efd2f6ee8"
       }
     },
     {
       "name": "syft",
-      "resolved": "1.57.0",
+      "resolved": "1.57.1",
       "sha256": {
-        "linux/amd64": "9c077a7d43029b3b13e98a8db720661e700c4d58db6352153a06395ae4a2a704"
+        "linux/amd64": "bf52519eb57f675d47c07d43213cb6dff6449f3d6d1147ff6701ed91f44eef0c"
       }
     },
     {
