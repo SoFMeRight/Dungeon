@@ -1,0 +1,57 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: mutate-redis-master-handoff
+  annotations:
+    policies.kyverno.io/title: Mutate Redis master handoff on shutdown
+    policies.kyverno.io/description: >-
+      A drain that takes a Redis replication master and one of its three sentinels together
+      leaves two sentinels that can split their vote and abort the failover. The redis-operator
+      then re-registers the new master with SENTINEL REMOVE/MONITOR, which publishes no
+      +switch-master, so sentinel-aware clients (gitlab-kas) keep the old master's pod IP. This
+      injects a preStop hook on operator-managed Redis replication pods: a master asks its
+      sentinels for SENTINEL FAILOVER and waits until it is demoted, so planned disruption is a
+      single coordinated, announced failover. Replicas exit at once. The redis-operator CRD has no
+      lifecycle field, so Kyverno is the only mechanism. CREATE-only + admission-time: existing
+      pods get the hook when they next roll. Assumes the operator naming <name>-redis replication,
+      <name>-sentinel RedisSentinel, master group = replication name.
+spec:
+  background: true
+  rules:
+    - name: preStop-sentinel-failover
+      match:
+        any:
+          - resources:
+              kinds: [Pod]
+              operations: [CREATE]
+              selector:
+                matchLabels:
+                  redis_setup_type: replication
+      preconditions:
+        all:
+          - key: "{{ request.object.metadata.labels.app || '' }}"
+            operator: Equals
+            value: "*-redis"
+      mutate:
+        patchStrategicMerge:
+          spec:
+            containers:
+              - name: "{{ request.object.metadata.labels.app }}"
+                lifecycle:
+                  preStop:
+                    exec:
+                      command:
+                        - /bin/sh
+                        - -c
+                        - |
+                          REDISCLI_AUTH="$(printf %s "$REDISCLI_AUTH" | tr -d '\r\n')"
+                          export REDISCLI_AUTH
+                          [ "$(redis-cli --no-auth-warning role | head -n1)" = master ] || exit 0
+                          sentinel="{{ regex_replace_all('-redis$', request.object.metadata.labels.app, '-sentinel-sentinel') }}"
+                          redis-cli --no-auth-warning -h "$sentinel" -p 26379 sentinel failover "{{ request.object.metadata.labels.app }}" || exit 0
+                          i=0
+                          while [ "$i" -lt 25 ]; do
+                            [ "$(redis-cli --no-auth-warning role | head -n1)" = slave ] && exit 0
+                            sleep 1
+                            i=$((i + 1))
+                          done

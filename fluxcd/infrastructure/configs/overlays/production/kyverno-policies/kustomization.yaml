@@ -7,6 +7,7 @@ resources:
   - gate-breakglass-label.yaml
   - enforce-image-policy.yaml
   - mutate-redis-contract-labels.yaml
+  - mutate-redis-master-handoff.yaml
   - mutate-probe-on-ingress.yaml
   - audit-pod-hardening.yaml
   - mutate-pod-hardening.yaml
