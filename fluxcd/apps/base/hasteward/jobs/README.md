@@ -25,6 +25,9 @@ purpose — they are operational runbooks applied on demand, never reconciled.
 # Galera with every node down: bootstrap from the highest recovered seqno. Dry-run first.
 ./run.sh bootstrap        -c kimai-mariadb       -n some-ns        -e galera -- --dry-run
 
+# Back the cluster up into HASteward's restic repo (e.g. before planned maintenance).
+./run.sh backup           -c osticket-mariadb    -n some-ns        -e galera
+
 # List the restic snapshots HASteward holds for a cluster (backups, diverged, escrow).
 ./run.sh backup-list      -c some-postgres       -n some-ns
 
@@ -35,7 +38,7 @@ purpose — they are operational runbooks applied on demand, never reconciled.
 Flags: `-c` cluster (required), `-n` namespace (required), `-i` instance, `-e` engine
 (`cnpg` default, or `galera`), `--image` (default `docker.io/prplanit/hasteward:latest-dev`),
 `-f`/`--force` (`repair`, `promote` and `bootstrap` only), `--` then HASteward flags
-(`bootstrap`, `backup-list` and `backup-prune` only).
+(`bootstrap`, `backup`, `backup-list` and `backup-prune` only).
 
 ### Which image actually ran
 
@@ -89,6 +92,7 @@ kubectl -n optcp-fairy-bottle logs -f job/<printed-name>
 | `repair` | `repair -i N` | restic | Re-clone/heal an unhealthy instance from the primary. Accepts `-f`. |
 | `promote` | `repair -i N --promote` | restic | Rebuild-around-authority when the authority is not the primary. `--dry-run` first (edit args). Accepts `-f`. |
 | `bootstrap` | `bootstrap` | restic | Galera, all nodes down: fence, `wsrep_recover` and escrow every PVC, bootstrap the highest seqno. `-- --dry-run` first. Accepts `-f`. |
+| `backup` | `backup create` | — | Backs the cluster up to the restic repo; `-- --method native` for CNPG barmanObjectStore. |
 | `backup-list` | `backup list` | — | Read-only. The cluster's restic snapshots with type and age. |
 | `backup-prune` | `backup prune` | — | Retention over `backup` / `diverged` snapshots (`-t`, `--keep-*`), or `-t escrow` VolumeSnapshots. All `--keep-*` at 0 keeps everything. |
 
