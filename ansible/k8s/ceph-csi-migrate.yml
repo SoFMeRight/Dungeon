@@ -1,0 +1,203 @@
+---
+# Move volumes from one ceph-csi driver name to another, zero-copy (OpenProject #432: gorons-bracelet.*
+# -> optcp.*). A PV's spec.csi is immutable, so each PV and its PVC are recreated under the same names
+# on the new driver with the same volumeHandle; the RBD image or CephFS subvolume never moves.
+#
+# Volumes are migrated in quiesce groups (see files/ceph-csi-discover.py): the workloads that share
+# volumes stop together, so each group has one outage of a few minutes and no data is copied. Groups
+# run one at a time. Safety: Retain is forced before anything is deleted; the Ceph data is checked
+# before the old objects go; each PV, PVC and record is escrowed; any failure puts the whole group
+# back on its old drivers from escrow; a group's Flux managers are suspended while it runs.
+#
+# Tiers this playbook does not migrate (the plan lists them): operator (a Redis/MariaDB/Vault
+# operator owns a workload and would undo the scale-down), cnpg (rbd-rook-migrate-cnpg.yml), manual,
+# released.
+#
+# Static PVs are declared in git, and git must end up naming the new driver, or Flux would try to
+# change the (immutable) driver of the live PV back. So a run that migrates static PVs:
+#   1. migrates, then rewrites those PVs' git definitions (files/ceph-csi-git-flip.py) in the repo
+#      working tree, and leaves the Flux managers declaring them suspended (held);
+#   2. the Operator commits those files with stagefreight and pushes;
+#   3. `-e resume=true -e expect_commit=<sha>` waits until the Flux source carries that commit, then
+#      resumes the held managers.
+# A run without static PVs resumes everything itself.
+#
+# Runs in the ghcr.io/homelabhd/ansible:v2.22.0 container (repo mounted read-write for the git flip):
+#   docker run --rm --network host -e KUBECONFIG=/root/.kube/config \
+#     -v ~/.kube:/root/.kube:ro -v /home/kai/repositories/dungeon:/dungeon \
+#     -v ~/backups/_ceph-csi-optcp:/escrow -w /dungeon ghcr.io/homelabhd/ansible:v2.22.0 \
+#     ansible-playbook ansible/k8s/ceph-csi-migrate.yml [flags]
+#
+#   Plan (default, changes nothing):              (no flags)       or  -e targets=optcp-cloud
+#   Migrate namespaces:                           -e confirm=true -e targets=optcp-cloud,optcp-tools
+#   Migrate specific groups:                      -e confirm=true -e 'groups_list=["optcp-cloud/dailytxt"]'
+#   After the push of the git flip:               -e resume=true -e expect_commit=<sha>
+
+- name: Migrate volumes between ceph-csi drivers (same names, zero-copy)
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    drivers:
+      gorons-bracelet.rbd.csi.ceph.com: optcp.rbd.csi.ceph.com
+      gorons-bracelet.cephfs.csi.ceph.com: optcp.cephfs.csi.ceph.com
+    old_secret_ns: gorons-bracelet
+    new_secret_ns: optcp-operators-privileged
+    escrow_dir: /escrow
+    repo_dir: "{{ playbook_dir | dirname | dirname }}"
+    suspended_by: optcp.com/ceph-csi-migration
+    suspended_by_jsonpath: "{{ suspended_by | replace('.', '\\.') }}"
+    run_marker: suspended
+    confirm: false
+    resume: false
+    expect_commit: ""
+    targets: ""
+    groups_list: []
+    dry_run: "{{ not (confirm | bool) }}"
+    gl: "{{ groups_list if (groups_list is sequence and groups_list is not string) else (groups_list | from_yaml) }}"
+    tns: "{{ targets.split(',') | map('trim') | select | list }}"
+    migrated_ok: []
+    not_ready: []
+    failed_groups: []
+    held: []
+
+  tasks:
+    # ------------------------------------------------------------------------------------ resume
+    - name: Resume the managers held for a git flip
+      when: resume | bool
+      block:
+        - name: An expected commit is required
+          ansible.builtin.assert:
+            that: expect_commit | length >= 7
+            fail_msg: "Pass -e expect_commit=<sha> (the pushed git-flip commit)."
+
+        - name: Wait until the Flux source carries {{ expect_commit }}
+          ansible.builtin.command: >-
+            kubectl get gitrepository flux-system -n flux-system -o jsonpath={.status.artifact.revision}
+          register: src_rev
+          changed_when: false
+          until: expect_commit in src_rev.stdout
+          retries: 40
+          delay: 15
+
+        - name: Find the managers this migration suspended
+          ansible.builtin.shell: >-
+            kubectl get kustomizations.kustomize.toolkit.fluxcd.io,helmreleases.helm.toolkit.fluxcd.io -A
+            -o jsonpath='{range .items[?(@.metadata.annotations.{{ suspended_by_jsonpath }}=="{{ run_marker }}")]}{.kind}/{.metadata.namespace}/{.metadata.name}{"\n"}{end}'
+          register: held_raw
+          changed_when: false
+
+        - name: Resume them
+          ansible.builtin.shell: |
+            set -e
+            IFS=/ read -r kind ns name <<< "{{ item }}"
+            res=$([ "$kind" = Kustomization ] && echo kustomizations.kustomize.toolkit.fluxcd.io || echo helmreleases.helm.toolkit.fluxcd.io)
+            kubectl patch $res $name -n $ns --type=merge -p '{"spec":{"suspend":false}}' >/dev/null
+            kubectl annotate $res $name -n $ns {{ suspended_by }}- >/dev/null
+          args:
+            executable: /bin/bash
+          loop: "{{ held_raw.stdout_lines }}"
+
+        - name: Resumed
+          ansible.builtin.debug:
+            msg: "✓ Flux source at {{ src_rev.stdout }}; resumed {{ held_raw.stdout_lines | length }}: {{ held_raw.stdout_lines | join(', ') or 'none were held' }}"
+
+        - name: End
+          ansible.builtin.meta: end_play
+
+    # ------------------------------------------------------------------------- discovery + plan
+    - name: Ensure the escrow dir exists
+      ansible.builtin.file:
+        path: "{{ escrow_dir }}"
+        state: directory
+        mode: "0700"
+      when: not dry_run
+
+    - name: Find the toolbox pod (Ceph checks before anything is deleted)
+      ansible.builtin.shell: >-
+        kubectl get pods -n {{ new_secret_ns }} -o name | grep -m1 rbd-toolbox | sed 's#^pod/##'
+      register: tb
+      changed_when: false
+      failed_when: tb.stdout | length == 0
+
+    - name: Discover and classify
+      ansible.builtin.command:
+        argv: "{{ ['python3', playbook_dir ~ '/files/ceph-csi-discover.py', repo_dir]
+                  + (drivers | dict2items | map(attribute='key') | zip(drivers | dict2items | map(attribute='value'))
+                     | map('join', '=') | list) }}"
+      register: disc
+      changed_when: false
+
+    - name: Select
+      ansible.builtin.set_fact:
+        toolbox_pod: "{{ tb.stdout }}"
+        recs: "{{ disc.stdout | from_json }}"
+        scope: >-
+          {{ (disc.stdout | from_json)
+             | selectattr('namespace', 'in', tns if tns else ((disc.stdout | from_json) | map(attribute='namespace') | list))
+             | list }}
+
+    - name: Narrow to groups_list
+      ansible.builtin.set_fact:
+        scope: "{{ scope | selectattr('group', 'in', gl) | list }}"
+      when: gl | length > 0
+
+    - name: Group (one entry per quiesce group, in the order they run)
+      ansible.builtin.set_fact:
+        mig_groups: "{{ scope | selectattr('tier', 'equalto', 'group') | groupby('group') }}"
+
+    - name: Check that every static PV in scope can be flipped in git
+      ansible.builtin.command: python3 {{ playbook_dir }}/files/ceph-csi-git-flip.py --check {{ repo_dir }} {{ old_secret_ns }} {{ new_secret_ns }}
+      args:
+        stdin: "{{ (scope | selectattr('tier', 'equalto', 'group') | selectattr('static') | list) | to_json }}"
+      changed_when: false
+
+    - name: Build the plan
+      ansible.builtin.command: python3 {{ playbook_dir }}/files/ceph-csi-plan.py
+      args:
+        stdin: "{{ scope | to_json }}"
+      register: plan
+      changed_when: false
+
+    - name: Plan
+      ansible.builtin.debug:
+        msg: "{{ ['PLAN ONLY, nothing changes' if dry_run else 'EXECUTE',
+                  'scope: ' ~ (tns | join(', ') if tns else 'all namespaces') ~ ((' / groups ' ~ (gl | join(', '))) if gl else '')]
+                 + plan.stdout_lines }}"
+
+    - name: A confirmed run needs a scope
+      ansible.builtin.assert:
+        that: tns | length > 0 or gl | length > 0
+        fail_msg: "confirm=true needs -e targets=<ns,...> or -e groups_list=[...]: migrate in waves."
+      when: not dry_run
+
+    # --------------------------------------------------------------------------------- migrate
+    - name: Migrate each group, one at a time
+      ansible.builtin.include_tasks: tasks/ceph-csi-migrate-group.yml
+      loop: "{{ mig_groups }}"
+      loop_control:
+        loop_var: grp
+        label: "{{ grp.0 }}"
+      vars:
+        g_key: "{{ grp.0 }}"
+        grp_vols: "{{ grp.1 }}"
+      when: not dry_run
+
+    - name: Point git at the new drivers for the static PVs that migrated
+      ansible.builtin.command: python3 {{ playbook_dir }}/files/ceph-csi-git-flip.py {{ repo_dir }} {{ old_secret_ns }} {{ new_secret_ns }}
+      args:
+        stdin: "{{ (migrated_ok | selectattr('static') | list) | to_json }}"
+      register: flipped
+      when: not dry_run and (migrated_ok | selectattr('static') | list | length > 0)
+
+    - name: Result
+      ansible.builtin.debug:
+        msg: |
+          migrated: {{ migrated_ok | length }} volume(s) in {{ migrated_ok | map(attribute='group') | unique | list | length }} group(s)
+          {% if not_ready %}NOT READY after 300s (left migrated, check them): {{ not_ready | join(', ') }}
+          {% endif %}{% if failed_groups %}FAILED: {{ failed_groups | join('; ') }}
+          {% endif %}{% if held %}held suspended until git names the new drivers: {{ held | join(', ') }}
+          git files flipped (commit them, push, then run -e resume=true -e expect_commit=<sha>):
+          {{ flipped.stdout_lines | default([]) | join(' ') }}
+          {% endif %}
+      when: not dry_run

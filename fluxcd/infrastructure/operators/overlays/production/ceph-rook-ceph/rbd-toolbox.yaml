@@ -1,4 +1,4 @@
-# Ceph toolbox for the disaster scripts (bash/disaster/ceph, ansible/k8s/rbd-rook-migrat*).
+# Ceph toolbox for the disaster scripts (bash/disaster/ceph, ansible/k8s/ceph-csi-migrate.yml).
 apiVersion: apps/v1
 kind: Deployment
 metadata:

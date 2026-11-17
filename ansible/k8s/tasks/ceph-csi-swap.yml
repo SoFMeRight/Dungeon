@@ -1,0 +1,60 @@
+---
+# Re-adopt ONE volume onto its new ceph-csi driver, zero-copy and under the same PV and PVC names.
+# `vol` is a ceph-csi-discover.py record. The caller (ceph-csi-migrate-group.yml) has escrowed the
+# old PV, PVC and record, forced the PV to Retain, stopped every pod that mounts it, and owns the
+# rollback. Nothing here forces a finalizer off: a PVC or PV that won't go away is still in use,
+# and the swap fails so the caller rolls the group back.
+
+- name: "[{{ vol.key }}] the {{ vol.type }} data exists in Ceph before anything is deleted"
+  ansible.builtin.command: >-
+    kubectl exec -n {{ new_secret_ns }} {{ toolbox_pod }} --
+    {{ ('rbd info ' ~ vol.volumeAttributes.pool ~ '/' ~ vol.volumeAttributes.imageName)
+       if vol.type == 'rbd' else
+       ('ceph fs subvolume info ' ~ vol.volumeAttributes.fsName ~ ' ' ~ vol.volumeAttributes.subvolumeName
+        ~ ' --group_name ' ~ (vol.volumeAttributes.subvolumeGroup | default('csi'))) }}
+  changed_when: false
+  # A static CephFS volume is a plain path (rootPath) that no driver ever deletes.
+  when: vol.type == 'rbd' or not vol.static
+
+- name: "[{{ vol.key }}] wait for the volume to detach from its node"
+  ansible.builtin.shell: >-
+    set -o pipefail;
+    kubectl get volumeattachment -o json | python3 {{ playbook_dir }}/files/count-pv-attachments.py {{ vol.pv }}
+  args:
+    executable: /bin/bash
+  register: va_count
+  changed_when: false
+  until: va_count.stdout | trim == "0"
+  retries: 120
+  delay: 5
+
+- name: "[{{ vol.key }}] delete the old PVC (the PV is Retain, so the data stays)"
+  ansible.builtin.command: >-
+    kubectl delete pvc {{ vol.pvc }} -n {{ vol.namespace }} --ignore-not-found --wait=true --timeout=180s
+
+- name: "[{{ vol.key }}] delete the old PV (Retain: the data stays)"
+  ansible.builtin.command: kubectl delete pv {{ vol.pv }} --ignore-not-found --wait=true --timeout=180s
+
+- name: "[{{ vol.key }}] create the PV and PVC on {{ vol.newDriver }} (same names, same volumeHandle)"
+  ansible.builtin.shell: >-
+    set -o pipefail;
+    python3 {{ playbook_dir }}/files/ceph-csi-manifests.py {{ escrow_dir }}/{{ esc }}.record.json {{ new_secret_ns }}
+    | kubectl create -f -
+  args:
+    executable: /bin/bash
+
+- name: "[{{ vol.key }}] wait for the PVC to bind"
+  ansible.builtin.command: >-
+    kubectl wait pvc/{{ vol.pvc }} -n {{ vol.namespace }} --for=jsonpath={.status.phase}=Bound --timeout=300s
+  changed_when: false
+
+- name: "[{{ vol.key }}] the PV is on {{ vol.newDriver }}"
+  ansible.builtin.command: kubectl get pv {{ vol.pv }} -o jsonpath={.spec.csi.driver}
+  register: drv
+  changed_when: false
+  failed_when: drv.stdout != vol.newDriver
+
+- name: "[{{ vol.key }}] restore reclaimPolicy {{ vol.reclaimPolicy }}"
+  ansible.builtin.command: >-
+    kubectl patch pv {{ vol.pv }} --type=merge -p '{"spec":{"persistentVolumeReclaimPolicy":"{{ vol.reclaimPolicy }}"}}'
+  when: vol.reclaimPolicy != 'Retain'

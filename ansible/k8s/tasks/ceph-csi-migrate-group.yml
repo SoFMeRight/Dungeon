@@ -1,0 +1,179 @@
+---
+# Migrate ONE quiesce group (grp_vols: the ceph-csi-discover.py records sharing a `group`) onto the
+# new drivers. Every workload in the group stops together, every volume is swapped, every workload
+# starts again: one outage per group.
+#
+# Flux is suspended for the group's whole run, on every Kustomization/HelmRelease that manages one
+# of its workloads, PVs or PVCs. Otherwise a reconcile mid-swap would scale a workload back up, and a
+# StatefulSet whose PVC is momentarily gone would provision a new, empty one. Managers are marked
+# with the suspended_by annotation, so only what this run suspended is ever resumed. A manager that
+# declares a migrated static PV stays suspended (held) until git carries that PV's new driver: see
+# ceph-csi-migrate.yml.
+#
+# rescue: puts every volume of the group back on its old driver from escrow (the data never moved),
+# restores the reclaim policies, starts the workloads (only once every volume is restored), records
+# the failure and moves on.
+
+- name: "[{{ g_key }}] facts"
+  ansible.builtin.set_fact:
+    g_ns: "{{ grp_vols[0].namespace }}"
+    g_workloads: "{{ grp_vols[0].workloadInfo }}"
+    g_managers: >-
+      {{ ((grp_vols[0].workloadInfo | map(attribute='managers') | flatten)
+          + (grp_vols | map(attribute='pvManagers') | flatten)
+          + (grp_vols | map(attribute='pvcManagers') | flatten)) | unique | sort }}
+    g_esc: "{{ grp_vols | map(attribute='key') | map('regex_replace', '[^A-Za-z0-9_.-]', '_') | list }}"
+
+- name: "[{{ g_key }}] suspend its Flux managers"
+  ansible.builtin.shell: |
+    set -e
+    IFS=/ read -r kind ns name <<< "{{ item }}"
+    res=$([ "$kind" = Kustomization ] && echo kustomizations.kustomize.toolkit.fluxcd.io || echo helmreleases.helm.toolkit.fluxcd.io)
+    cur=$(kubectl get $res $name -n $ns -o jsonpath='{.spec.suspend}/{.metadata.annotations.{{ suspended_by_jsonpath }}}')
+    case "$cur" in
+      true/{{ run_marker }}) echo "already suspended by this migration" ;;
+      true/*) echo "suspended by someone else: left as it is, never resumed by this run" ;;
+      *) kubectl annotate $res $name -n $ns {{ suspended_by }}={{ run_marker }} --overwrite >/dev/null
+         kubectl patch $res $name -n $ns --type=merge -p '{"spec":{"suspend":true}}' >/dev/null
+         echo suspended ;;
+    esac
+  args:
+    executable: /bin/bash
+  loop: "{{ g_managers }}"
+  changed_when: true
+
+- name: "[{{ g_key }}] force Retain on every PV (no step can delete data)"
+  ansible.builtin.command: >-
+    kubectl patch pv {{ item.pv }} --type=merge -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
+  loop: "{{ grp_vols }}"
+  loop_control:
+    label: "{{ item.pv }}"
+
+- name: "[{{ g_key }}] escrow every PV, PVC and discovery record"
+  ansible.builtin.shell: >-
+    set -o pipefail;
+    kubectl get pv {{ item.0.pv }} -o json | python3 {{ playbook_dir }}/files/k8s-strip.py > {{ escrow_dir }}/{{ item.1 }}.pv.json &&
+    kubectl get pvc {{ item.0.pvc }} -n {{ g_ns }} -o json | python3 {{ playbook_dir }}/files/k8s-strip.py > {{ escrow_dir }}/{{ item.1 }}.pvc.json &&
+    printf '%s' {{ item.0 | to_json | quote }} > {{ escrow_dir }}/{{ item.1 }}.record.json
+  args:
+    executable: /bin/bash
+  loop: "{{ grp_vols | zip(g_esc) | list }}"
+  loop_control:
+    label: "{{ item.0.key }}"
+
+- name: "[{{ g_key }}] migrate {{ grp_vols | length }} volume(s), {{ g_workloads | length }} workload(s)"
+  block:
+    - name: "[{{ g_key }}] scale every workload to 0"
+      ansible.builtin.command: kubectl scale -n {{ g_ns }} {{ item.ref | lower }} --replicas=0
+      loop: "{{ g_workloads }}"
+      loop_control:
+        label: "{{ item.ref }}"
+
+    - name: "[{{ g_key }}] wait until no pod mounts any of the group's volumes"
+      ansible.builtin.shell: >-
+        set -o pipefail;
+        kubectl get pods -n {{ g_ns }} -o json |
+        python3 {{ playbook_dir }}/files/count-pvc-consumers.py {{ grp_vols | map(attribute='pvc') | map('quote') | join(' ') }}
+      args:
+        executable: /bin/bash
+      register: consumers
+      changed_when: false
+      until: consumers.stdout | trim == "0"
+      retries: 120
+      delay: 5
+
+    - name: "[{{ g_key }}] swap each volume"
+      ansible.builtin.include_tasks: ceph-csi-swap.yml
+      loop: "{{ grp_vols | zip(g_esc) | list }}"
+      loop_control:
+        loop_var: pair
+        label: "{{ pair.0.key }}"
+      vars:
+        vol: "{{ pair.0 }}"
+        esc: "{{ pair.1 }}"
+
+    - name: "[{{ g_key }}] scale every workload back up"
+      ansible.builtin.command: kubectl scale -n {{ g_ns }} {{ item.ref | lower }} --replicas={{ item.replicas }}
+      loop: "{{ g_workloads }}"
+      loop_control:
+        label: "{{ item.ref }} → {{ item.replicas }}"
+
+    # Not fatal: the swap is already verified (bound, on the new driver). A slow or unrelated failure
+    # to start must not roll a good migration back; it is reported instead.
+    - name: "[{{ g_key }}] wait for the workloads to be Ready (best-effort)"
+      ansible.builtin.command: kubectl rollout status -n {{ g_ns }} {{ item.ref | lower }} --timeout=300s
+      loop: "{{ g_workloads }}"
+      loop_control:
+        label: "{{ item.ref }}"
+      register: rollout
+      changed_when: false
+      failed_when: false
+
+    - name: "[{{ g_key }}] record"
+      ansible.builtin.set_fact:
+        migrated_ok: "{{ migrated_ok + grp_vols }}"
+        not_ready: "{{ not_ready + (rollout.results | rejectattr('rc', 'equalto', 0) | map(attribute='item.ref') | map('regex_replace', '^', g_ns ~ '/') | list) }}"
+        held: "{{ (held + (grp_vols | selectattr('static') | map(attribute='pvManagers') | flatten)) | unique }}"
+
+  rescue:
+    - name: "[{{ g_key }}] ROLLBACK"
+      ansible.builtin.debug:
+        msg: "✗ {{ g_key }}: {{ ansible_failed_result.msg | default('see above') }}. Putting every volume back on its old driver from escrow."
+
+    - name: "[{{ g_key }}] restore each volume from escrow"
+      ansible.builtin.shell: |
+        set -e
+        e={{ escrow_dir }}/{{ item.1 }}
+        pv={{ item.0.pv }}; pvc={{ item.0.pvc }}; ns={{ g_ns }}
+        drv=$(kubectl get pv $pv -o jsonpath='{.spec.csi.driver}' 2>/dev/null || true)
+        state=$(kubectl get pvc $pvc -n $ns -o jsonpath='{.spec.volumeName}/{.status.phase}/{.metadata.deletionTimestamp}' 2>/dev/null || true)
+        if [ "$drv" = "{{ item.0.oldDriver }}" ] && [ "$state" = "$pv/Bound/" ]; then
+          echo untouched
+        else
+          case "$state" in */*/?*) echo "PVC $ns/$pvc is terminating: still mounted, restore it by hand from $e.*.json"; exit 1 ;; esac
+          kubectl delete pvc $pvc -n $ns --ignore-not-found --wait=true --timeout=120s
+          kubectl delete pv $pv --ignore-not-found --wait=true --timeout=120s
+          kubectl apply -f $e.pv.json
+          kubectl apply -f $e.pvc.json
+          kubectl wait pvc/$pvc -n $ns --for=jsonpath='{.status.phase}'=Bound --timeout=300s
+          echo restored
+        fi
+        kubectl patch pv $pv --type=merge -p '{"spec":{"persistentVolumeReclaimPolicy":"{{ item.0.reclaimPolicy }}"}}' >/dev/null
+      args:
+        executable: /bin/bash
+      loop: "{{ grp_vols | zip(g_esc) | list }}"
+      loop_control:
+        label: "{{ item.0.key }}"
+      register: restored
+      ignore_errors: true
+
+    # Only after a complete restore: a StatefulSet started while one of its PVCs is missing would
+    # provision a new, empty volume in its place. An incomplete restore leaves the workloads at 0.
+    - name: "[{{ g_key }}] start the workloads again on the old drivers"
+      ansible.builtin.command: kubectl scale -n {{ g_ns }} {{ item.ref | lower }} --replicas={{ item.replicas }}
+      loop: "{{ g_workloads }}"
+      loop_control:
+        label: "{{ item.ref }}"
+      when: not (restored.failed | default(false))
+      ignore_errors: true
+
+    - name: "[{{ g_key }}] record the rollback"
+      ansible.builtin.set_fact:
+        failed_groups: >-
+          {{ failed_groups + [g_key ~ (' (rolled back)' if not (restored.failed | default(false))
+             else ' (ROLLBACK INCOMPLETE: see the restore task above; workloads left at 0, managers suspended)')] }}
+        held: "{{ (held + (g_managers if (restored.failed | default(false)) else [])) | unique }}"
+
+  always:
+    - name: "[{{ g_key }}] resume its Flux managers (except held ones)"
+      ansible.builtin.shell: |
+        set -e
+        IFS=/ read -r kind ns name <<< "{{ item }}"
+        res=$([ "$kind" = Kustomization ] && echo kustomizations.kustomize.toolkit.fluxcd.io || echo helmreleases.helm.toolkit.fluxcd.io)
+        [ "$(kubectl get $res $name -n $ns -o jsonpath='{.metadata.annotations.{{ suspended_by_jsonpath }}}')" = "{{ run_marker }}" ] || exit 0
+        kubectl patch $res $name -n $ns --type=merge -p '{"spec":{"suspend":false}}' >/dev/null
+        kubectl annotate $res $name -n $ns {{ suspended_by }}- >/dev/null
+      args:
+        executable: /bin/bash
+      loop: "{{ g_managers | difference(held) }}"
+      changed_when: true

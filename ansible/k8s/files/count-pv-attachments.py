@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Count VolumeAttachments (from `kubectl get volumeattachment -o json` on stdin) that still
-attach the PV named in argv[1]. Used by rbd-rook-swap-core.yml to wait for an RBD volume to fully
+attach the PV named in argv[1]. Used by ceph-csi-swap.yml to wait for a volume to fully
 DETACH from its node after scale-down before deleting the PVC/PV — deleting while still attached is
 what made `kubectl delete pvc --wait` hang and falsely trip the rollback."""
 import json
