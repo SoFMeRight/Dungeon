@@ -30,6 +30,13 @@ spec:
   values:
     redisOperator:
       replicas: 2
+    # Write each pod's redis.conf / sentinel.conf with the operator's own agent (an init-config
+    # init container) instead of the image's entrypoint script. The script knows only
+    # standalone and cluster, so it ignores announceHostnames and Redis replicas announce their
+    # pod IP; the agent adds replica-announce-ip <pod FQDN>, so a promoted replica is named by
+    # hostname too. Otherwise the same config.
+    featureGates:
+      GenerateConfigInInitContainer: true
     resources:
       requests:
         cpu: 60m
