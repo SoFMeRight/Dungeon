@@ -6,7 +6,8 @@ spec:
   description: >-
     The CSI-Addons controller runs reclaim-space through the RBD driver's
     csi-addons sidecars: the ctrlplugin's on 9070 and the per-node
-    nodeplugin-csi-addons pods' on 9071.
+    nodeplugin-csi-addons pods' on 9071. Both RBD drivers' pods, while
+    gorons-bracelet.rbd is migrated to optcp.rbd (OpenProject #432).
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -15,15 +16,23 @@ spec:
       app.kubernetes.io/name: csi-addons
   egress:
     - toEndpoints:
-        - matchLabels:
-            app: gorons-bracelet.rbd.csi.ceph.com-ctrlplugin
+        - matchExpressions:
+            - key: app
+              operator: In
+              values:
+                - gorons-bracelet.rbd.csi.ceph.com-ctrlplugin
+                - optcp.rbd.csi.ceph.com-ctrlplugin
       toPorts:
         - ports:
             - port: "9070"
               protocol: TCP
     - toEndpoints:
-        - matchLabels:
-            app: gorons-bracelet.rbd.csi.ceph.com-nodeplugin-csi-addons
+        - matchExpressions:
+            - key: app
+              operator: In
+              values:
+                - gorons-bracelet.rbd.csi.ceph.com-nodeplugin-csi-addons
+                - optcp.rbd.csi.ceph.com-nodeplugin-csi-addons
       toPorts:
         - ports:
             - port: "9071"
@@ -41,8 +50,12 @@ spec:
     ingress: false
     egress: false
   endpointSelector:
-    matchLabels:
-      app: gorons-bracelet.rbd.csi.ceph.com-ctrlplugin
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - gorons-bracelet.rbd.csi.ceph.com-ctrlplugin
+          - optcp.rbd.csi.ceph.com-ctrlplugin
   ingress:
     - fromEndpoints:
         - matchLabels:
@@ -64,8 +77,12 @@ spec:
     ingress: false
     egress: false
   endpointSelector:
-    matchLabels:
-      app: gorons-bracelet.rbd.csi.ceph.com-nodeplugin-csi-addons
+    matchExpressions:
+      - key: app
+        operator: In
+        values:
+          - gorons-bracelet.rbd.csi.ceph.com-nodeplugin-csi-addons
+          - optcp.rbd.csi.ceph.com-nodeplugin-csi-addons
   ingress:
     - fromEndpoints:
         - matchLabels:
