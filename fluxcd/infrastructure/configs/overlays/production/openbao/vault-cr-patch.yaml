@@ -168,6 +168,13 @@ spec:
           path "optcp/metadata/apps/stalwart/smtp-*" {
             capabilities = ["read"]
           }
+      # secrets-write (one-off): creates Harbor's Redis password, generated in the Job, and
+      # reads it back, nothing else. Removed once run.
+      - name: secrets-write
+        rules: |
+          path "optcp/data/apps/harbor/redis" {
+            capabilities = ["create", "read"]
+          }
       # People with the operator role sign their own SSH certificate; the role limits the
       # principal to their own username.
       - name: ssh-operator
@@ -436,6 +443,11 @@ spec:
             bound_service_account_names: ["stalwart-configuration"]
             bound_service_account_namespaces: ["optcp-delivery-bag"]
             policies: ["stalwart-configuration"]
+            ttl: 1h
+          - name: secrets-write
+            bound_service_account_names: ["secrets-write"]
+            bound_service_account_namespaces: ["optcp-secrets"]
+            policies: ["secrets-write"]
             ttl: 1h
           # cert-manager logs in as optcp-siem's wazuh-pki ServiceAccount with a token it
           # requests for the Issuer, whose audience is always vault://<namespace>/<issuer>.
