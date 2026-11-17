@@ -47,7 +47,10 @@ spec:
               memory: 33Mi
               cpu: 2m
             limits:
-              memory: 96Mi
+              # Sign-in runs two argon2id derivations of 64 MiB each (verify, then derive the
+              # encryption key), so a login peaks well above the idle working set. 96Mi, sized
+              # from 30-day peaks that held no login, OOM-killed every sign-in.
+              memory: 256Mi
               cpu: 200m
   volumeClaimTemplates:
     - metadata:
