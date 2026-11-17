@@ -2,8 +2,8 @@
 """Pre-drain guard: move CNPG primaries off the node so the drain can proceed.
 
 Runs on a control-plane host (holds admin.conf), delegated there by ansible, with the
-target node's kubernetes name as the sole argument, AFTER the node is cordoned and
-BEFORE it is drained.
+target node's kubernetes name and the drain's per-pod grace period as arguments, AFTER
+the node is cordoned and BEFORE it is drained.
 
 CNPG does NOT switch a primary off a cordoned or draining node on its own — verified:
 a primary blocks the drain on its always-zero <cluster>-primary PDB for the full
@@ -26,18 +26,22 @@ one of two completely different things and MUST NOT be conflated:
                (a single-replica workload with minAvailable: 1). Waiting is futile and
                the drain would burn its whole timeout; fail fast and name it.
   transient  - the budget is closed only because currentHealthy < expectedPods, i.e. a
-               pod is unhealthy or mid-rollout right now. This clears on its own in
-               seconds. `kubectl drain` already retries refused evictions for its full
-               --timeout, so drain is the better waiter: report, give it a bounded head
-               start, then hand over. NEVER fail on a transient.
+               pod is unhealthy or mid-rollout right now. This usually clears on its
+               own in seconds: report it, give it a bounded head start, then evict the
+               pods those budgets cover FIRST, with drain's own retrying --timeout.
+               Only once they are out does the caller drain the rest of the node; if
+               they can't be evicted within that timeout the guard fails BEFORE anything
+               else on the node was evicted.
 
 Conflating the two is what wedges a roll: one 30s liveness flap on an unrelated pod used
 to abort the node, and because the caller fail-opens, the node silently kept its old
-version while the roll moved on.
+version while the roll moved on. Handing a closed budget to the whole-node drain instead
+churned the node: a budget held shut by a crash-looping peer (osticket-mariadb-1) let the
+drain evict every other pod on dungeon-chest-002, then time out and uncordon it anyway.
 
-Exit 0 = safe to drain; exit non-zero = no promotion target, switchover didn't take, or a
-structurally un-evictable PDB covers this node (the caller fail-opens and leaves the node
-schedulable).
+Exit 0 = safe to drain; exit non-zero = no promotion target, switchover didn't take, a
+structurally un-evictable PDB covers this node, or the pods a closed budget covers could
+not be evicted in time (the caller fail-opens and leaves the node schedulable).
 """
 import json
 import subprocess
@@ -110,7 +114,8 @@ def switchover_primaries_off(node, attempts=60, delay=5):
 def scan_budgets(node):
     """Classify every zero-disruption PDB that covers a Running pod on `node`.
 
-    Returns (structural, transient) lists of human-readable blocker descriptions.
+    Returns (structural, transient, selectors): human-readable blocker descriptions, and
+    the label selector of each transient budget, for evicting its pods ahead of the drain.
     """
     pods = json.loads(k(
         "get", "pods", "-A",
@@ -118,7 +123,7 @@ def scan_budgets(node):
         "-o", "json",
     ))["items"]
     pdbs = json.loads(k("get", "pdb", "-A", "-o", "json"))["items"]
-    structural, transient = [], []
+    structural, transient, selectors = [], [], []
     for pdb in pdbs:
         status = pdb.get("status", {})
         if status.get("disruptionsAllowed", 1) != 0:
@@ -153,12 +158,13 @@ def scan_budgets(node):
                 f"{where}: {healthy}/{expected} healthy, needs {desired} — "
                 f"covers {', '.join(covered)}"
             )
-    return structural, transient
+            selectors.append(",".join(f"{key}={val}" for key, val in sorted(selector.items())))
+    return structural, transient, selectors
 
 
-def wait_for_budgets(node, attempts=36, delay=5):
-    """Fail on a structural blocker; wait out a transient one, then hand over to drain."""
-    structural, transient = scan_budgets(node)
+def wait_for_budgets(node, grace_period, attempts=36, delay=5):
+    """Fail on a structural blocker; wait out a transient one, then evict its pods first."""
+    structural, transient, selectors = scan_budgets(node)
     if structural:
         sys.exit("drain cannot succeed — un-evictable PDB on this node:\n"
                  + "\n".join(f"  {b}" for b in structural))
@@ -169,28 +175,40 @@ def wait_for_budgets(node, attempts=36, delay=5):
         print(f"  {blocker}")
     for _ in range(attempts):
         time.sleep(delay)
-        structural, transient = scan_budgets(node)
+        structural, transient, selectors = scan_budgets(node)
         if structural:
             sys.exit("drain cannot succeed — un-evictable PDB on this node:\n"
                      + "\n".join(f"  {b}" for b in structural))
         if not transient:
             print("PDB budgets recovered")
             return
-    # Deliberately NOT a failure. kubectl drain retries refused evictions for its own
-    # --timeout, so it gets the final say; aborting here would fail-open the node and
-    # leave it on the old version, which is the worse outcome.
-    print("WARNING: PDB budgets still closed after waiting; proceeding — "
-          "drain will retry evictions within its own timeout:")
+    # Not yet a failure: the budget still gets drain's full retrying --timeout to open.
+    # But only the pods it covers are evicted now, so a budget that never opens fails the
+    # node before the rest of it was emptied, instead of after.
+    print("WARNING: PDB budgets still closed after waiting; evicting the pods they cover "
+          "first — drain retries refused evictions within its own timeout:")
     for blocker in transient:
         print(f"  {blocker}")
+    for selector in selectors:
+        try:
+            subprocess.run(
+                ["kubectl", "--kubeconfig", "/etc/kubernetes/admin.conf", "drain", node,
+                 f"--pod-selector={selector}", "--ignore-daemonsets", "--delete-emptydir-data",
+                 f"--grace-period={grace_period}", "--timeout=600s"],
+                check=True, timeout=660,
+            )
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired):
+            sys.exit(f"pods under the closed budget ({selector}) could not be evicted in time "
+                     f"— nothing else on {node} was evicted")
+    print("PDB-blocked pods evicted")
 
 
 def main():
-    if len(sys.argv) != 2:
-        sys.exit("usage: pre-drain-guard.py <node-name>")
-    node = sys.argv[1]
+    if len(sys.argv) != 3:
+        sys.exit("usage: pre-drain-guard.py <node-name> <grace-period-seconds>")
+    node, grace_period = sys.argv[1], sys.argv[2]
     switchover_primaries_off(node)
-    wait_for_budgets(node)
+    wait_for_budgets(node, grace_period)
 
 
 if __name__ == "__main__":
