@@ -94,7 +94,7 @@ data:
     # restarts it as a master; the operator's own bootstrap then relinks every pod to
     # the recorded master. A healthy cluster never matches: sentinels that know the
     # master correct stale links themselves (+fix-slave-config).
-    # Upstream: OT-CONTAINER-KIT/redis-operator (filed 2026-11-17).
+    # Upstream: OT-CONTAINER-KIT/redis-operator#1981 (open as of v0.27.0).
     set -u
     MIN_DOWN_SECONDS="${MIN_DOWN_SECONDS:-300}"
     MAX_DELETES="${MAX_DELETES:-3}"
