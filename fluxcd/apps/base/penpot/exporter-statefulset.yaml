@@ -22,15 +22,22 @@ spec:
               value: "http://penpot-frontend:8080"
             - name: PENPOT_REDIS_URI
               value: "redis://penpot-redis/0"
+            # 2.19's wasm render workers cost ~300Mi each: start none (the default keeps one
+            # warm, 692Mi idle against 395Mi without) and run one export render at a time.
+            - name: PENPOT_WASM_WORKER_POOL_MIN
+              value: "0"
+            - name: PENPOT_WASM_WORKER_POOL_MAX
+              value: "1"
             - name: PENPOT_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: penpot-secrets
                   key: secret_key
+          # Measured on 2.19.1 with the pool above: 395Mi idle, ~700Mi with its one worker.
           resources:
             requests:
-              memory: 211Mi
+              memory: 400Mi
               cpu: 2m
             limits:
-              memory: "256Mi"
+              memory: "768Mi"
               cpu: 184m
