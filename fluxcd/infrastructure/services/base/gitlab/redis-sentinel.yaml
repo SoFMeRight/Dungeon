@@ -47,6 +47,11 @@ spec:
     parallelSyncs: "1"
     failoverTimeout: "180000"
     downAfterMilliseconds: "30000"
+    # Sentinels and their Redis by hostname, not pod IP (the operator sets the Redis side from
+    # these): a restarted pod keeps its name, so a client holding the master's address
+    # reconnects to it rather than to a dead IP, as gitlab-kas did for 30h.
+    resolveHostnames: "yes"
+    announceHostnames: "yes"
     redisReplicationPassword:
       secretKeyRef:
         name: gitlab-redis-password
