@@ -244,3 +244,15 @@ spec:
         certificateRefs:
           - kind: Secret
             name: journal-optcp-com-tls
+    - name: https-translate-optcp
+      protocol: HTTPS
+      port: 443
+      hostname: "translate.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: translate-optcp-com-tls

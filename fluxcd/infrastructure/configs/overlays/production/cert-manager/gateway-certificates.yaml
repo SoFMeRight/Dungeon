@@ -542,6 +542,18 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
+  name: translate-optcp-com-phloem-tls
+spec:
+  secretName: translate-optcp-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "translate.optcp.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
   name: hosts-optcp-com-phloem-tls
 spec:
   secretName: hosts-optcp-com-tls
