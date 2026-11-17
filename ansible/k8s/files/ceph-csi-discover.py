@@ -24,6 +24,11 @@ Tiers (per volume; every volume in a group shares its group's tier):
   released - the PV is not Bound, or its PVC no longer exists.
 
 Only Pending/Running pods count as mounting a volume: a finished Job's pod holds no mount.
+
+Flux managers are listed with their whole chain, root first: a HelmRelease is applied by a
+Kustomization, and every Kustomization (flux-system's own included) by flux-system. Each level
+reverts a kubectl change to the level below on its next reconcile, so suspending a group's workloads
+means suspending everything above them, top-down, and resuming bottom-up.
 """
 import json
 import os
@@ -60,6 +65,23 @@ def managers(obj):
     return out
 
 
+def chain(mgrs, parent_of):
+    """mgrs plus every Flux object above them, root first (flux-system, Kustomization, HelmRelease)."""
+    depth = {}
+
+    def walk(m, d):
+        if depth.get(m, -1) >= d or d > 10:
+            return
+        depth[m] = d
+        p = parent_of.get(m)
+        if p and p != m:
+            walk(p, d + 1)
+
+    for m in mgrs:
+        walk(m, 0)
+    return sorted(depth, key=lambda m: (-depth[m], m))
+
+
 def git_pv_files(repo_dir):
     """PV name -> repo-relative file declaring it (live overlays and bases; never the graveyard)."""
     found = {}
@@ -92,6 +114,13 @@ def main():
     deps = {(d["metadata"]["namespace"], d["metadata"]["name"]): d for d in kget("deploy", "-A")}
     stss = {(s["metadata"]["namespace"], s["metadata"]["name"]): s for s in kget("sts", "-A")}
     git_files = git_pv_files(repo_dir)
+    parent_of = {}
+    for kind, res in (("Kustomization", "kustomizations.kustomize.toolkit.fluxcd.io"),
+                      ("HelmRelease", "helmreleases.helm.toolkit.fluxcd.io")):
+        for o in kget(res, "-A"):
+            up = managers(o)
+            if up:
+                parent_of["%s/%s/%s" % (kind, o["metadata"]["namespace"], o["metadata"]["name"])] = up[0]
 
     # StatefulSet PVCs carry no ownerRef and a scaled-down StatefulSet has no pods, so its template
     # PVCs ("<template>-<sts>-<ordinal>") are matched by name: they must never look like orphans.
@@ -159,7 +188,7 @@ def main():
             "pvAnnotations": pv["metadata"].get("annotations") or {},
             "static": attrs.get("staticVolume") == "true",
             "gitFile": "",
-            "pvManagers": managers(pv),
+            "pvManagers": chain(managers(pv), parent_of),
             "pvcManagers": [],
             "pvcRequest": "",
             "pvcStorageClassName": None,
@@ -181,7 +210,7 @@ def main():
                 pv.get("status", {}).get("phase"), "gone" if ns and claim else "unset")
             recs.append(rec)
             continue
-        rec["pvcManagers"] = managers(pvc)
+        rec["pvcManagers"] = chain(managers(pvc), parent_of)
         rec["pvcRequest"] = pvc["spec"]["resources"]["requests"]["storage"]
         rec["pvcStorageClassName"] = pvc["spec"].get("storageClassName")
         rec["pvcLabels"] = pvc["metadata"].get("labels") or {}
@@ -231,9 +260,12 @@ def main():
             if ctl:
                 ops.append("%s/%s owns %s" % (ctl[0]["kind"], ctl[0]["name"], ref))
             info.append({"ref": ref, "replicas": obj["spec"].get("replicas", 1), "managers": managers(obj)})
+        g_mgrs = chain([m for w in info for m in w["managers"]]
+                       + [m for r in members for m in r["pvManagers"] + r["pvcManagers"]], parent_of)
         for r in members:
             r["group"] = gkey
             r["workloadInfo"] = info
+            r["groupManagers"] = g_mgrs   # root first: suspend in this order, resume in reverse
             if ops:
                 r["tier"], r["operator"] = "operator", "; ".join(ops)
             elif r["static"] and not r["gitFile"]:

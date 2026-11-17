@@ -4,11 +4,14 @@
 # starts again: one outage per group.
 #
 # Flux is suspended for the group's whole run, on every Kustomization/HelmRelease that manages one
-# of its workloads, PVs or PVCs. Otherwise a reconcile mid-swap would scale a workload back up, and a
-# StatefulSet whose PVC is momentarily gone would provision a new, empty one. Managers are marked
-# with the suspended_by annotation, so only what this run suspended is ever resumed. A manager that
-# declares a migrated static PV stays suspended (held) until git carries that PV's new driver: see
-# ceph-csi-migrate.yml.
+# of its workloads, PVs or PVCs, and on everything above those up to flux-system (groupManagers, root
+# first). Otherwise a reconcile mid-swap would scale a workload back up, and a StatefulSet whose PVC
+# is momentarily gone would provision a new, empty one. The chain matters: flux-system re-applies
+# every Kustomization and strips a kubectl-set suspend on its next reconcile, and a Kustomization
+# does the same to its HelmReleases. So the chain is suspended top-down and resumed bottom-up,
+# flux-system last. Managers are marked with the suspended_by annotation, so only what this run
+# suspended is ever resumed. A manager that declares a migrated static PV, and the chain above it,
+# stays suspended (held) until git carries that PV's new driver: see ceph-csi-migrate.yml.
 #
 # rescue: puts every volume of the group back on its old driver from escrow (the data never moved),
 # restores the reclaim policies, starts the workloads (only once every volume is restored), records
@@ -18,13 +21,10 @@
   ansible.builtin.set_fact:
     g_ns: "{{ grp_vols[0].namespace }}"
     g_workloads: "{{ grp_vols[0].workloadInfo }}"
-    g_managers: >-
-      {{ ((grp_vols[0].workloadInfo | map(attribute='managers') | flatten)
-          + (grp_vols | map(attribute='pvManagers') | flatten)
-          + (grp_vols | map(attribute='pvcManagers') | flatten)) | unique | sort }}
+    g_managers: "{{ grp_vols[0].groupManagers }}"
     g_esc: "{{ grp_vols | map(attribute='key') | map('regex_replace', '[^A-Za-z0-9_.-]', '_') | list }}"
 
-- name: "[{{ g_key }}] suspend its Flux managers"
+- name: "[{{ g_key }}] suspend its Flux managers, top-down"
   ansible.builtin.shell: |
     set -e
     IFS=/ read -r kind ns name <<< "{{ item }}"
@@ -165,7 +165,7 @@
         held: "{{ (held + (g_managers if (restored.failed | default(false)) else [])) | unique }}"
 
   always:
-    - name: "[{{ g_key }}] resume its Flux managers (except held ones)"
+    - name: "[{{ g_key }}] resume its Flux managers bottom-up (except held ones)"
       ansible.builtin.shell: |
         set -e
         IFS=/ read -r kind ns name <<< "{{ item }}"
@@ -175,5 +175,5 @@
         kubectl annotate $res $name -n $ns {{ suspended_by }}- >/dev/null
       args:
         executable: /bin/bash
-      loop: "{{ g_managers | difference(held) }}"
+      loop: "{{ g_managers | reverse | reject('in', held) | list }}"
       changed_when: true

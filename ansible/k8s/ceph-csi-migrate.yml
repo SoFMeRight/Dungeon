@@ -96,7 +96,9 @@
             kubectl annotate $res $name -n $ns {{ suspended_by }}- >/dev/null
           args:
             executable: /bin/bash
-          loop: "{{ held_raw.stdout_lines }}"
+          # flux-system last: resumed, it re-applies the Kustomizations below it.
+          loop: "{{ (held_raw.stdout_lines | reject('equalto', 'Kustomization/flux-system/flux-system') | list)
+                    + (held_raw.stdout_lines | select('equalto', 'Kustomization/flux-system/flux-system') | list) }}"
 
         - name: Resumed
           ansible.builtin.debug:
