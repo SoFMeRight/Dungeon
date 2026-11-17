@@ -12,6 +12,7 @@ resources:
   - proxy-cache-nginx-service.yaml
   - proxy-cache-nginx-serviceaccount.yaml
   - externalsecret.yaml
+  - externalsecret-redis.yaml
   - postgres-credentials-externalsecret.yaml
   - cephfs-pvs.yaml
   - oidc-config-job.yaml

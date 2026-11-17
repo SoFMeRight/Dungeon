@@ -177,3 +177,78 @@ spec:
 
     notary:
       enabled: false
+
+  # Harbor's Redis password, as env from harbor-redis-password (externalsecret-redis.yaml):
+  # env overrides the chart's ConfigMap values, which carry no password.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: Deployment
+              name: harbor-core
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: harbor-core
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: core
+                        env:
+                          - name: _REDIS_URL_CORE
+                            valueFrom:
+                              secretKeyRef:
+                                name: harbor-redis-password
+                                key: core-url
+                          - name: _REDIS_URL_REG
+                            valueFrom:
+                              secretKeyRef:
+                                name: harbor-redis-password
+                                key: registry-url
+          - target:
+              kind: Deployment
+              name: harbor-jobservice
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: harbor-jobservice
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: jobservice
+                        env:
+                          - name: JOB_SERVICE_POOL_REDIS_URL
+                            valueFrom:
+                              secretKeyRef:
+                                name: harbor-redis-password
+                                key: jobservice-url
+          - target:
+              kind: Deployment
+              name: harbor-registry
+            patch: |
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: harbor-registry
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: registry
+                        env:
+                          - name: REGISTRY_REDIS_PASSWORD
+                            valueFrom:
+                              secretKeyRef:
+                                name: harbor-redis-password
+                                key: password
+                      - name: registryctl
+                        env:
+                          - name: REGISTRY_REDIS_PASSWORD
+                            valueFrom:
+                              secretKeyRef:
+                                name: harbor-redis-password
+                                key: password
