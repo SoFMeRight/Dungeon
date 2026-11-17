@@ -15,7 +15,6 @@ spec:
     # Note: 16 hostnames max should be assigned to each "httproute-<name>-<#>.yaml"
 
     # pcfae.com
-    - "shiplog.pcfae.com"
     - "shlink.pcfae.com"
     - "smkeygen.pcfae.com"
     - "sonarr.pcfae.com"

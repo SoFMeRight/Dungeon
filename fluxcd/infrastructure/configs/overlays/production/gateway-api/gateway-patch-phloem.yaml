@@ -232,3 +232,15 @@ spec:
         certificateRefs:
           - kind: Secret
             name: sdiff-optcp-com-tls
+    - name: https-journal-optcp
+      protocol: HTTPS
+      port: 443
+      hostname: "journal.optcp.com"
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: journal-optcp-com-tls

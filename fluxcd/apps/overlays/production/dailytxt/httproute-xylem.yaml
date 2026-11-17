@@ -5,7 +5,7 @@ metadata:
   annotations:
     gatus.home-operations.com/endpoint: |
       group: "Private Apps (Pedestal of Time⚔️)"
-      url: https://shiplog.pcfae.com/
+      url: https://journal.optcp.com/
       conditions:
         - "[STATUS] == 200"
 spec:
@@ -13,7 +13,7 @@ spec:
     - name: phloem-ingress-gateway
       namespace: optcp-ingress-internal
   hostnames:
-    - "shiplog.pcfae.com"
+    - "journal.optcp.com"
   rules:
     - matches:
         - path:

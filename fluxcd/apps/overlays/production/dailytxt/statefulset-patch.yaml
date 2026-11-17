@@ -48,7 +48,7 @@ spec:
             readOnlyRootFilesystem: true
           env:
             - name: ALLOWED_HOSTS
-              value: "shiplog.pcfae.com"
+              value: "journal.optcp.com"
           volumeMounts:
             - name: nginx-config
               mountPath: /etc/nginx/nginx.conf

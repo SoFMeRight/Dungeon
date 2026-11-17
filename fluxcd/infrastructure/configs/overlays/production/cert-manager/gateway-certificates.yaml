@@ -530,6 +530,18 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
+  name: journal-optcp-com-phloem-tls
+spec:
+  secretName: journal-optcp-com-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  dnsNames:
+    - "journal.optcp.com"
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
   name: hosts-optcp-com-phloem-tls
 spec:
   secretName: hosts-optcp-com-tls

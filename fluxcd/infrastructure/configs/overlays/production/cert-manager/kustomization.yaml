@@ -131,6 +131,13 @@ patches:
   - patch: |-
       - op: add
         path: /metadata/namespace
+        value: optcp-ingress-internal
+    target:
+      kind: Certificate
+      name: journal-optcp-com-phloem-tls
+  - patch: |-
+      - op: add
+        path: /metadata/namespace
         value: optcp-ingress-public
     target:
       kind: Certificate
