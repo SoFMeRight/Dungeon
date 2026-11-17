@@ -71,6 +71,13 @@ def ready_off_node(pod, node):
     return bool(statuses) and all(cs.get("ready") for cs in statuses)
 
 
+def lease_holder(ns, cluster):
+    try:
+        return json.loads(k("get", "lease", "-n", ns, cluster, "-o", "json"))["spec"].get("holderIdentity", "")
+    except subprocess.CalledProcessError:
+        return ""
+
+
 def switchover_primaries_off(node, attempts=60, delay=5):
     primaries = json.loads(k(
         "get", "pods", "-A", "-l", "cnpg.io/instanceRole=primary",
@@ -90,6 +97,14 @@ def switchover_primaries_off(node, attempts=60, delay=5):
             "get", "pods", "-n", ns,
             "-l", f"cnpg.io/cluster={cluster},cnpg.io/instanceRole=replica", "-o", "json",
         ))["items"]
+        # The switchover target promotes only once it holds the primary Lease. A demoted
+        # instance can keep its lease loop running and take the Lease when the primary
+        # misses a renewal (CNPG #11720); the target then waits on it forever and the
+        # cluster has no primary (gitlab-postgresql, 2026-11-14, five hours). Refuse here.
+        holder = lease_holder(ns, cluster)
+        if holder != pod["metadata"]["name"]:
+            sys.exit(f"{ns}/{cluster}: primary Lease held by {holder or 'nobody'}, not the primary "
+                     f"{pod['metadata']['name']}; a switchover would leave it without a primary")
         target = next((r["metadata"]["name"] for r in replicas if ready_off_node(r, node)), None)
         if target is None:
             sys.exit(f"{ns}/{cluster}: no ready off-node replica to promote — cannot drain safely")
