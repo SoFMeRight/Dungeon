@@ -2,11 +2,22 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: redis-operator
+  annotations:
+    # One-off forced upgrade so the CRDs are replaced from the chart now: without
+    # crds: CreateReplace they had stayed at the first install's (controller-gen v0.4.1).
+    # Fires once per value; leave it for history.
+    reconcile.fluxcd.io/requestedAt: "2026-11-17T17:00:00Z"
+    reconcile.fluxcd.io/forceAt: "2026-11-17T17:00:00Z"
 spec:
   releaseName: redis-operator
   targetNamespace: PLACEHOLDER_NAMESPACE
+  # The chart's CRDs follow the chart. Without this Flux skips them on upgrade, and
+  # fields the operator reads (redisSentinelConfig.announceHostnames) are pruned.
   install:
     createNamespace: false
+    crds: CreateReplace
+  upgrade:
+    crds: CreateReplace
   interval: 30m
   chart:
     spec:
