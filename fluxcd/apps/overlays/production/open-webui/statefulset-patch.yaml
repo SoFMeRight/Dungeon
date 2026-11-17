@@ -37,15 +37,17 @@ spec:
             - name: REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@open-webui-redis:6379/0"
             - name: REDIS_SENTINEL_HOSTS
-              # yamllint disable-line rule:line-length
-              value: "open-webui-sentinel-0.open-webui-sentinel-headless.optcp-ai.svc.cluster.local,open-webui-sentinel-1.open-webui-sentinel-headless.optcp-ai.svc.cluster.local,open-webui-sentinel-2.open-webui-sentinel-headless.optcp-ai.svc.cluster.local"
+              # The operator's Service fronts whichever sentinels are ready; a per-pod name would
+              # not resolve while its pod is down. The URL's host is the master group name.
+              value: "open-webui-sentinel-sentinel"
             - name: REDIS_SENTINEL_PORT
               value: "26379"
             - name: WEBSOCKET_REDIS_URL
               value: "redis://:$(REDIS_PASSWORD)@open-webui-redis:6379/0"
             - name: WEBSOCKET_SENTINEL_HOSTS
-              # yamllint disable-line rule:line-length
-              value: "open-webui-sentinel-0.open-webui-sentinel-headless.optcp-ai.svc.cluster.local,open-webui-sentinel-1.open-webui-sentinel-headless.optcp-ai.svc.cluster.local,open-webui-sentinel-2.open-webui-sentinel-headless.optcp-ai.svc.cluster.local"
+              # The operator's Service fronts whichever sentinels are ready; a per-pod name would
+              # not resolve while its pod is down. The URL's host is the master group name.
+              value: "open-webui-sentinel-sentinel"
             - name: WEBSOCKET_SENTINEL_PORT
               value: "26379"
             - name: ENABLE_WEBSOCKET_SUPPORT

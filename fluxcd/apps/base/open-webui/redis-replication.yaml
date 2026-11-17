@@ -1,0 +1,45 @@
+# Open WebUI's Redis (websocket manager and app state) as an operator-managed replica set
+# behind sentinels, like every other Redis here: pods announce stable hostnames, a master
+# hands off through its sentinels before it stops (kyverno mutate-redis-master-handoff),
+# and the contract labels come from kyverno mutate-redis-contract-labels.
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: open-webui-redis
+spec:
+  clusterSize: 3
+  serviceAccountName: open-webui-redis
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+    runAsNonRoot: true
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  kubernetesConfig:
+    image: PLACEHOLDER_REDIS_IMAGE
+    imagePullPolicy: IfNotPresent
+    redisSecret:
+      name: open-webui-redis-password
+      key: password
+    resources:
+      requests:
+        cpu: 12m
+        memory: 21Mi
+      limits:
+        cpu: 268m
+        memory: 96Mi
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: PLACEHOLDER_STORAGE_CLASS
+        resources:
+          requests:
+            storage: PLACEHOLDER_STORAGE_SIZE

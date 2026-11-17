@@ -24,7 +24,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: open-webui-sentinel
+      app: open-webui-sentinel-sentinel
   action: ALLOW
   rules:
     - from:

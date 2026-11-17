@@ -1,0 +1,22 @@
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisReplication
+metadata:
+  name: open-webui-redis
+spec:
+  kubernetesConfig:
+    image: quay.io/opstree/redis:v7.4.11
+  storage:
+    volumeClaimTemplate:
+      spec:
+        storageClassName: ceph-rbd
+        resources:
+          requests:
+            storage: 2Gi
+---
+apiVersion: redis.redis.opstreelabs.in/v1beta2
+kind: RedisSentinel
+metadata:
+  name: open-webui-sentinel
+spec:
+  kubernetesConfig:
+    image: quay.io/opstree/redis-sentinel:v7.4.11
