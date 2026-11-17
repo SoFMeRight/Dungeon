@@ -12,7 +12,7 @@ spec:
   mountOptions:
     - discard
   csi:
-    driver: gorons-bracelet.rbd.csi.ceph.com
+    driver: optcp.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: kai-dailytxt-data
     volumeAttributes:
@@ -23,7 +23,7 @@ spec:
       imageFeatures: layering
     nodeStageSecretRef:
       name: csi-rbd-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
     controllerExpandSecretRef:
       name: csi-rbd-provisioner
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
