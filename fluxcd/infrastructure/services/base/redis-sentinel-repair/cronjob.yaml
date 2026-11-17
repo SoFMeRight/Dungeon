@@ -42,7 +42,12 @@ spec:
                 capabilities:
                   drop:
                     - ALL
-              command: ["/bin/sh", "/scripts/repair.sh"]
+              # Two independent repairs for redis-operator bugs; both run, and the job fails
+              # if either does.
+              command:
+                - /bin/sh
+                - -c
+                - sh /scripts/repair.sh; a=$?; sh /scripts/replication-deadlock.sh; b=$?; [ "$a" -eq 0 ] && [ "$b" -eq 0 ]
               env:
                 - name: HOME
                   value: /tmp
@@ -52,6 +57,11 @@ spec:
                   value: "3"
                 - name: MAX_DELETES
                   value: "3"
+                # replication-deadlock.sh: how long a replica's link must have been down to a
+                # vanished IP. Covers a master's restart, which the sentinels or the
+                # operator repair within a few minutes when they can.
+                - name: MIN_DOWN_SECONDS
+                  value: "300"
                 # Report-only until the match signature has been observed against a
                 # real wedge. Set to "false" in the overlay to let it delete.
                 - name: DRY_RUN

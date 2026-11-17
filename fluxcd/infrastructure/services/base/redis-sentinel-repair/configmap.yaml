@@ -83,3 +83,99 @@ data:
     done < "$CAND"
 
     echo "=== repaired ${deleted} pod(s) ==="
+  replication-deadlock.sh: |
+    #!/bin/sh
+    # Breaks a redis-operator replication deadlock. When a master restarts on a new pod
+    # IP while its sentinels have lost their state (Redis and sentinels rolled together),
+    # a replica keeps replicating from the master's old IP: the operator links replicas
+    # by pod IP unless TLS is set. No master then has an attached replica, and the
+    # operator elects one only when no pod is a replica, so the stale one blocks the
+    # election forever and the sentinels stay at 0.0.0.0. Deleting the stale replica
+    # restarts it as a master; the operator's own bootstrap then relinks every pod to
+    # the recorded master. A healthy cluster never matches: sentinels that know the
+    # master correct stale links themselves (+fix-slave-config).
+    # Upstream: OT-CONTAINER-KIT/redis-operator (filed 2026-11-17).
+    set -u
+    MIN_DOWN_SECONDS="${MIN_DOWN_SECONDS:-300}"
+    MAX_DELETES="${MAX_DELETES:-3}"
+    DRY_RUN="${DRY_RUN:-false}"
+
+    SENT=/tmp/sentinels
+    if ! kubectl get redissentinels -A -o json | jq -r '
+          .items[]
+          | select(.spec.redisSentinelConfig.redisReplicationName != null)
+          | "\(.metadata.namespace) \(.metadata.name) \(.spec.redisSentinelConfig.redisReplicationName) \(.spec.redisSentinelConfig.masterGroupName // "mymaster")"
+        ' > "$SENT"; then
+      echo "ERROR: could not list RedisSentinels"
+      exit 1
+    fi
+
+    # Runs a redis-cli query inside a pod, authenticating from the pod's own env.
+    sentinel_master() { # ns pod container group
+      kubectl -n "$1" exec "$2" -c "$3" -- sh -c '
+        REDISCLI_AUTH="$(printf %s "${REDIS_PASSWORD:-}" | tr -d "\r\n")"; export REDISCLI_AUTH
+        [ -n "$REDISCLI_AUTH" ] || unset REDISCLI_AUTH
+        redis-cli --no-auth-warning -p 26379 sentinel get-master-addr-by-name "$1" | head -n1
+      ' _ "$4" 2>/dev/null | tr -d '\r'
+    }
+    replication_info() { # ns pod container
+      kubectl -n "$1" exec "$2" -c "$3" -- sh -c '
+        REDISCLI_AUTH="$(printf %s "${REDISCLI_AUTH:-}" | tr -d "\r\n")"; export REDISCLI_AUTH
+        [ -n "$REDISCLI_AUTH" ] || unset REDISCLI_AUTH
+        redis-cli --no-auth-warning info replication
+      ' 2>/dev/null | tr -d '\r' | awk -F: '
+        /^role:/ {r=$2} /^master_host:/ {h=$2} /^master_link_status:/ {l=$2}
+        /^master_link_down_since_seconds:/ {d=$2} /^connected_slaves:/ {c=$2}
+        END {printf "%s %s %s %s %s\n", r, (h==""?"-":h), (l==""?"-":l), (d==""?0:d), (c==""?0:c)}'
+    }
+
+    deleted=0
+    while read -r ns sentinel repl group; do
+      [ -z "${ns:-}" ] && continue
+      id="${ns}/${repl}"
+
+      # Any sentinel that knows a master can repair the links itself.
+      known=""
+      for spod in $(kubectl -n "$ns" get pods -l "app=${sentinel}-sentinel" -o jsonpath='{.items[*].metadata.name}'); do
+        addr=$(sentinel_master "$ns" "$spod" "${sentinel}-sentinel" "$group")
+        case "$addr" in ""|0.0.0.0) ;; *) known="$addr"; break ;; esac
+      done
+      if [ -n "$known" ]; then echo "ok ${id}: sentinels know the master"; continue; fi
+
+      # The operator's election needs every pod observed; wait for a complete view.
+      pods=$(kubectl -n "$ns" get pods -l "app=${repl}" -o json | jq -r '
+        .items[] | "\(.metadata.name) \(.status.podIP // "-") \([.status.conditions[]? | select(.type=="Ready") | .status][0] // "False")"')
+      if [ -z "$pods" ] || echo "$pods" | grep -q -v ' True$'; then
+        echo "skip ${id}: sentinels have no master, but not every Redis pod is ready"; continue
+      fi
+      ips=$(echo "$pods" | awk '{print $2}')
+
+      attached=0; stale=""
+      for pod in $(echo "$pods" | awk '{print $1}'); do
+        set -- $(replication_info "$ns" "$pod" "$repl")
+        role="${1:-}"; host="${2:--}"; link="${3:--}"; down="${4:-0}"; slaves="${5:-0}"
+        [ "$role" = master ] && [ "$slaves" -gt 0 ] && attached=1
+        # Stale: a replica whose link is down to an IP no current pod has.
+        if [ "$role" = slave ] && [ "$link" = down ] && [ "$down" -ge "$MIN_DOWN_SECONDS" ] &&
+           echo "$host" | grep -q -E '^[0-9.]+$|:' && ! echo "$ips" | grep -q -x -F "$host"; then
+          stale="$stale $pod"
+          echo "  ${id}: ${pod} replicates from ${host}, which no pod has (down ${down}s)"
+        fi
+      done
+      if [ "$attached" = 1 ]; then echo "ok ${id}: a master has attached replicas"; continue; fi
+      if [ -z "$stale" ]; then echo "skip ${id}: sentinels have no master, but no stale replica"; continue; fi
+
+      for pod in $stale; do
+        if [ "$deleted" -ge "$MAX_DELETES" ]; then echo "SKIP ${ns}/${pod}: per-run delete cap (${MAX_DELETES}) reached"; continue; fi
+        echo "MATCH ${ns}/${pod}: stale replica blocks the operator's election"
+        if [ "$DRY_RUN" = "true" ]; then
+          echo "  DRY_RUN: would delete pod ${ns}/${pod}"
+        elif kubectl -n "$ns" delete pod "$pod" --wait=false; then
+          deleted=$((deleted + 1))
+        else
+          echo "  ERROR: delete failed for ${ns}/${pod}"
+        fi
+      done
+    done < "$SENT"
+
+    echo "=== deleted ${deleted} stale replica(s) ==="

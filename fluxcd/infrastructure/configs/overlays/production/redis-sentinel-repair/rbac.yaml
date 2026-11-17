@@ -1,4 +1,5 @@
-# Pod deletion is granted only where a RedisSentinel runs: this ClusterRole grants
+# Pod deletion, and exec to read Sentinel and Redis replication state
+# (replication-deadlock.sh), are granted only where a RedisSentinel runs: this ClusterRole grants
 # nothing on its own, and Kyverno binds it in each namespace that holds a
 # RedisSentinel (generate-redis-sentinel-repair-access), so a Sentinel that moves
 # or appears is covered without a list to keep in step.
@@ -16,6 +17,9 @@ rules:
   - apiGroups: [""]
     resources: ["pods/log"]
     verbs: ["get"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
 ---
 # The job finds its namespaces from the RedisSentinel objects.
 apiVersion: rbac.authorization.k8s.io/v1
