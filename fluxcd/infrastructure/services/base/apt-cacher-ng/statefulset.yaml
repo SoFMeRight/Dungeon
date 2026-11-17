@@ -49,6 +49,11 @@ spec:
               value: PLACEHOLDER_MAX_THREADS
             - name: NETWORK_TIMEOUT
               value: PLACEHOLDER_NETWORK_TIMEOUT
+            # Range-resuming a volatile file (InRelease, Release, Packages) that changed
+            # upstream splices the new tail onto the cached head: same size, BADSIG, and apt
+            # silently keeps stale indexes. 0 fetches a changed volatile file whole.
+            - name: VFILE_USE_RANGE_OPS
+              value: "0"
           resources:
             limits:
               memory: PLACEHOLDER_MEMORY_LIMIT
@@ -61,13 +66,6 @@ spec:
               mountPath: /var/cache/apt-cacher-ng
             - name: compass-apt-cacher-ng-logs
               mountPath: /var/log/apt-cacher-ng
-            - name: config
-              mountPath: /etc/apt-cacher-ng/zz-volatile-whole.conf
-              subPath: zz-volatile-whole.conf
-      volumes:
-        - name: config
-          configMap:
-            name: apt-cacher-ng-config
   volumeClaimTemplates:
     - metadata:
         name: compass-apt-cacher-ng-cache
