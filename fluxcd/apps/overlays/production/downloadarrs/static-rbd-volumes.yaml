@@ -15,7 +15,7 @@ spec:
   mountOptions:
     - discard
   csi:
-    driver: gorons-bracelet.rbd.csi.ceph.com
+    driver: optcp.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-qbittorrent-config-0
     volumeAttributes:
@@ -25,7 +25,7 @@ spec:
       staticVolume: "true"
     nodeStageSecretRef:
       name: csi-rbd-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -55,7 +55,7 @@ spec:
   mountOptions:
     - discard
   csi:
-    driver: gorons-bracelet.rbd.csi.ceph.com
+    driver: optcp.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-qbittorrent-downloads-0
     volumeAttributes:
@@ -65,7 +65,7 @@ spec:
       staticVolume: "true"
     nodeStageSecretRef:
       name: csi-rbd-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -95,7 +95,7 @@ spec:
   mountOptions:
     - discard
   csi:
-    driver: gorons-bracelet.rbd.csi.ceph.com
+    driver: optcp.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-qbittorrent-gluetun-config-0
     volumeAttributes:
@@ -105,7 +105,7 @@ spec:
       staticVolume: "true"
     nodeStageSecretRef:
       name: csi-rbd-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -135,7 +135,7 @@ spec:
   mountOptions:
     - discard
   csi:
-    driver: gorons-bracelet.rbd.csi.ceph.com
+    driver: optcp.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-radarr-config-0
     volumeAttributes:
@@ -145,7 +145,7 @@ spec:
       staticVolume: "true"
     nodeStageSecretRef:
       name: csi-rbd-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -175,7 +175,7 @@ spec:
   mountOptions:
     - discard
   csi:
-    driver: gorons-bracelet.rbd.csi.ceph.com
+    driver: optcp.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-sonarr-config-0
     volumeAttributes:
@@ -185,7 +185,7 @@ spec:
       staticVolume: "true"
     nodeStageSecretRef:
       name: csi-rbd-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -215,7 +215,7 @@ spec:
   mountOptions:
     - discard
   csi:
-    driver: gorons-bracelet.rbd.csi.ceph.com
+    driver: optcp.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-lidarr-config-0
     volumeAttributes:
@@ -225,7 +225,7 @@ spec:
       staticVolume: "true"
     nodeStageSecretRef:
       name: csi-rbd-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -255,7 +255,7 @@ spec:
   mountOptions:
     - discard
   csi:
-    driver: gorons-bracelet.rbd.csi.ceph.com
+    driver: optcp.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-readarr-config-0
     volumeAttributes:
@@ -265,7 +265,7 @@ spec:
       staticVolume: "true"
     nodeStageSecretRef:
       name: csi-rbd-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -295,7 +295,7 @@ spec:
   mountOptions:
     - discard
   csi:
-    driver: gorons-bracelet.rbd.csi.ceph.com
+    driver: optcp.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: swift-sail-cross-seed-config-0
     volumeAttributes:
@@ -305,7 +305,7 @@ spec:
       staticVolume: "true"
     nodeStageSecretRef:
       name: csi-rbd-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
