@@ -336,6 +336,11 @@ spec:
           # Startup is CPU-bound; a lower limit fails the startup probe.
           cpu: 150m
           memory: 641Mi
+      probes:
+        startup:
+          # RuntimeDefault seccomp blocks the jail bind-mount, so startup copies LibreOffice into each jail.
+          failureThreshold: 100
+          periodSeconds: 3
       podLabels:
         policy.prplanit.com/ingress: "true"
       image:
