@@ -4,7 +4,9 @@ Every pod object counts, finished ones (Succeeded, Failed) included: they hold n
 protection keeps a PVC from being deleted while any pod object references it. The group task
 deletes a group's finished pods (completed Job history) before waiting on this. Used to wait until
 nothing references a volume (or a whole quiesce group's volumes) before the swap.
-With --finished, prints the names of the finished pods that reference them instead of a count."""
+With --finished, prints the names of the finished pods that reference them instead of a count,
+skipping any already being deleted: a StatefulSet pod shows Succeeded or Failed while it terminates,
+and goes on its own."""
 import json
 import sys
 
@@ -17,7 +19,8 @@ users = [p for p in pods
                 for v in (p["spec"].get("volumes") or []))]
 if finished:
     for p in users:
-        if p.get("status", {}).get("phase") in ("Succeeded", "Failed"):
+        if (p.get("status", {}).get("phase") in ("Succeeded", "Failed")
+                and not p["metadata"].get("deletionTimestamp")):
             print(p["metadata"]["name"])
 else:
     print(len(users))

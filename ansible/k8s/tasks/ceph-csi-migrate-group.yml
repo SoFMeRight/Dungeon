@@ -92,7 +92,7 @@
         set -o pipefail;
         kubectl get pods -n {{ g_ns }} -o json |
         python3 {{ playbook_dir }}/files/count-pvc-consumers.py --finished {{ grp_vols | map(attribute='pvc') | map('quote') | join(' ') }} |
-        xargs -r kubectl delete pod -n {{ g_ns }} --wait=true --timeout=120s
+        xargs -r kubectl delete pod -n {{ g_ns }} --ignore-not-found --wait=true --timeout=120s
       args:
         executable: /bin/bash
       register: finished_pods
