@@ -57,6 +57,17 @@ def kget(*args):
     return json.loads(r.stdout)["items"]
 
 
+def volume_name_declared(pvc):
+    """Whether the PVC's own definition names its volume (git, a Helm chart or a person set
+    spec.volumeName), as opposed to the binder recording the volume it bound. The recreated PVC must
+    then name it too: a claim that names its volume, against a PV pre-bound to that claim, is bound
+    without the capacity match the binder otherwise applies, and some static PVs declare less
+    capacity than their claim requests (swift-sail-qbittorrent-config: 96Mi against 5Gi)."""
+    return any(m.get("manager") != "kube-controller-manager"
+               and "f:volumeName" in ((m.get("fieldsV1") or {}).get("f:spec") or {})
+               for m in pvc["metadata"].get("managedFields") or [])
+
+
 def managers(obj):
     """The Flux objects that reconcile obj, as 'Kind/namespace/name' (Kustomization, HelmRelease)."""
     lab = obj["metadata"].get("labels") or {}
@@ -110,7 +121,9 @@ def main():
     repo_dir = sys.argv[1]
     pairs = dict(a.split("=", 1) for a in sys.argv[2:])
     pvs = kget("pv")
-    pvcs = {(p["metadata"]["namespace"], p["metadata"]["name"]): p for p in kget("pvc", "-A")}
+    # managedFields tell who set a PVC's volumeName (see pvcVolumeNameDeclared)
+    pvcs = {(p["metadata"]["namespace"], p["metadata"]["name"]): p
+            for p in kget("pvc", "-A", "--show-managed-fields")}
     pods = [p for p in kget("pods", "-A") if p.get("status", {}).get("phase") in ("Pending", "Running")]
     rss = {(r["metadata"]["namespace"], r["metadata"]["name"]): r for r in kget("rs", "-A")}
     deps = {(d["metadata"]["namespace"], d["metadata"]["name"]): d for d in kget("deploy", "-A")}
@@ -207,6 +220,7 @@ def main():
             "pvcManagers": [],
             "pvcRequest": "",
             "pvcStorageClassName": None,
+            "pvcVolumeNameDeclared": False,
             "pvcLabels": {},
             "pvcAnnotations": {},
             "workloads": [],
@@ -228,6 +242,7 @@ def main():
         rec["pvcManagers"] = chain(managers(pvc), parent_of)
         rec["pvcRequest"] = pvc["spec"]["resources"]["requests"]["storage"]
         rec["pvcStorageClassName"] = pvc["spec"].get("storageClassName")
+        rec["pvcVolumeNameDeclared"] = volume_name_declared(pvc)
         rec["pvcLabels"] = pvc["metadata"].get("labels") or {}
         rec["pvcAnnotations"] = {k: v for k, v in (pvc["metadata"].get("annotations") or {}).items()
                                  if not PVC_ANNOTATION_DROP.match(k)}

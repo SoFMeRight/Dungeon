@@ -35,11 +35,15 @@
 - name: "[{{ vol.key }}] delete the old PV (Retain: the data stays)"
   ansible.builtin.command: kubectl delete pv {{ vol.pv }} --ignore-not-found --wait=true --timeout=180s
 
+# The PV first, and the claim only once the binder has seen it (it sets Available): a claim created
+# before then, on a StorageClass with a provisioner, may be provisioned a new volume instead.
 - name: "[{{ vol.key }}] create the PV and PVC on {{ vol.newDriver }} (same names, same volumeHandle)"
-  ansible.builtin.shell: >-
-    set -o pipefail;
-    python3 {{ playbook_dir }}/files/ceph-csi-manifests.py {{ escrow_dir }}/{{ esc }}.record.json {{ new_secret_ns }}
-    | kubectl create -f -
+  ansible.builtin.shell: |
+    set -eo pipefail
+    m="python3 {{ playbook_dir }}/files/ceph-csi-manifests.py {{ escrow_dir }}/{{ esc }}.record.json {{ new_secret_ns }}"
+    $m | python3 -c 'import json,sys; print(json.dumps(json.load(sys.stdin)["items"][0]))' | kubectl create -f -
+    kubectl wait pv/{{ vol.pv }} --for=jsonpath='{.status.phase}'=Available --timeout=120s
+    $m pvc | kubectl create -f -
   args:
     executable: /bin/bash
 

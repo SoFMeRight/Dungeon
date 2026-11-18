@@ -169,11 +169,15 @@
           case "$state" in */*/?*) echo "PVC $ns/$pvc is terminating: still mounted, restore it by hand from $e.*.json"; exit 1 ;; esac
           kubectl delete pvc $pvc -n $ns --ignore-not-found --wait=true --timeout=120s
           kubectl delete pv $pv --ignore-not-found --wait=true --timeout=120s
-          # As on the way in (see files/ceph-csi-manifests.py): the PV comes back pre-bound to the
-          # claim, and the PVC without volumeName, so the binder binds them and owns volumeName.
+          # As on the way in: the PV comes back pre-bound to the claim, and the claim is built from
+          # the record exactly as the swap builds it (files/ceph-csi-manifests.py), not from the
+          # escrowed PVC, whose binder annotations would leave the new claim Lost.
           kubectl create -f $e.pv.json
           kubectl patch pv $pv --type=merge -p '{"spec":{"claimRef":{"apiVersion":"v1","kind":"PersistentVolumeClaim","namespace":"'$ns'","name":"'$pvc'"}}}'
-          python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["spec"].pop("volumeName",None); print(json.dumps(o))' $e.pvc.json | kubectl create -f -
+          # The binder sets Available once it has seen the PV; a claim created before then may be
+          # provisioned a new volume instead.
+          kubectl wait pv/$pv --for=jsonpath='{.status.phase}'=Available --timeout=120s
+          python3 {{ playbook_dir }}/files/ceph-csi-manifests.py $e.record.json {{ new_secret_ns }} pvc | kubectl create -f -
           kubectl wait pvc/$pvc -n $ns --for=jsonpath='{.status.phase}'=Bound --timeout=300s
           [ "$(kubectl get pvc $pvc -n $ns -o jsonpath='{.spec.volumeName}')" = "$pv" ] || { echo "PVC $ns/$pvc bound to the wrong PV"; exit 1; }
           echo restored
