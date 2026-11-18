@@ -19,9 +19,11 @@
     kubectl annotate $res $name -n $ns {{ suspended_by }}- >/dev/null
   args:
     executable: /bin/bash
+  # The parentheses matter: a filter binds tighter than +, so without them `keep` would only be
+  # applied to the last list.
   loop: >-
-    {{ (marked.stdout_lines | select('match', '^HelmRelease/') | list)
-       + (marked.stdout_lines | select('match', '^Kustomization/') | reject('equalto', 'Kustomization/flux-system/flux-system') | list)
-       + (marked.stdout_lines | select('equalto', 'Kustomization/flux-system/flux-system') | list)
+    {{ ((marked.stdout_lines | select('match', '^HelmRelease/') | list)
+        + (marked.stdout_lines | select('match', '^Kustomization/') | reject('equalto', 'Kustomization/flux-system/flux-system') | list)
+        + (marked.stdout_lines | select('equalto', 'Kustomization/flux-system/flux-system') | list))
        | reject('in', keep) | list }}
   register: resumed_items

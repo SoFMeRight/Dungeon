@@ -85,7 +85,20 @@
       loop_control:
         label: "{{ item.ref }}"
 
-    - name: "[{{ g_key }}] wait until no pod mounts any of the group's volumes"
+    # A finished pod holds no mount, but PVC protection won't let a PVC go while any pod object
+    # names it. These are completed Job runs (a CronJob's history); the CronJob itself is suspended.
+    - name: "[{{ g_key }}] delete finished pods that still reference the group's volumes"
+      ansible.builtin.shell: >-
+        set -o pipefail;
+        kubectl get pods -n {{ g_ns }} -o json |
+        python3 {{ playbook_dir }}/files/count-pvc-consumers.py --finished {{ grp_vols | map(attribute='pvc') | map('quote') | join(' ') }} |
+        xargs -r kubectl delete pod -n {{ g_ns }} --wait=true --timeout=120s
+      args:
+        executable: /bin/bash
+      register: finished_pods
+      changed_when: finished_pods.stdout | length > 0
+
+    - name: "[{{ g_key }}] wait until no pod references any of the group's volumes"
       ansible.builtin.shell: >-
         set -o pipefail;
         kubectl get pods -n {{ g_ns }} -o json |
