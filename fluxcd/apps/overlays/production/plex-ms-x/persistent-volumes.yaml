@@ -14,7 +14,7 @@ spec:
   mountOptions:
     - discard
   csi:
-    driver: gorons-bracelet.rbd.csi.ceph.com
+    driver: optcp.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: kai-plex-ms-x-config-0
     volumeAttributes:
@@ -25,7 +25,7 @@ spec:
       imageFeatures: layering
     nodeStageSecretRef:
       name: csi-rbd-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -41,7 +41,7 @@ spec:
   mountOptions:
     - discard
   csi:
-    driver: gorons-bracelet.rbd.csi.ceph.com
+    driver: optcp.rbd.csi.ceph.com
     fsType: ext4
     volumeHandle: kai-plex-ms-x-transcode-0
     volumeAttributes:
@@ -52,4 +52,4 @@ spec:
       imageFeatures: layering
     nodeStageSecretRef:
       name: csi-rbd-node
-      namespace: gorons-bracelet
+      namespace: optcp-operators-privileged
