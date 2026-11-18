@@ -10,7 +10,7 @@ spec:
         policy.prplanit.com/probe: "true"
         policy.prplanit.com/ingress: "true"
         policy.prplanit.com/cap.ceph: "true"
-        policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
+        policy.prplanit.com/access-scope-ceph: "optcp-operators-privileged.rgw"
     spec:
       containers:
         - name: rgw

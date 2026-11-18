@@ -20,7 +20,7 @@ spec:
         policy.prplanit.com/access-scope-postgres: optcp-sibyl-system.dependency-track.postgres
         policy.prplanit.com/cap.oidc: "true"
         policy.prplanit.com/cap.s3: "true"
-        policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
+        policy.prplanit.com/access-scope-s3: optcp-operators-privileged.rgw
       web:
         resources:
           requests:

@@ -11,4 +11,4 @@ spec:
         policy.prplanit.com/access-scope-postgres: optcp-staff-suite.openproject.postgres
         policy.prplanit.com/cap.oidc: "true"
         policy.prplanit.com/cap.s3: "true"
-        policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
+        policy.prplanit.com/access-scope-s3: optcp-operators-privileged.rgw

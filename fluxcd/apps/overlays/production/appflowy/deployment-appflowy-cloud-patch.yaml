@@ -12,7 +12,7 @@ spec:
         policy.prplanit.com/cap.redis: "true"
         policy.prplanit.com/access-scope-redis: optcp-cloud.appflowy.redis
         policy.prplanit.com/cap.s3: "true"
-        policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
+        policy.prplanit.com/access-scope-s3: optcp-operators-privileged.rgw
     spec:
       containers:
         - name: appflowy-cloud

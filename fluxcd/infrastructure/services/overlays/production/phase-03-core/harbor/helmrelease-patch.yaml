@@ -55,7 +55,7 @@ spec:
         policy.prplanit.com/cap.redis: "true"
         policy.prplanit.com/access-scope-redis: optcp-supply-chain.harbor.redis
         policy.prplanit.com/cap.ceph: "true"
-        policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
+        policy.prplanit.com/access-scope-ceph: "optcp-operators-privileged.rgw"
         # core validates OIDC tokens against Zitadel (sso.optcp.com) — needs
         # the cell-membrane gateway hairpin allow.
         policy.prplanit.com/cap.oidc: "true"
@@ -75,7 +75,7 @@ spec:
         policy.prplanit.com/cap.redis: "true"
         policy.prplanit.com/access-scope-redis: optcp-supply-chain.harbor.redis
         policy.prplanit.com/cap.ceph: "true"
-        policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
+        policy.prplanit.com/access-scope-ceph: "optcp-operators-privileged.rgw"
       image:
         repository: docker.io/goharbor/harbor-jobservice
 
@@ -83,7 +83,7 @@ spec:
       replicas: 3
       podLabels:
         policy.prplanit.com/cap.ceph: "true"
-        policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
+        policy.prplanit.com/access-scope-ceph: "optcp-operators-privileged.rgw"
       registry:
         resources:
           requests:

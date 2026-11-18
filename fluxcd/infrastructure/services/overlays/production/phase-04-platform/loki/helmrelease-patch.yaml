@@ -111,7 +111,7 @@ spec:
                     labels:
                       policy.prplanit.com/metrics: "true"
                       policy.prplanit.com/cap.s3: "true"
-                      policy.prplanit.com/access-scope-s3: gorons-bracelet.rgw
+                      policy.prplanit.com/access-scope-s3: optcp-operators-privileged.rgw
                   spec:
                     containers:
                       - name: loki-sc-rules
