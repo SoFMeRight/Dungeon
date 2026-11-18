@@ -1,0 +1,27 @@
+---
+# Resume every Kustomization/HelmRelease this migration suspended (marked with suspended_by), except
+# those in `keep`. Bottom-up: HelmReleases, then Kustomizations, then flux-system, because resuming a
+# level makes it re-apply the level below.
+
+- name: Find the Flux objects this migration suspended
+  ansible.builtin.shell: >-
+    kubectl get kustomizations.kustomize.toolkit.fluxcd.io,helmreleases.helm.toolkit.fluxcd.io -A
+    -o jsonpath='{range .items[?(@.metadata.annotations.{{ suspended_by_jsonpath }}=="{{ run_marker }}")]}{.kind}/{.metadata.namespace}/{.metadata.name}{"\n"}{end}'
+  register: marked
+  changed_when: false
+
+- name: Resume them bottom-up
+  ansible.builtin.shell: |
+    set -e
+    IFS=/ read -r kind ns name <<< "{{ item }}"
+    res=$([ "$kind" = Kustomization ] && echo kustomizations.kustomize.toolkit.fluxcd.io || echo helmreleases.helm.toolkit.fluxcd.io)
+    kubectl patch $res $name -n $ns --type=merge -p '{"spec":{"suspend":false}}' >/dev/null
+    kubectl annotate $res $name -n $ns {{ suspended_by }}- >/dev/null
+  args:
+    executable: /bin/bash
+  loop: >-
+    {{ (marked.stdout_lines | select('match', '^HelmRelease/') | list)
+       + (marked.stdout_lines | select('match', '^Kustomization/') | reject('equalto', 'Kustomization/flux-system/flux-system') | list)
+       + (marked.stdout_lines | select('equalto', 'Kustomization/flux-system/flux-system') | list)
+       | reject('in', keep) | list }}
+  register: resumed_items

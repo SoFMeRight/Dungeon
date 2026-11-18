@@ -9,6 +9,14 @@ keeps the volumeHandle and volumeAttributes, which is what makes this zero-copy:
 CephFS subvolume is found by them, not by the driver name. Each secret ref keeps its secret's name
 and moves to the new driver's namespace (the csi-* secrets exist under the same names in both).
 
+The PVC carries no volumeName. The PV is created first, pre-bound to the claim by its claimRef,
+and the binder binds a claim to the PV that names it (every StorageClass here binds Immediate). The
+binder then records spec.volumeName under its own field manager, exactly as the original binding
+did. Set by this script instead, volumeName would belong to the kubectl manager, which Flux claims
+as its own: Flux would then try to clear it on any PVC whose git definition doesn't name its volume,
+and the bound PVC's immutable spec fails the whole Kustomization. ceph-csi-swap.yml checks that the
+claim bound to this PV.
+
 The PV is created Retain; ceph-csi-swap.yml restores the original policy once the claim is bound.
 """
 import json
@@ -59,7 +67,6 @@ pvc = {
     "spec": {
         "accessModes": rec["accessModes"],
         "volumeMode": rec["volumeMode"],
-        "volumeName": rec["pv"],
         "resources": {"requests": {"storage": rec["pvcRequest"]}},
     },
 }

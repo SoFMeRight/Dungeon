@@ -48,11 +48,13 @@
     kubectl wait pvc/{{ vol.pvc }} -n {{ vol.namespace }} --for=jsonpath={.status.phase}=Bound --timeout=300s
   changed_when: false
 
-- name: "[{{ vol.key }}] the PV is on {{ vol.newDriver }}"
-  ansible.builtin.command: kubectl get pv {{ vol.pv }} -o jsonpath={.spec.csi.driver}
+- name: "[{{ vol.key }}] the PVC is bound to {{ vol.pv }}, and that PV is on {{ vol.newDriver }}"
+  ansible.builtin.shell: >-
+    echo "$(kubectl get pvc {{ vol.pvc }} -n {{ vol.namespace }} -o jsonpath={.spec.volumeName})
+    $(kubectl get pv {{ vol.pv }} -o jsonpath={.spec.csi.driver})"
   register: drv
   changed_when: false
-  failed_when: drv.stdout != vol.newDriver
+  failed_when: drv.stdout.split() != [vol.pv, vol.newDriver]
 
 - name: "[{{ vol.key }}] restore reclaimPolicy {{ vol.reclaimPolicy }}"
   ansible.builtin.command: >-

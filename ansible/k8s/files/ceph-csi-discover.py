@@ -12,15 +12,17 @@ consumes the JSON list this prints.
 
 A workload can only release a volume by stopping, and volumes shared between workloads (CephFS RWX)
 tie those workloads together. So volumes are planned in quiesce groups: the connected sets of
-volumes and the Deployments/StatefulSets that mount them, within a namespace. A group is migrated as
-a unit: every workload in it scales to 0, every volume is swapped, every workload scales back up.
+volumes and the Deployments/StatefulSets/CronJobs that mount them, within a namespace. A group is
+migrated as a unit: every workload in it stops (a CronJob is suspended), every volume is swapped,
+every workload starts again. A CronJob counts by its pod template, so one that mounts a volume is
+in the group even when none of its Jobs is running.
 
 Tiers (per volume; every volume in a group shares its group's tier):
-  group    - Deployments/StatefulSets only, or nothing at all (an orphan is a group of one).
+  group    - Deployments/StatefulSets/CronJobs only, or nothing at all (an orphan is a group of one).
   operator - a workload in the group is owned by an operator CR (Redis, MariaDB, Vault). The operator
              would undo a scale-down, so the group needs that operator's own procedure.
   cnpg     - a CNPG instance volume; rbd-rook-migrate-cnpg.yml reclones it through CNPG.
-  manual   - mounted by a bare Pod, a Job or a DaemonSet.
+  manual   - mounted by a bare Pod, a Job no CronJob owns, or a DaemonSet.
   released - the PV is not Bound, or its PVC no longer exists.
 
 Only Pending/Running pods count as mounting a volume: a finished Job's pod holds no mount.
@@ -113,6 +115,8 @@ def main():
     rss = {(r["metadata"]["namespace"], r["metadata"]["name"]): r for r in kget("rs", "-A")}
     deps = {(d["metadata"]["namespace"], d["metadata"]["name"]): d for d in kget("deploy", "-A")}
     stss = {(s["metadata"]["namespace"], s["metadata"]["name"]): s for s in kget("sts", "-A")}
+    cjs = {(c["metadata"]["namespace"], c["metadata"]["name"]): c for c in kget("cronjobs", "-A")}
+    jobs = {(j["metadata"]["namespace"], j["metadata"]["name"]): j for j in kget("jobs", "-A")}
     git_files = git_pv_files(repo_dir)
     parent_of = {}
     for kind, res in (("Kustomization", "kustomizations.kustomize.toolkit.fluxcd.io"),
@@ -131,7 +135,7 @@ def main():
             sts_patterns.setdefault(ns, []).append((pat, name))
 
     def owner_of(pod):
-        """Top controller of a pod: 'Deployment/x', 'StatefulSet/x', 'Job/x', 'DaemonSet/x', 'Pod/x'."""
+        """Top controller of a pod: 'Deployment/x', 'StatefulSet/x', 'CronJob/x', 'Job/x', 'DaemonSet/x', 'Pod/x'."""
         ns = pod["metadata"]["namespace"]
         for o in (pod["metadata"].get("ownerReferences") or []):
             if o["kind"] == "ReplicaSet":
@@ -139,6 +143,10 @@ def main():
                     if oo["kind"] == "Deployment":
                         return "Deployment/" + oo["name"]
                 return "ReplicaSet/" + o["name"]
+            if o["kind"] == "Job":
+                for oo in (jobs.get((ns, o["name"]), {}).get("metadata", {}).get("ownerReferences") or []):
+                    if oo["kind"] == "CronJob":
+                        return "CronJob/" + oo["name"]
             return "%s/%s" % (o["kind"], o["name"])
         return "Pod/" + pod["metadata"]["name"]
 
@@ -150,9 +158,16 @@ def main():
             if claim:
                 by_claim.setdefault((ns, claim), set()).add(owner_of(p))
 
+    for (ns, name), c in cjs.items():
+        spec = c["spec"]["jobTemplate"]["spec"]["template"]["spec"]
+        for v in (spec.get("volumes") or []):
+            claim = (v.get("persistentVolumeClaim") or {}).get("claimName")
+            if claim:
+                by_claim.setdefault((ns, claim), set()).add("CronJob/" + name)
+
     def workload(ns, ref):
         kind, name = ref.split("/", 1)
-        return (deps if kind == "Deployment" else stss).get((ns, name))
+        return {"Deployment": deps, "StatefulSet": stss, "CronJob": cjs}[kind].get((ns, name))
 
     recs = []
     for pv in pvs:
@@ -223,7 +238,7 @@ def main():
         refs = set(by_claim.get((ns, claim), set()))
         refs |= {"StatefulSet/" + s for pat, s in sts_patterns.get(ns, []) if pat.match(claim)}
         rec["workloads"] = sorted(refs)
-        odd = [r for r in refs if r.split("/")[0] not in ("Deployment", "StatefulSet")]
+        odd = [r for r in refs if r.split("/")[0] not in ("Deployment", "StatefulSet", "CronJob")]
         if odd:
             rec["tier"], rec["reason"] = "manual", "mounted by %s" % ", ".join(sorted(odd))
         recs.append(rec)
@@ -259,7 +274,10 @@ def main():
             ctl = [o for o in (obj["metadata"].get("ownerReferences") or []) if o.get("controller")]
             if ctl:
                 ops.append("%s/%s owns %s" % (ctl[0]["kind"], ctl[0]["name"], ref))
-            info.append({"ref": ref, "replicas": obj["spec"].get("replicas", 1), "managers": managers(obj)})
+            info.append({"ref": ref, "kind": ref.split("/")[0], "managers": managers(obj),
+                         # a CronJob is stopped by suspending it; "replicas" is then its original suspend
+                         "replicas": (bool(obj["spec"].get("suspend", False)) if ref.startswith("CronJob/")
+                                      else obj["spec"].get("replicas", 1))})
         g_mgrs = chain([m for w in info for m in w["managers"]]
                        + [m for r in members for m in r["pvManagers"] + r["pvcManagers"]], parent_of)
         for r in members:

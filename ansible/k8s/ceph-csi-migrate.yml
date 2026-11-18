@@ -7,7 +7,8 @@
 # volumes stop together, so each group has one outage of a few minutes and no data is copied. Groups
 # run one at a time. Safety: Retain is forced before anything is deleted; the Ceph data is checked
 # before the old objects go; each PV, PVC and record is escrowed; any failure puts the whole group
-# back on its old drivers from escrow; a group's Flux managers are suspended while it runs.
+# back on its old drivers from escrow; each group's Flux chain is suspended from the group's start
+# and resumed once, after the last group (see tasks/ceph-csi-migrate-group.yml).
 #
 # Tiers this playbook does not migrate (the plan lists them): operator (a Redis/MariaDB/Vault
 # operator owns a workload and would undo the scale-down), cnpg (rbd-rook-migrate-cnpg.yml), manual,
@@ -20,7 +21,8 @@
 #   2. the Operator commits those files with stagefreight and pushes;
 #   3. `-e resume=true -e expect_commit=<sha>` waits until the Flux source carries that commit, then
 #      resumes the held managers.
-# A run without static PVs resumes everything itself.
+# Everything not held is resumed at the end of the run. `-e resume=true` without expect_commit
+# resumes whatever this migration left suspended, e.g. after a run was stopped.
 #
 # Runs in the ghcr.io/homelabhd/ansible:v2.22.0 container (repo mounted read-write for the git flip):
 #   docker run --rm --network host -e KUBECONFIG=/root/.kube/config \
@@ -32,6 +34,7 @@
 #   Migrate namespaces:                           -e confirm=true -e targets=optcp-cloud,optcp-tools
 #   Migrate specific groups:                      -e confirm=true -e 'groups_list=["optcp-cloud/dailytxt"]'
 #   After the push of the git flip:               -e resume=true -e expect_commit=<sha>
+#   After a stopped run:                          -e resume=true
 
 - name: Migrate volumes between ceph-csi drivers (same names, zero-copy)
   hosts: localhost
@@ -63,14 +66,9 @@
 
   tasks:
     # ------------------------------------------------------------------------------------ resume
-    - name: Resume the managers held for a git flip
+    - name: Resume what this migration left suspended
       when: resume | bool
       block:
-        - name: An expected commit is required
-          ansible.builtin.assert:
-            that: expect_commit | length >= 7
-            fail_msg: "Pass -e expect_commit=<sha> (the pushed git-flip commit)."
-
         - name: Wait until the Flux source carries {{ expect_commit }}
           ansible.builtin.command: >-
             kubectl get gitrepository flux-system -n flux-system -o jsonpath={.status.artifact.revision}
@@ -79,30 +77,16 @@
           until: expect_commit in src_rev.stdout
           retries: 40
           delay: 15
+          when: expect_commit | length > 0
 
-        - name: Find the managers this migration suspended
-          ansible.builtin.shell: >-
-            kubectl get kustomizations.kustomize.toolkit.fluxcd.io,helmreleases.helm.toolkit.fluxcd.io -A
-            -o jsonpath='{range .items[?(@.metadata.annotations.{{ suspended_by_jsonpath }}=="{{ run_marker }}")]}{.kind}/{.metadata.namespace}/{.metadata.name}{"\n"}{end}'
-          register: held_raw
-          changed_when: false
-
-        - name: Resume them
-          ansible.builtin.shell: |
-            set -e
-            IFS=/ read -r kind ns name <<< "{{ item }}"
-            res=$([ "$kind" = Kustomization ] && echo kustomizations.kustomize.toolkit.fluxcd.io || echo helmreleases.helm.toolkit.fluxcd.io)
-            kubectl patch $res $name -n $ns --type=merge -p '{"spec":{"suspend":false}}' >/dev/null
-            kubectl annotate $res $name -n $ns {{ suspended_by }}- >/dev/null
-          args:
-            executable: /bin/bash
-          # flux-system last: resumed, it re-applies the Kustomizations below it.
-          loop: "{{ (held_raw.stdout_lines | reject('equalto', 'Kustomization/flux-system/flux-system') | list)
-                    + (held_raw.stdout_lines | select('equalto', 'Kustomization/flux-system/flux-system') | list) }}"
+        - name: Resume
+          ansible.builtin.include_tasks: tasks/ceph-csi-resume.yml
+          vars:
+            keep: []
 
         - name: Resumed
           ansible.builtin.debug:
-            msg: "✓ Flux source at {{ src_rev.stdout }}; resumed {{ held_raw.stdout_lines | length }}: {{ held_raw.stdout_lines | join(', ') or 'none were held' }}"
+            msg: "✓ resumed {{ marked.stdout_lines | length }}: {{ marked.stdout_lines | join(', ') or 'nothing was suspended' }}"
 
         - name: End
           ansible.builtin.meta: end_play
@@ -183,6 +167,12 @@
       vars:
         g_key: "{{ grp.0 }}"
         grp_vols: "{{ grp.1 }}"
+      when: not dry_run
+
+    - name: Resume the Flux chains, except those held for the git flip
+      ansible.builtin.include_tasks: tasks/ceph-csi-resume.yml
+      vars:
+        keep: "{{ held }}"
       when: not dry_run
 
     - name: Point git at the new drivers for the static PVs that migrated

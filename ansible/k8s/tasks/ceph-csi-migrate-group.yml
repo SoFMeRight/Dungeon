@@ -1,15 +1,19 @@
 ---
 # Migrate ONE quiesce group (grp_vols: the ceph-csi-discover.py records sharing a `group`) onto the
-# new drivers. Every workload in the group stops together, every volume is swapped, every workload
-# starts again: one outage per group.
+# new drivers. Every workload in the group stops together (scaled to 0; a CronJob suspended), every
+# volume is swapped, every workload starts again: one outage per group.
 #
-# Flux is suspended for the group's whole run, on every Kustomization/HelmRelease that manages one
-# of its workloads, PVs or PVCs, and on everything above those up to flux-system (groupManagers, root
+# Flux is suspended from the group's start to the end of the run (ceph-csi-migrate.yml resumes it
+# once, after the last group), on every Kustomization/HelmRelease that manages one of the group's
+# workloads, PVs or PVCs, and on everything above those up to flux-system (groupManagers, root
 # first). Otherwise a reconcile mid-swap would scale a workload back up, and a StatefulSet whose PVC
 # is momentarily gone would provision a new, empty one. The chain matters: flux-system re-applies
 # every Kustomization and strips a kubectl-set suspend on its next reconcile, and a Kustomization
 # does the same to its HelmReleases. So the chain is suspended top-down and resumed bottom-up,
-# flux-system last. Managers are marked with the suspended_by annotation, so only what this run
+# flux-system last. Suspending doesn't stop a reconcile already running, which would still re-apply
+# the replica counts, so each suspend waits for that reconcile to finish before anything is scaled.
+# Resuming per group would start a fresh reconcile under the next group's feet; that's why it waits
+# for the end of the run. Managers are marked with the suspended_by annotation, so only what this run
 # suspended is ever resumed. A manager that declares a migrated static PV, and the chain above it,
 # stays suspended (held) until git carries that PV's new driver: see ceph-csi-migrate.yml.
 #
@@ -37,6 +41,11 @@
          kubectl patch $res $name -n $ns --type=merge -p '{"spec":{"suspend":true}}' >/dev/null
          echo suspended ;;
     esac
+    for i in $(seq 1 120); do
+      [ "$(kubectl get $res $name -n $ns -o jsonpath='{.status.conditions[?(@.type=="Reconciling")].status}')" = True ] || exit 0
+      sleep 5
+    done
+    echo "$kind $ns/$name still reconciling after 10m"; exit 1
   args:
     executable: /bin/bash
   loop: "{{ g_managers }}"
@@ -63,8 +72,15 @@
 
 - name: "[{{ g_key }}] migrate {{ grp_vols | length }} volume(s), {{ g_workloads | length }} workload(s)"
   block:
-    - name: "[{{ g_key }}] scale every workload to 0"
-      ansible.builtin.command: kubectl scale -n {{ g_ns }} {{ item.ref | lower }} --replicas=0
+    - name: "[{{ g_key }}] stop every workload"
+      ansible.builtin.shell: |
+        if [ "{{ item.ref.split('/')[0] }}" = CronJob ]; then
+          kubectl patch -n {{ g_ns }} {{ item.ref | lower }} --type=merge -p '{"spec":{"suspend":true}}'
+        else
+          kubectl scale -n {{ g_ns }} {{ item.ref | lower }} --replicas=0
+        fi
+      args:
+        executable: /bin/bash
       loop: "{{ g_workloads }}"
       loop_control:
         label: "{{ item.ref }}"
@@ -92,8 +108,15 @@
         vol: "{{ pair.0 }}"
         esc: "{{ pair.1 }}"
 
-    - name: "[{{ g_key }}] scale every workload back up"
-      ansible.builtin.command: kubectl scale -n {{ g_ns }} {{ item.ref | lower }} --replicas={{ item.replicas }}
+    - name: "[{{ g_key }}] start every workload again"
+      ansible.builtin.shell: |
+        if [ "{{ item.ref.split('/')[0] }}" = CronJob ]; then
+          kubectl patch -n {{ g_ns }} {{ item.ref | lower }} --type=merge -p '{"spec":{"suspend":{{ item.replicas | string | lower }}}}'
+        else
+          kubectl scale -n {{ g_ns }} {{ item.ref | lower }} --replicas={{ item.replicas }}
+        fi
+      args:
+        executable: /bin/bash
       loop: "{{ g_workloads }}"
       loop_control:
         label: "{{ item.ref }} → {{ item.replicas }}"
@@ -102,7 +125,7 @@
     # to start must not roll a good migration back; it is reported instead.
     - name: "[{{ g_key }}] wait for the workloads to be Ready (best-effort)"
       ansible.builtin.command: kubectl rollout status -n {{ g_ns }} {{ item.ref | lower }} --timeout=300s
-      loop: "{{ g_workloads }}"
+      loop: "{{ g_workloads | rejectattr('ref', 'match', '^CronJob/') | list }}"
       loop_control:
         label: "{{ item.ref }}"
       register: rollout
@@ -133,9 +156,13 @@
           case "$state" in */*/?*) echo "PVC $ns/$pvc is terminating: still mounted, restore it by hand from $e.*.json"; exit 1 ;; esac
           kubectl delete pvc $pvc -n $ns --ignore-not-found --wait=true --timeout=120s
           kubectl delete pv $pv --ignore-not-found --wait=true --timeout=120s
-          kubectl apply -f $e.pv.json
-          kubectl apply -f $e.pvc.json
+          # As on the way in (see files/ceph-csi-manifests.py): the PV comes back pre-bound to the
+          # claim, and the PVC without volumeName, so the binder binds them and owns volumeName.
+          kubectl create -f $e.pv.json
+          kubectl patch pv $pv --type=merge -p '{"spec":{"claimRef":{"apiVersion":"v1","kind":"PersistentVolumeClaim","namespace":"'$ns'","name":"'$pvc'"}}}'
+          python3 -c 'import json,sys; o=json.load(open(sys.argv[1])); o["spec"].pop("volumeName",None); print(json.dumps(o))' $e.pvc.json | kubectl create -f -
           kubectl wait pvc/$pvc -n $ns --for=jsonpath='{.status.phase}'=Bound --timeout=300s
+          [ "$(kubectl get pvc $pvc -n $ns -o jsonpath='{.spec.volumeName}')" = "$pv" ] || { echo "PVC $ns/$pvc bound to the wrong PV"; exit 1; }
           echo restored
         fi
         kubectl patch pv $pv --type=merge -p '{"spec":{"persistentVolumeReclaimPolicy":"{{ item.0.reclaimPolicy }}"}}' >/dev/null
@@ -150,7 +177,14 @@
     # Only after a complete restore: a StatefulSet started while one of its PVCs is missing would
     # provision a new, empty volume in its place. An incomplete restore leaves the workloads at 0.
     - name: "[{{ g_key }}] start the workloads again on the old drivers"
-      ansible.builtin.command: kubectl scale -n {{ g_ns }} {{ item.ref | lower }} --replicas={{ item.replicas }}
+      ansible.builtin.shell: |
+        if [ "{{ item.ref.split('/')[0] }}" = CronJob ]; then
+          kubectl patch -n {{ g_ns }} {{ item.ref | lower }} --type=merge -p '{"spec":{"suspend":{{ item.replicas | string | lower }}}}'
+        else
+          kubectl scale -n {{ g_ns }} {{ item.ref | lower }} --replicas={{ item.replicas }}
+        fi
+      args:
+        executable: /bin/bash
       loop: "{{ g_workloads }}"
       loop_control:
         label: "{{ item.ref }}"
@@ -163,17 +197,3 @@
           {{ failed_groups + [g_key ~ (' (rolled back)' if not (restored.failed | default(false))
              else ' (ROLLBACK INCOMPLETE: see the restore task above; workloads left at 0, managers suspended)')] }}
         held: "{{ (held + (g_managers if (restored.failed | default(false)) else [])) | unique }}"
-
-  always:
-    - name: "[{{ g_key }}] resume its Flux managers bottom-up (except held ones)"
-      ansible.builtin.shell: |
-        set -e
-        IFS=/ read -r kind ns name <<< "{{ item }}"
-        res=$([ "$kind" = Kustomization ] && echo kustomizations.kustomize.toolkit.fluxcd.io || echo helmreleases.helm.toolkit.fluxcd.io)
-        [ "$(kubectl get $res $name -n $ns -o jsonpath='{.metadata.annotations.{{ suspended_by_jsonpath }}}')" = "{{ run_marker }}" ] || exit 0
-        kubectl patch $res $name -n $ns --type=merge -p '{"spec":{"suspend":false}}' >/dev/null
-        kubectl annotate $res $name -n $ns {{ suspended_by }}- >/dev/null
-      args:
-        executable: /bin/bash
-      loop: "{{ g_managers | reverse | reject('in', held) | list }}"
-      changed_when: true
