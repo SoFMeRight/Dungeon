@@ -45,6 +45,9 @@ spec:
         - matchLabels:
             policy.prplanit.com/cap.ceph: "true"
             policy.prplanit.com/access-scope-ceph: "gorons-bracelet.rgw"
+        - matchLabels:
+            policy.prplanit.com/cap.ceph: "true"
+            policy.prplanit.com/access-scope-ceph: "optcp-operators-privileged.rgw"
       toPorts:
         - ports:
             - port: "8080"
