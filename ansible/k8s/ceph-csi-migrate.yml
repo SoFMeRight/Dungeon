@@ -197,7 +197,7 @@
       ansible.builtin.debug:
         msg: |
           migrated: {{ migrated_ok | length }} volume(s) in {{ migrated_ok | map(attribute='group') | unique | list | length }} group(s)
-          {% if not_ready %}NOT READY after 300s (left migrated, check them): {{ not_ready | join(', ') }}
+          {% if not_ready %}NOT READY in the wait (300s, 900s for an operator's group; left migrated, check them): {{ not_ready | join(', ') }}
           {% endif %}{% if failed_groups %}FAILED: {{ failed_groups | join('; ') }}
           {% endif %}{% if held_paused %}operators left paused (an incomplete rollback): {{ held_paused | join(', ') }}
           {% endif %}{% if held %}held suspended until git names the new drivers: {{ held | join(', ') }}
