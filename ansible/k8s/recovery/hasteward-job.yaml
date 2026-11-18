@@ -76,7 +76,7 @@ spec:
     name: hasteward-backups
     namespace: optcp-fairy-bottle
   csi:
-    driver: gorons-bracelet.cephfs.csi.ceph.com
+    driver: optcp.cephfs.csi.ceph.com
     nodeStageSecretRef:
       name: csi-cephfs-node
       namespace: optcp-operators-privileged

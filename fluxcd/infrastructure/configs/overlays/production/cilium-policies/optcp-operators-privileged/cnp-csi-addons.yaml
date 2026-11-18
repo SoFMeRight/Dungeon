@@ -6,8 +6,7 @@ spec:
   description: >-
     The CSI-Addons controller runs reclaim-space through the RBD driver's
     csi-addons sidecars: the ctrlplugin's on 9070 and the per-node
-    nodeplugin-csi-addons pods' on 9071. Both RBD drivers' pods, while
-    gorons-bracelet.rbd is migrated to optcp.rbd (OpenProject #432).
+    nodeplugin-csi-addons pods' on 9071.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -20,7 +19,6 @@ spec:
             - key: app
               operator: In
               values:
-                - gorons-bracelet.rbd.csi.ceph.com-ctrlplugin
                 - optcp.rbd.csi.ceph.com-ctrlplugin
       toPorts:
         - ports:
@@ -31,7 +29,6 @@ spec:
             - key: app
               operator: In
               values:
-                - gorons-bracelet.rbd.csi.ceph.com-nodeplugin-csi-addons
                 - optcp.rbd.csi.ceph.com-nodeplugin-csi-addons
       toPorts:
         - ports:
@@ -54,7 +51,6 @@ spec:
       - key: app
         operator: In
         values:
-          - gorons-bracelet.rbd.csi.ceph.com-ctrlplugin
           - optcp.rbd.csi.ceph.com-ctrlplugin
   ingress:
     - fromEndpoints:
@@ -81,7 +77,6 @@ spec:
       - key: app
         operator: In
         values:
-          - gorons-bracelet.rbd.csi.ceph.com-nodeplugin-csi-addons
           - optcp.rbd.csi.ceph.com-nodeplugin-csi-addons
   ingress:
     - fromEndpoints:

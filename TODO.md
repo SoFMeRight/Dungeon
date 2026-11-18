@@ -155,30 +155,6 @@ CLAUDE.md specifies PVC naming pattern for StatefulSets: `<namespace>-<app>-<pur
 
 **Decision:** Keep running on dedicated Docker host - AIO provides superior experience and functionality
 
-## Infrastructure Modernization
-
-### Standardize Ceph CSI Provisioner Naming
-**Status:** Inconsistent naming between RBD and CephFS provisioners
-**Current state:**
-- RBD StorageClasses use `rbd.csi.ceph.com` provisioner (generic upstream naming)
-- CephFS StorageClasses use `gorons-bracelet.cephfs.csi.ceph.com` provisioner (cluster-specific naming)
-
-**Target state:** Both provisioners should follow the same naming pattern
-- Option 1: Rename RBD to `gorons-bracelet.rbd.csi.ceph.com` (matches CephFS pattern)
-- Option 2: Rename CephFS to `rbd.csi.ceph.com` pattern (but CephFS is already deployed as cluster-specific)
-
-**Recommended approach:** Rename RBD provisioner to match CephFS cluster-specific naming
-
-**Migration tasks:**
-- [ ] Update RBD Driver CRD name from `gorons-bracelet.rbd.csi.ceph.com` to match naming pattern
-- [ ] Update all RBD StorageClasses to use new provisioner name
-- [ ] Migrate existing PVCs using old provisioner name to new provisioner (may require PVC recreation)
-- [ ] Update application manifests referencing old StorageClass names
-- [ ] Test dynamic provisioning with new RBD provisioner name
-- [ ] Clean up old provisioner resources after migration
-
-**Note:** This will cause downtime for applications using RBD PVCs during migration. Plan carefully.
-
 ## Cilium cluster-pool IPAM Migration
 
 ### Overview
