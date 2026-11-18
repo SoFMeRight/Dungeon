@@ -12,7 +12,9 @@
 #
 # A group whose workload an operator owns (Redis, MariaDB, Vault) pauses that operator while it is
 # stopped (`operators` below). Tiers this playbook does not migrate (the plan lists them): operator
-# (an owner with no known pause), cnpg (rbd-rook-migrate-cnpg.yml), manual, released.
+# (an owner with no known pause), manual, released. A CNPG cluster is one group, hibernated while
+# its claims are re-adopted (`operators.Cluster`); cnpg is left only for a cluster discovery can't
+# read.
 #
 # Static PVs are declared in git, and git must end up naming the new driver, or Flux would try to
 # change the (immutable) driver of the live PV back. So a run that migrates static PVs:
@@ -58,6 +60,8 @@
       MariaDB: {pause: suspend, resource: mariadbs.k8s.mariadb.com}
       RedisReplication: {pause: scale, deployment: optcp-operators-baseline/redis-operator}
       Vault: {pause: scale, deployment: optcp-secrets/bank-vaults-operator}
+      # A CNPG Cluster's own volumes (not an owner of a workload): hibernation stops every instance
+      Cluster: {pause: hibernate, resource: clusters.postgresql.cnpg.io}
     suspended_by_jsonpath: "{{ suspended_by | replace('.', '\\.') }}"
     run_marker: suspended
     confirm: false

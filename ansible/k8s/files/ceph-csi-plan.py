@@ -17,7 +17,8 @@ print("migrate: %d group(s), %d volume(s) (%d rbd, %d cephfs), %d static (git fl
 for key, g in groups.items():
     types = collections.Counter(r["type"] for r in g)
     static = sum(r["static"] for r in g)
-    stops = " ".join(w["ref"] for w in g[0]["workloadInfo"]) or "nothing (unused)"
+    stops = " ".join(w["ref"] for w in g[0]["workloadInfo"]) or (
+        "no workload" if g[0]["operatorPauses"] else "nothing (unused)")
     pauses = "; pauses " + " ".join("%s %s/%s" % (p["how"], p["namespace"], p["name"])
                                     for p in g[0]["operatorPauses"]) if g[0]["operatorPauses"] else ""
     print("  %s: %s%s; stops %s%s" % (key, ", ".join("%d %s" % (n, t) for t, n in sorted(types.items())),
@@ -30,7 +31,8 @@ for tier in ("operator", "cnpg", "manual", "released"):
         continue
     if tier == "cnpg":
         clusters = sorted({"%s/%s" % (r["namespace"], r["pvcLabels"]["cnpg.io/cluster"]) for r in rs})
-        print("  cnpg: %d volume(s) in %d cluster(s); rbd-rook-migrate-cnpg.yml" % (len(rs), len(clusters)))
+        print("  cnpg: %d volume(s) in %d cluster(s) discovery could not read: %s" % (
+            len(rs), len(clusters), ", ".join(clusters)))
     elif tier == "operator":
         by = collections.OrderedDict()
         for r in rs:

@@ -169,6 +169,8 @@ def main():
     cjs = {(c["metadata"]["namespace"], c["metadata"]["name"]): c for c in kget("cronjobs", "-A")}
     jobs = {(j["metadata"]["namespace"], j["metadata"]["name"]): j for j in kget("jobs", "-A")}
     git_files = git_pv_files(repo_dir)
+    clusters = {(c["metadata"]["namespace"], c["metadata"]["name"]): c
+                for c in kget("clusters.postgresql.cnpg.io", "-A")}
     parent_of = {}
     for kind, res in (("Kustomization", "kustomizations.kustomize.toolkit.fluxcd.io"),
                       ("HelmRelease", "helmreleases.helm.toolkit.fluxcd.io")):
@@ -259,6 +261,9 @@ def main():
             "pvcRequest": "",
             "pvcStorageClassName": None,
             "pvcVolumeNameDeclared": False,
+            "pvcNamesVolume": False,
+            "pvcOwnerReferences": [],
+            "cnpgCluster": "",
             "pvcLabels": {},
             "pvcAnnotations": {},
             "workloads": [],
@@ -282,6 +287,10 @@ def main():
         rec["pvcRequest"] = pvc["spec"]["resources"]["requests"]["storage"]
         rec["pvcStorageClassName"] = pvc["spec"].get("storageClassName")
         rec["pvcVolumeNameDeclared"] = volume_name_declared(pvc)
+        # Name the volume unless Flux manages the PVC without naming it (ceph-csi-manifests.py)
+        rec["pvcNamesVolume"] = rec["pvcVolumeNameDeclared"] or not managers(pvc)
+        # A CNPG claim is owned by its Cluster, which stays: the recreated claim keeps that owner
+        rec["pvcOwnerReferences"] = pvc["metadata"].get("ownerReferences") or []
         rec["pvcLabels"] = pvc["metadata"].get("labels") or {}
         rec["pvcAnnotations"] = {k: v for k, v in (pvc["metadata"].get("annotations") or {}).items()
                                  if not PVC_ANNOTATION_DROP.match(k)}
@@ -355,6 +364,28 @@ def main():
             why = "; ".join(sorted({r["reason"] for r in members if r["reason"]}))
             for r in members:
                 r["tier"], r["reason"] = "manual", why
+
+    # A CNPG cluster is one group: hibernating it stops every instance cleanly and keeps the claims,
+    # which are then re-adopted like any other (same names, labels, annotations and owner; CNPG
+    # starts an instance on the claim labelled with its instanceName, with no initdb). Its pods
+    # belong to CNPG itself, not a StatefulSet, so there is no workload to scale.
+    how = operators.get("Cluster")
+    by_cluster = {}
+    for r in recs:
+        if r["tier"] == "cnpg":
+            by_cluster.setdefault((r["namespace"], r["pvcLabels"]["cnpg.io/cluster"]), []).append(r)
+    for (ns, name), members in by_cluster.items():
+        cl = clusters.get((ns, name))
+        if not how or cl is None:
+            continue
+        pause = {"how": "hibernate", "resource": how["resource"], "namespace": ns, "name": name,
+                 # "off" is what an unset annotation means; the pause restores it
+                 "orig": (cl["metadata"].get("annotations") or {}).get("cnpg.io/hibernation", "off")}
+        g_mgrs = chain(managers(cl) + [m for r in members for m in r["pvManagers"] + r["pvcManagers"]],
+                       parent_of)
+        for r in members:
+            r.update({"group": "%s/%s" % (ns, name), "workloadInfo": [], "groupManagers": g_mgrs,
+                      "operatorPauses": [pause], "cnpgCluster": name, "tier": "group", "reason": ""})
 
     print(json.dumps(recs, indent=1))
 

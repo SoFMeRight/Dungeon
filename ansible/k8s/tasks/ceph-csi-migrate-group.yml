@@ -89,6 +89,9 @@
             sleep 5
           done
           echo "$r $ns/$n still has pods after 5m"; exit 1
+        elif [ "{{ item.how }}" = hibernate ]; then
+          # CNPG shuts every instance down cleanly; the unmount wait below waits for the pods to go
+          kubectl annotate $r $n -n $ns cnpg.io/hibernation=on --overwrite
         else
           kubectl patch $r $n -n $ns --type=merge -p '{"spec":{"suspend":true}}'
         fi
@@ -174,10 +177,29 @@
       changed_when: false
       failed_when: false
 
+    # A CNPG cluster has no workload of ours to roll out: it is ready once CNPG reports every
+    # instance ready and the cluster healthy. Best-effort, like the rollout.
+    - name: "[{{ g_key }}] wait for the CNPG cluster to be healthy (best-effort)"
+      ansible.builtin.shell: |
+        for i in $(seq 1 {{ (g_ready_timeout | int) // 10 }}); do
+          s=$(kubectl get clusters.postgresql.cnpg.io {{ grp_vols[0].cnpgCluster }} -n {{ g_ns }} -o jsonpath='{.status.readyInstances}/{.spec.instances}/{.status.phase}')
+          case "$s" in */*/"Cluster in healthy state") [ "${s%%/*}" = "$(echo $s | cut -d/ -f2)" ] && { echo "$s"; exit 0; } ;; esac
+          sleep 10
+        done
+        echo "$s"; exit 1
+      args:
+        executable: /bin/bash
+      register: cnpg_ready
+      changed_when: false
+      failed_when: false
+      when: grp_vols[0].cnpgCluster | default('') | length > 0
+
     - name: "[{{ g_key }}] record"
       ansible.builtin.set_fact:
         migrated_ok: "{{ migrated_ok + grp_vols }}"
-        not_ready: "{{ not_ready + (rollout.results | rejectattr('rc', 'equalto', 0) | map(attribute='item.ref') | map('regex_replace', '^', g_ns ~ '/') | list) }}"
+        not_ready: >-
+          {{ not_ready + (rollout.results | rejectattr('rc', 'equalto', 0) | map(attribute='item.ref') | map('regex_replace', '^', g_ns ~ '/') | list)
+             + ([g_ns ~ '/Cluster/' ~ grp_vols[0].cnpgCluster] if (cnpg_ready.rc | default(0)) != 0 else []) }}
         held: "{{ (held + (grp_vols | selectattr('static') | map(attribute='pvManagers') | flatten)) | unique }}"
 
   rescue:

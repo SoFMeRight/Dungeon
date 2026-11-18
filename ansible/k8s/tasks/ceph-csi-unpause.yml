@@ -8,6 +8,8 @@
     r={{ item.resource }}; ns={{ item.namespace }}; n={{ item.name }}
     if [ "{{ item.how }}" = scale ]; then
       kubectl scale $r $n -n $ns --replicas={{ item.orig }}
+    elif [ "{{ item.how }}" = hibernate ]; then
+      kubectl annotate $r $n -n $ns cnpg.io/hibernation={{ item.orig }} --overwrite
     else
       kubectl patch $r $n -n $ns --type=merge -p '{"spec":{"suspend":{{ item.orig | string | lower }}}}'
     fi

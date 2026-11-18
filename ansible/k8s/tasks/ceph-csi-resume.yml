@@ -18,8 +18,11 @@
     set -e
     IFS=/ read -r res ns name <<< "{{ item }}"
     orig=$(kubectl get $res $name -n $ns -o jsonpath='{.metadata.annotations.{{ paused_by_jsonpath }}}')
-    if [ "$res" = deployments ]; then kubectl scale $res $name -n $ns --replicas=$orig
-    else kubectl patch $res $name -n $ns --type=merge -p '{"spec":{"suspend":'$orig'}}'; fi
+    case "$res" in
+      deployments) kubectl scale $res $name -n $ns --replicas=$orig ;;
+      clusters.postgresql.cnpg.io) kubectl annotate $res $name -n $ns cnpg.io/hibernation=$orig --overwrite ;;
+      *) kubectl patch $res $name -n $ns --type=merge -p '{"spec":{"suspend":'$orig'}}' ;;
+    esac
     kubectl annotate $res $name -n $ns {{ paused_by }}- >/dev/null
   args:
     executable: /bin/bash

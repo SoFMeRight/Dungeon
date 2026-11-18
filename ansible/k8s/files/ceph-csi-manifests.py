@@ -3,18 +3,20 @@
 
   ceph-csi-manifests.py <record.json> <new_secret_namespace> [pvc]
 
-record.json is one ceph-csi-discover.py record. Both objects keep their names, so StatefulSets, git
+record.json is one ceph-csi-discover.py record. Both objects keep their names (and the PVC its labels, annotations and owner: a CNPG
+claim stays its Cluster's), so StatefulSets, git
 PVCs (spec.volumeName is immutable) and everything else that names them carry on unchanged. The PV
 keeps the volumeHandle and volumeAttributes, which is what makes this zero-copy: the RBD image or
 CephFS subvolume is found by them, not by the driver name. Each secret ref keeps its secret's name
 and moves to the new driver's namespace (the csi-* secrets exist under the same names in both).
 
 The PV is created first, pre-bound to the claim by its claimRef. The PVC names its volume
-(spec.volumeName) only when its original definition did (pvcVolumeNameDeclared: set by git, a chart
-or a person, not by the binder), and then it must: a claim that names its volume, against a PV
+(spec.volumeName, pvcNamesVolume) when its original definition did (pvcVolumeNameDeclared: set by
+git, a chart or a person, not by the binder), or when Flux doesn't manage the claim at all (a
+StatefulSet's or CNPG's), where nothing can contest the field. Where it was declared it must: a claim that names its volume, against a PV
 pre-bound to it, is bound without a capacity match, and some static PVs declare less capacity than
 their claim requests. Without the name the binder would provision a new, empty volume for such a
-claim instead. Every other PVC carries no volumeName, and the binder binds it to the PV that names it
+claim instead. A claim Flux manages without naming its volume carries no volumeName, and the binder binds it to the PV that names it
 and records volumeName under its own field manager, as the original binding did. Set by this script
 there, volumeName would belong to the kubectl manager, which Flux claims as its own: Flux would then
 try to clear it on a PVC whose git definition doesn't name its volume, and the bound PVC's immutable
@@ -78,8 +80,10 @@ pvc = {
     },
 }
 
-if rec.get("pvcVolumeNameDeclared"):
+if rec.get("pvcNamesVolume", rec.get("pvcVolumeNameDeclared")):
     pvc["spec"]["volumeName"] = rec["pv"]
+if rec.get("pvcOwnerReferences"):
+    pvc["metadata"]["ownerReferences"] = rec["pvcOwnerReferences"]
 # The PVC's own class, unset when it was: an unset class would be defaulted at admission.
 if rec["pvcStorageClassName"] is not None:
     pvc["spec"]["storageClassName"] = rec["pvcStorageClassName"]
