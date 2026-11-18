@@ -4,7 +4,7 @@ metadata:
   name: cephfs-hdd
   annotations:
     kustomize.toolkit.fluxcd.io/force: "Enabled"
-provisioner: gorons-bracelet.cephfs.csi.ceph.com
+provisioner: optcp.cephfs.csi.ceph.com
 parameters:
   clusterID: 0985467c-d8f3-4483-b27f-f0a512397ec2
   fsName: Seed_Bank
