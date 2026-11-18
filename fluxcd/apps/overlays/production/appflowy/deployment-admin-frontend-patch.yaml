@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: admin-frontend
-          image: docker.io/appflowyinc/admin_frontend:0.20.3
+          image: docker.io/appflowyinc/admin_frontend:0.20.4
           resources:
             requests:
               memory: 170Mi
