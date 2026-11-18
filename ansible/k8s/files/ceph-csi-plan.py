@@ -18,8 +18,10 @@ for key, g in groups.items():
     types = collections.Counter(r["type"] for r in g)
     static = sum(r["static"] for r in g)
     stops = " ".join(w["ref"] for w in g[0]["workloadInfo"]) or "nothing (unused)"
-    print("  %s: %s%s; stops %s" % (key, ", ".join("%d %s" % (n, t) for t, n in sorted(types.items())),
-                                    ", %d static" % static if static else "", stops))
+    pauses = "; pauses " + " ".join("%s %s/%s" % (p["how"], p["namespace"], p["name"])
+                                    for p in g[0]["operatorPauses"]) if g[0]["operatorPauses"] else ""
+    print("  %s: %s%s; stops %s%s" % (key, ", ".join("%d %s" % (n, t) for t, n in sorted(types.items())),
+                                      ", %d static" % static if static else "", stops, pauses))
 if others:
     print("not migrated by this playbook:")
 for tier in ("operator", "cnpg", "manual", "released"):

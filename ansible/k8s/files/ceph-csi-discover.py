@@ -19,8 +19,10 @@ in the group even when none of its Jobs is running.
 
 Tiers (per volume; every volume in a group shares its group's tier):
   group    - Deployments/StatefulSets/CronJobs only, or nothing at all (an orphan is a group of one).
-  operator - a workload in the group is owned by an operator CR (Redis, MariaDB, Vault). The operator
-             would undo a scale-down, so the group needs that operator's own procedure.
+  operator - a workload in the group is owned by an operator CR this playbook has no pause for (see
+             --operators). The operator would undo a scale-down, so the group needs its own procedure.
+             A group whose every owner has a pause is an ordinary group with operatorPauses: the
+             group task pauses those operators while the group is stopped.
   cnpg     - a CNPG instance volume; rbd-rook-migrate-cnpg.yml reclones it through CNPG.
   manual   - mounted by a bare Pod, a Job no CronJob owns, or a DaemonSet.
   released - the PV is not Bound, or its PVC no longer exists.
@@ -66,6 +68,39 @@ def volume_name_declared(pvc):
     return any(m.get("manager") != "kube-controller-manager"
                and "f:volumeName" in ((m.get("fieldsV1") or {}).get("f:spec") or {})
                for m in pvc["metadata"].get("managedFields") or [])
+
+
+def operator_pause(how, ns, name, deps, op_mgrs):
+    """How to stop the operator that owns a group's workload from undoing its scale-down, or None
+    when there is no known way. `how` is one --operators entry:
+      {"pause": "suspend", "resource": <CR resource>}: set the CR's spec.suspend (MariaDB);
+      {"pause": "scale", "deployment": "<ns>/<name>"}: scale the operator itself to 0 (Redis and
+        Vault operators have no per-CR pause; the others they manage just go unreconciled briefly).
+    The Flux objects that apply the CR or the operator join the group's managers (op_mgrs), so Flux
+    can't undo the pause either. `orig` is what the pause restores."""
+    if not how:
+        return None
+    if how["pause"] == "suspend":
+        cr = kget_one(how["resource"], "-n", ns, name)
+        if cr is None:
+            return None
+        op_mgrs.extend(managers(cr))
+        return {"how": "suspend", "resource": how["resource"], "namespace": ns, "name": name,
+                "orig": bool(cr["spec"].get("suspend", False))}
+    if how["pause"] == "scale":
+        dns, dname = how["deployment"].split("/", 1)
+        dep = deps.get((dns, dname))
+        if dep is None:
+            return None
+        op_mgrs.extend(managers(dep))
+        return {"how": "scale", "resource": "deployments", "namespace": dns, "name": dname,
+                "orig": dep["spec"].get("replicas", 1)}
+    return None
+
+
+def kget_one(*args):
+    r = subprocess.run(["kubectl", "get", *args, "-o", "json"], capture_output=True, text=True)
+    return json.loads(r.stdout) if r.returncode == 0 else None
 
 
 def managers(obj):
@@ -119,7 +154,10 @@ def git_pv_files(repo_dir):
 
 def main():
     repo_dir = sys.argv[1]
-    pairs = dict(a.split("=", 1) for a in sys.argv[2:])
+    # --operators=<json>: owner kind -> how to pause its operator, from ceph-csi-migrate.yml
+    opt = [a for a in sys.argv[2:] if a.startswith("--operators=")]
+    operators = json.loads(opt[0].split("=", 1)[1]) if opt else {}
+    pairs = dict(a.split("=", 1) for a in sys.argv[2:] if not a.startswith("--"))
     pvs = kget("pv")
     # managedFields tell who set a PVC's volumeName (see pvcVolumeNameDeclared)
     pvcs = {(p["metadata"]["namespace"], p["metadata"]["name"]): p
@@ -226,6 +264,7 @@ def main():
             "workloads": [],
             "group": "",
             "operator": "",
+            "operatorPauses": [],
             "tier": "",
             "reason": "",
         }
@@ -280,7 +319,7 @@ def main():
         ns = members[0]["namespace"]
         refs = sorted({w for r in members for w in r["workloads"]})
         gkey = "%s/%s" % (ns, "+".join(w.split("/", 1)[1] for w in refs) if refs else members[0]["pvc"])
-        info, ops = [], []
+        info, ops, pauses, op_mgrs = [], [], [], []
         for ref in refs:
             obj = workload(ns, ref)
             if obj is None:
@@ -289,17 +328,23 @@ def main():
             ctl = [o for o in (obj["metadata"].get("ownerReferences") or []) if o.get("controller")]
             if ctl:
                 ops.append("%s/%s owns %s" % (ctl[0]["kind"], ctl[0]["name"], ref))
+                pause = operator_pause(operators.get(ctl[0]["kind"]), ns, ctl[0]["name"], deps, op_mgrs)
+                if pause is None:
+                    pauses = None
+                elif pauses is not None and pause not in pauses:
+                    pauses.append(pause)
             info.append({"ref": ref, "kind": ref.split("/")[0], "managers": managers(obj),
                          # a CronJob is stopped by suspending it; "replicas" is then its original suspend
                          "replicas": (bool(obj["spec"].get("suspend", False)) if ref.startswith("CronJob/")
                                       else obj["spec"].get("replicas", 1))})
-        g_mgrs = chain([m for w in info for m in w["managers"]]
+        g_mgrs = chain([m for w in info for m in w["managers"]] + op_mgrs
                        + [m for r in members for m in r["pvManagers"] + r["pvcManagers"]], parent_of)
         for r in members:
             r["group"] = gkey
             r["workloadInfo"] = info
             r["groupManagers"] = g_mgrs   # root first: suspend in this order, resume in reverse
-            if ops:
+            r["operatorPauses"] = pauses or []
+            if ops and pauses is None:
                 r["tier"], r["operator"] = "operator", "; ".join(ops)
             elif r["static"] and not r["gitFile"]:
                 r["tier"] = "manual"

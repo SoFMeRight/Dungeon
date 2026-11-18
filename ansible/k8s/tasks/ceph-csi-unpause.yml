@@ -1,0 +1,19 @@
+---
+# Undo the group's operator pauses (g_pauses, from ceph-csi-migrate-group.yml): each back to what
+# the pause recorded (orig), and the paused_by annotation removed.
+
+- name: "[{{ g_key }}] unpause {{ item.how }} {{ item.namespace }}/{{ item.name }}"
+  ansible.builtin.shell: |
+    set -e
+    r={{ item.resource }}; ns={{ item.namespace }}; n={{ item.name }}
+    if [ "{{ item.how }}" = scale ]; then
+      kubectl scale $r $n -n $ns --replicas={{ item.orig }}
+    else
+      kubectl patch $r $n -n $ns --type=merge -p '{"spec":{"suspend":{{ item.orig | string | lower }}}}'
+    fi
+    kubectl annotate $r $n -n $ns {{ paused_by }}- >/dev/null
+  args:
+    executable: /bin/bash
+  loop: "{{ g_pauses }}"
+  loop_control:
+    label: "{{ item.how }} {{ item.namespace }}/{{ item.name }}"

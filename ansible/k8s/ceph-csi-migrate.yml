@@ -10,9 +10,9 @@
 # back on its old drivers from escrow; each group's Flux chain is suspended from the group's start
 # and resumed once, after the last group (see tasks/ceph-csi-migrate-group.yml).
 #
-# Tiers this playbook does not migrate (the plan lists them): operator (a Redis/MariaDB/Vault
-# operator owns a workload and would undo the scale-down), cnpg (rbd-rook-migrate-cnpg.yml), manual,
-# released.
+# A group whose workload an operator owns (Redis, MariaDB, Vault) pauses that operator while it is
+# stopped (`operators` below). Tiers this playbook does not migrate (the plan lists them): operator
+# (an owner with no known pause), cnpg (rbd-rook-migrate-cnpg.yml), manual, released.
 #
 # Static PVs are declared in git, and git must end up naming the new driver, or Flux would try to
 # change the (immutable) driver of the live PV back. So a run that migrates static PVs:
@@ -49,6 +49,15 @@
     escrow_dir: /escrow
     repo_dir: "{{ playbook_dir | dirname | dirname }}"
     suspended_by: optcp.com/ceph-csi-migration
+    # On a paused operator object (a CR or an operator Deployment): what the pause restores
+    paused_by: optcp.com/ceph-csi-migration-paused
+    paused_by_jsonpath: "{{ paused_by | replace('.', '\\.') }}"
+    # Owner kind -> how to pause its operator while a group is stopped (files/ceph-csi-discover.py,
+    # operator_pause). An owner kind not listed leaves its group in the operator tier.
+    operators:
+      MariaDB: {pause: suspend, resource: mariadbs.k8s.mariadb.com}
+      RedisReplication: {pause: scale, deployment: optcp-operators-baseline/redis-operator}
+      Vault: {pause: scale, deployment: optcp-secrets/bank-vaults-operator}
     suspended_by_jsonpath: "{{ suspended_by | replace('.', '\\.') }}"
     run_marker: suspended
     confirm: false
@@ -63,6 +72,7 @@
     not_ready: []
     failed_groups: []
     held: []
+    held_paused: []
 
   tasks:
     # ------------------------------------------------------------------------------------ resume
@@ -108,7 +118,7 @@
 
     - name: Discover and classify
       ansible.builtin.command:
-        argv: "{{ ['python3', playbook_dir ~ '/files/ceph-csi-discover.py', repo_dir]
+        argv: "{{ ['python3', playbook_dir ~ '/files/ceph-csi-discover.py', repo_dir, '--operators=' ~ (operators | to_json)]
                   + (drivers | dict2items | map(attribute='key') | zip(drivers | dict2items | map(attribute='value'))
                      | map('join', '=') | list) }}"
       register: disc
@@ -173,6 +183,7 @@
       ansible.builtin.include_tasks: tasks/ceph-csi-resume.yml
       vars:
         keep: "{{ held }}"
+        keep_paused: "{{ held_paused }}"
       when: not dry_run
 
     - name: Point git at the new drivers for the static PVs that migrated
@@ -188,6 +199,7 @@
           migrated: {{ migrated_ok | length }} volume(s) in {{ migrated_ok | map(attribute='group') | unique | list | length }} group(s)
           {% if not_ready %}NOT READY after 300s (left migrated, check them): {{ not_ready | join(', ') }}
           {% endif %}{% if failed_groups %}FAILED: {{ failed_groups | join('; ') }}
+          {% endif %}{% if held_paused %}operators left paused (an incomplete rollback): {{ held_paused | join(', ') }}
           {% endif %}{% if held %}held suspended until git names the new drivers: {{ held | join(', ') }}
           git files flipped (commit them, push, then run -e resume=true -e expect_commit=<sha>):
           {{ flipped.stdout_lines | default([]) | join(' ') }}

@@ -26,6 +26,9 @@
     g_ns: "{{ grp_vols[0].namespace }}"
     g_workloads: "{{ grp_vols[0].workloadInfo }}"
     g_managers: "{{ grp_vols[0].groupManagers }}"
+    g_pauses: "{{ grp_vols[0].operatorPauses }}"
+    # A Galera cluster recovers, and Vault unseals, only after its operator is back.
+    g_ready_timeout: "{{ 900 if grp_vols[0].operatorPauses else 300 }}"
     g_esc: "{{ grp_vols | map(attribute='key') | map('regex_replace', '[^A-Za-z0-9_.-]', '_') | list }}"
 
 - name: "[{{ g_key }}] suspend its Flux managers, top-down"
@@ -72,6 +75,29 @@
 
 - name: "[{{ g_key }}] migrate {{ grp_vols | length }} volume(s), {{ g_workloads | length }} workload(s)"
   block:
+    # Before the workloads stop: an operator that is still running would scale them straight back.
+    # The annotation records what the pause restores, so -e resume=true can undo a stopped run's.
+    - name: "[{{ g_key }}] pause the operators that own its workloads"
+      ansible.builtin.shell: |
+        set -e
+        r={{ item.resource }}; ns={{ item.namespace }}; n={{ item.name }}
+        kubectl annotate $r $n -n $ns {{ paused_by }}={{ item.orig | string | lower }} --overwrite >/dev/null
+        if [ "{{ item.how }}" = scale ]; then
+          kubectl scale $r $n -n $ns --replicas=0
+          for i in $(seq 1 60); do
+            [ "$(kubectl get $r $n -n $ns -o jsonpath='{.status.replicas}')" -gt 0 ] 2>/dev/null || exit 0
+            sleep 5
+          done
+          echo "$r $ns/$n still has pods after 5m"; exit 1
+        else
+          kubectl patch $r $n -n $ns --type=merge -p '{"spec":{"suspend":true}}'
+        fi
+      args:
+        executable: /bin/bash
+      loop: "{{ g_pauses }}"
+      loop_control:
+        label: "{{ item.how }} {{ item.namespace }}/{{ item.name }}"
+
     - name: "[{{ g_key }}] stop every workload"
       ansible.builtin.shell: |
         if [ "{{ item.ref.split('/')[0] }}" = CronJob ]; then
@@ -134,10 +160,13 @@
       loop_control:
         label: "{{ item.ref }} → {{ item.replicas }}"
 
+    - name: "[{{ g_key }}] unpause the operators"
+      ansible.builtin.include_tasks: ceph-csi-unpause.yml
+
     # Not fatal: the swap is already verified (bound, on the new driver). A slow or unrelated failure
     # to start must not roll a good migration back; it is reported instead.
     - name: "[{{ g_key }}] wait for the workloads to be Ready (best-effort)"
-      ansible.builtin.command: kubectl rollout status -n {{ g_ns }} {{ item.ref | lower }} --timeout=300s
+      ansible.builtin.command: kubectl rollout status -n {{ g_ns }} {{ item.ref | lower }} --timeout={{ g_ready_timeout }}s
       loop: "{{ g_workloads | rejectattr('ref', 'match', '^CronJob/') | list }}"
       loop_control:
         label: "{{ item.ref }}"
@@ -208,9 +237,18 @@
       when: not (restored.failed | default(false))
       ignore_errors: true
 
+    # Only after a complete restore, like the workloads: a running operator would recreate a
+    # missing PVC from its template, empty. An incomplete restore leaves the operators paused.
+    - name: "[{{ g_key }}] unpause the operators"
+      ansible.builtin.include_tasks: ceph-csi-unpause.yml
+      when: not (restored.failed | default(false))
+
     - name: "[{{ g_key }}] record the rollback"
       ansible.builtin.set_fact:
         failed_groups: >-
           {{ failed_groups + [g_key ~ (' (rolled back)' if not (restored.failed | default(false))
-             else ' (ROLLBACK INCOMPLETE: see the restore task above; workloads left at 0, managers suspended)')] }}
+             else ' (ROLLBACK INCOMPLETE: see the restore task above; workloads left at 0, operators paused, managers suspended)')] }}
         held: "{{ (held + (g_managers if (restored.failed | default(false)) else [])) | unique }}"
+        held_paused: >-
+          {{ (held_paused + ((g_pauses | map(attribute='resource') | zip(g_pauses | map(attribute='namespace'), g_pauses | map(attribute='name'))
+             | map('join', '/') | list) if (restored.failed | default(false)) else [])) | unique }}

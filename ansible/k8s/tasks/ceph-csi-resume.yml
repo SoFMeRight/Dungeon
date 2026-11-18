@@ -1,7 +1,29 @@
 ---
 # Resume every Kustomization/HelmRelease this migration suspended (marked with suspended_by), except
-# those in `keep`. Bottom-up: HelmReleases, then Kustomizations, then flux-system, because resuming a
+# those in `keep`, after unpausing every operator it paused (marked with paused_by), except those in
+# `keep_paused` (as "<resource>/<namespace>/<name>"). Bottom-up: HelmReleases, then Kustomizations, then flux-system, because resuming a
 # level makes it re-apply the level below.
+
+# First: an operator this migration paused and a stopped run left paused. Operators before Flux, so
+# nothing is resumed onto an unmanaged workload.
+- name: Find the operators this migration paused
+  ansible.builtin.shell: >-
+    for r in deployments {{ operators.values() | selectattr('resource', 'defined') | map(attribute='resource') | unique | join(' ') }}; do
+    kubectl get $r -A -o jsonpath='{range .items[?(@.metadata.annotations.{{ paused_by_jsonpath }})]}'$r'/{.metadata.namespace}/{.metadata.name}{"\n"}{end}'; done
+  register: paused
+  changed_when: false
+
+- name: Unpause them
+  ansible.builtin.shell: |
+    set -e
+    IFS=/ read -r res ns name <<< "{{ item }}"
+    orig=$(kubectl get $res $name -n $ns -o jsonpath='{.metadata.annotations.{{ paused_by_jsonpath }}}')
+    if [ "$res" = deployments ]; then kubectl scale $res $name -n $ns --replicas=$orig
+    else kubectl patch $res $name -n $ns --type=merge -p '{"spec":{"suspend":'$orig'}}'; fi
+    kubectl annotate $res $name -n $ns {{ paused_by }}- >/dev/null
+  args:
+    executable: /bin/bash
+  loop: "{{ paused.stdout_lines | reject('in', keep_paused | default([])) | list }}"
 
 - name: Find the Flux objects this migration suspended
   ansible.builtin.shell: >-
