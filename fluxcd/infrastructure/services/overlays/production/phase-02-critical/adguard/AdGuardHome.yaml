@@ -328,15 +328,6 @@ filtering:
     - domain: '*.pcfae.com'
       answer: 172.22.30.70
       enabled: true
-    - domain: ansible.pcfae.com
-      answer: 10.24.96.9
-      enabled: true
-    - domain: dns.pcfae.com
-      answer: 10.24.96.9
-      enabled: true
-    - domain: dns2.pcfae.com
-      answer: 10.24.96.9
-      enabled: true
     - domain: harbormaster.pcfae.com
       answer: 10.24.96.9
       enabled: true
