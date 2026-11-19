@@ -38,15 +38,7 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-ingress-public
             policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-ingress-public
-            policy.prplanit.com/cap.s3: "true"
             policy.prplanit.com/access-scope-s3: "optcp-operators-privileged.rgw"
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: outspokekin-delivery-bag
-            policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: outspokekin-delivery-bag
             policy.prplanit.com/cap.s3: "true"
@@ -54,15 +46,7 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-gossip-stone
             policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-gossip-stone
-            policy.prplanit.com/cap.s3: "true"
             policy.prplanit.com/access-scope-s3: "optcp-operators-privileged.rgw"
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-cloud
-            policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-cloud
             policy.prplanit.com/cap.s3: "true"
@@ -70,15 +54,7 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-staff-suite
             policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-staff-suite
-            policy.prplanit.com/cap.s3: "true"
             policy.prplanit.com/access-scope-s3: "optcp-operators-privileged.rgw"
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-supply-chain
-            policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-supply-chain
             policy.prplanit.com/cap.s3: "true"
@@ -86,15 +62,7 @@ spec:
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-sibyl-system
             policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-sibyl-system
-            policy.prplanit.com/cap.s3: "true"
             policy.prplanit.com/access-scope-s3: "optcp-operators-privileged.rgw"
-        - matchLabels:
-            k8s:io.kubernetes.pod.namespace: optcp-delivery-bag
-            policy.prplanit.com/cap.s3: "true"
-            policy.prplanit.com/access-scope-s3: "gorons-bracelet.rgw"
         - matchLabels:
             k8s:io.kubernetes.pod.namespace: optcp-delivery-bag
             policy.prplanit.com/cap.s3: "true"
