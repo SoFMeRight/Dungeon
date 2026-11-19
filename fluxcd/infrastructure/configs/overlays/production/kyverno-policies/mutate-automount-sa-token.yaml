@@ -97,8 +97,7 @@ spec:
           'zitadel-configuration',
           'zitadel-postgres',
           'boundary-init',
-          'stalwart-configuration',
-          'secrets-delete'
+          'stalwart-configuration'
         ])
   mutations:
     - patchType: ApplyConfiguration

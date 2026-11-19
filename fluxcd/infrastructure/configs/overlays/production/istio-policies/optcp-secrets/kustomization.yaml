@@ -14,5 +14,4 @@ resources:
   - allow-stalwart-configuration-to-vault.yaml
   - allow-vault-to-vault.yaml
   - allow-zitadel-configuration-to-vault.yaml
-  - allow-secrets-delete-to-vault.yaml
   - allow-gateway-ingress-phloem.yaml
