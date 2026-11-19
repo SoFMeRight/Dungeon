@@ -1,72 +1,73 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
 metadata:
   name: mutate-stunner-gateway
 spec:
-  background: true
-  rules:
-    - name: set-stunner-sa-on-deployment
-      match:
-        any:
-          - resources:
-              kinds: [Deployment]
-              namespaces: ["optcp-swift-sail-privileged", "optcp-remote-access", "outspokekin-delivery-bag"]
-              selector:
-                matchLabels:
-                  stunner.l7mp.io/owned-by: stunner
-      preconditions:
-        all:
-          - key: "{{ request.object.metadata.labels.\"stunner.l7mp.io/related-gateway-name\" || '' }}"
-            operator: NotEquals
-            value: ""
-      mutate:
-        patchStrategicMerge:
-          spec:
-            template:
-              spec:
-                serviceAccountName: "{{ request.object.metadata.labels.\"stunner.l7mp.io/related-gateway-name\" }}"
-    - name: set-stunner-lb-ip-on-service
-      match:
-        any:
-          - resources:
-              kinds: [Service]
-              namespaces: ["optcp-swift-sail-privileged"]
-              annotations:
-                stunner.l7mp.io/related-gateway-name: "optcp-swift-sail-privileged/neko-gateway"
-      mutate:
-        patchStrategicMerge:
-          metadata:
-            annotations:
-              lbipam.cilium.io/ips: "172.22.30.120"
-    # NetBird's STUNner TURN gateway inherits coturn's old address (172.22.30.86,
-    # sharing-key optcp-remote-access) so turn.prplanit.com DNS and the WAN NAT don't move.
-    - name: set-netbird-turn-lb-ip-on-service
-      match:
-        any:
-          - resources:
-              kinds: [Service]
-              namespaces: ["optcp-remote-access"]
-              annotations:
-                stunner.l7mp.io/related-gateway-name: "optcp-remote-access/netbird-turn"
-      mutate:
-        patchStrategicMerge:
-          metadata:
-            annotations:
-              lbipam.cilium.io/ips: "172.22.30.86"
-              lbipam.cilium.io/sharing-key: "optcp-remote-access"
-              lbipam.cilium.io/sharing-cross-namespace: "*"
-    # Matrix's TURN gateway takes its own address rather than sharing NetBird's: both
-    # want a TURN listener, and two listeners cannot hold the same port on one IP.
-    - name: set-matrix-turn-lb-ip-on-service
-      match:
-        any:
-          - resources:
-              kinds: [Service]
-              namespaces: ["outspokekin-delivery-bag"]
-              annotations:
-                stunner.l7mp.io/related-gateway-name: "outspokekin-delivery-bag/matrix-turn"
-      mutate:
-        patchStrategicMerge:
-          metadata:
-            annotations:
-              lbipam.cilium.io/ips: "172.22.30.87"
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [apps]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [deployments]
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values: [optcp-swift-sail-privileged, optcp-remote-access, outspokekin-delivery-bag]
+  matchConditions:
+    - name: stunner-owned
+      expression: "object.metadata.?labels[?'stunner.l7mp.io/owned-by'].orValue('') == 'stunner'"
+    - name: has-gateway
+      expression: "object.metadata.?labels[?'stunner.l7mp.io/related-gateway-name'].orValue('') != ''"
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: >-
+          Object{spec: Object.spec{template: Object.spec.template{spec: Object.spec.template.spec{
+            serviceAccountName: object.metadata.labels['stunner.l7mp.io/related-gateway-name']}}}}
+---
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
+metadata:
+  name: mutate-stunner-gateway-lb-ips
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [services]
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values: [optcp-swift-sail-privileged, optcp-remote-access, outspokekin-delivery-bag]
+  matchConditions:
+    - name: known-gateway
+      expression: >-
+        object.metadata.namespace + '/' + object.metadata.?annotations[?'stunner.l7mp.io/related-gateway-name'].orValue('') in
+          ['optcp-swift-sail-privileged/optcp-swift-sail-privileged/neko-gateway',
+           'optcp-remote-access/optcp-remote-access/netbird-turn',
+           'outspokekin-delivery-bag/outspokekin-delivery-bag/matrix-turn']
+  variables:
+    - name: gateway
+      expression: "object.metadata.annotations['stunner.l7mp.io/related-gateway-name']"
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: >-
+          Object{metadata: Object.metadata{annotations: {
+            // neko's STUNner gateway
+            "optcp-swift-sail-privileged/neko-gateway": {"lbipam.cilium.io/ips": "172.22.30.120"},
+            // NetBird's STUNner TURN gateway inherits coturn's old address (172.22.30.86,
+            // sharing-key optcp-remote-access) so turn.prplanit.com DNS and the WAN NAT don't move.
+            "optcp-remote-access/netbird-turn": {
+              "lbipam.cilium.io/ips": "172.22.30.86",
+              "lbipam.cilium.io/sharing-key": "optcp-remote-access",
+              "lbipam.cilium.io/sharing-cross-namespace": "*"},
+            // Matrix's TURN gateway takes its own address rather than sharing NetBird's: both
+            // want a TURN listener, and two listeners cannot hold the same port on one IP.
+            "outspokekin-delivery-bag/matrix-turn": {"lbipam.cilium.io/ips": "172.22.30.87"}
+          }[variables.gateway]}}

@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
 metadata:
   name: mutate-automount-sa-token
   annotations:
@@ -8,96 +8,98 @@ metadata:
       Most app pods carry a projected ServiceAccount token they never use — a live k8s-API
       credential and pure post-RCE attack surface. This injects automountServiceAccountToken:false
       on pods in istio-ambient app namespaces whose ServiceAccount has NO RBAC binding (a token
-      that grants nothing). The precondition SKIPS the ServiceAccounts that ARE bound to a
+      that grants nothing). The match condition SKIPS the ServiceAccounts that ARE bound to a
       Role/ClusterRole (they genuinely call the API — operators, CNPG instance managers, gitlab
-      runner, monitoring); those keep their token. +() anchor = add-only, so an explicit setting is
-      never clobbered. CREATE-only + admission-time: existing pods keep their token until they next
+      runner, monitoring); those keep their token. Add-only, so an explicit setting is never
+      clobbered. CREATE-only + admission-time: existing pods keep their token until they next
       roll, so the change lands gradually and observably. Infra namespaces (root CSI/backup/etc.)
       are excluded — their controllers need the API. Escape hatch: label a namespace
       policy.prplanit.com/automount-hardening=suspended, or a workload SA to add a RoleBinding to
       opt back in. New API-consuming SAs must be added to the skip list below.
 spec:
-  background: true
-  rules:
-    - name: default-automount-false
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              operations: [CREATE]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude:
-        any:
-          - resources:
-              selector:
-                matchLabels:
-                  app.kubernetes.io/name: kyverno
-          - resources:
-              namespaceSelector:
-                matchLabels:
-                  policy.prplanit.com/automount-hardening: "suspended"
-          # Infra namespaces: root CSI/backup/gateway/reflector controllers need the API.
-          - resources:
-              namespaces:
-                - optcp-operators-privileged
-                - optcp-fairy-bottle
-                - optcp-service-mesh
-                - optcp-operators-baseline
-                - optcp-telemetry
-                - optcp-ingress-internal
-                - kai-ingress-private
-      preconditions:
-        all:
-          # Skip pods whose ServiceAccount is RBAC-bound (genuinely uses the token). Everything
-          # else gets automountServiceAccountToken:false. Keep this list in sync with the app-ns
-          # ServiceAccounts that have a Role/ClusterRoleBinding.
-          - key: "{{ request.object.spec.serviceAccountName || 'default' }}"
-            operator: AnyNotIn
-            value:
-              - gatus
-              - gatus-postgres
-              - grafana
-              - grafana-postgres
-              - kube-state-metrics
-              - loki
-              - weave-gitops
-              - boundary-postgres
-              - calcom-postgres
-              - gitlab-certmanager-issuer
-              - gitlab-postgresql
-              - gitlab-praefect-db-init
-              - gitlab-runner
-              - harbor-postgres
-              - osticket-mariadb
-              - osticket-backup-verify
-              - osticket-configuration
-              - homarr-postgres
-              - appflowy-postgres
-              - kimai
-              - kimai-mariadb
-              - nextcloud
-              - nextcloud-postgres
-              - open-webui-postgres
-              - openproject-postgres
-              - wikijs-sops-postgres
-              - dependency-track-postgres
-              - sbom-operator
-              - training-dummy-postgres
-              - bank-vaults-operator
-              - external-secrets
-              - external-secrets-cert-controller
-              - external-secrets-vault
-              - netbird-postgres
-              - openbao
-              - vaultwarden-postgres
-              - zitadel
-              - zitadel-configuration
-              - zitadel-postgres
-              - boundary-init
-              - stalwart-configuration
-      mutate:
-        patchStrategicMerge:
-          spec:
-            +(automountServiceAccountToken): false
+  failurePolicy: Fail
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/automount-hardening
+          operator: NotIn
+          values: [suspended]
+        # Infra namespaces: root CSI/backup/gateway/reflector controllers need the API.
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - optcp-operators-privileged
+            - optcp-fairy-bottle
+            - optcp-service-mesh
+            - optcp-operators-baseline
+            - optcp-telemetry
+            - optcp-ingress-internal
+            - kai-ingress-private
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+    - name: automount-unset
+      expression: "!has(object.spec.automountServiceAccountToken)"
+    # Skip pods whose ServiceAccount is RBAC-bound (genuinely uses the token). Everything
+    # else gets automountServiceAccountToken:false. Keep this list in sync with the app-ns
+    # ServiceAccounts that have a Role/ClusterRoleBinding.
+    - name: unbound-service-account
+      expression: |-
+        !((object.spec.?serviceAccountName.orValue('') != '' ? object.spec.serviceAccountName : 'default') in [
+          'gatus',
+          'gatus-postgres',
+          'grafana',
+          'grafana-postgres',
+          'kube-state-metrics',
+          'loki',
+          'weave-gitops',
+          'boundary-postgres',
+          'calcom-postgres',
+          'gitlab-certmanager-issuer',
+          'gitlab-postgresql',
+          'gitlab-praefect-db-init',
+          'gitlab-runner',
+          'harbor-postgres',
+          'osticket-mariadb',
+          'osticket-backup-verify',
+          'osticket-configuration',
+          'homarr-postgres',
+          'appflowy-postgres',
+          'kimai',
+          'kimai-mariadb',
+          'nextcloud',
+          'nextcloud-postgres',
+          'open-webui-postgres',
+          'openproject-postgres',
+          'wikijs-sops-postgres',
+          'dependency-track-postgres',
+          'sbom-operator',
+          'training-dummy-postgres',
+          'bank-vaults-operator',
+          'external-secrets',
+          'external-secrets-cert-controller',
+          'external-secrets-vault',
+          'netbird-postgres',
+          'openbao',
+          'vaultwarden-postgres',
+          'zitadel',
+          'zitadel-configuration',
+          'zitadel-postgres',
+          'boundary-init',
+          'stalwart-configuration'
+        ])
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: "Object{spec: Object.spec{automountServiceAccountToken: false}}"

@@ -1,169 +1,89 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: restrict-default-sa
 spec:
-  validationFailureAction: Enforce
-  background: true
-  rules:
-    - name: restrict-default-sa-pods
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              # Gate creation/update only. Without this, the rule also matches
-              # DELETE and traps every existing default-SA pod — it can never be
-              # deleted/replaced with a compliant one (e.g. a StatefulSet rolling
-              # in a fixed serviceAccountName deadlocks). Enforcement is unchanged:
-              # default-SA pods still cannot be created.
-              operations: [CREATE, UPDATE]
-              namespaces:
-                - optcp-ingress-internal
-                - kai-ingress-private
-                - optcp-monitoring-agents
-                - optcp-network-services
-                - optcp-restricted
-                - optcp-address-sync
-                - optcp-ai
-                - optcp-app-directory
-                - optcp-fairy-bottle
-                - optcp-operators-privileged
-                - optcp-operators-baseline
-                - optcp-gossip-stone
-                - optcp-remote-access
-                - optcp-web
-                - optcp-web-analytics
-                - outspokekin-delivery-bag
-                - outspokekin-social
-                - outspokekin-web
-                - prplanit-web
-                - yesimvegan-web
-                - optcp-ids-ips
-                - optcp-siem
-                - kai-personal
-                - kai-private
-                - arbitorium-home
-                - arbitorium-nvr
-                - arbitorium-restricted
-                - optcp-ci-runners
-                - optcp-cloud
-                - optcp-delivery-bag
-                - optcp-identity
-                - optcp-keyring
-                - optcp-sibyl-system
-                - optcp-staff-suite
-                - optcp-supply-chain
-                - prplanit-billing
-                - prplanit-commerce
-                - prplanit-remote-access
-                - prplanit-staff-suite
-                - prplanit-support
-                - optcp-management-dashboards
-                - optcp-media
-                - optcp-secrets
-                - optcp-infrastructure-management
-                - optcp-ipam
-                - optcp-shooting-gallery
-                - optcp-swift-sail
-                - optcp-swift-sail-privileged
-                - optcp-tools
-                - optcp-edge-defenses
-      exclude:
-        any:
-          - resources:
-              selector:
-                matchLabels:
-                  app.kubernetes.io/name: kyverno
-          - resources:
-              namespaceSelector:
-                matchLabels:
-                  policy.prplanit.com/restrict-default-sa: "suspended"
-      validate:
-        message: "Pods must specify a non-default serviceAccountName in ambient mesh namespaces."
-        deny:
-          conditions:
-            any:
-              - key: "{{ request.object.spec.serviceAccountName || '' }}"
-                operator: Equals
-                value: ""
-              - key: "{{ request.object.spec.serviceAccountName || '' }}"
-                operator: Equals
-                value: "default"
-    - name: restrict-default-sa-controllers
-      match:
-        any:
-          - resources:
-              kinds: [Deployment, StatefulSet, DaemonSet, Job, CronJob]
-              operations: [CREATE, UPDATE]
-              namespaces:
-                - optcp-ingress-internal
-                - kai-ingress-private
-                - optcp-monitoring-agents
-                - optcp-network-services
-                - optcp-restricted
-                - optcp-address-sync
-                - optcp-ai
-                - optcp-app-directory
-                - optcp-fairy-bottle
-                - optcp-operators-privileged
-                - optcp-operators-baseline
-                - optcp-gossip-stone
-                - optcp-remote-access
-                - optcp-web
-                - optcp-web-analytics
-                - outspokekin-delivery-bag
-                - outspokekin-social
-                - outspokekin-web
-                - prplanit-web
-                - yesimvegan-web
-                - optcp-ids-ips
-                - optcp-siem
-                - kai-personal
-                - kai-private
-                - arbitorium-home
-                - arbitorium-nvr
-                - arbitorium-restricted
-                - optcp-ci-runners
-                - optcp-cloud
-                - optcp-delivery-bag
-                - optcp-identity
-                - optcp-keyring
-                - optcp-sibyl-system
-                - optcp-staff-suite
-                - optcp-supply-chain
-                - prplanit-billing
-                - prplanit-commerce
-                - prplanit-remote-access
-                - prplanit-staff-suite
-                - prplanit-support
-                - optcp-management-dashboards
-                - optcp-media
-                - optcp-secrets
-                - optcp-infrastructure-management
-                - optcp-ipam
-                - optcp-shooting-gallery
-                - optcp-swift-sail
-                - optcp-swift-sail-privileged
-                - optcp-tools
-                - optcp-edge-defenses
-      exclude:
-        any:
-          - resources:
-              selector:
-                matchLabels:
-                  app.kubernetes.io/name: kyverno
-          - resources:
-              namespaceSelector:
-                matchLabels:
-                  policy.prplanit.com/restrict-default-sa: "suspended"
-      validate:
-        message: "Controllers must specify a non-default serviceAccountName in ambient mesh namespaces."
-        deny:
-          conditions:
-            any:
-              - key: "{{ request.object.spec.jobTemplate.spec.template.spec.serviceAccountName || request.object.spec.template.spec.serviceAccountName || '' }}"
-                operator: Equals
-                value: ""
-              - key: "{{ request.object.spec.jobTemplate.spec.template.spec.serviceAccountName || request.object.spec.template.spec.serviceAccountName || '' }}"
-                operator: Equals
-                value: "default"
+  validationActions: [Deny]
+  failurePolicy: Fail
+  evaluation:
+    background:
+      enabled: true
+  # The Pod rule also checks the pod templates of these controllers
+  autogen:
+    podControllers:
+      controllers: [deployments, statefulsets, daemonsets, jobs, cronjobs]
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        # Gate creation/update only. Without this, the rule also matches
+        # DELETE and traps every existing default-SA pod — it can never be
+        # deleted/replaced with a compliant one (e.g. a StatefulSet rolling
+        # in a fixed serviceAccountName deadlocks). Enforcement is unchanged:
+        # default-SA pods still cannot be created.
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - optcp-ingress-internal
+            - kai-ingress-private
+            - optcp-monitoring-agents
+            - optcp-network-services
+            - optcp-restricted
+            - optcp-address-sync
+            - optcp-ai
+            - optcp-app-directory
+            - optcp-fairy-bottle
+            - optcp-operators-privileged
+            - optcp-operators-baseline
+            - optcp-gossip-stone
+            - optcp-remote-access
+            - optcp-web
+            - optcp-web-analytics
+            - outspokekin-delivery-bag
+            - outspokekin-social
+            - outspokekin-web
+            - prplanit-web
+            - yesimvegan-web
+            - optcp-ids-ips
+            - optcp-siem
+            - kai-personal
+            - kai-private
+            - arbitorium-home
+            - arbitorium-nvr
+            - arbitorium-restricted
+            - optcp-ci-runners
+            - optcp-cloud
+            - optcp-delivery-bag
+            - optcp-identity
+            - optcp-keyring
+            - optcp-sibyl-system
+            - optcp-staff-suite
+            - optcp-supply-chain
+            - prplanit-billing
+            - prplanit-commerce
+            - prplanit-remote-access
+            - prplanit-staff-suite
+            - prplanit-support
+            - optcp-management-dashboards
+            - optcp-media
+            - optcp-secrets
+            - optcp-infrastructure-management
+            - optcp-ipam
+            - optcp-shooting-gallery
+            - optcp-swift-sail
+            - optcp-swift-sail-privileged
+            - optcp-tools
+            - optcp-edge-defenses
+        - key: policy.prplanit.com/restrict-default-sa
+          operator: NotIn
+          values: [suspended]
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+  validations:
+    - expression: "object.spec.?serviceAccountName.orValue('') != '' && object.spec.serviceAccountName != 'default'"
+      message: "Pods and their controllers must specify a non-default serviceAccountName in ambient mesh namespaces."

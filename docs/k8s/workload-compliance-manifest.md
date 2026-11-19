@@ -169,18 +169,18 @@ Cilium L3/L4 egress default-deny is now enforced in **all 16 app namespaces**: `
 
 #### Kyverno pod-hardening — Enforcing (the SEC-* layer)
 
-Kyverno is deployed and actively enforcing, not merely auditing. Key ClusterPolicies:
+Kyverno is deployed and actively enforcing, not merely auditing. Key policies (`policies.kyverno.io`; the pod-hardening and image policies are one policy per dimension, `<name>-<dimension>`):
 
 | Policy | Action | What it does |
 |--------|--------|--------------|
-| `enforce-pod-hardening` | **Enforce** | Blocks admission of pods violating the five SEC standards: SEC-7 seccompProfile RuntimeDefault/Localhost, SEC-6 drop ALL capabilities, SEC-5 allowPrivilegeEscalation=false, SEC-1/2 runAsNonRoot, SEC-4 readOnlyRootFilesystem — each with a per-workload exemption path |
-| `audit-pod-hardening` | Audit | Same five rules in report-only mode — tracks residual violations among exempted/in-flight workloads (the SEC-4 remediation campaign) |
+| `enforce-pod-hardening-*` | **Enforce** | Blocks admission of pods violating the five SEC standards: SEC-7 seccompProfile RuntimeDefault/Localhost, SEC-6 drop ALL capabilities, SEC-5 allowPrivilegeEscalation=false, SEC-1/2 runAsNonRoot, SEC-4 readOnlyRootFilesystem — each with a per-workload exemption path |
+| `audit-pod-hardening-*` | Audit | Same five rules in report-only mode — tracks residual violations among exempted/in-flight workloads (the SEC-4 remediation campaign) |
 | `restrict-default-sa` | **Enforce** | Pods/controllers in ambient-mesh namespaces must set a non-default `serviceAccountName` (mesh identity hygiene) |
-| `gate-breakglass-label` | **Enforce** | Three-gate break-glass: an exemption only holds when kube-system carries `zt.breakglass/active=true` + the workload's label + non-stale; auto-expires stale break-glass |
-| `enforce-image-policy` | Audit | Image provenance/policy checks (report-only) |
+| `gate-breakglass-label`, `gate-breakglass-expire` | **Enforce** | Three-gate break-glass: an exemption only holds when kube-system carries `zt.breakglass/active=true` + the workload's label + non-stale; auto-expires stale break-glass |
+| `enforce-image-policy-*` | Audit | Image provenance/policy checks (report-only) |
 | `mutate-*` (probes, SA-token, sidecar/vault/velero/stunner hardening, contract labels) | Audit/mutate | Auto-inject hardening + contract labels at admission |
 
-`enforce-pod-hardening` matches `Pod` CREATE in ambient-mesh namespaces, excludes kyverno itself, and honors a `policy.prplanit.com/enforce-hardening: suspended` namespace kill-switch. Enforcement is at admission, so the compliant baseline lands as pods roll (existing pods grandfathered until restart).
+`enforce-pod-hardening-*` match `Pod` CREATE in ambient-mesh namespaces, excludes kyverno itself, and honors a `policy.prplanit.com/enforce-hardening: suspended` namespace kill-switch. Enforcement is at admission, so the compliant baseline lands as pods roll (existing pods grandfathered until restart).
 
 **Fleet compliance snapshot (audit-pod-hardening PolicyReports, 2026-09-01):**
 
@@ -192,7 +192,7 @@ Kyverno is deployed and actively enforcing, not merely auditing. Key ClusterPoli
 | SEC-1/2 run as non-root | ~77% | ▲ from 27% |
 | SEC-4 readOnlyRootFilesystem | ~48% | ▲ from 16% — the active remaining campaign |
 
-Query to refresh: `kubectl get policyreport -A -o json | jq -r '[.items[].results[]?|select(.policy=="audit-pod-hardening")]|group_by(.rule)[]|"\(.[0].rule): pass \([.[]|select(.result=="pass")]|length) fail \([.[]|select(.result=="fail")]|length)"'`. SEC-4 (writable-rootfs remediation via per-overlay emptyDir mounts) is the one laggard; the other four are effectively enforced fleet-wide.
+Query to refresh: `kubectl get policyreport -A -o json | jq -r '[.items[].results[]?|select(.policy|startswith("audit-pod-hardening-"))]|group_by(.policy)[]|"\(.[0].policy): pass \([.[]|select(.result=="pass")]|length) fail \([.[]|select(.result=="fail")]|length)"'`. SEC-4 (writable-rootfs remediation via per-overlay emptyDir mounts) is the one laggard; the other four are effectively enforced fleet-wide.
 
 ### RBAC & Service Accounts (RBAC)
 

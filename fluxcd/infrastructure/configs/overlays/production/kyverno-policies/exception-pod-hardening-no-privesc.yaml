@@ -1,4 +1,4 @@
-apiVersion: kyverno.io/v2
+apiVersion: policies.kyverno.io/v1
 kind: PolicyException
 metadata:
   name: enforce-pod-hardening-no-privesc
@@ -10,53 +10,35 @@ metadata:
       (2) Helm/operator-managed pods that don't need it but can't carry a pod-level
       securityContext without chart/CR value changes — flagged TIGHTENABLE below as follow-ups.
 spec:
-  exceptions:
-    - policyName: enforce-pod-hardening
-      ruleNames:
-        - require-no-privilege-escalation
-  match:
-    any:
-      # frigate: privileged NVR (privileged implies allowPrivEsc).
-      - resources:
-          kinds: [Pod]
-          namespaces: [arbitorium-nvr]
-          names: ["frigate-*"]
-      # ark-se: arkmanager uses sudo. stable-diffusion-webui: ai-dock init.sh sudo/sudoers.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-shooting-gallery]
-          names: ["ark-se-tmc-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-ai]
-          names: ["stable-diffusion-webui-*"]
-      # photoprism + photoprism-x: same app/image, two instances. Both start NON-ROOT (uid 2432)
-      # with added caps (CHOWN/DAC_OVERRIDE/FOWNER/SETUID/SETGID) that a non-root process needs in
-      # its effective set — NoNewPrivs blocks raising them, so both genuinely require privesc:true.
-      # (Contrast root-start images like apt-cacher/speedtest-tracker, which are fine at false.)
-      # Matched by app label to exclude the compliant mariadb sidecars.
-      - resources:
-          kinds: [Pod]
-          namespaces: [arbitorium-restricted]
-          selector:
-            matchLabels:
-              app: photoprism
-      - resources:
-          kinds: [Pod]
-          namespaces: [kai-private]
-          selector:
-            matchLabels:
-              app: photoprism-x
-      # bank-vaults operator + openbao (Vault) pods — openbao's sidecars are hardened by the
-      # mutate-vault-sidecar-hardening policy on create; this exception is the safety belt for that
-      # policy's failurePolicy:Ignore (a Kyverno blip must not block Vault pod creation).
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-secrets]
-          names: ["bank-vaults-operator-*", "openbao-*"]
-      # nextcloud-collabora (Helm chroot sandbox). (kimai/osticket-mariadb agents + harbor-redis +
-      # harbor-proxy-cache all hardened directly — no longer excepted here.)
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-cloud]
-          names: ["nextcloud-collabora-*"]
+  policyRefs:
+    - name: enforce-pod-hardening-no-privesc
+      kind: ValidatingPolicy
+  matchConditions:
+    - name: exempt-workloads
+      expression: |-
+        [object.metadata.?name.orValue('') != '' ? object.metadata.name : object.metadata.?generateName.orValue('')].exists(name,
+          // frigate: privileged NVR (privileged implies allowPrivEsc).
+          object.kind == 'Pod' && object.metadata.namespace == 'arbitorium-nvr' &&
+            name.matches('^frigate-.*$') ||
+          // ark-se: arkmanager uses sudo. stable-diffusion-webui: ai-dock init.sh sudo/sudoers.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-shooting-gallery' &&
+            name.matches('^ark-se-tmc-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-ai' &&
+            name.matches('^stable-diffusion-webui-.*$') ||
+          // photoprism + photoprism-x: same app/image, two instances. Both start NON-ROOT (uid 2432)
+          // with added caps (CHOWN/DAC_OVERRIDE/FOWNER/SETUID/SETGID) that a non-root process needs in
+          // its effective set — NoNewPrivs blocks raising them, so both genuinely require privesc:true.
+          // (Contrast root-start images like apt-cacher/speedtest-tracker, which are fine at false.)
+          // Matched by app label to exclude the compliant mariadb sidecars.
+          object.kind == 'Pod' && object.metadata.namespace == 'arbitorium-restricted' && object.metadata.?labels[?'app'].orValue('') == 'photoprism' ||
+          object.kind == 'Pod' && object.metadata.namespace == 'kai-private' && object.metadata.?labels[?'app'].orValue('') == 'photoprism-x' ||
+          // bank-vaults operator + openbao (Vault) pods — openbao's sidecars are hardened by the
+          // mutate-vault-sidecar-hardening policy on create; this exception is the safety belt for that
+          // policy's failurePolicy:Ignore (a Kyverno blip must not block Vault pod creation).
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-secrets' &&
+            name.matches('^(bank-vaults-operator-.*|openbao-.*)$') ||
+          // nextcloud-collabora (Helm chroot sandbox). (kimai/osticket-mariadb agents + harbor-redis +
+          // harbor-proxy-cache all hardened directly — no longer excepted here.)
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-cloud' &&
+            name.matches('^nextcloud-collabora-.*$')
+        )

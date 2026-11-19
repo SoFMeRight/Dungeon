@@ -1,4 +1,4 @@
-apiVersion: kyverno.io/v2
+apiVersion: policies.kyverno.io/v1
 kind: PolicyException
 metadata:
   name: enforce-pod-hardening-gitlab-selfsign
@@ -16,15 +16,17 @@ metadata:
       three container/pod hardening rules it violates. Scoped to the self-sign pod
       only (the main shared-secrets job pod is already compliant and is NOT matched).
 spec:
-  exceptions:
-    - policyName: enforce-pod-hardening
-      ruleNames:
-        - require-run-as-non-root
-        - require-no-privilege-escalation
-        - require-drop-all-capabilities
-  match:
-    any:
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-supply-chain]
-          names: ["gitlab-shared-secrets-*-selfsign-*"]
+  policyRefs:
+    - name: enforce-pod-hardening-non-root
+      kind: ValidatingPolicy
+    - name: enforce-pod-hardening-no-privesc
+      kind: ValidatingPolicy
+    - name: enforce-pod-hardening-drop-caps
+      kind: ValidatingPolicy
+  matchConditions:
+    - name: exempt-workloads
+      expression: |-
+        [object.metadata.?name.orValue('') != '' ? object.metadata.name : object.metadata.?generateName.orValue('')].exists(name,
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-supply-chain' &&
+            name.matches('^gitlab-shared-secrets-.*-selfsign-.*$')
+        )

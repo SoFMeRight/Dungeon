@@ -19,8 +19,8 @@ spec:
   values:
     fullnameOverride: kyverno
     # Uninstalling the release (a namespace move does) must never delete the CRDs, or every
-    # ClusterPolicy, PolicyException and policy report goes with them. The policies.kyverno.io
-    # CRDs come from the kyverno-api subchart, which takes its own annotations.
+    # policy, PolicyException and policy report goes with them. The policies.kyverno.io CRDs
+    # come from the kyverno-api subchart, which takes its own annotations.
     crds:
       install: true
       annotations:

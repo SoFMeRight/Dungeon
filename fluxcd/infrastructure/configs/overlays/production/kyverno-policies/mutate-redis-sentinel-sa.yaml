@@ -1,26 +1,26 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
 metadata:
   name: mutate-redis-sentinel-sa
 spec:
-  background: true
-  rules:
-    - name: set-sentinel-sa-on-statefulset
-      match:
-        any:
-          - resources:
-              kinds: [StatefulSet]
-              selector:
-                matchLabels:
-                  redis_setup_type: sentinel
-      preconditions:
-        all:
-          - key: "{{ request.object.metadata.labels.app || '' }}"
-            operator: NotEquals
-            value: ""
-      mutate:
-        patchStrategicMerge:
-          spec:
-            template:
-              spec:
-                serviceAccountName: "{{ regex_replace_all('-sentinel$', request.object.metadata.labels.app, '') }}"
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [apps]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [statefulsets]
+  matchConditions:
+    - name: sentinel
+      expression: "object.metadata.?labels[?'redis_setup_type'].orValue('') == 'sentinel'"
+    - name: has-app-label
+      expression: "object.metadata.?labels[?'app'].orValue('') != ''"
+  variables:
+    - name: app
+      expression: "object.metadata.labels['app']"
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: >-
+          Object{spec: Object.spec{template: Object.spec.template{spec: Object.spec.template.spec{
+            serviceAccountName: variables.app.endsWith('-sentinel') ? variables.app.substring(0, size(variables.app) - 9) : variables.app}}}}

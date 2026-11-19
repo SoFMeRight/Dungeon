@@ -1,199 +1,172 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+# require-tag:
+# - Deny :latest
+# - Deny implicit latest (no ":" and no "@sha256:")
+# - Allow digests (image@sha256:...)
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
-  name: enforce-image-policy
+  name: enforce-image-policy-require-tag
+  annotations:
+    policies.kyverno.io/title: Require an image tag
 spec:
-  validationFailureAction: Audit
-  background: true
-  rules:
-    # ------------------------------------------------------------
-    # Rule 1: require-image-tag
-    # - Deny :latest
-    # - Deny implicit latest (no ":" and no "@sha256:")
-    # - Allow digests (image@sha256:...)
-    # ------------------------------------------------------------
-    - name: require-image-tag
-      match:
-        any:
-          - resources:
-              kinds: ["Pod"]
-              namespaces:
-                - optcp-ingress-internal
-                - kai-ingress-private
-                - optcp-monitoring-agents
-                - optcp-network-services
-                - optcp-restricted
-                - optcp-address-sync
-                - optcp-ai
-                - optcp-app-directory
-                - optcp-fairy-bottle
-                - optcp-operators-privileged
-                - optcp-operators-baseline
-                - optcp-gossip-stone
-                - optcp-remote-access
-                - optcp-service-mesh
-                - optcp-web
-                - optcp-web-analytics
-                - outspokekin-delivery-bag
-                - outspokekin-social
-                - outspokekin-web
-                - prplanit-web
-                - yesimvegan-web
-                - optcp-ids-ips
-                - optcp-siem
-                - kai-personal
-                - kai-private
-                - arbitorium-home
-                - arbitorium-nvr
-                - arbitorium-restricted
-                - optcp-ci-runners
-                - optcp-cloud
-                - optcp-delivery-bag
-                - optcp-identity
-                - optcp-keyring
-                - optcp-sibyl-system
-                - optcp-staff-suite
-                - optcp-supply-chain
-                - prplanit-billing
-                - prplanit-commerce
-                - prplanit-remote-access
-                - prplanit-staff-suite
-                - prplanit-support
-                - optcp-management-dashboards
-                - optcp-media
-                - optcp-secrets
-                - optcp-infrastructure-management
-                - optcp-ipam
-                - optcp-shooting-gallery
-                - optcp-swift-sail
-                - optcp-swift-sail-privileged
-                - optcp-tools
-                - optcp-edge-defenses
-      validate:
-        message: >-
-          Images must be pinned to a non-latest tag or an immutable digest.
-          ':latest' and implicit latest (no tag) are not allowed.
-        foreach:
-          - list: "request.object.spec.containers"
-            deny:
-              conditions:
-                any:
-                  - key: "{{ regex_match('.*:latest$', element.image) }}"
-                    operator: Equals
-                    value: true
-                  - key: "{{ contains(element.image, ':') || contains(element.image, '@sha256:') }}"
-                    operator: Equals
-                    value: false
-          - list: "request.object.spec.initContainers"
-            deny:
-              conditions:
-                any:
-                  - key: "{{ regex_match('.*:latest$', element.image) }}"
-                    operator: Equals
-                    value: true
-                  - key: "{{ contains(element.image, ':') || contains(element.image, '@sha256:') }}"
-                    operator: Equals
-                    value: false
-          - list: "request.object.spec.ephemeralContainers"
-            deny:
-              conditions:
-                any:
-                  - key: "{{ regex_match('.*:latest$', element.image) }}"
-                    operator: Equals
-                    value: true
-                  - key: "{{ contains(element.image, ':') || contains(element.image, '@sha256:') }}"
-                    operator: Equals
-                    value: false
-    # ------------------------------------------------------------
-    # Rule 1b: require-image-tag-controllers
-    # - Same as Rule 1 but for controller pod templates
-    # ------------------------------------------------------------
-    - name: require-image-tag-controllers
-      match:
-        any:
-          - resources:
-              kinds: ["Deployment", "StatefulSet", "DaemonSet", "Job", "CronJob"]
-              namespaces:
-                - optcp-ingress-internal
-                - kai-ingress-private
-                - optcp-monitoring-agents
-                - optcp-network-services
-                - optcp-restricted
-                - optcp-address-sync
-                - optcp-ai
-                - optcp-app-directory
-                - optcp-fairy-bottle
-                - optcp-operators-privileged
-                - optcp-operators-baseline
-                - optcp-gossip-stone
-                - optcp-remote-access
-                - optcp-service-mesh
-                - optcp-web
-                - optcp-web-analytics
-                - outspokekin-delivery-bag
-                - outspokekin-social
-                - outspokekin-web
-                - prplanit-web
-                - yesimvegan-web
-                - optcp-ids-ips
-                - optcp-siem
-                - kai-personal
-                - kai-private
-                - arbitorium-home
-                - arbitorium-nvr
-                - arbitorium-restricted
-                - optcp-ci-runners
-                - optcp-cloud
-                - optcp-delivery-bag
-                - optcp-identity
-                - optcp-keyring
-                - optcp-sibyl-system
-                - optcp-staff-suite
-                - optcp-supply-chain
-                - prplanit-billing
-                - prplanit-commerce
-                - prplanit-remote-access
-                - prplanit-staff-suite
-                - prplanit-support
-                - optcp-management-dashboards
-                - optcp-media
-                - optcp-secrets
-                - optcp-infrastructure-management
-                - optcp-ipam
-                - optcp-shooting-gallery
-                - optcp-swift-sail
-                - optcp-swift-sail-privileged
-                - optcp-tools
-                - optcp-edge-defenses
-      validate:
-        message: >-
-          Images must be pinned to a non-latest tag or an immutable digest.
-          ':latest' and implicit latest (no tag) are not allowed.
-        foreach:
-          - list: "request.object.spec.template.spec.containers"
-            deny:
-              conditions:
-                any:
-                  - key: "{{ regex_match('.*:latest$', element.image) }}"
-                    operator: Equals
-                    value: true
-                  - key: "{{ contains(element.image, ':') || contains(element.image, '@sha256:') }}"
-                    operator: Equals
-                    value: false
-          - list: "request.object.spec.template.spec.initContainers"
-            deny:
-              conditions:
-                any:
-                  - key: "{{ regex_match('.*:latest$', element.image) }}"
-                    operator: Equals
-                    value: true
-                  - key: "{{ contains(element.image, ':') || contains(element.image, '@sha256:') }}"
-                    operator: Equals
-                    value: false
-    # ------------------------------------------------------------
-    # Rule 2: restrict-image-registries
-    # - Allow explicit allowlisted registries
-    # - Also allow images without registry prefix (implicit docker hub)
+  validationActions: [Audit]
+  failurePolicy: Fail
+  evaluation:
+    background:
+      enabled: true
+  # The Pod rule also checks the pod templates of every pod controller
+  autogen:
+    podControllers:
+      controllers: [deployments, replicasets, replicationcontrollers, statefulsets, daemonsets, jobs, cronjobs]
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - optcp-ingress-internal
+            - kai-ingress-private
+            - optcp-monitoring-agents
+            - optcp-network-services
+            - optcp-restricted
+            - optcp-address-sync
+            - optcp-ai
+            - optcp-app-directory
+            - optcp-fairy-bottle
+            - optcp-operators-privileged
+            - optcp-operators-baseline
+            - optcp-gossip-stone
+            - optcp-remote-access
+            - optcp-service-mesh
+            - optcp-web
+            - optcp-web-analytics
+            - outspokekin-delivery-bag
+            - outspokekin-social
+            - outspokekin-web
+            - prplanit-web
+            - yesimvegan-web
+            - optcp-ids-ips
+            - optcp-siem
+            - kai-personal
+            - kai-private
+            - arbitorium-home
+            - arbitorium-nvr
+            - arbitorium-restricted
+            - optcp-ci-runners
+            - optcp-cloud
+            - optcp-delivery-bag
+            - optcp-identity
+            - optcp-keyring
+            - optcp-sibyl-system
+            - optcp-staff-suite
+            - optcp-supply-chain
+            - prplanit-billing
+            - prplanit-commerce
+            - prplanit-remote-access
+            - prplanit-staff-suite
+            - prplanit-support
+            - optcp-management-dashboards
+            - optcp-media
+            - optcp-secrets
+            - optcp-infrastructure-management
+            - optcp-ipam
+            - optcp-shooting-gallery
+            - optcp-swift-sail
+            - optcp-swift-sail-privileged
+            - optcp-tools
+            - optcp-edge-defenses
+  validations:
+    - expression: >-
+        (object.spec.containers + object.spec.?initContainers.orValue([]) + object.spec.?ephemeralContainers.orValue([])).all(c,
+          !c.image.matches('.*:latest$') && (c.image.contains(':') || c.image.contains('@sha256:')))
+      message: >-
+        Images must be pinned to a non-latest tag or an immutable digest. ':latest' and implicit
+        latest (no tag) are not allowed.
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: enforce-image-policy-restrict-registries
+  annotations:
+    policies.kyverno.io/title: Restrict image registries
+spec:
+  validationActions: [Audit]
+  failurePolicy: Fail
+  evaluation:
+    background:
+      enabled: true
+  # The Pod rule also checks the pod templates of every pod controller
+  autogen:
+    podControllers:
+      controllers: [deployments, replicasets, replicationcontrollers, statefulsets, daemonsets, jobs, cronjobs]
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - optcp-ingress-internal
+            - kai-ingress-private
+            - optcp-monitoring-agents
+            - optcp-network-services
+            - optcp-restricted
+            - optcp-address-sync
+            - optcp-ai
+            - optcp-app-directory
+            - optcp-fairy-bottle
+            - optcp-operators-privileged
+            - optcp-operators-baseline
+            - optcp-gossip-stone
+            - optcp-remote-access
+            - optcp-service-mesh
+            - optcp-web
+            - optcp-web-analytics
+            - outspokekin-delivery-bag
+            - outspokekin-social
+            - outspokekin-web
+            - prplanit-web
+            - yesimvegan-web
+            - optcp-ids-ips
+            - optcp-siem
+            - kai-personal
+            - kai-private
+            - arbitorium-home
+            - arbitorium-nvr
+            - arbitorium-restricted
+            - optcp-ci-runners
+            - optcp-cloud
+            - optcp-delivery-bag
+            - optcp-identity
+            - optcp-keyring
+            - optcp-sibyl-system
+            - optcp-staff-suite
+            - optcp-supply-chain
+            - prplanit-billing
+            - prplanit-commerce
+            - prplanit-remote-access
+            - prplanit-staff-suite
+            - prplanit-support
+            - optcp-management-dashboards
+            - optcp-media
+            - optcp-secrets
+            - optcp-infrastructure-management
+            - optcp-ipam
+            - optcp-shooting-gallery
+            - optcp-swift-sail
+            - optcp-swift-sail-privileged
+            - optcp-tools
+            - optcp-edge-defenses
+  variables:
     # Trusted registries:
     #   docker.io         - Docker Hub (public images; CRI-O mirrors via Harbor)
     #   ghcr.io           - GitHub Container Registry
@@ -203,191 +176,18 @@ spec:
     #   reg.kyverno.io    - Kyverno policy engine images
     #   registry.k8s.io   - Official Kubernetes images
     #   registry.gitlab.com - GitLab container images (self-hosted GitLab)
+    #   registry.istio.io - Istio images
     #   cr.optcp.com      - Harbor (custom-built images, proxy caches)
     #   releases-docker.jfrog.io - JFrog Artifactory upstream releases
     #   docker-registry3.mariadb.com - MariaDB operator sidecar images
-    # Regex: single-line, repeated per deny block (Kyverno has no variable reuse across rules)
-    # ------------------------------------------------------------
-    - name: restrict-image-registries
-      match:
-        any:
-          - resources:
-              kinds: ["Pod"]
-              namespaces:
-                - optcp-ingress-internal
-                - kai-ingress-private
-                - optcp-monitoring-agents
-                - optcp-network-services
-                - optcp-restricted
-                - optcp-address-sync
-                - optcp-ai
-                - optcp-app-directory
-                - optcp-fairy-bottle
-                - optcp-operators-privileged
-                - optcp-operators-baseline
-                - optcp-gossip-stone
-                - optcp-remote-access
-                - optcp-service-mesh
-                - optcp-web
-                - optcp-web-analytics
-                - outspokekin-delivery-bag
-                - outspokekin-social
-                - outspokekin-web
-                - prplanit-web
-                - yesimvegan-web
-                - optcp-ids-ips
-                - optcp-siem
-                - kai-personal
-                - kai-private
-                - arbitorium-home
-                - arbitorium-nvr
-                - arbitorium-restricted
-                - optcp-ci-runners
-                - optcp-cloud
-                - optcp-delivery-bag
-                - optcp-identity
-                - optcp-keyring
-                - optcp-sibyl-system
-                - optcp-staff-suite
-                - optcp-supply-chain
-                - prplanit-billing
-                - prplanit-commerce
-                - prplanit-remote-access
-                - prplanit-staff-suite
-                - prplanit-support
-                - optcp-management-dashboards
-                - optcp-media
-                - optcp-secrets
-                - optcp-infrastructure-management
-                - optcp-ipam
-                - optcp-shooting-gallery
-                - optcp-swift-sail
-                - optcp-swift-sail-privileged
-                - optcp-tools
-                - optcp-edge-defenses
-      validate:
-        message: >-
-          Image registry is not allowlisted. Use an approved registry,
-          or docker hub images with no registry prefix.
-        foreach:
-          - list: "request.object.spec.containers"
-            deny:
-              conditions:
-                all:
-                  # yamllint disable-line rule:line-length
-                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com|istio\\.io)|([a-z0-9-]+\\.)*cr\\.optcp\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
-                    operator: Equals
-                    value: false
-                  - key: "{{ regex_match('^[^/]+(:|@sha256:)', element.image) }}"
-                    operator: Equals
-                    value: false
-          - list: "request.object.spec.initContainers"
-            deny:
-              conditions:
-                all:
-                  # yamllint disable-line rule:line-length
-                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com|istio\\.io)|([a-z0-9-]+\\.)*cr\\.optcp\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
-                    operator: Equals
-                    value: false
-                  - key: "{{ regex_match('^[^/]+(:|@sha256:)', element.image) }}"
-                    operator: Equals
-                    value: false
-          - list: "request.object.spec.ephemeralContainers"
-            deny:
-              conditions:
-                all:
-                  # yamllint disable-line rule:line-length
-                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com|istio\\.io)|([a-z0-9-]+\\.)*cr\\.optcp\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
-                    operator: Equals
-                    value: false
-                  - key: "{{ regex_match('^[^/]+(:|@sha256:)', element.image) }}"
-                    operator: Equals
-                    value: false
-    # ------------------------------------------------------------
-    # Rule 2b: restrict-image-registries-controllers
-    # - Same as Rule 2 but for controller pod templates
-    # ------------------------------------------------------------
-    - name: restrict-image-registries-controllers
-      match:
-        any:
-          - resources:
-              kinds: ["Deployment", "StatefulSet", "DaemonSet", "Job", "CronJob"]
-              namespaces:
-                - optcp-ingress-internal
-                - kai-ingress-private
-                - optcp-monitoring-agents
-                - optcp-network-services
-                - optcp-restricted
-                - optcp-address-sync
-                - optcp-ai
-                - optcp-app-directory
-                - optcp-fairy-bottle
-                - optcp-operators-privileged
-                - optcp-operators-baseline
-                - optcp-gossip-stone
-                - optcp-remote-access
-                - optcp-service-mesh
-                - optcp-web
-                - optcp-web-analytics
-                - outspokekin-delivery-bag
-                - outspokekin-social
-                - outspokekin-web
-                - prplanit-web
-                - yesimvegan-web
-                - optcp-ids-ips
-                - optcp-siem
-                - kai-personal
-                - kai-private
-                - arbitorium-home
-                - arbitorium-nvr
-                - arbitorium-restricted
-                - optcp-ci-runners
-                - optcp-cloud
-                - optcp-delivery-bag
-                - optcp-identity
-                - optcp-keyring
-                - optcp-sibyl-system
-                - optcp-staff-suite
-                - optcp-supply-chain
-                - prplanit-billing
-                - prplanit-commerce
-                - prplanit-remote-access
-                - prplanit-staff-suite
-                - prplanit-support
-                - optcp-management-dashboards
-                - optcp-media
-                - optcp-secrets
-                - optcp-infrastructure-management
-                - optcp-ipam
-                - optcp-shooting-gallery
-                - optcp-swift-sail
-                - optcp-swift-sail-privileged
-                - optcp-tools
-                - optcp-edge-defenses
-      validate:
-        message: >-
-          Image registry is not allowlisted. Use an approved registry,
-          or docker hub images with no registry prefix.
-        foreach:
-          - list: "request.object.spec.template.spec.containers"
-            deny:
-              conditions:
-                all:
-                  # yamllint disable-line rule:line-length
-                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com|istio\\.io)|([a-z0-9-]+\\.)*cr\\.optcp\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
-                    operator: Equals
-                    value: false
-                  - key: "{{ regex_match('^[^/]+(:|@sha256:)', element.image) }}"
-                    operator: Equals
-                    value: false
-          - list: "request.object.spec.template.spec.initContainers"
-            deny:
-              conditions:
-                all:
-                  # yamllint disable-line rule:line-length
-                  - key: "{{ regex_match('^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com|istio\\.io)|([a-z0-9-]+\\.)*cr\\.optcp\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/', element.image) }}"
-                    operator: Equals
-                    value: false
-                  - key: "{{ regex_match('^[^/]+(:|@sha256:)', element.image) }}"
-                    operator: Equals
-                    value: false
+    # Images without a registry prefix (implicit docker hub) are allowed too.
+    - name: trusted
+      # yamllint disable-line rule:line-length
+      expression: "r'^((docker|ghcr|quay|lscr|nvcr)\\.io|reg\\.kyverno\\.io|registry\\.(k8s\\.io|gitlab\\.com|istio\\.io)|([a-z0-9-]+\\.)*cr\\.optcp\\.com|releases-docker\\.jfrog\\.io|docker-registry3\\.mariadb\\.com)/'"
+  validations:
+    - expression: >-
+        (object.spec.containers + object.spec.?initContainers.orValue([]) + object.spec.?ephemeralContainers.orValue([])).all(c,
+          c.image.matches(variables.trusted) || c.image.matches('^[^/]+(:|@sha256:)'))
+      message: >-
+        Image registry is not allowlisted. Use an approved registry, or docker hub images with no
+        registry prefix.

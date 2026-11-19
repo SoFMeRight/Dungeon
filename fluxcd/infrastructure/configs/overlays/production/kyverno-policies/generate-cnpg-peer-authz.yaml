@@ -17,39 +17,45 @@ rules:
     resources: ["authorizationpolicies"]
     verbs: ["create", "update", "patch", "get", "list", "watch", "delete"]
 ---
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: GeneratingPolicy
 metadata:
   name: generate-cnpg-peer-authz
 spec:
-  rules:
-    - name: cnpg-instance-peer-allow
-      match:
-        any:
-          - resources:
-              kinds:
-                - postgresql.cnpg.io/v1/Cluster
-              operations:
-                - CREATE
-      generate:
-        generateExisting: false
-        synchronize: false
-        apiVersion: security.istio.io/v1
-        kind: AuthorizationPolicy
-        name: "allow-{{request.object.metadata.name}}-replication"
-        namespace: "{{request.object.metadata.namespace}}"
-        data:
-          spec:
-            selector:
-              matchLabels:
-                cnpg.io/cluster: "{{request.object.metadata.name}}"
-            action: ALLOW
-            rules:
-              - from:
-                  - source:
-                      principals:
-                        - "cluster.local/ns/{{request.object.metadata.namespace}}/sa/{{request.object.metadata.name}}"
-                to:
-                  - operation:
-                      # 5432: streaming replication; 8000: instance-manager peer /failsafe (CNPG >=1.30)
-                      ports: ["5432", "8000"]
+  evaluation:
+    generateExisting:
+      enabled: false
+    synchronize:
+      enabled: false
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [postgresql.cnpg.io]
+        apiVersions: [v1]
+        operations: [CREATE]
+        resources: [clusters]
+  variables:
+    - name: name
+      expression: "'allow-' + object.metadata.name + '-replication'"
+    - name: existing
+      expression: "resource.List('security.istio.io/v1', 'authorizationpolicies', object.metadata.namespace)"
+    - name: exists
+      expression: "dyn(variables.existing.items).exists(p, p.metadata.name == variables.name)"
+    - name: authz
+      expression: |-
+        [{
+          "apiVersion": "security.istio.io/v1",
+          "kind": "AuthorizationPolicy",
+          "metadata": {"name": variables.name, "namespace": object.metadata.namespace},
+          "spec": {
+            "selector": {"matchLabels": {"cnpg.io/cluster": object.metadata.name}},
+            "action": "ALLOW",
+            "rules": [{
+              "from": [{"source": {"principals": [
+                "cluster.local/ns/" + object.metadata.namespace + "/sa/" + object.metadata.name]}}],
+              // 5432: streaming replication; 8000: instance-manager peer /failsafe (CNPG >=1.30)
+              "to": [{"operation": {"ports": ["5432", "8000"]}}]
+            }]
+          }
+        }]
+  generate:
+    - expression: "variables.exists || generator.Apply(object.metadata.namespace, variables.authz)"

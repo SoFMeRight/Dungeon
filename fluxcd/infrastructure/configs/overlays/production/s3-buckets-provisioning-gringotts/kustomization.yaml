@@ -7,7 +7,7 @@ resources:
   - s3-buckets-provisioning-gringotts-script.yaml
   - s3-buckets-provisioning-gringotts.yaml
 patches:
-  # Kyverno restrict-default-sa-controllers requires a non-default serviceAccountName
+  # Kyverno restrict-default-sa requires a non-default serviceAccountName
   # for controllers in ambient-mesh namespaces.
   - target:
       kind: Job

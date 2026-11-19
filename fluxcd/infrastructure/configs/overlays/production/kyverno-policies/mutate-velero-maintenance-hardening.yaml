@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
 metadata:
   name: mutate-velero-maintenance-hardening
   annotations:
@@ -20,51 +20,65 @@ metadata:
       1000, allowPrivilegeEscalation false, drop-all capabilities, seccomp RuntimeDefault. Without
       these, forcing runAsNonRoot fatals with "mkdir /udmrepo" then "mkdir /.cache: permission
       denied" (both verified on live cycles). readOnlyRootFilesystem is intentionally left off —
-      the cache is written at runtime. Add-only (+() anchors on
-      scalars; volume/mount merge by name); ADMISSION-TIME ONLY — maintenance Jobs are recreated
-      each cycle, so new pods are covered within one interval (no mutateExisting).
+      the cache is written at runtime. Add-only for the securityContext fields; the volume,
+      mount and HOME are set by name. ADMISSION-TIME ONLY — maintenance Jobs are recreated each
+      cycle, so new pods are covered within one interval (no mutateExisting).
 spec:
-  background: true
-  rules:
-    - name: harden-velero-maintenance-pods
-      match:
-        any:
-          - resources:
-              kinds:
-                - Pod
-              # CREATE-only: admission-time hardening. Firing on UPDATE re-injects the immutable
-              # securityContext/volume onto the maintenance pod's own finalizer-removal update →
-              # API rejects it → the failed kopia-maintain pods wedge Terminating with the
-              # batch.kubernetes.io/job-tracking finalizer forever. Scope out UPDATE.
-              operations: [CREATE]
-              selector:
-                matchExpressions:
-                  - key: velero.io/repo-name
-                    operator: Exists
-      mutate:
-        patchStrategicMerge:
-          spec:
-            securityContext:
-              +(runAsNonRoot): true
-              +(runAsUser): 1000
-              +(runAsGroup): 1000
-              +(fsGroup): 1000
-              +(seccompProfile):
-                type: RuntimeDefault
-            volumes:
-              - name: udmrepo
-                emptyDir:
-                  sizeLimit: 2Gi
-            containers:
-              - (name): "*"
-                securityContext:
-                  +(allowPrivilegeEscalation): false
-                  +(capabilities):
-                    drop:
-                      - ALL
-                env:
-                  - name: HOME
-                    value: /udmrepo
-                volumeMounts:
-                  - name: udmrepo
-                    mountPath: /udmrepo
+  failurePolicy: Fail
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        # CREATE-only: admission-time hardening. Firing on UPDATE re-injects the immutable
+        # securityContext/volume onto the maintenance pod's own finalizer-removal update →
+        # API rejects it → the failed kopia-maintain pods wedge Terminating with the
+        # batch.kubernetes.io/job-tracking finalizer forever. Scope out UPDATE.
+        operations: [CREATE]
+        resources: [pods]
+  matchConditions:
+    - name: velero-maintenance
+      expression: "has(object.metadata.labels) && 'velero.io/repo-name' in object.metadata.labels"
+  mutations:
+    - patchType: JSONPatch
+      jsonPatch:
+        expression: |-
+          // Pod securityContext: add each field only when it is unset
+          (has(object.spec.securityContext) ? [] : [JSONPatch{op: "add", path: "/spec/securityContext", value: {}}]) +
+          (object.spec.?securityContext.?runAsNonRoot.hasValue() ? [] :
+            [JSONPatch{op: "add", path: "/spec/securityContext/runAsNonRoot", value: true}]) +
+          (object.spec.?securityContext.?runAsUser.hasValue() ? [] :
+            [JSONPatch{op: "add", path: "/spec/securityContext/runAsUser", value: 1000}]) +
+          (object.spec.?securityContext.?runAsGroup.hasValue() ? [] :
+            [JSONPatch{op: "add", path: "/spec/securityContext/runAsGroup", value: 1000}]) +
+          (object.spec.?securityContext.?fsGroup.hasValue() ? [] :
+            [JSONPatch{op: "add", path: "/spec/securityContext/fsGroup", value: 1000}]) +
+          (object.spec.?securityContext.?seccompProfile.hasValue() ? [] :
+            [JSONPatch{op: "add", path: "/spec/securityContext/seccompProfile", value: {"type": "RuntimeDefault"}}]) +
+          // The writable emptyDir velero's kopia config and cache land in
+          (object.spec.?volumes.orValue([]).exists(v, v.name == 'udmrepo') ? [] :
+            has(object.spec.volumes)
+              ? [JSONPatch{op: "add", path: "/spec/volumes/0", value: {"name": dyn("udmrepo"), "emptyDir": dyn({"sizeLimit": "2Gi"})}}]
+              : [JSONPatch{op: "add", path: "/spec/volumes", value: [{"name": dyn("udmrepo"), "emptyDir": dyn({"sizeLimit": "2Gi"})}]}]) +
+          // Every container: no privilege escalation, drop ALL (each only when unset), HOME and the mount
+          lists.range(size(object.spec.containers)).map(i, cel.bind(c, object.spec.containers[i],
+            cel.bind(p, "/spec/containers/" + string(i),
+              (has(c.securityContext) ? [] : [JSONPatch{op: "add", path: p + "/securityContext", value: {}}]) +
+              (c.?securityContext.?allowPrivilegeEscalation.hasValue() ? [] :
+                [JSONPatch{op: "add", path: p + "/securityContext/allowPrivilegeEscalation", value: false}]) +
+              (c.?securityContext.?capabilities.hasValue() ? [] :
+                [JSONPatch{op: "add", path: p + "/securityContext/capabilities", value: {"drop": ["ALL"]}}]) +
+              cel.bind(env, c.?env.orValue([]),
+                cel.bind(home, lists.range(size(env)).filter(j, env[j].name == 'HOME'),
+                  size(home) > 0 ? [JSONPatch{op: "replace", path: p + "/env/" + string(home[0]), value: {"name": "HOME", "value": "/udmrepo"}}] :
+                  has(c.env) ? [JSONPatch{op: "add", path: p + "/env/0", value: {"name": "HOME", "value": "/udmrepo"}}] :
+                  [JSONPatch{op: "add", path: p + "/env", value: [{"name": "HOME", "value": "/udmrepo"}]}])) +
+              cel.bind(mounts, c.?volumeMounts.orValue([]),
+                cel.bind(m, lists.range(size(mounts)).filter(j, mounts[j].mountPath == '/udmrepo'),
+                  size(m) > 0 ? [JSONPatch{op: "replace", path: p + "/volumeMounts/" + string(m[0]) + "/name", value: "udmrepo"}] :
+                  has(c.volumeMounts) ? [JSONPatch{op: "add", path: p + "/volumeMounts/0", value: {"name": "udmrepo", "mountPath": "/udmrepo"}}] :
+                  [JSONPatch{op: "add", path: p + "/volumeMounts", value: [{"name": "udmrepo", "mountPath": "/udmrepo"}]}]))
+            ))).flatten()

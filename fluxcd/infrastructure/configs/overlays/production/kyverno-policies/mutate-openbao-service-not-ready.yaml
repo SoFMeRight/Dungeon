@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
 metadata:
   name: mutate-openbao-service-not-ready
   annotations:
@@ -13,18 +13,18 @@ metadata:
       on the next update. Safe on UPDATE: unlike a pod securityContext the field is mutable.
       failurePolicy: Ignore so a Kyverno webhook blip never blocks the openbao Service.
 spec:
-  background: false
   failurePolicy: Ignore
-  rules:
-    - name: openbao-service-publish-not-ready
-      match:
-        any:
-          - resources:
-              kinds: [Service]
-              operations: [CREATE, UPDATE]
-              namespaces: [optcp-secrets]
-              names: [openbao]
-      mutate:
-        patchStrategicMerge:
-          spec:
-            publishNotReadyAddresses: true
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [services]
+        resourceNames: [openbao]
+    namespaceSelector:
+      matchLabels:
+        kubernetes.io/metadata.name: optcp-secrets
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: "Object{spec: Object.spec{publishNotReadyAddresses: true}}"

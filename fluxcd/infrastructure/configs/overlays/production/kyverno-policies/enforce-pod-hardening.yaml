@@ -1,11 +1,8 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
-  name: enforce-pod-hardening
+  name: enforce-pod-hardening-seccomp
   annotations:
-    # Pod-only (match uses operations:[CREATE]); disable controller autogen so the rule names
-    # stay stable for PolicyException references.
-    pod-policies.kyverno.io/autogen-controllers: none
     policies.kyverno.io/title: Enforce Pod Hardening (graduated dimensions)
     policies.kyverno.io/description: >-
       The Enforce companion to audit-pod-hardening. Dimensions graduate here ONE AT A TIME, only
@@ -35,228 +32,263 @@ metadata:
           RO-root-clean workloads (stateless exporters, VictoriaMetrics, appflowy rust, uptime-kuma,
           searxng) are hardened. All five dimensions are now enforced.
 spec:
-  validationFailureAction: Enforce
-  background: false
-  rules:
-    - name: require-seccomp-runtime-default
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              operations: [CREATE]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude:
-        any:
-          - resources:
-              selector:
-                matchLabels:
-                  app.kubernetes.io/name: kyverno
-          - resources:
-              namespaceSelector:
-                matchLabels:
-                  policy.prplanit.com/enforce-hardening: "suspended"
-          - resources:
-              selector:
-                matchLabels:
-                  policy.prplanit.com/except-seccomp: "true"
-      validate:
-        message: "SEC-7: seccompProfile must be RuntimeDefault/Localhost (pod-level or every container). mutate-pod-hardening adds it automatically — this rejects an explicit Unconfined."
-        anyPattern:
-          - spec:
-              securityContext:
-                seccompProfile:
-                  type: "RuntimeDefault | Localhost"
-          - spec:
-              containers:
-                - securityContext:
-                    seccompProfile:
-                      type: "RuntimeDefault | Localhost"
-    - name: require-drop-all-capabilities
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              operations: [CREATE]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude:
-        any:
-          - resources:
-              selector:
-                matchLabels:
-                  app.kubernetes.io/name: kyverno
-          - resources:
-              namespaceSelector:
-                matchLabels:
-                  policy.prplanit.com/enforce-hardening: "suspended"
-          # App namespaces only: the infra namespaces host root CSI/backup/gateway/reflector
-          # daemonsets that legitimately hold caps — they stay audit-only.
-          - resources:
-              namespaces:
-                - optcp-operators-privileged
-                - optcp-fairy-bottle
-                - optcp-service-mesh
-                - optcp-operators-baseline
-                - optcp-telemetry
-                - optcp-ingress-internal
-                - kai-ingress-private
-          # Repo-manifest exceptions (self-documenting label on the workload).
-          - resources:
-              selector:
-                matchLabels:
-                  policy.prplanit.com/except-drop-caps: "true"
-          # Helm/operator-managed exceptions that can't carry a pod label (PolicyExceptions are
-          # disabled in this Kyverno). harbor + gitlab (Helm), bank-vaults (operator),
-          # neko-gateway (STUNner dataplane), nextcloud-collabora (Helm subchart, keeps
-          # MKNOD/SYS_CHROOT sandbox caps). (osticket/kimai mariadb agents now hardened via the
-          # MariaDB CR galera.agent.securityContext — no longer excepted.)
-          - resources:
-              names:
-                - "gitlab-praefect-db-init-*"
-                - "bank-vaults-operator-*"
-                - "openbao-*"
-                - "neko-gateway-*"
-                - "nextcloud-collabora-*"
-      validate:
-        message: "SEC-6: every container must drop ALL capabilities (add back only the minimum). Exempt a workload with the label policy.prplanit.com/except-drop-caps: \"true\"."
-        pattern:
-          spec:
-            containers:
-              - securityContext:
-                  capabilities:
-                    drop: ["ALL"]
-    - name: require-no-privilege-escalation
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              operations: [CREATE]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude:
-        any:
-          - resources:
-              selector:
-                matchLabels:
-                  app.kubernetes.io/name: kyverno
-          - resources:
-              namespaceSelector:
-                matchLabels:
-                  policy.prplanit.com/enforce-hardening: "suspended"
-          # App namespaces only: infra namespaces (root CSI/backup/gateway/reflector) stay audit-only.
-          - resources:
-              namespaces:
-                - optcp-operators-privileged
-                - optcp-fairy-bottle
-                - optcp-service-mesh
-                - optcp-operators-baseline
-                - optcp-telemetry
-                - optcp-ingress-internal
-                - kai-ingress-private
-          # Repo-manifest self-documenting exceptions.
-          - resources:
-              selector:
-                matchLabels:
-                  policy.prplanit.com/except-no-privesc: "true"
-      # Genuine escalators (sudo / file-cap binaries / privileged) + operator/Helm pods are
-      # exempted via the PolicyException exception-pod-hardening-no-privesc (optcp-policy-engine).
-      validate:
-        message: "SEC-5: allowPrivilegeEscalation must be false on every container. Exempt a genuine escalator via the no-privesc PolicyException or except-no-privesc label."
-        pattern:
-          spec:
-            containers:
-              - securityContext:
-                  allowPrivilegeEscalation: false
-    - name: require-run-as-non-root
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              operations: [CREATE]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude:
-        any:
-          - resources:
-              selector:
-                matchLabels:
-                  app.kubernetes.io/name: kyverno
-          - resources:
-              namespaceSelector:
-                matchLabels:
-                  policy.prplanit.com/enforce-hardening: "suspended"
-          # App namespaces only: infra namespaces (root CSI/backup/gateway/reflector) stay audit-only.
-          - resources:
-              namespaces:
-                - optcp-operators-privileged
-                - optcp-fairy-bottle
-                - optcp-service-mesh
-                - optcp-operators-baseline
-                - optcp-telemetry
-                - optcp-ingress-internal
-                - kai-ingress-private
-          # Repo-manifest self-documenting exceptions.
-          - resources:
-              selector:
-                matchLabels:
-                  policy.prplanit.com/except-non-root: "true"
-      # ~63 genuinely root-required workloads are exempted via the PolicyException
-      # exception-pod-hardening-non-root (optcp-policy-engine).
-      validate:
-        message: "SEC-1/2: runAsNonRoot must be true (pod-level or every container). Exempt a root-required workload via the non-root PolicyException or except-non-root label."
-        anyPattern:
-          - spec:
-              securityContext:
-                runAsNonRoot: true
-          - spec:
-              containers:
-                - securityContext:
-                    runAsNonRoot: true
-    - name: require-readonly-root-fs
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              operations: [CREATE]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude:
-        any:
-          - resources:
-              selector:
-                matchLabels:
-                  app.kubernetes.io/name: kyverno
-          - resources:
-              namespaceSelector:
-                matchLabels:
-                  policy.prplanit.com/enforce-hardening: "suspended"
-          # App namespaces only: infra namespaces (root CSI/backup/gateway/reflector) stay audit-only.
-          - resources:
-              namespaces:
-                - optcp-operators-privileged
-                - optcp-fairy-bottle
-                - optcp-service-mesh
-                - optcp-operators-baseline
-                - optcp-telemetry
-                - optcp-ingress-internal
-                - kai-ingress-private
-          # Repo-manifest self-documenting exceptions.
-          - resources:
-              selector:
-                matchLabels:
-                  policy.prplanit.com/except-ro-rootfs: "true"
-      # ~124 workloads that genuinely can't run a read-only rootfs are exempted via the
-      # PolicyException exception-pod-hardening-ro-rootfs (optcp-policy-engine).
-      validate:
-        message: "SEC-4: readOnlyRootFilesystem must be true on every container (mount emptyDir for writable paths). Exempt via the ro-rootfs PolicyException or except-ro-rootfs label."
-        pattern:
-          spec:
-            containers:
-              - securityContext:
-                  readOnlyRootFilesystem: true
+  validationActions: [Deny]
+  failurePolicy: Fail
+  evaluation:
+    background:
+      enabled: false
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/enforce-hardening
+          operator: NotIn
+          values: [suspended]
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+    # Repo-manifest exceptions (self-documenting label on the workload)
+    - name: not-excepted-by-label
+      expression: "object.metadata.?labels[?'policy.prplanit.com/except-seccomp'].orValue('') != 'true'"
+  validations:
+    - expression: >-
+        object.spec.?securityContext.?seccompProfile.?type.orValue('') in ['RuntimeDefault', 'Localhost'] ||
+          object.spec.containers.all(c, c.?securityContext.?seccompProfile.?type.orValue('') in ['RuntimeDefault', 'Localhost'])
+      message: "SEC-7: seccompProfile must be RuntimeDefault/Localhost (pod-level or every container). mutate-pod-hardening adds it automatically — this rejects an explicit Unconfined."
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: enforce-pod-hardening-drop-caps
+  annotations:
+    policies.kyverno.io/description: >-
+      The drop-caps dimension of enforce-pod-hardening; the full description is on
+      enforce-pod-hardening-seccomp.
+spec:
+  validationActions: [Deny]
+  failurePolicy: Fail
+  evaluation:
+    background:
+      enabled: false
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/enforce-hardening
+          operator: NotIn
+          values: [suspended]
+        # App namespaces only: the infra namespaces host root CSI/backup/gateway/reflector
+        # workloads that legitimately need this; they stay audit-only.
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - optcp-operators-privileged
+            - optcp-fairy-bottle
+            - optcp-service-mesh
+            - optcp-operators-baseline
+            - optcp-telemetry
+            - optcp-ingress-internal
+            - kai-ingress-private
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+    # Repo-manifest exceptions (self-documenting label on the workload)
+    - name: not-excepted-by-label
+      expression: "object.metadata.?labels[?'policy.prplanit.com/except-drop-caps'].orValue('') != 'true'"
+    # Helm/operator-managed exceptions that can't carry a pod label. harbor + gitlab (Helm),
+    # bank-vaults (operator), neko-gateway (STUNner dataplane), nextcloud-collabora (Helm
+    # subchart, keeps MKNOD/SYS_CHROOT sandbox caps).
+    - name: not-excepted-by-name
+      expression: |-
+        !cel.bind(name, object.metadata.?name.orValue('') != '' ? object.metadata.name : object.metadata.?generateName.orValue(''),
+          name.matches(
+            '^(gitlab-praefect-db-init-.*|bank-vaults-operator-.*|openbao-.*|neko-gateway-.*|' +
+            'nextcloud-collabora-.*)$'))
+  validations:
+    - expression: >-
+        object.spec.containers.all(c, c.?securityContext.?capabilities.?drop.hasValue() &&
+          c.securityContext.capabilities.drop.all(d, d == 'ALL'))
+      message: "SEC-6: every container must drop ALL capabilities (add back only the minimum). Exempt a workload with the label policy.prplanit.com/except-drop-caps: \"true\"."
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: enforce-pod-hardening-no-privesc
+  annotations:
+    policies.kyverno.io/description: >-
+      The no-privesc dimension of enforce-pod-hardening; the full description is on
+      enforce-pod-hardening-seccomp.
+spec:
+  validationActions: [Deny]
+  failurePolicy: Fail
+  evaluation:
+    background:
+      enabled: false
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/enforce-hardening
+          operator: NotIn
+          values: [suspended]
+        # App namespaces only: the infra namespaces host root CSI/backup/gateway/reflector
+        # workloads that legitimately need this; they stay audit-only.
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - optcp-operators-privileged
+            - optcp-fairy-bottle
+            - optcp-service-mesh
+            - optcp-operators-baseline
+            - optcp-telemetry
+            - optcp-ingress-internal
+            - kai-ingress-private
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+    # Repo-manifest exceptions (self-documenting label on the workload)
+    - name: not-excepted-by-label
+      expression: "object.metadata.?labels[?'policy.prplanit.com/except-no-privesc'].orValue('') != 'true'"
+  validations:
+    - expression: >-
+        object.spec.containers.all(c, c.?securityContext.?allowPrivilegeEscalation.orValue(true) == false)
+      message: "SEC-5: allowPrivilegeEscalation must be false on every container. Exempt a genuine escalator via the no-privesc PolicyException or except-no-privesc label."
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: enforce-pod-hardening-non-root
+  annotations:
+    policies.kyverno.io/description: >-
+      The non-root dimension of enforce-pod-hardening; the full description is on
+      enforce-pod-hardening-seccomp.
+spec:
+  validationActions: [Deny]
+  failurePolicy: Fail
+  evaluation:
+    background:
+      enabled: false
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/enforce-hardening
+          operator: NotIn
+          values: [suspended]
+        # App namespaces only: the infra namespaces host root CSI/backup/gateway/reflector
+        # workloads that legitimately need this; they stay audit-only.
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - optcp-operators-privileged
+            - optcp-fairy-bottle
+            - optcp-service-mesh
+            - optcp-operators-baseline
+            - optcp-telemetry
+            - optcp-ingress-internal
+            - kai-ingress-private
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+    # Repo-manifest exceptions (self-documenting label on the workload)
+    - name: not-excepted-by-label
+      expression: "object.metadata.?labels[?'policy.prplanit.com/except-non-root'].orValue('') != 'true'"
+  validations:
+    - expression: >-
+        object.spec.?securityContext.?runAsNonRoot.orValue(false) ||
+          object.spec.containers.all(c, c.?securityContext.?runAsNonRoot.orValue(false))
+      message: "SEC-1/2: runAsNonRoot must be true (pod-level or every container). Exempt a root-required workload via the non-root PolicyException or except-non-root label."
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: enforce-pod-hardening-ro-rootfs
+  annotations:
+    policies.kyverno.io/description: >-
+      The ro-rootfs dimension of enforce-pod-hardening; the full description is on
+      enforce-pod-hardening-seccomp.
+spec:
+  validationActions: [Deny]
+  failurePolicy: Fail
+  evaluation:
+    background:
+      enabled: false
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/enforce-hardening
+          operator: NotIn
+          values: [suspended]
+        # App namespaces only: the infra namespaces host root CSI/backup/gateway/reflector
+        # workloads that legitimately need this; they stay audit-only.
+        - key: kubernetes.io/metadata.name
+          operator: NotIn
+          values:
+            - optcp-operators-privileged
+            - optcp-fairy-bottle
+            - optcp-service-mesh
+            - optcp-operators-baseline
+            - optcp-telemetry
+            - optcp-ingress-internal
+            - kai-ingress-private
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+    # Repo-manifest exceptions (self-documenting label on the workload)
+    - name: not-excepted-by-label
+      expression: "object.metadata.?labels[?'policy.prplanit.com/except-ro-rootfs'].orValue('') != 'true'"
+  validations:
+    - expression: >-
+        object.spec.containers.all(c, c.?securityContext.?readOnlyRootFilesystem.orValue(false))
+      message: "SEC-4: readOnlyRootFilesystem must be true on every container (mount emptyDir for writable paths). Exempt via the ro-rootfs PolicyException or except-ro-rootfs label."

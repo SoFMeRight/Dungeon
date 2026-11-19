@@ -1,4 +1,4 @@
-apiVersion: kyverno.io/v2
+apiVersion: policies.kyverno.io/v1
 kind: PolicyException
 metadata:
   name: enforce-pod-hardening-ro-rootfs
@@ -12,185 +12,100 @@ metadata:
       The ~10 genuinely RO-root-clean workloads (stateless exporters, VictoriaMetrics, appflowy
       rust services, uptime-kuma, searxng) are hardened instead of listed here.
 spec:
-  exceptions:
-    - policyName: enforce-pod-hardening
-      ruleNames:
-        - require-readonly-root-fs
-  match:
-    any:
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-network-services]
-          names: ["adguard-*", "adguardhome-sync-*", "chrony-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-gossip-stone]
-          names: ["grafana-*", "nutify-*", "speedtest-tracker-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [prplanit-remote-access]
-          names: ["tactical-*"]
-      # bagisto/invoiceninja apache+root, frappe-suite (writes /home/frappe + sites).
-      - resources:
-          kinds: [Pod]
-          namespaces: [prplanit-billing]
-          names: ["invoiceninja-app-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [prplanit-commerce]
-          names: ["bagisto-demo-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [prplanit-staff-suite]
-          names: ["frappe-suite-*"]
-      # optcp-supply-chain — apt-cacher apache+root, gitlab and harbor Helm charts, LSIO netbootxyz.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-supply-chain]
-          names: ["apt-cacher-ng-*", "gitlab-*", "harbor-*", "netbootxyz-*"]
-      # optcp-ci-runners — renovate (containerbase installs toolchains at runtime).
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-ci-runners]
-          names: ["renovate-*"]
-      # prplanit-support — osticket apache+root.
-      - resources:
-          kinds: [Pod]
-          namespaces: [prplanit-support]
-          names: ["osticket-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [outspokekin-social]
-          names: ["linkstack-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-ids-ips]
-          names: ["crowdsec-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-siem]
-          names: ["wazuh-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [arbitorium-home]
-          names: ["home-assistant-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [arbitorium-nvr]
-          names: ["frigate-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [kai-personal]
-          names: ["ferdium-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-app-directory]
-          names: ["homarr-*", "organizr-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [kai-private]
-          names: ["photoprism-x-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-restricted]
-          names: ["plex-ms-x-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-media]
-          names: ["calibre-web-*", "plex-*", "romm-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-shooting-gallery]
-          names: ["ark-sa-*", "ark-se-*"]
-      # optcp-swift-sail-privileged — gluetun cohort + LSIO *arr + root-vendor.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-swift-sail-privileged]
-          names:
-            - "bazarr-*"
-            - "byparr-*"
-            - "downloadarrs-*"
-            - "jellyseerr-*"
-            - "neko-*"
-            - "overseerr-*"
-            - "pinchflat-*"
-            - "prowlarr-*"
-            - "pyload-ng-*"
-            - "sabnzbd-*"
-            - "thelounge-*"
-      # optcp-swift-sail — anirra (root-vendor).
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-swift-sail]
-          names: ["anirra-*"]
-      - resources:
-          kinds: [Pod]
-          namespaces: [arbitorium-restricted]
-          names: ["immich-*", "lubelogger-*", "monica-*", "paperless-webserver-*", "photoprism-*"]
-      # optcp-staff-suite — kimai apache + sidecars.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-staff-suite]
-          names: ["kimai-*"]
-      # optcp-delivery-bag — opstree redis/sentinel render their config at start; elasticsearch
-      # writes its keystore under the install dir.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-delivery-bag]
-          names: ["stalwart-redis-*", "stalwart-sentinel-*", "stalwart-elasticsearch-*"]
-      # optcp-cloud — appflowy web/admin (NOT cloud/ai, which are hardened), bookstack LSIO, linkwarden root, nextcloud apache + sidecars, penpot-frontend, shlink-db LSIO
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-cloud]
-          names: ["appflowy-admin-frontend-*", "appflowy-web-*", "bookstack-*", "linkwarden-*", "nextcloud-*", "penpot-frontend-*", "shlink-db-*"]
-      # optcp-ai — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp), open-webui
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-ai]
-          names: ["faster-whisper-*", "libretranslate-*", "open-webui-*", "stable-diffusion-webui-*"]
-      # optcp-tools — apache (hrconvert2), librespeed. searxng is hardened.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-tools]
-          names: ["hrconvert2-*", "librespeed-speedtest-*"]
-      # optcp-secrets — Vault operator and the OpenBao pods.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-secrets]
-          names:
-            - "bank-vaults-operator-*"
-            - "openbao-*"
-      # optcp-infrastructure-management — unifi-network-application LSIO and its MongoDB, semaphore.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-infrastructure-management]
-          names:
-            - "semaphore-*"
-            - "unifi-network-application-*"
-      # optcp-ipam — netbox-server LSIO.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-ipam]
-          names: ["netbox-server-*"]
-      # optcp-remote-access — netbird-dashboard supervisord.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-remote-access]
-          names:
-            - "netbird-dashboard-*"
-      # optcp-identity — zitadel's configuration Job and Redis.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-identity]
-          names: ["zitadel-*"]
-      # optcp-keyring — twofauth's entrypoint symlinks its database into the baked app tree.
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-keyring]
-          names: ["twofauth-*"]
-      # optcp-vpn — netbird-router (WireGuard subnet router needs a writable rootfs for the agent).
-      - resources:
-          kinds: [Pod]
-          namespaces: [optcp-vpn]
-          names:
-            - "netbird-router-*"
+  policyRefs:
+    - name: enforce-pod-hardening-ro-rootfs
+      kind: ValidatingPolicy
+  matchConditions:
+    - name: exempt-workloads
+      expression: |-
+        [object.metadata.?name.orValue('') != '' ? object.metadata.name : object.metadata.?generateName.orValue('')].exists(name,
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-network-services' &&
+            name.matches('^(adguard-.*|adguardhome-sync-.*|chrony-.*)$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-gossip-stone' &&
+            name.matches('^(grafana-.*|nutify-.*|speedtest-tracker-.*)$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'prplanit-remote-access' &&
+            name.matches('^tactical-.*$') ||
+          // bagisto/invoiceninja apache+root, frappe-suite (writes /home/frappe + sites).
+          object.kind == 'Pod' && object.metadata.namespace == 'prplanit-billing' &&
+            name.matches('^invoiceninja-app-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'prplanit-commerce' &&
+            name.matches('^bagisto-demo-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'prplanit-staff-suite' &&
+            name.matches('^frappe-suite-.*$') ||
+          // optcp-supply-chain — apt-cacher apache+root, gitlab and harbor Helm charts, LSIO netbootxyz.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-supply-chain' &&
+            name.matches('^(apt-cacher-ng-.*|gitlab-.*|harbor-.*|netbootxyz-.*)$') ||
+          // optcp-ci-runners — renovate (containerbase installs toolchains at runtime).
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-ci-runners' &&
+            name.matches('^renovate-.*$') ||
+          // prplanit-support — osticket apache+root.
+          object.kind == 'Pod' && object.metadata.namespace == 'prplanit-support' &&
+            name.matches('^osticket-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'outspokekin-social' &&
+            name.matches('^linkstack-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-ids-ips' &&
+            name.matches('^crowdsec-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-siem' &&
+            name.matches('^wazuh-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'arbitorium-home' &&
+            name.matches('^home-assistant-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'arbitorium-nvr' &&
+            name.matches('^frigate-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'kai-personal' &&
+            name.matches('^ferdium-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-app-directory' &&
+            name.matches('^(homarr-.*|organizr-.*)$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'kai-private' &&
+            name.matches('^photoprism-x-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-restricted' &&
+            name.matches('^plex-ms-x-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-media' &&
+            name.matches('^(calibre-web-.*|plex-.*|romm-.*)$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-shooting-gallery' &&
+            name.matches('^(ark-sa-.*|ark-se-.*)$') ||
+          // optcp-swift-sail-privileged — gluetun cohort + LSIO *arr + root-vendor.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-swift-sail-privileged' &&
+            name.matches('^(bazarr-.*|byparr-.*|downloadarrs-.*|jellyseerr-.*|neko-.*|overseerr-.*|pinchflat-.*|prowlarr-.*|pyload-ng-.*|sabnzbd-.*|thelounge-.*)$') ||
+          // optcp-swift-sail — anirra (root-vendor).
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-swift-sail' &&
+            name.matches('^anirra-.*$') ||
+          object.kind == 'Pod' && object.metadata.namespace == 'arbitorium-restricted' &&
+            name.matches('^(immich-.*|lubelogger-.*|monica-.*|paperless-webserver-.*|photoprism-.*)$') ||
+          // optcp-staff-suite — kimai apache + sidecars.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-staff-suite' &&
+            name.matches('^kimai-.*$') ||
+          // optcp-delivery-bag — opstree redis/sentinel render their config at start; elasticsearch
+          // writes its keystore under the install dir.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-delivery-bag' &&
+            name.matches('^(stalwart-redis-.*|stalwart-sentinel-.*|stalwart-elasticsearch-.*)$') ||
+          // optcp-cloud — appflowy web/admin (NOT cloud/ai, which are hardened), bookstack LSIO, linkwarden root, nextcloud apache + sidecars, penpot-frontend, shlink-db LSIO
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-cloud' &&
+            name.matches('^(appflowy-admin-frontend-.*|appflowy-web-.*|bookstack-.*|linkwarden-.*|nextcloud-.*|penpot-frontend-.*|shlink-db-.*)$') ||
+          // optcp-ai — GPU (faster-whisper/libretranslate/stable-diffusion write /tmp), open-webui
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-ai' &&
+            name.matches('^(faster-whisper-.*|libretranslate-.*|open-webui-.*|stable-diffusion-webui-.*)$') ||
+          // optcp-tools — apache (hrconvert2), librespeed. searxng is hardened.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-tools' &&
+            name.matches('^(hrconvert2-.*|librespeed-speedtest-.*)$') ||
+          // optcp-secrets — Vault operator and the OpenBao pods.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-secrets' &&
+            name.matches('^(bank-vaults-operator-.*|openbao-.*)$') ||
+          // optcp-infrastructure-management — unifi-network-application LSIO and its MongoDB, semaphore.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-infrastructure-management' &&
+            name.matches('^(semaphore-.*|unifi-network-application-.*)$') ||
+          // optcp-ipam — netbox-server LSIO.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-ipam' &&
+            name.matches('^netbox-server-.*$') ||
+          // optcp-remote-access — netbird-dashboard supervisord.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-remote-access' &&
+            name.matches('^netbird-dashboard-.*$') ||
+          // optcp-identity — zitadel's configuration Job and Redis.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-identity' &&
+            name.matches('^zitadel-.*$') ||
+          // optcp-keyring — twofauth's entrypoint symlinks its database into the baked app tree.
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-keyring' &&
+            name.matches('^twofauth-.*$') ||
+          // optcp-vpn — netbird-router (WireGuard subnet router needs a writable rootfs for the agent).
+          object.kind == 'Pod' && object.metadata.namespace == 'optcp-vpn' &&
+            name.matches('^netbird-router-.*$')
+        )

@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
 metadata:
   name: mutate-pod-hardening
   annotations:
@@ -7,43 +7,44 @@ metadata:
     policies.kyverno.io/description: >-
       Phase 2b of the workload-hardening rollout (see docs/container-security-audit.md and the
       audit-pod-hardening report). Injects pod-level seccompProfile RuntimeDefault on pods in
-      istio ambient (app) namespaces — the ONE dimension safe to apply fleet-wide. Uses a +()
-      anchor so it only ADDS when absent, never overrides. ADMISSION-TIME ONLY (no
-      mutateExisting): existing pods are untouched until they next roll, so the change lands
-      gradually and observably, never a fleet-wide restart. The other four dimensions
-      (non-root, no-privilege-escalation, drop-caps, read-only rootfs) are carried explicitly
-      per app in the overlays (Phase 3) — every decision visible and diff-reviewable in git,
-      rather than inferred from a runtime expression. Escape hatch: label a namespace
-      policy.prplanit.com/mutate-hardening=suspended.
+      istio ambient (app) namespaces — the ONE dimension safe to apply fleet-wide. Only ADDS when
+      absent, never overrides. ADMISSION-TIME ONLY (no mutateExisting): existing pods are
+      untouched until they next roll, so the change lands gradually and observably, never a
+      fleet-wide restart. The other four dimensions (non-root, no-privilege-escalation,
+      drop-caps, read-only rootfs) are carried explicitly per app in the overlays (Phase 3) —
+      every decision visible and diff-reviewable in git, rather than inferred from a runtime
+      expression. Escape hatch: label a namespace policy.prplanit.com/mutate-hardening=suspended.
 spec:
-  background: true
-  rules:
-    - name: add-seccomp-runtime-default
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              # CREATE-only: hardening is admission-time (see description). On UPDATE the
-              # securityContext fields are immutable anyway, and the mutation would re-inject
-              # them onto controller-issued pod updates (finalizer removal, status) → the API
-              # rejects the update → finalizers/GC wedge. Scope out UPDATE.
-              operations: [CREATE]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude:
-        any:
-          - resources:
-              selector:
-                matchLabels:
-                  app.kubernetes.io/name: kyverno
-          - resources:
-              namespaceSelector:
-                matchLabels:
-                  policy.prplanit.com/mutate-hardening: "suspended"
-      mutate:
-        patchStrategicMerge:
-          spec:
-            securityContext:
-              +(seccompProfile):
-                type: RuntimeDefault
+  failurePolicy: Fail
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        # CREATE-only: hardening is admission-time (see description). On UPDATE the
+        # securityContext fields are immutable anyway, and the mutation would re-inject
+        # them onto controller-issued pod updates (finalizer removal, status) → the API
+        # rejects the update → finalizers/GC wedge. Scope out UPDATE.
+        operations: [CREATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/mutate-hardening
+          operator: NotIn
+          values: [suspended]
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+    - name: seccomp-unset
+      expression: "!object.spec.?securityContext.?seccompProfile.hasValue()"
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: >-
+          Object{spec: Object.spec{securityContext: Object.spec.securityContext{
+            seccompProfile: Object.spec.securityContext.seccompProfile{type: "RuntimeDefault"}}}}

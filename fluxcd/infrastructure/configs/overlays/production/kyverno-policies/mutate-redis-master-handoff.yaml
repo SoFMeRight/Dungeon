@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
 metadata:
   name: mutate-redis-master-handoff
   annotations:
@@ -16,42 +16,48 @@ metadata:
       pods get the hook when they next roll. Assumes the operator naming <name>-redis replication,
       <name>-sentinel RedisSentinel, master group = replication name.
 spec:
-  background: true
-  rules:
-    - name: preStop-sentinel-failover
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              operations: [CREATE]
-              selector:
-                matchLabels:
-                  redis_setup_type: replication
-      preconditions:
-        all:
-          - key: "{{ request.object.metadata.labels.app || '' }}"
-            operator: Equals
-            value: "*-redis"
-      mutate:
-        patchStrategicMerge:
-          spec:
-            containers:
-              - name: "{{ request.object.metadata.labels.app }}"
-                lifecycle:
-                  preStop:
-                    exec:
-                      command:
-                        - /bin/sh
-                        - -c
-                        - |
-                          REDISCLI_AUTH="$(printf %s "$REDISCLI_AUTH" | tr -d '\r\n')"
-                          export REDISCLI_AUTH
-                          [ "$(redis-cli --no-auth-warning role | head -n1)" = master ] || exit 0
-                          sentinel="{{ regex_replace_all('-redis$', request.object.metadata.labels.app, '-sentinel-sentinel') }}"
-                          redis-cli --no-auth-warning -h "$sentinel" -p 26379 sentinel failover "{{ request.object.metadata.labels.app }}" || exit 0
-                          i=0
-                          while [ "$i" -lt 25 ]; do
-                            [ "$(redis-cli --no-auth-warning role | head -n1)" = slave ] && exit 0
-                            sleep 1
-                            i=$((i + 1))
-                          done
+  failurePolicy: Fail
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE]
+        resources: [pods]
+  matchConditions:
+    - name: redis-replication
+      expression: "object.metadata.?labels[?'redis_setup_type'].orValue('') == 'replication'"
+    - name: operator-naming
+      expression: "object.metadata.?labels[?'app'].orValue('').endsWith('-redis')"
+  variables:
+    - name: app
+      expression: "object.metadata.labels['app']"
+    # The container named after the replication: the redis server
+    - name: index
+      expression: "lists.range(size(object.spec.containers)).filter(i, object.spec.containers[i].name == variables.app)"
+    - name: sentinel
+      expression: "variables.app.substring(0, size(variables.app) - 6) + '-sentinel-sentinel'"
+  mutations:
+    - patchType: JSONPatch
+      jsonPatch:
+        expression: |-
+          size(variables.index) == 0 ? [] : cel.bind(p, "/spec/containers/" + string(variables.index[0]),
+            cel.bind(hook, {"exec": {"command": ["/bin/sh", "-c",
+              r'''REDISCLI_AUTH="$(printf %s "$REDISCLI_AUTH" | tr -d '\r\n')"
+          export REDISCLI_AUTH
+          [ "$(redis-cli --no-auth-warning role | head -n1)" = master ] || exit 0
+          sentinel="''' + variables.sentinel + r'''"
+          redis-cli --no-auth-warning -h "$sentinel" -p 26379 sentinel failover "''' + variables.app + r'''" || exit 0
+          i=0
+          while [ "$i" -lt 25 ]; do
+            [ "$(redis-cli --no-auth-warning role | head -n1)" = slave ] && exit 0
+            sleep 1
+            i=$((i + 1))
+          done
+          ''']}},
+              has(object.spec.containers[variables.index[0]].lifecycle)
+                ? [JSONPatch{op: "add", path: p + "/lifecycle/preStop", value: hook}]
+                : [JSONPatch{op: "add", path: p + "/lifecycle", value: {"preStop": hook}}]))

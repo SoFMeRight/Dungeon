@@ -1,52 +1,36 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
 metadata:
   name: mutate-redis-contract-labels
 spec:
-  background: true
-  rules:
-    # Inject contract labels on Redis replication StatefulSets.
-    # The Redis operator CRD does not support custom pod labels,
-    # so Kyverno is the only mechanism to add contract taxonomy labels.
-    - name: set-redis-replication-contract-labels
-      match:
-        any:
-          - resources:
-              kinds: [StatefulSet]
-              selector:
-                matchLabels:
-                  redis_setup_type: replication
-      preconditions:
-        all:
-          - key: "{{ request.object.metadata.labels.app || '' }}"
-            operator: NotEquals
-            value: ""
-      mutate:
-        patchStrategicMerge:
-          spec:
-            template:
-              metadata:
-                labels:
-                  policy.prplanit.com/access-class: redis
-                  policy.prplanit.com/metrics: "true"
-                  policy.prplanit.com/service-scope: "{{ request.object.metadata.namespace }}.{{ regex_replace_all('-redis$', request.object.metadata.labels.app, '') }}.redis"
-    - name: set-redis-sentinel-metrics-label
-      match:
-        any:
-          - resources:
-              kinds: [StatefulSet]
-              selector:
-                matchLabels:
-                  redis_setup_type: sentinel
-      preconditions:
-        all:
-          - key: "{{ request.object.metadata.labels.app || '' }}"
-            operator: NotEquals
-            value: ""
-      mutate:
-        patchStrategicMerge:
-          spec:
-            template:
-              metadata:
-                labels:
-                  policy.prplanit.com/metrics: "true"
+  failurePolicy: Fail
+  # Inject contract labels on Redis replication and sentinel StatefulSets.
+  # The Redis operator CRD does not support custom pod labels,
+  # so Kyverno is the only mechanism to add contract taxonomy labels.
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [apps]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [statefulsets]
+  matchConditions:
+    - name: redis
+      expression: "object.metadata.?labels[?'redis_setup_type'].orValue('') in ['replication', 'sentinel']"
+    - name: has-app-label
+      expression: "object.metadata.?labels[?'app'].orValue('') != ''"
+  variables:
+    - name: app
+      expression: "object.metadata.labels['app']"
+    - name: name
+      expression: "variables.app.endsWith('-redis') ? variables.app.substring(0, size(variables.app) - 6) : variables.app"
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        # Replication pods: access class, metrics and service scope. Sentinel pods: metrics only.
+        expression: >-
+          Object{spec: Object.spec{template: Object.spec.template{metadata: Object.spec.template.metadata{
+            labels: object.metadata.labels['redis_setup_type'] == 'replication' ? {
+              "policy.prplanit.com/access-class": "redis",
+              "policy.prplanit.com/metrics": "true",
+              "policy.prplanit.com/service-scope": object.metadata.namespace + "." + variables.name + ".redis"
+            } : {"policy.prplanit.com/metrics": "true"}}}}}

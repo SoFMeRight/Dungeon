@@ -1,7 +1,11 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+# AUDIT ONLY — reports violations in PolicyReports, blocks nothing. Do not flip to Deny here;
+# enforcement graduates per-dimension via enforce-pod-hardening-* once the audit exception list
+# is triaged. failurePolicy Ignore: a report-only policy must never be able to block admission
+# (with Fail it sat in the fail-closed webhook gating every pod in the cluster).
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
-  name: audit-pod-hardening
+  name: audit-pod-hardening-seccomp
   annotations:
     policies.kyverno.io/title: Audit Pod Hardening (SEC-*)
     policies.kyverno.io/description: >-
@@ -12,112 +16,191 @@ metadata:
       before graduating the tolerable dimensions to a mutate + Enforce policy. Scope follows
       the ambient label (auto-covers new app namespaces; excludes system namespaces).
 spec:
-  # AUDIT ONLY — reports violations in PolicyReports, blocks nothing. Do not flip to
-  # Enforce here; enforcement graduates per-dimension via a separate mutate/validate policy
-  # once the audit exception list is triaged.
-  validationFailureAction: Audit
-  # An audit policy must not be able to block admission. Without this it defaults
-  # to Fail, which put a report-only policy into the -fail webhook and made it one
-  # of the nine policies gating every pod in the cluster — able to cause an outage
-  # while being, by design, incapable of preventing one.
+  validationActions: [Audit]
   failurePolicy: Ignore
-  background: true
-  rules:
-    - name: require-run-as-non-root
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude: &excludeCommon
-        any:
-          - resources:
-              selector:
-                matchLabels:
-                  app.kubernetes.io/name: kyverno
-          - resources:
-              namespaceSelector:
-                matchLabels:
-                  policy.prplanit.com/audit-hardening: "suspended"
-      validate:
-        message: "SEC-1/2: runAsNonRoot should be true (pod-level or every container)."
-        anyPattern:
-          - spec:
-              securityContext:
-                runAsNonRoot: true
-          - spec:
-              containers:
-                - securityContext:
-                    runAsNonRoot: true
-    - name: disallow-privilege-escalation
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude: *excludeCommon
-      validate:
-        message: "SEC-5: allowPrivilegeEscalation must be false on every container."
-        pattern:
-          spec:
-            containers:
-              - securityContext:
-                  allowPrivilegeEscalation: false
-    - name: require-drop-all-capabilities
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude: *excludeCommon
-      validate:
-        message: "SEC-6: every container should drop ALL capabilities (add back the minimum)."
-        pattern:
-          spec:
-            containers:
-              - securityContext:
-                  capabilities:
-                    drop: ["ALL"]
-    - name: require-seccomp-runtime-default
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude: *excludeCommon
-      validate:
-        message: "SEC-7: seccompProfile RuntimeDefault/Localhost required (pod-level or every container)."
-        anyPattern:
-          - spec:
-              securityContext:
-                seccompProfile:
-                  type: "RuntimeDefault | Localhost"
-          - spec:
-              containers:
-                - securityContext:
-                    seccompProfile:
-                      type: "RuntimeDefault | Localhost"
-    - name: require-readonly-root-fs
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              namespaceSelector:
-                matchLabels:
-                  istio.io/dataplane-mode: ambient
-      exclude: *excludeCommon
-      validate:
-        message: "SEC-4: readOnlyRootFilesystem should be true on every container (mount emptyDir for writable paths)."
-        pattern:
-          spec:
-            containers:
-              - securityContext:
-                  readOnlyRootFilesystem: true
+  evaluation:
+    background:
+      enabled: true
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/audit-hardening
+          operator: NotIn
+          values: [suspended]
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+  validations:
+    - expression: >-
+        object.spec.?securityContext.?seccompProfile.?type.orValue('') in ['RuntimeDefault', 'Localhost'] ||
+          object.spec.containers.all(c, c.?securityContext.?seccompProfile.?type.orValue('') in ['RuntimeDefault', 'Localhost'])
+      message: "SEC-7: seccompProfile RuntimeDefault/Localhost required (pod-level or every container)."
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: audit-pod-hardening-drop-caps
+  annotations:
+    policies.kyverno.io/description: >-
+      The drop-caps dimension of audit-pod-hardening; the full description is on
+      audit-pod-hardening-seccomp.
+spec:
+  validationActions: [Audit]
+  failurePolicy: Ignore
+  evaluation:
+    background:
+      enabled: true
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/audit-hardening
+          operator: NotIn
+          values: [suspended]
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+  validations:
+    - expression: >-
+        object.spec.containers.all(c, c.?securityContext.?capabilities.?drop.hasValue() &&
+          c.securityContext.capabilities.drop.all(d, d == 'ALL'))
+      message: "SEC-6: every container should drop ALL capabilities (add back the minimum)."
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: audit-pod-hardening-no-privesc
+  annotations:
+    policies.kyverno.io/description: >-
+      The no-privesc dimension of audit-pod-hardening; the full description is on
+      audit-pod-hardening-seccomp.
+spec:
+  validationActions: [Audit]
+  failurePolicy: Ignore
+  evaluation:
+    background:
+      enabled: true
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/audit-hardening
+          operator: NotIn
+          values: [suspended]
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+  validations:
+    - expression: >-
+        object.spec.containers.all(c, c.?securityContext.?allowPrivilegeEscalation.orValue(true) == false)
+      message: "SEC-5: allowPrivilegeEscalation must be false on every container."
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: audit-pod-hardening-non-root
+  annotations:
+    policies.kyverno.io/description: >-
+      The non-root dimension of audit-pod-hardening; the full description is on
+      audit-pod-hardening-seccomp.
+spec:
+  validationActions: [Audit]
+  failurePolicy: Ignore
+  evaluation:
+    background:
+      enabled: true
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/audit-hardening
+          operator: NotIn
+          values: [suspended]
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+  validations:
+    - expression: >-
+        object.spec.?securityContext.?runAsNonRoot.orValue(false) ||
+          object.spec.containers.all(c, c.?securityContext.?runAsNonRoot.orValue(false))
+      message: "SEC-1/2: runAsNonRoot should be true (pod-level or every container)."
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: audit-pod-hardening-ro-rootfs
+  annotations:
+    policies.kyverno.io/description: >-
+      The ro-rootfs dimension of audit-pod-hardening; the full description is on
+      audit-pod-hardening-seccomp.
+spec:
+  validationActions: [Audit]
+  failurePolicy: Ignore
+  evaluation:
+    background:
+      enabled: true
+  # Pods only: no rules generated for their controllers
+  autogen:
+    podControllers:
+      controllers: []
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchLabels:
+        istio.io/dataplane-mode: ambient
+      matchExpressions:
+        - key: policy.prplanit.com/audit-hardening
+          operator: NotIn
+          values: [suspended]
+  matchConditions:
+    - name: not-kyverno
+      expression: "object.metadata.?labels[?'app.kubernetes.io/name'].orValue('') != 'kyverno'"
+  validations:
+    - expression: >-
+        object.spec.containers.all(c, c.?securityContext.?readOnlyRootFilesystem.orValue(false))
+      message: "SEC-4: readOnlyRootFilesystem should be true on every container (mount emptyDir for writable paths)."

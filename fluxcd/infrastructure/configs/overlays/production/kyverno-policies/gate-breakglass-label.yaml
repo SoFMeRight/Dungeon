@@ -1,259 +1,181 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+# Breakglass takes three gates: kube-system labelled zt.breakglass/active=true, the namespace
+# labelled zt.breakglass/namespace=true, and the pod labelled zt.breakglass/pod=true.
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: gate-breakglass-label
 spec:
-  validationFailureAction: Enforce
-  background: false
-  rules:
-    - name: gate-breakglass-pods
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              namespaces:
-                - optcp-ingress-internal
-                - kai-ingress-private
-                - optcp-monitoring-agents
-                - optcp-network-services
-                - optcp-restricted
-                - optcp-address-sync
-                - optcp-ai
-                - optcp-app-directory
-                - optcp-fairy-bottle
-                - optcp-operators-privileged
-                - optcp-operators-baseline
-                - optcp-gossip-stone
-                - optcp-remote-access
-                - optcp-service-mesh
-                - optcp-web
-                - optcp-web-analytics
-                - outspokekin-delivery-bag
-                - outspokekin-social
-                - outspokekin-web
-                - prplanit-web
-                - yesimvegan-web
-                - optcp-ids-ips
-                - optcp-siem
-                - kai-personal
-                - kai-private
-                - arbitorium-home
-                - arbitorium-nvr
-                - arbitorium-restricted
-                - optcp-ci-runners
-                - optcp-cloud
-                - optcp-delivery-bag
-                - optcp-identity
-                - optcp-keyring
-                - optcp-sibyl-system
-                - optcp-staff-suite
-                - optcp-supply-chain
-                - prplanit-billing
-                - prplanit-commerce
-                - prplanit-remote-access
-                - prplanit-staff-suite
-                - prplanit-support
-                - optcp-management-dashboards
-                - optcp-media
-                - optcp-secrets
-                - optcp-infrastructure-management
-                - optcp-ipam
-                - optcp-shooting-gallery
-                - optcp-swift-sail
-                - optcp-swift-sail-privileged
-                - optcp-tools
-                - optcp-edge-defenses
-      preconditions:
-        all:
-          - key: "{{ request.object.metadata.labels.\"zt.breakglass/pod\" || '' }}"
-            operator: Equals
-            value: "true"
-      context:
-        - name: clusterGate
-          apiCall:
-            urlPath: "/api/v1/namespaces/kube-system"
-            jmesPath: "metadata.labels.\"zt.breakglass/active\" || 'false'"
-        - name: namespaceGate
-          apiCall:
-            urlPath: "/api/v1/namespaces/{{request.namespace}}"
-            jmesPath: "metadata.labels.\"zt.breakglass/namespace\" || 'false'"
-      validate:
-        message: >-
-          Breakglass requires three gates: (1) kube-system labeled
-          zt.breakglass/active=true, (2) this namespace labeled
-          zt.breakglass/namespace=true, (3) pod labeled zt.breakglass/pod=true.
-          Gates 1 and/or 2 are not set.
-        deny:
-          conditions:
-            any:
-              - key: "{{ clusterGate }}"
-                operator: NotEquals
-                value: "true"
-              - key: "{{ namespaceGate }}"
-                operator: NotEquals
-                value: "true"
-    - name: gate-breakglass-controllers
-      match:
-        any:
-          - resources:
-              kinds: [Deployment, StatefulSet, DaemonSet, Job, CronJob]
-              namespaces:
-                - optcp-ingress-internal
-                - kai-ingress-private
-                - optcp-monitoring-agents
-                - optcp-network-services
-                - optcp-restricted
-                - optcp-address-sync
-                - optcp-ai
-                - optcp-app-directory
-                - optcp-fairy-bottle
-                - optcp-operators-privileged
-                - optcp-operators-baseline
-                - optcp-gossip-stone
-                - optcp-remote-access
-                - optcp-service-mesh
-                - optcp-web
-                - optcp-web-analytics
-                - outspokekin-delivery-bag
-                - outspokekin-social
-                - outspokekin-web
-                - prplanit-web
-                - yesimvegan-web
-                - optcp-ids-ips
-                - optcp-siem
-                - kai-personal
-                - kai-private
-                - arbitorium-home
-                - arbitorium-nvr
-                - arbitorium-restricted
-                - optcp-ci-runners
-                - optcp-cloud
-                - optcp-delivery-bag
-                - optcp-identity
-                - optcp-keyring
-                - optcp-sibyl-system
-                - optcp-staff-suite
-                - optcp-supply-chain
-                - prplanit-billing
-                - prplanit-commerce
-                - prplanit-remote-access
-                - prplanit-staff-suite
-                - prplanit-support
-                - optcp-management-dashboards
-                - optcp-media
-                - optcp-secrets
-                - optcp-infrastructure-management
-                - optcp-ipam
-                - optcp-shooting-gallery
-                - optcp-swift-sail
-                - optcp-swift-sail-privileged
-                - optcp-tools
-                - optcp-edge-defenses
-      preconditions:
-        all:
-          - key: "{{ request.object.spec.template.metadata.labels.\"zt.breakglass/pod\" || '' }}"
-            operator: Equals
-            value: "true"
-      context:
-        - name: clusterGate
-          apiCall:
-            urlPath: "/api/v1/namespaces/kube-system"
-            jmesPath: "metadata.labels.\"zt.breakglass/active\" || 'false'"
-        - name: namespaceGate
-          apiCall:
-            urlPath: "/api/v1/namespaces/{{request.namespace}}"
-            jmesPath: "metadata.labels.\"zt.breakglass/namespace\" || 'false'"
-      validate:
-        message: >-
-          Breakglass requires three gates: (1) kube-system labeled
-          zt.breakglass/active=true, (2) this namespace labeled
-          zt.breakglass/namespace=true, (3) controller pod template labeled
-          zt.breakglass/pod=true. Gates 1 and/or 2 are not set.
-        deny:
-          conditions:
-            any:
-              - key: "{{ clusterGate }}"
-                operator: NotEquals
-                value: "true"
-              - key: "{{ namespaceGate }}"
-                operator: NotEquals
-                value: "true"
-    - name: expire-stale-breakglass
-      match:
-        any:
-          - resources:
-              kinds: [Pod]
-              namespaces:
-                - optcp-ingress-internal
-                - kai-ingress-private
-                - optcp-monitoring-agents
-                - optcp-network-services
-                - optcp-restricted
-                - optcp-address-sync
-                - optcp-ai
-                - optcp-app-directory
-                - optcp-fairy-bottle
-                - optcp-operators-privileged
-                - optcp-operators-baseline
-                - optcp-gossip-stone
-                - optcp-remote-access
-                - optcp-service-mesh
-                - optcp-web
-                - optcp-web-analytics
-                - outspokekin-delivery-bag
-                - outspokekin-social
-                - outspokekin-web
-                - prplanit-web
-                - yesimvegan-web
-                - optcp-ids-ips
-                - optcp-siem
-                - kai-personal
-                - kai-private
-                - arbitorium-home
-                - arbitorium-nvr
-                - arbitorium-restricted
-                - optcp-ci-runners
-                - optcp-cloud
-                - optcp-delivery-bag
-                - optcp-identity
-                - optcp-keyring
-                - optcp-sibyl-system
-                - optcp-staff-suite
-                - optcp-supply-chain
-                - prplanit-billing
-                - prplanit-commerce
-                - prplanit-remote-access
-                - prplanit-staff-suite
-                - prplanit-support
-                - optcp-management-dashboards
-                - optcp-media
-                - optcp-secrets
-                - optcp-infrastructure-management
-                - optcp-ipam
-                - optcp-shooting-gallery
-                - optcp-swift-sail
-                - optcp-swift-sail-privileged
-                - optcp-tools
-                - optcp-edge-defenses
-              operations: [UPDATE]
-      preconditions:
-        all:
-          - key: "{{ request.object.metadata.labels.\"zt.breakglass/pod\" || '' }}"
-            operator: Equals
-            value: "true"
-      context:
-        - name: clusterGate
-          apiCall:
-            urlPath: "/api/v1/namespaces/kube-system"
-            jmesPath: "metadata.labels.\"zt.breakglass/active\" || 'false'"
-      validate:
-        message: >-
-          Stale breakglass: pod retains zt.breakglass/pod=true but cluster
-          emergency mode (kube-system zt.breakglass/active=true) is no longer
-          active. Remove the pod label or re-enable cluster emergency.
-        deny:
-          conditions:
-            any:
-              - key: "{{ clusterGate }}"
-                operator: NotEquals
-                value: "true"
+  validationActions: [Deny]
+  failurePolicy: Fail
+  evaluation:
+    background:
+      enabled: false
+  # The Pod rule also checks the pod templates of every pod controller
+  autogen:
+    podControllers:
+      controllers: [deployments, replicasets, replicationcontrollers, statefulsets, daemonsets, jobs, cronjobs]
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - optcp-ingress-internal
+            - kai-ingress-private
+            - optcp-monitoring-agents
+            - optcp-network-services
+            - optcp-restricted
+            - optcp-address-sync
+            - optcp-ai
+            - optcp-app-directory
+            - optcp-fairy-bottle
+            - optcp-operators-privileged
+            - optcp-operators-baseline
+            - optcp-gossip-stone
+            - optcp-remote-access
+            - optcp-service-mesh
+            - optcp-web
+            - optcp-web-analytics
+            - outspokekin-delivery-bag
+            - outspokekin-social
+            - outspokekin-web
+            - prplanit-web
+            - yesimvegan-web
+            - optcp-ids-ips
+            - optcp-siem
+            - kai-personal
+            - kai-private
+            - arbitorium-home
+            - arbitorium-nvr
+            - arbitorium-restricted
+            - optcp-ci-runners
+            - optcp-cloud
+            - optcp-delivery-bag
+            - optcp-identity
+            - optcp-keyring
+            - optcp-sibyl-system
+            - optcp-staff-suite
+            - optcp-supply-chain
+            - prplanit-billing
+            - prplanit-commerce
+            - prplanit-remote-access
+            - prplanit-staff-suite
+            - prplanit-support
+            - optcp-management-dashboards
+            - optcp-media
+            - optcp-secrets
+            - optcp-infrastructure-management
+            - optcp-ipam
+            - optcp-shooting-gallery
+            - optcp-swift-sail
+            - optcp-swift-sail-privileged
+            - optcp-tools
+            - optcp-edge-defenses
+  matchConditions:
+    - name: breakglass-pod
+      expression: "object.metadata.?labels[?'zt.breakglass/pod'].orValue('') == 'true'"
+  variables:
+    - name: clusterGate
+      expression: "resource.Get('v1', 'namespaces', '', 'kube-system').metadata.?labels[?'zt.breakglass/active'].orValue('false')"
+    - name: namespaceGate
+      expression: "resource.Get('v1', 'namespaces', '', request.namespace).metadata.?labels[?'zt.breakglass/namespace'].orValue('false')"
+  validations:
+    - expression: "variables.clusterGate == 'true' && variables.namespaceGate == 'true'"
+      message: >-
+        Breakglass requires three gates: (1) kube-system labeled zt.breakglass/active=true, (2)
+        this namespace labeled zt.breakglass/namespace=true, (3) pod labeled
+        zt.breakglass/pod=true. Gates 1 and/or 2 are not set.
+---
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: gate-breakglass-expire
+spec:
+  validationActions: [Deny]
+  failurePolicy: Fail
+  evaluation:
+    background:
+      enabled: false
+  # The Pod rule also checks the pod templates of every pod controller
+  autogen:
+    podControllers:
+      controllers: [deployments, replicasets, replicationcontrollers, statefulsets, daemonsets, jobs, cronjobs]
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [UPDATE]
+        resources: [pods]
+    namespaceSelector:
+      matchExpressions:
+        - key: kubernetes.io/metadata.name
+          operator: In
+          values:
+            - optcp-ingress-internal
+            - kai-ingress-private
+            - optcp-monitoring-agents
+            - optcp-network-services
+            - optcp-restricted
+            - optcp-address-sync
+            - optcp-ai
+            - optcp-app-directory
+            - optcp-fairy-bottle
+            - optcp-operators-privileged
+            - optcp-operators-baseline
+            - optcp-gossip-stone
+            - optcp-remote-access
+            - optcp-service-mesh
+            - optcp-web
+            - optcp-web-analytics
+            - outspokekin-delivery-bag
+            - outspokekin-social
+            - outspokekin-web
+            - prplanit-web
+            - yesimvegan-web
+            - optcp-ids-ips
+            - optcp-siem
+            - kai-personal
+            - kai-private
+            - arbitorium-home
+            - arbitorium-nvr
+            - arbitorium-restricted
+            - optcp-ci-runners
+            - optcp-cloud
+            - optcp-delivery-bag
+            - optcp-identity
+            - optcp-keyring
+            - optcp-sibyl-system
+            - optcp-staff-suite
+            - optcp-supply-chain
+            - prplanit-billing
+            - prplanit-commerce
+            - prplanit-remote-access
+            - prplanit-staff-suite
+            - prplanit-support
+            - optcp-management-dashboards
+            - optcp-media
+            - optcp-secrets
+            - optcp-infrastructure-management
+            - optcp-ipam
+            - optcp-shooting-gallery
+            - optcp-swift-sail
+            - optcp-swift-sail-privileged
+            - optcp-tools
+            - optcp-edge-defenses
+  matchConditions:
+    - name: breakglass-pod
+      expression: "object.metadata.?labels[?'zt.breakglass/pod'].orValue('') == 'true'"
+  variables:
+    - name: clusterGate
+      expression: "resource.Get('v1', 'namespaces', '', 'kube-system').metadata.?labels[?'zt.breakglass/active'].orValue('false')"
+  validations:
+    - expression: "variables.clusterGate == 'true'"
+      message: >-
+        Stale breakglass: pod retains zt.breakglass/pod=true but cluster emergency mode
+        (kube-system zt.breakglass/active=true) is no longer active. Remove the pod label or
+        re-enable cluster emergency.

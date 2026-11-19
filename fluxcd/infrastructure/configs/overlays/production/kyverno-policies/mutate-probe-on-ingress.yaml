@@ -1,57 +1,21 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: MutatingPolicy
 metadata:
   name: mutate-probe-on-ingress
 spec:
-  rules:
-    - name: add-probe-to-deployments
-      match:
-        any:
-          - resources:
-              kinds: ["Deployment"]
-      preconditions:
-        all:
-          - key: "{{ request.object.spec.template.metadata.labels.\"policy.prplanit.com/ingress\" || '' }}"
-            operator: Equals
-            value: "true"
-      mutate:
-        patchStrategicMerge:
-          spec:
-            template:
-              metadata:
-                labels:
-                  policy.prplanit.com/probe: "true"
-    - name: add-probe-to-statefulsets
-      match:
-        any:
-          - resources:
-              kinds: ["StatefulSet"]
-      preconditions:
-        all:
-          - key: "{{ request.object.spec.template.metadata.labels.\"policy.prplanit.com/ingress\" || '' }}"
-            operator: Equals
-            value: "true"
-      mutate:
-        patchStrategicMerge:
-          spec:
-            template:
-              metadata:
-                labels:
-                  policy.prplanit.com/probe: "true"
-    - name: add-probe-to-daemonsets
-      match:
-        any:
-          - resources:
-              kinds: ["DaemonSet"]
-      preconditions:
-        all:
-          - key: "{{ request.object.spec.template.metadata.labels.\"policy.prplanit.com/ingress\" || '' }}"
-            operator: Equals
-            value: "true"
-      mutate:
-        patchStrategicMerge:
-          spec:
-            template:
-              metadata:
-                labels:
-                  policy.prplanit.com/probe: "true"
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [apps]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [deployments, statefulsets, daemonsets]
+  matchConditions:
+    - name: ingress
+      expression: "object.spec.template.metadata.?labels[?'policy.prplanit.com/ingress'].orValue('') == 'true'"
+  mutations:
+    - patchType: ApplyConfiguration
+      applyConfiguration:
+        expression: >-
+          Object{spec: Object.spec{template: Object.spec.template{metadata: Object.spec.template.metadata{
+            labels: {"policy.prplanit.com/probe": "true"}}}}}

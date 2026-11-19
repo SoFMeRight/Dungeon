@@ -60,6 +60,10 @@ rules:
     resources: ["clusterpolicies", "policies", "policyexceptions"]
     verbs: ["get", "list"]
 
+  - apiGroups: ["policies.kyverno.io"]
+    resources: ["validatingpolicies", "mutatingpolicies", "generatingpolicies", "policyexceptions"]
+    verbs: ["get", "list"]
+
   - apiGroups: ["kustomize.toolkit.fluxcd.io"]
     resources: ["kustomizations"]
     verbs: ["get", "list", "watch"]
