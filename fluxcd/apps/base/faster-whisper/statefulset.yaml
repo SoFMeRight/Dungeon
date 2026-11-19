@@ -17,7 +17,7 @@ spec:
       serviceAccountName: faster-whisper
       containers:
         - name: faster-whisper
-          image: docker.io/linuxserver/faster-whisper:gpu-v3.8.1-ls73@sha256:dc273893de51dae79fb0af4bf4a2332bea274a376ce1b3374ead890e48c6dbdc
+          image: docker.io/linuxserver/faster-whisper:gpu-v3.9.0-ls76@sha256:d7b8d3a56f4d5e471ce646f9ba731feffae32e94567396001f2800db67c50601
           # LSIO/s6-overlay (PUID/PGID), root-required. Partial hardening: drop ALL + s6's
           # file-perm/setuid caps + seccomp. GPU is runtime/cgroup-based (caps don't affect it).
           securityContext:
