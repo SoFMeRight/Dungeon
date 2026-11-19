@@ -23,7 +23,6 @@ resources:
   - loki-ingest  # Loki gateway basic auth for external ingest
   - vminsert-ingest  # VictoriaMetrics vminsert basic auth for external ingest
   - alloy-ingest  # Alloy vminsert auth credentials (optcp-telemetry namespace)
-  - prometheus  # Prometheus S3 credentials for metric storage
   - prometheus-exporter-eaton-ups  # Eaton UPS exporter credentials
   - prometheus-exporter-pve  # Proxmox VE exporter credentials
   - gateway-api  # Gateway API resources (implemented by Istio) with TLS certificates
