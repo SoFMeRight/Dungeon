@@ -58,6 +58,13 @@ spec:
         create: false
         name: kube-system
 
+    # Secrets for TLS-intercepting network policies live in kube-system, like BGP's, so the
+    # chart creates no namespace of its own
+    tls:
+      secretsNamespace:
+        create: false
+        name: kube-system
+
     loadBalancer:
       mode: snat
       serviceTopology: true
