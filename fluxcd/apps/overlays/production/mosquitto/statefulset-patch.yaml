@@ -11,7 +11,7 @@ spec:
         fsGroup: 1883
       initContainers:
         - name: init-passwd
-          image: docker.io/eclipse-mosquitto:2.1.2-alpine
+          image: docker.io/eclipse-mosquitto:2.1.4-alpine
           resources:
             requests:
               cpu: 10m
@@ -21,7 +21,7 @@ spec:
               memory: 64Mi
       containers:
         - name: mosquitto
-          image: docker.io/eclipse-mosquitto:2.1.2-alpine
+          image: docker.io/eclipse-mosquitto:2.1.4-alpine
           resources:
             requests:
               cpu: 2m
