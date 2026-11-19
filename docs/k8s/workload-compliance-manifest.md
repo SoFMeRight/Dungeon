@@ -161,7 +161,7 @@ Cilium L3/L4 egress default-deny is now enforced in **all 16 app namespaces**: `
 
 | ID | Requirement | Target | Status |
 |----|-------------|--------|--------|
-| PSA-1 | Namespace PSA `enforce` label | `baseline` (min) | ✅ `enforce=baseline` on 15 namespaces, `enforce=privileged` (deliberate exemption) on 7, `warn=restricted` on flux-system |
+| PSA-1 | Namespace PSA `enforce` label | `baseline` (min) | ✅ `enforce=baseline` on 15 namespaces, `enforce=privileged` (deliberate exemption) on 7, `warn=restricted` on optcp-gitops |
 | PSA-2 | PSA audit mode | set | ✅ `audit=baseline` on most namespaces |
 | PSA-3 | PSA warn mode | set | ✅ `warn=baseline` on most namespaces |
 
@@ -647,7 +647,7 @@ root-required vendor images) or external no-pod services. Counts are per deploye
 | compass | None | baseline | ? | DNS services may need NET_BIND_SERVICE |
 | delivery-bag | None | baseline | ? | Mail services complex |
 | fairy-bottle | None | restricted | ? | Backup agents |
-| flux-system | None | restricted | ? | GitOps controllers |
+| optcp-gitops | None | restricted | ? | GitOps controllers |
 | optcp-operators-privileged | None | baseline | ? | Storage services |
 | gossip-stone | None | restricted | ? | Monitoring |
 | hookshot | None | baseline | ? | Remote access services |

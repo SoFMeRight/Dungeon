@@ -13,7 +13,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: istio
-        namespace: flux-system
+        namespace: optcp-gitops
       interval: 12h
   install:
     createNamespace: true

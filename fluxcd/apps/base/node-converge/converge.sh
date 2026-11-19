@@ -17,7 +17,7 @@ work=/tmp/dungeon
 inventory=ansible/inventory
 
 # The revision Flux applied, so hosts converge from the same commit the cluster runs.
-rev=$(kubectl -n flux-system get gitrepository flux-system -o jsonpath='{.status.artifact.revision}')
+rev=$(kubectl -n optcp-gitops get gitrepository flux-system -o jsonpath='{.status.artifact.revision}')
 sha=${rev##*:}
 git init -q "$work"
 git -C "$work" fetch -q --depth 1 "$REPO_URL" "$sha"

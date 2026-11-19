@@ -2,7 +2,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: rook-release
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   interval: 12h
   url: https://charts.rook.io/release

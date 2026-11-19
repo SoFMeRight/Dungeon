@@ -2,7 +2,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: namespaces
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   interval: 10m
   retryInterval: 1m

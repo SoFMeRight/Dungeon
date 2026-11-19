@@ -9,7 +9,7 @@ spec:
     In ambient mode, ztunnel intercepts via iptables before Cilium BPF,
     so Cilium sees original source pod identity on HBONE, not ztunnel.
     Source restriction to ambient namespaces blocks non-ambient pods
-    (flux-system, kube-system, etc.) from reaching the HBONE listener.
+    (optcp-gitops, kube-system, etc.) from reaching the HBONE listener.
     Istio owns identity authorization inside the tunnel via SPIFFE/mTLS.
     Non-mesh paths (LB ingress, monitoring, DNS) handled by other CCNPs.
   enableDefaultDeny:

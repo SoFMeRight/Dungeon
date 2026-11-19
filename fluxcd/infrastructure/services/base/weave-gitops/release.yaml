@@ -15,7 +15,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: weave-gitops
-        namespace: flux-system
+        namespace: optcp-gitops
   interval: 1h0m0s
   values:
     fullnameOverride: "weave-gitops"

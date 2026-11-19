@@ -20,7 +20,7 @@ spec:
   chartRef:
     kind: HelmChart
     name: ztunnel
-    namespace: flux-system
+    namespace: optcp-gitops
   values:
     # ztunnel is the core of Ambient mode
     # Handles L4 mTLS between pods

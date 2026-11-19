@@ -26,7 +26,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: redis-operator
-        namespace: flux-system
+        namespace: optcp-gitops
   values:
     redisOperator:
       replicas: 2

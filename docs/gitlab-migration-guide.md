@@ -66,8 +66,8 @@ git commit -m "Upgrade GitLab to v18.2.8 (chart 9.2.8) for migration compatibili
 git push
 
 # Reconcile FluxCD to trigger upgrade
-flux reconcile source git flux-system -n flux-system
-flux reconcile kustomization infra-controllers -n flux-system
+flux reconcile source git flux-system -n optcp-gitops
+flux reconcile kustomization infra-controllers -n optcp-gitops
 ```
 
 ### Step 1.4: Monitor Upgrade Progress

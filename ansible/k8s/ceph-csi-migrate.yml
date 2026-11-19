@@ -85,7 +85,7 @@
       block:
         - name: Wait until the Flux source carries {{ expect_commit }}
           ansible.builtin.command: >-
-            kubectl get gitrepository flux-system -n flux-system -o jsonpath={.status.artifact.revision}
+            kubectl get gitrepository flux-system -n optcp-gitops -o jsonpath={.status.artifact.revision}
           register: src_rev
           changed_when: false
           until: expect_commit in src_rev.stdout

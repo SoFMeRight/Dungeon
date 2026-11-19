@@ -407,7 +407,7 @@
         api_version: kustomize.toolkit.fluxcd.io/v1
         kind: Kustomization
         name: apps
-        namespace: flux-system
+        namespace: optcp-gitops
         definition:
           spec:
             suspend: true
@@ -741,7 +741,7 @@
         api_version: kustomize.toolkit.fluxcd.io/v1
         kind: Kustomization
         name: apps
-        namespace: flux-system
+        namespace: optcp-gitops
         definition:
           spec:
             suspend: false
@@ -752,7 +752,7 @@
         api_version: source.toolkit.fluxcd.io/v1
         kind: GitRepository
         name: flux-system
-        namespace: flux-system
+        namespace: optcp-gitops
         definition:
           metadata:
             annotations:
@@ -764,7 +764,7 @@
         api_version: kustomize.toolkit.fluxcd.io/v1
         kind: Kustomization
         name: apps
-        namespace: flux-system
+        namespace: optcp-gitops
         definition:
           metadata:
             annotations:
@@ -775,7 +775,7 @@
         api_version: kustomize.toolkit.fluxcd.io/v1
         kind: Kustomization
         name: apps
-        namespace: flux-system
+        namespace: optcp-gitops
       register: flux_ks_status
       until: >
         flux_ks_status.resources | length > 0 and

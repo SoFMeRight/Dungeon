@@ -18,4 +18,4 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: cloudnative-pg
-        namespace: flux-system
+        namespace: optcp-gitops

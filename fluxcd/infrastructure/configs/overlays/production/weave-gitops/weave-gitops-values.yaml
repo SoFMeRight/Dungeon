@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: weave-gitops-values
-  namespace: flux-system
+  namespace: optcp-gitops
 data:
   values.yaml: |
     # HomeLabHD weave-gitops fork, replacing the upstream wego-app image. Finalizes the

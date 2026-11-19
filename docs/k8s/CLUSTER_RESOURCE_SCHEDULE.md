@@ -168,7 +168,7 @@
 | **compass** | AdGuard (2), DNS/NTP, Speed Tests | ~800m | Keep (networking) |
 | **delivery-bag** | Stalwart | ~500m | Keep (mail/notifications) |
 | **optcp-fairy-bottle** | Velero, Node Agents | ~600m | Keep (backups) |
-| **flux-system** | Flux Controllers | ~350m | Keep (GitOps) |
+| **optcp-gitops** | Flux Controllers | ~350m | Keep (GitOps) |
 | **optcp-ingress-internal** | Phloem Gateway (Istio) | ~300m | Keep (internal gateway) |
 | **kokiri-forest** | Linkstack | ~400m | Keep (public apps) |
 | **king-of-red-lions** | Traefik, Istio | ~500m | Keep (routing) |

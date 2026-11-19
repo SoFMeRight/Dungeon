@@ -1140,7 +1140,7 @@
 | Cilium Envoy | kube-system | ✅ |
 | Cilium Operator | kube-system | ✅ |
 | Coredns | kube-system | ✅ |
-| Flux System (4 components) | flux-system | ✅ |
+| Flux System (4 components) | optcp-gitops | ✅ |
 | Hubble Relay | kube-system | ✅ |
 | Kube Vip | kube-system | ✅ |
 | Metrics Server | kube-system | ✅ |
@@ -1183,7 +1183,7 @@
 - Replicas: 2/2
 
 **Flux System** — Deployment — v2.10.0
-- Namespace: flux-system
+- Namespace: optcp-gitops
 - Replicas: 4/4
 
 **Hubble Relay** — Deployment — 

@@ -2,7 +2,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: jetstack
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   interval: 1h
   url: https://charts.jetstack.io

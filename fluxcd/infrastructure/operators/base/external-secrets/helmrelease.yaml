@@ -15,7 +15,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: external-secrets
-        namespace: flux-system
+        namespace: optcp-gitops
   values:
     fullnameOverride: "external-secrets"
     installCRDs: true

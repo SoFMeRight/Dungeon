@@ -379,7 +379,7 @@ patches:
 ```yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: flux-system
+namespace: optcp-gitops
 resources:
   - ../../../base/ceph-csi
 patches:
@@ -802,7 +802,7 @@ Should return no results if migration is complete.
 #### Step 6.3: Check FluxCD reconciliation
 ```bash
 # Force reconcile to pick up new structure
-flux reconcile source git flux-system
+flux reconcile source git flux-system -n optcp-gitops
 flux reconcile kustomization infrastructure-controllers
 flux reconcile kustomization infrastructure-configs
 ```
@@ -832,7 +832,7 @@ git revert <commit-range>
 git push
 
 # Force FluxCD to reconcile
-flux reconcile source git flux-system
+flux reconcile source git flux-system -n optcp-gitops
 ```
 
 ### Manual Rollback Steps

@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: csi-driver-smb
-        namespace: flux-system
+        namespace: optcp-gitops
   interval: 15m
   install:
     createNamespace: true

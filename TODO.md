@@ -172,7 +172,7 @@ Enable static pod IP for CrowdSec cloudflare-bouncer to prevent duplicate LAPI r
 #### IPv4 Pod CIDR: 192.168.144.0/20 (4096 IPs total)
 
 **Tier 0: Core Infrastructure** - `192.168.144.0/22` (1024 IPs)
-- Namespaces: `kube-system`, `flux-system`, `optcp-operators-privileged`
+- Namespaces: `kube-system`, `optcp-gitops`, `optcp-operators-privileged`
 - Purpose: K8s control plane, storage operators, CSI drivers, core CNI
 
 **Tier 1: Security & Administrative** - `192.168.148.0/23` (512 IPs)

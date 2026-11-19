@@ -33,4 +33,4 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: mariadb-operator
-        namespace: flux-system
+        namespace: optcp-gitops

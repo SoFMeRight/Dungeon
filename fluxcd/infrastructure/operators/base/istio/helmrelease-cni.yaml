@@ -24,7 +24,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: istio
-        namespace: flux-system
+        namespace: optcp-gitops
       interval: 12h
   values:
     hub: docker.io/istio
@@ -73,4 +73,4 @@ spec:
         - kube-system
         - kube-public
         - kube-node-lease
-        - flux-system
+        - optcp-gitops

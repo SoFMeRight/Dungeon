@@ -35,7 +35,7 @@
     - Base resources: NO namespace metadata anywhere
     - Overlay kustomization.yaml: `namespace: <target-namespace>` field at kustomization level
     - Kustomize automatically adds namespace to all resources
-    - Critical for infrastructure: Avoids conflicts between FluxCD namespace (flux-system) and target deployment namespace (kube-system, etc.)
+    - Critical for infrastructure: Avoids conflicts between FluxCD namespace (optcp-gitops) and target deployment namespace (kube-system, etc.)
   - `fluxcd/infrastructure/configs` should only provide secrets and configuration values
   - `fluxcd/infrastructure/namespaces` manages all Kubernetes namespaces - ALL namespaces MUST be deployed via this path only
     - Which namespace a workload belongs in, and why, is the namespace plan in the SOPs (`information-technology/specialization/platform-engineering/namespaces.md`, published at https://sops.optcp.com/information-technology/specialization/platform-engineering/namespaces). Never keep a copy of it here.

@@ -2,7 +2,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: bank-vaults
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   interval: 60m
   type: oci

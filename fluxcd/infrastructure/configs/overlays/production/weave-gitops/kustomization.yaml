@@ -14,7 +14,7 @@ patches:
     patch: |-
       - op: replace
         path: /metadata/namespace
-        value: flux-system
+        value: optcp-gitops
   - target:
       kind: Secret
       name: weave-gitops-admin-secret

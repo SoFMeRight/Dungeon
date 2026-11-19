@@ -48,7 +48,7 @@
   # applied to the last list.
   loop: >-
     {{ ((marked.stdout_lines | select('match', '^HelmRelease/') | list)
-        + (marked.stdout_lines | select('match', '^Kustomization/') | reject('equalto', 'Kustomization/flux-system/flux-system') | list)
-        + (marked.stdout_lines | select('equalto', 'Kustomization/flux-system/flux-system') | list))
+        + (marked.stdout_lines | select('match', '^Kustomization/') | reject('equalto', 'Kustomization/optcp-gitops/flux-system') | list)
+        + (marked.stdout_lines | select('equalto', 'Kustomization/optcp-gitops/flux-system') | list))
        | reject('in', keep) | list }}
   register: resumed_items

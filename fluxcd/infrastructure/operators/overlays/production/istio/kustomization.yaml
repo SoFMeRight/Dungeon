@@ -5,11 +5,11 @@ resources:
   - helmrelease-ztunnel-control-plane.yaml
   - externalsecret-cacerts.yaml
 patches:
-  # Set namespace for HelmReleases to flux-system
+  # Set namespace for HelmReleases to optcp-gitops
   - patch: |-
       - op: add
         path: /metadata/namespace
-        value: flux-system
+        value: optcp-gitops
     target:
       kind: HelmRelease
   # Add webhook label to istiod pods for ccnp-allow-kube-apiserver-webhooks

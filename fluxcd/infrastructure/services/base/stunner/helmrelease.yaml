@@ -15,6 +15,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: stunner
-        namespace: flux-system
+        namespace: optcp-gitops
   values:
     fullnameOverride: "stunner"

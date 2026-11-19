@@ -18,7 +18,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: mariadb-operator
-        namespace: flux-system
+        namespace: optcp-gitops
   values:
     image:
       repository: ghcr.io/mariadb-operator/mariadb-operator

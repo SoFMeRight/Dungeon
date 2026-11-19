@@ -3,7 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmChart
 metadata:
   name: ztunnel
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   chart: ztunnel
   version: "1.32.0"

@@ -2,7 +2,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: mariadb-operator
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   interval: 1h
   # helm.mariadb.com is deprecated (26.x); charts now ship as OCI artifacts on ghcr.io.

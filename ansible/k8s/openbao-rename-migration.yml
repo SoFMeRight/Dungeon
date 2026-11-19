@@ -410,7 +410,7 @@
         api_version: kustomize.toolkit.fluxcd.io/v1
         kind: Kustomization
         name: "{{ item }}"
-        namespace: flux-system
+        namespace: optcp-gitops
         definition: {spec: {suspend: true}}
       loop: [infra-configs, infra-operators]
       when: not (rehearse | bool) and not (rollback | bool)
@@ -763,7 +763,7 @@
         api_version: kustomize.toolkit.fluxcd.io/v1
         kind: Kustomization
         name: "{{ item }}"
-        namespace: flux-system
+        namespace: optcp-gitops
         definition:
           metadata: {annotations: {"reconcile.fluxcd.io/requestedAt": "{{ ansible_date_time.iso8601 }}"}}
           spec: {suspend: false}

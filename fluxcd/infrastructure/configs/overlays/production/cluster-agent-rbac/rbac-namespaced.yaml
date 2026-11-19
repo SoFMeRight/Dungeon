@@ -1,6 +1,6 @@
 # Dangerous verbs -- exec, pod delete, job create/delete -- are granted ONLY in
 # the namespaces the agent actually operates in, never cluster-wide. Cluster-wide
-# exec would reach flux-system and the operator pods, and an exec'd pod's
+# exec would reach optcp-gitops and the operator pods, and an exec'd pod's
 # ServiceAccount token is an escalation path to whatever that SA can do (up to
 # cluster-admin). Scoping per namespace cuts that path and makes the "no secrets,
 # no RBAC edit, no node/namespace mutation" delta from the admin cert real.

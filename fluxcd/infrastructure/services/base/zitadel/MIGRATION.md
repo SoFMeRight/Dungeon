@@ -46,9 +46,9 @@ git commit -m "Add Zitadel deployment"
 git push
 
 # Apply via Flux
-flux reconcile source git flux-system -n flux-system
-flux reconcile kustomization infra-configs -n flux-system
-flux reconcile kustomization infra-controllers -n flux-system
+flux reconcile source git flux-system -n optcp-gitops
+flux reconcile kustomization infra-configs -n optcp-gitops
+flux reconcile kustomization infra-controllers -n optcp-gitops
 ```
 
 ### 4. Wait for PostgreSQL

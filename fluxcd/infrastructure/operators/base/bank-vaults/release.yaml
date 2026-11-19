@@ -13,7 +13,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: bank-vaults
-        namespace: flux-system
+        namespace: optcp-gitops
   values:
     fullnameOverride: "bank-vaults-operator"
     image:

@@ -9,7 +9,7 @@ spec:
   chartRef:
     kind: HelmChart
     name: alloy
-    namespace: flux-system
+    namespace: optcp-gitops
   values:
     fullnameOverride: "alloy"
 

@@ -25,7 +25,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: gitlab
-        namespace: flux-system
+        namespace: optcp-gitops
   values:
     global:
       edition: ce  # Community Edition

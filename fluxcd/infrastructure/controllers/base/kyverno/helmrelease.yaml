@@ -15,7 +15,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: kyverno
-        namespace: flux-system
+        namespace: optcp-gitops
   values:
     fullnameOverride: kyverno
     # Uninstalling the release (a namespace move does) must never delete the CRDs, or every

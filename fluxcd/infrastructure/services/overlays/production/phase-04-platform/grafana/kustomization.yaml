@@ -36,14 +36,14 @@ patches:
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: flux-system
+        value: optcp-gitops
   - target:
       kind: HelmRepository
       name: grafana
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: flux-system
+        value: optcp-gitops
   - target:
       kind: Cluster
       name: grafana-postgres

@@ -29,7 +29,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: rook-release
-        namespace: flux-system
+        namespace: optcp-gitops
       interval: 12h
   values:
     fullnameOverride: "rook-ceph-operator"

@@ -6,22 +6,22 @@ apiVersion: v1
 kind: Namespace
 metadata:
   labels:
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
     pod-security.kubernetes.io/warn: restricted
     pod-security.kubernetes.io/warn-version: latest
-  name: flux-system
+  name: optcp-gitops
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   labels:
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: allow-egress
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   egress:
   - {}
@@ -37,11 +37,11 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   labels:
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: allow-scraping
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   ingress:
   - from:
@@ -57,11 +57,11 @@ apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   labels:
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: allow-webhooks
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   ingress:
   - from:
@@ -79,11 +79,11 @@ apiVersion: v1
 kind: ResourceQuota
 metadata:
   labels:
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
-  name: critical-pods-flux-system
-  namespace: flux-system
+  name: critical-pods-optcp-gitops
+  namespace: optcp-gitops
 spec:
   hard:
     pods: "1000"
@@ -99,10 +99,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
-  name: crd-controller-flux-system
+  name: crd-controller-optcp-gitops
 rules:
 - apiGroups:
   - source.toolkit.fluxcd.io
@@ -205,12 +205,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
-  name: flux-edit-flux-system
+  name: flux-edit-optcp-gitops
 rules:
 - apiGroups:
   - notification.toolkit.fluxcd.io
@@ -232,13 +232,13 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
     rbac.authorization.k8s.io/aggregate-to-view: "true"
-  name: flux-view-flux-system
+  name: flux-view-optcp-gitops
 rules:
 - apiGroups:
   - notification.toolkit.fluxcd.io
@@ -258,10 +258,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
-  name: cluster-reconciler-flux-system
+  name: cluster-reconciler-optcp-gitops
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -269,45 +269,45 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kustomize-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 - kind: ServiceAccount
   name: helm-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
-  name: crd-controller-flux-system
+  name: crd-controller-optcp-gitops
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: crd-controller-flux-system
+  name: crd-controller-optcp-gitops
 subjects:
 - kind: ServiceAccount
   name: kustomize-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 - kind: ServiceAccount
   name: helm-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 - kind: ServiceAccount
   name: source-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 - kind: ServiceAccount
   name: notification-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 - kind: ServiceAccount
   name: image-reflector-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 - kind: ServiceAccount
   name: image-automation-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 - kind: ServiceAccount
   name: source-watcher
-  namespace: flux-system
+  namespace: optcp-gitops
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -317,7 +317,7 @@ metadata:
     kustomize.toolkit.fluxcd.io/substitute: disabled
   labels:
     app.kubernetes.io/component: source-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: buckets.source.toolkit.fluxcd.io
@@ -709,7 +709,7 @@ metadata:
     kustomize.toolkit.fluxcd.io/substitute: disabled
   labels:
     app.kubernetes.io/component: source-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: externalartifacts.source.toolkit.fluxcd.io
@@ -920,7 +920,7 @@ metadata:
     kustomize.toolkit.fluxcd.io/substitute: disabled
   labels:
     app.kubernetes.io/component: source-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: gitrepositories.source.toolkit.fluxcd.io
@@ -1422,7 +1422,7 @@ metadata:
     kustomize.toolkit.fluxcd.io/substitute: disabled
   labels:
     app.kubernetes.io/component: source-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: helmcharts.source.toolkit.fluxcd.io
@@ -1786,7 +1786,7 @@ metadata:
     kustomize.toolkit.fluxcd.io/substitute: disabled
   labels:
     app.kubernetes.io/component: source-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: helmrepositories.source.toolkit.fluxcd.io
@@ -2117,7 +2117,7 @@ metadata:
     kustomize.toolkit.fluxcd.io/substitute: disabled
   labels:
     app.kubernetes.io/component: source-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: ocirepositories.source.toolkit.fluxcd.io
@@ -2559,23 +2559,23 @@ kind: ServiceAccount
 metadata:
   labels:
     app.kubernetes.io/component: source-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: source-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app.kubernetes.io/component: source-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
     control-plane: controller
   name: source-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   ports:
   - name: http
@@ -2595,12 +2595,12 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: source-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
     control-plane: controller
   name: source-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   replicas: 1
   selector:
@@ -2616,7 +2616,7 @@ spec:
       labels:
         app: source-controller
         app.kubernetes.io/component: source-controller
-        app.kubernetes.io/instance: flux-system
+        app.kubernetes.io/instance: optcp-gitops
         app.kubernetes.io/part-of: flux
         app.kubernetes.io/version: v2.10.0
     spec:
@@ -2704,7 +2704,7 @@ metadata:
     kustomize.toolkit.fluxcd.io/substitute: disabled
   labels:
     app.kubernetes.io/component: kustomize-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: kustomizations.kustomize.toolkit.fluxcd.io
@@ -3512,23 +3512,23 @@ kind: ServiceAccount
 metadata:
   labels:
     app.kubernetes.io/component: kustomize-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: kustomize-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: kustomize-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
     control-plane: controller
   name: kustomize-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   replicas: 1
   selector:
@@ -3542,7 +3542,7 @@ spec:
       labels:
         app: kustomize-controller
         app.kubernetes.io/component: kustomize-controller
-        app.kubernetes.io/instance: flux-system
+        app.kubernetes.io/instance: optcp-gitops
         app.kubernetes.io/part-of: flux
         app.kubernetes.io/version: v2.10.0
     spec:
@@ -3619,7 +3619,7 @@ metadata:
     kustomize.toolkit.fluxcd.io/substitute: disabled
   labels:
     app.kubernetes.io/component: helm-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: helmreleases.helm.toolkit.fluxcd.io
@@ -5320,23 +5320,23 @@ kind: ServiceAccount
 metadata:
   labels:
     app.kubernetes.io/component: helm-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: helm-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: helm-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
     control-plane: controller
   name: helm-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   replicas: 1
   selector:
@@ -5350,7 +5350,7 @@ spec:
       labels:
         app: helm-controller
         app.kubernetes.io/component: helm-controller
-        app.kubernetes.io/instance: flux-system
+        app.kubernetes.io/instance: optcp-gitops
         app.kubernetes.io/part-of: flux
         app.kubernetes.io/version: v2.10.0
     spec:
@@ -5427,7 +5427,7 @@ metadata:
     kustomize.toolkit.fluxcd.io/substitute: disabled
   labels:
     app.kubernetes.io/component: notification-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: alerts.notification.toolkit.fluxcd.io
@@ -5741,7 +5741,7 @@ metadata:
     kustomize.toolkit.fluxcd.io/substitute: disabled
   labels:
     app.kubernetes.io/component: notification-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: providers.notification.toolkit.fluxcd.io
@@ -6129,7 +6129,7 @@ metadata:
     kustomize.toolkit.fluxcd.io/substitute: disabled
   labels:
     app.kubernetes.io/component: notification-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: receivers.notification.toolkit.fluxcd.io
@@ -6503,23 +6503,23 @@ kind: ServiceAccount
 metadata:
   labels:
     app.kubernetes.io/component: notification-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
   name: notification-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app.kubernetes.io/component: notification-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
     control-plane: controller
   name: notification-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   ports:
   - name: http
@@ -6539,12 +6539,12 @@ kind: Service
 metadata:
   labels:
     app.kubernetes.io/component: notification-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
     control-plane: controller
   name: webhook-receiver
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   ports:
   - name: http
@@ -6564,12 +6564,12 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: notification-controller
-    app.kubernetes.io/instance: flux-system
+    app.kubernetes.io/instance: optcp-gitops
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.10.0
     control-plane: controller
   name: notification-controller
-  namespace: flux-system
+  namespace: optcp-gitops
 spec:
   replicas: 1
   selector:
@@ -6583,7 +6583,7 @@ spec:
       labels:
         app: notification-controller
         app.kubernetes.io/component: notification-controller
-        app.kubernetes.io/instance: flux-system
+        app.kubernetes.io/instance: optcp-gitops
         app.kubernetes.io/part-of: flux
         app.kubernetes.io/version: v2.10.0
     spec:

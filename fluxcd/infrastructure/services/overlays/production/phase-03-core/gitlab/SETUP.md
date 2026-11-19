@@ -55,7 +55,7 @@ s3cmd mb s3://gitlab-registry
      kind: Kustomization
      metadata:
        name: gitlab
-       namespace: flux-system
+       namespace: optcp-gitops
      spec:
        interval: 10m
        path: ./fluxcd/apps/overlays/production/gitlab

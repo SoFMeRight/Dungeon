@@ -16,14 +16,14 @@ patches:
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: flux-system
+        value: optcp-gitops
   - target:
       kind: HelmRepository
       name: cilium
     patch: |-
       - op: add
         path: /metadata/namespace
-        value: flux-system
+        value: optcp-gitops
   - path: service-hubble-ui-ingress-patch.yaml
     target:
       kind: Service
