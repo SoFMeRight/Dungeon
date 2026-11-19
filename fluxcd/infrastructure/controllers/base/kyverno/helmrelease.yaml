@@ -16,15 +16,25 @@ spec:
         kind: HelmRepository
         name: kyverno
         namespace: optcp-gitops
+  # Uninstalling the release (a namespace move does) must never delete the CRDs, or every
+  # policy, PolicyException and policy report goes with them. Since chart 3.10 the crds
+  # subchart hard-codes keep on five of its CRDs, so annotating through crds.annotations
+  # renders the key twice there and the post-render fails; the patch sets it on every CRD
+  # once instead. The policies.kyverno.io CRDs come from the kyverno-api subchart, which
+  # takes its own annotations.
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: CustomResourceDefinition
+            patch: |
+              - op: add
+                path: /metadata/annotations/helm.sh~1resource-policy
+                value: keep
   values:
     fullnameOverride: kyverno
-    # Uninstalling the release (a namespace move does) must never delete the CRDs, or every
-    # policy, PolicyException and policy report goes with them. The policies.kyverno.io CRDs
-    # come from the kyverno-api subchart, which takes its own annotations.
     crds:
       install: true
-      annotations:
-        helm.sh/resource-policy: keep
     kyverno-api:
       annotations:
         helm.sh/resource-policy: keep
