@@ -14,6 +14,9 @@ metadata:
       failurePolicy: Ignore so a Kyverno webhook blip never blocks the openbao Service.
 spec:
   failurePolicy: Ignore
+  evaluation:
+    background:
+      enabled: false
   matchConstraints:
     resourceRules:
       - apiGroups: [""]

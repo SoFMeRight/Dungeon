@@ -17,6 +17,11 @@ spec:
   # storage provisioning. If Kyverno is unavailable, a PV is created
   # un-mutated (the pre-policy behavior) rather than rejected.
   failurePolicy: Ignore
+  # Admission-time mutation only: mountOptions is immutable, so a background scan of
+  # existing PVs would only produce noise
+  evaluation:
+    background:
+      enabled: false
   matchConstraints:
     resourceRules:
       - apiGroups: [""]
@@ -32,7 +37,6 @@ spec:
     - name: options
       expression: "object.spec.mountOptions"
   mutations:
-    # Admission-time only (mountOptions is immutable, so there is nothing to scan)
     - patchType: JSONPatch
       jsonPatch:
         expression: >-

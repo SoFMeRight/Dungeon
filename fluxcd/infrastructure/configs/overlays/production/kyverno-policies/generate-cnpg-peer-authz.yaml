@@ -17,6 +17,18 @@ rules:
     resources: ["authorizationpolicies"]
     verbs: ["create", "update", "patch", "get", "list", "watch", "delete"]
 ---
+# The reports controller reads the trigger (CNPG Clusters) to report on the policy
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno:report-cnpg-clusters
+  labels:
+    rbac.kyverno.io/aggregate-to-reports-controller: "true"
+rules:
+  - apiGroups: ["postgresql.cnpg.io"]
+    resources: ["clusters"]
+    verbs: ["get", "list", "watch"]
+---
 apiVersion: policies.kyverno.io/v1
 kind: GeneratingPolicy
 metadata:
