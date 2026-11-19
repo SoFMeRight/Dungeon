@@ -2,7 +2,6 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: stunner
-  namespace: optcp-gitops
 spec:
   interval: 1h
   url: https://l7mp.io/stunner
