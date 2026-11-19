@@ -12,7 +12,7 @@ spec:
           image: docker.io/wazuh/wazuh-indexer:4.14.10
       containers:
         - name: configure
-          image: ghcr.io/homelabhd/ansible:v2.22.0@sha256:bb4f24756e0c9d53c58220ae412c451101d17f802b1863e23ecd1aea2215188e
+          image: ghcr.io/homelabhd/ansible:v2.22.0@sha256:2fdb363113a31c1d96349cc9905e0b42871ea18acb15103f2817b767d89505af
           env:
             - name: TENANT_GROUPS
               value: optcp,prplanit,arbitorium
