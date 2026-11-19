@@ -105,7 +105,7 @@ gitops:
       - name: Platform
         namespaces:
           - kube-system
-          - flux-system
+          - optcp-gitops
           - istio-system
           - cert-manager
         tier: platform
