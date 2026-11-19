@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "cluster": "dungeon",
-  "generated_at": "2026-11-14T12:42:13.446351054Z",
+  "generated_at": "2026-11-19T15:49:00.75817406Z",
   "discovery_status": {
     "complete": true,
     "source": "live_cluster"
@@ -10,7 +10,7 @@
     "arbitorium-game-streaming/steam-headless": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-game-streaming",
@@ -29,13 +29,13 @@
     "arbitorium-home/home-assistant": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-home",
         "name": "home-assistant",
         "images": [
-          "ghcr.io/home-assistant/home-assistant:2026.11.1"
+          "ghcr.io/home-assistant/home-assistant:2026.11.2"
         ],
         "image_digests": null
       },
@@ -48,13 +48,13 @@
     "arbitorium-home/mosquitto": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-home",
         "name": "mosquitto",
         "images": [
-          "docker.io/eclipse-mosquitto:2.1.2-alpine"
+          "docker.io/eclipse-mosquitto:2.1.4-alpine"
         ],
         "image_digests": null
       },
@@ -67,7 +67,7 @@
     "arbitorium-home/zigbee2mqtt": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-home",
@@ -86,13 +86,13 @@
     "arbitorium-nvr/frigate": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-nvr",
         "name": "frigate",
         "images": [
-          "ghcr.io/blakeblackshear/frigate:0.18.2-tensorrt",
+          "ghcr.io/blakeblackshear/frigate:0.18.3-tensorrt",
           "ghcr.io/0x2142/frigate-notify:v0.5.4"
         ],
         "image_digests": null
@@ -106,7 +106,7 @@
     "arbitorium-restricted/actualbudget": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-restricted",
@@ -125,7 +125,7 @@
     "arbitorium-restricted/homebox": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-restricted",
@@ -144,7 +144,7 @@
     "arbitorium-restricted/immich": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-restricted",
@@ -166,7 +166,7 @@
     "arbitorium-restricted/lubelogger": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-restricted",
@@ -185,13 +185,13 @@
     "arbitorium-restricted/monica": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-restricted",
         "name": "monica",
         "images": [
-          "docker.io/nginx:1.31.8-alpine",
+          "docker.io/nginx:1.31.9-alpine",
           "docker.io/monica:4.1.2-fpm-alpine",
           "docker.io/mariadb:11"
         ],
@@ -206,7 +206,7 @@
     "arbitorium-restricted/paperless": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-restricted",
@@ -214,7 +214,7 @@
         "images": [
           "docker.io/postgres:18.7-alpine",
           "docker.io/library/redis:8-alpine",
-          "ghcr.io/paperless-ngx/paperless-ngx:3.4.2"
+          "ghcr.io/paperless-ngx/paperless-ngx:3.5.1"
         ],
         "image_digests": null
       },
@@ -227,7 +227,7 @@
     "arbitorium-restricted/photoprism": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "arbitorium-restricted",
@@ -235,28 +235,6 @@
         "images": [
           "docker.io/photoprism/photoprism:261029",
           "docker.io/mariadb:11"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "flux-system/flux-system": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
-      },
-      "observed": {
-        "namespace": "flux-system",
-        "name": "flux-system",
-        "images": [
-          "ghcr.io/fluxcd/helm-controller:v1.7.1",
-          "ghcr.io/fluxcd/kustomize-controller:v1.10.1",
-          "ghcr.io/fluxcd/notification-controller:v1.10.0",
-          "ghcr.io/fluxcd/source-controller:v1.10.1"
         ],
         "image_digests": null
       },
@@ -492,7 +470,7 @@
     "kai-ingress-private/xylem-ingress-gateway-istio": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "kai-ingress-private",
@@ -511,7 +489,7 @@
     "kai-personal/ferdium": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "kai-personal",
@@ -530,7 +508,7 @@
     "kai-private/photoprism": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "kai-private",
@@ -550,7 +528,7 @@
     "kube-system/cilium-agent": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -567,7 +545,7 @@
     "kube-system/cilium-envoy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -584,7 +562,7 @@
     "kube-system/cilium-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -601,7 +579,7 @@
     "kube-system/coredns": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -620,7 +598,7 @@
     "kube-system/hubble-relay": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -637,7 +615,7 @@
     "kube-system/hubble-ui": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -654,7 +632,7 @@
     "kube-system/kube-vip": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -673,7 +651,7 @@
     "kube-system/metrics-server": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "kube-system",
@@ -692,7 +670,7 @@
     "optcp-address-sync/bulkvs-ip-sync": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-address-sync",
@@ -711,7 +689,7 @@
     "optcp-address-sync/cloudflare-ddns": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-address-sync",
@@ -730,13 +708,13 @@
     "optcp-ai/faster-whisper": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ai",
         "name": "faster-whisper",
         "images": [
-          "docker.io/linuxserver/faster-whisper:gpu-v3.8.1-ls73"
+          "docker.io/linuxserver/faster-whisper:gpu-v3.9.0-ls76"
         ],
         "image_digests": null
       },
@@ -749,7 +727,7 @@
     "optcp-ai/libretranslate": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ai",
@@ -768,7 +746,7 @@
     "optcp-ai/ollama": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ai",
@@ -784,17 +762,18 @@
         "reason": "new_app"
       }
     },
-    "optcp-ai/open": {
+    "optcp-ai/open-webui": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ai",
-        "name": "open",
+        "name": "open-webui",
         "images": [
-          "ghcr.io/open-webui/open-webui:v0.13.3",
-          "docker.io/redis:8.10-alpine"
+          "ghcr.io/open-webui/open-webui:v0.13.4",
+          "quay.io/opstree/redis:v7.4.11",
+          "quay.io/opstree/redis-sentinel:v7.4.11"
         ],
         "image_digests": null
       },
@@ -807,7 +786,7 @@
     "optcp-ai/openwakeword": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ai",
@@ -826,13 +805,13 @@
     "optcp-ai/piper": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ai",
         "name": "piper",
         "images": [
-          "docker.io/rhasspy/wyoming-piper:2.5.3"
+          "docker.io/rhasspy/wyoming-piper:2.5.4"
         ],
         "image_digests": null
       },
@@ -845,7 +824,7 @@
     "optcp-ai/stable-diffusion-webui": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ai",
@@ -864,7 +843,7 @@
     "optcp-app-directory/homarr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-app-directory",
@@ -885,7 +864,7 @@
     "optcp-app-directory/organizr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-app-directory",
@@ -904,7 +883,7 @@
     "optcp-ci-runners/buildkitd": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ci-runners",
@@ -923,7 +902,7 @@
     "optcp-ci-runners/gitlab-runner": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ci-runners",
@@ -942,7 +921,7 @@
     "optcp-ci-runners/renovate-redis": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ci-runners",
@@ -961,20 +940,20 @@
     "optcp-cloud/appflowy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-cloud",
         "name": "appflowy",
         "images": [
-          "docker.io/appflowyinc/admin_frontend:0.20.2",
-          "docker.io/appflowyinc/appflowy_ai:0.21.4",
-          "docker.io/appflowyinc/appflowy_cloud:0.21.4",
+          "docker.io/appflowyinc/admin_frontend:0.20.3",
+          "docker.io/appflowyinc/appflowy_ai:0.21.8",
+          "docker.io/appflowyinc/appflowy_cloud:0.21.8",
           "docker.io/appflowyinc/gotrue:0.20.6",
-          "docker.io/nginx:1.31.8-alpine",
+          "docker.io/nginx:1.31.9-alpine",
           "docker.io/redis:8.10.3-alpine",
-          "docker.io/appflowyinc/appflowy_web:0.20.12",
-          "docker.io/appflowyinc/appflowy_worker:0.21.4"
+          "docker.io/appflowyinc/appflowy_web:0.20.14",
+          "docker.io/appflowyinc/appflowy_worker:0.21.8"
         ],
         "image_digests": null
       },
@@ -987,7 +966,7 @@
     "optcp-cloud/bookstack": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-cloud",
@@ -1007,7 +986,7 @@
     "optcp-cloud/calcom": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-cloud",
@@ -1026,7 +1005,7 @@
     "optcp-cloud/dailytxt": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-cloud",
@@ -1045,13 +1024,13 @@
     "optcp-cloud/joplin": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-cloud",
         "name": "joplin",
         "images": [
-          "docker.io/joplin/server:3.7.5",
+          "docker.io/joplin/server:3.7.6",
           "docker.io/postgres:15"
         ],
         "image_digests": null
@@ -1085,14 +1064,14 @@
     "optcp-cloud/linkwarden": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-cloud",
         "name": "linkwarden",
         "images": [
           "ghcr.io/linkwarden/linkwarden:v2.17.0",
-          "docker.io/getmeili/meilisearch:v1.56.2",
+          "docker.io/getmeili/meilisearch:v1.57.0",
           "docker.io/library/postgres:18-alpine"
         ],
         "image_digests": null
@@ -1106,7 +1085,7 @@
     "optcp-cloud/nextcloud": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-cloud",
@@ -1134,15 +1113,15 @@
     "optcp-cloud/opnform": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-cloud",
         "name": "opnform",
         "images": [
-          "docker.io/jhumanj/opnform-api:2.8.4",
-          "docker.io/jhumanj/opnform-client:2.8.4",
-          "docker.io/nginx:1.31.8-alpine",
+          "docker.io/jhumanj/opnform-api:2.8.5",
+          "docker.io/jhumanj/opnform-client:2.8.5",
+          "docker.io/nginx:1.31.9-alpine",
           "docker.io/postgres:16",
           "docker.io/redis:8-alpine"
         ],
@@ -1157,15 +1136,15 @@
     "optcp-cloud/penpot": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-cloud",
         "name": "penpot",
         "images": [
-          "docker.io/penpotapp/backend:2.19.1",
-          "docker.io/penpotapp/exporter:2.19.1",
-          "docker.io/penpotapp/frontend:2.19.1",
+          "docker.io/penpotapp/backend:2.19.3",
+          "docker.io/penpotapp/exporter:2.19.3",
+          "docker.io/penpotapp/frontend:2.19.3",
           "docker.io/postgres:15",
           "docker.io/redis:8-alpine"
         ],
@@ -1180,14 +1159,14 @@
     "optcp-cloud/reactive-resume": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-cloud",
         "name": "reactive-resume",
         "images": [
           "docker.io/amruthpillai/reactive-resume:v5.3.2",
-          "ghcr.io/browserless/chromium:v2.63.1",
+          "ghcr.io/browserless/chromium:v2.63.2",
           "docker.io/library/postgres:18-alpine"
         ],
         "image_digests": null
@@ -1201,7 +1180,7 @@
     "optcp-cloud/shlink": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-cloud",
@@ -1222,7 +1201,7 @@
     "optcp-delivery-bag/bulwark": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-delivery-bag",
@@ -1241,7 +1220,7 @@
     "optcp-delivery-bag/roundcube-primary": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-delivery-bag",
@@ -1262,13 +1241,13 @@
     "optcp-delivery-bag/stalwart": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-delivery-bag",
         "name": "stalwart",
         "images": [
-          "docker.io/stalwartlabs/stalwart:v1.1.0",
+          "docker.io/stalwartlabs/stalwart:v1.1.1",
           "docker.io/library/elasticsearch:9.5.5",
           "quay.io/opstree/redis:v7.4.11",
           "quay.io/opstree/redis-sentinel:v7.4.11"
@@ -1284,7 +1263,7 @@
     "optcp-edge-defenses/anubis": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-edge-defenses",
@@ -1303,7 +1282,7 @@
     "optcp-edge-defenses/endlessh-go": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-edge-defenses",
@@ -1322,7 +1301,7 @@
     "optcp-fairy-bottle/snapshot-controller": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-fairy-bottle",
@@ -1341,7 +1320,7 @@
     "optcp-fairy-bottle/velero": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-fairy-bottle",
@@ -1357,10 +1336,32 @@
         "reason": "new_app"
       }
     },
+    "optcp-gitops/optcp-gitops": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
+      },
+      "observed": {
+        "namespace": "optcp-gitops",
+        "name": "optcp-gitops",
+        "images": [
+          "ghcr.io/fluxcd/helm-controller:v1.7.1",
+          "ghcr.io/fluxcd/kustomize-controller:v1.10.1",
+          "ghcr.io/fluxcd/notification-controller:v1.10.0",
+          "ghcr.io/fluxcd/source-controller:v1.10.1"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
     "optcp-gossip-stone/alertmanager": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1379,7 +1380,7 @@
     "optcp-gossip-stone/beszel": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1398,7 +1399,7 @@
     "optcp-gossip-stone/gatus": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1418,7 +1419,7 @@
     "optcp-gossip-stone/grafana": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1437,7 +1438,7 @@
     "optcp-gossip-stone/kube-state-metrics": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1456,7 +1457,7 @@
     "optcp-gossip-stone/loki": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1465,7 +1466,7 @@
           "docker.io/nginxinc/nginx-unprivileged:1.29-alpine",
           "docker.io/kiwigrid/k8s-sidecar:2.14.3",
           "docker.io/grafana/loki:3.7.10",
-          "docker.io/grafana/loki-canary:3.6.18"
+          "docker.io/grafana/loki-canary:3.6.20"
         ],
         "image_digests": null
       },
@@ -1478,13 +1479,13 @@
     "optcp-gossip-stone/ntfy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
         "name": "ntfy",
         "images": [
-          "docker.io/binwiederhier/ntfy:v2.38.0"
+          "docker.io/binwiederhier/ntfy:v2.38.1"
         ],
         "image_digests": null
       },
@@ -1497,7 +1498,7 @@
     "optcp-gossip-stone/nutify": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1516,7 +1517,7 @@
     "optcp-gossip-stone/speedtest": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1536,13 +1537,13 @@
     "optcp-gossip-stone/uptime-kuma": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
         "name": "uptime-kuma",
         "images": [
-          "docker.io/louislam/uptime-kuma:2.5.11"
+          "docker.io/louislam/uptime-kuma:2.5.12"
         ],
         "image_digests": null
       },
@@ -1555,7 +1556,7 @@
     "optcp-gossip-stone/vmalert": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1574,7 +1575,7 @@
     "optcp-gossip-stone/vmauth": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1593,7 +1594,7 @@
     "optcp-gossip-stone/vminsert": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1612,7 +1613,7 @@
     "optcp-gossip-stone/vmselect": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1631,7 +1632,7 @@
     "optcp-gossip-stone/vmstorage": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-gossip-stone",
@@ -1650,7 +1651,7 @@
     "optcp-identity/oauth2-proxy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-identity",
@@ -1669,7 +1670,7 @@
     "optcp-identity/zitadel": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-identity",
@@ -1692,7 +1693,7 @@
     "optcp-ids-ips/crowdsec": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ids-ips",
@@ -1714,7 +1715,7 @@
     "optcp-infrastructure-management/semaphore": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-infrastructure-management",
@@ -1734,7 +1735,7 @@
     "optcp-infrastructure-management/unifi-network-application": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-infrastructure-management",
@@ -1754,7 +1755,7 @@
     "optcp-ingress-internal/phloem-ingress-gateway-istio": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ingress-internal",
@@ -1773,7 +1774,7 @@
     "optcp-ingress-public/cell-membrane-ingress-gateway-istio": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ingress-public",
@@ -1792,7 +1793,7 @@
     "optcp-ipam/netbox": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-ipam",
@@ -1813,7 +1814,7 @@
     "optcp-keyring/twofauth": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-keyring",
@@ -1832,7 +1833,7 @@
     "optcp-keyring/vaultwarden": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-keyring",
@@ -1851,7 +1852,7 @@
     "optcp-management-dashboards/headlamp": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-management-dashboards",
@@ -1870,13 +1871,13 @@
     "optcp-management-dashboards/pbs-cluster-proxy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-management-dashboards",
         "name": "pbs-cluster-proxy",
         "images": [
-          "docker.io/nginx:1.31.8-alpine"
+          "docker.io/nginx:1.31.9-alpine"
         ],
         "image_digests": null
       },
@@ -1889,13 +1890,13 @@
     "optcp-management-dashboards/pve-cluster-proxy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-management-dashboards",
         "name": "pve-cluster-proxy",
         "images": [
-          "docker.io/nginx:1.31.8-alpine"
+          "docker.io/nginx:1.31.9-alpine"
         ],
         "image_digests": null
       },
@@ -1908,7 +1909,7 @@
     "optcp-management-dashboards/weave-gitops": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-management-dashboards",
@@ -1927,7 +1928,7 @@
     "optcp-media/calibre-web": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-media",
@@ -1946,7 +1947,7 @@
     "optcp-media/jellyfin": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-media",
@@ -1965,7 +1966,7 @@
     "optcp-media/navidrome": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-media",
@@ -1984,7 +1985,7 @@
     "optcp-media/plex": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-media",
@@ -2003,7 +2004,7 @@
     "optcp-media/romm": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-media",
@@ -2023,7 +2024,7 @@
     "optcp-monitoring-agents/graphite-exporter-truenas": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-monitoring-agents",
@@ -2042,7 +2043,7 @@
     "optcp-monitoring-agents/prometheus-exporter": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-monitoring-agents",
@@ -2062,7 +2063,7 @@
     "optcp-network-services/adguard": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-network-services",
@@ -2081,7 +2082,7 @@
     "optcp-network-services/adguardhome-sync": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-network-services",
@@ -2100,7 +2101,7 @@
     "optcp-network-services/chrony": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-network-services",
@@ -2119,13 +2120,13 @@
     "optcp-operators-baseline/cloudnative-pg": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-baseline",
         "name": "cloudnative-pg",
         "images": [
-          "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.1"
+          "ghcr.io/cloudnative-pg/cloudnative-pg:1.30.2"
         ],
         "image_digests": null
       },
@@ -2138,7 +2139,7 @@
     "optcp-operators-baseline/mariadb-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-baseline",
@@ -2157,7 +2158,7 @@
     "optcp-operators-baseline/plugin-barman-cloud": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-baseline",
@@ -2176,7 +2177,7 @@
     "optcp-operators-baseline/redis-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-baseline",
@@ -2195,13 +2196,13 @@
     "optcp-operators-baseline/reflector": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-baseline",
         "name": "reflector",
         "images": [
-          "docker.io/emberstack/kubernetes-reflector:10.0.77"
+          "docker.io/emberstack/kubernetes-reflector:10.0.79"
         ],
         "image_digests": null
       },
@@ -2214,7 +2215,7 @@
     "optcp-operators-baseline/reloader": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-baseline",
@@ -2233,7 +2234,7 @@
     "optcp-operators-privileged/ceph-rgw": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-privileged",
@@ -2252,7 +2253,7 @@
     "optcp-operators-privileged/cifs-csi-driver": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-privileged",
@@ -2276,7 +2277,7 @@
     "optcp-operators-privileged/csi-addons": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-privileged",
@@ -2295,7 +2296,7 @@
     "optcp-operators-privileged/generic-device-plugin": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-privileged",
@@ -2311,59 +2312,10 @@
         "reason": "new_app"
       }
     },
-    "optcp-operators-privileged/gorons-bracelet.cephfs.csi.ceph.com": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
-      },
-      "observed": {
-        "namespace": "optcp-operators-privileged",
-        "name": "gorons-bracelet.cephfs.csi.ceph.com",
-        "images": [
-          "quay.io/cephcsi/cephcsi:v3.18.1",
-          "registry.k8s.io/sig-storage/csi-provisioner:v6.3.0",
-          "registry.k8s.io/sig-storage/csi-resizer:v2.2.1",
-          "registry.k8s.io/sig-storage/csi-attacher:v4.13.0",
-          "registry.k8s.io/sig-storage/csi-snapshotter:v8.6.0",
-          "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.18.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
-    "optcp-operators-privileged/gorons-bracelet.rbd.csi.ceph.com": {
-      "lifecycle": {
-        "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
-      },
-      "observed": {
-        "namespace": "optcp-operators-privileged",
-        "name": "gorons-bracelet.rbd.csi.ceph.com",
-        "images": [
-          "quay.io/cephcsi/cephcsi:v3.18.1",
-          "registry.k8s.io/sig-storage/csi-provisioner:v6.3.0",
-          "registry.k8s.io/sig-storage/csi-resizer:v2.2.1",
-          "registry.k8s.io/sig-storage/csi-attacher:v4.13.0",
-          "registry.k8s.io/sig-storage/csi-snapshotter:v8.6.0",
-          "quay.io/csiaddons/k8s-sidecar:v0.15.1",
-          "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.18.0"
-        ],
-        "image_digests": null
-      },
-      "identity_cache": {},
-      "identity_cache_status": {
-        "state": "stale",
-        "reason": "new_app"
-      }
-    },
     "optcp-operators-privileged/gpu-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-privileged",
@@ -2384,10 +2336,59 @@
         "reason": "new_app"
       }
     },
+    "optcp-operators-privileged/optcp.cephfs.csi.ceph.com": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
+      },
+      "observed": {
+        "namespace": "optcp-operators-privileged",
+        "name": "optcp.cephfs.csi.ceph.com",
+        "images": [
+          "quay.io/cephcsi/cephcsi:v3.18.1",
+          "registry.k8s.io/sig-storage/csi-provisioner:v6.3.0",
+          "registry.k8s.io/sig-storage/csi-resizer:v2.2.1",
+          "registry.k8s.io/sig-storage/csi-attacher:v4.13.0",
+          "registry.k8s.io/sig-storage/csi-snapshotter:v8.6.0",
+          "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.18.0"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
+    "optcp-operators-privileged/optcp.rbd.csi.ceph.com": {
+      "lifecycle": {
+        "state": "active",
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
+      },
+      "observed": {
+        "namespace": "optcp-operators-privileged",
+        "name": "optcp.rbd.csi.ceph.com",
+        "images": [
+          "quay.io/cephcsi/cephcsi:v3.18.1",
+          "registry.k8s.io/sig-storage/csi-provisioner:v6.3.0",
+          "registry.k8s.io/sig-storage/csi-resizer:v2.2.1",
+          "registry.k8s.io/sig-storage/csi-attacher:v4.13.0",
+          "registry.k8s.io/sig-storage/csi-snapshotter:v8.6.0",
+          "quay.io/csiaddons/k8s-sidecar:v0.15.1",
+          "registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.18.0"
+        ],
+        "image_digests": null
+      },
+      "identity_cache": {},
+      "identity_cache_status": {
+        "state": "stale",
+        "reason": "new_app"
+      }
+    },
     "optcp-operators-privileged/rbd-toolbox": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-privileged",
@@ -2406,7 +2407,7 @@
     "optcp-operators-privileged/rook-ceph-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-operators-privileged",
@@ -2426,7 +2427,7 @@
     "optcp-policy-engine/kyverno": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-policy-engine",
@@ -2448,7 +2449,7 @@
     "optcp-remote-access/boundary": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-remote-access",
@@ -2467,7 +2468,7 @@
     "optcp-remote-access/guacamole": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-remote-access",
@@ -2488,7 +2489,7 @@
     "optcp-remote-access/netbird": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-remote-access",
@@ -2511,7 +2512,7 @@
     "optcp-remote-access/rustdesk": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-remote-access",
@@ -2530,7 +2531,7 @@
     "optcp-restricted/plex-ms-x": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-restricted",
@@ -2549,7 +2550,7 @@
     "optcp-secrets/bank-vaults-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-secrets",
@@ -2568,7 +2569,7 @@
     "optcp-secrets/external-secrets": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-secrets",
@@ -2587,7 +2588,7 @@
     "optcp-secrets/openbao-snapshot": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-secrets",
@@ -2606,7 +2607,7 @@
     "optcp-secrets/vault": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-secrets",
@@ -2627,7 +2628,7 @@
     "optcp-secrets/vault-configurator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-secrets",
@@ -2646,7 +2647,7 @@
     "optcp-service-mesh/cert-manager": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-service-mesh",
@@ -2667,7 +2668,7 @@
     "optcp-service-mesh/istio": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-service-mesh",
@@ -2686,7 +2687,7 @@
     "optcp-service-mesh/istio-cni": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-service-mesh",
@@ -2705,7 +2706,7 @@
     "optcp-service-mesh/istiod": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-service-mesh",
@@ -2724,7 +2725,7 @@
     "optcp-service-mesh/stunner": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-service-mesh",
@@ -2744,7 +2745,7 @@
     "optcp-service-mesh/ztunnel": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-service-mesh",
@@ -2763,7 +2764,7 @@
     "optcp-service-mesh/ztunnel-control-plane": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-service-mesh",
@@ -2782,13 +2783,13 @@
     "optcp-shooting-gallery/ark": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-shooting-gallery",
         "name": "ark",
         "images": [
-          "docker.io/nginx:1.31.8-alpine",
+          "docker.io/nginx:1.31.9-alpine",
           "docker.io/acekorneya/asa_server:2_1_latest",
           "ghcr.io/homelabhd/ark-se-server:v1.6.69"
         ],
@@ -2803,7 +2804,7 @@
     "optcp-shooting-gallery/enshrouded": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-shooting-gallery",
@@ -2822,7 +2823,7 @@
     "optcp-shooting-gallery/minecraft": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-shooting-gallery",
@@ -2841,7 +2842,7 @@
     "optcp-shooting-gallery/palworld": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-shooting-gallery",
@@ -2860,7 +2861,7 @@
     "optcp-shooting-gallery/valheim": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-shooting-gallery",
@@ -2879,7 +2880,7 @@
     "optcp-sibyl-system/dependency-track": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-sibyl-system",
@@ -2899,7 +2900,7 @@
     "optcp-sibyl-system/sbom-operator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-sibyl-system",
@@ -2918,7 +2919,7 @@
     "optcp-siem/wazuh": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-siem",
@@ -2939,7 +2940,7 @@
     "optcp-staff-suite/kimai": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-staff-suite",
@@ -2960,14 +2961,14 @@
     "optcp-staff-suite/openproject": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-staff-suite",
         "name": "openproject",
         "images": [
           "docker.io/library/memcached:1.6.45-alpine",
-          "docker.io/openproject/openproject:17.9.7-slim"
+          "docker.io/openproject/openproject:17.9.8-slim"
         ],
         "image_digests": null
       },
@@ -2980,7 +2981,7 @@
     "optcp-staff-suite/wikijs-sops": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-staff-suite",
@@ -2999,13 +3000,13 @@
     "optcp-supply-chain/apt-cacher-ng": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-supply-chain",
         "name": "apt-cacher-ng",
         "images": [
-          "docker.io/prplanit/apt-cacher-ng-oci:3.7.4-v0.1"
+          "docker.io/hlhd/apt-cacher-ng:v3.7.5"
         ],
         "image_digests": null
       },
@@ -3018,7 +3019,7 @@
     "optcp-supply-chain/gitlab": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-supply-chain",
@@ -3026,13 +3027,13 @@
         "images": [
           "registry.gitlab.com/gitlab-org/build/cng/gitlab-exporter:17.0.2",
           "registry.gitlab.com/gitlab-org/build/cng/gitlab-shell:v14.58.0",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-kas:v19.5.5",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-kas:v19.5.6",
           "registry.gitlab.com/gitlab-org/build/cng/gitlab-container-registry:v4.42.0-gitlab",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ce:v19.5.5",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ce:v19.5.5",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ce:v19.5.5",
-          "registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ce:v19.5.5",
-          "registry.gitlab.com/gitlab-org/build/cng/gitaly:v19.5.5",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-sidekiq-ce:v19.5.6",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-toolbox-ce:v19.5.6",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-webservice-ce:v19.5.6",
+          "registry.gitlab.com/gitlab-org/build/cng/gitlab-workhorse-ce:v19.5.6",
+          "registry.gitlab.com/gitlab-org/build/cng/gitaly:v19.5.6",
           "quay.io/opstree/redis:v7.4.11",
           "quay.io/opstree/redis-sentinel:v7.4.11"
         ],
@@ -3047,7 +3048,7 @@
     "optcp-supply-chain/harbor": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-supply-chain",
@@ -3073,7 +3074,7 @@
     "optcp-supply-chain/harbor-proxy-cache-proxy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-supply-chain",
@@ -3092,7 +3093,7 @@
     "optcp-supply-chain/netbootxyz": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-supply-chain",
@@ -3111,7 +3112,7 @@
     "optcp-swift-sail-privileged/bazarr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail-privileged",
@@ -3131,7 +3132,7 @@
     "optcp-swift-sail-privileged/byparr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail-privileged",
@@ -3151,7 +3152,7 @@
     "optcp-swift-sail-privileged/downloadarrs": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail-privileged",
@@ -3160,9 +3161,9 @@
           "ghcr.io/monstermuffin/qsticky:sha-5ca1746",
           "docker.io/qmcgaw/gluetun:v3.41.3",
           "docker.io/linuxserver/qbittorrent:5.3.0_v2.1.2-ls485",
-          "docker.io/linuxserver/radarr:6.4.4.10685-ls326",
+          "docker.io/linuxserver/radarr:6.4.4.10685-ls327",
           "docker.io/linuxserver/sonarr:4.0.20.3014-ls329",
-          "docker.io/linuxserver/lidarr:3.1.6.5079-ls48",
+          "docker.io/linuxserver/lidarr:3.1.6.5079-ls49",
           "docker.io/linuxserver/readarr:0.4.19-nightly",
           "docker.io/crossseed/cross-seed:6.13.9"
         ],
@@ -3177,7 +3178,7 @@
     "optcp-swift-sail-privileged/jellyseerr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail-privileged",
@@ -3197,7 +3198,7 @@
     "optcp-swift-sail-privileged/neko": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail-privileged",
@@ -3218,7 +3219,7 @@
     "optcp-swift-sail-privileged/overseerr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail-privileged",
@@ -3238,7 +3239,7 @@
     "optcp-swift-sail-privileged/pinchflat": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail-privileged",
@@ -3258,7 +3259,7 @@
     "optcp-swift-sail-privileged/prowlarr": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail-privileged",
@@ -3278,7 +3279,7 @@
     "optcp-swift-sail-privileged/pyload-ng": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail-privileged",
@@ -3298,7 +3299,7 @@
     "optcp-swift-sail-privileged/sabnzbd": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail-privileged",
@@ -3318,7 +3319,7 @@
     "optcp-swift-sail-privileged/thelounge": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail-privileged",
@@ -3338,7 +3339,7 @@
     "optcp-swift-sail/anirra": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail",
@@ -3357,7 +3358,7 @@
     "optcp-swift-sail/py-kms": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail",
@@ -3376,7 +3377,7 @@
     "optcp-swift-sail/supermicro-license-generator": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-swift-sail",
@@ -3395,7 +3396,7 @@
     "optcp-telemetry/alloy": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-telemetry",
@@ -3415,7 +3416,7 @@
     "optcp-telemetry/alloy-control-plane": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-telemetry",
@@ -3435,7 +3436,7 @@
     "optcp-telemetry/alloy-syslog": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-telemetry",
@@ -3454,7 +3455,7 @@
     "optcp-telemetry/netalertx": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-telemetry",
@@ -3473,7 +3474,7 @@
     "optcp-telemetry/netconsole-collector": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-telemetry",
@@ -3492,7 +3493,7 @@
     "optcp-telemetry/node": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-telemetry",
@@ -3511,7 +3512,7 @@
     "optcp-tools/convertx": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-tools",
@@ -3530,13 +3531,13 @@
     "optcp-tools/draw-io": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-tools",
         "name": "draw-io",
         "images": [
-          "docker.io/jgraph/drawio:32.6.10"
+          "docker.io/jgraph/drawio:32.7.4"
         ],
         "image_digests": null
       },
@@ -3549,7 +3550,7 @@
     "optcp-tools/echo-ip": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-tools",
@@ -3568,7 +3569,7 @@
     "optcp-tools/google-webfonts-helper": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-tools",
@@ -3587,7 +3588,7 @@
     "optcp-tools/hrconvert2": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-tools",
@@ -3606,7 +3607,7 @@
     "optcp-tools/it-tools": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-tools",
@@ -3625,7 +3626,7 @@
     "optcp-tools/librespeed-speedtest": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-tools",
@@ -3644,7 +3645,7 @@
     "optcp-tools/mazanoke": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-tools",
@@ -3663,7 +3664,7 @@
     "optcp-tools/openspeedtest": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-tools",
@@ -3682,13 +3683,13 @@
     "optcp-tools/searxng": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-tools",
         "name": "searxng",
         "images": [
-          "ghcr.io/searxng/searxng:2026.11.14-a7128d5d1",
+          "ghcr.io/searxng/searxng:2026.11.19-368baa340",
           "docker.io/valkey/valkey:9-alpine"
         ],
         "image_digests": null
@@ -3702,7 +3703,7 @@
     "optcp-vpn/netbird-router-dungeon": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-vpn",
@@ -3721,7 +3722,7 @@
     "optcp-web-analytics/umami": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-web-analytics",
@@ -3740,7 +3741,7 @@
     "optcp-web-analytics/umami-postgres": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-web-analytics",
@@ -3759,7 +3760,7 @@
     "optcp-web/astralfocal-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-web",
@@ -3778,7 +3779,7 @@
     "optcp-web/enamorafoto-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-web",
@@ -3797,7 +3798,7 @@
     "optcp-web/fairer-pages": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-web",
@@ -3816,7 +3817,7 @@
     "optcp-web/ghost": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-web",
@@ -3836,7 +3837,7 @@
     "optcp-web/kai-hamilton-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-web",
@@ -3855,7 +3856,7 @@
     "optcp-web/sofmeright-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "optcp-web",
@@ -3874,7 +3875,7 @@
     "outspokekin-delivery-bag/matrix": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "outspokekin-delivery-bag",
@@ -3885,9 +3886,9 @@
           "ghcr.io/element-hq/element-call:v0.28.2",
           "docker.io/livekit/livekit-server:v1.13.11",
           "ghcr.io/element-hq/lk-jwt-service:0.10.0",
-          "ghcr.io/homelabhd/synapse:v1.162.0",
+          "ghcr.io/homelabhd/synapse:v1.165.0",
           "docker.io/l7mp/stunnerd:1.2.1",
-          "docker.io/nginx:1.31.8-alpine"
+          "docker.io/nginx:1.31.9-alpine"
         ],
         "image_digests": null
       },
@@ -3900,7 +3901,7 @@
     "outspokekin-social/hubzilla": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "outspokekin-social",
@@ -3920,7 +3921,7 @@
     "outspokekin-social/linkstack": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "outspokekin-social",
@@ -3940,7 +3941,7 @@
     "outspokekin-web/etherealclique-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "outspokekin-web",
@@ -3959,14 +3960,14 @@
     "prplanit-billing/invoiceninja": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "prplanit-billing",
         "name": "invoiceninja",
         "images": [
-          "docker.io/invoiceninja/invoiceninja-debian:5.13.53",
-          "docker.io/nginx:1.31.8-alpine",
+          "docker.io/invoiceninja/invoiceninja-debian:5.13.54",
+          "docker.io/nginx:1.31.9-alpine",
           "docker.io/mysql:8",
           "docker.io/redis:alpine"
         ],
@@ -3981,13 +3982,13 @@
     "prplanit-commerce/bagisto": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "prplanit-commerce",
         "name": "bagisto",
         "images": [
-          "docker.io/webkul/bagisto:2.5.1",
+          "docker.io/webkul/bagisto:2.5.2",
           "docker.io/mysql:8"
         ],
         "image_digests": null
@@ -4001,7 +4002,7 @@
     "prplanit-remote-access/tactical": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "prplanit-remote-access",
@@ -4027,7 +4028,7 @@
     "prplanit-staff-suite/frappe-suite": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "prplanit-staff-suite",
@@ -4048,7 +4049,7 @@
     "prplanit-support/osticket-app": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "prplanit-support",
@@ -4067,7 +4068,7 @@
     "prplanit-support/osticket-mariadb": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "prplanit-support",
@@ -4087,7 +4088,7 @@
     "prplanit-web/homelabhelpdesk-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "prplanit-web",
@@ -4106,7 +4107,7 @@
     "prplanit-web/precisionplanit-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "prplanit-web",
@@ -4205,7 +4206,7 @@
     "yesimvegan-web/mealie": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "yesimvegan-web",
@@ -4225,7 +4226,7 @@
     "yesimvegan-web/wikijs": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "yesimvegan-web",
@@ -4245,7 +4246,7 @@
     "yesimvegan-web/yesimvegan-site": {
       "lifecycle": {
         "state": "active",
-        "last_seen": "2026-11-14T12:42:13.446351054Z"
+        "last_seen": "2026-11-19T15:49:00.75817406Z"
       },
       "observed": {
         "namespace": "yesimvegan-web",

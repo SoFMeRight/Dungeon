@@ -6,7 +6,7 @@
 
 ## Apps & Services (131)
 
-✅ 127 healthy · ⚠️ 3 degraded · ❌ 1 down
+✅ 129 healthy · ⚠️ 1 degraded · ❌ 1 down
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -38,7 +38,7 @@
 | Bookstack (2 components) | ✅ | 🏠 kb.precisionplanit.com | [open](https://kb.precisionplanit.com) |
 | Calcom | ✅ | 🏠 cal.prplanit.com | [open](https://cal.prplanit.com) |
 | Frappe Suite (9 components) | ✅ | 🏠 hq.prplanit.com | [open](https://hq.prplanit.com) |
-| Gitlab (11 components) | ⚠️ | 🏠 git.prplanit.com | [open](https://git.prplanit.com) |
+| Gitlab (11 components) | ✅ | 🏠 git.prplanit.com | [open](https://git.prplanit.com) |
 | Harbor (7 components) | ✅ | 🏠 cr.optcp.com | [open](https://cr.optcp.com) |
 | Harbor Proxy Cache Proxy | ✅ | 🏠 docker.cr.optcp.com | [open](https://docker.cr.optcp.com) |
 | Invoiceninja (3 components) | ✅ | 🏠 invoice.pcfae.com | [open](https://invoice.pcfae.com) |
@@ -49,7 +49,7 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Nextcloud (9 components) | ⚠️ | 🏠 cloud.optcp.com | [open](https://cloud.optcp.com) |
+| Nextcloud (9 components) | ✅ | 🏠 cloud.optcp.com | [open](https://cloud.optcp.com) |
 | Openproject (3 components) | ✅ | 🏠 projects.optcp.com | [open](https://projects.optcp.com) |
 | Wikijs Sops | ✅ | 🏠 sops.optcp.com | [open](https://sops.optcp.com) |
 
@@ -72,8 +72,8 @@
 | Kimai (2 components) | ✅ | 🏠 kimai.pcfae.com | [open](https://kimai.pcfae.com) |
 | Linkwarden (3 components) | ✅ | 🏠 bookmarks.pcfae.com | [open](https://bookmarks.pcfae.com) |
 | Mealie (2 components) | ✅ | 🏠 meals.yesimvegan.com | [open](https://meals.yesimvegan.com) |
-| Open (3 components) | ✅ | 🏠 ai.optcp.com | [open](https://ai.optcp.com) |
-| Penpot (5 components) | ⚠️ | 🏠 design.pcfae.com | [open](https://design.pcfae.com) |
+| Open Webui (3 components) | ✅ | 🏠 ai.optcp.com | [open](https://ai.optcp.com) |
+| Penpot (5 components) | ✅ | 🏠 design.pcfae.com | [open](https://design.pcfae.com) |
 | Photoprism (2 components) | ✅ | 🏠 photos.pcfae.com | [open](https://photos.pcfae.com) |
 | Plex | ✅ | 🔒 plex.optcp.com | [open](https://plex.optcp.com) |
 | Reactive Resume (3 components) | ✅ | 🏠 resume.sofmeright.com | [open](https://resume.sofmeright.com) |
@@ -115,7 +115,7 @@
 | --- | --- | --- | --- |
 | Anirra | ✅ | 🏠 anime.pcfae.com | [open](https://anime.pcfae.com) |
 | Bazarr | ✅ | 🏠 bazarr.pcfae.com | [open](https://bazarr.pcfae.com) |
-| Downloadarrs | ✅ | 🏠 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
+| Downloadarrs | ❌ | 🏠 lidarr.pcfae.com | [open](https://lidarr.pcfae.com) |
 | Jellyseerr | ✅ | 🏠 jseer.optcp.com | [open](https://jseer.optcp.com) |
 | Overseerr | ✅ | 🏠 overseer.pcfae.com | [open](https://overseer.pcfae.com) |
 | Pinchflat | ✅ | 🏠 pinchflat.pcfae.com | [open](https://pinchflat.pcfae.com) |
@@ -131,7 +131,7 @@
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Ark (4 components) | ✅ | 🌐 |  |
-| Minecraft | ❌ | 🌐 |  |
+| Minecraft | ✅ | 🌐 |  |
 | Palworld | ✅ | 🌐 |  |
 
 ### Infrastructure (Aryll's Lookout🔭)
@@ -184,7 +184,7 @@
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Actualbudget | ✅ | 🏠 budget.pcfae.com | [open](https://budget.pcfae.com) |
-| Dailytxt | ✅ | 🏠 shiplog.pcfae.com | [open](https://shiplog.pcfae.com) |
+| Dailytxt | ✅ | 🏠 journal.optcp.com | [open](https://journal.optcp.com) |
 | Homebox | ✅ | 🏠 inventory.pcfae.com | [open](https://inventory.pcfae.com) |
 | Lubelogger | ✅ | 🏠 lubelogger.pcfae.com | [open](https://lubelogger.pcfae.com) |
 | Monica (2 components) | ✅ | 🏠 monica.pcfae.com | [open](https://monica.pcfae.com) |
@@ -228,7 +228,7 @@
 
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
-| Dependency Track Api Server (2 components) | ✅ | 🏠 dtrack.optcp.com | [open](https://dtrack.optcp.com) |
+| Dependency Track Api Server (2 components) | ⚠️ | 🏠 dtrack.optcp.com | [open](https://dtrack.optcp.com) |
 
 ### Social (Temple of Time⏳)
 
@@ -253,7 +253,7 @@
 | Google Webfonts Helper | ✅ | 🏠 gwfonts.pcfae.com | [open](https://gwfonts.pcfae.com) |
 | Hrconvert2 | ✅ | 🏠 hrconvert2.pcfae.com | [open](https://hrconvert2.pcfae.com) |
 | It Tools | ✅ | 🏠 ittools.pcfae.com | [open](https://ittools.pcfae.com) |
-| Libretranslate | ✅ | 🏠 translate.pcfae.com | [open](https://translate.pcfae.com) |
+| Libretranslate | ✅ | 🏠 translate.optcp.com | [open](https://translate.optcp.com) |
 | Mazanoke | ✅ | 🏠 mazanoke.pcfae.com | [open](https://mazanoke.pcfae.com) |
 | Neko (2 components) | ✅ | 🔒 web.pcfae.com | [open](https://web.pcfae.com) |
 | Ollama | ✅ | 🏠 ollama.pcfae.com | [open](https://ollama.pcfae.com) |
@@ -335,7 +335,7 @@
 - Namespace: optcp-edge-defenses
 - Replicas: 1/1
 
-**Apt Cacher Ng** — StatefulSet — 3.7.4-v0.1
+**Apt Cacher Ng** — StatefulSet — v3.7.5
 - Namespace: optcp-supply-chain
 - Replicas: 1/1
 - Hosts: apt.pcfae.com
@@ -376,9 +376,9 @@
   - frappe-suite-sites (StatefulSet)
   - frappe-suite-websocket (Deployment)
 
-**Gitlab — 11 components** — Mixed — v19.5.5
+**Gitlab — 11 components** — Mixed — v19.5.6
 - Namespace: optcp-supply-chain
-- Replicas: 20/22
+- Replicas: 22/22
 - Hosts: git.prplanit.com
 - Components:
   - gitlab-gitlab-exporter (Deployment)
@@ -440,7 +440,7 @@
 
 **Nextcloud — 9 components** — Deployment — 
 - Namespace: optcp-cloud
-- Replicas: 4/5
+- Replicas: 5/5
 - Hosts: cloud.optcp.com
 - Components:
   - nextcloud (Deployment)
@@ -542,18 +542,18 @@
   - mealie (StatefulSet)
   - mealie-postgres (StatefulSet, database)
 
-**Open — 3 components** — StatefulSet — 
+**Open Webui — 3 components** — StatefulSet — v0.13.4
 - Namespace: optcp-ai
-- Replicas: 9/9
+- Replicas: 3/3
 - Hosts: ai.optcp.com
 - Components:
   - open-webui (StatefulSet)
   - open-webui-redis (StatefulSet, cache)
-  - open-webui-sentinel (StatefulSet, cache)
+  - open-webui-sentinel-sentinel (StatefulSet, cache)
 
 **Penpot — 5 components** — StatefulSet — 
 - Namespace: optcp-cloud
-- Replicas: 4/5
+- Replicas: 5/5
 - Hosts: design.pcfae.com, penpot.prplanit.com
 - Components:
   - penpot-backend (StatefulSet)
@@ -637,7 +637,7 @@
 - Replicas: 1/1
 - Hosts: speedtest.pcfae.com
 
-**Searxng — 2 components** — Deployment — 2026.11.15-2d500cb6b
+**Searxng — 2 components** — Deployment — 2026.11.19-368baa340
 - Namespace: optcp-tools
 - Replicas: 3/3
 - Hosts: search.pcfae.com
@@ -716,7 +716,7 @@
 
 **Downloadarrs** — StatefulSet — 
 - Namespace: optcp-swift-sail-privileged
-- Replicas: 1/1
+- Replicas: 0/1
 - Hosts: lidarr.pcfae.com, qbitt.pcfae.com, radarr.pcfae.com, readarr.pcfae.com, sonarr.pcfae.com
 
 **Jellyseerr** — StatefulSet — 
@@ -775,18 +775,18 @@
 
 **Minecraft** — StatefulSet — java25
 - Namespace: optcp-shooting-gallery
-- Replicas: 0/1
+- Replicas: 1/1
 
 **Palworld** — StatefulSet — v2.8.1
 - Namespace: optcp-shooting-gallery
 - Replicas: 1/1
 
-**Pbs Cluster Proxy** — Deployment — 1.31.8-alpine
+**Pbs Cluster Proxy** — Deployment — 1.31.9-alpine
 - Namespace: optcp-management-dashboards
 - Replicas: 2/2
 - Hosts: pbs.pcfae.com
 
-**Pve Cluster Proxy** — Deployment — 1.31.8-alpine
+**Pve Cluster Proxy** — Deployment — 1.31.9-alpine
 - Namespace: optcp-management-dashboards
 - Replicas: 2/2
 - Hosts: pve.pcfae.com
@@ -796,7 +796,7 @@
 - Replicas: 1/1
 - Hosts: mail.optcp.com
 
-**Stalwart — 4 components** — Deployment — v1.1.0
+**Stalwart — 4 components** — Deployment — v1.1.1
 - Namespace: optcp-delivery-bag
 - Replicas: 1/1
 - Hosts: mail-admin.optcp.com, mail.optcp.com
@@ -806,7 +806,7 @@
   - stalwart-redis (StatefulSet, cache)
   - stalwart-sentinel-sentinel (StatefulSet, cache)
 
-**Ntfy** — StatefulSet — v2.38.0
+**Ntfy** — StatefulSet — v2.38.1
 - Namespace: optcp-gossip-stone
 - Replicas: 1/1
 - Hosts: ntfy.pcfae.com, ntfy.prplanit.com
@@ -869,7 +869,7 @@
 - Replicas: 1/1
 - Hosts: analytics.prplanit.com
 
-**Uptime Kuma** — StatefulSet — 2.5.11
+**Uptime Kuma** — StatefulSet — 2.5.12
 - Namespace: optcp-gossip-stone
 - Replicas: 1/1
 - Hosts: uptime.pcfae.com, uptime.sofmeright.com
@@ -904,7 +904,7 @@
 **Dailytxt** — StatefulSet — 2.6.4
 - Namespace: optcp-cloud
 - Replicas: 1/1
-- Hosts: shiplog.pcfae.com
+- Hosts: journal.optcp.com
 
 **Homebox** — StatefulSet — 0.27.1
 - Namespace: arbitorium-restricted
@@ -1017,7 +1017,7 @@
 - Replicas: 1/1
 - Hosts: nvr.pcfae.com
 
-**Home Assistant** — StatefulSet — 2026.11.1
+**Home Assistant** — StatefulSet — 2026.11.2
 - Namespace: arbitorium-home
 - Replicas: 1/1
 - Hosts: home.arbitorium.com, home.pcfae.com, home.private.arbitorium.com
@@ -1038,7 +1038,7 @@
 
 **Dependency Track Api Server — 2 components** — Deployment — 5.2.0
 - Namespace: optcp-sibyl-system
-- Replicas: 2/2
+- Replicas: 1/2
 - Hosts: dtrack.optcp.com
 - Components:
   - dependency-track-api-server (Deployment)
@@ -1077,7 +1077,7 @@
 - Replicas: 1/1
 - Hosts: convertx.pcfae.com
 
-**Draw Io** — StatefulSet — 32.6.10
+**Draw Io** — StatefulSet — 32.7.4
 - Namespace: optcp-tools
 - Replicas: 1/1
 - Hosts: draw.pcfae.com
@@ -1085,7 +1085,7 @@
 **Fairer Pages** — Deployment — v0.0.14
 - Namespace: optcp-web
 - Replicas: 3/3
-- Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.outspokekin.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, ai.optcp.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, authenticator.optcp.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.internal.optcp.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, chat.outspokekin.com, cloud.optcp.com, code.pcfae.com, convertx.pcfae.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, dolibarr.prplanit.com, draw.pcfae.com, dtrack.optcp.com, erpnext.prplanit.com, fairer-pages.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, home.arbitorium.com, home.pcfae.com, home.private.arbitorium.com, homelabhelpdesk.com, hosts.optcp.com, hosts.pcfae.com, hosts.private.optcp.com, hq.prplanit.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, joplin.pcfae.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, livekit.outspokekin.com, ls.sofmeright.com, lubelogger.pcfae.com, lwd.optcp.com, mail-admin.optcp.com, mail.pcfae.com, mail.precisionplanit.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, mazanoke.pcfae.com, meals.yesimvegan.com, monica.pcfae.com, netalertx.pcfae.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, optcp.com, orangehrm.prplanit.com, outspokekin.com, overseer.pcfae.com, paperless.pcfae.com, passwords.optcp.com, pbx.pcfae.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, projects.optcp.com, prowlarr.pcfae.com, prplanit.com, qbitt.pcfae.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.optcp.com, search.pcfae.com, secrets.optcp.com, sh.pcfae.com, sh.uni2.cc, shiplog.pcfae.com, shlink.pcfae.com, siem.prplanit.com, smkeygen.pcfae.com, social.outspokekin.com, sofmeright.com, sonarr.pcfae.com, sops.optcp.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.prplanit.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.pcfae.com, trmm.prplanit.com, uni2.cc, uptime.pcfae.com, uptime.sofmeright.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.arbitorium.com, z2m.pcfae.com, zigbee.arbitorium.com, zigbee.private.arbitorium.com
+- Hosts: *.arbitorium.com, *.homelabhelpdesk.com, *.ipleek.com, *.operationtimecapsule.com, *.optcp.com, *.outspokekin.com, *.pcfae.com, *.precisionplanit.com, *.prplanit.com, *.sofmeright.com, *.uni2.cc, *.yesimvegan.com, ai.optcp.com, analytics.prplanit.com, anime.pcfae.com, anubis.pcfae.com, apps.pcfae.com, apps.prplanit.com, apptray.pcfae.com, apt.pcfae.com, arbitorium.com, astralfocal.com, authenticator.optcp.com, autoconfig.precisionplanit.com, autodiscover.precisionplanit.com, bazarr.pcfae.com, beszel.pcfae.com, blog.pcfae.com, blog.sofmeright.com, bookmarks.pcfae.com, books.internal.optcp.com, books.optcp.com, books.pcfae.com, budget.pcfae.com, cal.prplanit.com, chat.outspokekin.com, cloud.optcp.com, code.pcfae.com, convertx.pcfae.com, crowdsec.pcfae.com, design.pcfae.com, dl.pcfae.com, dns.pcfae.com, dns2.pcfae.com, dolibarr.prplanit.com, draw.pcfae.com, dtrack.optcp.com, erpnext.prplanit.com, fairer-pages.prplanit.com, fairers.pcfae.com, flix.optcp.com, flowy.pcfae.com, flux.pcfae.com, flwy.prplanit.com, form.prplanit.com, fotos.pcfae.com, git.prplanit.com, grafana.pcfae.com, guacamole.pcfae.com, gwfonts.pcfae.com, home.arbitorium.com, home.pcfae.com, home.private.arbitorium.com, homelabhelpdesk.com, hosts.optcp.com, hosts.pcfae.com, hosts.private.optcp.com, hq.prplanit.com, hrconvert2.pcfae.com, hubble.pcfae.com, images.pcfae.com, inventory.pcfae.com, invoice.pcfae.com, invoiceninja.prplanit.com, ipleek.com, isptest.pcfae.com, ittools.pcfae.com, joplin.pcfae.com, journal.optcp.com, jseer.optcp.com, kai-hamilton.com, kb.precisionplanit.com, kimai.pcfae.com, kms.pcfae.com, lidarr.pcfae.com, links.pcfae.com, livekit.outspokekin.com, ls.sofmeright.com, lubelogger.pcfae.com, lwd.optcp.com, mail-admin.optcp.com, mail.pcfae.com, mail.precisionplanit.com, matrix-auth.outspokekin.com, matrix-call.outspokekin.com, matrix.outspokekin.com, mazanoke.pcfae.com, meals.yesimvegan.com, monica.pcfae.com, netalertx.pcfae.com, netbox.pcfae.com, netbox.prplanit.com, ntfy.pcfae.com, ntfy.prplanit.com, nut.pcfae.com, nvr.pcfae.com, nvr2.pcfae.com, oa2p.pcfae.com, ollama.pcfae.com, operationtimecapsule.com, optcp.com, orangehrm.prplanit.com, outspokekin.com, overseer.pcfae.com, paperless.pcfae.com, passwords.optcp.com, pbx.pcfae.com, pcfae.com, penpot.prplanit.com, photos.pcfae.com, pinchflat.pcfae.com, plex.optcp.com, podinfo.pcfae.com, precisionplanit.com, projects.optcp.com, prowlarr.pcfae.com, prplanit.com, qbitt.pcfae.com, quay.prplanit.com, radarr.pcfae.com, readarr.pcfae.com, recipes.pcfae.com, resume.sofmeright.com, romm.pcfae.com, sabnzbd.pcfae.com, sdiff.optcp.com, search.pcfae.com, secrets.optcp.com, sh.pcfae.com, sh.uni2.cc, shlink.pcfae.com, siem.prplanit.com, smkeygen.pcfae.com, social.outspokekin.com, sofmeright.com, sonarr.pcfae.com, sops.optcp.com, speedtest.pcfae.com, speedtester.pcfae.com, sso.prplanit.com, support.pcfae.com, support.prplanit.com, thelounge.pcfae.com, translate.optcp.com, trmm.prplanit.com, uni2.cc, uptime.pcfae.com, uptime.sofmeright.com, web.pcfae.com, wiki.yesimvegan.com, www.homelabhelpdesk.com, www.ipleek.com, www.precisionplanit.com, yesimvegan.com, z2m.arbitorium.com, z2m.pcfae.com, zigbee.arbitorium.com, zigbee.private.arbitorium.com
 
 **Google Webfonts Helper** — StatefulSet — v1.7.2
 - Namespace: optcp-tools
@@ -1105,7 +1105,7 @@
 **Libretranslate** — StatefulSet — v1.9.6-cuda
 - Namespace: optcp-ai
 - Replicas: 1/1
-- Hosts: translate.pcfae.com
+- Hosts: translate.optcp.com
 
 **Mazanoke** — Deployment — v1.1.7
 - Namespace: optcp-tools
@@ -1140,10 +1140,10 @@
 | Cilium Envoy | kube-system | ✅ |
 | Cilium Operator | kube-system | ✅ |
 | Coredns | kube-system | ✅ |
-| Flux System (4 components) | optcp-gitops | ✅ |
 | Hubble Relay | kube-system | ✅ |
 | Kube Vip | kube-system | ✅ |
 | Metrics Server | kube-system | ✅ |
+| Optcp Gitops (4 components) | optcp-gitops | ✅ |
 | Alloy | optcp-telemetry | ✅ |
 | Alloy | optcp-telemetry | ✅ |
 | Ceph Csi (2 components) | optcp-operators-privileged | ✅ |
@@ -1182,10 +1182,6 @@
 - Namespace: kube-system
 - Replicas: 2/2
 
-**Flux System** — Deployment — v2.10.0
-- Namespace: optcp-gitops
-- Replicas: 4/4
-
 **Hubble Relay** — Deployment — 
 - Namespace: kube-system
 - Replicas: 1/1
@@ -1197,6 +1193,10 @@
 **Metrics Server** — Deployment — v0.9.0
 - Namespace: kube-system
 - Replicas: 2/2
+
+**Optcp Gitops** — Deployment — v2.10.0
+- Namespace: optcp-gitops
+- Replicas: 4/4
 
 **Alloy** — DaemonSet — 
 - Namespace: optcp-telemetry
@@ -1291,17 +1291,17 @@ Not yet placed: declare their namespaces under `gitops.dungeon.categories` to li
 | External Secrets | optcp-secrets | ✅ |
 | Faster Whisper | optcp-ai | ✅ |
 | Gitlab Runner | optcp-ci-runners | ✅ |
-| Gorons Bracelet.cephfs.csi.ceph.com | optcp-operators-privileged | ✅ |
-| Gorons Bracelet.rbd.csi.ceph.com | optcp-operators-privileged | ✅ |
 | Istiod | optcp-service-mesh | ✅ |
 | Kube State Metrics | optcp-gossip-stone | ✅ |
 | Kyverno Admission Controller | optcp-policy-engine | ✅ |
-| Mariadb | prplanit-support | ⚠️ |
+| Mariadb | prplanit-support | ✅ |
 | Mosquitto | arbitorium-home | ✅ |
 | Netbird Router Dungeon | optcp-vpn | ✅ |
 | Netconsole Collector | optcp-telemetry | ✅ |
 | Openbao Snapshot | optcp-secrets | ✅ |
 | Openwakeword | optcp-ai | ✅ |
+| Optcp.cephfs.csi.ceph.com | optcp-operators-privileged | ✅ |
+| Optcp.rbd.csi.ceph.com | optcp-operators-privileged | ✅ |
 | Phloem Ingress Gateway Istio | optcp-ingress-internal | ✅ |
 | Piper | optcp-ai | ✅ |
 | Plugin Barman Cloud | optcp-operators-baseline | ✅ |
