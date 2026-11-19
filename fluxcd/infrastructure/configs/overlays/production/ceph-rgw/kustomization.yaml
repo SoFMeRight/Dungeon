@@ -4,7 +4,6 @@ namespace: optcp-operators-privileged
 resources:
   - rgw-admin-serviceaccount.yaml
   - ceph-rgw-keyring.enc.yaml
-  - ceph-rgw-bucket-provisioning-script.yaml
   - gitlab-rgw-credentials.enc.yaml
   - ceph-rgw-bucket-provisioning-gitlab.yaml
   - harbor-rgw-credentials-externalsecret.yaml
@@ -27,3 +26,11 @@ resources:
   - ceph-rgw-bucket-provisioning-stalwart.yaml
   - dependency-track-rgw-credentials-externalsecret.yaml
   - ceph-rgw-bucket-provisioning-dependency-track.yaml
+
+# The bucket setup script. The name carries a hash of the script, so a change to it
+# changes every bucket Job's pod template: Flux force-replaces each Job and every
+# bucket is set up again by the new script.
+configMapGenerator:
+  - name: ceph-rgw-bucket-provisioning-script
+    files:
+      - setup.sh=ceph-rgw-bucket-provisioning-setup.sh
