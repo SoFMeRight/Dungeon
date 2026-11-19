@@ -58,6 +58,14 @@ spec:
         - ports:
             - port: "8200"
               protocol: TCP
+    # secrets-delete (one-off) deletes zeldas-letter rgw/gossip-stone; removed once run.
+    - fromEndpoints:
+        - matchLabels:
+            app: secrets-delete
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
     - fromEntities:
         - host
         - remote-node
