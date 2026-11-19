@@ -14,7 +14,7 @@ spec:
           image: docker.io/monica:4.1.2-fpm-alpine@sha256:25e07143ea727a47c4eda6bd04f8c6d306626d9271777de7a1ce64a7277f41d9
       containers:
         - name: nginx
-          image: docker.io/nginx:1.31.8-alpine
+          image: docker.io/nginx:1.31.9-alpine
         - name: monica
           image: docker.io/monica:4.1.2-fpm-alpine@sha256:25e07143ea727a47c4eda6bd04f8c6d306626d9271777de7a1ce64a7277f41d9
           env:
