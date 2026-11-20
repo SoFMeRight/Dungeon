@@ -13,6 +13,10 @@ dependency_track:
     - group: general
       name: base.url
       value: https://dtrack.optcp.com
+    # Each day's metrics partition is ~400MB; the default 90 days outgrows the Postgres volume
+    - group: maintenance
+      name: metrics.retention.days
+      value: "30"
 
   # Secret-ref fields name a DT_SECRET_<name> secret, never its value.
   extensions:
