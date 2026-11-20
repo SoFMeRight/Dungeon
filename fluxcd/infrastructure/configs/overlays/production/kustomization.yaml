@@ -7,7 +7,6 @@ resources:
   - stunner  # Shared hardened STUNner dataplane, referenced by every TURN gateway
   # - metallb  # Disabled - replaced by Cilium LoadBalancer IPAM
   - weave-gitops
-  - ceph-rbd  # Ceph RBD connection config and secrets
   - ceph-fs  # CephFS root access + static volumes
   - ceph-rgw  # Ceph RGW keyring for S3 object storage
   - s3-buckets-provisioning-gringotts  # velero + CNPG backup-target buckets: COMPLIANCE object lock + lifecycle
