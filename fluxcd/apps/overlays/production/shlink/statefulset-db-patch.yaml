@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: mariadb
-          image: docker.io/linuxserver/mariadb:11.8.9-r0-ls238
+          image: docker.io/linuxserver/mariadb:11.8.10-r0-ls241
           env:
             - name: TZ
               value: "America/Los_Angeles"
