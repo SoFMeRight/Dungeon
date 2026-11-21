@@ -6,7 +6,6 @@ resources:
   - externalsecret-rails-secret.yaml
   - externalsecret-root.yaml
   - externalsecret-s3.yaml
-  - httproute.yaml
   - externalsecret-s3-creds.yaml
   - externalsecret-shell-host-keys.yaml
 patches:

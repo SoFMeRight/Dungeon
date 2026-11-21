@@ -1,6 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
+  # GitLab's only public route: every request reaches gitlab-webservice through anubis
   name: gitlab
   annotations:
     gatus.home-operations.com/endpoint: |
@@ -14,5 +15,5 @@ spec:
     - git.prplanit.com
   rules:
     - backendRefs:
-        - name: gitlab-webservice-default
-          port: 8181
+        - name: anubis
+          port: 8080

@@ -1,0 +1,24 @@
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-anubis-to-gitlab-webservice
+spec:
+  description: >-
+    Allow anubis (optcp-edge-defenses), which fronts git.prplanit.com, to reach
+    GitLab's workhorse on 8181/TCP. It is GitLab's only public path.
+  enableDefaultDeny:
+    ingress: false
+    egress: false
+  endpointSelector:
+    matchLabels:
+      app: webservice
+      gitlab.com/webservice-name: default
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-edge-defenses
+            app: anubis
+      toPorts:
+        - ports:
+            - port: "8181"
+              protocol: TCP

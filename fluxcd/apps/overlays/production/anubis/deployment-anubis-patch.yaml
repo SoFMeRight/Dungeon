@@ -27,7 +27,7 @@ spec:
             - name: SERVE_ROBOTS_TXT
               value: "true"
             - name: TARGET
-              value: "http://10.55.6.136:5005"
+              value: "http://gitlab-webservice-default.optcp-supply-chain.svc.cluster.local:8181"
             - name: OG_PASSTHROUGH
               value: "true"
             - name: OG_EXPIRY_TIME

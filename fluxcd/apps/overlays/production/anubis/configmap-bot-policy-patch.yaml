@@ -22,6 +22,21 @@ data:
           "action": "ALLOW"
         },
         {
+          "name": "gitlab-git-http",
+          "path_regex": "^/.+\\.git/(info/refs|info/lfs/.*|git-upload-pack|git-receive-pack)$",
+          "action": "ALLOW"
+        },
+        {
+          "name": "gitlab-api",
+          "path_regex": "^/(api|oauth|jwt)/.*$",
+          "action": "ALLOW"
+        },
+        {
+          "name": "gitlab-health",
+          "path_regex": "^/-/(health|readiness|liveness)$",
+          "action": "ALLOW"
+        },
+        {
           "name": "generic-browser",
           "user_agent_regex": "Mozilla",
           "action": "CHALLENGE"

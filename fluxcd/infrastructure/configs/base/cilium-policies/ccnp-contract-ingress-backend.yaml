@@ -110,11 +110,9 @@ spec:
               protocol: TCP
             - port: "8123"
               protocol: TCP
-            - port: "8181"
-              protocol: TCP
-        - ports:
             - port: "8200"
               protocol: TCP
+        - ports:
             - port: "8227"
               protocol: TCP
             - port: "8443"

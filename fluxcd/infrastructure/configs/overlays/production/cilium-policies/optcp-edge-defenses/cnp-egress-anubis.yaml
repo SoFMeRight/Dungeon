@@ -5,11 +5,10 @@ metadata:
 spec:
   description: >-
     anubis is a bot-protection reverse proxy; its only egress dependency is
-    the upstream backend it protects, configured as TARGET
-    http://10.55.6.136:5005 (an external RFC1918 LAN host, outside all
-    cluster CIDRs). OG_PASSTHROUGH fetches OpenGraph metadata from that same
-    target. Narrow toCIDR allow on 5005/TCP; DNS + mesh ride the universal
-    CCNP baseline. Inert until egress default-deny is enabled for the ns.
+    the upstream it protects, GitLab's workhorse (gitlab-webservice-default
+    in optcp-supply-chain, 8181/TCP). OG_PASSTHROUGH fetches OpenGraph
+    metadata from that same target. DNS + mesh ride the universal CCNP
+    baseline.
   enableDefaultDeny:
     ingress: false
     egress: false
@@ -17,9 +16,12 @@ spec:
     matchLabels:
       app: anubis
   egress:
-    - toCIDR:
-        - "10.55.6.136/32"
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: optcp-supply-chain
+            app: webservice
+            gitlab.com/webservice-name: default
       toPorts:
         - ports:
-            - port: "5005"
+            - port: "8181"
               protocol: TCP

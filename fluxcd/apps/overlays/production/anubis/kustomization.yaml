@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: optcp-edge-defenses
 resources:
   - ../../../base/anubis
-  - httproute-xylem.yaml
+  - httproute-gitlab.yaml
 patches:
   - path: deployment-anubis-patch.yaml
   - path: configmap-bot-policy-patch.yaml

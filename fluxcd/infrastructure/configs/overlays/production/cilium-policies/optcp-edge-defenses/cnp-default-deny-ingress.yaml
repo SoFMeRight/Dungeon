@@ -8,7 +8,7 @@ spec:
     Ingress: CCNPs cover kubelet-probes, istio-ambient, prometheus-scrape and ingress-gw;
     cnp-endlessh opens the honeypot to the world.
     Egress: universal CCNPs cover DNS + mesh HBONE; cnp-egress-anubis grants anubis
-    the upstream it protects.
+    the upstream it protects (GitLab).
     Both directions use a reserved-label anchor to trigger enforcement.
   enableDefaultDeny:
     ingress: true

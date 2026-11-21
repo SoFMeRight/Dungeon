@@ -4,10 +4,10 @@ namespace: optcp-supply-chain
 resources:
   - ../../../../base/istio-policies
   - allow-intra-breakglass.yaml
-  - allow-gateway-ingress-cell-membrane.yaml
   - allow-gateway-ingress-phloem.yaml
   - allow-apt-cacher-ng-loadbalancer.yaml
   - allow-netbootxyz-loadbalancer.yaml
+  - allow-anubis-to-gitlab-webservice.yaml
   - allow-gitlab-kas-to-gitlab-webservice.yaml
   - allow-gitlab-postgresql-replication.yaml
   - allow-gitlab-praefect-to-gitaly.yaml
