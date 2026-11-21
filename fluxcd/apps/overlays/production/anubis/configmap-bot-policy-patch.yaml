@@ -37,6 +37,9 @@ data:
           "action": "ALLOW"
         },
         {
+          "import": "(data)/crawlers/_allow-good.yaml"
+        },
+        {
           "name": "generic-browser",
           "user_agent_regex": "Mozilla",
           "action": "CHALLENGE"

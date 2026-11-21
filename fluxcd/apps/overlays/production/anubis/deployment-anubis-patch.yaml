@@ -24,8 +24,12 @@ spec:
           env:
             - name: DIFFICULTY
               value: "4"
+            # GitLab's own robots.txt passes through; anubis's would disallow every crawler
             - name: SERVE_ROBOTS_TXT
-              value: "true"
+              value: "false"
+            # Unset, anubis redirects to any domain after a challenge
+            - name: REDIRECT_DOMAINS
+              value: "git.prplanit.com"
             - name: TARGET
               value: "http://gitlab-webservice-default.optcp-supply-chain.svc.cluster.local:8181"
             - name: OG_PASSTHROUGH
