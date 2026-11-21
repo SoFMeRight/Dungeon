@@ -10,7 +10,7 @@ spec:
         runAsGroup: 1000
       containers:
         - name: guacd
-          image: docker.io/guacamole/guacd@sha256:ac1eeab374a3c4c5e55c3007c2c083c184d5919eee626b7cb627fed136d3c235
+          image: docker.io/guacamole/guacd@sha256:71b35f4444e26bfa986063a56e2a9b84c8540f92cab685dbd9cc58511bc2a763
           securityContext:
             readOnlyRootFilesystem: true
           resources:
