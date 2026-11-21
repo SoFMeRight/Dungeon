@@ -22,7 +22,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: client
-          image: docker.io/jhumanj/opnform-client:2.8.5
+          image: docker.io/jhumanj/opnform-client:2.8.6
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
