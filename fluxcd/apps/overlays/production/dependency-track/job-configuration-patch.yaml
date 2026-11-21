@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
         - name: configuration
-          image: ghcr.io/homelabhd/ansible:v2.22.0@sha256:2fdb363113a31c1d96349cc9905e0b42871ea18acb15103f2817b767d89505af
+          image: ghcr.io/homelabhd/ansible:v2.22.0@sha256:001483870196e1971ace861151f8e1b09fa42a9bd954062d2e8c9dee44fb7617
           env:
             - name: BAO_ADDR
               value: http://openbao.optcp-secrets.svc.cluster.local:8200
