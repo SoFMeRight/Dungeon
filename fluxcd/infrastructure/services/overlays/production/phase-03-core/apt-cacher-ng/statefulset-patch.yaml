@@ -22,6 +22,11 @@ spec:
               value: "30"
             - name: NETWORK_TIMEOUT
               value: "120"
+            # acng 3.7.5's DNS cache never expires an entry (clean_dns_cache() tests expiry
+            # backwards and Resolve() ignores it), so one failed lookup 503s that mirror until
+            # restart. CoreDNS and ztunnel already cache DNS.
+            - name: DNS_CACHE_SECONDS
+              value: "0"
           resources:
             limits:
               memory: 96Mi
