@@ -1,6 +1,6 @@
 ---
 # Converges each kubernetes node's kubelet/kubeadm/kubectl to the pinned
-# kubernetes_version from group_vars/all.yml. PATCH upgrades within one minor.
+# kubernetes_version from group_vars/all.yml: a patch, or one minor up.
 # Per-host idempotent: a node already at the pin is skipped without cordon/drain.
 #
 # Ordering is the INVERSE of cri-o convergence and is load-bearing. kubeadm
@@ -8,14 +8,15 @@
 # version into cluster state BEFORE any other node's `kubeadm upgrade node` can
 # read it. So two phases, each serial: 1:
 #   1. the control plane: the first node to converge applies, the rest run
-#      upgrade node (decided from the cluster's kubeadm-config, not a fixed host,
+#      upgrade node (decided from the live kube-apiservers, not a fixed host,
 #      so a run limited to some of the control plane still orders correctly)
 #   2. the workers (run upgrade node; each refuses until the control plane applied)
 #
 # A converge play (.stagefreight.yml): it runs every perform, and the version
 # gate makes a converged fleet a no-op. Bumping kubernetes_version in
 # group_vars is the declaration of intent — Renovate patch-PRs it (minors are
-# held for approval), and the next perform rolls the fleet to it.
+# held behind its allowedVersions fence until raised deliberately), and the next
+# perform rolls the fleet to it.
 
 - name: Converge kubelet on the control plane (first applies, the rest upgrade node)
   hosts: k8s_master
