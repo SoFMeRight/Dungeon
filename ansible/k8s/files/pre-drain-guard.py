@@ -5,9 +5,10 @@ Runs on a control-plane host (holds admin.conf), delegated there by ansible, wit
 target node's kubernetes name and the drain's per-pod grace period as arguments, AFTER
 the node is cordoned and BEFORE it is drained.
 
-CNPG does NOT switch a primary off a cordoned or draining node on its own — verified:
-a primary blocks the drain on its always-zero <cluster>-primary PDB for the full
-timeout. So the roll must move it. For each CNPG primary on the node, patch
+Before 1.30, CNPG did NOT switch a primary off a cordoned or draining node on its own —
+verified: a primary blocked the drain on its always-zero <cluster>-primary PDB for the
+full timeout. 1.30 does, on the cordon, so a switchover may already be in progress here;
+it is waited out. The roll still moves any primary CNPG has not. For each CNPG primary on the node, patch
 status.targetPrimary to a ready off-node replica (the switchover trigger that
 `kubectl cnpg promote` uses) and wait only until the primary ROLE is off the node, so
 the drain can evict the node's now-replica instance. A cluster with enablePDB: false has
@@ -87,11 +88,19 @@ def switchover_primaries_off(node, attempts=60, delay=5):
     for pod in primaries:
         ns = pod["metadata"]["namespace"]
         cluster = pod["metadata"]["labels"]["cnpg.io/cluster"]
-        spec = json.loads(k("get", "cluster", "-n", ns, cluster, "-o", "json")).get("spec", {})
+        obj = json.loads(k("get", "cluster", "-n", ns, cluster, "-o", "json"))
+        spec, status = obj.get("spec", {}), obj.get("status", {})
         if spec.get("enablePDB") is False:
             # The cluster opted out of disruption protection: CNPG keeps no PDB for it, so
             # the drain evicts its primary with a clean shutdown and it restarts elsewhere.
             print(f"{ns}/{cluster}: enablePDB false, no switchover; the drain restarts it")
+            continue
+        # CNPG 1.30 switches a primary off an unschedulable node itself, so the cordon can
+        # start one before this runs, and its target takes the Lease ahead of the status
+        # update. Wait that switchover out rather than reading its Lease handoff as #11720.
+        if status.get("targetPrimary") and status.get("targetPrimary") != status.get("currentPrimary"):
+            print(f"{ns}/{cluster}: switchover to {status['targetPrimary']} already in progress, waiting")
+            moving.append((ns, cluster))
             continue
         replicas = json.loads(k(
             "get", "pods", "-n", ns,
