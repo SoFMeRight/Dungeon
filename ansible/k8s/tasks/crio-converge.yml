@@ -1,8 +1,10 @@
 ---
 # Per-host cri-o convergence: version gate, then the safe roll — node-drain.yml →
 # crio-install.yml (apt upgrade within the pinned line, restart) → node-undrain.yml.
-# A coupled kubernetes bump has already moved cri-o inside kubelet-converge's
-# drain, so the gate finds such a node converged and skips it.
+# A coupled kubernetes bump moves cri-o inside kubelet-converge's drain, so the
+# gate finds such a node converged and skips it. A node whose kubelet has not
+# reached cri-o's target minor (its kubelet converge failed or has not run) is
+# skipped too: cri-o's minor never moves ahead of the kubelet's.
 # kubectl steps delegate to the first control-plane host, which holds the admin
 # kubeconfig; the node's kubernetes name is its hostname.
 
@@ -12,8 +14,21 @@
   changed_when: false
   check_mode: false
 
+- name: Read live kubelet version for the cri-o converge
+  ansible.builtin.command: kubelet --version
+  register: kubelet_live_crio
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
 - name: Converge cri-o to {{ crio_version }}
-  when: crio_version not in crio_live.stdout
+  when:
+    - crio_version not in crio_live.stdout
+    # No kubelet yet (a node being provisioned), or its minor is at cri-o's target.
+    - >-
+      kubelet_live_crio.rc != 0 or
+      (kubelet_live_crio.stdout | regex_search('v(\\d+\\.\\d+)', '\\1') | first)
+      == crio_version.split('.')[0] ~ '.' ~ crio_version.split('.')[1]
   vars:
     kubectl_admin: kubectl --kubeconfig /etc/kubernetes/admin.conf
   block:

@@ -52,6 +52,11 @@
     live_minor: "{{ kubelet_live.stdout | regex_search('v(\\d+\\.\\d+)', '\\1') | first }}"
     minor_upgrade: "{{ live_minor != k8s_minor }}"
     next_minor: "{{ live_minor.split('.')[0] }}.{{ (live_minor.split('.')[1] | int) + 1 }}"
+    # Flux owns the CoreDNS Corefile (fluxcd/infrastructure/configs/base/coredns) and
+    # reverts any rewrite, so kubeadm must not migrate it: its migration tool fails
+    # preflight on the template plugin the Corefile uses. kubeadm still moves the
+    # CoreDNS image, so the Corefile must parse on the CoreDNS the target ships.
+    kubeadm_coredns_owned_by_flux: CoreDNSUnsupportedPlugins,CoreDNSMigration
   block:
     # kubeadm supports one minor per upgrade, and never a downgrade. A minor
     # upgrade is declared like a patch (header); a skip or a downgrade is refused.
@@ -126,7 +131,9 @@
       when: is_control_plane | bool and not (control_plane_applied | bool) and minor_upgrade | bool
 
     - name: Run kubeadm's preflight for v{{ kubernetes_version }}
-      ansible.builtin.command: kubeadm upgrade plan v{{ kubernetes_version }}
+      ansible.builtin.command: >-
+        kubeadm upgrade plan v{{ kubernetes_version }}
+        --ignore-preflight-errors={{ kubeadm_coredns_owned_by_flux }}
       changed_when: false
       when: is_control_plane | bool and not (control_plane_applied | bool) and minor_upgrade | bool
 
@@ -136,6 +143,7 @@
     - name: Upgrade cluster config (first control-plane of the roll — kubeadm upgrade apply)
       ansible.builtin.command: >-
         kubeadm upgrade apply v{{ kubernetes_version }} --yes --certificate-renewal=false
+        --ignore-preflight-errors={{ kubeadm_coredns_owned_by_flux }}
       when: is_control_plane | bool and not (control_plane_applied | bool)
 
     - name: Upgrade node config (every other node — kubeadm upgrade node)
