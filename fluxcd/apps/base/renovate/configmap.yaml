@@ -426,13 +426,13 @@ data:
         {
           // k8s-nodes: cri-o's minor is coupled to the cluster's kubernetes minor
           // (runtime/kubelet skew policy), so the two pins move as one PR. Patch
-          // bumps auto-PR within the 1.35 line; the minor fence (allowedVersions)
-          // holds 1.36+ until it is raised deliberately alongside a cluster
+          // bumps auto-PR within the 1.36 line; the minor fence (allowedVersions)
+          // holds 1.37+ until it is raised deliberately alongside a cluster
           // upgrade. Merging a bump makes the perform reconcile's ansible
           // converge roll the fleet, one node at a time.
           "groupName": "k8s-nodes",
           "matchDepNames": ["cri-o/cri-o", "kubernetes/kubernetes"],
-          "allowedVersions": "<1.36.0",
+          "allowedVersions": "<1.37.0",
           "commitMessagePrefix": "chore(k8s-nodes):"
         },
         {
