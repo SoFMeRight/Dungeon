@@ -1,6 +1,8 @@
 ---
 # Per-host cri-o convergence: version gate, then the safe roll — node-drain.yml →
-# apt upgrade within the pinned line → restart → node-undrain.yml.
+# crio-install.yml (apt upgrade within the pinned line, restart) → node-undrain.yml.
+# A coupled kubernetes bump has already moved cri-o inside kubelet-converge's
+# drain, so the gate finds such a node converged and skips it.
 # kubectl steps delegate to the first control-plane host, which holds the admin
 # kubeconfig; the node's kubernetes name is its hostname.
 
@@ -13,7 +15,6 @@
 - name: Converge cri-o to {{ crio_version }}
   when: crio_version not in crio_live.stdout
   vars:
-    crio_minor: "{{ crio_version.split('.')[0] }}.{{ crio_version.split('.')[1] }}"
     kubectl_admin: kubectl --kubeconfig /etc/kubernetes/admin.conf
   block:
     - name: Empty {{ ansible_facts['hostname'] }}
@@ -21,41 +22,8 @@
       vars:
         drain_grace_period: 90
 
-    - name: Install the cri-o {{ crio_minor }} apt keyring
-      ansible.builtin.shell: >-
-        curl -fsSL https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v{{ crio_minor }}/deb/Release.key
-        | gpg --dearmor --yes -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
-
-    - name: Point the cri-o apt repo at the {{ crio_minor }} line
-      ansible.builtin.copy:
-        dest: /etc/apt/sources.list.d/cri-o.list
-        content: >
-          deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg]
-          https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v{{ crio_minor }}/deb/ /
-        mode: "0644"
-
-    - name: Install cri-o {{ crio_version }}
-      ansible.builtin.apt:
-        name: "cri-o={{ crio_version }}*"
-        update_cache: true
-        allow_change_held_packages: true
-
-    - name: Hold cri-o
-      ansible.builtin.dpkg_selections:
-        name: cri-o
-        selection: hold
-
-    - name: Restart cri-o
-      ansible.builtin.systemd_service:
-        name: crio
-        state: restarted
-
-    - name: Verify the live version converged
-      ansible.builtin.command: crio --version
-      register: crio_after
-      changed_when: false
-      failed_when: crio_version not in crio_after.stdout
-      when: not ansible_check_mode
+    - name: Move cri-o to {{ crio_version }}
+      ansible.builtin.include_tasks: crio-install.yml
 
     - name: Return {{ ansible_facts['hostname'] }} to service
       ansible.builtin.include_tasks: node-undrain.yml

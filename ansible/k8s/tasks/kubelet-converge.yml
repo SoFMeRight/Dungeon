@@ -23,10 +23,20 @@
 #
 # The drain and the return to service are tasks/node-drain.yml and
 # tasks/node-undrain.yml, shared with crio-converge.yml and update-hosts.yml.
+#
+# cri-o's minor moves with kubernetes' (the k8s-nodes pins), so a node whose
+# cri-o is behind its pin moves it here, inside the same drain and ahead of the
+# kubelet: one drain per node, and no kubelet on an older runtime minor.
 
 - name: Read live kubelet version
   ansible.builtin.command: kubelet --version
   register: kubelet_live
+  changed_when: false
+  check_mode: false
+
+- name: Read live cri-o version for the kubelet converge
+  ansible.builtin.command: crio --version
+  register: crio_live_kubelet
   changed_when: false
   check_mode: false
 
@@ -136,6 +146,10 @@
       ansible.builtin.include_tasks: node-drain.yml
       vars:
         drain_grace_period: 90
+
+    - name: Move cri-o to {{ crio_version }} in the same drain
+      ansible.builtin.include_tasks: crio-install.yml
+      when: crio_version not in crio_live_kubelet.stdout
 
     - name: Install kubelet + kubectl {{ kubernetes_version }}
       ansible.builtin.apt:

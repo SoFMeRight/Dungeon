@@ -11,6 +11,8 @@
 #      upgrade node (decided from the live kube-apiservers, not a fixed host,
 #      so a run limited to some of the control plane still orders correctly)
 #   2. the workers (run upgrade node; each refuses until the control plane applied)
+# A node whose cri-o is behind its pin moves it inside the same drain, so a
+# coupled bump rolls cri-o in this order too, and provision-hosts finds it done.
 #
 # A converge play (.stagefreight.yml): it runs every perform, and the version
 # gate makes a converged fleet a no-op. Bumping kubernetes_version in
