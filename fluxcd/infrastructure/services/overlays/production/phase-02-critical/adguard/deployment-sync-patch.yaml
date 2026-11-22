@@ -10,7 +10,7 @@ spec:
         - name: pull-secret-cr-optcp-optcp-k8s-dungeon-public
       containers:
         - name: adguardhome-sync
-          image: docker.io/linuxserver/adguardhome-sync:v0.10.0-ls183
+          image: docker.io/linuxserver/adguardhome-sync:v0.10.1-ls183
           # LSIO/s6-overlay; setuid-drops to PUID/PGID on :8080 (unprivileged). Partial hardening:
           # keep root, drop ALL, add back s6's file-perm + setuid caps.
           securityContext:
