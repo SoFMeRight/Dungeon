@@ -53,7 +53,7 @@ data:
 
         basic_auth {
           username      = sys.env("VM_AUTH_USERNAME")
-          password_file = "/run/secrets/vm_password"
+          password_file = "/run/secrets/vm-auth/vm_password"
         }
 
         queue_config {

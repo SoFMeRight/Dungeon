@@ -56,8 +56,11 @@ spec:
         varlog: true
         dockercontainers: false
         extra:
+          # One level below /run/secrets: the service-account token mounts at
+          # /var/run/secrets/kubernetes.io (/var/run is /run), and cri-o 1.36's crun
+          # can't create that mountpoint inside a read-only volume at /run/secrets.
           - name: vm-auth
-            mountPath: /run/secrets
+            mountPath: /run/secrets/vm-auth
             readOnly: true
       resources:
         requests:
