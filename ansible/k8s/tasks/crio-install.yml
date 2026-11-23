@@ -64,3 +64,28 @@
       ansible.builtin.systemd_service:
         name: kubelet
         state: started
+
+# A cri-o minor swap does not keep the node's sandboxes: every pod the drain left
+# (the DaemonSets) gets a new one, and on a busy worker cri-o takes minutes to catch
+# up (RunPodSandbox: DeadlineExceeded) — dungeon-chest-001 took 8 minutes on the 1.36
+# roll, past the mesh restart's 180s wait in node-undrain. Wait for no pod on the node
+# to be Pending before the caller carries on; a pod still Pending after 15 minutes is
+# named and the roll continues, so a pod stuck for its own reasons can't wedge it.
+- name: Wait for the node's pods to come back on the new runtime
+  ansible.builtin.command: >-
+    kubectl --kubeconfig /etc/kubernetes/admin.conf get pods -A
+    --field-selector spec.nodeName={{ ansible_facts['hostname'] }},status.phase=Pending
+    -o name
+  register: crio_pending_pods
+  until: crio_pending_pods.stdout | length == 0
+  retries: 90
+  delay: 10
+  changed_when: false
+  failed_when: false
+  delegate_to: "{{ groups['k8s_master'][0] }}"
+  when: not ansible_check_mode
+
+- name: Name the pods still Pending after the runtime swap
+  ansible.builtin.debug:
+    msg: "still Pending on {{ ansible_facts['hostname'] }}: {{ crio_pending_pods.stdout_lines | join(', ') }}"
+  when: not ansible_check_mode and crio_pending_pods.stdout | length > 0
