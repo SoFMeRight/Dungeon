@@ -92,8 +92,8 @@
     # =====================================================================
     - name: Set timestamp + backup path (honor resume_bdir when resuming a real cutover)
       ansible.builtin.set_fact:
-        timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
-        bdir: "{{ resume_bdir if (resume_bdir | length > 0) else (backup_dir ~ '/' ~ old ~ '-to-' ~ new ~ '-' ~ ansible_date_time.iso8601_basic_short) }}"
+        timestamp: "{{ ansible_facts['date_time'].iso8601_basic_short }}"
+        bdir: "{{ resume_bdir if (resume_bdir | length > 0) else (backup_dir ~ '/' ~ old ~ '-to-' ~ new ~ '-' ~ ansible_facts['date_time'].iso8601_basic_short) }}"
 
     - name: "PRE-FLIGHT: all three raft pods present and Ready"
       kubernetes.core.k8s_info:
@@ -765,7 +765,7 @@
         name: "{{ item }}"
         namespace: optcp-gitops
         definition:
-          metadata: {annotations: {"reconcile.fluxcd.io/requestedAt": "{{ ansible_date_time.iso8601 }}"}}
+          metadata: {annotations: {"reconcile.fluxcd.io/requestedAt": "{{ ansible_facts['date_time'].iso8601 }}"}}
           spec: {suspend: false}
       loop: [infra-operators, infra-configs]
       when: not (rehearse | bool)

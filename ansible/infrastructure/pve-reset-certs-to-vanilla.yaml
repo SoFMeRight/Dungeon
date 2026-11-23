@@ -36,7 +36,7 @@
   tasks:
     - name: Compute a per-run backup directory
       ansible.builtin.set_fact:
-        pve_cert_backup_dir: "{{ pve_cert_backup_root }}/{{ ansible_date_time.iso8601_basic_short }}"
+        pve_cert_backup_dir: "{{ pve_cert_backup_root }}/{{ ansible_facts['date_time'].iso8601_basic_short }}"
 
     - name: Ensure the backup directory exists
       ansible.builtin.file:

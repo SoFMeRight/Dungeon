@@ -13,7 +13,7 @@
 
 - name: Set backup CRD name
   ansible.builtin.set_fact:
-    _native_backup_name: "{{ cluster_name }}-{{ ansible_date_time.iso8601_basic_short | lower }}"
+    _native_backup_name: "{{ cluster_name }}-{{ ansible_facts['date_time'].iso8601_basic_short | lower }}"
 
 - name: Display native backup plan
   ansible.builtin.debug:

@@ -13,7 +13,7 @@
 - name: Set backup filename
   ansible.builtin.set_fact:
     _backup_dir: "{{ backups_path }}/{{ namespace }}/{{ cluster_name }}"
-    _backup_filename: "{{ namespace }}-{{ cluster_name }}-galera-{{ ansible_date_time.iso8601_basic_short }}-{{ _backup_type }}.sql.gz"
+    _backup_filename: "{{ namespace }}-{{ cluster_name }}-galera-{{ ansible_facts['date_time'].iso8601_basic_short }}-{{ _backup_type }}.sql.gz"
 
 - name: Set full backup path
   ansible.builtin.set_fact:

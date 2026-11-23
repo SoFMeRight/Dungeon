@@ -17,7 +17,7 @@
   ansible.builtin.set_fact:
     _heal_ca_secret: "{{ cluster_name }}-ca"
     _heal_replication_secret: "{{ cluster_name }}-replication"
-    _heal_pod_name: "{{ cluster_name }}-heal-{{ heal_target_pod.split('-')[-1] }}-{{ ansible_date_time.epoch }}"
+    _heal_pod_name: "{{ cluster_name }}-heal-{{ heal_target_pod.split('-')[-1] }}-{{ ansible_facts['date_time'].epoch }}"
     _heal_fence_applied: false
     _heal_pod_created: false
 

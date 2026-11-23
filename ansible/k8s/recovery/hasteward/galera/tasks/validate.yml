@@ -17,7 +17,7 @@
       - "=== HASteward / Galera ({{ mode }}) ==="
       - "MariaDB: {{ cluster_name }}"
       - "Namespace: {{ namespace }}"
-      - "Timestamp: {{ ansible_date_time.iso8601 }}"
+      - "Timestamp: {{ ansible_facts['date_time'].iso8601 }}"
 
 - name: Get MariaDB CR
   kubernetes.core.k8s_info:

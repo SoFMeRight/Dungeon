@@ -16,8 +16,8 @@
   ansible.builtin.set_fact:
     _heal_storage_pvc: "storage-{{ heal_target_pod }}"
     _heal_galera_pvc: "galera-{{ heal_target_pod }}"
-    _heal_storage_helper: "{{ cluster_name }}-heal-storage-{{ heal_target_instance }}-{{ ansible_date_time.epoch }}"
-    _heal_galera_helper: "{{ cluster_name }}-heal-galera-{{ heal_target_instance }}-{{ ansible_date_time.epoch }}"
+    _heal_storage_helper: "{{ cluster_name }}-heal-storage-{{ heal_target_instance }}-{{ ansible_facts['date_time'].epoch }}"
+    _heal_galera_helper: "{{ cluster_name }}-heal-galera-{{ heal_target_instance }}-{{ ansible_facts['date_time'].epoch }}"
     _heal_suspended: false
     _heal_scaled_down: false
     _heal_original_replicas: "{{ replicas | int }}"

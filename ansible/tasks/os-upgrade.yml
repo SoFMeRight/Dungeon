@@ -6,7 +6,7 @@
 # a drain window for clustered nodes, directly for unclustered).
 
 - name: Upgrade Debian / Ubuntu with apt
-  when: ansible_os_family == "Debian"
+  when: ansible_facts['os_family'] == "Debian"
   block:
     - name: apt dist-upgrade
       ansible.builtin.apt:
@@ -45,7 +45,7 @@
         node_reboot_required: "{{ deb_reboot.stat.exists or deb_boot_kernel.stdout != ansible_facts['kernel'] }}"
 
 - name: Upgrade RHEL 8+ with dnf
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version != "7"
+  when: ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] != "7"
   block:
     - name: dnf upgrade
       ansible.builtin.dnf:
@@ -65,7 +65,7 @@
         node_reboot_required: "{{ dnf_reboot.rc != 0 }}"
 
 - name: Upgrade legacy RHEL 7 with yum
-  when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+  when: ansible_facts['os_family'] == "RedHat" and ansible_facts['distribution_major_version'] == "7"
   block:
     - name: yum upgrade
       ansible.builtin.yum:

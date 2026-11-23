@@ -157,7 +157,7 @@
     - name: Set app config and timestamp
       ansible.builtin.set_fact:
         app: "{{ pg_apps[target_app] }}"
-        timestamp: "{{ ansible_date_time.iso8601_basic_short }}"
+        timestamp: "{{ ansible_facts['date_time'].iso8601_basic_short }}"
 
     - name: Display operation details
       ansible.builtin.debug:
@@ -452,7 +452,7 @@
     # =========================================================================
     - name: "WIPE: Set wipe pod name"
       ansible.builtin.set_fact:
-        wipe_pod: "pgupgrade-wipe-{{ target_app }}-{{ ansible_date_time.epoch }}"
+        wipe_pod: "pgupgrade-wipe-{{ target_app }}-{{ ansible_facts['date_time'].epoch }}"
 
     - name: Create temp pod to wipe PGDATA
       kubernetes.core.k8s:
@@ -756,7 +756,7 @@
         definition:
           metadata:
             annotations:
-              reconcile.fluxcd.io/requestedAt: "{{ ansible_date_time.iso8601 }}"
+              reconcile.fluxcd.io/requestedAt: "{{ ansible_facts['date_time'].iso8601 }}"
 
     - name: Trigger flux kustomization reconciliation
       kubernetes.core.k8s:
@@ -768,7 +768,7 @@
         definition:
           metadata:
             annotations:
-              reconcile.fluxcd.io/requestedAt: "{{ ansible_date_time.iso8601 }}"
+              reconcile.fluxcd.io/requestedAt: "{{ ansible_facts['date_time'].iso8601 }}"
 
     - name: Wait for flux kustomization to reconcile
       kubernetes.core.k8s_info:
