@@ -189,6 +189,31 @@
       failed_when: kubernetes_version not in kubelet_after.stdout
       when: not ansible_check_mode
 
+    # kubeadm writes a dated etcd data copy, manifests and kubelet config backup to
+    # /etc/kubernetes/tmp on every upgrade and never prunes them, and the snapshot
+    # above lands there too: 7-13 GB per control-plane node after the 1.36 roll, on
+    # 45 GB roots. Once this node's upgrade has verified, keep only the newest of each
+    # kind (the restore point for the upgrade just made) and drop the temp dirs
+    # kubeadm leaves behind (kubeadm-kubelet-env*, kubeadm-upgraded-manifests*).
+    - name: Prune kubeadm's upgrade backups to the newest of each kind
+      ansible.builtin.shell: |
+        set -euo pipefail
+        cd /etc/kubernetes/tmp 2>/dev/null || exit 0
+        shopt -s nullglob
+        for kind in kubeadm-backup-etcd- kubeadm-backup-manifests- kubeadm-kubelet-config-20 etcd-pre-; do
+          set -- "$kind"*
+          [ $# -gt 1 ] || continue
+          ls -1dt -- "$@" | tail -n +2 | while IFS= read -r old; do rm -rf -- "$old"; echo "$old"; done
+        done
+        for stray in kubeadm-kubelet-env[0-9]* kubeadm-kubelet-config[0-9]* kubeadm-upgraded-manifests[0-9]*; do
+          rm -rf -- "$stray"; echo "$stray"
+        done
+      args:
+        executable: /bin/bash
+      register: kubeadm_tmp_pruned
+      changed_when: kubeadm_tmp_pruned.stdout | length > 0
+      when: not ansible_check_mode
+
     - name: Return {{ ansible_facts['hostname'] }} to service
       ansible.builtin.include_tasks: node-undrain.yml
 
