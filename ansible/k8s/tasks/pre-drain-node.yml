@@ -22,3 +22,11 @@
   changed_when: "'switching over' in pre_drain_guard.stdout"
   when: not ansible_check_mode
   delegate_to: "{{ _k8s_delegate }}"
+
+# The guard's waits (a switchover CNPG already started, a budget held shut by an
+# unhealthy pod) are what makes it slow, and ansible hides a passing task's stdout:
+# dungeon-chest-004 sat 9.5 minutes here on the 1.36 roll with no record of why.
+- name: Report what the pre-drain guard did on {{ _drain_node }}
+  ansible.builtin.debug:
+    msg: "{{ pre_drain_guard.stdout_lines }}"
+  when: not ansible_check_mode and pre_drain_guard.stdout | default('') | length > 0
