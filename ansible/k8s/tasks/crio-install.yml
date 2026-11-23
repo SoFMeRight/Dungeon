@@ -66,18 +66,22 @@
         state: started
 
 # A cri-o minor swap does not keep the node's sandboxes: every pod the drain left
-# (the DaemonSets) gets a new one, and on a busy worker cri-o takes minutes to catch
-# up (RunPodSandbox: DeadlineExceeded) — dungeon-chest-001 took 8 minutes on the 1.36
-# roll, past the mesh restart's 180s wait in node-undrain. Wait for no pod on the node
-# to be Pending before the caller carries on; a pod still Pending after 15 minutes is
-# named and the roll continues, so a pod stuck for its own reasons can't wedge it.
-- name: Wait for the node's pods to come back on the new runtime
-  ansible.builtin.command: >-
+# (the DaemonSets) gets a new one, and on a busy worker that takes minutes, most of
+# it at cri-o's "sandbox network creation" stage — dungeon-chest-001 took 8 minutes
+# and chest-002 6.5 on the 1.36 roll, past node-undrain's 180s mesh restart wait.
+# The pods stay phase Running throughout, so the signal is each pod's
+# PodReadyToStartContainers condition (its sandbox is up). Wait until every pod on
+# the node has one; a pod still without one after 15 minutes is named and the roll
+# continues, so a pod stuck for its own reasons can't wedge it.
+- name: Wait for the node's pods to get their sandboxes back on the new runtime
+  ansible.builtin.shell: >-
     kubectl --kubeconfig /etc/kubernetes/admin.conf get pods -A
-    --field-selector spec.nodeName={{ ansible_facts['hostname'] }},status.phase=Pending
-    -o name
-  register: crio_pending_pods
-  until: crio_pending_pods.stdout | length == 0
+    --field-selector spec.nodeName={{ ansible_facts['hostname'] }},status.phase!=Succeeded,status.phase!=Failed
+    -o jsonpath='{range .items[*]}{.metadata.namespace}/{.metadata.name}
+    {.status.conditions[?(@.type=="PodReadyToStartContainers")].status}{"\n"}{end}'
+    | grep -v ' True$' || true
+  register: crio_sandboxless_pods
+  until: crio_sandboxless_pods.stdout | length == 0
   retries: 90
   delay: 10
   changed_when: false
@@ -85,7 +89,7 @@
   delegate_to: "{{ groups['k8s_master'][0] }}"
   when: not ansible_check_mode
 
-- name: Name the pods still Pending after the runtime swap
+- name: Name the pods still without a sandbox after the runtime swap
   ansible.builtin.debug:
-    msg: "still Pending on {{ ansible_facts['hostname'] }}: {{ crio_pending_pods.stdout_lines | join(', ') }}"
-  when: not ansible_check_mode and crio_pending_pods.stdout | length > 0
+    msg: "no sandbox yet on {{ ansible_facts['hostname'] }}: {{ crio_sandboxless_pods.stdout_lines | join(', ') }}"
+  when: not ansible_check_mode and crio_sandboxless_pods.stdout | length > 0
