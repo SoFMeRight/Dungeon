@@ -40,10 +40,21 @@ spec:
       policy.prplanit.com/cap.s3-nas: "true"
       policy.prplanit.com/access-scope-s3-nas: gringotts.seaweedfs
 
-  instances: 2
+  # Three, so the synchronous standby below always has a spare: with two, draining the
+  # replica's node would leave no standby to confirm a commit and block every write.
+  instances: 3
 
   imageName: ghcr.io/cloudnative-pg/postgresql:18.4-system-trixie
   postgresql:
+    # A commit is acknowledged only once a standby has it. Asynchronous, the failover at
+    # 2026-11-23 08:00 promoted a replica missing the last writes while Synapse kept
+    # running: its stream positions stayed ahead of the rolled-back sequences, so new
+    # to-device messages took ids clients had already acknowledged and were deleted
+    # undelivered (lost E2EE room keys).
+    synchronous:
+      method: any      # Any 1 replica can acknowledge
+      number: 1        # At least 1 replica must confirm writes
+
     parameters:
       shared_buffers: "256MB"
       max_connections: "200"
