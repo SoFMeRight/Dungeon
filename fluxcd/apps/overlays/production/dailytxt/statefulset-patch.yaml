@@ -73,10 +73,12 @@ spec:
         - name: nginx-config
           configMap:
             name: dailytxt-nginx-config
+        # The image's web root is copied in at start: 2.4M on 2.6.4, 5.5M on 2.7.0. Room for
+        # the next few releases; it counts against the 256Mi memory limit.
         - name: html
           emptyDir:
             medium: Memory
-            sizeLimit: 4Mi
+            sizeLimit: 16Mi
         # readOnlyRootFilesystem: nginx + supervisord need writable run/cache/log; /tmp scratch.
         - name: tmp
           emptyDir: {}
