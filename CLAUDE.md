@@ -60,20 +60,20 @@
     - Credentials stored in Vault at `registries/<registry-url>` with keys: `username`, `password`
 
 - Harbor Container Registry Strategy:
-  - **Primary Registry**: Harbor (internal) at `cr.optcp.com`, admin-managed. Runs **in-cluster** — GitOps-managed under `fluxcd/infrastructure/services/*/harbor` (namespace `optcp-supply-chain`, services phase-03-core), with registry blobs on ceph-rgw (S3) and its own PostgreSQL. Cluster-outage availability is covered by the CRI-O mirror's automatic fallback to upstream registries (below), not by external hosting. **Replaces the retired JFrog/JCR** — `jcr.pcfae.com`, `*.jcr.pcfae.com`, `jcr-pcfae-dungeon-pull-secret`, and the `jcr-pull-secret` label are all DEAD; do not reference them.
+  - **Primary Registry**: Harbor (internal) at `cr.optcp.com`, admin-managed. Runs **in-cluster** — GitOps-managed under `fluxcd/infrastructure/services/*/harbor` (namespace `optcp-supply-chain`, services phase-03-core), with registry blobs on ceph-rgw (S3) and its own PostgreSQL. Cluster-outage availability is covered by Harbor's own dependency chain pulling straight from upstream (below), not by external hosting. **Replaces the retired JFrog/JCR** — `jcr.pcfae.com`, `*.jcr.pcfae.com`, `jcr-pcfae-dungeon-pull-secret`, and the `jcr-pull-secret` label are all DEAD; do not reference them.
   - **Pull-Through Cache Registries**: Harbor proxy-cache projects proxy upstream registries via `*.cr.optcp.com` subdomains
     - `docker.cr.optcp.com` - Docker Hub (docker.io) pull-through cache
     - `ghcr.cr.optcp.com` - GitHub Container Registry (ghcr.io) pull-through cache
     - `quay.cr.optcp.com` - Quay.io (quay.io) pull-through cache
     - `lscr.cr.optcp.com` - LinuxServer.io (lscr.io) pull-through cache
   - **CRI-O Registry Mirrors (Automatic)**:
-    - All cluster nodes have CRI-O registry mirrors configured to route upstream names through the Harbor mirrors
+    - All cluster nodes have CRI-O registry mirrors configured to route upstream names through the Harbor mirrors, declared in `ansible/k8s/tasks/registry-mirrors.yml` (applied by provision-hosts)
     - **Transparent redirection**: Images can be requested using original registry names (e.g., `docker.io/redis:alpine`) and CRI-O automatically pulls through the Harbor mirrors
-    - **Automatic fallback**: If Harbor is unavailable, CRI-O falls back to upstream registries
+    - **No fallback when Harbor is up but broken**: CRI-O falls back to upstream only when Harbor fails the first manifest request. Once Harbor answers a manifest list, the pull stays on Harbor, so a Harbor returning 500s fails the pull. Harbor's own dependency chain (network, mesh, Ceph, secrets, its database and redis, admission, Flux, Harbor itself) therefore bypasses the mirror and pulls straight from upstream (`harbor_mirror_bypass`)
     - **Mirrored registries**: docker.io → docker.cr.optcp.com, ghcr.io → ghcr.cr.optcp.com, lscr.io → lscr.cr.optcp.com, quay.io → quay.cr.optcp.com
     - **Benefits**: Reduces bandwidth, avoids rate limits, caches images, no manifest changes required.
   - **Image Pull Strategy**:
-    - **All Applications**: Always use original upstream registry names (docker.io, ghcr.io, quay.io, lscr.io) - CRI-O mirrors automatically route through Harbor with transparent fallback
+    - **All Applications**: Always use original upstream registry names (docker.io, ghcr.io, quay.io, lscr.io) - CRI-O mirrors automatically route through Harbor
     - **No need to explicitly reference `*.cr.optcp.com`**: CRI-O handles the routing automatically, no manifest changes required
   - **Pull Secrets** (auths `cr.optcp.com`, `*.cr.optcp.com`; pull-only robots):
     - `pull-secret-cr-optcp-optcp-k8s-dungeon-public`: public projects, in every namespace, from one ClusterExternalSecret through a store that reads only that token (`optcp/shared/registry/cr.optcp.com-public`).

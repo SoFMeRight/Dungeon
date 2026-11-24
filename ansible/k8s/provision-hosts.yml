@@ -51,6 +51,19 @@
         content: |
           $nrconf{restart} = 'l';
 
+# cri-o re-reads registries.conf on SIGHUP: a reload, not a restart, so running
+# containers are untouched.
+- name: Route image pulls through Harbor's caches
+  hosts: k8s_worker:k8s_master
+  become: true
+  tasks:
+    - ansible.builtin.import_tasks: tasks/registry-mirrors.yml
+  handlers:
+    - name: Reload cri-o registries
+      ansible.builtin.systemd_service:
+        name: crio
+        state: reloaded
+
 - name: Converge cri-o on workers
   hosts: k8s_worker
   serial: 1

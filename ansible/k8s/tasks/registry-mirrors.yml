@@ -1,0 +1,68 @@
+---
+# cri-o pulls docker.io, ghcr.io, lscr.io and quay.io through Harbor's pull-through
+# caches (*.cr.optcp.com), except the images Harbor itself needs to come back.
+#
+# A mirror is no fallback for those: once Harbor has answered a manifest list, the
+# pull stays on Harbor, so a Harbor that is up but cannot read its blobs fails the
+# pull outright instead of falling through to upstream. Harbor's blobs live on
+# ceph-rgw, whose image came through Harbor: on 2026-11-24 the rgw pod moved, could
+# not pull quay.io/ceph/ceph, and every pull through Harbor then failed with it.
+#
+# So everything below Harbor in its own dependency chain pulls straight from
+# upstream: the network and mesh, Ceph and its CSI, secrets, the database and redis
+# operators and images, admission, Flux, and Harbor's own images. The longer prefix
+# wins over the registry-wide mirror.
+- name: Route image pulls through Harbor, except Harbor's own dependency chain
+  ansible.builtin.copy:
+    dest: /etc/containers/registries.conf.d/harbor-mirrors.conf
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      # Managed by dungeon ansible/k8s/tasks/registry-mirrors.yml.
+      {% for registry, mirror in harbor_registry_mirrors.items() %}
+
+      [[registry]]
+      prefix = "{{ registry }}"
+      location = "{{ registry }}"
+
+      [[registry.mirror]]
+      location = "{{ mirror }}"
+      {% endfor %}
+      {% for prefix in harbor_mirror_bypass %}
+
+      [[registry]]
+      prefix = "{{ prefix }}"
+      location = "{{ prefix }}"
+      {% endfor %}
+  vars:
+    harbor_registry_mirrors:
+      docker.io: docker.cr.optcp.com
+      ghcr.io: ghcr.cr.optcp.com
+      lscr.io: lscr.cr.optcp.com
+      quay.io: quay.cr.optcp.com
+    harbor_mirror_bypass:
+      # network and mesh
+      - quay.io/cilium
+      - ghcr.io/kube-vip
+      - docker.io/istio
+      # storage: Ceph, its operator and CSI, and the rgw holding Harbor's blobs
+      - docker.io/rook
+      - quay.io/ceph
+      - quay.io/cephcsi
+      - quay.io/csiaddons
+      # secrets
+      - docker.io/openbao
+      - ghcr.io/bank-vaults
+      - ghcr.io/external-secrets
+      # Harbor's database and redis
+      - ghcr.io/cloudnative-pg
+      - quay.io/opstree
+      # admission, certificates and reconciliation
+      - ghcr.io/kyverno
+      - quay.io/jetstack
+      - ghcr.io/fluxcd
+      # Harbor and the proxy in front of its caches
+      - docker.io/goharbor
+      - docker.io/openresty
+  notify: Reload cri-o registries
