@@ -382,7 +382,7 @@ spec:
 
         # Lidarr
         - name: lidarr
-          image: docker.io/linuxserver/lidarr:3.1.6.5079-ls49
+          image: docker.io/linuxserver/lidarr:3.1.6.5079-ls50
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
