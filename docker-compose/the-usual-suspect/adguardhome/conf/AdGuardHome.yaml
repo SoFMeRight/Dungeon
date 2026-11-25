@@ -307,6 +307,9 @@ filtering:
     - domain: sops.optcp.com
       answer: 172.22.30.70
       enabled: true
+    - domain: urbackup.optcp.com
+      answer: 10.24.96.9
+      enabled: true
     - domain: outspokekin.com
       answer: 172.22.30.71
       enabled: true
