@@ -15,6 +15,14 @@ spec:
         app: ceph-rgw
     spec:
       serviceAccountName: ceph-rgw
+      # One gateway per node, so a node drain or loss never takes them all (see pdb.yaml).
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchLabels:
+                  app: ceph-rgw
       containers:
         - name: rgw
           image: quay.io/ceph/ceph:PLACEHOLDER_CEPH_VERSION

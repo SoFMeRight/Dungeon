@@ -4,6 +4,7 @@ resources:
   - serviceaccount.yaml
   - configmap.yaml
   - statefulset.yaml
+  - pdb.yaml
   - service.yaml
   - init-job.yaml
   - zone-config-template.yaml

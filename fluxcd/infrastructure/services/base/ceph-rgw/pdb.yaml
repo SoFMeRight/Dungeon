@@ -1,0 +1,12 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: ceph-rgw
+spec:
+  # Harbor keeps its blobs here, and its images pull through Harbor: a drain that takes
+  # every gateway at once leaves Harbor unable to serve anything until one is back. One
+  # serving gateway keeps Harbor up; the PDB only forbids a drain from taking the last.
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: ceph-rgw
