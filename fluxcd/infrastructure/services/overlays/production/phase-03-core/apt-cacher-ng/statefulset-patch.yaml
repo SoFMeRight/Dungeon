@@ -13,10 +13,10 @@ spec:
     spec:
       initContainers:
         - name: init
-          image: docker.io/hlhd/apt-cacher-ng:v3.7.5@sha256:e21d1b390d3428ad0c74848eae78d424a2d1830d7dd54ce0998426f4d5336aad
+          image: docker.io/hlhd/apt-cacher-ng:v3.7.5@sha256:6155b04fd63fea748ad0c0b205033d20e4a20cd24c09889a28b6a2fcea2b1ba0
       containers:
         - name: apt-cacher-ng
-          image: docker.io/hlhd/apt-cacher-ng:v3.7.5@sha256:e21d1b390d3428ad0c74848eae78d424a2d1830d7dd54ce0998426f4d5336aad
+          image: docker.io/hlhd/apt-cacher-ng:v3.7.5@sha256:6155b04fd63fea748ad0c0b205033d20e4a20cd24c09889a28b6a2fcea2b1ba0
           env:
             - name: MAX_THREADS
               value: "30"
