@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: meilisearch
-          image: docker.io/getmeili/meilisearch:v1.57.0
+          image: docker.io/getmeili/meilisearch:v1.58.0
           resources:
             limits:
               cpu: 372m
