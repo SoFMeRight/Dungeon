@@ -21,7 +21,7 @@ spec:
               echo "Setup job completed! Starting Zitadel..."
       containers:
         - name: zitadel
-          image: ghcr.io/homelabhd/zitadel:v4.20.2
+          image: ghcr.io/homelabhd/zitadel:v4.20.2@sha256:0569ac8c01b025840283ca0ab8a795e60d7df92a63df4b4637b03a3912b4455f
 ---
 apiVersion: apps/v1
 kind: Deployment

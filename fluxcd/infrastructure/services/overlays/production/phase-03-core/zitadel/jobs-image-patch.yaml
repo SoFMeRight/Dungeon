@@ -19,7 +19,7 @@ spec:
               done
       containers:
         - name: zitadel-init
-          image: ghcr.io/homelabhd/zitadel:v4.20.2
+          image: ghcr.io/homelabhd/zitadel:v4.20.2@sha256:0569ac8c01b025840283ca0ab8a795e60d7df92a63df4b4637b03a3912b4455f
 ---
 apiVersion: batch/v1
 kind: Job
@@ -33,7 +33,7 @@ spec:
           image: docker.io/alpine/k8s:1.37.1
       containers:
         - name: zitadel-setup
-          image: ghcr.io/homelabhd/zitadel:v4.20.2
+          image: ghcr.io/homelabhd/zitadel:v4.20.2@sha256:0569ac8c01b025840283ca0ab8a795e60d7df92a63df4b4637b03a3912b4455f
         - name: machine-pat-writer
           image: docker.io/alpine/k8s:1.37.1
         - name: login-client-pat-writer
