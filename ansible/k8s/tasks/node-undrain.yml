@@ -41,6 +41,11 @@
     # pod-Ready wait latches onto doomed pods and times out (ztunnel/istio-cni linger
     # in Terminating well past 180s on graceful shutdown). rollout status tracks the
     # DS reaching desired/available and ignores the terminating ones.
+    #
+    # 300s, not 180s: after a reboot every sandbox on the node asks cilium-agent for an
+    # endpoint at once, and its API rate limit answers 429 (putEndpointIdTooManyRequests)
+    # until the burst drains. On 2026-11-25 ztunnel on dungeon-chest-001 got its
+    # sandbox on kubelet's retry, ~3.5 min in, and the 180s wait failed a patched node.
     - name: Restart the mesh dataplane on {{ _drain_node }}, istio-cni then ztunnel
       ansible.builtin.shell: |
         set -o pipefail
@@ -49,7 +54,7 @@
         if [ -n "$pods" ]; then
           echo "$pods" | xargs {{ kubectl_admin }} -n {{ mesh_namespace }} delete --wait=false
         fi
-        {{ kubectl_admin }} -n {{ mesh_namespace }} rollout status {{ item.ds }} --timeout=180s
+        {{ kubectl_admin }} -n {{ mesh_namespace }} rollout status {{ item.ds }} --timeout=300s
       args:
         executable: /bin/bash
       loop:
