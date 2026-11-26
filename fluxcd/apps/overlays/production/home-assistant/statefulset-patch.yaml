@@ -45,9 +45,9 @@ spec:
               value: auth_oidc
             # renovate: datasource=github-releases depName=christiaangoossens/hass-oidc-auth
             - name: COMP_3_VERSION
-              value: "1.2.1"
+              value: "1.3.0"
             - name: COMP_3_URL
-              value: "https://github.com/christiaangoossens/hass-oidc-auth/releases/download/v1.2.1/hass-oidc-auth.zip"
+              value: "https://github.com/christiaangoossens/hass-oidc-auth/releases/download/v1.3.0/hass-oidc-auth.zip"
             - name: COMP_4_NAME
               value: frigate
             # renovate: datasource=github-releases depName=blakeblackshear/frigate-hass-integration
