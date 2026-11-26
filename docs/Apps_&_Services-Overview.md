@@ -6,7 +6,7 @@
 
 ## Apps & Services (130)
 
-✅ 129 healthy · ❌ 1 down
+✅ 130 healthy
 
 ### Administration (Zelda's Lullaby🎵)
 
@@ -183,7 +183,7 @@
 | App | Status | Exposure | Links |
 | --- | --- | --- | --- |
 | Actualbudget | ✅ | 🏠 budget.pcfae.com | [open](https://budget.pcfae.com) |
-| Dailytxt | ❌ | 🏠 journal.optcp.com | [open](https://journal.optcp.com) |
+| Dailytxt | ✅ | 🏠 journal.optcp.com | [open](https://journal.optcp.com) |
 | Homebox | ✅ | 🏠 inventory.pcfae.com | [open](https://inventory.pcfae.com) |
 | Lubelogger | ✅ | 🏠 lubelogger.pcfae.com | [open](https://lubelogger.pcfae.com) |
 | Monica (2 components) | ✅ | 🏠 monica.pcfae.com | [open](https://monica.pcfae.com) |
@@ -388,7 +388,7 @@
   - harbor-redis (StatefulSet, cache)
   - harbor-sentinel-sentinel (StatefulSet, cache)
 
-**Harbor Proxy Cache Proxy** — Deployment — 1.31.8.1-alpine
+**Harbor Proxy Cache Proxy** — Deployment — 1.31.9.1-alpine
 - Namespace: optcp-supply-chain
 - Replicas: 2/2
 - Hosts: docker.cr.optcp.com, ghcr.cr.optcp.com, lscr.cr.optcp.com, quay.cr.optcp.com
@@ -524,7 +524,7 @@
   - mealie (StatefulSet)
   - mealie-postgres (StatefulSet, database)
 
-**Open Webui — 3 components** — StatefulSet — v0.13.4
+**Open Webui — 3 components** — StatefulSet — v0.13.5
 - Namespace: optcp-ai
 - Replicas: 3/3
 - Hosts: ai.optcp.com
@@ -619,7 +619,7 @@
 - Replicas: 1/1
 - Hosts: speedtest.pcfae.com
 
-**Searxng — 2 components** — Deployment — 2026.11.21-c6ee3e9fd
+**Searxng — 2 components** — Deployment — 2026.11.23-a7163d091
 - Namespace: optcp-tools
 - Replicas: 3/3
 - Hosts: search.pcfae.com
@@ -763,22 +763,22 @@
 - Namespace: optcp-shooting-gallery
 - Replicas: 1/1
 
-**Pbs Cluster Proxy** — Deployment — 1.31.9-alpine
+**Pbs Cluster Proxy** — Deployment — 1.31.10-alpine
 - Namespace: optcp-management-dashboards
 - Replicas: 2/2
 - Hosts: pbs.pcfae.com
 
-**Pve Cluster Proxy** — Deployment — 1.31.9-alpine
+**Pve Cluster Proxy** — Deployment — 1.31.10-alpine
 - Namespace: optcp-management-dashboards
 - Replicas: 2/2
 - Hosts: pve.pcfae.com
 
-**Bulwark** — StatefulSet — 1.21.3
+**Bulwark** — StatefulSet — 1.22.0
 - Namespace: optcp-delivery-bag
 - Replicas: 1/1
 - Hosts: mail.optcp.com
 
-**Stalwart — 4 components** — Deployment — v1.1.1
+**Stalwart — 4 components** — Deployment — v1.2.0
 - Namespace: optcp-delivery-bag
 - Replicas: 1/1
 - Hosts: mail-admin.optcp.com, mail.optcp.com
@@ -788,7 +788,7 @@
   - stalwart-redis (StatefulSet, cache)
   - stalwart-sentinel-sentinel (StatefulSet, cache)
 
-**Ntfy** — StatefulSet — v2.38.1
+**Ntfy** — StatefulSet — v2.38.2
 - Namespace: optcp-gossip-stone
 - Replicas: 1/1
 - Hosts: ntfy.pcfae.com, ntfy.prplanit.com
@@ -807,7 +807,7 @@
 - Replicas: 1/1
 - Hosts: status.pcfae.com, status.sofmeright.com
 
-**Grafana** — Deployment — 12.4.15
+**Grafana** — Deployment — 12.4.16
 - Namespace: optcp-gossip-stone
 - Replicas: 3/3
 - Hosts: grafana.pcfae.com
@@ -883,9 +883,9 @@
 - Replicas: 1/1
 - Hosts: budget.pcfae.com
 
-**Dailytxt** — StatefulSet — 2.7.0
+**Dailytxt** — StatefulSet — 2.7.2
 - Namespace: optcp-cloud
-- Replicas: 0/1
+- Replicas: 1/1
 - Hosts: journal.optcp.com
 
 **Homebox** — StatefulSet — 0.27.1
@@ -999,12 +999,12 @@
 - Replicas: 1/1
 - Hosts: nvr.pcfae.com
 
-**Home Assistant** — StatefulSet — 2026.11.2
+**Home Assistant** — StatefulSet — 2026.11.3
 - Namespace: arbitorium-home
 - Replicas: 1/1
 - Hosts: home.arbitorium.com, home.pcfae.com, home.private.arbitorium.com
 
-**Wazuh — 3 components** — StatefulSet — 4.14.10
+**Wazuh — 3 components** — StatefulSet — 4.14.11
 - Namespace: optcp-siem
 - Replicas: 3/3
 - Hosts: siem.prplanit.com
@@ -1084,7 +1084,7 @@
 - Replicas: 3/3
 - Hosts: ittools.pcfae.com
 
-**Libretranslate** — StatefulSet — v1.9.6-cuda
+**Libretranslate** — StatefulSet — v1.10.0-cuda
 - Namespace: optcp-ai
 - Replicas: 1/1
 - Hosts: translate.optcp.com
@@ -1102,7 +1102,7 @@
   - neko-gateway (Deployment)
   - neko-vpn (StatefulSet)
 
-**Ollama** — StatefulSet — 0.40.17
+**Ollama** — StatefulSet — 0.40.18
 - Namespace: optcp-ai
 - Replicas: 1/1
 - Hosts: ollama.pcfae.com
@@ -1236,7 +1236,7 @@
 - Namespace: optcp-sibyl-system
 - Replicas: 1/1
 
-**Snapshot Controller** — Deployment — v8.7.0
+**Snapshot Controller** — Deployment — v8.7.1
 - Namespace: optcp-fairy-bottle
 - Replicas: 2/2
 
