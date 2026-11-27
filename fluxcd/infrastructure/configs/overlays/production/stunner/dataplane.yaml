@@ -9,7 +9,7 @@ kind: Dataplane
 metadata:
   name: stunner-hardened
 spec:
-  image: docker.io/l7mp/stunnerd:1.2.1
+  image: docker.io/l7mp/stunnerd:2.0.0
   imagePullPolicy: IfNotPresent
   command: ["stunnerd"]
   args: ["-w", "--udp-thread-num=16", "--log-format=text"]
