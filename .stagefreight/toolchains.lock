@@ -10,9 +10,9 @@
     },
     {
       "name": "flux",
-      "resolved": "2.10.0",
+      "resolved": "2.10.1",
       "sha256": {
-        "linux/amd64": "208dd7012c04fedeed5b2d0b6e63df3b15b1c34a381527811685c098bc9f8659"
+        "linux/amd64": "967365ff84aabc97871827ff33713ef0c09f62dd83c18759e3a5e39adcea9285"
       }
     },
     {
