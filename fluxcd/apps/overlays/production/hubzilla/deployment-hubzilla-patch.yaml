@@ -15,7 +15,7 @@ spec:
             name: hubzilla-socialauth-button
       containers:
         - name: web
-          image: ghcr.io/homelabhd/hubzilla:v11.4.2
+          image: ghcr.io/homelabhd/hubzilla:v11.4.2@sha256:ee759260c7a4a48717e77e6af057d3bc62a0b6f6faba8ab1162c984e5b7e43d4
           volumeMounts:
             # addon/socialauth is a symlink, so the file is mounted at the real path it
             # points into rather than through the link.

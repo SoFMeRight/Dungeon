@@ -10,7 +10,7 @@ spec:
     spec:
       containers:
         - name: synapse
-          image: ghcr.io/homelabhd/synapse:v1.165.0
+          image: ghcr.io/homelabhd/synapse:v1.165.0@sha256:77032bdc13cc8776475c6b8158658cec054d6557b14b0728376fd934c6ecd230
   volumeClaimTemplates:
     - metadata:
         name: data
